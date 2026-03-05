@@ -46,7 +46,7 @@ nest::register_mip_generator( const std::string& name )
  * ---------------------------------------------------------------- */
 
 nest::mip_generator::Parameters_::Parameters_()
-  : rate_( 0.0 ) // spks/s
+  : rate_( 0.0 )  // spks/s
   , p_copy_( 1.0 )
 {
 }
@@ -91,7 +91,7 @@ nest::mip_generator::mip_generator()
 
 nest::mip_generator::mip_generator( const mip_generator& n )
   : StimulationDevice( n )
-  , P_( n.P_ ) // also causes deep copy of random nnumber generator
+  , P_( n.P_ )  // also causes deep copy of random nnumber generator
 {
 }
 
@@ -133,7 +133,7 @@ nest::mip_generator::update( Time const& T, const long from, const long to )
   {
     if ( not StimulationDevice::is_active( T ) or P_.rate_ <= 0 )
     {
-      return; // no spikes to be generated
+      return;  // no spikes to be generated
     }
 
     // generate spikes of parent process for each time slice
@@ -190,7 +190,7 @@ nest::mip_generator::event_hook( DSSpikeEvent& e )
 void
 nest::mip_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
 
   // For the input backend
   if ( not input_param.empty() )

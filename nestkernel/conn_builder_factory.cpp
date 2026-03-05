@@ -29,4 +29,4 @@ GenericBipartiteConnBuilderFactory::~GenericBipartiteConnBuilderFactory() = defa
 
 GenericThirdConnBuilderFactory::~GenericThirdConnBuilderFactory() = default;
 
-} // namespace nest
+}  // namespace nest

@@ -80,7 +80,7 @@ class spikecounter;
 
 class ConnectionManager : public ManagerInterface
 {
-  friend class SimulationManager; // update_delay_extrema_
+  friend class SimulationManager;  // update_delay_extrema_
 public:
   enum ConnectionType
   {
@@ -692,19 +692,19 @@ private:
    */
   std::vector< std::vector< size_t > > num_connections_;
 
-  Dictionary connruledict_; //!< Dictionary for connection rules.
+  Dictionary connruledict_;  //!< Dictionary for connection rules.
 
   //! ConnBuilder factories, indexed by connruledict_ elements.
   std::vector< GenericBipartiteConnBuilderFactory* > connbuilder_factories_;
 
-  Dictionary thirdconnruledict_; //!< Dictionary for third-factor connection rules.
+  Dictionary thirdconnruledict_;  //!< Dictionary for third-factor connection rules.
 
   //! Third-factor ConnBuilder factories, indexed by thirdconnruledict_ elements.
   std::vector< GenericThirdConnBuilderFactory* > thirdconnbuilder_factories_;
 
-  long min_delay_; //!< Value of the smallest delay in the network.
+  long min_delay_;  //!< Value of the smallest delay in the network.
 
-  long max_delay_; //!< Value of the largest delay in the network in steps.
+  long max_delay_;  //!< Value of the largest delay in the network in steps.
 
   //! Whether to keep source table after connection setup is complete.
   bool keep_source_table_;
@@ -1049,6 +1049,6 @@ ConnectionManager::clear_compressed_spike_data_map()
   source_table_.clear_compressed_spike_data_map();
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* CONNECTION_MANAGER_H */

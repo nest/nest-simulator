@@ -147,7 +147,7 @@ nest::pp_cond_exp_mc_urbanczik_dynamics( double, const double y[], double f[], v
   // soma
   f[ S::idx( N::SOMA, S::V_M ) ] =
     ( -I_L - I_syn_exc - I_syn_inh + I_conn_d_s + node.B_.I_stim_[ N::SOMA ] + node.P_.I_e[ N::SOMA ] )
-    / node.P_.urbanczik_params.C_m[ N::SOMA ]; // plus or minus I_conn_d_s?
+    / node.P_.urbanczik_params.C_m[ N::SOMA ];  // plus or minus I_conn_d_s?
 
   // excitatory conductance soma
   f[ S::idx( N::SOMA, S::G_EXC ) ] = -y[ S::idx( N::SOMA, S::G_EXC ) ] / node.P_.urbanczik_params.tau_syn_ex[ N::SOMA ];
@@ -168,35 +168,35 @@ nest::pp_cond_exp_mc_urbanczik_dynamics( double, const double y[], double f[], v
  * ---------------------------------------------------------------- */
 
 nest::pp_cond_exp_mc_urbanczik::Parameters_::Parameters_()
-  : t_ref( 3.0 ) // ms
+  : t_ref( 3.0 )  // ms
 {
   urbanczik_params.phi_max = 0.15;
   urbanczik_params.rate_slope = 0.5;
   urbanczik_params.beta = 1.0 / 3.0;
   urbanczik_params.theta = -55.0;
   // conductances between compartments
-  urbanczik_params.g_conn[ SOMA ] = 600.0; // nS, soma-dendrite
-  urbanczik_params.g_conn[ DEND ] = 0.0;   // nS, dendrite-soma
+  urbanczik_params.g_conn[ SOMA ] = 600.0;  // nS, soma-dendrite
+  urbanczik_params.g_conn[ DEND ] = 0.0;    // nS, dendrite-soma
 
   // soma parameters
-  urbanczik_params.g_L[ SOMA ] = 30.0;  // nS
-  urbanczik_params.C_m[ SOMA ] = 300.0; // pF
-  E_ex[ SOMA ] = 0.0;                   // mV
-  E_in[ SOMA ] = -75;                   // mV
-  urbanczik_params.E_L[ SOMA ] = -70.0; // mV
+  urbanczik_params.g_L[ SOMA ] = 30.0;   // nS
+  urbanczik_params.C_m[ SOMA ] = 300.0;  // pF
+  E_ex[ SOMA ] = 0.0;                    // mV
+  E_in[ SOMA ] = -75;                    // mV
+  urbanczik_params.E_L[ SOMA ] = -70.0;  // mV
   urbanczik_params.tau_syn_ex[ SOMA ] = 3.0;
   urbanczik_params.tau_syn_in[ SOMA ] = 3.0;
-  I_e[ SOMA ] = 0.0; // pA
+  I_e[ SOMA ] = 0.0;  // pA
 
   // dendritic parameters
   urbanczik_params.g_L[ DEND ] = 30.0;
-  urbanczik_params.C_m[ DEND ] = 300.0; // pF
-  E_ex[ DEND ] = 0.0;                   // mV
-  E_in[ DEND ] = 0.0;                   // mV
-  urbanczik_params.E_L[ DEND ] = -70.0; // mV
+  urbanczik_params.C_m[ DEND ] = 300.0;  // pF
+  E_ex[ DEND ] = 0.0;                    // mV
+  E_in[ DEND ] = 0.0;                    // mV
+  urbanczik_params.E_L[ DEND ] = -70.0;  // mV
   urbanczik_params.tau_syn_ex[ DEND ] = 3.0;
   urbanczik_params.tau_syn_in[ DEND ] = 3.0;
-  I_e[ DEND ] = 0.0; // pA
+  I_e[ DEND ] = 0.0;  // pA
 }
 
 nest::pp_cond_exp_mc_urbanczik::Parameters_::Parameters_( const Parameters_& p )
@@ -224,7 +224,7 @@ nest::pp_cond_exp_mc_urbanczik::Parameters_::Parameters_( const Parameters_& p )
 nest::pp_cond_exp_mc_urbanczik::Parameters_&
 nest::pp_cond_exp_mc_urbanczik::Parameters_::operator=( const Parameters_& p )
 {
-  assert( this != &p ); // would be bad logical error in program
+  assert( this != &p );  // would be bad logical error in program
 
   t_ref = p.t_ref;
   urbanczik_params.phi_max = p.urbanczik_params.phi_max;
@@ -408,7 +408,7 @@ nest::pp_cond_exp_mc_urbanczik::State_::get( Dictionary& d ) const
     assert( d.known( comp_names_[ n ] ) );
     auto dd = d.get< Dictionary >( comp_names_[ n ] );
 
-    dd[ names::V_m ] = y_[ idx( n, V_M ) ]; // Membrane potential
+    dd[ names::V_m ] = y_[ idx( n, V_M ) ];  // Membrane potential
   }
 }
 
@@ -483,12 +483,12 @@ nest::pp_cond_exp_mc_urbanczik::init_buffers_()
   for ( size_t n = 0; n < NUM_SPIKE_RECEPTORS; ++n )
   {
     B_.spikes_[ n ].clear();
-  } // includes resize
+  }  // includes resize
 
   B_.currents_.resize( NUM_CURR_RECEPTORS );
   for ( size_t n = 0; n < NUM_CURR_RECEPTORS; ++n )
   {
-    B_.currents_[ n ].clear(); // includes resize
+    B_.currents_[ n ].clear();  // includes resize
   }
 
   B_.logger_.reset();
@@ -579,11 +579,11 @@ nest::pp_cond_exp_mc_urbanczik::update( Time const& origin, const long from, con
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
-        &B_.sys_,             // system of ODE
-        &t,                   // from t
-        B_.step_,             // to t <= step
-        &B_.IntegrationStep_, // integration step size
-        S_.y_ );              // neuronal state
+        &B_.sys_,              // system of ODE
+        &t,                    // from t
+        B_.step_,              // to t <= step
+        &B_.IntegrationStep_,  // integration step size
+        S_.y_ );               // neuronal state
       if ( status != GSL_SUCCESS )
       {
         throw GSLSolverFailure( get_name(), status );
@@ -632,7 +632,7 @@ nest::pp_cond_exp_mc_urbanczik::update( Time const& origin, const long from, con
           n_spikes = V_.poisson_dist_( V_.rng_, param );
         }
 
-        if ( n_spikes > 0 ) // Is there a spike? Then set the new dead time.
+        if ( n_spikes > 0 )  // Is there a spike? Then set the new dead time.
         {
           // Set dead time interval according to parameters
           S_.r_ = V_.RefractoryCounts_;
@@ -648,9 +648,9 @@ nest::pp_cond_exp_mc_urbanczik::update( Time const& origin, const long from, con
             set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
           }
         }
-      } // if (rate > 0.0)
+      }  // if (rate > 0.0)
     }
-    else // Neuron is within dead time
+    else  // Neuron is within dead time
     {
       --S_.r_;
     }
@@ -700,4 +700,4 @@ nest::pp_cond_exp_mc_urbanczik::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-#endif // HAVE_GSL
+#endif  // HAVE_GSL

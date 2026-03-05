@@ -411,6 +411,6 @@ private:
   double epsilon_;
 };
 
-} // namespace nest
+}  // namespace nest
 
-#endif // WEIGHT_OPTIMIZER_H
+#endif  // WEIGHT_OPTIMIZER_H

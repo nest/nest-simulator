@@ -119,15 +119,15 @@ private:
     //!< Stop time, relative to origin. Defaults to "infinity".
     Time stop_;
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
     //! Copy and recalibrate parameter set
     Parameters_( const Parameters_& );
 
     Parameters_& operator=( const Parameters_& );
 
-    void get( Dictionary& ) const; //!< Store current values in dictionary
-    void set( const Dictionary& ); //!< Set values from dictionary
+    void get( Dictionary& ) const;  //!< Store current values in dictionary
+    void set( const Dictionary& );  //!< Set values from dictionary
 
   private:
     //! Update given Time parameter including error checking
@@ -170,6 +170,6 @@ private:
   Variables_ V_;
 };
 
-} // namespace
+}  // namespace
 
 #endif /* DEVICE_H */

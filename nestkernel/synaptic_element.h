@@ -210,6 +210,6 @@ private:
   GrowthCurve* growth_curve_;
 };
 
-} // of namespace
+}  // of namespace
 
 #endif /* #ifndef SYNAPTIC_ELEMENT_H */

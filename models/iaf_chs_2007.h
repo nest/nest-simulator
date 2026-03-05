@@ -175,14 +175,14 @@ private:
   struct State_
   {
     // state variables
-    double i_syn_ex_; // postsynaptic current for exc. inputs, variable 1
-    double V_syn_;    // psp waveform, variable 2
-    double V_spike_;  // post spike reset waveform, variable 3
-    double V_m_;      // membrane potential, variable 4
+    double i_syn_ex_;  // postsynaptic current for exc. inputs, variable 1
+    double V_syn_;     // psp waveform, variable 2
+    double V_spike_;   // post spike reset waveform, variable 3
+    double V_m_;       // membrane potential, variable 4
 
     unsigned long position_;
 
-    State_(); //!< Default initialization
+    State_();  //!< Default initialization
 
     void get( Dictionary& ) const;
     void set( Dictionary const&, Node* );
@@ -222,9 +222,9 @@ private:
     /** Noise signal. */
     std::vector< double > noise_;
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( Dictionary& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const;  //!< Store current values in dictionary
 
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
@@ -274,7 +274,7 @@ private:
     double P22_;
     double P30_;
 
-    normal_distribution normal_dist_; //!< random distribution
+    normal_distribution normal_dist_;  //!< random distribution
   };
 
   // Access functions for UniversalDataLogger -------------------------------
@@ -346,10 +346,10 @@ iaf_chs_2007::get_status( Dictionary& d ) const
 inline void
 iaf_chs_2007::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
   ptmp.set( d, S_, this );
-  State_ stmp = S_;    // temporary copy in case of errors
-  stmp.set( d, this ); // throws if BadProperty
+  State_ stmp = S_;     // temporary copy in case of errors
+  stmp.set( d, this );  // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -362,6 +362,6 @@ iaf_chs_2007::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-} // namespace
+}  // namespace
 
-#endif // IAF_CHS_2007_H
+#endif  // IAF_CHS_2007_H

@@ -211,6 +211,6 @@ GenericModel< ElementT >::deprecation_warning( const std::string& caller )
   deprecation_warning_issued_ = true;
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif

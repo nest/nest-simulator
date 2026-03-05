@@ -220,25 +220,25 @@ private:
   //! Model parameters
   struct Parameters_
   {
-    double V_th;     //!< Threshold Potential in mV
-    double g_L;      //!< Leak Conductance in nS
-    double C_m;      //!< Membrane Capacitance in pF
-    double E_ex;     //!< Excitatory reversal Potential in mV
-    double E_in;     //!< Inhibitory reversal Potential in mV
-    double E_L;      //!< Leak reversal Potential (a.k.a. resting potential) in mV
-    double tau_synE; //!< Synaptic Time Constant Excitatory Synapse in ms
-    double tau_synI; //!< Synaptic Time Constant for Inhibitory Synapse in ms
-    double I_e;      //!< Constant Current in pA
-    double tau_ahp;  //!< Afterhyperpolarization (AHP) time constant
-    double g_ahp;    //!< AHP conductance
-    double E_ahp;    //!< AHP potential
-    bool ahp_bug;    //!< If true, discard AHP conductance value from previous
-                     //!< spikes
+    double V_th;      //!< Threshold Potential in mV
+    double g_L;       //!< Leak Conductance in nS
+    double C_m;       //!< Membrane Capacitance in pF
+    double E_ex;      //!< Excitatory reversal Potential in mV
+    double E_in;      //!< Inhibitory reversal Potential in mV
+    double E_L;       //!< Leak reversal Potential (a.k.a. resting potential) in mV
+    double tau_synE;  //!< Synaptic Time Constant Excitatory Synapse in ms
+    double tau_synI;  //!< Synaptic Time Constant for Inhibitory Synapse in ms
+    double I_e;       //!< Constant Current in pA
+    double tau_ahp;   //!< Afterhyperpolarization (AHP) time constant
+    double g_ahp;     //!< AHP conductance
+    double E_ahp;     //!< AHP potential
+    bool ahp_bug;     //!< If true, discard AHP conductance value from previous
+                      //!< spikes
 
-    Parameters_(); //!< Set default parameter values
+    Parameters_();  //!< Set default parameter values
 
-    void get( Dictionary& ) const;             //!< Store current values in Dictionary
-    void set( const Dictionary&, Node* node ); //!< Set values from Dictionary
+    void get( Dictionary& ) const;              //!< Store current values in Dictionary
+    void set( const Dictionary&, Node* node );  //!< Set values from Dictionary
   };
 
   // State variables class --------------------------------------------
@@ -274,12 +274,12 @@ public:
     //!< number of refractory steps remaining
     int r;
 
-    State_( const Parameters_& ); //!< Default initialization
+    State_( const Parameters_& );  //!< Default initialization
     State_( const State_& );
 
     State_& operator=( const State_& );
 
-    void get( Dictionary& ) const; //!< Store current values in Dictionary
+    void get( Dictionary& ) const;  //!< Store current values in Dictionary
 
     /**
      * Set state from values in Dictionary.
@@ -299,8 +299,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( iaf_chxk_2008& );                  //!< Sets buffer pointers to 0
-    Buffers_( const Buffers_&, iaf_chxk_2008& ); //!< Sets buffer pointers to 0
+    Buffers_( iaf_chxk_2008& );                   //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, iaf_chxk_2008& );  //!< Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< iaf_chxk_2008 > logger_;
@@ -311,16 +311,16 @@ private:
     RingBuffer currents_;
 
     /* GSL ODE stuff */
-    gsl_odeiv_step* s_;    //!< stepping function
-    gsl_odeiv_control* c_; //!< adaptive step size control function
-    gsl_odeiv_evolve* e_;  //!< evolution function
-    gsl_odeiv_system sys_; //!< struct describing system
+    gsl_odeiv_step* s_;     //!< stepping function
+    gsl_odeiv_control* c_;  //!< adaptive step size control function
+    gsl_odeiv_evolve* e_;   //!< evolution function
+    gsl_odeiv_system sys_;  //!< struct describing system
 
     // Since IntegrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
-    double step_;            //!< step size in ms
-    double IntegrationStep_; //!< current integration time step, updated by GSL
+    double step_;             //!< step size in ms
+    double IntegrationStep_;  //!< current integration time step, updated by GSL
 
     /**
      * Input current injected by CurrentEvent.
@@ -460,10 +460,10 @@ iaf_chxk_2008::get_status( Dictionary& d ) const
 inline void
 iaf_chxk_2008::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;     // temporary copy in case of errors
-  ptmp.set( d, this );       // throws if BadProperty
-  State_ stmp = S_;          // temporary copy in case of errors
-  stmp.set( d, ptmp, this ); // throws if BadProperty
+  Parameters_ ptmp = P_;      // temporary copy in case of errors
+  ptmp.set( d, this );        // throws if BadProperty
+  State_ stmp = S_;           // temporary copy in case of errors
+  stmp.set( d, ptmp, this );  // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -476,7 +476,7 @@ iaf_chxk_2008::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-} // namespace
+}  // namespace
 
-#endif // HAVE_GSL
-#endif // IAF_CHXK_2008_H
+#endif  // HAVE_GSL
+#endif  // IAF_CHXK_2008_H

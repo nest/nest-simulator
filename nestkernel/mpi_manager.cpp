@@ -194,8 +194,8 @@ MPIManager::initialize( const bool adjust_number_of_threads_or_rng_only )
   }
 
 #ifndef HAVE_MPI
-  char* pmix_rank_set = std::getenv( "PMIX_RANK" ); // set by OpenMPI's launcher
-  char* pmi_rank_set = std::getenv( "PMI_RANK" );   // set by MPICH's launcher
+  char* pmix_rank_set = std::getenv( "PMIX_RANK" );  // set by OpenMPI's launcher
+  char* pmi_rank_set = std::getenv( "PMI_RANK" );    // set by MPICH's launcher
   const bool mpi_launcher_or_mpi4py_used = pmix_rank_set or pmi_rank_set;
 
   long mpi_num_procs = 0;
@@ -286,7 +286,7 @@ MPIManager::mpi_finalize( int exitcode )
   {
     if ( exitcode == 0 )
     {
-      kernel::manager< MUSICManager >.music_finalize(); // calls MPI_Finalize()
+      kernel::manager< MUSICManager >.music_finalize();  // calls MPI_Finalize()
     }
     else
     {
@@ -340,7 +340,7 @@ MPIManager::communicate( std::vector< size_t >& local_nodes, std::vector< size_t
   const int num_globals = std::accumulate( num_nodes_per_rank.begin(), num_nodes_per_rank.end(), 0 );
   if ( num_globals == 0 )
   {
-    return; // Must return here to avoid passing address to empty global_nodes below
+    return;  // Must return here to avoid passing address to empty global_nodes below
   }
 
   global_nodes.resize( num_globals, 0L );
@@ -371,7 +371,7 @@ MPIManager::communicate( std::vector< unsigned int >& send_buffer,
   std::vector< int >& displacements )
 {
   displacements.resize( num_processes_, 0 );
-  if ( get_num_processes() == 1 ) // purely thread-based
+  if ( get_num_processes() == 1 )  // purely thread-based
   {
     displacements[ 0 ] = 0;
     if ( static_cast< unsigned int >( recv_buffer_size_ ) < send_buffer.size() )
@@ -527,7 +527,7 @@ MPIManager::communicate( std::vector< OffGridSpike >& send_buffer,
   std::vector< int >& displacements )
 {
   displacements.resize( num_processes_, 0 );
-  if ( get_num_processes() == 1 ) // purely thread-based
+  if ( get_num_processes() == 1 )  // purely thread-based
   {
     displacements[ 0 ] = 0;
     if ( static_cast< unsigned int >( recv_buffer_size_ ) < send_buffer.size() )
@@ -940,8 +940,8 @@ MPIManager::time_communicate_alltoall( int num_bytes, int samples ) const
   {
     return 0.0;
   }
-  unsigned int packet_length = num_bytes / sizeof( unsigned int );        // this size should be sent to each process
-  unsigned int total_packet_length = packet_length * get_num_processes(); // total size of send and receive buffers
+  unsigned int packet_length = num_bytes / sizeof( unsigned int );         // this size should be sent to each process
+  unsigned int total_packet_length = packet_length * get_num_processes();  // total size of send and receive buffers
   if ( total_packet_length < 1 )
   {
     total_packet_length = 1;
@@ -969,8 +969,8 @@ MPIManager::time_communicate_alltoallv( int num_bytes, int samples ) const
   {
     return 0.0;
   }
-  unsigned int packet_length = num_bytes / sizeof( unsigned int );        // this size should be sent to each process
-  unsigned int total_packet_length = packet_length * get_num_processes(); // total size of send and receive buffers
+  unsigned int packet_length = num_bytes / sizeof( unsigned int );         // this size should be sent to each process
+  unsigned int total_packet_length = packet_length * get_num_processes();  // total size of send and receive buffers
   if ( total_packet_length < 1 )
   {
     total_packet_length = 1;
@@ -1229,4 +1229,4 @@ test_links()
 #endif /* HAVE_MPI */
 
 
-} // namespace nest
+}  // namespace nest

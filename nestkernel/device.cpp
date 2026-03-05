@@ -179,8 +179,8 @@ nest::Device::get_origin() const
 void
 nest::Device::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
+  ptmp.set( d );          // throws if BadProperty
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

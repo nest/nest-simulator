@@ -74,6 +74,6 @@ private:
   long label_;
 };
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* CONNECTION_LABEL_H */

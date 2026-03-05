@@ -59,14 +59,14 @@ Time::compute_max()
   const tic_t tmax = std::numeric_limits< tic_t >::max();
 
   tic_t tics;
-  if ( lmax < tmax * Range::TICS_PER_STEP_INV ) // step size is limiting factor
+  if ( lmax < tmax * Range::TICS_PER_STEP_INV )  // step size is limiting factor
   {
     tics = Range::TICS_PER_STEP * ( lmax / Range::INF_MARGIN );
   }
-  else // tic size is limiting factor
+  else  // tic size is limiting factor
   {
     tics = tmax / Range::INF_MARGIN;
-  } // make sure that tics and steps match so that we can have simple range
+  }  // make sure that tics and steps match so that we can have simple range
   // checking when going back and forth, regardless of limiting factor
   return tics - ( tics % Range::TICS_PER_STEP );
 }
@@ -169,7 +169,7 @@ operator*( const long factor, const Time& t )
   // if no overflow:
   if ( t.tics == 0 or n / t.tics == factor )
   {
-    return Time::tic( n ); // check range
+    return Time::tic( n );  // check range
   }
   if ( ( t.tics > 0 and factor > 0 ) or ( t.tics < 0 and factor < 0 ) )
   {

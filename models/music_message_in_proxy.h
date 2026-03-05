@@ -109,8 +109,8 @@ EndUserDocs */
 
 class MsgHandler : public MUSIC::MessageHandler
 {
-  std::vector< std::string > messages; //!< The buffer for incoming message
-  std::vector< double > message_times; //!< The times for incoming message
+  std::vector< std::string > messages;  //!< The buffer for incoming message
+  std::vector< double > message_times;  //!< The times for incoming message
 
   void
   operator()( double t, void* msg, size_t size )
@@ -178,10 +178,10 @@ private:
 
   struct Parameters_
   {
-    std::string port_name_;     //!< the name of MUSIC port to connect to
-    double acceptable_latency_; //!< the acceptable latency of the port
+    std::string port_name_;      //!< the name of MUSIC port to connect to
+    double acceptable_latency_;  //!< the acceptable latency of the port
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
     void get( Dictionary& ) const;
 
@@ -195,13 +195,13 @@ private:
 
   struct State_
   {
-    bool published_; //!< indicates whether this node has been published already
-                     //!< with MUSIC
-    int port_width_; //!< the width of the MUSIC port
+    bool published_;  //!< indicates whether this node has been published already
+                      //!< with MUSIC
+    int port_width_;  //!< the width of the MUSIC port
 
-    State_(); //!< Sets default state value
+    State_();  //!< Sets default state value
 
-    void get( Dictionary& ) const; //!< Store current values in Dictionary
+    void get( Dictionary& ) const;  //!< Store current values in Dictionary
     //! Set values from Dictionary
     void set( const Dictionary&, const Parameters_&, Node* );
   };
@@ -217,7 +217,7 @@ private:
 
   struct Variables_
   {
-    MUSIC::MessageInputPort* MP_; //!< The MUSIC cont port for input of data
+    MUSIC::MessageInputPort* MP_;  //!< The MUSIC cont port for input of data
   };
 
   // ------------------------------------------------------------
@@ -240,11 +240,11 @@ music_message_in_proxy::get_status( Dictionary& d ) const
 inline void
 music_message_in_proxy::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;   // temporary copy in case of errors
-  ptmp.set( d, S_, this ); // throws if BadProperty
+  Parameters_ ptmp = P_;    // temporary copy in case of errors
+  ptmp.set( d, S_, this );  // throws if BadProperty
 
   State_ stmp = S_;
-  stmp.set( d, P_, this ); // throws if BadProperty
+  stmp.set( d, P_, this );  // throws if BadProperty
 
   long nm = 0;
   if ( update_value_param( d, names::n_messages, nm, this ) )
@@ -264,7 +264,7 @@ music_message_in_proxy::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-} // namespace
+}  // namespace
 
 #endif
 

@@ -303,6 +303,6 @@ protected:
   SynIdDelay syn_id_delay_;
 };
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* CONNECTION_H */

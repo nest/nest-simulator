@@ -87,4 +87,4 @@ SICEvent::clone() const
   return new SICEvent( *this );
 }
 
-} // namespace nest
+}  // namespace nest

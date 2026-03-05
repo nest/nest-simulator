@@ -41,7 +41,7 @@
 namespace nest
 {
 class Parameter;
-} // namespace nest
+}  // namespace nest
 
 /**
  * General vector streamer.
@@ -87,7 +87,7 @@ Dictionary::cast_value_< double >( const boost::any& value, const std::string& k
     {
       return static_cast< double >( boost::any_cast< int >( value ) );
     }
-    throw boost::bad_any_cast(); // deflect to error handling below
+    throw boost::bad_any_cast();  // deflect to error handling below
   }
   catch ( const boost::bad_any_cast& )
   {
@@ -132,7 +132,7 @@ Dictionary::cast_vector_value_< double >( const boost::any& value, const std::st
       std::copy( vlong.begin(), vlong.end(), std::back_inserter( res ) );
       return res;
     }
-    throw boost::bad_any_cast(); // deflect to error handling below
+    throw boost::bad_any_cast();  // deflect to error handling below
   }
   catch ( const boost::bad_any_cast& )
   {
@@ -339,7 +339,7 @@ Dictionary::register_access_( const DictEntry_& entry ) const
     // if() above avoids any unnecessary updates, atomic prevents any potential
     // data races in case the compiler does behind-the-scences magic.
 #pragma omp atomic write
-    entry.accessed = true; // accessed is mutable
+    entry.accessed = true;  // accessed is mutable
   }
 }
 
@@ -444,7 +444,7 @@ Dictionary::all_entries_accessed( const std::string& where,
   {
     const auto missed = std::accumulate( not_accessed_keys.begin(),
       not_accessed_keys.end(),
-      Dictionary::key_type(), // creates empty instance of key type (string)
+      Dictionary::key_type(),  // creates empty instance of key type (string)
       []( const Dictionary::key_type& a, const Dictionary::key_type& b ) { return a + " " + b; } );
 
     throw nest::UnaccessedDictionaryEntry( what, where, missed );

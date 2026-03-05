@@ -296,17 +296,17 @@ ConnectionGeneratorBuilder::cg_get_ranges( RangeSet& ranges, const NodeCollectio
     // interval between left and the end of node IDs.
     right = cg_get_right_border( left, ( nodes->size() - left ) / 2, nodes );
     ranges.push_back( Range( ( *nodes )[ left ], ( *nodes )[ right ] ) );
-    if ( right == nodes->size() - 1 ) // We're at the end of node IDs and stop
+    if ( right == nodes->size() - 1 )  // We're at the end of node IDs and stop
     {
       break;
     }
     else
     {
-      left = right + 1; // The new left border is one behind the old right
+      left = right + 1;  // The new left border is one behind the old right
     }
   }
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* ifdef HAVE_LIBNEUROSIM */

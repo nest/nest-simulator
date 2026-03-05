@@ -365,6 +365,6 @@ cm_default::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
   return logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef CM_DEFAULT_H */

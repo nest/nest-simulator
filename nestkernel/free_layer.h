@@ -109,6 +109,6 @@ protected:
   };
 };
 
-} // namespace nest
+}  // namespace nest
 
 #endif

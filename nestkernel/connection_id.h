@@ -55,6 +55,6 @@ protected:
   long synapse_modelid_;
   long port_;
 };
-} // namespace
+}  // namespace
 
 #endif /* #ifndef CONNECTION_ID_H */

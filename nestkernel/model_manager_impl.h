@@ -104,10 +104,10 @@ ModelManager::register_specific_connection_model_( const std::string& name )
     }
     connection_models_.at( kernel::manager< VPManager >.get_thread_id() ).push_back( conn_model );
     kernel::manager< ConnectionManager >.resize_connections();
-  } // end of parallel section
+  }  // end of parallel section
 }
 
-} // namespace nest
+}  // namespace nest
 
 
 #endif

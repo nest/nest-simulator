@@ -178,8 +178,8 @@ class KernelManager : public ManagerInterface
 {
   unsigned long fingerprint_;
 
-  KernelManager( KernelManager const& );  // do not implement
-  void operator=( KernelManager const& ); // do not implement
+  KernelManager( KernelManager const& );   // do not implement
+  void operator=( KernelManager const& );  // do not implement
 
   Dictionary get_build_info_();
 
@@ -242,14 +242,14 @@ public:
   void write_to_dump( const std::string& msg );
 
 private:
-  size_t get_memsize_linux_() const;  //!< return VmSize in kB
-  size_t get_memsize_darwin_() const; //!< return resident_size in kB
+  size_t get_memsize_linux_() const;   //!< return VmSize in kB
+  size_t get_memsize_darwin_() const;  //!< return resident_size in kB
 
   //! All managers, order determines initialization and finalization order (latter backwards)
   std::vector< ManagerInterface* > managers;
 
-  bool initialized_;   //!< true if the kernel is initialized
-  std::ofstream dump_; //!< for FULL_LOGGING output
+  bool initialized_;    //!< true if the kernel is initialized
+  std::ofstream dump_;  //!< for FULL_LOGGING output
 };
 
 namespace kernel
@@ -279,6 +279,6 @@ get_vp_specific_rng( size_t tid )
   return kernel::manager< RandomManager >.get_vp_specific_rng( tid );
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* KERNEL_MANAGER_H */

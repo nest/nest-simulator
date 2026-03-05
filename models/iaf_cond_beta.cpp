@@ -48,7 +48,7 @@
 
 nest::RecordablesMap< nest::iaf_cond_beta > nest::iaf_cond_beta::recordablesMap_;
 
-namespace nest // template specialization must be placed in namespace
+namespace nest  // template specialization must be placed in namespace
 {
 void
 register_iaf_cond_beta( const std::string& name )
@@ -119,26 +119,26 @@ nest::iaf_cond_beta_dynamics( double, const double y[], double f[], void* pnode 
  * ---------------------------------------------------------------- */
 
 nest::iaf_cond_beta::Parameters_::Parameters_()
-  : V_th( -55.0 )       // mV
-  , V_reset( -60.0 )    // mV
-  , t_ref( 2.0 )        // ms
-  , g_L( 16.6667 )      // nS
-  , C_m( 250.0 )        // pF
-  , E_ex( 0.0 )         // mV
-  , E_in( -85.0 )       // mV
-  , E_L( -70.0 )        // mV
-  , tau_rise_ex( 0.2 )  // ms
-  , tau_decay_ex( 0.2 ) // ms
-  , tau_rise_in( 2.0 )  // ms
-  , tau_decay_in( 2.0 ) // ms
-  , I_e( 0.0 )          // pA
+  : V_th( -55.0 )        // mV
+  , V_reset( -60.0 )     // mV
+  , t_ref( 2.0 )         // ms
+  , g_L( 16.6667 )       // nS
+  , C_m( 250.0 )         // pF
+  , E_ex( 0.0 )          // mV
+  , E_in( -85.0 )        // mV
+  , E_L( -70.0 )         // mV
+  , tau_rise_ex( 0.2 )   // ms
+  , tau_decay_ex( 0.2 )  // ms
+  , tau_rise_in( 2.0 )   // ms
+  , tau_decay_in( 2.0 )  // ms
+  , I_e( 0.0 )           // pA
 {
 }
 
 nest::iaf_cond_beta::State_::State_( const Parameters_& p )
   : r( 0 )
 {
-  y[ V_M ] = p.E_L; // initialize to reversal potential
+  y[ V_M ] = p.E_L;  // initialize to reversal potential
   for ( size_t i = 1; i < STATE_VEC_SIZE; ++i )
   {
     y[ i ] = 0;
@@ -249,7 +249,7 @@ nest::iaf_cond_beta::Parameters_::set( const Dictionary& d, Node* node )
 void
 nest::iaf_cond_beta::State_::get( Dictionary& d ) const
 {
-  d[ names::V_m ] = y[ V_M ]; // Membrane potential
+  d[ names::V_m ] = y[ V_M ];  // Membrane potential
   d[ names::g_ex ] = y[ G_EXC ];
   d[ names::dg_ex ] = y[ DG_EXC ];
   d[ names::g_in ] = y[ G_INH ];
@@ -314,9 +314,9 @@ nest::iaf_cond_beta::init_buffers_()
 {
   ArchivingNode::clear_history();
 
-  B_.spike_exc_.clear(); // includes resize
-  B_.spike_inh_.clear(); // includes resize
-  B_.currents_.clear();  // includes resize
+  B_.spike_exc_.clear();  // includes resize
+  B_.spike_inh_.clear();  // includes resize
+  B_.currents_.clear();   // includes resize
 
   B_.logger_.reset();
 
@@ -406,11 +406,11 @@ nest::iaf_cond_beta::update( Time const& origin, const long from, const long to 
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
-        &B_.sys_,             // system of ODE
-        &t,                   // from t
-        B_.step_,             // to t <= step
-        &B_.IntegrationStep_, // integration step size
-        S_.y );               // neuronal state
+        &B_.sys_,              // system of ODE
+        &t,                    // from t
+        B_.step_,              // to t <= step
+        &B_.IntegrationStep_,  // integration step size
+        S_.y );                // neuronal state
       if ( status != GSL_SUCCESS )
       {
         throw GSLSolverFailure( get_name(), status );
@@ -419,9 +419,9 @@ nest::iaf_cond_beta::update( Time const& origin, const long from, const long to 
 
     // refractoriness and spike generation
     if ( S_.r )
-    { // neuron is absolute refractory
+    {  // neuron is absolute refractory
       --S_.r;
-      S_.y[ State_::V_M ] = P_.V_reset; // clamp potential
+      S_.y[ State_::V_M ] = P_.V_reset;  // clamp potential
     }
     else
       // neuron is not absolute refractory
@@ -463,7 +463,7 @@ nest::iaf_cond_beta::handle( SpikeEvent& e )
   {
     B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() );
-  } // ensure conductance is positive
+  }  // ensure conductance is positive
 }
 
 void
@@ -482,4 +482,4 @@ nest::iaf_cond_beta::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-#endif // HAVE_GSL
+#endif  // HAVE_GSL

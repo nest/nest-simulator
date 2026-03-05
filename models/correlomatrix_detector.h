@@ -245,18 +245,18 @@ private:
 
   struct Parameters_
   {
-    Time delta_tau_;    //!< width of correlation histogram bins
-    Time tau_max_;      //!< maximum time difference of events to detect
-    Time Tstart_;       //!< start of recording
-    Time Tstop_;        //!< end of recording      //!< end of recording
-    size_t N_channels_; //!< number of channels
+    Time delta_tau_;     //!< width of correlation histogram bins
+    Time tau_max_;       //!< maximum time difference of events to detect
+    Time Tstart_;        //!< start of recording
+    Time Tstop_;         //!< end of recording      //!< end of recording
+    size_t N_channels_;  //!< number of channels
 
-    Parameters_();                     //!< Sets default parameter values
-    Parameters_( const Parameters_& ); //!< Recalibrate all times
+    Parameters_();                      //!< Sets default parameter values
+    Parameters_( const Parameters_& );  //!< Recalibrate all times
 
     Parameters_& operator=( const Parameters_& );
 
-    void get( Dictionary& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const;  //!< Store current values in dictionary
 
     /**
      * Set values from dictionary.
@@ -281,18 +281,18 @@ private:
    */
   struct State_
   {
-    std::vector< long > n_events_; //!< spike counters
-    SpikelistType incoming_;       //!< incoming spikes, sorted
-                                   /** Weighted covariance matrix.
-                                    *  @note Data type is double to accommodate weights.
-                                    */
+    std::vector< long > n_events_;  //!< spike counters
+    SpikelistType incoming_;        //!< incoming spikes, sorted
+                                    /** Weighted covariance matrix.
+                                     *  @note Data type is double to accommodate weights.
+                                     */
     std::vector< std::vector< std::vector< double > > > covariance_;
 
     /** Unweighted covariance matrix.
      */
     std::vector< std::vector< std::vector< long > > > count_covariance_;
 
-    State_(); //!< initialize default state
+    State_();  //!< initialize default state
 
     void get( Dictionary& ) const;
 
@@ -349,6 +349,6 @@ correlomatrix_detector::Parameters_::get_default_delta_tau()
   return 5 * Time::get_resolution();
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef CORRELOMATRIX_DETECTOR_H */

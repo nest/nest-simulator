@@ -108,9 +108,9 @@ hh_psc_alpha_dynamics( double, const double y[], double f[], void* pnode )
   f[ S::V_M ] = ( -( I_Na + I_K + I_L ) + node.B_.I_stim_ + node.P_.I_e + I_ex + I_in ) / node.P_.C_m;
 
   // channel dynamics
-  f[ S::HH_M ] = alpha_m * ( 1 - y[ S::HH_M ] ) - beta_m * y[ S::HH_M ]; // m-variable
-  f[ S::HH_H ] = alpha_h * ( 1 - y[ S::HH_H ] ) - beta_h * y[ S::HH_H ]; // h-variable
-  f[ S::HH_N ] = alpha_n * ( 1 - y[ S::HH_N ] ) - beta_n * y[ S::HH_N ]; // n-variable
+  f[ S::HH_M ] = alpha_m * ( 1 - y[ S::HH_M ] ) - beta_m * y[ S::HH_M ];  // m-variable
+  f[ S::HH_H ] = alpha_h * ( 1 - y[ S::HH_H ] ) - beta_h * y[ S::HH_H ];  // h-variable
+  f[ S::HH_N ] = alpha_n * ( 1 - y[ S::HH_N ] ) - beta_n * y[ S::HH_N ];  // n-variable
 
   // synapses: alpha functions
   f[ S::DI_EXC ] = -dI_ex / node.P_.tau_synE;
@@ -127,24 +127,24 @@ hh_psc_alpha_dynamics( double, const double y[], double f[], void* pnode )
  * ---------------------------------------------------------------- */
 
 nest::hh_psc_alpha::Parameters_::Parameters_()
-  : t_ref_( 2.0 )   // ms
-  , g_Na( 12000.0 ) // nS
-  , g_K( 3600.0 )   // nS
-  , g_L( 30.0 )     // nS
-  , C_m( 100.0 )    // pF
-  , E_Na( 50.0 )    // mV
-  , E_K( -77.0 )    // mV
-  , E_L( -54.402 )  // mV
-  , tau_synE( 0.2 ) // ms
-  , tau_synI( 2.0 ) // ms
-  , I_e( 0.0 )      // pA
+  : t_ref_( 2.0 )    // ms
+  , g_Na( 12000.0 )  // nS
+  , g_K( 3600.0 )    // nS
+  , g_L( 30.0 )      // nS
+  , C_m( 100.0 )     // pF
+  , E_Na( 50.0 )     // mV
+  , E_K( -77.0 )     // mV
+  , E_L( -54.402 )   // mV
+  , tau_synE( 0.2 )  // ms
+  , tau_synI( 2.0 )  // ms
+  , I_e( 0.0 )       // pA
 {
 }
 
 nest::hh_psc_alpha::State_::State_( const Parameters_& )
   : r_( 0 )
 {
-  y_[ 0 ] = -65; // p.E_L;
+  y_[ 0 ] = -65;  // p.E_L;
   for ( size_t i = 1; i < STATE_VEC_SIZE; ++i )
   {
     y_[ i ] = 0;
@@ -324,9 +324,9 @@ nest::hh_psc_alpha::~hh_psc_alpha()
 void
 nest::hh_psc_alpha::init_buffers_()
 {
-  B_.spike_exc_.clear(); // includes resize
-  B_.spike_inh_.clear(); // includes resize
-  B_.currents_.clear();  // includes resize
+  B_.spike_exc_.clear();  // includes resize
+  B_.spike_inh_.clear();  // includes resize
+  B_.currents_.clear();   // includes resize
   ArchivingNode::clear_history();
 
   B_.logger_.reset();
@@ -411,11 +411,11 @@ nest::hh_psc_alpha::update( Time const& origin, const long from, const long to )
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
-        &B_.sys_,             // system of ODE
-        &t,                   // from t
-        B_.step_,             // to t <= step
-        &B_.IntegrationStep_, // integration step size
-        S_.y_ );              // neuronal state
+        &B_.sys_,              // system of ODE
+        &t,                    // from t
+        B_.step_,              // to t <= step
+        &B_.IntegrationStep_,  // integration step size
+        S_.y_ );               // neuronal state
       if ( status != GSL_SUCCESS )
       {
         throw GSLSolverFailure( get_name(), status );
@@ -431,7 +431,7 @@ nest::hh_psc_alpha::update( Time const& origin, const long from, const long to )
     {
       --S_.r_;
     }
-    else if ( S_.y_[ State_::V_M ] >= 0 and U_old > S_.y_[ State_::V_M ] ) // (threshold and maximum)
+    else if ( S_.y_[ State_::V_M ] >= 0 and U_old > S_.y_[ State_::V_M ] )  // (threshold and maximum)
     {
       S_.r_ = V_.RefractoryCounts_;
 
@@ -483,4 +483,4 @@ nest::hh_psc_alpha::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-#endif // HAVE_GSL
+#endif  // HAVE_GSL

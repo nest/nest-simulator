@@ -117,7 +117,7 @@ void
 nest::RecordingBackendScreen::check_device_status( const Dictionary& params ) const
 {
   DeviceData dd;
-  dd.set_status( params ); // throws if params contains invalid entries
+  dd.set_status( params );  // throws if params contains invalid entries
 }
 
 void

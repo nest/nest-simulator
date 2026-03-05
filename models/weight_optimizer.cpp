@@ -283,10 +283,10 @@ WeightOptimizerAdam::optimize_( const WeightOptimizerCommonProperties& cp,
 
     // set gradients to zero for following iterations since more than
     // one cycle indicates past learning periods with vanishing gradients
-    sum_gradients_ = 0.0; // reset for following iterations
+    sum_gradients_ = 0.0;  // reset for following iterations
   }
 
   return weight;
 }
 
-} // namespace nest
+}  // namespace nest

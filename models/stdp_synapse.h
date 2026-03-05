@@ -360,6 +360,6 @@ stdp_synapse< targetidentifierT >::set_status( const Dictionary& d, ConnectorMod
   }
 }
 
-} // of namespace nest
+}  // of namespace nest
 
-#endif // of #ifndef STDP_SYNAPSE_H
+#endif  // of #ifndef STDP_SYNAPSE_H

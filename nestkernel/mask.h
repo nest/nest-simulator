@@ -752,6 +752,6 @@ std::string EllipseMask< 2 >::get_name();
 template <>
 std::string EllipseMask< 3 >::get_name();
 
-} // namespace nest
+}  // namespace nest
 
 #endif

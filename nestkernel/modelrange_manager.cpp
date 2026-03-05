@@ -93,7 +93,7 @@ ModelRangeManager::get_model_id( size_t node_id ) const
   assert( right >= 1 );
 
   // to ensure thread-safety, use local range_idx
-  long range_idx = right / 2; // start in center
+  long range_idx = right / 2;  // start in center
   while ( not modelranges_[ range_idx ].is_in_range( node_id ) )
   {
     if ( node_id > modelranges_[ range_idx ].get_last_node_id() )
@@ -166,4 +166,4 @@ nest::ModelRangeManager::set_status( const Dictionary& )
 {
 }
 
-} // namespace nest
+}  // namespace nest

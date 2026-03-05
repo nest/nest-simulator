@@ -76,7 +76,7 @@ ModelManager::~ModelManager()
 void
 ModelManager::initialize( const bool )
 {
-  assert( not proxynode_model_ ); // must be re-created on initialization
+  assert( not proxynode_model_ );  // must be re-created on initialization
   proxynode_model_ = new GenericModel< proxynode >( "proxynode", "" );
   proxynode_model_->set_type_id( 1 );
   proxynode_model_->set_threads();
@@ -238,7 +238,7 @@ ModelManager::copy_connection_model_( const size_t old_id, const std::string& ne
     kernel::manager< ConnectionManager >.resize_connections();
   }
 
-  set_synapse_defaults_( new_id, params ); // handles parallelism internally
+  set_synapse_defaults_( new_id, params );  // handles parallelism internally
 }
 
 
@@ -300,7 +300,7 @@ ModelManager::set_synapse_defaults_( size_t model_id, const Dictionary& params )
       // Capture the current exception object and create an std::exception_ptr
       exceptions_raised_.at( tid ) = std::current_exception();
     }
-  } // omp parallel
+  }  // omp parallel
 
   // check if any exceptions have been raised
   for ( auto eptr : exceptions_raised_ )
@@ -364,7 +364,7 @@ ModelManager::clear_node_models_()
   {
     if ( node_model )
     {
-      node_model->clear(); // Make sure all node memory is gone
+      node_model->clear();  // Make sure all node memory is gone
       delete node_model;
     }
   }
@@ -492,4 +492,4 @@ ModelManager::get_proxy_node( size_t tid, size_t node_id )
   return proxy;
 }
 
-} // namespace nest
+}  // namespace nest

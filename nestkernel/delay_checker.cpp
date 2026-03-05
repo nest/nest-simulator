@@ -25,7 +25,7 @@
 #include <boost/any.hpp>
 #include <simulation_manager.h>
 // C++ includes:
-#include <algorithm> // min, max
+#include <algorithm>  // min, max
 #include <string>
 
 // Includes from nestkernel:
@@ -55,7 +55,7 @@ nest::DelayChecker::DelayChecker( const DelayChecker& cr )
   , user_set_delay_extrema_( cr.user_set_delay_extrema_ )
   , freeze_delay_update_( cr.freeze_delay_update_ )
 {
-  min_delay_.calibrate(); // in case of change in resolution
+  min_delay_.calibrate();  // in case of change in resolution
   max_delay_.calibrate();
 }
 

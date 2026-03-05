@@ -64,4 +64,4 @@ public:
 
 }
 
-#endif // #ifndef NEST_EXTENSION_INTERFACE_H
+#endif  // #ifndef NEST_EXTENSION_INTERFACE_H

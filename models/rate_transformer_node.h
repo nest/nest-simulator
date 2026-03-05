@@ -171,9 +171,9 @@ private:
     **/
     bool linear_summation_;
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( Dictionary& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const;  //!< Store current values in dictionary
 
     void set( const Dictionary&, Node* node );
   };
@@ -185,9 +185,9 @@ private:
    */
   struct State_
   {
-    double rate_; //!< Rate
+    double rate_;  //!< Rate
 
-    State_(); //!< Default initialization
+    State_();  //!< Default initialization
 
     void get( Dictionary& ) const;
 
@@ -253,9 +253,9 @@ template < class TNonlinearities >
 inline bool
 rate_transformer_node< TNonlinearities >::wfr_update( Time const& origin, const long from, const long to )
 {
-  State_ old_state = S_; // save state before wfr update
+  State_ old_state = S_;  // save state before wfr update
   const bool wfr_tol_exceeded = update_( origin, from, to, true );
-  S_ = old_state; // restore old state
+  S_ = old_state;  // restore old state
 
   return not wfr_tol_exceeded;
 }
@@ -309,10 +309,10 @@ template < class TNonlinearities >
 inline void
 rate_transformer_node< TNonlinearities >::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d, this );   // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, this );   // throws if BadProperty
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
+  ptmp.set( d, this );    // throws if BadProperty
+  State_ stmp = S_;       // temporary copy in case of errors
+  stmp.set( d, this );    // throws if BadProperty
 
   // We now know that (stmp) is consistent. We do not
   // write it back to (S_) before we are also sure that
@@ -372,14 +372,14 @@ template < class TNonlinearities >
 void
 nest::rate_transformer_node< TNonlinearities >::State_::get( Dictionary& d ) const
 {
-  d[ names::rate ] = rate_; // Rate
+  d[ names::rate ] = rate_;  // Rate
 }
 
 template < class TNonlinearities >
 void
 nest::rate_transformer_node< TNonlinearities >::State_::set( const Dictionary& d, Node* node )
 {
-  update_value_param( d, names::rate, rate_, node ); // Rate
+  update_value_param( d, names::rate, rate_, node );  // Rate
 }
 
 template < class TNonlinearities >
@@ -427,14 +427,14 @@ template < class TNonlinearities >
 void
 nest::rate_transformer_node< TNonlinearities >::init_buffers_()
 {
-  B_.delayed_rates_.clear(); // includes resize
+  B_.delayed_rates_.clear();  // includes resize
 
   // resize buffers
   const size_t buffer_size = kernel::manager< ConnectionManager >.get_min_delay();
   B_.instant_rates_.resize( buffer_size, 0.0 );
   B_.last_y_values.resize( buffer_size, 0.0 );
 
-  B_.logger_.reset(); // includes resize
+  B_.logger_.reset();  // includes resize
   ArchivingNode::clear_history();
 }
 
@@ -442,7 +442,7 @@ template < class TNonlinearities >
 void
 nest::rate_transformer_node< TNonlinearities >::pre_run_hook()
 {
-  B_.logger_.init(); // ensures initialization in case mm connected after Simulate
+  B_.logger_.init();  // ensures initialization in case mm connected after Simulate
 }
 
 /* ----------------------------------------------------------------
@@ -589,6 +589,6 @@ nest::rate_transformer_node< TNonlinearities >::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef RATE_TRANSFORMER_NODE_H */

@@ -65,4 +65,4 @@ RecordablesMap< nest::erfc_neuron >::create()
   insert_( names::h, &nest::erfc_neuron::get_input__ );
 }
 
-} // namespace nest
+}  // namespace nest

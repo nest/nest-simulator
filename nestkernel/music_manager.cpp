@@ -300,4 +300,4 @@ MUSICManager::update_music_event_handlers( Time const& origin, const long from, 
 
 #endif
 
-} // namespace nest
+}  // namespace nest

@@ -159,9 +159,9 @@ public:
 private:
   void set_data_path_prefix_( const Dictionary& );
 
-  std::string data_path_;   //!< Path for all files written by devices
-  std::string data_prefix_; //!< Prefix for all files written by devices
-  bool overwrite_files_;    //!< If true, overwrite existing data files.
+  std::string data_path_;    //!< Path for all files written by devices
+  std::string data_prefix_;  //!< Prefix for all files written by devices
+  bool overwrite_files_;     //!< If true, overwrite existing data files.
 
   /**
    * A mapping from names to registered recording backends.
@@ -202,6 +202,6 @@ IOManager::register_stimulation_backend( const std::string& name )
   stimulation_backends_.insert( std::make_pair( name, stimulation_backend ) );
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifndef IO_MANAGER_H */

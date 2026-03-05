@@ -215,7 +215,7 @@ public:
   is_off_grid() const override
   {
     return true;
-  } // uses off_grid events
+  }  // uses off_grid events
 
   void get_status( Dictionary& ) const override;
   void set_status( const Dictionary& ) override;
@@ -296,9 +296,9 @@ private:
     */
     double U_reset_;
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( Dictionary& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const;  //!< Store current values in dictionary
 
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
@@ -320,18 +320,18 @@ private:
   {
     //! This is the membrane potential RELATIVE TO RESTING POTENTIAL.
     double U_;
-    double I_; //!< This is the current to be applied during this time step
+    double I_;  //!< This is the current to be applied during this time step
 
     //! step of last spike, for reporting in status dict
     long last_spike_step_;
-    double last_spike_offset_; //!< offset of last spike, for reporting in
-                               //!< status dict
+    double last_spike_offset_;  //!< offset of last spike, for reporting in
+                                //!< status dict
 
-    bool is_refractory_;   //!< flag for refractoriness
-    bool with_refr_input_; //!< spikes arriving during refractory period are
-                           //!< counted
+    bool is_refractory_;    //!< flag for refractoriness
+    bool with_refr_input_;  //!< spikes arriving during refractory period are
+                            //!< counted
 
-    State_(); //!< Default initialization
+    State_();  //!< Default initialization
 
     void get( Dictionary&, const Parameters_& ) const;
 
@@ -376,13 +376,13 @@ private:
    */
   struct Variables_
   {
-    double exp_t_;   //!< @$ e^{-t/\tau_m} @$
-    double expm1_t_; //!< @$ e^{-t/\tau_m} - 1 @$
-    double R_;       //!< @$ \frac{\tau_m}{c_m} @$
+    double exp_t_;    //!< @$ e^{-t/\tau_m} @$
+    double expm1_t_;  //!< @$ e^{-t/\tau_m} - 1 @$
+    double R_;        //!< @$ \frac{\tau_m}{c_m} @$
 
-    double h_ms_; //!< duration of time step [ms]
+    double h_ms_;  //!< duration of time step [ms]
 
-    long refractory_steps_; //!< refractory time in steps
+    long refractory_steps_;  //!< refractory time in steps
 
     /** Accumulate spikes arriving during refractory period, discounted for
         decay until end of refractory period.
@@ -469,10 +469,10 @@ iaf_psc_delta_ps::get_status( Dictionary& d ) const
 inline void
 iaf_psc_delta_ps::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;                       // temporary copy in case of errors
-  const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
-  State_ stmp = S_;                            // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
+  Parameters_ ptmp = P_;                        // temporary copy in case of errors
+  const double delta_EL = ptmp.set( d, this );  // throws if BadProperty
+  State_ stmp = S_;                             // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );          // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -485,6 +485,6 @@ iaf_psc_delta_ps::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-} // namespace
+}  // namespace
 
-#endif // IAF_PSC_DELTA_PS_H
+#endif  // IAF_PSC_DELTA_PS_H

@@ -80,4 +80,4 @@ RecordablesMap< nest::rate_transformer_gauss >::create()
   insert_( names::rate, &nest::rate_transformer_gauss::get_rate_ );
 }
 
-} // namespace nest
+}  // namespace nest

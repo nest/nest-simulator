@@ -48,4 +48,4 @@ ConnectorModel::get_synapse_model_id( const std::string& name )
   return kernel::manager< ModelManager >.get_synapse_model_id( name );
 }
 
-} // namespace nest
+}  // namespace nest

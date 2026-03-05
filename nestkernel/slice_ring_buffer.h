@@ -131,9 +131,9 @@ private:
 
     // data elements must not be const, since heap implementation
     // in DEC STL uses operator=().
-    long stamp_;       //<! spike's time stamp
-    double ps_offset_; //<! spike offset is PS sense
-    double weight_;    //<! spike weight
+    long stamp_;        //<! spike's time stamp
+    double ps_offset_;  //<! spike offset is PS sense
+    double weight_;     //<! spike weight
   };
 
   //! entire queue, one slot per min_delay block within max_delay
@@ -142,10 +142,10 @@ private:
   //! slot to deliver from
   std::vector< SpikeInfo >* deliver_;
 
-  SpikeInfo refract_; //!< pseudo-event for return from refractoriness
+  SpikeInfo refract_;  //!< pseudo-event for return from refractoriness
 };
 
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifndef SLICE_RING_BUFFER_H */

@@ -61,11 +61,11 @@ NodeManager::NodeManager()
   , node_collection_container_()
   , wfr_nodes_vec_()
   , wfr_is_used_( false )
-  , size_last_local_data_update_( 0 ) // zero to force update
+  , size_last_local_data_update_( 0 )  // zero to force update
   , num_active_nodes_( 0 )
   , num_thread_local_devices_()
   , have_nodes_changed_( true )
-  , exceptions_raised_() // cannot call kernel(), not complete yet
+  , exceptions_raised_()  // cannot call kernel(), not complete yet
 {
 }
 
@@ -238,7 +238,7 @@ NodeManager::add_neurons_( Model& model, size_t min_node_id, size_t max_node_id 
       // Capture the current exception object and create an std::exception_ptr
       exceptions_raised_.at( tid ) = std::current_exception();
     }
-  } // omp parallel
+  }  // omp parallel
 }
 
 void
@@ -275,7 +275,7 @@ NodeManager::add_devices_( Model& model, size_t min_node_id, size_t max_node_id 
       // Capture the current exception object and create an std::exception_ptr
       exceptions_raised_.at( tid ) = std::current_exception();
     }
-  } // omp parallel
+  }  // omp parallel
 }
 
 void
@@ -311,7 +311,7 @@ NodeManager::add_music_nodes_( Model& model, size_t min_node_id, size_t max_node
       // Capture the current exception object and create an std::exception_ptr
       exceptions_raised_.at( tid ) = std::current_exception();
     }
-  } // omp parallel
+  }  // omp parallel
 }
 
 NodeCollectionPTR
@@ -378,7 +378,7 @@ NodeManager::get_nodes( const Dictionary& properties, const bool local_only )
         nodes_on_thread[ tid ].push_back( node_id );
       }
     }
-  } // omp parallel
+  }  // omp parallel
 
   std::vector< size_t > nodes;
   for ( auto vec : nodes_on_thread )
@@ -518,7 +518,7 @@ NodeManager::update_thread_local_node_data()
         wfr_nodes_vec_[ tid ].push_back( node );
       }
     }
-  } // end of for threads
+  }  // end of for threads
 
   size_last_local_data_update_ = size();
 
@@ -548,7 +548,7 @@ NodeManager::destruct_nodes_()
       delete node.get_node();
     }
     local_nodes_[ tid ].clear();
-  } // omp parallel
+  }  // omp parallel
 }
 
 void
@@ -578,8 +578,8 @@ NodeManager::prepare_nodes()
 
   // We initialize the buffers of each node and calibrate it.
 
-  size_t num_active_nodes = 0;     // counts nodes that will be updated
-  size_t num_active_wfr_nodes = 0; // counts nodes that use waveform relaxation
+  size_t num_active_nodes = 0;      // counts nodes that will be updated
+  size_t num_active_wfr_nodes = 0;  // counts nodes that use waveform relaxation
 
   std::vector< std::exception_ptr > exceptions_raised( kernel::manager< VPManager >.get_num_threads() );
 
@@ -609,7 +609,7 @@ NodeManager::prepare_nodes()
       // Capture the current exception object and create an std::exception_ptr
       exceptions_raised.at( tid ) = std::current_exception();
     }
-  } // omp parallel
+  }  // omp parallel
 
   // check if any exceptions have been raised
   for ( auto eptr : exceptions_raised )
@@ -645,7 +645,7 @@ NodeManager::post_run_cleanup()
     {
       n->get_node()->post_run_cleanup();
     }
-  } // omp parallel
+  }  // omp parallel
 }
 
 void
@@ -659,7 +659,7 @@ NodeManager::finalize_nodes()
     {
       n->get_node()->finalize();
     }
-  } // omp parallel
+  }  // omp parallel
 }
 
 void
@@ -737,4 +737,4 @@ NodeManager::set_have_nodes_changed( const bool changed )
   have_nodes_changed_ = changed;
 }
 
-} // namespace nest
+}  // namespace nest

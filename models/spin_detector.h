@@ -189,6 +189,6 @@ nest::spin_detector::calibrate_time( const TimeConverter& tc )
   t_last_in_spike_ = tc.from_old_tics( t_last_in_spike_.get_tics() );
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef SPIN_DETECTOR_H */

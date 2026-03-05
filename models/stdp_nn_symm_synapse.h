@@ -297,7 +297,7 @@ stdp_nn_symm_synapse< targetidentifierT >::send( Event& e, size_t t, const Commo
 
   // depression due to the new pre-synaptic spike
   double nearest_neighbor_Kminus;
-  double value_to_throw_away; // discard Kminus and Kminus_triplet here
+  double value_to_throw_away;  // discard Kminus and Kminus_triplet here
   target->get_K_values( t_spike - dendritic_delay, value_to_throw_away, nearest_neighbor_Kminus, value_to_throw_away );
   weight_ = depress_( weight_, nearest_neighbor_Kminus );
 
@@ -364,6 +364,6 @@ stdp_nn_symm_synapse< targetidentifierT >::set_status( const Dictionary& d, Conn
   }
 }
 
-} // of namespace nest
+}  // of namespace nest
 
-#endif // of #ifndef STDP_NN_SYMM_SYNAPSE_H
+#endif  // of #ifndef STDP_NN_SYMM_SYNAPSE_H

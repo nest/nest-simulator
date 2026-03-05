@@ -220,10 +220,10 @@ private:
     /** Use standard integration numerics **/
     bool consistent_integration_;
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( Dictionary& ) const;             //!< Store current values in dictionary
-    void set( const Dictionary&, Node* node ); //!< Set values from dictionary
+    void get( Dictionary& ) const;              //!< Store current values in dictionary
+    void set( const Dictionary&, Node* node );  //!< Set values from dictionary
   };
 
   // ----------------------------------------------------------------
@@ -233,16 +233,16 @@ private:
    */
   struct State_
   {
-    double v_; // membrane potential
-    double u_; // membrane recovery variable
-    double I_; // input current
+    double v_;  // membrane potential
+    double u_;  // membrane recovery variable
+    double I_;  // input current
 
 
     /** Accumulate spikes arriving during refractory period, discounted for
         decay until end of refractory period.
     */
 
-    State_(); //!< Default initialization
+    State_();  //!< Default initialization
 
     void get( Dictionary&, const Parameters_& ) const;
     void set( const Dictionary&, const Parameters_&, Node* );
@@ -354,10 +354,10 @@ izhikevich::get_status( Dictionary& d ) const
 inline void
 izhikevich::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;     // temporary copy in case of errors
-  ptmp.set( d, this );       // throws if BadProperty
-  State_ stmp = S_;          // temporary copy in case of errors
-  stmp.set( d, ptmp, this ); // throws if BadProperty
+  Parameters_ ptmp = P_;      // temporary copy in case of errors
+  ptmp.set( d, this );        // throws if BadProperty
+  State_ stmp = S_;           // temporary copy in case of errors
+  stmp.set( d, ptmp, this );  // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -370,6 +370,6 @@ izhikevich::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifndef IZHIKEVICH_H */

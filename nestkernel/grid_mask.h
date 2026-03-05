@@ -110,6 +110,6 @@ std::string GridMask< 2 >::get_name();
 template <>
 std::string GridMask< 3 >::get_name();
 
-} // namespace nest
+}  // namespace nest
 
 #endif

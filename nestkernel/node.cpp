@@ -791,4 +791,4 @@ Node::set_frozen_( bool frozen )
 }
 
 
-} // namespace
+}  // namespace

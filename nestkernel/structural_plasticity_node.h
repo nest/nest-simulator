@@ -150,6 +150,6 @@ private:
   std::map< std::string, SynapticElement > synaptic_elements_map_;
 };
 
-} // of namespace
+}  // of namespace
 
 #endif /* #ifndef STRUCTURAL_PLASTICITY_NODE_H */

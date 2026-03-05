@@ -67,7 +67,7 @@ ModuleManager::ModuleManager()
 
 ModuleManager::~ModuleManager()
 {
-  finalize( /* adjust_number_of_threads_or_rng_only */ false ); // closes dynamically loaded modules
+  finalize( /* adjust_number_of_threads_or_rng_only */ false );  // closes dynamically loaded modules
   lt_dlexit();
 }
 
@@ -162,8 +162,8 @@ ModuleManager::install( const std::string& name )
   char* errstr = ( char* ) lt_dlerror();
   if ( errstr )
   {
-    lt_dlclose( hModule ); // close module again
-    lt_dlerror();          // remove any error caused by lt_dlclose()
+    lt_dlclose( hModule );  // close module again
+    lt_dlerror();           // remove any error caused by lt_dlclose()
     throw DynamicModuleManagementError(
             "Module '" + name + "' could not be loaded.\n"
             "The dynamic loader returned the following error: '"
@@ -178,8 +178,8 @@ ModuleManager::install( const std::string& name )
   catch ( std::exception& e )
   {
     lt_dlclose( hModule );
-    lt_dlerror(); // remove any error caused by lt_dlclose()
-    throw;        // no arg re-throws entire exception, see Stroustrup 14.3.1
+    lt_dlerror();  // remove any error caused by lt_dlclose()
+    throw;         // no arg re-throws entire exception, see Stroustrup 14.3.1
   }
 
   // add the handle to list of loaded modules
@@ -188,6 +188,6 @@ ModuleManager::install( const std::string& name )
   LOG( VerbosityLevel::INFO, "Install", ( "loaded module " + name ).c_str() );
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* HAVE_LIBLTDL */

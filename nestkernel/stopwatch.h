@@ -50,14 +50,14 @@ constexpr bool use_threaded_timers = false;
 
 enum class StopwatchGranularity
 {
-  Normal,  //!< Always measure stopwatch
-  Detailed //!< Only measure if detailed stopwatches are activated
+  Normal,   //!< Always measure stopwatch
+  Detailed  //!< Only measure if detailed stopwatches are activated
 };
 
 enum class StopwatchParallelism
 {
-  MasterOnly, //!< Only the master thread owns a stopwatch
-  Threaded    //!< Every thread measures an individual stopwatch
+  MasterOnly,  //!< Only the master thread owns a stopwatch
+  Threaded     //!< Every thread measures an individual stopwatch
 };
 
 /**
@@ -156,10 +156,10 @@ public:
   print( const std::string& msg = "", timeunit_t timeunit = timeunit_t::SECONDS, std::ostream& os = std::cout ) const;
 
 private:
-  size_t beg_;          //!< clock (in ns) at which timer was last started
-  size_t end_;          //!< clock (in ns) at which timer was last stopped (invariant: end_ >= beg_)
-  size_t prev_elapsed_; //!< accumulated time of all start-stop intervals since last reset
-  bool is_running_;     //!< true between start() and stop()
+  size_t beg_;           //!< clock (in ns) at which timer was last started
+  size_t end_;           //!< clock (in ns) at which timer was last stopped (invariant: end_ >= beg_)
+  size_t prev_elapsed_;  //!< accumulated time of all start-stop intervals since last reset
+  bool is_running_;      //!< true between start() and stop()
 
   //! Returns current time of clock_type in nanoseconds.
   static size_t get_current_time();
@@ -171,9 +171,9 @@ StopwatchTimer< clock_type >::start()
 {
   if ( not is_running_ )
   {
-    prev_elapsed_ += end_ - beg_;     // store prev. time, if we resume
-    end_ = beg_ = get_current_time(); // invariant: end_ >= beg_
-    is_running_ = true;               // we start running
+    prev_elapsed_ += end_ - beg_;      // store prev. time, if we resume
+    end_ = beg_ = get_current_time();  // invariant: end_ >= beg_
+    is_running_ = true;                // we start running
   }
 }
 
@@ -183,8 +183,8 @@ StopwatchTimer< clock_type >::stop()
 {
   if ( is_running_ )
   {
-    end_ = get_current_time(); // invariant: end_ >= beg_
-    is_running_ = false;       // we stopped running
+    end_ = get_current_time();  // invariant: end_ >= beg_
+    is_running_ = false;        // we stopped running
   }
 }
 
@@ -210,10 +210,10 @@ template < clockid_t clock_type >
 inline void
 StopwatchTimer< clock_type >::reset()
 {
-  beg_ = 0; // invariant: end_ >= beg_
+  beg_ = 0;  // invariant: end_ >= beg_
   end_ = 0;
-  prev_elapsed_ = 0;   // erase all prev. measurements
-  is_running_ = false; // of course not running.
+  prev_elapsed_ = 0;    // erase all prev. measurements
+  is_running_ = false;  // of course not running.
 }
 
 template < clockid_t clock_type >
@@ -266,7 +266,7 @@ operator<<( std::ostream& os, const StopwatchTimer< clock_type >& stopwatch )
   return os;
 }
 
-} // namespace timers
+}  // namespace timers
 
 
 //! Stopwatch template specialization.

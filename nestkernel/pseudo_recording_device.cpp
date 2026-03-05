@@ -42,4 +42,4 @@ PseudoRecordingDevice::is_active( Time const& T ) const
   return get_t_min_() < stamp and stamp <= get_t_max_();
 }
 
-} // namespace nest
+}  // namespace nest

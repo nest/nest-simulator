@@ -90,6 +90,6 @@ public:
   bool is_active( Time const& T ) const override;
 };
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef PSEUDO_RECORDING_DEVICE_H */

@@ -127,4 +127,4 @@ ConnectionID::get_port() const
 }
 
 
-} // namespace
+}  // namespace

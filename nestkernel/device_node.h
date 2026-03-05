@@ -49,6 +49,6 @@ protected:
   size_t local_device_id_;
 };
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef DEVICE_NODE_H */

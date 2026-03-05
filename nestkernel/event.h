@@ -324,15 +324,15 @@ public:
   void set_stamp( Time const& );
 
 protected:
-  size_t sender_node_id_;       //!< node ID of sender or 0
-  SpikeData sender_spike_data_; //!< spike data of sender node, in some cases required to retrieve node ID
+  size_t sender_node_id_;        //!< node ID of sender or 0
+  SpikeData sender_spike_data_;  //!< spike data of sender node, in some cases required to retrieve node ID
   // The original formulation used references to Nodes as
   // members, however, in order to avoid the reference of reference
   // problem, we store sender and receiver as pointers and use
   // references in the interface.
   // Thus, we can still ensure that the pointers are never nullptr.
-  Node* sender_;   //!< Pointer to sender or nullptr.
-  Node* receiver_; //!< Pointer to receiver or nullptr.
+  Node* sender_;    //!< Pointer to sender or nullptr.
+  Node* receiver_;  //!< Pointer to receiver or nullptr.
 
 
   /**
@@ -444,7 +444,7 @@ public:
   void set_receiver_node_id( size_t );
 
 protected:
-  size_t receiver_node_id_; //!< node ID of receiver or 0.
+  size_t receiver_node_id_;  //!< node ID of receiver or 0.
 };
 
 
@@ -833,10 +833,10 @@ inline void
 Event::set_stamp( Time const& s )
 {
   stamp_ = s;
-  stamp_steps_ = 0; // setting stamp_steps to zero indicates
-                    // stamp_steps needs to be recalculated from
-                    // stamp_ next time it is needed (e.g., in
-                    // get_rel_delivery_steps)
+  stamp_steps_ = 0;  // setting stamp_steps to zero indicates
+                     // stamp_steps needs to be recalculated from
+                     // stamp_ next time it is needed (e.g., in
+                     // get_rel_delivery_steps)
 }
 
 inline Time const&

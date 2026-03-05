@@ -306,7 +306,7 @@ nest::music_cont_out_proxy::get_status( Dictionary& d ) const
 
   if ( is_model_prototype() )
   {
-    return; // no data to collect
+    return;  // no data to collect
   }
 
   // if we are the device on thread 0, also get the data from the
@@ -325,7 +325,7 @@ nest::music_cont_out_proxy::get_status( Dictionary& d ) const
 void
 nest::music_cont_out_proxy::set_status( const Dictionary& d )
 {
-  P_.set( d, *this, S_, B_ ); // throws if BadProperty
+  P_.set( d, *this, S_, B_ );  // throws if BadProperty
 }
 
 void

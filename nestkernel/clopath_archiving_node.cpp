@@ -269,4 +269,4 @@ ClopathArchivingNode::get_theta_plus() const
 {
   return theta_plus_;
 }
-} // of namespace nest
+}  // of namespace nest

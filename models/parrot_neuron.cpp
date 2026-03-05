@@ -49,7 +49,7 @@ parrot_neuron::parrot_neuron()
 void
 parrot_neuron::init_buffers_()
 {
-  B_.n_spikes_.clear(); // includes resize
+  B_.n_spikes_.clear();  // includes resize
   ArchivingNode::clear_history();
 }
 
@@ -98,4 +98,4 @@ parrot_neuron::handle( SpikeEvent& e )
   }
 }
 
-} // namespace
+}  // namespace

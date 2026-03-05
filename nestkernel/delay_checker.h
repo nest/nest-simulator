@@ -91,10 +91,10 @@ public:
   void set_status( const Dictionary& d );
 
 private:
-  Time min_delay_;              //!< Minimal delay of all created synapses.
-  Time max_delay_;              //!< Maximal delay of all created synapses.
-  bool user_set_delay_extrema_; //!< Flag indicating if the user set the delay
-                                //!< extrema.
+  Time min_delay_;               //!< Minimal delay of all created synapses.
+  Time max_delay_;               //!< Maximal delay of all created synapses.
+  bool user_set_delay_extrema_;  //!< Flag indicating if the user set the delay
+                                 //!< extrema.
   bool freeze_delay_update_;
 
   void set_min_max_delay_( const double, const double );

@@ -138,15 +138,15 @@ private:
 
   struct Parameters_
   {
-    std::vector< double > pulse_times_; //!< times of pulses
-    long a_;                            //!< number of pulses in a packet
-    double sdev_;                       //!< standard deviation of the packet
+    std::vector< double > pulse_times_;  //!< times of pulses
+    long a_;                             //!< number of pulses in a packet
+    double sdev_;                        //!< standard deviation of the packet
 
     double sdev_tolerance_;
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( Dictionary& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const;  //!< Store current values in dictionary
 
     /**
      * Set values from dictionary.
@@ -167,7 +167,7 @@ private:
 
   struct Variables_
   {
-    normal_distribution normal_dist_; //!< normal distribution
+    normal_distribution normal_dist_;  //!< normal distribution
 
     /** Indices into sorted vector of sorted pulse-center times
      *  (P_.pulse_times_). Spike times to be sent are calculated from
@@ -212,8 +212,8 @@ pulsepacket_generator::get_status( Dictionary& d ) const
 inline void
 pulsepacket_generator::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;      // temporary copy in case of errors
-  ptmp.set( d, *this, this ); // throws if BadProperty
+  Parameters_ ptmp = P_;       // temporary copy in case of errors
+  ptmp.set( d, *this, this );  // throws if BadProperty
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
@@ -230,6 +230,6 @@ pulsepacket_generator::get_type() const
   return StimulationDevice::Type::CURRENT_GENERATOR;
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif

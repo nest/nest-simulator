@@ -36,7 +36,7 @@
 // External includes:
 #include <gsl/gsl_errno.h>
 // C++ includes:
-#include <cmath> // in case we need isnan() // fabs
+#include <cmath>  // in case we need isnan() // fabs
 
 // Includes from libnestutil:
 #include "beta_normalization_factor.h"
@@ -143,9 +143,9 @@ hh_cond_beta_gap_traub_dynamics( double time, const double y[], double f[], void
   const double alpha_h = 0.128 * std::exp( ( 17. - V ) / 18. );
   const double beta_h = 4. / ( 1. + std::exp( ( 40. - V ) / 5. ) );
 
-  f[ S::HH_M ] = alpha_m - ( alpha_m + beta_m ) * y[ S::HH_M ]; // m-variable
-  f[ S::HH_H ] = alpha_h - ( alpha_h + beta_h ) * y[ S::HH_H ]; // h-variable
-  f[ S::HH_N ] = alpha_n - ( alpha_n + beta_n ) * y[ S::HH_N ]; // n-variable
+  f[ S::HH_M ] = alpha_m - ( alpha_m + beta_m ) * y[ S::HH_M ];  // m-variable
+  f[ S::HH_H ] = alpha_h - ( alpha_h + beta_h ) * y[ S::HH_H ];  // h-variable
+  f[ S::HH_N ] = alpha_n - ( alpha_n + beta_n ) * y[ S::HH_N ];  // n-variable
 
   // synapses: beta function
   // d^2g_exc/dt^2, dg_exc/dt
@@ -164,22 +164,22 @@ hh_cond_beta_gap_traub_dynamics( double time, const double y[], double f[], void
  * ---------------------------------------------------------------- */
 
 nest::hh_cond_beta_gap_traub::Parameters_::Parameters_()
-  : g_Na( 20000.0 )      // Sodium Conductance                      (nS)
-  , g_K( 6000.0 )        // Potassium Conductance                   (nS)
-  , g_L( 10.0 )          // Leak Conductance                        (nS)
-  , C_m( 200.0 )         // Membrane Capacitance                    (pF)
-  , E_Na( 50.0 )         // Sodium Reversal potential               (mV)
-  , E_K( -90.0 )         // Potassium Reversal potential            (mV)
-  , E_L( -60.0 )         // Leak Reversal potential                 (mV)
-  , V_T( -50.0 )         // adjusts firing threshold                (mV)
-  , E_ex( 0.0 )          // Excitatory reversal potential           (mV)
-  , E_in( -80.0 )        // Inhibitory reversal potential           (mV)
-  , tau_rise_ex( 0.5 )   // Excitatory Synaptic Rise Time Constant  (ms)
-  , tau_decay_ex( 5.0 )  // Excitatory Synaptic Decay Time Constant (ms)
-  , tau_rise_in( 0.5 )   // Inhibitory Synaptic Rise Time Constant  (ms)
-  , tau_decay_in( 10.0 ) // Inhibitory Synaptic Decay Time Constant (ms)
-  , t_ref_( 2.0 )        // Refractory time in ms                   (ms)
-  , I_e( 0.0 )           // Stimulus Current                        (pA)
+  : g_Na( 20000.0 )       // Sodium Conductance                      (nS)
+  , g_K( 6000.0 )         // Potassium Conductance                   (nS)
+  , g_L( 10.0 )           // Leak Conductance                        (nS)
+  , C_m( 200.0 )          // Membrane Capacitance                    (pF)
+  , E_Na( 50.0 )          // Sodium Reversal potential               (mV)
+  , E_K( -90.0 )          // Potassium Reversal potential            (mV)
+  , E_L( -60.0 )          // Leak Reversal potential                 (mV)
+  , V_T( -50.0 )          // adjusts firing threshold                (mV)
+  , E_ex( 0.0 )           // Excitatory reversal potential           (mV)
+  , E_in( -80.0 )         // Inhibitory reversal potential           (mV)
+  , tau_rise_ex( 0.5 )    // Excitatory Synaptic Rise Time Constant  (ms)
+  , tau_decay_ex( 5.0 )   // Excitatory Synaptic Decay Time Constant (ms)
+  , tau_rise_in( 0.5 )    // Inhibitory Synaptic Rise Time Constant  (ms)
+  , tau_decay_in( 10.0 )  // Inhibitory Synaptic Decay Time Constant (ms)
+  , t_ref_( 2.0 )         // Refractory time in ms                   (ms)
+  , I_e( 0.0 )            // Stimulus Current                        (pA)
 {
 }
 
@@ -294,7 +294,7 @@ nest::hh_cond_beta_gap_traub::Parameters_::set( const Dictionary& d, Node* node 
 void
 nest::hh_cond_beta_gap_traub::State_::get( Dictionary& d ) const
 {
-  d[ names::V_m ] = y_[ V_M ]; // Membrane potential
+  d[ names::V_m ] = y_[ V_M ];  // Membrane potential
   d[ names::Act_m ] = y_[ HH_M ];
   d[ names::Inact_h ] = y_[ HH_H ];
   d[ names::Act_n ] = y_[ HH_N ];
@@ -380,9 +380,9 @@ nest::hh_cond_beta_gap_traub::~hh_cond_beta_gap_traub()
 void
 nest::hh_cond_beta_gap_traub::init_buffers_()
 {
-  B_.spike_exc_.clear(); // includes resize
-  B_.spike_inh_.clear(); // includes resize
-  B_.currents_.clear();  // includes resize
+  B_.spike_exc_.clear();  // includes resize
+  B_.spike_inh_.clear();  // includes resize
+  B_.currents_.clear();   // includes resize
 
   // allocate strucure for gap events here
   // function is called from Scheduler::prepare_nodes() before the
@@ -526,11 +526,11 @@ nest::hh_cond_beta_gap_traub::update_( Time const& origin,
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
-        &B_.sys_,             // system of ODE
-        &t,                   // from t
-        B_.step_,             // to t <= step
-        &B_.IntegrationStep_, // integration step size
-        S_.y_ );              // neuronal state
+        &B_.sys_,              // system of ODE
+        &t,                    // from t
+        B_.step_,              // to t <= step
+        &B_.IntegrationStep_,  // integration step size
+        S_.y_ );               // neuronal state
       if ( status != GSL_SUCCESS )
       {
         throw GSLSolverFailure( get_name(), status );
@@ -548,7 +548,7 @@ nest::hh_cond_beta_gap_traub::update_( Time const& origin,
       {
         --S_.r_;
       }
-      else if ( S_.y_[ State_::V_M ] >= P_.V_T + 30. and U_old > S_.y_[ State_::V_M ] ) // ( threshold and maximum )
+      else if ( S_.y_[ State_::V_M ] >= P_.V_T + 30. and U_old > S_.y_[ State_::V_M ] )  // ( threshold and maximum )
       {
         S_.r_ = V_.refractory_counts_;
 
@@ -564,7 +564,7 @@ nest::hh_cond_beta_gap_traub::update_( Time const& origin,
       // set new input current
       B_.I_stim_ = B_.currents_.get_value( lag );
     }
-    else // if(called_from_wfr_update)
+    else  // if(called_from_wfr_update)
     {
       S_.y_[ State_::DG_EXC ] += B_.spike_exc_.get_value_wfr_update( lag ) * V_.PSConInit_E;
       S_.y_[ State_::DG_INH ] += B_.spike_inh_.get_value_wfr_update( lag ) * V_.PSConInit_I;
@@ -604,7 +604,7 @@ nest::hh_cond_beta_gap_traub::update_( Time const& origin,
     }
 
 
-  } // end for-loop
+  }  // end for-loop
 
   // if not called_from_wfr_update perform constant extrapolation
   // and reset last_y_values
@@ -684,6 +684,6 @@ nest::hh_cond_beta_gap_traub::handle( GapJunctionEvent& e )
   }
 }
 
-} // namespace nest
+}  // namespace nest
 
-#endif // HAVE_GSL
+#endif  // HAVE_GSL

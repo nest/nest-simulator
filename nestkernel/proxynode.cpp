@@ -111,4 +111,4 @@ proxynode::is_proxy() const
 {
   return true;
 }
-} // namespace
+}  // namespace

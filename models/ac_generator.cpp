@@ -61,10 +61,10 @@ RecordablesMap< ac_generator >::create()
  * ---------------------------------------------------------------- */
 
 nest::ac_generator::Parameters_::Parameters_()
-  : amp_( 0.0 )     // pA
-  , offset_( 0.0 )  // pA
-  , freq_( 0.0 )    // Hz
-  , phi_deg_( 0.0 ) // degree
+  : amp_( 0.0 )      // pA
+  , offset_( 0.0 )   // pA
+  , freq_( 0.0 )     // Hz
+  , phi_deg_( 0.0 )  // degree
 {
 }
 
@@ -94,8 +94,8 @@ nest::ac_generator::Parameters_::operator=( const Parameters_& p )
 
 nest::ac_generator::State_::State_()
   : y_0_( 0.0 )
-  , y_1_( 0.0 ) // pA
-  , I_( 0.0 )   // pA
+  , y_1_( 0.0 )  // pA
+  , I_( 0.0 )    // pA
 {
 }
 
@@ -241,7 +241,7 @@ nest::ac_generator::handle( DataLoggingRequest& e )
 void
 nest::ac_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
 
   // For the input backend
   if ( not input_param.empty() )

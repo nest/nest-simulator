@@ -308,6 +308,6 @@ public:
   void remove_disabled_connections( size_t first_disabled_index ) override;
 };
 
-} // of namespace nest
+}  // of namespace nest
 
 #endif

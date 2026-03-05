@@ -101,4 +101,4 @@ RecordablesMap< nest::rate_transformer_lin >::create()
   insert_( names::rate, &nest::rate_transformer_lin::get_rate_ );
 }
 
-} // namespace nest
+}  // namespace nest

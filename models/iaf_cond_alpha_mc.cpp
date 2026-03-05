@@ -155,43 +155,43 @@ nest::iaf_cond_alpha_mc_dynamics( double, const double y[], double f[], void* pn
  * ---------------------------------------------------------------- */
 
 nest::iaf_cond_alpha_mc::Parameters_::Parameters_()
-  : V_th( -55.0 )    // mV
-  , V_reset( -60.0 ) // mV
-  , t_ref( 2.0 )     // ms
+  : V_th( -55.0 )     // mV
+  , V_reset( -60.0 )  // mV
+  , t_ref( 2.0 )      // ms
 {
   // conductances between compartments
-  g_conn[ SOMA ] = 2.5; // nS, soma-proximal
-  g_conn[ PROX ] = 1.0; // nS, proximal-distal
+  g_conn[ SOMA ] = 2.5;  // nS, soma-proximal
+  g_conn[ PROX ] = 1.0;  // nS, proximal-distal
 
   // soma parameters
-  g_L[ SOMA ] = 10.0;     // nS
-  C_m[ SOMA ] = 150.0;    // pF
-  E_ex[ SOMA ] = 0.0;     // mV
-  E_in[ SOMA ] = -85.0;   // mV
-  E_L[ SOMA ] = -70.0;    // mV
-  tau_synE[ SOMA ] = 0.5; // ms
-  tau_synI[ SOMA ] = 2.0; // ms
-  I_e[ SOMA ] = 0.0;      // pA
+  g_L[ SOMA ] = 10.0;      // nS
+  C_m[ SOMA ] = 150.0;     // pF
+  E_ex[ SOMA ] = 0.0;      // mV
+  E_in[ SOMA ] = -85.0;    // mV
+  E_L[ SOMA ] = -70.0;     // mV
+  tau_synE[ SOMA ] = 0.5;  // ms
+  tau_synI[ SOMA ] = 2.0;  // ms
+  I_e[ SOMA ] = 0.0;       // pA
 
   // proximal parameters
-  g_L[ PROX ] = 5.0;      // nS
-  C_m[ PROX ] = 75.0;     // pF
-  E_ex[ PROX ] = 0.0;     // mV
-  E_in[ PROX ] = -85.0;   // mV
-  E_L[ PROX ] = -70.0;    // mV
-  tau_synE[ PROX ] = 0.5; // ms
-  tau_synI[ PROX ] = 2.0; // ms
-  I_e[ PROX ] = 0.0;      // pA
+  g_L[ PROX ] = 5.0;       // nS
+  C_m[ PROX ] = 75.0;      // pF
+  E_ex[ PROX ] = 0.0;      // mV
+  E_in[ PROX ] = -85.0;    // mV
+  E_L[ PROX ] = -70.0;     // mV
+  tau_synE[ PROX ] = 0.5;  // ms
+  tau_synI[ PROX ] = 2.0;  // ms
+  I_e[ PROX ] = 0.0;       // pA
 
   // distal parameters
-  g_L[ DIST ] = 10.0;     // nS
-  C_m[ DIST ] = 150.0;    // pF
-  E_ex[ DIST ] = 0.0;     // mV
-  E_in[ DIST ] = -85.0;   // mV
-  E_L[ DIST ] = -70.0;    // mV
-  tau_synE[ DIST ] = 0.5; // ms
-  tau_synI[ DIST ] = 2.0; // ms
-  I_e[ DIST ] = 0.0;      // pA
+  g_L[ DIST ] = 10.0;      // nS
+  C_m[ DIST ] = 150.0;     // pF
+  E_ex[ DIST ] = 0.0;      // mV
+  E_in[ DIST ] = -85.0;    // mV
+  E_L[ DIST ] = -70.0;     // mV
+  tau_synE[ DIST ] = 0.5;  // ms
+  tau_synI[ DIST ] = 2.0;  // ms
+  I_e[ DIST ] = 0.0;       // pA
 }
 
 nest::iaf_cond_alpha_mc::Parameters_::Parameters_( const Parameters_& p )
@@ -221,7 +221,7 @@ nest::iaf_cond_alpha_mc::Parameters_::Parameters_( const Parameters_& p )
 nest::iaf_cond_alpha_mc::Parameters_&
 nest::iaf_cond_alpha_mc::Parameters_::operator=( const Parameters_& p )
 {
-  assert( this != &p ); // would be bad logical error in program
+  assert( this != &p );  // would be bad logical error in program
 
   V_th = p.V_th;
   V_reset = p.V_reset;
@@ -397,7 +397,7 @@ nest::iaf_cond_alpha_mc::State_::get( Dictionary& d ) const
     assert( d.known( comp_names_[ n ] ) );
     auto dd = d.get< Dictionary >( comp_names_[ n ] );
 
-    dd[ names::V_m ] = y_[ idx( n, V_M ) ]; // Membrane potential
+    dd[ names::V_m ] = y_[ idx( n, V_M ) ];  // Membrane potential
   }
 }
 
@@ -571,11 +571,11 @@ nest::iaf_cond_alpha_mc::update( Time const& origin, const long from, const long
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
-        &B_.sys_,             // system of ODE
-        &t,                   // from t
-        B_.step_,             // to t <= step
-        &B_.IntegrationStep_, // integration step size
-        S_.y_ );              // neuronal state
+        &B_.sys_,              // system of ODE
+        &t,                    // from t
+        B_.step_,              // to t <= step
+        &B_.IntegrationStep_,  // integration step size
+        S_.y_ );               // neuronal state
       if ( status != GSL_SUCCESS )
       {
         throw GSLSolverFailure( get_name(), status );
@@ -596,12 +596,12 @@ nest::iaf_cond_alpha_mc::update( Time const& origin, const long from, const long
     // refractoriness and spiking
     // exploit here that plain offset enum value V_M indexes soma V_M
     if ( S_.r_ )
-    { // neuron is absolute refractory
+    {  // neuron is absolute refractory
       --S_.r_;
       S_.y_[ State_::V_M ] = P_.V_reset;
     }
     else if ( S_.y_[ State_::V_M ] >= P_.V_th )
-    { // neuron fires spike
+    {  // neuron fires spike
       S_.r_ = V_.RefractoryCounts_;
       S_.y_[ State_::V_M ] = P_.V_reset;
 
@@ -652,4 +652,4 @@ nest::iaf_cond_alpha_mc::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-#endif // HAVE_GSL
+#endif  // HAVE_GSL

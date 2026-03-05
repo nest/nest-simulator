@@ -75,4 +75,4 @@ STDPHomCommonProperties::set_status( const Dictionary& d, ConnectorModel& cm )
   d.update_value( names::Wmax, Wmax_ );
 }
 
-} // of namespace nest
+}  // of namespace nest

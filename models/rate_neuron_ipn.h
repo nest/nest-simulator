@@ -24,7 +24,7 @@
 #define RATE_NEURON_IPN_H
 
 // C++ includes:
-#include <cmath> // in case we need isnan() // fabs
+#include <cmath>  // in case we need isnan() // fabs
 #include <string>
 
 // Includes from nestkernel:
@@ -208,9 +208,9 @@ private:
     /** use multiplicative coupling? Default is false */
     bool mult_coupling_;
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( Dictionary& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const;  //!< Store current values in dictionary
 
     void set( const Dictionary&, Node* node );
   };
@@ -222,10 +222,10 @@ private:
    */
   struct State_
   {
-    double rate_;  //!< Rate
-    double noise_; //!< Noise
+    double rate_;   //!< Rate
+    double noise_;  //!< Noise
 
-    State_(); //!< Default initialization
+    State_();  //!< Default initialization
 
     void get( Dictionary& ) const;
 
@@ -247,20 +247,20 @@ private:
     Buffers_( rate_neuron_ipn& );
     Buffers_( const Buffers_&, rate_neuron_ipn& );
 
-    RingBuffer delayed_rates_ex_; //!< buffer for rate vector received by
+    RingBuffer delayed_rates_ex_;  //!< buffer for rate vector received by
     // RateConnectionDelayed from excitatory neurons
-    RingBuffer delayed_rates_in_; //!< buffer for rate vector received by
+    RingBuffer delayed_rates_in_;  //!< buffer for rate vector received by
     // RateConnectionDelayed from inhibitory neurons
-    std::vector< double > instant_rates_ex_; //!< buffer for rate vector received
+    std::vector< double > instant_rates_ex_;  //!< buffer for rate vector received
     // by RateConnectionInstantaneous from excitatory neurons
-    std::vector< double > instant_rates_in_; //!< buffer for rate vector received
+    std::vector< double > instant_rates_in_;  //!< buffer for rate vector received
     // by RateConnectionInstantaneous from inhibitory neurons
-    std::vector< double > last_y_values;  //!< remembers y_values from last wfr_update
-    std::vector< double > random_numbers; //!< remembers the random_numbers in
+    std::vector< double > last_y_values;   //!< remembers y_values from last wfr_update
+    std::vector< double > random_numbers;  //!< remembers the random_numbers in
     // order to apply the same random
     // numbers in each iteration when wfr
     // is used
-    UniversalDataLogger< rate_neuron_ipn > logger_; //!< Logger for all analog data
+    UniversalDataLogger< rate_neuron_ipn > logger_;  //!< Logger for all analog data
   };
 
   // ----------------------------------------------------------------
@@ -277,7 +277,7 @@ private:
     // propagator for noise
     double input_noise_factor_;
 
-    normal_distribution normal_dist_; //!< normal distribution
+    normal_distribution normal_dist_;  //!< normal distribution
   };
 
   //! Read out the rate
@@ -316,9 +316,9 @@ template < class TNonlinearities >
 inline bool
 rate_neuron_ipn< TNonlinearities >::wfr_update( Time const& origin, const long from, const long to )
 {
-  State_ old_state = S_; // save state before wfr update
+  State_ old_state = S_;  // save state before wfr update
   const bool wfr_tol_exceeded = update_( origin, from, to, true );
-  S_ = old_state; // restore old state
+  S_ = old_state;  // restore old state
 
   return not wfr_tol_exceeded;
 }
@@ -372,10 +372,10 @@ template < class TNonlinearities >
 inline void
 rate_neuron_ipn< TNonlinearities >::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d, this );   // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, this );   // throws if BadProperty
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
+  ptmp.set( d, this );    // throws if BadProperty
+  State_ stmp = S_;       // temporary copy in case of errors
+  stmp.set( d, this );    // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -403,8 +403,8 @@ RecordablesMap< rate_neuron_ipn< TNonlinearities > > rate_neuron_ipn< TNonlinear
 
 template < class TNonlinearities >
 rate_neuron_ipn< TNonlinearities >::Parameters_::Parameters_()
-  : tau_( 10.0 )   // ms
-  , lambda_( 1.0 ) // ms
+  : tau_( 10.0 )    // ms
+  , lambda_( 1.0 )  // ms
   , sigma_( 1.0 )
   , mu_( 0.0 )
   , rectify_rate_( 0.0 )
@@ -497,15 +497,15 @@ template < class TNonlinearities >
 void
 rate_neuron_ipn< TNonlinearities >::State_::get( Dictionary& d ) const
 {
-  d[ names::rate ] = rate_;   // Rate
-  d[ names::noise ] = noise_; // Noise
+  d[ names::rate ] = rate_;    // Rate
+  d[ names::noise ] = noise_;  // Noise
 }
 
 template < class TNonlinearities >
 void
 rate_neuron_ipn< TNonlinearities >::State_::set( const Dictionary& d, Node* node )
 {
-  update_value_param( d, names::rate, rate_, node ); // Rate
+  update_value_param( d, names::rate, rate_, node );  // Rate
 }
 
 template < class TNonlinearities >
@@ -554,8 +554,8 @@ template < class TNonlinearities >
 void
 rate_neuron_ipn< TNonlinearities >::init_buffers_()
 {
-  B_.delayed_rates_ex_.clear(); // includes resize
-  B_.delayed_rates_in_.clear(); // includes resize
+  B_.delayed_rates_ex_.clear();  // includes resize
+  B_.delayed_rates_in_.clear();  // includes resize
 
   // resize buffers
   const size_t buffer_size = kernel::manager< ConnectionManager >.get_min_delay();
@@ -570,7 +570,7 @@ rate_neuron_ipn< TNonlinearities >::init_buffers_()
     B_.random_numbers[ i ] = V_.normal_dist_( get_vp_specific_rng( get_thread() ) );
   }
 
-  B_.logger_.reset(); // includes resize
+  B_.logger_.reset();  // includes resize
   ArchivingNode::clear_history();
 }
 
@@ -578,7 +578,7 @@ template < class TNonlinearities >
 void
 rate_neuron_ipn< TNonlinearities >::pre_run_hook()
 {
-  B_.logger_.init(); // ensures initialization in case mm connected after Simulate
+  B_.logger_.init();  // ensures initialization in case mm connected after Simulate
 
   const double h = Time::get_resolution().get_ms();
 
@@ -641,8 +641,8 @@ rate_neuron_ipn< TNonlinearities >::update_( Time const& origin,
     }
     double instant_rates_in = B_.instant_rates_in_[ lag ];
     double instant_rates_ex = B_.instant_rates_ex_[ lag ];
-    double H_ex = 1.; // valid value for non-multiplicative coupling
-    double H_in = 1.; // valid value for non-multiplicative coupling
+    double H_ex = 1.;  // valid value for non-multiplicative coupling
+    double H_in = 1.;  // valid value for non-multiplicative coupling
     if ( P_.mult_coupling_ )
     {
       H_ex = nonlinearities_.mult_coupling_ex( new_rates[ lag ] );
@@ -813,6 +813,6 @@ rate_neuron_ipn< TNonlinearities >::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef RATE_NEURON_IPN_H */

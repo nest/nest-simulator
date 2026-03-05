@@ -63,4 +63,4 @@ RecordablesMap< nest::mcculloch_pitts_neuron >::create()
   insert_( names::h, &nest::mcculloch_pitts_neuron::get_input__ );
 }
 
-} // namespace nest
+}  // namespace nest

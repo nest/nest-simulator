@@ -35,7 +35,7 @@
 #ifdef HAVE_GSL
 
 // C++ includes:
-#include <cmath> // in case we need isnan() // fabs
+#include <cmath>  // in case we need isnan() // fabs
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -145,10 +145,10 @@ hh_psc_alpha_gap_dynamics( double time, const double y[], double f[], void* pnod
   f[ S::V_M ] = ( -( I_Na + I_K + I_L ) + node.B_.I_stim_ + node.P_.I_e + I_ex + I_in + I_gap ) / node.P_.C_m;
 
   // channel dynamics
-  f[ S::HH_M ] = alpha_m * ( 1 - y[ S::HH_M ] ) - beta_m * y[ S::HH_M ]; // m-variable
-  f[ S::HH_H ] = alpha_h * ( 1 - y[ S::HH_H ] ) - beta_h * y[ S::HH_H ]; // h-variable
-  f[ S::HH_P ] = alpha_p * ( 1 - y[ S::HH_P ] ) - beta_p * y[ S::HH_P ]; // p-variable
-  f[ S::HH_N ] = alpha_n * ( 1 - y[ S::HH_N ] ) - beta_n * y[ S::HH_N ]; // n-variable
+  f[ S::HH_M ] = alpha_m * ( 1 - y[ S::HH_M ] ) - beta_m * y[ S::HH_M ];  // m-variable
+  f[ S::HH_H ] = alpha_h * ( 1 - y[ S::HH_H ] ) - beta_h * y[ S::HH_H ];  // h-variable
+  f[ S::HH_P ] = alpha_p * ( 1 - y[ S::HH_P ] ) - beta_p * y[ S::HH_P ];  // p-variable
+  f[ S::HH_N ] = alpha_n * ( 1 - y[ S::HH_N ] ) - beta_n * y[ S::HH_N ];  // n-variable
 
   // synapses: alpha functions
   f[ S::DI_EXC ] = -dI_ex / node.P_.tau_synE;
@@ -165,25 +165,25 @@ hh_psc_alpha_gap_dynamics( double time, const double y[], double f[], void* pnod
  * ---------------------------------------------------------------- */
 
 nest::hh_psc_alpha_gap::Parameters_::Parameters_()
-  : t_ref_( 2.0 )   // ms
-  , g_Na( 4500. )   // nS
-  , g_Kv1( 9.0 )    // nS
-  , g_Kv3( 9000.0 ) // nS
-  , g_L( 10.0 )     // nS
-  , C_m( 40.0 )     // pF
-  , E_Na( 74.0 )    // mV
-  , E_K( -90.0 )    // mV
-  , E_L( -70. )     // mV
-  , tau_synE( 0.2 ) // ms
-  , tau_synI( 2.0 ) // ms
-  , I_e( 0.0 )      // pA
+  : t_ref_( 2.0 )    // ms
+  , g_Na( 4500. )    // nS
+  , g_Kv1( 9.0 )     // nS
+  , g_Kv3( 9000.0 )  // nS
+  , g_L( 10.0 )      // nS
+  , C_m( 40.0 )      // pF
+  , E_Na( 74.0 )     // mV
+  , E_K( -90.0 )     // mV
+  , E_L( -70. )      // mV
+  , tau_synE( 0.2 )  // ms
+  , tau_synI( 2.0 )  // ms
+  , I_e( 0.0 )       // pA
 {
 }
 
 nest::hh_psc_alpha_gap::State_::State_( const Parameters_& )
   : r_( 0 )
 {
-  y_[ 0 ] = -69.60401191631222; // p.E_L;
+  y_[ 0 ] = -69.60401191631222;  // p.E_L;
   //'Act_n': 0.0005741576228359798, 'Inact_p': 0.00025113182271506364
   //'Inact_h': 0.8684620412943986,
   for ( size_t i = 1; i < STATE_VEC_SIZE; ++i )
@@ -374,9 +374,9 @@ nest::hh_psc_alpha_gap::~hh_psc_alpha_gap()
 void
 nest::hh_psc_alpha_gap::init_buffers_()
 {
-  B_.spike_exc_.clear(); // includes resize
-  B_.spike_inh_.clear(); // includes resize
-  B_.currents_.clear();  // includes resize
+  B_.spike_exc_.clear();  // includes resize
+  B_.spike_inh_.clear();  // includes resize
+  B_.currents_.clear();   // includes resize
 
   // allocate strucure for gap events here
   // function is called from Scheduler::prepare_nodes() before the
@@ -508,11 +508,11 @@ nest::hh_psc_alpha_gap::update_( Time const& origin, const long from, const long
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
-        &B_.sys_,             // system of ODE
-        &t,                   // from t
-        B_.step_,             // to t <= step
-        &B_.IntegrationStep_, // integration step size
-        S_.y_ );              // neuronal state
+        &B_.sys_,              // system of ODE
+        &t,                    // from t
+        B_.step_,              // to t <= step
+        &B_.IntegrationStep_,  // integration step size
+        S_.y_ );               // neuronal state
       if ( status != GSL_SUCCESS )
       {
         throw GSLSolverFailure( get_name(), status );
@@ -530,7 +530,7 @@ nest::hh_psc_alpha_gap::update_( Time const& origin, const long from, const long
       {
         --S_.r_;
       }
-      else if ( S_.y_[ State_::V_M ] >= 0 and U_old > S_.y_[ State_::V_M ] ) // (threshold and maximum)
+      else if ( S_.y_[ State_::V_M ] >= 0 and U_old > S_.y_[ State_::V_M ] )  // (threshold and maximum)
       {
         S_.r_ = V_.RefractoryCounts_;
 
@@ -546,7 +546,7 @@ nest::hh_psc_alpha_gap::update_( Time const& origin, const long from, const long
       // set new input current
       B_.I_stim_ = B_.currents_.get_value( lag );
     }
-    else // if(called_from_wfr_update)
+    else  // if(called_from_wfr_update)
     {
       S_.y_[ State_::DI_EXC ] += B_.spike_exc_.get_value_wfr_update( lag ) * V_.PSCurrInit_E_;
       S_.y_[ State_::DI_INH ] += B_.spike_inh_.get_value_wfr_update( lag ) * V_.PSCurrInit_I_;
@@ -586,7 +586,7 @@ nest::hh_psc_alpha_gap::update_( Time const& origin, const long from, const long
     }
 
 
-  } // end for-loop
+  }  // end for-loop
 
   // if not called_from_wfr_update perform constant extrapolation
   // and reset last_y_values
@@ -663,4 +663,4 @@ nest::hh_psc_alpha_gap::handle( GapJunctionEvent& e )
   }
 }
 
-#endif // HAVE_GSL
+#endif  // HAVE_GSL

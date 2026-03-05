@@ -224,12 +224,12 @@ public:
 
 private:
   double weight_;
-  double U_;           //!< unit increment of a facilitating synapse
-  double u_;           //!< dynamic value of probability of release
-  double x_;           //!< current fraction of the synaptic weight
-  double tau_rec_;     //!< [ms] time constant for recovery
-  double tau_fac_;     //!< [ms] time constant for facilitation
-  double t_lastspike_; //!< time point of last spike emitted
+  double U_;            //!< unit increment of a facilitating synapse
+  double u_;            //!< dynamic value of probability of release
+  double x_;            //!< current fraction of the synaptic weight
+  double tau_rec_;      //!< [ms] time constant for recovery
+  double tau_fac_;      //!< [ms] time constant for facilitation
+  double t_lastspike_;  //!< time point of last spike emitted
 };
 
 template < typename targetidentifierT >
@@ -253,11 +253,11 @@ tsodyks2_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSyn
 
     const double h = t_spike - t_lastspike_;
     double x_decay = std::exp( -h / tau_rec_ );
-    double u_decay = ( tau_fac_ == 0 ) ? 0.0 : std::exp( -h / tau_fac_ ); // tau_fac == 0 disables facilitation
+    double u_decay = ( tau_fac_ == 0 ) ? 0.0 : std::exp( -h / tau_fac_ );  // tau_fac == 0 disables facilitation
 
     // now we compute spike number n+1
-    x_ = 1. + ( x_ - x_ * u_ - 1. ) * x_decay; // Eq. 5 from reference [3]_
-    u_ = U_ + u_ * ( 1. - U_ ) * u_decay;      // Eq. 4 from [3]_
+    x_ = 1. + ( x_ - x_ * u_ - 1. ) * x_decay;  // Eq. 5 from reference [3]_
+    u_ = U_ + u_ * ( 1. - U_ ) * u_decay;       // Eq. 4 from [3]_
   }
 
   // We use the current values for the spike number n.
@@ -335,6 +335,6 @@ tsodyks2_synapse< targetidentifierT >::set_status( const Dictionary& d, Connecto
   d.update_value( names::x, x_ );
 }
 
-} // namespace
+}  // namespace
 
-#endif // TSODYKS2_SYNAPSE_H
+#endif  // TSODYKS2_SYNAPSE_H

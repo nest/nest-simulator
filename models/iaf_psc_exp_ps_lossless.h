@@ -175,7 +175,7 @@ public:
   void handle( DataLoggingRequest& ) override;
 
   bool
-  is_off_grid() const override // uses off_grid events
+  is_off_grid() const override  // uses off_grid events
   {
     return true;
   }
@@ -317,10 +317,10 @@ private:
         Relative to resting potential. */
     double U_reset_;
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( Dictionary& ) const;               //!< Store current values in dictionary
-    double set( const Dictionary&, Node* node ); //!< Set values from dictionary
+    void get( Dictionary& ) const;                //!< Store current values in dictionary
+    double set( const Dictionary&, Node* node );  //!< Set values from dictionary
   };
 
   // ----------------------------------------------------------------
@@ -330,16 +330,16 @@ private:
    */
   struct State_
   {
-    double y0_;       //!< External input current
-    double I_syn_ex_; //!< Exc. exponential current
-    double I_syn_in_; //!< Inh. exponential current
-    double y2_;       //!< Membrane potential (relative to resting potential)
+    double y0_;        //!< External input current
+    double I_syn_ex_;  //!< Exc. exponential current
+    double I_syn_in_;  //!< Inh. exponential current
+    double y2_;        //!< Membrane potential (relative to resting potential)
 
-    bool is_refractory_;       //!< True while refractory
-    long last_spike_step_;     //!< Time stamp of most recent spike
-    double last_spike_offset_; //!< Offset of most recent spike
+    bool is_refractory_;        //!< True while refractory
+    long last_spike_step_;      //!< Time stamp of most recent spike
+    double last_spike_offset_;  //!< Offset of most recent spike
 
-    State_(); //!< Default initialization
+    State_();  //!< Default initialization
 
     void get( Dictionary&, const Parameters_& ) const;
     void set( const Dictionary&, const Parameters_&, double delta_EL, Node* );
@@ -373,18 +373,18 @@ private:
    */
   struct Variables_
   {
-    double h_ms_;            //!< Time resolution [ms]
-    long refractory_steps_;  //!< Refractory time in steps
-    double expm1_tau_m_;     //!< expm1(-h/tau_m)
-    double exp_tau_ex_;      //!< exp(-h/tau_ex)
-    double exp_tau_in_;      //!< exp(-h/tau_in)
-    double P20_;             //!< Progagator matrix element, 2nd row
-    double P21_in_;          //!< Progagator matrix element, 2nd row
-    double P21_ex_;          //!< Progagator matrix element, 2nd row
-    double y0_before_;       //!< y0_ at beginning of ministep
-    double I_syn_ex_before_; //!< I_syn_ex_ at beginning of ministep
-    double I_syn_in_before_; //!< I_syn_in_ at beginning of ministep
-    double y2_before_;       //!< y2_ at beginning of ministep
+    double h_ms_;             //!< Time resolution [ms]
+    long refractory_steps_;   //!< Refractory time in steps
+    double expm1_tau_m_;      //!< expm1(-h/tau_m)
+    double exp_tau_ex_;       //!< exp(-h/tau_ex)
+    double exp_tau_in_;       //!< exp(-h/tau_in)
+    double P20_;              //!< Progagator matrix element, 2nd row
+    double P21_in_;           //!< Progagator matrix element, 2nd row
+    double P21_ex_;           //!< Progagator matrix element, 2nd row
+    double y0_before_;        //!< y0_ at beginning of ministep
+    double I_syn_ex_before_;  //!< I_syn_ex_ at beginning of ministep
+    double I_syn_in_before_;  //!< I_syn_in_ at beginning of ministep
+    double y2_before_;        //!< y2_ at beginning of ministep
 
     /**
      * Pre-computed constants for inequality V < g(h, I_e)
@@ -511,10 +511,10 @@ iaf_psc_exp_ps_lossless::get_status( Dictionary& d ) const
 inline void
 iaf_psc_exp_ps_lossless::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;                 // temporary copy in case of errors
-  double delta_EL = ptmp.set( d, this ); // throws if BadProperty
-  State_ stmp = S_;                      // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL, this );   // throws if BadProperty
+  Parameters_ ptmp = P_;                  // temporary copy in case of errors
+  double delta_EL = ptmp.set( d, this );  // throws if BadProperty
+  State_ stmp = S_;                       // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );    // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -527,5 +527,5 @@ iaf_psc_exp_ps_lossless::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-} // namespace
-#endif // IAF_PSC_EXP_PS_LOSSLESS_H
+}  // namespace
+#endif  // IAF_PSC_EXP_PS_LOSSLESS_H

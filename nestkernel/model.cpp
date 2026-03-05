@@ -158,4 +158,4 @@ Model::create( size_t t )
   return n;
 }
 
-} // namespace
+}  // namespace

@@ -57,7 +57,7 @@ ConnectionManager::register_third_conn_builder( const std::string& name )
   thirdconnruledict_[ name ] = idx;
 }
 
-} // namespace nest
+}  // namespace nest
 
 
 #endif /* CONNECTION_MANAGER_IMPL_H */

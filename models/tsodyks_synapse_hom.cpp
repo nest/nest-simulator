@@ -91,4 +91,4 @@ TsodyksHomCommonProperties::set_status( const Dictionary& d, ConnectorModel& cm 
   }
 }
 
-} // of namespace nest
+}  // of namespace nest

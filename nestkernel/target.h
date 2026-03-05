@@ -182,6 +182,6 @@ public:
   double get_offset() const;
 };
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifndef TARGET_H */

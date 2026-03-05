@@ -62,7 +62,7 @@ Ntree< D, T, max_capacity, max_depth >::~Ntree()
 
   for ( size_t n = 0; n < static_cast< size_t >( N ); ++n )
   {
-    delete children_[ n ]; // calls destructor in child, thus recursing
+    delete children_[ n ];  // calls destructor in child, thus recursing
   }
 }
 

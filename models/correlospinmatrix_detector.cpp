@@ -321,7 +321,7 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
     bool down_transition = false;
 
     if ( m == 1 )
-    { // multiplicity == 1, either a single 1->0 event or the first or second of
+    {  // multiplicity == 1, either a single 1->0 event or the first or second of
       // a pair of 0->1
       // events
       if ( curr_i == S_.last_i_ and stamp == S_.t_last_in_spike_ )
@@ -330,7 +330,7 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
         // revise the last event written to the buffer
         S_.curr_state_[ curr_i ] = true;
         S_.last_change_[ curr_i ] = stamp.get_steps();
-        S_.tentative_down_ = false; // previous event was first event of two, so no down transition
+        S_.tentative_down_ = false;  // previous event was first event of two, so no down transition
       }
       else
       {
@@ -338,8 +338,8 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
         // transition 1->0
         // assume it will stay alone, so meaning a down transition
 
-        if ( S_.tentative_down_ ) // really was a down transition, because we
-                                  // now have another event
+        if ( S_.tentative_down_ )  // really was a down transition, because we
+                                   // now have another event
         {
           down_transition = true;
         }
@@ -347,13 +347,13 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
         S_.tentative_down_ = true;
       }
     }
-    else // multiplicity != 1
+    else  // multiplicity != 1
       if ( m == 2 )
       {
         S_.curr_state_[ curr_i ] = true;
 
-        if ( S_.tentative_down_ ) // really was a down transition, because we now
-                                  // have another double event
+        if ( S_.tentative_down_ )  // really was a down transition, because we now
+                                   // have another double event
         {
           down_transition = true;
         }
@@ -364,9 +364,9 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
         S_.tentative_down_ = false;
       }
 
-    if ( down_transition ) // only do something on the downtransitions
+    if ( down_transition )  // only do something on the downtransitions
     {
-      long i = S_.last_i_; // index of neuron making the down transition
+      long i = S_.last_i_;  // index of neuron making the down transition
       // last time point of change, must have been on
       long t_i_on = S_.last_change_[ i ];
 
@@ -464,15 +464,15 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
             }
           }
         }
-      } // loop over history
+      }  // loop over history
 
       S_.last_change_[ i ] = t_i_off;
-    } // down transition happened
+    }  // down transition happened
 
     S_.last_i_ = curr_i;
     S_.t_last_in_spike_ = stamp;
 
-  } // device active
+  }  // device active
 }
 
 void

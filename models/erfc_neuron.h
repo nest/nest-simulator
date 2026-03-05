@@ -161,8 +161,8 @@ public:
   {
   }
 
-  void get( Dictionary& ) const;             //!< Store current values in dictionary
-  void set( const Dictionary&, Node* node ); //!< Set values from dictionary
+  void get( Dictionary& ) const;              //!< Store current values in dictionary
+  void set( const Dictionary&, Node* node );  //!< Set values from dictionary
 
   bool operator()( RngPtr rng, double h );
 };
@@ -177,7 +177,7 @@ typedef binary_neuron< nest::gainfunction_erfc > erfc_neuron;
 void register_erfc_neuron( const std::string& name );
 
 
-} // namespace nest
+}  // namespace nest
 
 
 #endif /* #ifndef ERFC_NEURON_H */

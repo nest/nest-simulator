@@ -414,4 +414,4 @@ KernelManager::get_memsize_darwin_() const
 
 #endif
 
-} // namespace nest
+}  // namespace nest

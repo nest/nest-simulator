@@ -279,17 +279,17 @@ private:
 
   struct Parameters_
   {
-    Time delta_tau_; //!< width of correlation histogram bins
-    Time tau_max_;   //!< maximum time difference of events to detect
-    Time Tstart_;    //!< start of recording
-    Time Tstop_;     //!< end of recording
+    Time delta_tau_;  //!< width of correlation histogram bins
+    Time tau_max_;    //!< maximum time difference of events to detect
+    Time Tstart_;     //!< start of recording
+    Time Tstop_;      //!< end of recording
 
-    Parameters_();                     //!< Sets default parameter values
-    Parameters_( const Parameters_& ); //!< Recalibrate all times
+    Parameters_();                      //!< Sets default parameter values
+    Parameters_( const Parameters_& );  //!< Recalibrate all times
 
     Parameters_& operator=( const Parameters_& );
 
-    void get( Dictionary& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const;  //!< Store current values in dictionary
 
     /**
      * Set values from dictionary.
@@ -314,8 +314,8 @@ private:
    */
   struct State_
   {
-    std::vector< long > n_events_;          //!< spike counters
-    std::vector< SpikelistType > incoming_; //!< incoming spikes, sorted
+    std::vector< long > n_events_;           //!< spike counters
+    std::vector< SpikelistType > incoming_;  //!< incoming spikes, sorted
 
     /** Weighted histogram.
      * @note Data type is double to accommodate weights.
@@ -328,7 +328,7 @@ private:
     //! Unweighted histogram.
     std::vector< long > count_histogram_;
 
-    State_(); //!< initialize default state
+    State_();  //!< initialize default state
 
     void get( Dictionary& ) const;
 
@@ -386,6 +386,6 @@ correlation_detector::Parameters_::get_default_delta_tau()
 }
 
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef CORRELATION_DETECTOR_H */

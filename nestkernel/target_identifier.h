@@ -68,8 +68,8 @@ public:
   void set_rport( size_t rprt );
 
 private:
-  Node* target_; //!< Target node
-  size_t rport_; //!< Receiver port at the target node
+  Node* target_;  //!< Target node
+  size_t rport_;  //!< Receiver port at the target node
 };
 
 
@@ -104,7 +104,7 @@ public:
   void set_rport( size_t rprt );
 
 private:
-  targetindex target_; //!< Target node
+  targetindex target_;  //!< Target node
 };
 
 // --------------------------
@@ -202,7 +202,7 @@ TargetIdentifierIndex::set_rport( size_t rprt )
   }
 }
 
-} // namespace nest
+}  // namespace nest
 
 
 #endif

@@ -74,16 +74,16 @@ RecordablesMap< iaf_psc_alpha_ps >::create()
  * ---------------------------------------------------------------- */
 
 nest::iaf_psc_alpha_ps::Parameters_::Parameters_()
-  : tau_m_( 10.0 )                                       // ms
-  , tau_syn_ex_( 2.0 )                                   // ms
-  , tau_syn_in_( 2.0 )                                   // ms
-  , c_m_( 250.0 )                                        // pF
-  , t_ref_( 2.0 )                                        // ms
-  , E_L_( -70.0 )                                        // mV
-  , I_e_( 0.0 )                                          // pA
-  , U_th_( -55.0 - E_L_ )                                // mV, rel to E_L_
-  , U_min_( -std::numeric_limits< double >::infinity() ) // mV
-  , U_reset_( -70.0 - E_L_ )                             // mV, rel to E_L_
+  : tau_m_( 10.0 )                                        // ms
+  , tau_syn_ex_( 2.0 )                                    // ms
+  , tau_syn_in_( 2.0 )                                    // ms
+  , c_m_( 250.0 )                                         // pF
+  , t_ref_( 2.0 )                                         // ms
+  , E_L_( -70.0 )                                         // mV
+  , I_e_( 0.0 )                                           // pA
+  , U_th_( -55.0 - E_L_ )                                 // mV, rel to E_L_
+  , U_min_( -std::numeric_limits< double >::infinity() )  // mV
+  , U_reset_( -70.0 - E_L_ )                              // mV, rel to E_L_
 {
 }
 
@@ -193,11 +193,11 @@ nest::iaf_psc_alpha_ps::Parameters_::set( const Dictionary& d, Node* node )
 void
 nest::iaf_psc_alpha_ps::State_::get( Dictionary& d, const Parameters_& p ) const
 {
-  d[ names::V_m ] = V_m_ + p.E_L_; // Membrane potential
-  d[ names::I_syn_ex ] = I_ex_;    // Excitatory synaptic current
-  d[ names::I_syn_in ] = I_in_;    // Inhibitory synaptic current
-  d[ names::dI_syn_in ] = dI_in_;  // Derivative inhib. current
-  d[ names::dI_syn_ex ] = dI_ex_;  // Derivative exc. current
+  d[ names::V_m ] = V_m_ + p.E_L_;  // Membrane potential
+  d[ names::I_syn_ex ] = I_ex_;     // Excitatory synaptic current
+  d[ names::I_syn_in ] = I_in_;     // Inhibitory synaptic current
+  d[ names::dI_syn_in ] = dI_in_;   // Derivative inhib. current
+  d[ names::dI_syn_ex ] = dI_ex_;   // Derivative exc. current
   d[ names::is_refractory ] = is_refractory_;
 }
 
@@ -255,7 +255,7 @@ nest::iaf_psc_alpha_ps::init_buffers_()
 {
   B_.events_.resize();
   B_.events_.clear();
-  B_.currents_.clear(); // includes resize
+  B_.currents_.clear();  // includes resize
   B_.logger_.reset();
 
   ArchivingNode::clear_history();
@@ -393,7 +393,7 @@ nest::iaf_psc_alpha_ps::update( Time const& origin, const long from, const long 
 
       // Time within step is measured by offsets, which are h at the beginning
       // and 0 at the end of the step.
-      double last_offset = V_.h_ms_; // start of step
+      double last_offset = V_.h_ms_;  // start of step
 
       do
       {
@@ -415,17 +415,17 @@ nest::iaf_psc_alpha_ps::update( Time const& origin, const long from, const long 
         if ( end_of_refract )
         {
           S_.is_refractory_ = false;
-        } // return from refractoriness
+        }  // return from refractoriness
         else
         {
           if ( ev_weight >= 0.0 )
           {
-            S_.dI_ex_ += V_.psc_norm_ex_ * ev_weight; // exc. spike input
+            S_.dI_ex_ += V_.psc_norm_ex_ * ev_weight;  // exc. spike input
           }
           else
           {
             S_.dI_in_ += V_.psc_norm_in_ * ev_weight;
-          } // inh. spike input
+          }  // inh. spike input
         }
 
         // store state
@@ -440,7 +440,7 @@ nest::iaf_psc_alpha_ps::update( Time const& origin, const long from, const long 
 
       // no events remaining, plain update step across remainder
       // of interval
-      if ( last_offset > 0 ) // not at end of step, do remainder
+      if ( last_offset > 0 )  // not at end of step, do remainder
       {
         propagate_( last_offset );
         if ( S_.V_m_ >= P_.U_th_ )
@@ -448,7 +448,7 @@ nest::iaf_psc_alpha_ps::update( Time const& origin, const long from, const long 
           emit_spike_( origin, lag, V_.h_ms_ - last_offset, last_offset );
         }
       }
-    } // else
+    }  // else
 
     // Set new input current. The current change occurs at the
     // end of the interval and thus must come AFTER the threshold-
@@ -458,7 +458,7 @@ nest::iaf_psc_alpha_ps::update( Time const& origin, const long from, const long 
 
     // logging
     B_.logger_.record_data( origin.get_steps() + lag );
-  } // from lag = from ...
+  }  // from lag = from ...
 }
 
 
@@ -563,7 +563,7 @@ nest::iaf_psc_alpha_ps::emit_spike_( Time const& origin, const long lag, const d
 void
 nest::iaf_psc_alpha_ps::emit_instant_spike_( Time const& origin, const long lag, const double spike_offs )
 {
-  assert( S_.V_m_ >= P_.U_th_ ); // ensure we are superthreshold
+  assert( S_.V_m_ >= P_.U_th_ );  // ensure we are superthreshold
 
   // set stamp and offset for spike
   S_.last_spike_step_ = origin.get_steps() + lag + 1;

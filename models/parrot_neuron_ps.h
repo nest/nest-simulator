@@ -125,7 +125,7 @@ private:
   void
   pre_run_hook() override
   {
-  } // no variables
+  }  // no variables
 
   void update( Time const&, const long, const long ) override;
 
@@ -162,6 +162,6 @@ parrot_neuron_ps::handles_test_event( SpikeEvent&, size_t receptor_type )
   }
 }
 
-} // namespace
+}  // namespace
 
-#endif // PARROT_NEURON_PS_H
+#endif  // PARROT_NEURON_PS_H

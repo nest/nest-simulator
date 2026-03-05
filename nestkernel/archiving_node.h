@@ -143,5 +143,5 @@ private:
   std::deque< histentry > history_;
 };
 
-} // of namespace
+}  // of namespace
 #endif

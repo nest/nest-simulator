@@ -202,14 +202,14 @@ public:
   }
 
 private:
-  double weight_;      //!< synaptic weight
-  double U_;           //!< unit increment of a facilitating synapse (U)
-  double u_;           //!< dynamic value of probability of release
-  double tau_rec_;     //!< [ms] time constant for recovery from depression (D)
-  double tau_fac_;     //!< [ms] time constant for facilitation (F)
-  int n_;              //!< Number of release sites
-  int a_;              //!< Number of available release sites
-  double t_lastspike_; //!< Time point of last spike emitted
+  double weight_;       //!< synaptic weight
+  double U_;            //!< unit increment of a facilitating synapse (U)
+  double u_;            //!< dynamic value of probability of release
+  double tau_rec_;      //!< [ms] time constant for recovery from depression (D)
+  double tau_fac_;      //!< [ms] time constant for facilitation (F)
+  int n_;               //!< Number of release sites
+  int a_;               //!< Number of available release sites
+  double t_lastspike_;  //!< Time point of last spike emitted
 };
 
 template < typename targetidentifierT >
@@ -237,7 +237,7 @@ quantal_stp_synapse< targetidentifierT >::send( Event& e, size_t t, const Common
     const double u_decay = ( tau_fac_ < 1.0e-10 ) ? 0.0 : std::exp( -h / tau_fac_ );
 
     // Compute release probability
-    u_ = U_ + u_ * ( 1. - U_ ) * u_decay; // Eq. 4 from [2]_
+    u_ = U_ + u_ * ( 1. - U_ ) * u_decay;  // Eq. 4 from [2]_
 
     // Compute number of sites that recovered during the interval.
     for ( int depleted = n_ - a_; depleted > 0; --depleted )
@@ -341,6 +341,6 @@ quantal_stp_synapse< targetidentifierT >::set_status( const Dictionary& d, Conne
   }
 }
 
-} // namespace
+}  // namespace
 
-#endif // QUANTAL_STP_SYNAPSE_H
+#endif  // QUANTAL_STP_SYNAPSE_H

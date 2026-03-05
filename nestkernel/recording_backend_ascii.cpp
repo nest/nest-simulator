@@ -214,7 +214,7 @@ void
 nest::RecordingBackendASCII::check_device_status( const Dictionary& params ) const
 {
   DeviceData dd( "", "" );
-  dd.set_status( params ); // throws if params contains invalid entries
+  dd.set_status( params );  // throws if params contains invalid entries
 }
 
 void
@@ -360,7 +360,7 @@ nest::RecordingBackendASCII::DeviceData::set_status( const Dictionary& d )
 
   bool time_in_steps = false;
   if ( d.update_value( names::time_in_steps, time_in_steps )
-    and time_in_steps != time_in_steps_ ) // setting to the existing value is not an error
+    and time_in_steps != time_in_steps_ )  // setting to the existing value is not an error
   {
     if ( kernel::manager< SimulationManager >.has_been_simulated() )
     {

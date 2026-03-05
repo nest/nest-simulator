@@ -117,6 +117,6 @@ public:
   void compress_secondary_send_buffer_pos( const size_t tid );
 };
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifndef TARGET_TABLE_H */

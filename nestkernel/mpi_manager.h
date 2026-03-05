@@ -300,21 +300,21 @@ public:
   void communicate_recv_counts_secondary_events();
 
 private:
-  int num_processes_;              //!< number of MPI processes
-  int rank_;                       //!< rank of the MPI process
-  int send_buffer_size_;           //!< expected size of send buffer
-  int recv_buffer_size_;           //!< size of receive buffer
-  bool use_mpi_;                   //!< whether MPI is used
-  size_t buffer_size_target_data_; //!< total size of MPI buffer for
+  int num_processes_;               //!< number of MPI processes
+  int rank_;                        //!< rank of the MPI process
+  int send_buffer_size_;            //!< expected size of send buffer
+  int recv_buffer_size_;            //!< size of receive buffer
+  bool use_mpi_;                    //!< whether MPI is used
+  size_t buffer_size_target_data_;  //!< total size of MPI buffer for
   // communication of connections
 
-  size_t buffer_size_spike_data_; //!< total size of MPI buffer for
+  size_t buffer_size_spike_data_;  //!< total size of MPI buffer for
   // communication of spikes
 
-  size_t max_buffer_size_target_data_; //!< maximal size of MPI buffer for
+  size_t max_buffer_size_target_data_;  //!< maximal size of MPI buffer for
   // communication of connections
 
-  bool adaptive_target_buffers_; //!< whether MPI buffers for communication of
+  bool adaptive_target_buffers_;  //!< whether MPI buffers for communication of
   // connections resize on the fly
 
   double growth_factor_buffer_spike_data_;
@@ -329,7 +329,7 @@ private:
   std::vector< int > recv_counts_secondary_events_in_int_per_rank_;
 
   std::vector< int >
-    send_counts_secondary_events_in_int_per_rank_; //!< how many secondary elements (in ints) will be sent to each rank
+    send_counts_secondary_events_in_int_per_rank_;  //!< how many secondary elements (in ints) will be sent to each rank
 
   //! Offset in the MPI receive buffer (in ints) at which elements received from each rank will be written
   std::vector< int > recv_displacements_secondary_events_in_int_per_rank_;
@@ -341,7 +341,7 @@ private:
 
   std::vector< int > comm_step_;
 
-  unsigned int COMM_OVERFLOW_ERROR; //<! array containing communication partner for each step.
+  unsigned int COMM_OVERFLOW_ERROR;  //<! array containing communication partner for each step.
 
 
   //! Variable to hold the MPI communicator to use (the datatype matters).
@@ -419,8 +419,8 @@ public:
     }
 
   private:
-    double node_id_; //!< node ID of neuron that spiked
-    double offset_;  //!< offset of spike from grid
+    double node_id_;  //!< node ID of neuron that spiked
+    double offset_;   //!< offset of spike from grid
 
     //! This function asserts that doubles can hold node IDs without loss
     static void

@@ -300,8 +300,8 @@ private:
    */
   std::vector< std::vector< ConnectorModel* > > connection_models_;
 
-  Dictionary modeldict_;   //!< Dictionary of all node models
-  Dictionary synapsedict_; //!< Dictionary of all synapse models
+  Dictionary modeldict_;    //!< Dictionary of all node models
+  Dictionary synapsedict_;  //!< Dictionary of all synapse models
 
   Model* proxynode_model_;
 
@@ -314,6 +314,6 @@ private:
 };
 
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* MODEL_MANAGER_H */

@@ -355,6 +355,6 @@ public:
 };
 
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifndef SOURCE_TABLE_H */

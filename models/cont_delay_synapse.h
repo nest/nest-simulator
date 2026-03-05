@@ -222,9 +222,9 @@ public:
   }
 
 private:
-  double weight_;       //!< synaptic weight
-  double delay_offset_; //!< fractional delay < h,
-                        //!< total delay = delay_ - delay_offset_
+  double weight_;        //!< synaptic weight
+  double delay_offset_;  //!< fractional delay < h,
+                         //!< total delay = delay_ - delay_offset_
 };
 
 /**
@@ -334,6 +334,6 @@ cont_delay_synapse< targetidentifierT >::check_synapse_params( const Dictionary&
   }
 }
 
-} // of namespace nest
+}  // of namespace nest
 
-#endif // of #ifndef CONT_DELAY_SYNAPSE_H
+#endif  // of #ifndef CONT_DELAY_SYNAPSE_H

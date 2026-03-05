@@ -71,7 +71,7 @@ public:
   bool operator==( const NodeCollectionMetadataPTR rhs ) const override;
 
 private:
-  const AbstractLayerPTR layer_; //!< layer object
+  const AbstractLayerPTR layer_;  //!< layer object
   size_t first_node_id_;
 };
 

@@ -37,4 +37,4 @@ mod( double x, double p )
   return x;
 }
 
-} // namespace nest
+}  // namespace nest

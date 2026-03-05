@@ -283,11 +283,11 @@ private:
      */
     size_t num_trains_;
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
     Parameters_( const Parameters_& );
     Parameters_& operator=( const Parameters_& p );
 
-    void get( Dictionary& ) const; //!< Store current values in Dictionary
+    void get( Dictionary& ) const;  //!< Store current values in Dictionary
 
     /**
      * Set values from Dictionary.
@@ -299,9 +299,9 @@ private:
 
   struct State_
   {
-    double rate_; //!< current rate, kept for recording
+    double rate_;  //!< current rate, kept for recording
 
-    State_(); //!< Sets default state value
+    State_();  //!< Sets default state value
   };
 
   // ------------------------------------------------------------
@@ -337,18 +337,18 @@ private:
      */
     std::vector< double > Lambda_t0_;
 
-    Parameters_ P_prev_; //!< parameter values prior to last SetStatus
+    Parameters_ P_prev_;  //!< parameter values prior to last SetStatus
   };
 
   // ------------------------------------------------------------
 
   struct Variables_
   {
-    double h_;    //!< time resolution (ms)
-    double t_ms_; //!< current time in ms, for communication with event_hook()
+    double h_;     //!< time resolution (ms)
+    double t_ms_;  //!< current time in ms, for communication with event_hook()
     //! current time in steps, for communication with event_hook()
     long t_steps_;
-    RngPtr rng_; //!< thread-specific random generator
+    RngPtr rng_;  //!< thread-specific random generator
   };
 
   double
@@ -429,9 +429,9 @@ sinusoidal_gamma_generator::get_status( Dictionary& d ) const
 inline void
 sinusoidal_gamma_generator::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
 
-  ptmp.set( d, *this, this ); // throws if BadProperty
+  ptmp.set( d, *this, this );  // throws if BadProperty
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.
@@ -461,8 +461,8 @@ sinusoidal_gamma_generator::get_type() const
   return StimulationDevice::Type::SPIKE_GENERATOR;
 }
 
-} // namespace
+}  // namespace
 
-#endif // SINUSOIDAL_GAMMA_GENERATOR_H
+#endif  // SINUSOIDAL_GAMMA_GENERATOR_H
 
-#endif // HAVE_GSL
+#endif  // HAVE_GSL

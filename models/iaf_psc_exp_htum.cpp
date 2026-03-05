@@ -67,16 +67,16 @@ RecordablesMap< iaf_psc_exp_htum >::create()
  * ---------------------------------------------------------------- */
 
 nest::iaf_psc_exp_htum::Parameters_::Parameters_()
-  : Tau_( 10.0 )             // in ms
-  , C_( 250.0 )              // in pF
-  , tau_ref_tot_( 2.0 )      // in ms
-  , tau_ref_abs_( 2.0 )      // in ms
-  , E_L_( -70.0 )            // in mV
-  , I_e_( 0.0 )              // in pA
-  , Theta_( -55.0 - E_L_ )   // relative E_L_
-  , V_reset_( -70.0 - E_L_ ) // in mV
-  , tau_ex_( 2.0 )           // in ms
-  , tau_in_( 2.0 )           // in ms
+  : Tau_( 10.0 )              // in ms
+  , C_( 250.0 )               // in pF
+  , tau_ref_tot_( 2.0 )       // in ms
+  , tau_ref_abs_( 2.0 )       // in ms
+  , E_L_( -70.0 )             // in mV
+  , I_e_( 0.0 )               // in pA
+  , Theta_( -55.0 - E_L_ )    // relative E_L_
+  , V_reset_( -70.0 - E_L_ )  // in mV
+  , tau_ex_( 2.0 )            // in ms
+  , tau_in_( 2.0 )            // in ms
 {
 }
 
@@ -97,9 +97,9 @@ nest::iaf_psc_exp_htum::State_::State_()
 void
 nest::iaf_psc_exp_htum::Parameters_::get( Dictionary& d ) const
 {
-  d[ names::E_L ] = E_L_; // Resting potential
+  d[ names::E_L ] = E_L_;  // Resting potential
   d[ names::I_e ] = I_e_;
-  d[ names::V_th ] = Theta_ + E_L_; // threshold value
+  d[ names::V_th ] = Theta_ + E_L_;  // threshold value
   d[ names::V_reset ] = V_reset_ + E_L_;
   d[ names::C_m ] = C_;
   d[ names::tau_m ] = Tau_;
@@ -168,7 +168,7 @@ nest::iaf_psc_exp_htum::Parameters_::set( const Dictionary& d, Node* node )
 void
 nest::iaf_psc_exp_htum::State_::get( Dictionary& d, const Parameters_& p ) const
 {
-  d[ names::V_m ] = V_m_ + p.E_L_; // Membrane potential
+  d[ names::V_m ] = V_m_ + p.E_L_;  // Membrane potential
 }
 
 void
@@ -222,10 +222,10 @@ nest::iaf_psc_exp_htum::iaf_psc_exp_htum( const iaf_psc_exp_htum& n )
 void
 nest::iaf_psc_exp_htum::init_buffers_()
 {
-  B_.spikes_ex_.clear(); // includes resize
-  B_.spikes_in_.clear(); // includes resize
-  B_.currents_.clear();  // includes resize
-  B_.logger_.reset();    // includes resize
+  B_.spikes_ex_.clear();  // includes resize
+  B_.spikes_in_.clear();  // includes resize
+  B_.currents_.clear();   // includes resize
+  B_.logger_.reset();     // includes resize
   ArchivingNode::clear_history();
 }
 
@@ -301,7 +301,7 @@ nest::iaf_psc_exp_htum::update( Time const& origin, const long from, const long 
   // evolve from timestep 'from' to timestep 'to' with steps of h each
   for ( long lag = from; lag < to; ++lag )
   {
-    if ( S_.r_abs_ == 0 ) // neuron not refractory, so evolve V
+    if ( S_.r_abs_ == 0 )  // neuron not refractory, so evolve V
     {
       S_.V_m_ =
         S_.V_m_ * V_.P22_ + S_.i_syn_ex_ * V_.P21ex_ + S_.i_syn_in_ * V_.P21in_ + ( P_.I_e_ + S_.i_0_ ) * V_.P20_;
@@ -322,7 +322,7 @@ nest::iaf_psc_exp_htum::update( Time const& origin, const long from, const long 
 
     if ( S_.r_tot_ == 0 )
     {
-      if ( S_.V_m_ >= P_.Theta_ ) // threshold crossing
+      if ( S_.V_m_ >= P_.Theta_ )  // threshold crossing
       {
         S_.r_abs_ = V_.RefractoryCountsAbs_;
         S_.r_tot_ = V_.RefractoryCountsTot_;

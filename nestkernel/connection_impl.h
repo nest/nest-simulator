@@ -120,6 +120,6 @@ Connection< targetidentifierT >::get_secondary_event()
   assert( false and "Non-primary connections have to provide get_secondary_event()" );
   return nullptr;
 }
-} // namespace nest
+}  // namespace nest
 
 #endif /* CONNECTION_IMPL_H */

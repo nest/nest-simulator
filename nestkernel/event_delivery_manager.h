@@ -36,7 +36,7 @@
 #include "connection_manager.h"
 #include "event.h"
 #include "kernel_manager.h"
-#include "mpi_manager.h" // OffGridSpike
+#include "mpi_manager.h"  // OffGridSpike
 #include "node.h"
 #include "per_thread_bool_indicator.h"
 #include "secondary_event.h"
@@ -379,8 +379,8 @@ private:
 
   //--------------------------------------------------//
 
-  bool off_grid_spiking_; //!< indicates whether spikes are not constrained to
-                          //!< the grid
+  bool off_grid_spiking_;  //!< indicates whether spikes are not constrained to
+                           //!< the grid
 
   /**
    * Table of pre-computed modulos.
@@ -462,9 +462,9 @@ private:
    */
   size_t global_max_spikes_per_rank_;
 
-  double send_recv_buffer_shrink_limit_; //!< shrink buffer only if below this limit
-  double send_recv_buffer_shrink_spare_; //!< leave this fraction more space than minimally needed
-  double send_recv_buffer_grow_extra_;   //!< when growing, add this fraction extra space
+  double send_recv_buffer_shrink_limit_;  //!< shrink buffer only if below this limit
+  double send_recv_buffer_shrink_spare_;  //!< leave this fraction more space than minimally needed
+  double send_recv_buffer_grow_extra_;    //!< when growing, add this fraction extra space
 
   /**
    * Log all resize events.
@@ -551,6 +551,6 @@ EventDeliveryManager::reset_spike_register_( const size_t tid )
   off_grid_emitted_spikes_register_[ tid ]->clear();
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* EVENT_DELIVERY_MANAGER_H */

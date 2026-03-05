@@ -222,9 +222,9 @@ public:
    **/
   size_t send_test_event( Node& target, size_t receptor_type, synindex, bool ) override;
 
-  void handle( SpikeEvent& ) override;         //!< accept spikes
-  void handle( CurrentEvent& e ) override;     //!< accept current
-  void handle( DataLoggingRequest& ) override; //!< allow recording with multimeter
+  void handle( SpikeEvent& ) override;          //!< accept spikes
+  void handle( CurrentEvent& e ) override;      //!< accept current
+  void handle( DataLoggingRequest& ) override;  //!< allow recording with multimeter
 
   size_t handles_test_event( SpikeEvent&, size_t ) override;
   size_t handles_test_event( CurrentEvent&, size_t ) override;
@@ -264,30 +264,30 @@ private:
 
   struct Parameters_
   {
-    double E_L;            //!< Resting Potential in mV
-    double E_ex;           //!< Excitatory reversal Potential in mV
-    double E_in;           //!< Inhibitory reversal Potential in mV
-    double V_th;           //!< Threshold Potential in mV
-    double V_reset;        //!< Reset Potential in mV
-    double C_m;            //!< Membrane Capacitance in pF
-    double g_L;            //!< Leak Conductance in nS
-    double t_ref;          //!< Refractory period in ms
-    double tau_AMPA;       //!< Synaptic Time Constant AMPA Synapse in ms
-    double tau_GABA;       //!< Synaptic Time Constant GABA Synapse in ms
-    double tau_rise_NMDA;  //!< Synaptic Rise Time Constant NMDA Synapse in ms
-    double tau_decay_NMDA; //!< Synaptic Decay Time Constant NMDA Synapse in ms
-    double alpha;          //!< Scaling factor for NMDA synapse in 1/ms
-    double conc_Mg2;       //!< Extracellular Magnesium Concentration in mM
+    double E_L;             //!< Resting Potential in mV
+    double E_ex;            //!< Excitatory reversal Potential in mV
+    double E_in;            //!< Inhibitory reversal Potential in mV
+    double V_th;            //!< Threshold Potential in mV
+    double V_reset;         //!< Reset Potential in mV
+    double C_m;             //!< Membrane Capacitance in pF
+    double g_L;             //!< Leak Conductance in nS
+    double t_ref;           //!< Refractory period in ms
+    double tau_AMPA;        //!< Synaptic Time Constant AMPA Synapse in ms
+    double tau_GABA;        //!< Synaptic Time Constant GABA Synapse in ms
+    double tau_rise_NMDA;   //!< Synaptic Rise Time Constant NMDA Synapse in ms
+    double tau_decay_NMDA;  //!< Synaptic Decay Time Constant NMDA Synapse in ms
+    double alpha;           //!< Scaling factor for NMDA synapse in 1/ms
+    double conc_Mg2;        //!< Extracellular Magnesium Concentration in mM
 
-    double gsl_error_tol; //!< GSL Error Tolerance
+    double gsl_error_tol;  //!< GSL Error Tolerance
 
     /**
      * Initialize parameters to their default values.
      **/
     Parameters_();
 
-    void get( Dictionary& ) const;             //!< Store current values in Dictionary
-    void set( const Dictionary&, Node* node ); //!< Set values from Dictionary
+    void get( Dictionary& ) const;              //!< Store current values in Dictionary
+    void set( const Dictionary&, Node* node );  //!< Set values from Dictionary
   };
 
 public:
@@ -318,16 +318,16 @@ public:
 
     size_t state_vec_size;
 
-    double* ode_state_; //!< state vector, must be C-array for GSL solver
-    long num_ports_;    //!< Number of ports
-    int r_;             //!< number of refractory steps remaining
+    double* ode_state_;  //!< state vector, must be C-array for GSL solver
+    long num_ports_;     //!< Number of ports
+    int r_;              //!< number of refractory steps remaining
 
-    double s_NMDA_sum; // For recording NMDA gating variables
-    double I_NMDA_;    // For recording NMDA currents
-    double I_AMPA_;    // For recording NMDA currents
-    double I_GABA_;    // For recording NMDA currents
+    double s_NMDA_sum;  // For recording NMDA gating variables
+    double I_NMDA_;     // For recording NMDA currents
+    double I_AMPA_;     // For recording NMDA currents
+    double I_GABA_;     // For recording NMDA currents
 
-    State_( const Parameters_& ); //!< Default initialization
+    State_( const Parameters_& );  //!< Default initialization
     State_( const State_& );
 
     void get( Dictionary& ) const;
@@ -368,10 +368,10 @@ private:
     //   GSL ODE solver data structures
     // -----------------------------------------------------------------------
 
-    gsl_odeiv_step* s_;    //!< stepping function
-    gsl_odeiv_control* c_; //!< adaptive stepsize control function
-    gsl_odeiv_evolve* e_;  //!< evolution function
-    gsl_odeiv_system sys_; //!< struct describing system
+    gsl_odeiv_step* s_;     //!< stepping function
+    gsl_odeiv_control* c_;  //!< adaptive stepsize control function
+    gsl_odeiv_evolve* e_;   //!< evolution function
+    gsl_odeiv_system sys_;  //!< struct describing system
 
     /*
      * integration_step_ should be reset with the neuron on ResetNetwork,
@@ -379,8 +379,8 @@ private:
      * step_, and the resolution cannot change after nodes have been created,
      * it is safe to place both here.
      */
-    double step_;             //!< step size in ms
-    double integration_step_; //!< current integration time step, updated by GSL
+    double step_;              //!< step size in ms
+    double integration_step_;  //!< current integration time step, updated by GSL
 
     /**
      * Input current injected by CurrentEvent.
@@ -440,10 +440,10 @@ private:
   // Data members -----------------------------------------------------------
 
   // keep the order of these lines, seems to give best performance
-  Parameters_ P_; //!< Free parameters.
-  State_ S_;      //!< Dynamic state.
-  Variables_ V_;  //!< Internal Variables
-  Buffers_ B_;    //!< Buffers.
+  Parameters_ P_;  //!< Free parameters.
+  State_ S_;       //!< Dynamic state.
+  Variables_ V_;   //!< Internal Variables
+  Buffers_ B_;     //!< Buffers.
 
   //! Mapping of recordables names to access functions
   static RecordablesMap< iaf_bw_2001_exact > recordablesMap_;
@@ -538,10 +538,10 @@ iaf_bw_2001_exact::get_status( Dictionary& d ) const
 inline void
 iaf_bw_2001_exact::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;     // temporary copy in case of errors
-  ptmp.set( d, this );       // throws if BadProperty
-  State_ stmp = S_;          // temporary copy in case of errors
-  stmp.set( d, ptmp, this ); // throws if BadProperty
+  Parameters_ ptmp = P_;      // temporary copy in case of errors
+  ptmp.set( d, this );        // throws if BadProperty
+  State_ stmp = S_;           // temporary copy in case of errors
+  stmp.set( d, ptmp, this );  // throws if BadProperty
 
   /*
    * We now know that (ptmp, stmp) are consistent. We do not
@@ -556,7 +556,7 @@ iaf_bw_2001_exact::set_status( const Dictionary& d )
   S_ = stmp;
 };
 
-} // namespace
+}  // namespace
 
-#endif // HAVE_GSL
-#endif // IAF_BW_2001
+#endif  // HAVE_GSL
+#endif  // IAF_BW_2001

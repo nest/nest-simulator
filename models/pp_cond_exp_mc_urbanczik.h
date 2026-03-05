@@ -99,21 +99,21 @@ private:
     NCOMP
   };
 
-  double phi_max;    //!< Parameter of the rate function
-  double rate_slope; //!< Parameter of the rate function
-  double beta;       //!< Parameter of the rate function
-  double theta;      //!< Parameter of the rate function
+  double phi_max;     //!< Parameter of the rate function
+  double rate_slope;  //!< Parameter of the rate function
+  double beta;        //!< Parameter of the rate function
+  double theta;       //!< Parameter of the rate function
   double phi( double u ) const;
   double h( double u ) const;
 
 public:
   // The Urbanczik parameters need to be public within this class as they are passed to the GSL solver
-  double g_conn[ NCOMP ];     //!< Conductances connecting compartments in nS
-  double g_L[ NCOMP ];        //!< Leak Conductance in nS
-  double C_m[ NCOMP ];        //!< Capacity of the membrane in pF
-  double E_L[ NCOMP ];        //!< Reversal Potential in mV
-  double tau_syn_ex[ NCOMP ]; //!< Rise time of excitatory synaptic conductance in ms
-  double tau_syn_in[ NCOMP ]; //!< Rise time of inhibitory synaptic conductance in ms
+  double g_conn[ NCOMP ];      //!< Conductances connecting compartments in nS
+  double g_L[ NCOMP ];         //!< Leak Conductance in nS
+  double C_m[ NCOMP ];         //!< Capacity of the membrane in pF
+  double E_L[ NCOMP ];         //!< Reversal Potential in mV
+  double tau_syn_ex[ NCOMP ];  //!< Rise time of excitatory synaptic conductance in ms
+  double tau_syn_in[ NCOMP ];  //!< Rise time of inhibitory synaptic conductance in ms
 };
 
 /* BeginUserDocs: neuron, point process, conductance-based, stochastic
@@ -378,22 +378,22 @@ private:
    */
   struct Parameters_
   {
-    double t_ref;         //!< Refractory period in ms
-    double E_ex[ NCOMP ]; //!< Excitatory reversal Potential in mV
-    double E_in[ NCOMP ]; //!< Inhibitory reversal Potential in mV
-    double I_e[ NCOMP ];  //!< Constant Current in pA
+    double t_ref;          //!< Refractory period in ms
+    double E_ex[ NCOMP ];  //!< Excitatory reversal Potential in mV
+    double E_in[ NCOMP ];  //!< Inhibitory reversal Potential in mV
+    double I_e[ NCOMP ];   //!< Constant Current in pA
 
     pp_cond_exp_mc_urbanczik_parameters urbanczik_params;
 
     /** Dead time in ms. */
     double dead_time_;
 
-    Parameters_();                                //!< Sets default parameter values
-    Parameters_( const Parameters_& );            //!< needed to copy C-arrays
-    Parameters_& operator=( const Parameters_& ); //!< needed to copy C-arrays
+    Parameters_();                                 //!< Sets default parameter values
+    Parameters_( const Parameters_& );             //!< needed to copy C-arrays
+    Parameters_& operator=( const Parameters_& );  //!< needed to copy C-arrays
 
-    void get( Dictionary& ) const; //!< Store current values in Dictionary
-    void set( const Dictionary& ); //!< Set values from Dictionary
+    void get( Dictionary& ) const;  //!< Store current values in Dictionary
+    void set( const Dictionary& );  //!< Set values from Dictionary
   };
 
 
@@ -418,7 +418,7 @@ public:
       V_M = 0,
       G_EXC,
       G_INH,
-      I_EXC, // in the paper it is I_dnd which accounts for both excitation and inhibition
+      I_EXC,  // in the paper it is I_dnd which accounts for both excitation and inhibition
       I_INH,
       STATE_VEC_COMPS
     };
@@ -428,9 +428,9 @@ public:
 
     //! neuron state, must be C-array for GSL solver
     double y_[ STATE_VEC_SIZE ];
-    int r_; //!< number of refractory steps remaining
+    int r_;  //!< number of refractory steps remaining
 
-    State_( const Parameters_& ); //!< Default initialization
+    State_( const Parameters_& );  //!< Default initialization
     State_( const State_& );
 
     State_& operator=( const State_& );
@@ -461,7 +461,7 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( pp_cond_exp_mc_urbanczik& ); //!< Sets buffer pointers to 0
+    Buffers_( pp_cond_exp_mc_urbanczik& );  //!< Sets buffer pointers to 0
     //! Sets buffer pointers to 0
     Buffers_( const Buffers_&, pp_cond_exp_mc_urbanczik& );
 
@@ -475,17 +475,17 @@ private:
     std::vector< RingBuffer > currents_;
 
     /** GSL ODE stuff */
-    gsl_odeiv_step* s_;    //!< stepping function
-    gsl_odeiv_control* c_; //!< adaptive stepsize control function
-    gsl_odeiv_evolve* e_;  //!< evolution function
-    gsl_odeiv_system sys_; //!< struct describing system
+    gsl_odeiv_step* s_;     //!< stepping function
+    gsl_odeiv_control* c_;  //!< adaptive stepsize control function
+    gsl_odeiv_evolve* e_;   //!< evolution function
+    gsl_odeiv_system sys_;  //!< struct describing system
 
     // IntegrationStep_ should be reset with the neuron on ResetNetwork,
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
-    double step_;            //!< step size in ms
-    double IntegrationStep_; //!< current integration time step, updated by GSL
+    double step_;             //!< step size in ms
+    double IntegrationStep_;  //!< current integration time step, updated by GSL
 
     /**
      * Input currents injected by CurrentEvent.
@@ -494,7 +494,7 @@ private:
      * It must be a part of Buffers_, since it is initialized once before
      * the first simulation, but not modified before later Simulate calls.
      */
-    double I_stim_[ NCOMP ]; //!< External Stimulus in pA
+    double I_stim_[ NCOMP ];  //!< External Stimulus in pA
   };
 
   // Internal variables ---------------------------------------------
@@ -506,9 +506,9 @@ private:
   {
     int RefractoryCounts_;
 
-    double h_;                          //!< simulation time step in ms
-    RngPtr rng_;                        //!< random number generator of my own thread
-    poisson_distribution poisson_dist_; //!< poisson distribution
+    double h_;                           //!< simulation time step in ms
+    RngPtr rng_;                         //!< random number generator of my own thread
+    poisson_distribution poisson_dist_;  //!< poisson distribution
   };
 
   // Access functions for UniversalDataLogger -------------------------------
@@ -651,10 +651,10 @@ pp_cond_exp_mc_urbanczik::get_status( Dictionary& d ) const
 inline void
 pp_cond_exp_mc_urbanczik::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, ptmp );   // throws if BadProperty
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
+  ptmp.set( d );          // throws if BadProperty
+  State_ stmp = S_;       // temporary copy in case of errors
+  stmp.set( d, ptmp );    // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -667,7 +667,7 @@ pp_cond_exp_mc_urbanczik::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-} // namespace
+}  // namespace
 
-#endif // HAVE_GSL
-#endif // PP_COND_EXP_MC_URBANCZIK_H
+#endif  // HAVE_GSL
+#endif  // PP_COND_EXP_MC_URBANCZIK_H

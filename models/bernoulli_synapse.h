@@ -232,6 +232,6 @@ bernoulli_synapse< targetidentifierT >::set_status( const Dictionary& d, Connect
   }
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef BERNOULLI_SYNAPSE_H */

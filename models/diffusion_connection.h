@@ -233,6 +233,6 @@ diffusion_connection< targetidentifierT >::get_secondary_event()
   return std::make_unique< DiffusionConnectionEvent >();
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef DIFFUSION_CONNECTION_H */

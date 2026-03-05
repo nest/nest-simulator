@@ -53,4 +53,4 @@ ConnectorBase::prepare_weight_recorder_event( WeightRecorderEvent& wr_e,
   wr_e.set_receiver_node_id( e.get_receiver_node_id() );
 }
 
-} // namespace nest
+}  // namespace nest

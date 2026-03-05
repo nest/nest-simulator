@@ -72,7 +72,7 @@ UniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const DataLoggingRequ
   , recording_offset_( Time::ms( 0. ) )
   , rec_int_steps_( 0 )
   , next_rec_step_( -1 )
-  , // flag as uninitialized
+  ,  // flag as uninitialized
   node_access_()
   , data_()
   , next_rec_( 2, 0 )
@@ -149,7 +149,7 @@ DynamicUniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const DataLogg
   , recording_offset_( Time::ms( 0. ) )
   , rec_int_steps_( 0 )
   , next_rec_step_( -1 )
-  , // flag as uninitialized
+  ,  // flag as uninitialized
   node_access_()
   , data_()
   , next_rec_( 2, 0 )
@@ -233,7 +233,7 @@ void
 DynamicUniversalDataLogger< HostNode >::DataLogger_::reset()
 {
   data_.clear();
-  next_rec_step_ = -1; // flag as uninitialized
+  next_rec_step_ = -1;  // flag as uninitialized
 }
 
 template < typename HostNode >
@@ -243,7 +243,7 @@ DynamicUniversalDataLogger< HostNode >::DataLogger_::init()
   if ( num_vars_ < 1 )
   {
     return;
-  } // not recording anything
+  }  // not recording anything
 
   // Next recording step is in current slice or beyond, indicates that
   // buffer is properly initialized.
@@ -271,7 +271,7 @@ DynamicUniversalDataLogger< HostNode >::DataLogger_::init()
   // step to be offset and then iterating until the variable is greater than current simulation time.
   if ( recording_offset_.get_steps() != 0 )
   {
-    next_rec_step_ = recording_offset_.get_steps() - 1; // shifted one to left
+    next_rec_step_ = recording_offset_.get_steps() - 1;  // shifted one to left
     while ( next_rec_step_ <= kernel::manager< SimulationManager >.get_time().get_steps() )
     {
       next_rec_step_ += rec_int_steps_;
@@ -284,8 +284,8 @@ DynamicUniversalDataLogger< HostNode >::DataLogger_::init()
 
   data_.resize( 2, DataLoggingReply::Container( recs_per_slice, DataLoggingReply::Item( num_vars_ ) ) );
 
-  next_rec_.resize( 2 );               // just for safety's sake
-  next_rec_[ 0 ] = next_rec_[ 1 ] = 0; // start at beginning of buffer
+  next_rec_.resize( 2 );                // just for safety's sake
+  next_rec_[ 0 ] = next_rec_[ 1 ] = 0;  // start at beginning of buffer
 }
 
 template < typename HostNode >
@@ -337,7 +337,7 @@ DynamicUniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host, con
   if ( num_vars_ < 1 )
   {
     return;
-  } // nothing to do
+  }  // nothing to do
 
   // The following assertions will fire if the user forgot to call init()
   // on the data logger.
@@ -434,7 +434,7 @@ void
 UniversalDataLogger< HostNode >::DataLogger_::reset()
 {
   data_.clear();
-  next_rec_step_ = -1; // flag as uninitialized
+  next_rec_step_ = -1;  // flag as uninitialized
 }
 
 template < typename HostNode >
@@ -473,7 +473,7 @@ UniversalDataLogger< HostNode >::DataLogger_::init()
   // step to be offset and then iterating until the variable is greater than current simulation time.
   if ( recording_offset_.get_steps() != 0 )
   {
-    next_rec_step_ = recording_offset_.get_steps() - 1; // shifted one to left
+    next_rec_step_ = recording_offset_.get_steps() - 1;  // shifted one to left
     while ( next_rec_step_ <= kernel::manager< SimulationManager >.get_time().get_steps() )
     {
       next_rec_step_ += rec_int_steps_;
@@ -486,8 +486,8 @@ UniversalDataLogger< HostNode >::DataLogger_::init()
 
   data_.resize( 2, DataLoggingReply::Container( recs_per_slice, DataLoggingReply::Item( num_vars_ ) ) );
 
-  next_rec_.resize( 2 );               // just for safety's sake
-  next_rec_[ 0 ] = next_rec_[ 1 ] = 0; // start at beginning of buffer
+  next_rec_.resize( 2 );                // just for safety's sake
+  next_rec_[ 0 ] = next_rec_[ 1 ] = 0;  // start at beginning of buffer
 }
 
 template < typename HostNode >

@@ -1251,4 +1251,4 @@ ConstantParameter::ConstantParameter( const Dictionary& d )
   returns_int_only_ = value_is_integer_( value_ );
 }
 
-} // namespace nest
+}  // namespace nest

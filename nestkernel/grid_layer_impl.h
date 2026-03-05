@@ -289,6 +289,6 @@ GridLayer< D >::get_global_positions_vector( const AbstractMask& mask,
 }
 
 
-} // namespace nest
+}  // namespace nest
 
 #endif

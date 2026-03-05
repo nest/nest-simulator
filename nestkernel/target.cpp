@@ -40,7 +40,7 @@ Target::Target()
 Target::Target( const Target& target )
   : remote_target_id_( target.remote_target_id_ )
 {
-  set_status( TARGET_ID_UNPROCESSED ); // initialize
+  set_status( TARGET_ID_UNPROCESSED );  // initialize
 }
 
 Target&
@@ -60,7 +60,7 @@ Target::Target( const size_t tid, const size_t rank, const synindex syn_id, cons
   set_rank( rank );
   set_tid( tid );
   set_syn_id( syn_id );
-  set_status( TARGET_ID_UNPROCESSED ); // initialize
+  set_status( TARGET_ID_UNPROCESSED );  // initialize
 }
 
 void
@@ -79,7 +79,7 @@ Target::get_lcid() const
 void
 Target::set_rank( const size_t rank )
 {
-  assert( rank <= MAX_RANK ); // MAX_RANK is allowed since it is not used as invalid value
+  assert( rank <= MAX_RANK );  // MAX_RANK is allowed since it is not used as invalid value
   remote_target_id_ = ( remote_target_id_ & ( ~MASK_RANK ) ) | ( static_cast< uint64_t >( rank ) << BITPOS_RANK );
 }
 
@@ -92,7 +92,7 @@ Target::get_rank() const
 void
 Target::set_tid( const size_t tid )
 {
-  assert( tid <= MAX_TID ); // MAX_TID is allowed since it is not used as invalid value
+  assert( tid <= MAX_TID );  // MAX_TID is allowed since it is not used as invalid value
   remote_target_id_ = ( remote_target_id_ & ( ~MASK_TID ) ) | ( static_cast< uint64_t >( tid ) << BITPOS_TID );
 }
 
@@ -121,10 +121,10 @@ Target::set_status( enum_status_target_id set_status_to )
   switch ( set_status_to )
   {
   case TARGET_ID_PROCESSED:
-    remote_target_id_ = remote_target_id_ | MASK_PROCESSED_FLAG; // set single bit
+    remote_target_id_ = remote_target_id_ | MASK_PROCESSED_FLAG;  // set single bit
     break;
   case TARGET_ID_UNPROCESSED:
-    remote_target_id_ = remote_target_id_ & ~MASK_PROCESSED_FLAG; // clear single bit
+    remote_target_id_ = remote_target_id_ & ~MASK_PROCESSED_FLAG;  // clear single bit
     break;
   default:
     throw InternalError( "Invalid remote target id status." );
@@ -134,7 +134,7 @@ Target::set_status( enum_status_target_id set_status_to )
 enum_status_target_id
 Target::get_status() const
 {
-  if ( ( remote_target_id_ & MASK_PROCESSED_FLAG ) >> BITPOS_PROCESSED_FLAG ) // test single bit
+  if ( ( remote_target_id_ & MASK_PROCESSED_FLAG ) >> BITPOS_PROCESSED_FLAG )  // test single bit
   {
     return TARGET_ID_PROCESSED;
   }
@@ -180,4 +180,4 @@ OffGridTarget::get_offset() const
   return offset_;
 }
 
-} // namespace nest
+}  // namespace nest

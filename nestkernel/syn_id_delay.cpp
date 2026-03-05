@@ -75,4 +75,4 @@ SynIdDelay::is_disabled() const
   return disabled;
 }
 
-} // namespace nest
+}  // namespace nest

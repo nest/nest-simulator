@@ -69,21 +69,21 @@ RecordablesMap< gif_psc_exp >::create()
  * ---------------------------------------------------------------- */
 
 nest::gif_psc_exp::Parameters_::Parameters_()
-  : g_L_( 4.0 )        // nS
-  , E_L_( -70.0 )      // mV
-  , V_reset_( -55.0 )  // mV
-  , Delta_V_( 0.5 )    // mV
-  , V_T_star_( -35 )   // mV
-  , lambda_0_( 0.001 ) // 1/ms
-  , t_ref_( 4.0 )      // ms
-  , c_m_( 80.0 )       // pF
-  , tau_stc_()         // ms
-  , q_stc_()           // nA
-  , tau_sfa_()         // ms
-  , q_sfa_()           // mV
-  , tau_ex_( 2.0 )     // ms
-  , tau_in_( 2.0 )     // ms
-  , I_e_( 0.0 )        // pA
+  : g_L_( 4.0 )         // nS
+  , E_L_( -70.0 )       // mV
+  , V_reset_( -55.0 )   // mV
+  , Delta_V_( 0.5 )     // mV
+  , V_T_star_( -35 )    // mV
+  , lambda_0_( 0.001 )  // 1/ms
+  , t_ref_( 4.0 )       // ms
+  , c_m_( 80.0 )        // pF
+  , tau_stc_()          // ms
+  , q_stc_()            // nA
+  , tau_sfa_()          // ms
+  , q_sfa_()            // mV
+  , tau_ex_( 2.0 )      // ms
+  , tau_in_( 2.0 )      // ms
+  , I_e_( 0.0 )         // pA
 {
 }
 
@@ -115,7 +115,7 @@ nest::gif_psc_exp::Parameters_::get( Dictionary& d ) const
   d[ names::V_reset ] = V_reset_;
   d[ names::Delta_V ] = Delta_V_;
   d[ names::V_T_star ] = V_T_star_;
-  d[ names::lambda_0 ] = lambda_0_ * 1000.0; // convert to 1/s
+  d[ names::lambda_0 ] = lambda_0_ * 1000.0;  // convert to 1/s
   d[ names::t_ref ] = t_ref_;
   d[ names::tau_syn_ex ] = tau_ex_;
   d[ names::tau_syn_in ] = tau_in_;
@@ -138,7 +138,7 @@ nest::gif_psc_exp::Parameters_::set( const Dictionary& d, Node* node )
 
   if ( update_value_param( d, names::lambda_0, lambda_0_, node ) )
   {
-    lambda_0_ /= 1000.0; // convert to 1/ms
+    lambda_0_ /= 1000.0;  // convert to 1/ms
   }
 
   update_value_param( d, names::t_ref, t_ref_, node );
@@ -212,9 +212,9 @@ nest::gif_psc_exp::Parameters_::set( const Dictionary& d, Node* node )
 void
 nest::gif_psc_exp::State_::get( Dictionary& d, const Parameters_& ) const
 {
-  d[ names::V_m ] = V_;     // Membrane potential
-  d[ names::E_sfa ] = sfa_; // Adaptive threshold potential
-  d[ names::I_stc ] = stc_; // Spike-triggered current
+  d[ names::V_m ] = V_;      // Membrane potential
+  d[ names::E_sfa ] = sfa_;  // Adaptive threshold potential
+  d[ names::I_stc ] = stc_;  // Spike-triggered current
 }
 
 void
@@ -261,10 +261,10 @@ nest::gif_psc_exp::gif_psc_exp( const gif_psc_exp& n )
 void
 nest::gif_psc_exp::init_buffers_()
 {
-  B_.spikes_ex_.clear(); // includes resize
-  B_.spikes_in_.clear(); // includes resize
-  B_.currents_.clear();  //!< includes resize
-  B_.logger_.reset();    //!< includes resize
+  B_.spikes_ex_.clear();  // includes resize
+  B_.spikes_in_.clear();  // includes resize
+  B_.currents_.clear();   //!< includes resize
+  B_.logger_.reset();     //!< includes resize
   ArchivingNode::clear_history();
 }
 
@@ -339,7 +339,7 @@ nest::gif_psc_exp::update( Time const& origin, const long from, const long to )
     S_.I_syn_ex_ += B_.spikes_ex_.get_value( lag );
     S_.I_syn_in_ += B_.spikes_in_.get_value( lag );
 
-    if ( S_.r_ref_ == 0 ) // neuron is not in refractory period
+    if ( S_.r_ref_ == 0 )  // neuron is not in refractory period
     {
       S_.V_ = V_.P30_ * ( S_.I_stim_ + P_.I_e_ - S_.stc_ ) + V_.P33_ * S_.V_ + V_.P31_ * P_.E_L_
         + S_.I_syn_ex_ * V_.P21ex_ + S_.I_syn_in_ * V_.P21in_;
@@ -373,8 +373,8 @@ nest::gif_psc_exp::update( Time const& origin, const long from, const long to )
     }
     else
     {
-      --S_.r_ref_;         // neuron is absolute refractory
-      S_.V_ = P_.V_reset_; // reset the membrane potential
+      --S_.r_ref_;          // neuron is absolute refractory
+      S_.V_ = P_.V_reset_;  // reset the membrane potential
     }
 
 
@@ -425,4 +425,4 @@ nest::gif_psc_exp::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-} // namespace
+}  // namespace

@@ -183,8 +183,8 @@ protected:
 private:
   struct Parameters_
   {
-    std::string label_;     //!< A user-defined label for symbolic device names.
-    std::string record_to_; //!< The name of the recording backend to use
+    std::string label_;      //!< A user-defined label for symbolic device names.
+    std::string record_to_;  //!< The name of the recording backend to use
 
     Parameters_();
     Parameters_( const Parameters_& ) = default;
@@ -194,7 +194,7 @@ private:
 
   struct State_
   {
-    size_t n_events_; //!< The number of events recorded by the device.
+    size_t n_events_;  //!< The number of events recorded by the device.
 
     State_();
     void get( Dictionary& ) const;
@@ -204,6 +204,6 @@ private:
   Dictionary backend_params_;
 };
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef RECORDING_DEVICE_H */

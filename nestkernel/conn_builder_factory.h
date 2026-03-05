@@ -123,6 +123,6 @@ public:
   }
 };
 
-} // namespace nest
+}  // namespace nest
 
 #endif

@@ -91,6 +91,6 @@ private:
   AssocMap associations_;
 };
 
-} // namespace nest
+}  // namespace nest
 
 #endif

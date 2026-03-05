@@ -66,14 +66,14 @@ RecordablesMap< iaf_chs_2007 >::create()
  * ---------------------------------------------------------------- */
 
 nest::iaf_chs_2007::Parameters_::Parameters_()
-  : tau_epsp_( 8.5 )   // in ms
-  , tau_reset_( 15.4 ) // in ms
-  , E_L_( 0.0 )        // normalized
-  , U_th_( 1.0 )       // normalized
-  , U_epsp_( 0.77 )    // normalized
-  , U_reset_( 2.31 )   // normalized
-  , C_( 1.0 )          // Should not be modified
-  , U_noise_( 0.0 )    // normalized
+  : tau_epsp_( 8.5 )    // in ms
+  , tau_reset_( 15.4 )  // in ms
+  , E_L_( 0.0 )         // normalized
+  , U_th_( 1.0 )        // normalized
+  , U_epsp_( 0.77 )     // normalized
+  , U_reset_( 2.31 )    // normalized
+  , C_( 1.0 )           // Should not be modified
+  , U_noise_( 0.0 )     // normalized
   , noise_()
 
 {
@@ -129,7 +129,7 @@ nest::iaf_chs_2007::Parameters_::set( const Dictionary& d, State_& s, Node* node
     throw BadProperty( "EPSP cannot be negative." );
   }
 
-  if ( U_reset_ < 0 ) // sign switched above
+  if ( U_reset_ < 0 )  // sign switched above
   {
     throw BadProperty( "Reset potential cannot be negative." );
   }
@@ -142,7 +142,7 @@ nest::iaf_chs_2007::Parameters_::set( const Dictionary& d, State_& s, Node* node
 void
 nest::iaf_chs_2007::State_::get( Dictionary& d ) const
 {
-  d[ names::V_m ] = V_m_; // Membrane potential
+  d[ names::V_m ] = V_m_;  // Membrane potential
 }
 
 void
@@ -189,8 +189,8 @@ nest::iaf_chs_2007::iaf_chs_2007( const iaf_chs_2007& n )
 void
 nest::iaf_chs_2007::init_buffers_()
 {
-  B_.spikes_ex_.clear(); // includes resize
-  B_.currents_.clear();  // includes resize
+  B_.spikes_ex_.clear();  // includes resize
+  B_.currents_.clear();   // includes resize
   B_.logger_.reset();
   ArchivingNode::clear_history();
 }
@@ -244,7 +244,7 @@ nest::iaf_chs_2007::update( const Time& origin, const long from, const long to )
     S_.V_m_ = S_.V_syn_ + S_.V_spike_ + noise_term;
 
 
-    if ( S_.V_m_ >= P_.U_th_ ) // threshold crossing
+    if ( S_.V_m_ >= P_.U_th_ )  // threshold crossing
     {
       S_.V_spike_ -= P_.U_reset_;
       S_.V_m_ -= P_.U_reset_;

@@ -260,7 +260,7 @@ Connector< ConnectionT >::send( const size_t tid,
     ++lcid_offset;
   }
 
-  return 1 + lcid_offset; // event was delivered to at least one target
+  return 1 + lcid_offset;  // event was delivered to at least one target
 }
 
 template < typename ConnectionT >
@@ -377,6 +377,6 @@ Connector< ConnectionT >::remove_disabled_connections( const size_t first_disabl
   C_.erase( C_.begin() + first_disabled_index, C_.end() );
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif

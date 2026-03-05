@@ -123,7 +123,7 @@ class Node
   friend class Model;
   friend class SimulationManager;
 
-  Node& operator=( const Node& ); //!< not implemented
+  Node& operator=( const Node& );  //!< not implemented
 
 public:
   Node();
@@ -1007,7 +1007,7 @@ public:
 
 
 private:
-  void set_node_id_( size_t ); //!< Set global node id
+  void set_node_id_( size_t );  //!< Set global node id
 
   /** Return a new dictionary datum .
    *
@@ -1074,11 +1074,11 @@ private:
    */
   int model_id_;
 
-  size_t thread_;      //!< thread node is assigned to
-  size_t vp_;          //!< virtual process node is assigned to
-  bool frozen_;        //!< node shall not be updated if true
-  bool initialized_;   //!< state and buffers have been initialized
-  bool node_uses_wfr_; //!< node uses waveform relaxation method
+  size_t thread_;       //!< thread node is assigned to
+  size_t vp_;           //!< virtual process node is assigned to
+  bool frozen_;         //!< node shall not be updated if true
+  bool initialized_;    //!< state and buffers have been initialized
+  bool node_uses_wfr_;  //!< node uses waveform relaxation method
 
   /**
    * Store index in NodeCollection.
@@ -1101,6 +1101,6 @@ Node::downcast( const Node& n )
   return *tp;
 }
 
-} // namespace
+}  // namespace
 
 #endif

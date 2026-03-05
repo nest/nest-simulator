@@ -108,7 +108,7 @@ private:
   Dictionary params_map_;
 };
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* ifdef HAVE_LIBNEUROSIM */
 

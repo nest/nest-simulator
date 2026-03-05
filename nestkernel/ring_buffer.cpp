@@ -51,7 +51,7 @@ nest::RingBuffer::resize()
 void
 nest::RingBuffer::clear()
 {
-  resize(); // does nothing if size is fine
+  resize();  // does nothing if size is fine
   // clear all elements
   buffer_.assign( buffer_.size(), 0.0 );
 }
@@ -103,7 +103,7 @@ nest::ListRingBuffer::resize()
 void
 nest::ListRingBuffer::clear()
 {
-  resize(); // does nothing if size is fine
+  resize();  // does nothing if size is fine
   // clear all elements
   for ( unsigned int i = 0; i < buffer_.size(); i++ )
   {
@@ -134,7 +134,7 @@ nest::RingBuffer::get_value( const long offs )
   // take modulo into account when indexing
   long idx = get_index_( offs );
   double val = buffer_[ idx ];
-  buffer_[ idx ] = 0.0; // clear buffer after reading
+  buffer_[ idx ] = 0.0;  // clear buffer after reading
   return val;
 }
 
@@ -178,7 +178,7 @@ nest::MultRBuffer::get_value( const long offs )
   // take modulo into account when indexing
   long idx = get_index_( offs );
   double val = buffer_[ idx ];
-  buffer_[ idx ] = 0.0; // clear buffer after reading
+  buffer_[ idx ] = 0.0;  // clear buffer after reading
   return val;
 }
 

@@ -377,4 +377,4 @@ nest::cm_default::handle( DataLoggingRequest& e )
   logger_.handle( e );
 }
 
-} // namespace
+}  // namespace

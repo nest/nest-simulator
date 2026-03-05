@@ -33,7 +33,7 @@
 namespace nest
 {
 class Node;
-} // namespace nest
+}  // namespace nest
 
 
 nest::ConnParameter*
@@ -335,4 +335,4 @@ ParameterConnParameterWrapper::provides_long() const
   return parameter_->returns_int_only();
 }
 
-} // namespace nest
+}  // namespace nest

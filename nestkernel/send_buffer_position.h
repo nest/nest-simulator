@@ -43,9 +43,9 @@ struct AssignedRanks;
 class SendBufferPosition
 {
 private:
-  std::vector< size_t > begin_; //!< first entry for rank
-  std::vector< size_t > end_;   //!< one beyond last entry for rank
-  std::vector< size_t > idx_;   //!< next entry in rank to write to
+  std::vector< size_t > begin_;  //!< first entry for rank
+  std::vector< size_t > end_;    //!< one beyond last entry for rank
+  std::vector< size_t > idx_;    //!< next entry in rank to write to
 
 public:
   SendBufferPosition();
@@ -129,6 +129,6 @@ public:
   void increase( const size_t rank );
 };
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* SEND_BUFFER_POSITION_H */

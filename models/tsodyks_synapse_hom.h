@@ -177,10 +177,10 @@ public:
    */
   void set_status( const Dictionary& d, ConnectorModel& cm );
 
-  double tau_psc_; //!< [ms] time constant of postsyn current
-  double tau_fac_; //!< [ms] time constant for fascilitation
-  double tau_rec_; //!< [ms] time constant for recovery
-  double U_;       //!< asymptotic value of probability of release
+  double tau_psc_;  //!< [ms] time constant of postsyn current
+  double tau_fac_;  //!< [ms] time constant for fascilitation
+  double tau_rec_;  //!< [ms] time constant for recovery
+  double U_;        //!< asymptotic value of probability of release
 };
 
 
@@ -271,10 +271,10 @@ public:
   }
 
 private:
-  double x_;           //!< amount of resources in recovered state
-  double y_;           //!< amount of resources in active state
-  double u_;           //!< actual probability of release
-  double t_lastspike_; //!< time point of last spike emitted
+  double x_;            //!< amount of resources in recovered state
+  double y_;            //!< amount of resources in active state
+  double u_;            //!< actual probability of release
+  double t_lastspike_;  //!< time point of last spike emitted
 };
 
 template < typename targetidentifierT >
@@ -381,6 +381,6 @@ tsodyks_synapse_hom< targetidentifierT >::set_status( const Dictionary& d, Conne
   d.update_value( names::u, u_ );
 }
 
-} // namespace
+}  // namespace
 
-#endif // TSODYKS_SYNAPSE_HOM_H
+#endif  // TSODYKS_SYNAPSE_HOM_H

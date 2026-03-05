@@ -155,8 +155,8 @@ private:
    */
   struct Parameters_
   {
-    double rate_;      //!< process rate [spks/s]
-    double dead_time_; //!< dead time [ms]
+    double rate_;       //!< process rate [spks/s]
+    double dead_time_;  //!< dead time [ms]
 
     /**
      * Number of targets.
@@ -166,10 +166,10 @@ private:
      */
     size_t num_targets_;
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( Dictionary& ) const;             //!< Store current values in dictionary
-    void set( const Dictionary&, Node* node ); //!< Set values from dictionary
+    void get( Dictionary& ) const;              //!< Store current values in dictionary
+    void set( const Dictionary&, Node* node );  //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------
@@ -192,8 +192,8 @@ private:
 
   struct Variables_
   {
-    double inv_rate_ms_;               //!< 1000.0 / Parameters_.rate_
-    exponential_distribution exp_dev_; //!< random deviate generator
+    double inv_rate_ms_;                //!< 1000.0 / Parameters_.rate_
+    exponential_distribution exp_dev_;  //!< random deviate generator
 
     /**
      * @name update-hook communication.
@@ -205,8 +205,8 @@ private:
      *   t_min_active_ < t <= t_max_active_
      */
     //@{
-    Time t_min_active_; //!< start of generator activity in slice
-    Time t_max_active_; //!< end of generator activity in slice
+    Time t_min_active_;  //!< start of generator activity in slice
+    Time t_max_active_;  //!< end of generator activity in slice
     //@}
   };
 
@@ -235,7 +235,7 @@ poisson_generator_ps::send_test_event( Node& target, size_t receptor_type, synin
     const size_t p = target.handles_test_event( e, receptor_type );
     if ( p != invalid_port and not is_model_prototype() )
     {
-      ++P_.num_targets_; // count number of targets
+      ++P_.num_targets_;  // count number of targets
     }
     return p;
   }
@@ -251,8 +251,8 @@ poisson_generator_ps::get_status( Dictionary& d ) const
 inline void
 poisson_generator_ps::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d, this );   // throws if BadProperty
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
+  ptmp.set( d, this );    // throws if BadProperty
 
   // If the rate is changed, the event_hook must handle the interval from
   // the rate change to the first subsequent spike.
@@ -289,6 +289,6 @@ poisson_generator_ps::get_type() const
   return StimulationDevice::Type::SPIKE_GENERATOR;
 }
 
-} // namespace
+}  // namespace
 
-#endif // POISSON_GENERATOR_PS_H
+#endif  // POISSON_GENERATOR_PS_H

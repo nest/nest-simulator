@@ -111,7 +111,7 @@ nest::spike_dilutor::init_state_()
 void
 nest::spike_dilutor::init_buffers_()
 {
-  B_.n_spikes_.clear(); // includes resize
+  B_.n_spikes_.clear();  // includes resize
   device_.init_buffers();
 }
 
@@ -132,7 +132,7 @@ nest::spike_dilutor::update( Time const& T, const long from, const long to )
   {
     if ( not device_.is_active( T ) )
     {
-      return; // no spikes to be repeated
+      return;  // no spikes to be repeated
     }
 
     // generate spikes of mother process for each time slice

@@ -226,4 +226,4 @@ ConnectionCreator::extract_params_( const Dictionary& dict, std::vector< Diction
   }
 }
 
-} // namespace nest
+}  // namespace nest

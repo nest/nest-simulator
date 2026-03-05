@@ -70,7 +70,7 @@ nest::SourceTable::initialize()
     sources_.at( tid ).resize( 0 );
     resize_sources();
     compressible_sources_.at( tid ).resize( 0 );
-  } // of omp parallel
+  }  // of omp parallel
 }
 
 void
@@ -211,14 +211,14 @@ nest::SourceTable::remove_disabled_sources( const size_t tid, const synindex syn
 
   if ( sources_[ tid ].size() <= syn_id )
   {
-    return invalid_index; // no source table entry for this synapse model
+    return invalid_index;  // no source table entry for this synapse model
   }
 
   BlockVector< Source >& mysources = sources_[ tid ][ syn_id ];
   const size_t max_size = mysources.size();
   if ( max_size == 0 )
   {
-    return invalid_index; // no connections for this synapse model
+    return invalid_index;  // no connections for this synapse model
   }
 
   // lcid needs to be signed, to allow lcid >= 0 check in while loop
@@ -229,10 +229,10 @@ nest::SourceTable::remove_disabled_sources( const size_t tid, const synindex syn
   {
     --lcid;
   }
-  const size_t first_invalid_lcid = static_cast< size_t >( lcid + 1 ); // loop stopped on first valid entry or -1
+  const size_t first_invalid_lcid = static_cast< size_t >( lcid + 1 );  // loop stopped on first valid entry or -1
   if ( first_invalid_lcid == max_size )
   {
-    return invalid_index; // all lcids are valid, nothing to remove
+    return invalid_index;  // all lcids are valid, nothing to remove
   }
 
   mysources.erase( mysources.begin() + first_invalid_lcid, mysources.end() );
@@ -311,7 +311,7 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const size_t
     kernel::manager< MPIManager >.set_recv_counts_secondary_events_in_int_per_rank(
       recv_counts_secondary_events_in_int_per_rank );
     delete unique_secondary_source_node_id_syn_id;
-  } // of omp single
+  }  // of omp single
 }
 
 void
@@ -355,8 +355,8 @@ nest::SourceTable::previous_entry_has_same_source_( const SourceTablePosition& c
   assert( not current_position.is_invalid() );
 
   const auto& local_sources = sources_[ current_position.tid ][ current_position.syn_id ];
-  const long previous_lcid = current_position.lcid - 1; // needs to be a signed type such that negative
-                                                        // values can signal invalid indices
+  const long previous_lcid = current_position.lcid - 1;  // needs to be a signed type such that negative
+                                                         // values can signal invalid indices
 
   return ( previous_lcid >= 0 and not local_sources[ previous_lcid ].is_processed()
     and local_sources[ previous_lcid ].get_node_id() == current_source.get_node_id() );
@@ -368,7 +368,7 @@ nest::SourceTable::populate_target_data_fields_( const SourceTablePosition& curr
   const size_t source_rank,
   TargetData& next_target_data ) const
 {
-  assert( not kernel::manager< ConnectionManager >.use_compressed_spikes() ); // handled elsewhere
+  assert( not kernel::manager< ConnectionManager >.use_compressed_spikes() );  // handled elsewhere
 
   const auto node_id = current_source.get_node_id();
 
@@ -378,7 +378,7 @@ nest::SourceTable::populate_target_data_fields_( const SourceTablePosition& curr
     kernel::manager< VPManager >.vp_to_thread( kernel::manager< VPManager >.node_id_to_vp( node_id ) ) );
   next_target_data.reset_marker();
 
-  if ( current_source.is_primary() ) // primary connection, i.e., chemical synapses
+  if ( current_source.is_primary() )  // primary connection, i.e., chemical synapses
   {
     next_target_data.set_is_primary( true );
 
@@ -389,7 +389,7 @@ nest::SourceTable::populate_target_data_fields_( const SourceTablePosition& curr
     target_fields.set_tid( current_position.tid );
     target_fields.set_lcid( current_position.lcid );
   }
-  else // secondary connection, e.g., gap junctions
+  else  // secondary connection, e.g., gap junctions
   {
     next_target_data.set_is_primary( false );
 
@@ -419,7 +419,7 @@ nest::SourceTable::get_next_target_data( const size_t tid,
 
   if ( current_position.is_invalid() )
   {
-    return false; // nothing to do here
+    return false;  // nothing to do here
   }
 
   // we stay in this loop either until we can return a valid
@@ -429,7 +429,7 @@ nest::SourceTable::get_next_target_data( const size_t tid,
     current_position.seek_to_next_valid_index( sources_ );
     if ( current_position.is_invalid() )
     {
-      return false; // reached the end of the sources table
+      return false;  // reached the end of the sources table
     }
 
     // the current position contains an entry, so we retrieve it
@@ -451,7 +451,7 @@ nest::SourceTable::get_next_target_data( const size_t tid,
     // no need to communicate this entry if the previous entry has the same source
     if ( previous_entry_has_same_source_( current_position, current_source ) )
     {
-      current_source.set_processed( true ); // no need to look at this entry again
+      current_source.set_processed( true );  // no need to look at this entry again
       current_position.decrease();
       continue;
     }
@@ -472,7 +472,7 @@ nest::SourceTable::get_next_target_data( const size_t tid,
     current_source.set_processed( true );
 
     current_position.decrease();
-    return true; // found a valid entry
+    return true;  // found a valid entry
   }
 }
 
@@ -600,12 +600,12 @@ nest::SourceTable::fill_compressed_spike_data(
         assert( compressed_spike_data[ syn_id ][ source_index ][ target_thread ].get_lcid() == invalid_lcid );
 
         compressed_spike_data[ syn_id ][ source_index ][ target_thread ] = connection.second;
-      } // for connection
+      }  // for connection
 
       compressible_sources_[ target_thread ][ syn_id ].clear();
 
-    } // for target_thread
-  }   // for syn_id
+    }  // for target_thread
+  }    // for syn_id
 }
 
 // Argument name only needed if full logging is activated. Macro-protect to avoid unused argument warning.

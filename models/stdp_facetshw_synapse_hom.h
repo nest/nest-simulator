@@ -369,8 +369,8 @@ private:
   bool init_flag_;
   long synapse_id_;
   double next_readout_time_;
-  unsigned int discrete_weight_; // TODO: TP: only needed in send, move to common
-                                 // properties or "static"?
+  unsigned int discrete_weight_;  // TODO: TP: only needed in send, move to common
+                                  // properties or "static"?
   double t_lastspike_;
 };
 
@@ -562,9 +562,9 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::STDPFACETSHWHomCommonPrope
   , tau_minus_( 20.0 )
   , Wmax_( 100.0 )
   , no_synapses_( 0 )
-  , synapses_per_driver_( 50 )   // hardware efficiency of 50/256=20%,
-                                 // which is comparable to Fieres et al. (2008)
-  , driver_readout_time_( 15.0 ) // in ms; measured on hardware
+  , synapses_per_driver_( 50 )    // hardware efficiency of 50/256=20%,
+                                  // which is comparable to Fieres et al. (2008)
+  , driver_readout_time_( 15.0 )  // in ms; measured on hardware
 {
   lookuptable_0_.resize( 16 );
   lookuptable_1_.resize( 16 );
@@ -795,7 +795,7 @@ stdp_facetshw_synapse_hom< targetidentifierT >::stdp_facetshw_synapse_hom()
   , a_causal_( 0.0 )
   , a_acausal_( 0.0 )
   , a_thresh_th_( 21.835 )
-  , a_thresh_tl_( 21.835 ) // exp(-10ms/20ms) * 36SSPs
+  , a_thresh_tl_( 21.835 )  // exp(-10ms/20ms) * 36SSPs
   , init_flag_( false )
   , synapse_id_( 0 )
   , next_readout_time_( 0.0 )
@@ -847,6 +847,6 @@ stdp_facetshw_synapse_hom< targetidentifierT >::set_status( const Dictionary& d,
   // setting discrete_weight_ does not make sense, is temporary variable
 }
 
-} // of namespace nest
+}  // of namespace nest
 
-#endif // of #ifndef STDP_SYNAPSE_FACETSHW_HOM_H
+#endif  // of #ifndef STDP_SYNAPSE_FACETSHW_HOM_H

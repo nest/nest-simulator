@@ -57,6 +57,6 @@ EventDeliveryManager::send( Node& source, EventT& e, const long lag )
   send_local_( source, e, lag );
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* EVENT_DELIVERY_MANAGER_IMPL_H */

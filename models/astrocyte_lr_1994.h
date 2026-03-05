@@ -44,7 +44,7 @@ class CurrentEvent;
 class DataLoggingRequest;
 class SICEvent;
 class SpikeEvent;
-} // namespace nest
+}  // namespace nest
 
 #ifdef HAVE_GSL
 
@@ -331,29 +331,29 @@ private:
   struct Parameters_
   {
     // parameters based on Nadkarni & Jung (2003)
-    double Ca_tot_;    //!< Total free astrocytic calcium concentration in terms of cytosolic volume in µM
-    double IP3_0_;     //!< Baseline value of the astrocytic IP3 concentration in µM
-    double Kd_IP3_1_;  //!< First astrocytic IP3R dissociation constant of IP3 in µM
-    double Kd_IP3_2_;  //!< Second astrocytic IP3R dissociation constant of IP3 in µM
-    double Kd_act_;    //!< Astrocytic IP3R dissociation constant of calcium (activation) in µM
-    double Kd_inh_;    //!< Astrocytic IP3R dissociation constant of calcium (inhibition) in µM
-    double Km_SERCA_;  //!< Half-activation constant of astrocytic SERCA pump in µM
-    double SIC_scale_; //!< Parameter determining the scale of astrocytic SIC output
-    double SIC_th_; //!< Threshold that determines the minimal level of intracellular astrocytic calcium sufficient to
-                    //!< induce SIC in µM
-    double delta_IP3_; //!< Parameter determining the increase in astrocytic IP3 concentration induced by synaptic input
-                       //!< in µM
-    double k_IP3R_;    //!< Astrocytic IP3R binding constant for calcium inhibition in 1/(µM*ms)
-    double rate_IP3R_; //!< Maximum rate of calcium release via astrocytic IP3R in 1/ms
-    double rate_L_;    //!< Rate constant of calcium leak from astrocytic ER to cytosol in 1/ms
-    double rate_SERCA_;   //!< Maximum rate of calcium uptake by astrocytic SERCA pump in µM/ms
-    double ratio_ER_cyt_; //!< Ratio between astrocytic ER and cytosol volumes
-    double tau_IP3_;      //!< Time constant of the exponential decay of astrocytic IP3 in ms
+    double Ca_tot_;     //!< Total free astrocytic calcium concentration in terms of cytosolic volume in µM
+    double IP3_0_;      //!< Baseline value of the astrocytic IP3 concentration in µM
+    double Kd_IP3_1_;   //!< First astrocytic IP3R dissociation constant of IP3 in µM
+    double Kd_IP3_2_;   //!< Second astrocytic IP3R dissociation constant of IP3 in µM
+    double Kd_act_;     //!< Astrocytic IP3R dissociation constant of calcium (activation) in µM
+    double Kd_inh_;     //!< Astrocytic IP3R dissociation constant of calcium (inhibition) in µM
+    double Km_SERCA_;   //!< Half-activation constant of astrocytic SERCA pump in µM
+    double SIC_scale_;  //!< Parameter determining the scale of astrocytic SIC output
+    double SIC_th_;  //!< Threshold that determines the minimal level of intracellular astrocytic calcium sufficient to
+                     //!< induce SIC in µM
+    double delta_IP3_;     //!< Parameter determining the increase in astrocytic IP3 concentration induced by synaptic
+                           //!< input in µM
+    double k_IP3R_;        //!< Astrocytic IP3R binding constant for calcium inhibition in 1/(µM*ms)
+    double rate_IP3R_;     //!< Maximum rate of calcium release via astrocytic IP3R in 1/ms
+    double rate_L_;        //!< Rate constant of calcium leak from astrocytic ER to cytosol in 1/ms
+    double rate_SERCA_;    //!< Maximum rate of calcium uptake by astrocytic SERCA pump in µM/ms
+    double ratio_ER_cyt_;  //!< Ratio between astrocytic ER and cytosol volumes
+    double tau_IP3_;       //!< Time constant of the exponential decay of astrocytic IP3 in ms
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( Dictionary& ) const;             //!< Store current values in Dictionary
-    void set( const Dictionary&, Node* node ); //!< Set values from dicitonary
+    void get( Dictionary& ) const;              //!< Store current values in Dictionary
+    void set( const Dictionary&, Node* node );  //!< Set values from dicitonary
   };
 
 public:
@@ -375,15 +375,15 @@ public:
     enum StateVecElems
     {
       IP3 = 0,
-      Ca_astro, // 1
-      h_IP3R,   // 2
+      Ca_astro,  // 1
+      h_IP3R,    // 2
       STATE_VEC_SIZE
     };
 
     //! cell state, must be C-array for GSL solver
     double y_[ STATE_VEC_SIZE ];
 
-    State_( const Parameters_& ); //!< Default initialization
+    State_( const Parameters_& );  //!< Default initialization
     State_( const State_& );
 
     State_& operator=( const State_& );
@@ -399,8 +399,8 @@ public:
    */
   struct Buffers_
   {
-    Buffers_( astrocyte_lr_1994& );                  //!< Sets buffer pointers to 0
-    Buffers_( const Buffers_&, astrocyte_lr_1994& ); //!< Sets buffer pointers to 0
+    Buffers_( astrocyte_lr_1994& );                   //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, astrocyte_lr_1994& );  //!< Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< astrocyte_lr_1994 > logger_;
@@ -410,16 +410,16 @@ public:
     RingBuffer currents_;
 
     /** GSL ODE stuff */
-    gsl_odeiv_step* s_;    //!< stepping function
-    gsl_odeiv_control* c_; //!< adaptive stepsize control function
-    gsl_odeiv_evolve* e_;  //!< evolution function
-    gsl_odeiv_system sys_; //!< struct describing system
+    gsl_odeiv_step* s_;     //!< stepping function
+    gsl_odeiv_control* c_;  //!< adaptive stepsize control function
+    gsl_odeiv_evolve* e_;   //!< evolution function
+    gsl_odeiv_system sys_;  //!< struct describing system
 
     // Since IntergrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
-    double step_;            //!< step size in ms
-    double IntegrationStep_; //!< current integration time step, updated by GSL
+    double step_;             //!< step size in ms
+    double IntegrationStep_;  //!< current integration time step, updated by GSL
 
     /**
      * Input current injected by CurrentEvent.
@@ -499,10 +499,10 @@ astrocyte_lr_1994::get_status( Dictionary& d ) const
 inline void
 astrocyte_lr_1994::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;     // temporary copy in case of errors
-  ptmp.set( d, this );       // throws if BadProperty
-  State_ stmp = S_;          // temporary copy in case of errors
-  stmp.set( d, ptmp, this ); // throws if BadProperty
+  Parameters_ ptmp = P_;      // temporary copy in case of errors
+  ptmp.set( d, this );        // throws if BadProperty
+  State_ stmp = S_;           // temporary copy in case of errors
+  stmp.set( d, ptmp, this );  // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -514,7 +514,7 @@ astrocyte_lr_1994::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-} // namespace
+}  // namespace
 
-#endif // HAVE_GSL
-#endif // ASTROCYTE_LR_1994_H
+#endif  // HAVE_GSL
+#endif  // ASTROCYTE_LR_1994_H

@@ -123,7 +123,7 @@ private:
 
   static constexpr int MAX_LID = generate_max_value( NUM_BITS_LID );
 
-  unsigned int source_lid_ : NUM_BITS_LID; //!< local id of presynaptic neuron
+  unsigned int source_lid_ : NUM_BITS_LID;  //!< local id of presynaptic neuron
   //! thread index of presynaptic neuron
   unsigned int source_tid_ : NUM_BITS_TID;
   unsigned int marker_ : NUM_BITS_MARKER;
@@ -156,6 +156,6 @@ public:
 //! check legal size
 using success_target_data_size = StaticAssert< sizeof( TargetData ) == 12 >::success;
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifndef TARGET_DATA_H */

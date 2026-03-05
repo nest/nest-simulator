@@ -346,11 +346,11 @@ slice_nc( const NodeCollectionPTR nc, long start, long stop, long step )
 
   if ( start >= 0 )
   {
-    start -= 1; // adjust from 1-based to 0-based indexing
+    start -= 1;  // adjust from 1-based to 0-based indexing
   }
   else
   {
-    start += g_size; // automatically correct for 0-based indexing
+    start += g_size;  // automatically correct for 0-based indexing
   }
 
   if ( stop >= 0 )
@@ -360,7 +360,7 @@ slice_nc( const NodeCollectionPTR nc, long start, long stop, long step )
   }
   else
   {
-    stop += g_size + 1; // adjust from 0- to 1- based indexin
+    stop += g_size + 1;  // adjust from 0- to 1- based indexin
   }
 
   return nc->slice( start, stop, step );
@@ -603,7 +603,7 @@ get_model_defaults( const std::string& component )
   }
 
   throw UnknownComponent( component );
-  return Dictionary(); // supress missing return value warning; never reached
+  return Dictionary();  // supress missing return value warning; never reached
 }
 
 ParameterPTR
@@ -793,4 +793,4 @@ message( const VerbosityLevel level,
   nest::kernel::manager< nest::LoggingManager >.publish_log( level, function, message, file, line );
 }
 
-} // namespace nest
+}  // namespace nest

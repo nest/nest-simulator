@@ -89,7 +89,7 @@ astrocyte_lr_1994_dynamics( double time, const double y[], double f[], void* pno
 
   // Ca_tot_ corresponds to the c_0 (total [Ca++] in terms of cytosolic vol)
   // in De Young & Keizer (1992) and Li & Rinzel (1994)
-  const double calc = std::max( 0.0, std::min( y[ S::Ca_astro ], node.P_.Ca_tot_ ) ); // keep calcium within limits
+  const double calc = std::max( 0.0, std::min( y[ S::Ca_astro ], node.P_.Ca_tot_ ) );  // keep calcium within limits
   const double alpha_h_ip3r =
     node.P_.k_IP3R_ * node.P_.Kd_inh_ * ( ip3 + node.P_.Kd_IP3_1_ ) / ( ip3 + node.P_.Kd_IP3_2_ );
   const double beta_h_ip3r = node.P_.k_IP3R_ * calc;
@@ -116,22 +116,22 @@ astrocyte_lr_1994_dynamics( double time, const double y[], double f[], void* pno
 
 nest::astrocyte_lr_1994::Parameters_::Parameters_()
   // parameters based on Nadkarni & Jung (2003)
-  : Ca_tot_( 2.0 )      // µM
-  , IP3_0_( 0.16 )      // µM
-  , Kd_IP3_1_( 0.13 )   // µM
-  , Kd_IP3_2_( 0.9434 ) // µM
-  , Kd_act_( 0.08234 )  // µM
-  , Kd_inh_( 1.049 )    // µM
-  , Km_SERCA_( 0.1 )    // µM
+  : Ca_tot_( 2.0 )       // µM
+  , IP3_0_( 0.16 )       // µM
+  , Kd_IP3_1_( 0.13 )    // µM
+  , Kd_IP3_2_( 0.9434 )  // µM
+  , Kd_act_( 0.08234 )   // µM
+  , Kd_inh_( 1.049 )     // µM
+  , Km_SERCA_( 0.1 )     // µM
   , SIC_scale_( 1.0 )
-  , SIC_th_( 0.19669 )    // µM
-  , delta_IP3_( 0.0002 )  // µM
-  , k_IP3R_( 0.0002 )     // 1/(µM*ms)
-  , rate_IP3R_( 0.006 )   // 1/ms
-  , rate_L_( 0.00011 )    // 1/ms
-  , rate_SERCA_( 0.0009 ) // µM/ms
+  , SIC_th_( 0.19669 )     // µM
+  , delta_IP3_( 0.0002 )   // µM
+  , k_IP3R_( 0.0002 )      // 1/(µM*ms)
+  , rate_IP3R_( 0.006 )    // 1/ms
+  , rate_L_( 0.00011 )     // 1/ms
+  , rate_SERCA_( 0.0009 )  // µM/ms
   , ratio_ER_cyt_( 0.185 )
-  , tau_IP3_( 7142.0 ) // ms
+  , tau_IP3_( 7142.0 )  // ms
 {
 }
 
@@ -370,10 +370,10 @@ nest::astrocyte_lr_1994::~astrocyte_lr_1994()
 void
 nest::astrocyte_lr_1994::init_buffers_()
 {
-  B_.spike_exc_.clear(); // includes resize
+  B_.spike_exc_.clear();  // includes resize
   B_.currents_.clear();
   B_.sic_values.resize(
-    kernel::manager< ConnectionManager >.get_min_delay(), 0.0 ); // set size of SIC buffer according to min_delay
+    kernel::manager< ConnectionManager >.get_min_delay(), 0.0 );  // set size of SIC buffer according to min_delay
 
   B_.logger_.reset();
 
@@ -455,11 +455,11 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
-        &B_.sys_,             // system of ODE
-        &t,                   // from t
-        B_.step_,             // to t <= step
-        &B_.IntegrationStep_, // integration step size
-        S_.y_ );              // neuronal state
+        &B_.sys_,              // system of ODE
+        &t,                    // from t
+        B_.step_,              // to t <= step
+        &B_.IntegrationStep_,  // integration step size
+        S_.y_ );               // neuronal state
       if ( status != GSL_SUCCESS )
       {
         throw GSLSolverFailure( get_name(), status );
@@ -525,4 +525,4 @@ nest::astrocyte_lr_1994::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-#endif // HAVE_GSL
+#endif  // HAVE_GSL

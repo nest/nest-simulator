@@ -176,4 +176,4 @@ TargetData::is_primary() const
   return is_primary_;
 }
 
-} // namespace nest
+}  // namespace nest

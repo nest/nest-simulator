@@ -302,11 +302,11 @@ stdp_nn_restr_synapse< targetidentifierT >::send( Event& e, size_t t, const Comm
   if ( start != finish )
   {
     double nearest_neighbor_Kminus;
-    double value_to_throw_away; // discard Kminus and Kminus_triplet here
+    double value_to_throw_away;  // discard Kminus and Kminus_triplet here
     target->get_K_values( t_spike - dendritic_delay,
-      value_to_throw_away, // discard Kminus
+      value_to_throw_away,  // discard Kminus
       nearest_neighbor_Kminus,
-      value_to_throw_away // discard Kminus_triplet
+      value_to_throw_away  // discard Kminus_triplet
     );
     weight_ = depress_( weight_, nearest_neighbor_Kminus );
   }
@@ -374,6 +374,6 @@ stdp_nn_restr_synapse< targetidentifierT >::set_status( const Dictionary& d, Con
   }
 }
 
-} // of namespace nest
+}  // of namespace nest
 
-#endif // of #ifndef STDP_NN_RESTR_SYNAPSE_H
+#endif  // of #ifndef STDP_NN_RESTR_SYNAPSE_H

@@ -649,6 +649,6 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::set_status( const Dictionary& d
   }
 }
 
-} // namespace nest
+}  // namespace nest
 
-#endif // EPROP_SYNAPSE_BSSHSLM_2020_H
+#endif  // EPROP_SYNAPSE_BSSHSLM_2020_H

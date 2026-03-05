@@ -45,7 +45,7 @@ nest::register_poisson_generator( const std::string& name )
  * ---------------------------------------------------------------- */
 
 nest::poisson_generator::Parameters_::Parameters_()
-  : rate_( 0.0 ) // spks/s
+  : rate_( 0.0 )  // spks/s
 {
 }
 
@@ -131,7 +131,7 @@ nest::poisson_generator::update( Time const& T, const long from, const long to )
   {
     if ( not StimulationDevice::is_active( T + Time::step( lag ) ) )
     {
-      continue; // no spike at this lag
+      continue;  // no spike at this lag
     }
 
     DSSpikeEvent se;
@@ -144,7 +144,7 @@ nest::poisson_generator::event_hook( DSSpikeEvent& e )
 {
   long n_spikes = V_.poisson_dist_( get_vp_specific_rng( get_thread() ) );
 
-  if ( n_spikes > 0 ) // we must not send events with multiplicity 0
+  if ( n_spikes > 0 )  // we must not send events with multiplicity 0
   {
     e.set_multiplicity( n_spikes );
     e.get_receiver().handle( e );
@@ -158,7 +158,7 @@ nest::poisson_generator::event_hook( DSSpikeEvent& e )
 void
 nest::poisson_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
 
   // For the input backend
   if ( not input_param.empty() )

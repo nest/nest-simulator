@@ -64,8 +64,8 @@ private:
   double h_Na_;
 
   //! user-defined parameters sodium channel (maximal conductance, reversal potential)
-  double gbar_Na_; // uS
-  double e_Na_;    // mV
+  double gbar_Na_;  // uS
+  double e_Na_;     // mV
 
   //! temperature factor for reaction rates
   double q10_;
@@ -106,8 +106,8 @@ private:
   double n_K_ = 0.0;
 
   //! user-defined parameters potassium channel (maximal conductance, reversal potential)
-  double gbar_K_; // uS
-  double e_K_;    // mV
+  double gbar_K_;  // uS
+  double e_K_;     // mV
 
   //! temperature factor for reaction rates
   double q10_;
@@ -141,9 +141,9 @@ private:
   double g_d_AMPA_;
 
   //!  user defined parameters
-  double e_rev_; // mV
-  double tau_r_; // ms
-  double tau_d_; // ms
+  double e_rev_;  // mV
+  double tau_r_;  // ms
+  double tau_d_;  // ms
 
   //!  assigned variables
   double g_norm_;
@@ -204,9 +204,9 @@ private:
   double g_d_GABA_;
 
   //! user defined parameters
-  double e_rev_; // mV
-  double tau_r_; // ms
-  double tau_d_; // ms
+  double e_rev_;  // mV
+  double tau_r_;  // ms
+  double tau_d_;  // ms
 
   //! assigned variables
   double g_norm_;
@@ -267,9 +267,9 @@ private:
   double g_d_NMDA_;
 
   //! user defined parameters
-  double e_rev_; // mV
-  double tau_r_; // ms
-  double tau_d_; // ms
+  double e_rev_;  // mV
+  double tau_r_;  // ms
+  double tau_d_;  // ms
 
   //! assigned variables
   double g_norm_;
@@ -342,11 +342,11 @@ private:
   double g_d_AN_NMDA_;
 
   //! user defined parameters
-  double e_rev_;      // mV
-  double tau_r_AMPA_; // ms
-  double tau_d_AMPA_; // ms
-  double tau_r_NMDA_; // ms
-  double tau_d_NMDA_; // ms
+  double e_rev_;       // mV
+  double tau_r_AMPA_;  // ms
+  double tau_d_AMPA_;  // ms
+  double tau_r_NMDA_;  // ms
+  double tau_d_NMDA_;  // ms
   double NMDA_ratio_;
 
   //! assigned variables
@@ -676,6 +676,6 @@ public:
   };
 };
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef CM_COMPARTMENTCURRENTS_H */

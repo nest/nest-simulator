@@ -445,8 +445,8 @@ protected:
 
   //! lower left corner (minimum coordinates) of layer
   Position< D > lower_left_;
-  Position< D > extent_;      //!< size of layer
-  std::bitset< D > periodic_; //!< periodic b.c.
+  Position< D > extent_;       //!< size of layer
+  std::bitset< D > periodic_;  //!< periodic b.c.
 
   /**
    * Global position information for a single layer
@@ -528,6 +528,6 @@ protected:
   MaskPTR mask_;
 };
 
-} // namespace nest
+}  // namespace nest
 
 #endif

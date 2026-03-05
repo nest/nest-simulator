@@ -51,4 +51,4 @@ DeviceNode::get_local_device_id() const
   return local_device_id_;
 }
 
-} // namespace nest
+}  // namespace nest

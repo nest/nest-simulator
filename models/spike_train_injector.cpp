@@ -385,4 +385,4 @@ spike_train_injector::update( Time const& sliceT0, const long from, const long t
   }
 }
 
-} // namespace nest
+}  // namespace nest

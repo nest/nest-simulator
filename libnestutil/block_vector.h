@@ -36,7 +36,7 @@ class BlockVector;
 template < typename value_type_, typename ref_, typename ptr_ >
 class bv_iterator;
 
-constexpr int block_size_shift = 10; //!< max_block_size = 2^block_size_shift
+constexpr int block_size_shift = 10;  //!< max_block_size = 2^block_size_shift
 constexpr int max_block_size = 1L << block_size_shift;
 constexpr int max_block_size_sub_1 = max_block_size - 1;
 
@@ -313,7 +313,7 @@ public:
 private:
   //! Vector holding blocks containing data.
   std::vector< std::vector< value_type_ > > blockmap_;
-  iterator finish_; //!< Iterator pointing to one past the last element.
+  iterator finish_;  //!< Iterator pointing to one past the last element.
 };
 
 /////////////////////////////////////////////////////////////
@@ -339,7 +339,7 @@ BlockVector< value_type_ >::BlockVector( size_t n )
   {
     blockmap_.emplace_back( max_block_size );
   }
-  finish_ = begin(); // Because the blockmap has changed we need to recreate the iterator
+  finish_ = begin();  // Because the blockmap has changed we need to recreate the iterator
   finish_ += n;
 }
 
@@ -455,7 +455,7 @@ template < typename value_type_ >
 inline size_t
 BlockVector< value_type_ >::size() const
 {
-  size_t element_index; // Where we are in the current block
+  size_t element_index;  // Where we are in the current block
   if ( finish_.block_vector_it_ >= blockmap_.end() )
   {
     // If the current block is completely filled
@@ -486,7 +486,7 @@ BlockVector< value_type_ >::erase( const_iterator first, const_iterator last )
   }
   else
   {
-    auto repl_it = first.const_cast_(); // Iterator for elements to be replaced.
+    auto repl_it = first.const_cast_();  // Iterator for elements to be replaced.
     for ( auto element = last; element != end(); ++element )
     {
       *repl_it = std::move( *element );

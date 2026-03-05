@@ -48,7 +48,7 @@
 
 nest::RecordablesMap< nest::iaf_chxk_2008 > nest::iaf_chxk_2008::recordablesMap_;
 
-namespace nest // template specialization must be placed in namespace
+namespace nest  // template specialization must be placed in namespace
 {
 void
 register_iaf_chxk_2008( const std::string& name )
@@ -119,20 +119,20 @@ nest::iaf_chxk_2008_dynamics( double, const double y[], double f[], void* pnode 
  * ---------------------------------------------------------------- */
 
 nest::iaf_chxk_2008::Parameters_::Parameters_()
-  : // Default values chosen based on values found in
+  :  // Default values chosen based on values found in
   // Alex Casti's simulator
-  V_th( -45.0 )     // mV
-  , g_L( 100.0 )    // nS
-  , C_m( 1000.0 )   // pF
-  , E_ex( 20.0 )    // mV
-  , E_in( -90.0 )   // mV
-  , E_L( -60.0 )    // mV
-  , tau_synE( 1.0 ) // ms
-  , tau_synI( 1.0 ) // ms
-  , I_e( 0.0 )      // pA
-  , tau_ahp( 0.5 )  // ms
-  , g_ahp( 443.8 )  // nS
-  , E_ahp( -95.0 )  // mV
+  V_th( -45.0 )      // mV
+  , g_L( 100.0 )     // nS
+  , C_m( 1000.0 )    // pF
+  , E_ex( 20.0 )     // mV
+  , E_in( -90.0 )    // mV
+  , E_L( -60.0 )     // mV
+  , tau_synE( 1.0 )  // ms
+  , tau_synI( 1.0 )  // ms
+  , I_e( 0.0 )       // pA
+  , tau_ahp( 0.5 )   // ms
+  , g_ahp( 443.8 )   // nS
+  , E_ahp( -95.0 )   // mV
   , ahp_bug( false )
 
 {
@@ -142,7 +142,7 @@ nest::iaf_chxk_2008::Parameters_::Parameters_()
 nest::iaf_chxk_2008::State_::State_( const Parameters_& p )
   : r( 0 )
 {
-  y[ V_M ] = p.E_L; // initialize to reversal potential
+  y[ V_M ] = p.E_L;  // initialize to reversal potential
   for ( size_t i = DG_EXC; i < STATE_VEC_SIZE; ++i )
   {
     y[ i ] = 0;
@@ -241,7 +241,7 @@ nest::iaf_chxk_2008::Parameters_::set( const Dictionary& d, Node* node )
 void
 nest::iaf_chxk_2008::State_::get( Dictionary& d ) const
 {
-  d[ names::V_m ] = y[ V_M ]; // Membrane potential
+  d[ names::V_m ] = y[ V_M ];  // Membrane potential
 }
 
 void
@@ -296,9 +296,9 @@ nest::iaf_chxk_2008::init_buffers_()
 {
   ArchivingNode::clear_history();
 
-  B_.spike_exc_.clear(); // includes resize
-  B_.spike_inh_.clear(); // includes resize
-  B_.currents_.clear();  // includes resize
+  B_.spike_exc_.clear();  // includes resize
+  B_.spike_inh_.clear();  // includes resize
+  B_.currents_.clear();   // includes resize
 
   B_.logger_.reset();
 
@@ -383,11 +383,11 @@ nest::iaf_chxk_2008::update( Time const& origin, const long from, const long to 
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
-        &B_.sys_,             // system of ODE
-        &t,                   // from t
-        B_.step_,             // to t <= step
-        &B_.IntegrationStep_, // integration step size
-        S_.y );               // neuronal state
+        &B_.sys_,              // system of ODE
+        &t,                    // from t
+        B_.step_,              // to t <= step
+        &B_.IntegrationStep_,  // integration step size
+        S_.y );                // neuronal state
       if ( status != GSL_SUCCESS )
       {
         throw GSLSolverFailure( get_name(), status );
@@ -470,4 +470,4 @@ nest::iaf_chxk_2008::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
-#endif // HAVE_GSL
+#endif  // HAVE_GSL

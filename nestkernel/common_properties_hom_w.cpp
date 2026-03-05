@@ -58,4 +58,4 @@ CommonPropertiesHomW::set_status( const Dictionary& d, ConnectorModel& cm )
   d.update_value( names::weight, weight_ );
 }
 
-} // namespace nest
+}  // namespace nest

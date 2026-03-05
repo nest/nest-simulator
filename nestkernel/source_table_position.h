@@ -43,9 +43,9 @@ class Source;
  */
 struct SourceTablePosition
 {
-  long tid;    //!< thread index
-  long syn_id; //!< synapse-type index
-  long lcid;   //!< local connection index
+  long tid;     //!< thread index
+  long syn_id;  //!< synapse-type index
+  long lcid;    //!< local connection index
 
   SourceTablePosition();
   SourceTablePosition( const long tid, const long syn_id, const long lcid );
@@ -77,6 +77,6 @@ bool operator<=( const SourceTablePosition& lhs, const SourceTablePosition& rhs 
 bool operator>=( const SourceTablePosition& lhs, const SourceTablePosition& rhs );
 
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifndef SOURCE_TABLE_POSITION_H */

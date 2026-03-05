@@ -283,4 +283,4 @@ StructuralPlasticityNode::get_Ca_minus() const
   return Ca_minus_;
 }
 
-} // of namespace nest
+}  // of namespace nest

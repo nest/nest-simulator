@@ -138,5 +138,5 @@ private:
 };
 
 
-} // of namespace
+}  // of namespace
 #endif

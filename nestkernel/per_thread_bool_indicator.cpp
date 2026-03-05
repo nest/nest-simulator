@@ -175,4 +175,4 @@ PerThreadBoolIndicator::logical_and( const size_t tid, const bool status )
     per_thread_status_[ tid ].set_false();
   }
 }
-} // namespace nest
+}  // namespace nest

@@ -50,8 +50,8 @@ nest::register_poisson_generator_ps( const std::string& name )
  * ---------------------------------------------------------------- */
 
 nest::poisson_generator_ps::Parameters_::Parameters_()
-  : rate_( 0.0 )      // spks/s
-  , dead_time_( 0.0 ) // ms
+  : rate_( 0.0 )       // spks/s
+  , dead_time_( 0.0 )  // ms
   , num_targets_( 0 )
 {
 }
@@ -162,7 +162,7 @@ nest::poisson_generator_ps::pre_run_hook()
 
     if ( min_time < StimulationDevice::get_origin() + StimulationDevice::get_start() )
     {
-      B_.next_spike_.clear(); // will be resized with neg_infs below
+      B_.next_spike_.clear();  // will be resized with neg_infs below
     }
   }
 
@@ -268,9 +268,9 @@ nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
     // Time of spike relative to current nextspk.first stamp
     const double new_offset = -nextspk.second + V_.inv_rate_ms_ * V_.exp_dev_( rng ) + P_.dead_time_;
 
-    if ( new_offset < 0 ) // still in same stamp
+    if ( new_offset < 0 )  // still in same stamp
     {
-      nextspk.second = -new_offset; // stamps always 0 < stamp <= h
+      nextspk.second = -new_offset;  // stamps always 0 < stamp <= h
     }
     else
     {
@@ -285,7 +285,7 @@ nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
 void
 nest::poisson_generator_ps::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
 
   // For the input backend
   if ( not input_param.empty() )

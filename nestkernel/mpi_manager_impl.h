@@ -57,7 +57,7 @@ MPIManager::communicate_secondary_events_Alltoallv( std::vector< D >& send_buffe
     &recv_displacements_secondary_events_in_int_per_rank_[ 0 ] );
 }
 
-#else // HAVE_MPI
+#else  // HAVE_MPI
 template < class D >
 void
 MPIManager::MPIManager::communicate_Alltoall( std::vector< D >& send_buffer,

@@ -156,6 +156,6 @@ private:
   }
 };
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef PROXYNODE_H */

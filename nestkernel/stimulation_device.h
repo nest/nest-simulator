@@ -201,8 +201,8 @@ protected:
 
   struct Parameters_
   {
-    std::string label_;           //!< A user-defined label for symbolic device names.
-    std::string stimulus_source_; //!< Origin of the stimulation signal.
+    std::string label_;            //!< A user-defined label for symbolic device names.
+    std::string stimulus_source_;  //!< Origin of the stimulation signal.
 
     Parameters_();
     Parameters_( const Parameters_& ) = default;
@@ -224,6 +224,6 @@ private:
   Dictionary backend_params_;
 };
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifndef STIMULATION_DEVICE_H */

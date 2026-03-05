@@ -265,66 +265,66 @@ private:
   {
     Parameters_();
 
-    void get( Dictionary& ) const;             //!< Store current values in Dictionary
-    void set( const Dictionary&, Node* node ); //!< Set values from Dictionary
+    void get( Dictionary& ) const;              //!< Store current values in Dictionary
+    void set( const Dictionary&, Node* node );  //!< Set values from Dictionary
 
     // Note: Conductances are unitless
     // Leaks
-    double E_Na; // mV
-    double E_K;  // mV
+    double E_Na;  // mV
+    double E_K;   // mV
     double g_NaL;
     double g_KL;
-    double tau_m; // ms
+    double tau_m;  // ms
 
     // Dynamic threshold
-    double theta_eq;  // mV
-    double tau_theta; // ms
+    double theta_eq;   // mV
+    double tau_theta;  // ms
 
     // Post-spike potassium current
-    double tau_spike; // ms, membrane time constant for this current
-    double t_ref;     // ms, refractory time
+    double tau_spike;  // ms, membrane time constant for this current
+    double t_ref;      // ms, refractory time
 
     // Parameters for synapse of type AMPA, GABA_A, GABA_B and NMDA
     double g_peak_AMPA;
-    double tau_rise_AMPA;  // ms
-    double tau_decay_AMPA; // ms
-    double E_rev_AMPA;     // mV
+    double tau_rise_AMPA;   // ms
+    double tau_decay_AMPA;  // ms
+    double E_rev_AMPA;      // mV
 
     double g_peak_NMDA;
-    double tau_rise_NMDA;    // ms
-    double tau_decay_NMDA;   // ms
-    double E_rev_NMDA;       // mV
-    double V_act_NMDA;       // mV, inactive for V << Vact, inflection of sigmoid
-    double S_act_NMDA;       // mV, scale of inactivation
-    double tau_Mg_slow_NMDA; // ms
-    double tau_Mg_fast_NMDA; // ms
+    double tau_rise_NMDA;     // ms
+    double tau_decay_NMDA;    // ms
+    double E_rev_NMDA;        // mV
+    double V_act_NMDA;        // mV, inactive for V << Vact, inflection of sigmoid
+    double S_act_NMDA;        // mV, scale of inactivation
+    double tau_Mg_slow_NMDA;  // ms
+    double tau_Mg_fast_NMDA;  // ms
     bool instant_unblock_NMDA;
 
     double g_peak_GABA_A;
-    double tau_rise_GABA_A;  // ms
-    double tau_decay_GABA_A; // ms
-    double E_rev_GABA_A;     // mV
+    double tau_rise_GABA_A;   // ms
+    double tau_decay_GABA_A;  // ms
+    double E_rev_GABA_A;      // mV
 
     double g_peak_GABA_B;
-    double tau_rise_GABA_B;  // ms
-    double tau_decay_GABA_B; // ms
-    double E_rev_GABA_B;     // mV
+    double tau_rise_GABA_B;   // ms
+    double tau_decay_GABA_B;  // ms
+    double E_rev_GABA_B;      // mV
 
     // parameters for intrinsic currents
     double g_peak_NaP;
-    double E_rev_NaP; // mV
+    double E_rev_NaP;  // mV
     double N_NaP;
 
     double g_peak_KNa;
-    double E_rev_KNa; // mV
-    double tau_D_KNa; // ms
+    double E_rev_KNa;  // mV
+    double tau_D_KNa;  // ms
 
     double g_peak_T;
-    double E_rev_T; // mV
+    double E_rev_T;  // mV
     double N_T;
 
     double g_peak_h;
-    double E_rev_h; // mV
+    double E_rev_h;  // mV
 
     bool voltage_clamp;
   };
@@ -349,8 +349,8 @@ public:
       DG_GABA_A,
       G_GABA_A,
       DG_GABA_B,
-      G_GABA_B, // DO NOT INSERT ANYTHING UP TO HERE, WILL MIX UP
-                // SPIKE DELIVERY
+      G_GABA_B,  // DO NOT INSERT ANYTHING UP TO HERE, WILL MIX UP
+                 // SPIKE DELIVERY
       m_fast_NMDA,
       m_slow_NMDA,
       m_Ih,
@@ -368,10 +368,10 @@ public:
      */
     long ref_steps_;
 
-    double I_NaP_; //!< Persistent Na current; member only to allow recording
-    double I_KNa_; //!< Depol act. K current; member only to allow recording
-    double I_T_;   //!< Low-thresh Ca current; member only to allow recording
-    double I_h_;   //!< Pacemaker current; member only to allow recording
+    double I_NaP_;  //!< Persistent Na current; member only to allow recording
+    double I_KNa_;  //!< Depol act. K current; member only to allow recording
+    double I_T_;    //!< Low-thresh Ca current; member only to allow recording
+    double I_h_;    //!< Pacemaker current; member only to allow recording
 
     State_( const ht_neuron&, const Parameters_& p );
     State_( const State_& s );
@@ -407,16 +407,16 @@ private:
     RingBuffer currents_;
 
     /** GSL ODE stuff */
-    gsl_odeiv_step* s_;    //!< stepping function
-    gsl_odeiv_control* c_; //!< adaptive stepsize control function
-    gsl_odeiv_evolve* e_;  //!< evolution function
-    gsl_odeiv_system sys_; //!< struct describing system
+    gsl_odeiv_step* s_;     //!< stepping function
+    gsl_odeiv_control* c_;  //!< adaptive stepsize control function
+    gsl_odeiv_evolve* e_;   //!< evolution function
+    gsl_odeiv_system sys_;  //!< struct describing system
 
     // Since IntegrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
-    double step_;             //!< step size in ms
-    double integration_step_; //!< current integration time step, updated by GSL
+    double step_;              //!< step size in ms
+    double integration_step_;  //!< current integration time step, updated by GSL
 
     /**
      * Input current injected by CurrentEvent.
@@ -577,5 +577,5 @@ ht_neuron::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 
 }
 
-#endif // HAVE_GSL
-#endif // HT_NEURON_H
+#endif  // HAVE_GSL
+#endif  // HT_NEURON_H

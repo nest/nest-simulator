@@ -144,6 +144,6 @@ private:
   static const std::uint32_t THREAD_SPECIFIC_SEEDER_;
 };
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* RANDOM_MANAGER_H */

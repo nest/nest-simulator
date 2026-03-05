@@ -287,6 +287,6 @@ private:
   std::vector< std::array< double, num_channels > > buffer_;
 };
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifndef RING_BUFFER_H */

@@ -149,8 +149,8 @@ IOManager::set_data_path_prefix_( const Dictionary& dict )
     DIR* testdir = opendir( tmp.c_str() );
     if ( testdir )
     {
-      data_path_ = tmp;    // absolute path & directory exists
-      closedir( testdir ); // we only opened it to check it exists
+      data_path_ = tmp;     // absolute path & directory exists
+      closedir( testdir );  // we only opened it to check it exists
     }
     else
     {
@@ -408,4 +408,4 @@ IOManager::overwrite_files() const
   return overwrite_files_;
 }
 
-} // namespace nest
+}  // namespace nest

@@ -44,7 +44,7 @@ namespace MUSIC
 {
 class Runtime;
 class Setup;
-} // namespace MUSIC
+}  // namespace MUSIC
 
 #ifdef HAVE_MUSIC
 #include "music_event_handler.h"
@@ -85,7 +85,7 @@ public:
    */
   void advance_music_time();
 
-  void music_finalize(); // called from MPIManager::mpi_finalize
+  void music_finalize();  // called from MPIManager::mpi_finalize
 
 #ifdef HAVE_MUSIC
   MPI_Comm communicator();
@@ -146,8 +146,8 @@ public:
     MusicPortData()
     {
     }
-    size_t n_input_proxies; // Counter for number of music_input proxies
-                            // connected to this port
+    size_t n_input_proxies;  // Counter for number of music_input proxies
+                             // connected to this port
     double acceptable_latency;
     int max_buffered;
   };
@@ -183,8 +183,8 @@ public:
 
 private:
 #ifdef HAVE_MUSIC
-  MUSIC::Setup* music_setup;     //!< pointer to a MUSIC setup object
-  MUSIC::Runtime* music_runtime; //!< pointer to a MUSIC runtime object
+  MUSIC::Setup* music_setup;      //!< pointer to a MUSIC setup object
+  MUSIC::Runtime* music_runtime;  //!< pointer to a MUSIC runtime object
 #endif
 };
 }

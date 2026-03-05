@@ -126,7 +126,7 @@ nest::SliceRingBuffer::get_next_spike( const long req_stamp,
   if ( deliver_->empty() or refract_ <= deliver_->back() )
   {
     if ( refract_.stamp_ == req_stamp )
-    { // if relies on stamp_==long::max() if not refractory
+    {  // if relies on stamp_==long::max() if not refractory
       // return from refractoriness
       ps_offset = refract_.ps_offset_;
       weight = 0;

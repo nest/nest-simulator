@@ -145,15 +145,15 @@ class DataSecondaryEvent : public SecondaryEvent
 {
 private:
   static std::set< synindex > supported_syn_ids_;
-  static size_t coeff_length_; // length of coeffarray
+  static size_t coeff_length_;  // length of coeffarray
 
   union CoeffarrayBegin
   {
     std::vector< unsigned int >::iterator as_uint;
     typename std::vector< DataType >::iterator as_DataType;
 
-    CoeffarrayBegin() {}; // need to provide default constructor due to
-                          // non-trivial constructors of iterators
+    CoeffarrayBegin() {};  // need to provide default constructor due to
+                           // non-trivial constructors of iterators
   } coeffarray_begin_;
 
   union CoeffarrayEnd
@@ -161,8 +161,8 @@ private:
     std::vector< unsigned int >::iterator as_uint;
     typename std::vector< DataType >::iterator as_DataType;
 
-    CoeffarrayEnd() {}; // need to provide default constructor due to
-                        // non-trivial constructors of iterators
+    CoeffarrayEnd() {};  // need to provide default constructor due to
+                         // non-trivial constructors of iterators
   } coeffarray_end_;
 
 public:
@@ -373,6 +373,6 @@ public:
   LearningSignalConnectionEvent* clone() const override;
 };
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifndef SECONDARY_EVENT_H */

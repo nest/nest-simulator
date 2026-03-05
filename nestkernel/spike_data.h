@@ -99,11 +99,11 @@ class SpikeData
 protected:
   static constexpr int MAX_LAG = generate_max_value( NUM_BITS_LAG );
 
-  size_t lcid_ : NUM_BITS_LCID;                      //!< local connection index
-  unsigned int marker_ : NUM_BITS_MARKER_SPIKE_DATA; //!< status flag
-  unsigned int lag_ : NUM_BITS_LAG;                  //!< lag in this min-delay interval
-  unsigned int tid_ : NUM_BITS_TID;                  //!< thread index
-  synindex syn_id_ : NUM_BITS_SYN_ID;                //!< synapse-type index
+  size_t lcid_ : NUM_BITS_LCID;                       //!< local connection index
+  unsigned int marker_ : NUM_BITS_MARKER_SPIKE_DATA;  //!< status flag
+  unsigned int lag_ : NUM_BITS_LAG;                   //!< lag in this min-delay interval
+  unsigned int tid_ : NUM_BITS_TID;                   //!< thread index
+  synindex syn_id_ : NUM_BITS_SYN_ID;                 //!< synapse-type index
 
 public:
   SpikeData();
@@ -261,8 +261,8 @@ struct SpikeDataWithRank
 {
   SpikeDataWithRank( const Target& target, const size_t lag );
 
-  const size_t rank;          //!< rank of target neuron
-  const SpikeData spike_data; //! data on spike transmitted
+  const size_t rank;           //!< rank of target neuron
+  const SpikeData spike_data;  //! data on spike transmitted
 };
 
 /**
@@ -274,11 +274,11 @@ struct OffGridSpikeDataWithRank
 {
   OffGridSpikeDataWithRank( const Target& target, const size_t lag, const double offset );
 
-  const size_t rank;                 //!< rank of target neuron
-  const OffGridSpikeData spike_data; //! data on spike transmitted
+  const size_t rank;                  //!< rank of target neuron
+  const OffGridSpikeData spike_data;  //! data on spike transmitted
 };
 
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* SPIKE_DATA_H */

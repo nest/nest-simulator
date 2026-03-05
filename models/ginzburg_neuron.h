@@ -167,17 +167,17 @@ public:
 
   gainfunction_ginzburg()
     : theta_( 0.0 )
-    , // mV
+    ,  // mV
     c1_( 0.0 )
-    , // (mV)^-1
+    ,  // (mV)^-1
     c2_( 1.0 )
-    ,          // dimensionless
-    c3_( 1.0 ) // (mV)^-1
+    ,           // dimensionless
+    c3_( 1.0 )  // (mV)^-1
   {
   }
 
-  void get( Dictionary& ) const;             //!< Store current values in dictionary
-  void set( const Dictionary&, Node* node ); //!< Set values from dictionary
+  void get( Dictionary& ) const;              //!< Store current values in dictionary
+  void set( const Dictionary&, Node* node );  //!< Set values from dictionary
 
   bool operator()( RngPtr rng, double h ) const;
 };
@@ -192,7 +192,7 @@ typedef binary_neuron< nest::gainfunction_ginzburg > ginzburg_neuron;
 void register_ginzburg_neuron( const std::string& name );
 
 
-} // namespace nest
+}  // namespace nest
 
 
 #endif /* #ifndef GINZBURG_NEURON_H */

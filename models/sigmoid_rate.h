@@ -155,12 +155,12 @@ public:
   {
   }
 
-  void get( Dictionary& ) const;             //!< Store current values in dictionary
-  void set( const Dictionary&, Node* node ); //!< Set values from dictionary
+  void get( Dictionary& ) const;              //!< Store current values in dictionary
+  void set( const Dictionary&, Node* node );  //!< Set values from dictionary
 
-  double input( double h );               // non-linearity on input
-  double mult_coupling_ex( double rate ); // factor of multiplicative coupling
-  double mult_coupling_in( double rate ); // factor of multiplicative coupling
+  double input( double h );                // non-linearity on input
+  double mult_coupling_ex( double rate );  // factor of multiplicative coupling
+  double mult_coupling_in( double rate );  // factor of multiplicative coupling
 };
 
 inline double
@@ -190,7 +190,7 @@ void register_rate_transformer_sigmoid( const std::string& name );
 template <>
 void RecordablesMap< rate_transformer_sigmoid >::create();
 
-} // namespace nest
+}  // namespace nest
 
 
 #endif /* #ifndef SIGMOID_RATE_H */

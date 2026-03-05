@@ -46,7 +46,7 @@
 namespace boost
 {
 class any;
-} // namespace boost
+}  // namespace boost
 
 namespace nest
 {
@@ -270,6 +270,6 @@ std::vector< size_t > node_collection_to_array( NodeCollectionPTR node_collectio
 
 void message( const VerbosityLevel, const std::string&, const std::string&, const std::string&, const size_t );
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* NEST_H */

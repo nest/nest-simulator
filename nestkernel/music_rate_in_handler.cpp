@@ -150,6 +150,6 @@ MusicRateInHandler::update( Time const&, const long, const long )
   }
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifdef HAVE_MUSIC */

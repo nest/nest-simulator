@@ -47,7 +47,7 @@
 
 nest::RecordablesMap< nest::iaf_cond_exp_sfa_rr > nest::iaf_cond_exp_sfa_rr::recordablesMap_;
 
-namespace nest // template specialization must be placed in namespace
+namespace nest  // template specialization must be placed in namespace
 {
 void
 register_iaf_cond_exp_sfa_rr( const std::string& name )
@@ -116,23 +116,23 @@ nest::iaf_cond_exp_sfa_rr_dynamics( double, const double y[], double f[], void* 
  * ---------------------------------------------------------------- */
 
 nest::iaf_cond_exp_sfa_rr::Parameters_::Parameters_()
-  : V_th_( -57.0 )    // mV
-  , V_reset_( -70.0 ) // mV
-  , t_ref_( 0.5 )     // ms
-  , g_L( 28.95 )      // nS
-  , C_m( 289.5 )      // pF
-  , E_ex( 0.0 )       // mV
-  , E_in( -75.0 )     // mV
-  , E_L( -70.0 )      // mV
-  , tau_synE( 1.5 )   // ms
-  , tau_synI( 10.0 )  // ms
-  , I_e( 0.0 )        // pA
-  , tau_sfa( 110.0 )  // ms
-  , tau_rr( 1.97 )    // ms
-  , E_sfa( -70.0 )    // mV
-  , E_rr( -70.0 )     // mV
-  , q_sfa( 14.48 )    // nS
-  , q_rr( 3214.0 )    // nS
+  : V_th_( -57.0 )     // mV
+  , V_reset_( -70.0 )  // mV
+  , t_ref_( 0.5 )      // ms
+  , g_L( 28.95 )       // nS
+  , C_m( 289.5 )       // pF
+  , E_ex( 0.0 )        // mV
+  , E_in( -75.0 )      // mV
+  , E_L( -70.0 )       // mV
+  , tau_synE( 1.5 )    // ms
+  , tau_synI( 10.0 )   // ms
+  , I_e( 0.0 )         // pA
+  , tau_sfa( 110.0 )   // ms
+  , tau_rr( 1.97 )     // ms
+  , E_sfa( -70.0 )     // mV
+  , E_rr( -70.0 )      // mV
+  , q_sfa( 14.48 )     // nS
+  , q_rr( 3214.0 )     // nS
 {
 }
 
@@ -240,7 +240,7 @@ nest::iaf_cond_exp_sfa_rr::Parameters_::set( const Dictionary& d, Node* node )
 void
 nest::iaf_cond_exp_sfa_rr::State_::get( Dictionary& d ) const
 {
-  d[ names::V_m ] = y_[ V_M ]; // Membrane potential
+  d[ names::V_m ] = y_[ V_M ];  // Membrane potential
   d[ names::g_ex ] = y_[ G_EXC ];
   d[ names::g_in ] = y_[ G_INH ];
   d[ names::g_sfa ] = y_[ G_SFA ];
@@ -322,9 +322,9 @@ nest::iaf_cond_exp_sfa_rr::~iaf_cond_exp_sfa_rr()
 void
 nest::iaf_cond_exp_sfa_rr::init_buffers_()
 {
-  B_.spike_exc_.clear(); // includes resize
-  B_.spike_inh_.clear(); // includes resize
-  B_.currents_.clear();  // includes resize
+  B_.spike_exc_.clear();  // includes resize
+  B_.spike_inh_.clear();  // includes resize
+  B_.currents_.clear();   // includes resize
   ArchivingNode::clear_history();
 
   B_.logger_.reset();
@@ -406,11 +406,11 @@ nest::iaf_cond_exp_sfa_rr::update( Time const& origin, const long from, const lo
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
-        &B_.sys_,             // system of ODE
-        &t,                   // from t
-        B_.step_,             // to t <= step
-        &B_.IntegrationStep_, // integration step size
-        S_.y_ );              // neuronal state
+        &B_.sys_,              // system of ODE
+        &t,                    // from t
+        B_.step_,              // to t <= step
+        &B_.IntegrationStep_,  // integration step size
+        S_.y_ );               // neuronal state
       if ( status != GSL_SUCCESS )
       {
         throw GSLSolverFailure( get_name(), status );
@@ -422,7 +422,7 @@ nest::iaf_cond_exp_sfa_rr::update( Time const& origin, const long from, const lo
 
     // absolute refractory period
     if ( S_.r_ )
-    { // neuron is absolute refractory
+    {  // neuron is absolute refractory
       --S_.r_;
       S_.y_[ State_::V_M ] = P_.V_reset_;
     }
@@ -484,4 +484,4 @@ nest::iaf_cond_exp_sfa_rr::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-#endif // HAVE_GSL
+#endif  // HAVE_GSL

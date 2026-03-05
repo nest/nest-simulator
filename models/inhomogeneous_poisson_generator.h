@@ -155,7 +155,7 @@ private:
     //! Allow and round up rate times not on steps;
     bool allow_offgrid_times_;
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
     Parameters_( const Parameters_&, Buffers_& );
 
     //!< Store current values in dictionary
@@ -170,16 +170,16 @@ private:
 
   struct Buffers_
   {
-    size_t idx_;  //!< index of current amplitude
-    double rate_; //!< current amplitude
+    size_t idx_;   //!< index of current amplitude
+    double rate_;  //!< current amplitude
   };
 
   // ------------------------------------------------------------
 
   struct Variables_
   {
-    poisson_distribution poisson_dist_; //!< poisson distribution
-    double h_;                          //! time resolution (ms)
+    poisson_distribution poisson_dist_;  //!< poisson distribution
+    double h_;                           //! time resolution (ms)
   };
 
   // ------------------------------------------------------------
@@ -224,9 +224,9 @@ inhomogeneous_poisson_generator::get_status( Dictionary& d ) const
 inline void
 inhomogeneous_poisson_generator::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
 
-  ptmp.set( d, B_, this ); // throws if BadProperty
+  ptmp.set( d, B_, this );  // throws if BadProperty
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.
@@ -242,6 +242,6 @@ inhomogeneous_poisson_generator::get_type() const
   return StimulationDevice::Type::SPIKE_GENERATOR;
 }
 
-} // namespace
+}  // namespace
 
-#endif // INHOMOGENEOUS_POISSON_GENERATOR_H
+#endif  // INHOMOGENEOUS_POISSON_GENERATOR_H

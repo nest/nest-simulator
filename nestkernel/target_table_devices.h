@@ -214,6 +214,6 @@ public:
   bool is_device_connected( size_t tid, size_t lcid ) const;
 };
 
-} // namespace nest
+}  // namespace nest
 
 #endif

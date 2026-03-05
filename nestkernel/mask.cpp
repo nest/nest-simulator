@@ -44,22 +44,22 @@ BallMask< 2 >::inside( const Box< 2 >& b ) const
 
   if ( not inside( p ) )
   {
-    return false; // (0,0)
+    return false;  // (0,0)
   }
   p[ 0 ] = b.upper_right[ 0 ];
   if ( not inside( p ) )
   {
-    return false; // (0,1)
+    return false;  // (0,1)
   }
   p[ 1 ] = b.upper_right[ 1 ];
   if ( not inside( p ) )
   {
-    return false; // (1,1)
+    return false;  // (1,1)
   }
   p[ 0 ] = b.lower_left[ 0 ];
   if ( not inside( p ) )
   {
-    return false; // (1,0)
+    return false;  // (1,0)
   }
 
   return true;
@@ -75,42 +75,42 @@ BallMask< 3 >::inside( const Box< 3 >& b ) const
 
   if ( not inside( p ) )
   {
-    return false; // (0,0,0)
+    return false;  // (0,0,0)
   }
   p[ 0 ] = b.upper_right[ 0 ];
   if ( not inside( p ) )
   {
-    return false; // (0,0,1)
+    return false;  // (0,0,1)
   }
   p[ 1 ] = b.upper_right[ 1 ];
   if ( not inside( p ) )
   {
-    return false; // (0,1,1)
+    return false;  // (0,1,1)
   }
   p[ 0 ] = b.lower_left[ 0 ];
   if ( not inside( p ) )
   {
-    return false; // (0,1,0)
+    return false;  // (0,1,0)
   }
   p[ 2 ] = b.upper_right[ 2 ];
   if ( not inside( p ) )
   {
-    return false; // (1,1,0)
+    return false;  // (1,1,0)
   }
   p[ 0 ] = b.upper_right[ 0 ];
   if ( not inside( p ) )
   {
-    return false; // (1,1,1)
+    return false;  // (1,1,1)
   }
   p[ 1 ] = b.lower_left[ 1 ];
   if ( not inside( p ) )
   {
-    return false; // (1,0,1)
+    return false;  // (1,0,1)
   }
   p[ 0 ] = b.lower_left[ 0 ];
   if ( not inside( p ) )
   {
-    return false; // (1,0,0)
+    return false;  // (1,0,0)
   }
 
   return true;
@@ -382,25 +382,25 @@ EllipseMask< 2 >::inside( const Box< 2 >& b ) const
   // Test if all corners are inside ellipse
   if ( not inside( p ) )
   {
-    return false; // lower left corner not inside ellipse
+    return false;  // lower left corner not inside ellipse
   }
 
   p[ 0 ] = b.upper_right[ 0 ];
   if ( not inside( p ) )
   {
-    return false; // upper left corner not inside ellipse
+    return false;  // upper left corner not inside ellipse
   }
 
   p[ 1 ] = b.upper_right[ 1 ];
   if ( not inside( p ) )
   {
-    return false; // upper right corner not inside ellipse
+    return false;  // upper right corner not inside ellipse
   }
 
   p[ 0 ] = b.lower_left[ 0 ];
   if ( not inside( p ) )
   {
-    return false; // lower right corner not inside ellipse
+    return false;  // lower right corner not inside ellipse
   }
 
   return true;
@@ -415,49 +415,49 @@ EllipseMask< 3 >::inside( const Box< 3 >& b ) const
   // Test if all corners are inside ellipsoid
   if ( not inside( p ) )
   {
-    return false; // first lower left corner not inside ellipsoid
+    return false;  // first lower left corner not inside ellipsoid
   }
 
   p[ 0 ] = b.upper_right[ 0 ];
   if ( not inside( p ) )
   {
-    return false; // second lower left corner not inside ellipsoid
+    return false;  // second lower left corner not inside ellipsoid
   }
 
   p[ 1 ] = b.upper_right[ 1 ];
   if ( not inside( p ) )
   {
-    return false; // second lower right corner not inside ellipsoid
+    return false;  // second lower right corner not inside ellipsoid
   }
 
   p[ 0 ] = b.lower_left[ 0 ];
   if ( not inside( p ) )
   {
-    return false; // first lower right corner not inside ellipsoid
+    return false;  // first lower right corner not inside ellipsoid
   }
 
   p[ 2 ] = b.upper_right[ 2 ];
   if ( not inside( p ) )
   {
-    return false; // first upper right corner not inside ellipsoid
+    return false;  // first upper right corner not inside ellipsoid
   }
 
   p[ 0 ] = b.upper_right[ 0 ];
   if ( not inside( p ) )
   {
-    return false; // second upper right corner not inside ellipsoid
+    return false;  // second upper right corner not inside ellipsoid
   }
 
   p[ 1 ] = b.lower_left[ 1 ];
   if ( not inside( p ) )
   {
-    return false; // second upper left corner not inside ellipsoid
+    return false;  // second upper left corner not inside ellipsoid
   }
 
   p[ 0 ] = b.lower_left[ 0 ];
   if ( not inside( p ) )
   {
-    return false; // first upper left corner not inside ellipsoid
+    return false;  // first upper left corner not inside ellipsoid
   }
 
   return true;

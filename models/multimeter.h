@@ -208,9 +208,9 @@ private:
 
   struct Parameters_
   {
-    Time interval_;                          //!< recording interval, in ms
-    Time offset_;                            //!< offset relative to 0, in ms
-    std::vector< std::string > record_from_; //!< which data to record
+    Time interval_;                           //!< recording interval, in ms
+    Time offset_;                             //!< offset relative to 0, in ms
+    std::vector< std::string > record_from_;  //!< which data to record
 
     Parameters_();
     Parameters_( const Parameters_& );
@@ -249,7 +249,7 @@ nest::multimeter::get_status( Dictionary& d ) const
 
   if ( is_model_prototype() )
   {
-    return; // no data to collect
+    return;  // no data to collect
   }
 
   // if we are the device on thread 0, also get the data from the
@@ -307,6 +307,6 @@ public:
   voltmeter( const voltmeter& );
 };
 
-} // namespace nest
+}  // namespace nest
 
 #endif

@@ -149,24 +149,24 @@ nest::glif_cond_dynamics( double, const double y[], double f[], void* pnode )
  * ---------------------------------------------------------------- */
 
 nest::glif_cond::Parameters_::Parameters_()
-  : G_( 9.43 )               // in nS
-  , E_L_( -78.85 )           // in mV
-  , th_inf_( -51.68 - E_L_ ) // in mv, rel to E_L_, - 51.68 - E_L_, i.e., 27.17
-  , C_m_( 58.72 )            // in pF
-  , t_ref_( 3.75 )           // in ms
-  , V_reset_( 0.0 )          // in mV, rel to E_L_, -78.85 - E_L_
-  , th_spike_add_( 0.37 )    // in mV
-  , th_spike_decay_( 0.009 ) // in 1/ms
+  : G_( 9.43 )                // in nS
+  , E_L_( -78.85 )            // in mV
+  , th_inf_( -51.68 - E_L_ )  // in mv, rel to E_L_, - 51.68 - E_L_, i.e., 27.17
+  , C_m_( 58.72 )             // in pF
+  , t_ref_( 3.75 )            // in ms
+  , V_reset_( 0.0 )           // in mV, rel to E_L_, -78.85 - E_L_
+  , th_spike_add_( 0.37 )     // in mV
+  , th_spike_decay_( 0.009 )  // in 1/ms
   , voltage_reset_fraction_( 0.20 )
-  , voltage_reset_add_( 18.51 )                           // in mV
-  , th_voltage_index_( 0.005 )                            // in 1/ms
-  , th_voltage_decay_( 0.09 )                             // in 1/ms
-  , asc_init_( std::vector< double >( 2, 0.0 ) )          // in pA
-  , asc_decay_( std::vector< double > { 0.003, 0.1 } )    // in 1/ms
-  , asc_amps_( std::vector< double > { -9.18, -198.94 } ) // in pA
-  , asc_r_( std::vector< double >( 2, 1.0 ) )             // in ms
-  , tau_syn_( std::vector< double > { 0.2, 2.0 } )        // in ms
-  , E_rev_( std::vector< double > { 0.0, -85.0 } )        // in mV
+  , voltage_reset_add_( 18.51 )                            // in mV
+  , th_voltage_index_( 0.005 )                             // in 1/ms
+  , th_voltage_decay_( 0.09 )                              // in 1/ms
+  , asc_init_( std::vector< double >( 2, 0.0 ) )           // in pA
+  , asc_decay_( std::vector< double > { 0.003, 0.1 } )     // in 1/ms
+  , asc_amps_( std::vector< double > { -9.18, -198.94 } )  // in pA
+  , asc_r_( std::vector< double >( 2, 1.0 ) )              // in ms
+  , tau_syn_( std::vector< double > { 0.2, 2.0 } )         // in ms
+  , E_rev_( std::vector< double > { 0.0, -85.0 } )         // in mV
   , has_connections_( false )
   , has_theta_spike_( false )
   , has_asc_( false )
@@ -175,11 +175,11 @@ nest::glif_cond::Parameters_::Parameters_()
 }
 
 nest::glif_cond::State_::State_( const Parameters_& p )
-  : threshold_( p.th_inf_ )    // in mV
-  , threshold_spike_( 0.0 )    // in mV
-  , threshold_voltage_( 0.0 )  // in mV
-  , ASCurrents_( p.asc_init_ ) // in pA
-  , ASCurrents_sum_( 0.0 )     // in pA
+  : threshold_( p.th_inf_ )     // in mV
+  , threshold_spike_( 0.0 )     // in mV
+  , threshold_voltage_( 0.0 )   // in mV
+  , ASCurrents_( p.asc_init_ )  // in pA
+  , ASCurrents_sum_( 0.0 )      // in pA
   , refractory_steps_( 0 )
   , y_( STATE_VECTOR_MIN_SIZE - NUMBER_OF_RECORDABLES_ELEMENTS, 0.0 )
 
@@ -188,7 +188,7 @@ nest::glif_cond::State_::State_( const Parameters_& p )
   {
     ASCurrents_sum_ += ASCurrents_[ a ];
   }
-  y_[ V_M ] = 0.0; // initialize to membrane potential
+  y_[ V_M ] = 0.0;  // initialize to membrane potential
 }
 
 /* ----------------------------------------------------------------
@@ -275,11 +275,11 @@ nest::glif_cond::Parameters_::set( const Dictionary& d, Node* node )
   d.update_value( names::adapting_threshold, has_theta_voltage_ );
 
   // check model mechanisms parameter
-  if ( not( ( not has_theta_spike_ and not has_asc_ and not has_theta_voltage_ ) or // glif1
-         ( has_theta_spike_ and not has_asc_ and not has_theta_voltage_ ) or        // glif2
-         ( not has_theta_spike_ and has_asc_ and not has_theta_voltage_ ) or        // glif3
-         ( has_theta_spike_ and has_asc_ and not has_theta_voltage_ ) or            // glif4
-         ( has_theta_spike_ and has_asc_ and has_theta_voltage_ )                   // glif5
+  if ( not( ( not has_theta_spike_ and not has_asc_ and not has_theta_voltage_ ) or  // glif1
+         ( has_theta_spike_ and not has_asc_ and not has_theta_voltage_ ) or         // glif2
+         ( not has_theta_spike_ and has_asc_ and not has_theta_voltage_ ) or         // glif3
+         ( has_theta_spike_ and has_asc_ and not has_theta_voltage_ ) or             // glif4
+         ( has_theta_spike_ and has_asc_ and has_theta_voltage_ )                    // glif5
          ) )
   {
     throw BadProperty(
@@ -525,14 +525,14 @@ nest::glif_cond::~glif_cond()
 void
 nest::glif_cond::init_buffers_()
 {
-  B_.spikes_.clear();   // includes resize
-  B_.currents_.clear(); // include resize
-  B_.logger_.reset();   // includes resize
+  B_.spikes_.clear();    // includes resize
+  B_.currents_.clear();  // include resize
+  B_.logger_.reset();    // includes resize
 
   B_.step_ = Time::get_resolution().get_ms();
   B_.IntegrationStep_ =
-    B_.step_; // reasonable initial value for numerical integrator step size; this will anyway be overwritten by
-              // gsl_odeiv_evolve_apply(), but it might confuse the integrator if it contains uninitialised data
+    B_.step_;  // reasonable initial value for numerical integrator step size; this will anyway be overwritten by
+               // gsl_odeiv_evolve_apply(), but it might confuse the integrator if it contains uninitialised data
 
   if ( not B_.c_ )
   {
@@ -555,7 +555,7 @@ nest::glif_cond::pre_run_hook()
 {
   B_.logger_.init();
 
-  const double h = Time::get_resolution().get_ms(); // in ms
+  const double h = Time::get_resolution().get_ms();  // in ms
 
   // pre-computing of decay parameters
   if ( P_.has_theta_spike_ )
@@ -647,11 +647,11 @@ nest::glif_cond::update( Time const& origin, const long from, const long to )
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
-        &B_.sys_,             // system of ODE
-        &t,                   // from t
-        B_.step_,             // to t <= step
-        &B_.IntegrationStep_, // integration step size
-        &S_.y_[ 0 ] );        // neuronal state
+        &B_.sys_,              // system of ODE
+        &t,                    // from t
+        B_.step_,              // to t <= step
+        &B_.IntegrationStep_,  // integration step size
+        &S_.y_[ 0 ] );         // neuronal state
       if ( status != GSL_SUCCESS )
       {
         throw GSLSolverFailure( get_name(), status );
@@ -756,7 +756,7 @@ nest::glif_cond::update( Time const& origin, const long from, const long to )
       // immediate effect on the state of the neuron
       S_.y_[ State_::DG_SYN - State_::NUMBER_OF_RECORDABLES_ELEMENTS
         + i * State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR ] +=
-        B_.spikes_[ i ].get_value( lag ) * V_.CondInitialValues_[ i ]; // add incoming spike
+        B_.spikes_[ i ].get_value( lag ) * V_.CondInitialValues_[ i ];  // add incoming spike
     }
     // Update any external currents
     B_.I_ = B_.currents_.get_value( lag );
@@ -799,4 +799,4 @@ nest::glif_cond::handle( CurrentEvent& e )
     e.get_weight() * e.get_current() );
 }
 
-#endif // HAVE_GSL
+#endif  // HAVE_GSL

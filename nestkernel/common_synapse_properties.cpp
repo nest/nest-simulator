@@ -95,4 +95,4 @@ CommonSynapseProperties::get_vt_node_id() const
 {
   return -1;
 }
-} // namespace nest
+}  // namespace nest

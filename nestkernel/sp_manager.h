@@ -208,7 +208,7 @@ private:
    */
   std::vector< GenericGrowthCurveFactory* > growthcurve_factories_;
 
-  Dictionary growthcurvedict_; //!< Dictionary for growth rules.
+  Dictionary growthcurvedict_;  //!< Dictionary for growth rules.
 };
 
 template < typename GrowthCurve >
@@ -223,6 +223,6 @@ SPManager::register_growth_curve( const std::string& name )
   growthcurvedict_[ name ] = id;
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifndef SP_MANAGER_H */

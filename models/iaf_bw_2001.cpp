@@ -108,20 +108,20 @@ nest::iaf_bw_2001_dynamics( double, const double y[], double f[], void* pnode )
  * --------------------------------------------------------------------------- */
 
 nest::iaf_bw_2001::Parameters_::Parameters_()
-  : E_L( -70.0 )          // mV
-  , E_ex( 0.0 )           // mV
-  , E_in( -70.0 )         // mV
-  , V_th( -55.0 )         // mV
-  , V_reset( -60.0 )      // mV
-  , C_m( 500.0 )          // pF
-  , g_L( 25.0 )           // nS
-  , t_ref( 2.0 )          // ms
-  , tau_AMPA( 2.0 )       // ms
-  , tau_GABA( 5.0 )       // ms
-  , tau_decay_NMDA( 100 ) // ms
-  , tau_rise_NMDA( 2 )    // ms
-  , alpha( 0.5 )          // 1 / ms
-  , conc_Mg2( 1 )         // mM
+  : E_L( -70.0 )           // mV
+  , E_ex( 0.0 )            // mV
+  , E_in( -70.0 )          // mV
+  , V_th( -55.0 )          // mV
+  , V_reset( -60.0 )       // mV
+  , C_m( 500.0 )           // pF
+  , g_L( 25.0 )            // nS
+  , t_ref( 2.0 )           // ms
+  , tau_AMPA( 2.0 )        // ms
+  , tau_GABA( 5.0 )        // ms
+  , tau_decay_NMDA( 100 )  // ms
+  , tau_rise_NMDA( 2 )     // ms
+  , alpha( 0.5 )           // 1 / ms
+  , conc_Mg2( 1 )          // mM
   , gsl_error_tol( 1e-3 )
 {
 }
@@ -129,7 +129,7 @@ nest::iaf_bw_2001::Parameters_::Parameters_()
 nest::iaf_bw_2001::State_::State_( const Parameters_& p )
   : r_( 0 )
 {
-  y_[ V_m ] = p.E_L; // initialize to reversal potential
+  y_[ V_m ] = p.E_L;  // initialize to reversal potential
   y_[ s_AMPA ] = 0.0;
   y_[ s_GABA ] = 0.0;
   y_[ s_NMDA ] = 0.0;
@@ -250,7 +250,7 @@ nest::iaf_bw_2001::Parameters_::set( const Dictionary& d, Node* node )
 void
 nest::iaf_bw_2001::State_::get( Dictionary& d ) const
 {
-  d[ names::V_m ] = y_[ V_m ]; // Membrane potential
+  d[ names::V_m ] = y_[ V_m ];  // Membrane potential
   d[ names::s_AMPA ] = y_[ s_AMPA ];
   d[ names::s_GABA ] = y_[ s_GABA ];
   d[ names::s_NMDA ] = y_[ s_NMDA ];
@@ -332,12 +332,12 @@ nest::iaf_bw_2001::init_buffers_()
   B_.spikes_.resize( 3 );
   for ( auto& sb : B_.spikes_ )
   {
-    sb.clear(); // includes resize
+    sb.clear();  // includes resize
   }
 
-  B_.currents_.clear(); // includes resize
+  B_.currents_.clear();  // includes resize
 
-  B_.logger_.reset(); // includes resize
+  B_.logger_.reset();  // includes resize
   ArchivingNode::clear_history();
 
   if ( B_.s_ == nullptr )
@@ -424,11 +424,11 @@ nest::iaf_bw_2001::update( Time const& origin, const long from, const long to )
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
-        &B_.sys_,              // system of ODE
-        &t,                    // from t
-        B_.step_,              // to t <= step
-        &B_.integration_step_, // integration step size
-        S_.y_ );               // neuronal state
+        &B_.sys_,               // system of ODE
+        &t,                     // from t
+        B_.step_,               // to t <= step
+        &B_.integration_step_,  // integration step size
+        S_.y_ );                // neuronal state
 
       if ( status != GSL_SUCCESS )
       {
@@ -445,7 +445,7 @@ nest::iaf_bw_2001::update( Time const& origin, const long from, const long to )
     {
       // neuron is absolute refractory
       --S_.r_;
-      S_.y_[ State_::V_m ] = P_.V_reset; // clamp potential
+      S_.y_[ State_::V_m ] = P_.V_reset;  // clamp potential
     }
     else if ( S_.y_[ State_::V_m ] >= P_.V_th )
     {
@@ -479,5 +479,5 @@ nest::iaf_bw_2001::update( Time const& origin, const long from, const long to )
   }
 }
 
-#endif // HAVE_BOOST
-#endif // HAVE_GSL
+#endif  // HAVE_BOOST
+#endif  // HAVE_GSL

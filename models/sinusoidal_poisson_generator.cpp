@@ -60,10 +60,10 @@ RecordablesMap< sinusoidal_poisson_generator >::create()
  * ---------------------------------------------------------------- */
 
 nest::sinusoidal_poisson_generator::Parameters_::Parameters_()
-  : om_( 0.0 )        // radian/ms
-  , phi_( 0.0 )       // radian
-  , rate_( 0.0 )      // spikes/ms
-  , amplitude_( 0.0 ) // spikes/ms
+  : om_( 0.0 )         // radian/ms
+  , phi_( 0.0 )        // radian
+  , rate_( 0.0 )       // spikes/ms
+  , amplitude_( 0.0 )  // spikes/ms
   , individual_spike_trains_( true )
 {
 }
@@ -150,7 +150,7 @@ nest::sinusoidal_poisson_generator::Parameters_::set( const Dictionary& d,
 
   if ( update_value_param( d, names::rate, rate_, node ) )
   {
-    rate_ /= 1000.0; // scale to ms^-1
+    rate_ /= 1000.0;  // scale to ms^-1
   }
 
   if ( update_value_param( d, names::frequency, om_, node ) )
@@ -223,7 +223,7 @@ nest::sinusoidal_poisson_generator::pre_run_hook()
   S_.y_0_ = P_.amplitude_ * std::cos( P_.om_ * t + P_.phi_ );
   S_.y_1_ = P_.amplitude_ * std::sin( P_.om_ * t + P_.phi_ );
 
-  V_.sin_ = std::sin( V_.h_ * P_.om_ ); // block elements
+  V_.sin_ = std::sin( V_.h_ * P_.om_ );  // block elements
   V_.cos_ = std::cos( V_.h_ * P_.om_ );
 }
 
@@ -286,7 +286,7 @@ nest::sinusoidal_poisson_generator::event_hook( DSSpikeEvent& e )
   poisson_distribution::param_type param( S_.rate_ * V_.h_ );
   long n_spikes = V_.poisson_dist_( get_vp_specific_rng( get_thread() ), param );
 
-  if ( n_spikes > 0 ) // we must not send events with multiplicity 0
+  if ( n_spikes > 0 )  // we must not send events with multiplicity 0
   {
     e.set_multiplicity( n_spikes );
     e.get_receiver().handle( e );
@@ -306,7 +306,7 @@ nest::sinusoidal_poisson_generator::handle( DataLoggingRequest& e )
 void
 nest::sinusoidal_poisson_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
 
   // For the input backend
   if ( not input_param.empty() )

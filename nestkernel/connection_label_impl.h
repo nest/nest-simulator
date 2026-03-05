@@ -75,7 +75,7 @@ ConnectionLabel< ConnectionT >::get_label() const
 {
   return label_;
 }
-} // namespace nest
+}  // namespace nest
 
 
 #endif /* CONNECTION_LABEL_IMPL_H */

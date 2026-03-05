@@ -187,4 +187,4 @@ AbstractLayer::get_node_collection()
   return node_collection_;
 }
 
-} // namespace nest
+}  // namespace nest

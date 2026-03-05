@@ -49,7 +49,7 @@ SourceTablePosition::seek_to_next_valid_index( const std::vector< std::vector< B
 {
   if ( lcid >= 0 )
   {
-    return; // nothing to do if we are at a valid index
+    return;  // nothing to do if we are at a valid index
   }
 
   // we stay in this loop either until we can return a valid position,
@@ -83,10 +83,10 @@ SourceTablePosition::seek_to_next_valid_index( const std::vector< std::vector< B
     assert( tid == -1 );
     assert( syn_id == -1 );
     assert( lcid == -1 );
-    return; // reached the end without finding a valid entry
+    return;  // reached the end without finding a valid entry
   }
 
-  return; // found a valid entry
+  return;  // found a valid entry
 }
 
 bool
@@ -152,4 +152,4 @@ operator>=( const SourceTablePosition& lhs, const SourceTablePosition& rhs )
   return not operator<( lhs, rhs );
 }
 
-} // namespace nest
+}  // namespace nest

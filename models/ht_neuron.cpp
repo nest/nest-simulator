@@ -240,47 +240,47 @@ nest::ht_neuron::get_g_NMDA_() const
  * ---------------------------------------------------------------- */
 
 nest::ht_neuron::Parameters_::Parameters_()
-  : E_Na( 30.0 ) // mV
-  , E_K( -90.0 ) // mV
+  : E_Na( 30.0 )  // mV
+  , E_K( -90.0 )  // mV
   , g_NaL( 0.2 )
   , g_KL( 1.0 )
-  , tau_m( 16.0 )     // ms
-  , theta_eq( -51.0 ) // mV
-  , tau_theta( 2.0 )  // ms
-  , tau_spike( 1.75 ) // ms
-  , t_ref( 2.0 )      // ms
+  , tau_m( 16.0 )      // ms
+  , theta_eq( -51.0 )  // mV
+  , tau_theta( 2.0 )   // ms
+  , tau_spike( 1.75 )  // ms
+  , t_ref( 2.0 )       // ms
   , g_peak_AMPA( 0.1 )
-  , tau_rise_AMPA( 0.5 )  // ms
-  , tau_decay_AMPA( 2.4 ) // ms
-  , E_rev_AMPA( 0.0 )     // mV
+  , tau_rise_AMPA( 0.5 )   // ms
+  , tau_decay_AMPA( 2.4 )  // ms
+  , E_rev_AMPA( 0.0 )      // mV
   , g_peak_NMDA( 0.075 )
-  , tau_rise_NMDA( 4.0 )     // ms
-  , tau_decay_NMDA( 40.0 )   // ms
-  , E_rev_NMDA( 0.0 )        // mV
-  , V_act_NMDA( -25.57 )     // mV
-  , S_act_NMDA( 0.081 )      // mV
-  , tau_Mg_slow_NMDA( 22.7 ) // ms
-  , tau_Mg_fast_NMDA( 0.68 ) // ms
+  , tau_rise_NMDA( 4.0 )      // ms
+  , tau_decay_NMDA( 40.0 )    // ms
+  , E_rev_NMDA( 0.0 )         // mV
+  , V_act_NMDA( -25.57 )      // mV
+  , S_act_NMDA( 0.081 )       // mV
+  , tau_Mg_slow_NMDA( 22.7 )  // ms
+  , tau_Mg_fast_NMDA( 0.68 )  // ms
   , instant_unblock_NMDA( false )
   , g_peak_GABA_A( 0.33 )
-  , tau_rise_GABA_A( 1.0 )  // ms
-  , tau_decay_GABA_A( 7.0 ) // ms
-  , E_rev_GABA_A( -70.0 )   // mV
+  , tau_rise_GABA_A( 1.0 )   // ms
+  , tau_decay_GABA_A( 7.0 )  // ms
+  , E_rev_GABA_A( -70.0 )    // mV
   , g_peak_GABA_B( 0.0132 )
-  , tau_rise_GABA_B( 60.0 )   // ms
-  , tau_decay_GABA_B( 200.0 ) // ms
-  , E_rev_GABA_B( -90.0 )     // mV
+  , tau_rise_GABA_B( 60.0 )    // ms
+  , tau_decay_GABA_B( 200.0 )  // ms
+  , E_rev_GABA_B( -90.0 )      // mV
   , g_peak_NaP( 1.0 )
-  , E_rev_NaP( 30.0 ) // mV
+  , E_rev_NaP( 30.0 )  // mV
   , N_NaP( 3.0 )
   , g_peak_KNa( 1.0 )
-  , E_rev_KNa( -90.0 )  // mV
-  , tau_D_KNa( 1250.0 ) // ms
+  , E_rev_KNa( -90.0 )   // mV
+  , tau_D_KNa( 1250.0 )  // ms
   , g_peak_T( 1.0 )
-  , E_rev_T( 0.0 ) // mV
+  , E_rev_T( 0.0 )  // mV
   , N_T( 2.0 )
   , g_peak_h( 1.0 )
-  , E_rev_h( -40.0 ) // mV
+  , E_rev_h( -40.0 )  // mV
   , voltage_clamp( false )
 {
 }
@@ -570,8 +570,8 @@ nest::ht_neuron::Parameters_::set( const Dictionary& d, Node* node )
 void
 nest::ht_neuron::State_::get( Dictionary& d ) const
 {
-  d[ names::V_m ] = y_[ V_M ];     // Membrane potential
-  d[ names::theta ] = y_[ THETA ]; // Threshold
+  d[ names::V_m ] = y_[ V_M ];      // Membrane potential
+  d[ names::theta ] = y_[ THETA ];  // Threshold
 }
 
 void
@@ -665,10 +665,10 @@ nest::ht_neuron::init_buffers_()
   // Reset spike buffers.
   for ( std::vector< RingBuffer >::iterator it = B_.spike_inputs_.begin(); it != B_.spike_inputs_.end(); ++it )
   {
-    it->clear(); // include resize
+    it->clear();  // include resize
   }
 
-  B_.currents_.clear(); // include resize
+  B_.currents_.clear();  // include resize
 
   B_.logger_.reset();
 
@@ -761,10 +761,10 @@ nest::ht_neuron::get_status( Dictionary& d ) const
 void
 nest::ht_neuron::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;      // temporary copy in case of errors
-  ptmp.set( d, this );        // throws if BadProperty
-  State_ stmp = S_;           // temporary copy in case of errors
-  stmp.set( d, *this, this ); // throws if BadProperty
+  Parameters_ ptmp = P_;       // temporary copy in case of errors
+  ptmp.set( d, this );         // throws if BadProperty
+  State_ stmp = S_;            // temporary copy in case of errors
+  stmp.set( d, *this, this );  // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -786,7 +786,7 @@ ht_neuron::update( Time const& origin, const long from, const long to )
 {
   for ( long lag = from; lag < to; ++lag )
   {
-    double tt = 0.0; // it's all relative!
+    double tt = 0.0;  // it's all relative!
 
     // adaptive step integration
     while ( tt < B_.step_ )
@@ -794,11 +794,11 @@ ht_neuron::update( Time const& origin, const long from, const long to )
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
-        &B_.sys_,              // system of ODE
-        &tt,                   // from t...
-        B_.step_,              // ...to t=t+h
-        &B_.integration_step_, // integration window (written on!)
-        S_.y_ );               // neuron state
+        &B_.sys_,               // system of ODE
+        &tt,                    // from t...
+        B_.step_,               // ...to t=t+h
+        &B_.integration_step_,  // integration window (written on!)
+        S_.y_ );                // neuron state
 
       if ( status != GSL_SUCCESS )
       {
@@ -887,4 +887,4 @@ nest::ht_neuron::handle( DataLoggingRequest& e )
 }
 }
 
-#endif // HAVE_GSL
+#endif  // HAVE_GSL

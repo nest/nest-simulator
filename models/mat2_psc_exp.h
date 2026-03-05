@@ -254,9 +254,9 @@ private:
         Called omega in [3]_. */
     double omega_;
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( Dictionary& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const;  //!< Store current values in dictionary
 
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
@@ -272,18 +272,18 @@ private:
   struct State_
   {
     // state variables
-    double i_0_;      //!< synaptic dc input current, variable 0
-    double i_syn_ex_; //!< postsynaptic current for exc. inputs, variable 1
-    double i_syn_in_; //!< postsynaptic current for inh. inputs, variable 1
-    double V_m_;      //!< membrane potential, variable 2
+    double i_0_;       //!< synaptic dc input current, variable 0
+    double i_syn_ex_;  //!< postsynaptic current for exc. inputs, variable 1
+    double i_syn_in_;  //!< postsynaptic current for inh. inputs, variable 1
+    double V_m_;       //!< membrane potential, variable 2
     //! short time adaptive threshold (related to tau_1_), variable 1
     double V_th_1_;
     //! long time adaptive threshold (related to tau_2_), variable 2
     double V_th_2_;
 
-    int r_; //!< total refractory counter (no spikes can be generated)
+    int r_;  //!< total refractory counter (no spikes can be generated)
 
-    State_(); //!< Default initialization
+    State_();  //!< Default initialization
 
     void get( Dictionary&, const Parameters_& ) const;
 
@@ -302,8 +302,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( mat2_psc_exp& );                  //!< Sets buffer pointers to 0
-    Buffers_( const Buffers_&, mat2_psc_exp& ); //!< Sets buffer pointers to 0
+    Buffers_( mat2_psc_exp& );                   //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, mat2_psc_exp& );  //!< Sets buffer pointers to 0
 
     /** buffers and sums up incoming spikes/currents */
     RingBuffer spikes_ex_;
@@ -330,7 +330,7 @@ private:
     //    double PSCInitialValue_;
 
     // time evolution operator of membrane potential
-    double P20_; // constant currents
+    double P20_;  // constant currents
     double P11ex_;
     double P11in_;
     double P21ex_;
@@ -431,10 +431,10 @@ mat2_psc_exp::get_status( Dictionary& d ) const
 inline void
 mat2_psc_exp::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;                       // temporary copy in case of errors
-  const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
-  State_ stmp = S_;                            // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
+  Parameters_ ptmp = P_;                        // temporary copy in case of errors
+  const double delta_EL = ptmp.set( d, this );  // throws if BadProperty
+  State_ stmp = S_;                             // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );          // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -447,6 +447,6 @@ mat2_psc_exp::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-} // namespace
+}  // namespace
 
-#endif // MAT2_PSC_EXP_H
+#endif  // MAT2_PSC_EXP_H

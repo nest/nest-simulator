@@ -37,7 +37,7 @@
 namespace boost
 {
 class any;
-} // namespace boost
+}  // namespace boost
 
 /**
  * Base class for parameters provided to connection routines.
@@ -223,6 +223,6 @@ private:
   ParameterPTR parameter_;
 };
 
-} // namespace nest
+}  // namespace nest
 
 #endif

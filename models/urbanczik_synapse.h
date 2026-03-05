@@ -254,9 +254,9 @@ urbanczik_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSy
 
   while ( start != finish )
   {
-    double const t_up = start->t_ + dendritic_delay;     // from t_lastspike to t_spike
-    double const minus_delta_t_up = t_lastspike_ - t_up; // from 0 to -delta t
-    double const minus_t_down = t_up - t_spike;          // from -t_spike to 0
+    double const t_up = start->t_ + dendritic_delay;      // from t_lastspike to t_spike
+    double const minus_delta_t_up = t_lastspike_ - t_up;  // from 0 to -delta t
+    double const minus_t_down = t_up - t_spike;           // from -t_spike to 0
     double const PI =
       ( tau_L_trace_ * exp( minus_delta_t_up / tau_L ) - tau_s_trace_ * exp( minus_delta_t_up / tau_s ) ) * start->dw_;
     PI_integral_ += PI;
@@ -349,6 +349,6 @@ urbanczik_synapse< targetidentifierT >::set_status( const Dictionary& d, Connect
   }
 }
 
-} // of namespace nest
+}  // of namespace nest
 
-#endif // of #ifndef URBANCZIK_SYNAPSE_H
+#endif  // of #ifndef URBANCZIK_SYNAPSE_H

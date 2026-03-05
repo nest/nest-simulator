@@ -46,7 +46,7 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-namespace nest // template specialization must be placed in namespace
+namespace nest  // template specialization must be placed in namespace
 {
 void
 register_aeif_cond_beta_multisynapse( const std::string& name )
@@ -156,21 +156,21 @@ aeif_cond_beta_multisynapse_dynamics( double, const double y[], double f[], void
  * ---------------------------------------------------------------- */
 
 aeif_cond_beta_multisynapse::Parameters_::Parameters_()
-  : V_peak_( 0.0 )       // mV
-  , V_reset_( -60.0 )    // mV
-  , t_ref_( 0.0 )        // ms
-  , g_L( 30.0 )          // nS
-  , C_m( 281.0 )         // pF
-  , E_L( -70.6 )         // mV
-  , Delta_T( 2.0 )       // mV
-  , tau_w( 144.0 )       // ms
-  , a( 4.0 )             // nS
-  , b( 80.5 )            // pA
-  , V_th( -50.4 )        // mV
-  , tau_rise( 1, 2.0 )   // ms
-  , tau_decay( 1, 20.0 ) // ms
-  , E_rev( 1, 0.0 )      // mV
-  , I_e( 0.0 )           // pA
+  : V_peak_( 0.0 )        // mV
+  , V_reset_( -60.0 )     // mV
+  , t_ref_( 0.0 )         // ms
+  , g_L( 30.0 )           // nS
+  , C_m( 281.0 )          // pF
+  , E_L( -70.6 )          // mV
+  , Delta_T( 2.0 )        // mV
+  , tau_w( 144.0 )        // ms
+  , a( 4.0 )              // nS
+  , b( 80.5 )             // pA
+  , V_th( -50.4 )         // mV
+  , tau_rise( 1, 2.0 )    // ms
+  , tau_decay( 1, 20.0 )  // ms
+  , E_rev( 1, 0.0 )       // mV
+  , I_e( 0.0 )            // pA
   , gsl_error_tol( 1e-6 )
   , has_connections_( false )
 {
@@ -227,7 +227,7 @@ aeif_cond_beta_multisynapse::Parameters_::set( const Dictionary& d, Node* node )
   bool taur_flag = d.update_value( names::tau_rise, tau_rise );
   bool taud_flag = d.update_value( names::tau_decay, tau_decay );
   if ( Erev_flag || taur_flag || taud_flag )
-  { // receptor arrays have been modified
+  {  // receptor arrays have been modified
     if ( ( E_rev.size() != old_n_receptors or tau_rise.size() != old_n_receptors
            or tau_decay.size() != old_n_receptors )
       and ( not Erev_flag or not taur_flag or not taud_flag ) )
@@ -417,16 +417,16 @@ aeif_cond_beta_multisynapse::~aeif_cond_beta_multisynapse()
 void
 aeif_cond_beta_multisynapse::init_buffers_()
 {
-  B_.spikes_.clear();   // includes resize
-  B_.currents_.clear(); // includes resize
+  B_.spikes_.clear();    // includes resize
+  B_.currents_.clear();  // includes resize
   ArchivingNode::clear_history();
 
   B_.logger_.reset();
 
   B_.step_ = Time::get_resolution().get_ms();
   B_.IntegrationStep_ =
-    B_.step_; // reasonable initial value for numerical integrator step size; this will anyway be overwritten by
-              // gsl_odeiv_evolve_apply(), but it might confuse the integrator if it contains uninitialised data
+    B_.step_;  // reasonable initial value for numerical integrator step size; this will anyway be overwritten by
+               // gsl_odeiv_evolve_apply(), but it might confuse the integrator if it contains uninitialised data
 
   if ( not B_.c_ )
   {
@@ -468,7 +468,7 @@ aeif_cond_beta_multisynapse::pre_run_hook()
   }
   else
   {
-    V_.V_peak = P_.V_th; // same as IAF dynamics for spikes if Delta_T == 0.
+    V_.V_peak = P_.V_th;  // same as IAF dynamics for spikes if Delta_T == 0.
   }
 
   V_.refractory_counts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
@@ -502,9 +502,9 @@ aeif_cond_beta_multisynapse::update( Time const& origin, const long from, const 
 {
   assert( State_::V_M == 0 );
 
-  for ( long lag = from; lag < to; ++lag ) // proceed by stepsize B_.step_
+  for ( long lag = from; lag < to; ++lag )  // proceed by stepsize B_.step_
   {
-    double t = 0.0; // internal time of the integration period
+    double t = 0.0;  // internal time of the integration period
 
     // numerical integration with adaptive step size control:
     // ------------------------------------------------------
@@ -524,11 +524,11 @@ aeif_cond_beta_multisynapse::update( Time const& origin, const long from, const 
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
-        &B_.sys_,             // system of ODE
-        &t,                   // from t
-        B_.step_,             // to t <= step
-        &B_.IntegrationStep_, // integration step size
-        &S_.y_[ 0 ] );        // neuronal state converted to double[]
+        &B_.sys_,              // system of ODE
+        &t,                    // from t
+        B_.step_,              // to t <= step
+        &B_.IntegrationStep_,  // integration step size
+        &S_.y_[ 0 ] );         // neuronal state converted to double[]
 
       if ( status != GSL_SUCCESS )
       {
@@ -541,14 +541,14 @@ aeif_cond_beta_multisynapse::update( Time const& origin, const long from, const 
         throw NumericalInstability( get_name() );
       }
 
-      if ( S_.r_ > 0 ) // if neuron is still in refractory period
+      if ( S_.r_ > 0 )  // if neuron is still in refractory period
       {
-        S_.y_[ State_::V_M ] = P_.V_reset_; // clamp it to V_reset
+        S_.y_[ State_::V_M ] = P_.V_reset_;  // clamp it to V_reset
       }
-      else if ( S_.y_[ State_::V_M ] >= V_.V_peak ) // V_m >= V_peak: spike
+      else if ( S_.y_[ State_::V_M ] >= V_.V_peak )  // V_m >= V_peak: spike
       {
         S_.y_[ State_::V_M ] = P_.V_reset_;
-        S_.y_[ State_::W ] += P_.b; // spike-driven adaptation
+        S_.y_[ State_::W ] += P_.b;  // spike-driven adaptation
 
         /* Initialize refractory step counter.
          * - We need to add 1 to compensate for count-down immediately after
@@ -572,7 +572,7 @@ aeif_cond_beta_multisynapse::update( Time const& origin, const long from, const 
     for ( size_t i = 0; i < P_.n_receptors(); ++i )
     {
       S_.y_[ State_::DG + ( State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * i ) ] +=
-        B_.spikes_[ i ].get_value( lag ) * V_.g0_[ i ]; // add incoming spike
+        B_.spikes_[ i ].get_value( lag ) * V_.g0_[ i ];  // add incoming spike
     }
     // set new input current
     B_.I_stim_ = B_.currents_.get_value( lag );
@@ -580,7 +580,7 @@ aeif_cond_beta_multisynapse::update( Time const& origin, const long from, const 
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );
 
-  } // for-loop
+  }  // for-loop
 }
 
 size_t
@@ -632,10 +632,10 @@ aeif_cond_beta_multisynapse::handle( DataLoggingRequest& e )
 void
 aeif_cond_beta_multisynapse::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d, this );   // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, this );   // throws if BadProperty
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
+  ptmp.set( d, this );    // throws if BadProperty
+  State_ stmp = S_;       // temporary copy in case of errors
+  stmp.set( d, this );    // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -647,7 +647,7 @@ aeif_cond_beta_multisynapse::set_status( const Dictionary& d )
    * Here is where we must update the recordablesMap_ if new receptors
    * are added!
    */
-  if ( ptmp.E_rev.size() > P_.E_rev.size() ) // Number of receptors increased
+  if ( ptmp.E_rev.size() > P_.E_rev.size() )  // Number of receptors increased
   {
     for ( size_t receptor = P_.E_rev.size(); receptor < ptmp.E_rev.size(); ++receptor )
     {
@@ -657,7 +657,7 @@ aeif_cond_beta_multisynapse::set_status( const Dictionary& d )
     }
   }
   else if ( ptmp.E_rev.size() < P_.E_rev.size() )
-  { // Number of receptors decreased
+  {  // Number of receptors decreased
     for ( size_t receptor = ptmp.E_rev.size(); receptor < P_.E_rev.size(); ++receptor )
     {
       recordablesMap_.erase( get_g_receptor_name( receptor ) );
@@ -669,6 +669,6 @@ aeif_cond_beta_multisynapse::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-} // namespace nest
+}  // namespace nest
 
-#endif // HAVE_GSL
+#endif  // HAVE_GSL

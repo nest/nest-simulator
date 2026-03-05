@@ -157,7 +157,7 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::set( const Dictionary& d, Node* node 
 
   if ( update_value_param( d, names::f_target, f_target_, node ) )
   {
-    f_target_ /= 1000.0; // convert from spikes/s to spikes/ms
+    f_target_ /= 1000.0;  // convert from spikes/s to spikes/ms
   }
 
   update_value_param( d, names::beta, beta_, node );
@@ -273,15 +273,15 @@ eprop_iaf_adapt_bsshslm_2020::eprop_iaf_adapt_bsshslm_2020( const eprop_iaf_adap
 void
 eprop_iaf_adapt_bsshslm_2020::init_buffers_()
 {
-  B_.spikes_.clear();   // includes resize
-  B_.currents_.clear(); // includes resize
-  B_.logger_.reset();   // includes resize
+  B_.spikes_.clear();    // includes resize
+  B_.currents_.clear();  // includes resize
+  B_.logger_.reset();    // includes resize
 }
 
 void
 eprop_iaf_adapt_bsshslm_2020::pre_run_hook()
 {
-  B_.logger_.init(); // ensures initialization in case multimeter connected after Simulate
+  B_.logger_.init();  // ensures initialization in case multimeter connected after Simulate
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
 
@@ -402,7 +402,7 @@ eprop_iaf_adapt_bsshslm_2020::handle( LearningSignalConnectionEvent& e )
   {
     const long time_step = e.get_stamp().get_steps();
     const double weight = e.get_weight();
-    const double error_signal = e.get_coeffvalue( it_event ); // get_coeffvalue advances iterator
+    const double error_signal = e.get_coeffvalue( it_event );  // get_coeffvalue advances iterator
     const double learning_signal = weight * error_signal;
 
     write_learning_signal_to_history( time_step, learning_signal );
@@ -424,19 +424,19 @@ eprop_iaf_adapt_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis
 {
   auto eprop_hist_it = get_eprop_history( t_previous_trigger_spike );
 
-  double e = 0.0;       // eligibility trace
-  double e_bar = 0.0;   // low-pass filtered eligibility trace
-  double epsilon = 0.0; // adaptive component of eligibility vector
-  double grad = 0.0;    // gradient value to be calculated
-  double L = 0.0;       // learning signal
-  double psi = 0.0;     // surrogate gradient
-  double sum_e = 0.0;   // sum of eligibility traces
-  double z = 0.0;       // spiking variable
-  double z_bar = 0.0;   // low-pass filtered spiking variable
+  double e = 0.0;        // eligibility trace
+  double e_bar = 0.0;    // low-pass filtered eligibility trace
+  double epsilon = 0.0;  // adaptive component of eligibility vector
+  double grad = 0.0;     // gradient value to be calculated
+  double L = 0.0;        // learning signal
+  double psi = 0.0;      // surrogate gradient
+  double sum_e = 0.0;    // sum of eligibility traces
+  double z = 0.0;        // spiking variable
+  double z_bar = 0.0;    // low-pass filtered spiking variable
 
   for ( long presyn_isi : presyn_isis )
   {
-    z = 1.0; // set spiking variable to 1 for each incoming spike
+    z = 1.0;  // set spiking variable to 1 for each incoming spike
 
     for ( long t = 0; t < presyn_isi; ++t )
     {
@@ -451,7 +451,7 @@ eprop_iaf_adapt_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis
       e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
       grad += L * e_bar;
       sum_e += e;
-      z = 0.0; // set spiking variable to 0 between spikes
+      z = 0.0;  // set spiking variable to 0 between spikes
 
       ++eprop_hist_it;
     }
@@ -472,4 +472,4 @@ eprop_iaf_adapt_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis
   return grad;
 }
 
-} // namespace nest
+}  // namespace nest

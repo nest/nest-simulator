@@ -57,6 +57,6 @@ public:
   const size_t line_number;
 };
 
-} // namespace nest
+}  // namespace nest
 
-#endif // ifndef LOGGING_EVENT_H
+#endif  // ifndef LOGGING_EVENT_H

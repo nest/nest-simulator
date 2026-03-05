@@ -116,6 +116,6 @@ private:
   bool deprecation_warning_issued_;
 };
 
-} // namespace nest
+}  // namespace nest
 
 #endif

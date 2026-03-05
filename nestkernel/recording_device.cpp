@@ -36,7 +36,7 @@
 namespace nest
 {
 class Event;
-} // namespace nest
+}  // namespace nest
 
 nest::RecordingDevice::RecordingDevice()
   : DeviceNode()
@@ -142,15 +142,15 @@ nest::RecordingDevice::set_status( const Dictionary& d )
     throw BadProperty( "Recorder parameters cannot be changed while inside a Prepare/Run/Cleanup context." );
   }
 
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
+  ptmp.set( d );          // throws if BadProperty
 
-  State_ stmp = S_; // temporary copy in case of errors
-  stmp.set( d );    // throws if BadProperty
+  State_ stmp = S_;  // temporary copy in case of errors
+  stmp.set( d );     // throws if BadProperty
 
   Device::set_status( d );
 
-  if ( get_node_id() == 0 ) // this is a model prototype, not an actual instance
+  if ( get_node_id() == 0 )  // this is a model prototype, not an actual instance
   {
     Dictionary backend_params;
 
@@ -196,7 +196,7 @@ nest::RecordingDevice::get_status( Dictionary& d ) const
 
   d[ names::element_type ] = names::recorder;
 
-  if ( get_node_id() == 0 ) // this is a model prototype, not an actual instance
+  if ( get_node_id() == 0 )  // this is a model prototype, not an actual instance
   {
     // first get the defaults from the backend
     kernel::manager< IOManager >.get_recording_backend_device_defaults( P_.record_to_, d );

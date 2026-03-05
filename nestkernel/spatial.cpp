@@ -643,4 +643,4 @@ LayerMetadata::operator==( const NodeCollectionMetadataPTR rhs ) const
   rhs_layer_metadata->get_status( rhs_dict, /* nc */ nullptr );
   return dict == rhs_dict;
 }
-} // namespace nest
+}  // namespace nest

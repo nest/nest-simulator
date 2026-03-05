@@ -64,7 +64,7 @@ template < typename ConnectionT >
 ConnectorModel*
 GenericConnectorModel< ConnectionT >::clone( std::string name, synindex syn_id ) const
 {
-  ConnectorModel* new_cm = new GenericConnectorModel( *this, name ); // calls copy construtor
+  ConnectorModel* new_cm = new GenericConnectorModel( *this, name );  // calls copy construtor
   new_cm->set_syn_id( syn_id );
 
   const bool is_primary = new_cm->has_property( ConnectionModelProperties::IS_PRIMARY );
@@ -319,5 +319,5 @@ GenericConnectorModel< ConnectionT >::add_connection_( Node& src,
   vc->push_back( std::move( connection ) );
 }
 
-} // namespace nest
-#endif // CONNECTOR_MODEL_IMPL_H
+}  // namespace nest
+#endif  // CONNECTOR_MODEL_IMPL_H

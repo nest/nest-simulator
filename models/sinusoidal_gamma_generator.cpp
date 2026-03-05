@@ -64,11 +64,11 @@ RecordablesMap< sinusoidal_gamma_generator >::create()
 
 
 nest::sinusoidal_gamma_generator::Parameters_::Parameters_()
-  : om_( 0.0 )  // radian/ms
-  , phi_( 0.0 ) // radian
+  : om_( 0.0 )   // radian/ms
+  , phi_( 0.0 )  // radian
   , order_( 1.0 )
-  , rate_( 0.0 )      // spikes/ms
-  , amplitude_( 0.0 ) // spikes/ms
+  , rate_( 0.0 )       // spikes/ms
+  , amplitude_( 0.0 )  // spikes/ms
   , individual_spike_trains_( true )
   , num_trains_( 0 )
 {
@@ -113,10 +113,10 @@ nest::sinusoidal_gamma_generator::State_::State_()
 nest::sinusoidal_gamma_generator::Buffers_::Buffers_( sinusoidal_gamma_generator& n )
   : logger_( n )
   , t0_ms_()
-  , // will be set in init_buffers_
+  ,  // will be set in init_buffers_
   Lambda_t0_()
-  ,               // will be set in init_buffers_
-  P_prev_( n.P_ ) // when creating Buffer, base on current parameters
+  ,                // will be set in init_buffers_
+  P_prev_( n.P_ )  // when creating Buffer, base on current parameters
 {
 }
 
@@ -194,13 +194,13 @@ nest::sinusoidal_gamma_generator::Parameters_::set( const Dictionary& d,
   double dc_unscaled = 1e3 * rate_;
   if ( update_value_param( d, names::rate, dc_unscaled, node ) )
   {
-    rate_ = 1e-3 * dc_unscaled; // scale to 1/ms
+    rate_ = 1e-3 * dc_unscaled;  // scale to 1/ms
   }
 
   double ac_unscaled = 1e3 * amplitude_;
   if ( update_value_param( d, names::amplitude, ac_unscaled, node ) )
   {
-    amplitude_ = 1e-3 * ac_unscaled; // scale to 1/ms
+    amplitude_ = 1e-3 * ac_unscaled;  // scale to 1/ms
   }
 
   if ( not( 0.0 <= ac_unscaled and ac_unscaled <= dc_unscaled ) )
@@ -372,7 +372,7 @@ nest::sinusoidal_gamma_generator::handle( DataLoggingRequest& e )
 void
 nest::sinusoidal_gamma_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
 
   // For the input backend
   if ( not input_param.empty() )
@@ -396,4 +396,4 @@ nest::sinusoidal_gamma_generator::set_data_from_stimulation_backend( std::vector
   // if we get here, temporary contains consistent set of properties
   P_ = ptmp;
 }
-#endif // HAVE_GSL
+#endif  // HAVE_GSL

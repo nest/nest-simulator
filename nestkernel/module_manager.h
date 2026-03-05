@@ -71,8 +71,8 @@ private:
     {
     }
 
-    lt_dlhandle handle;                //!< required for unloading
-    NESTExtensionInterface* extension; //!< required for re-initizliation(), avoid re-casting handle
+    lt_dlhandle handle;                 //!< required for unloading
+    NESTExtensionInterface* extension;  //!< required for re-initizliation(), avoid re-casting handle
   };
 
   std::map< std::string, ModuleMapEntry_ > modules_;
@@ -126,6 +126,6 @@ public:
 };
 }
 
-#endif // HAVE_LIBLTDL
+#endif  // HAVE_LIBLTDL
 
-#endif // #ifndef MODULE_MANAGER_H
+#endif  // #ifndef MODULE_MANAGER_H

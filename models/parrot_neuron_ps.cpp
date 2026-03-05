@@ -71,7 +71,7 @@ parrot_neuron_ps::update( Time const& origin, long const from, long const to )
     long const T = origin.get_steps() + lag;
 
     double ev_offset;
-    double ev_multiplicity; // parrot stores multiplicity in weight
+    double ev_multiplicity;  // parrot stores multiplicity in weight
     bool end_of_refract;
 
     while ( B_.events_.get_next_spike( T, false, ev_offset, ev_multiplicity, end_of_refract ) )
@@ -126,4 +126,4 @@ parrot_neuron_ps::handle( SpikeEvent& e )
   }
 }
 
-} // namespace
+}  // namespace

@@ -152,7 +152,7 @@ jobs:
            pip install --upgrade pip
            pip install mkdocs-material==9.5.35
            cd doc
-           mkdocs build --strict -d ../build-${{ matrix.version }}/devdoc
+            mkdocs build -f doc/mkdocs.yml --strict -d ../build-${{ matrix.version }}/devdoc
 
        - name: Upload docs artifact ${{ matrix.version }}
          uses: actions/upload-artifact@v4.6.0
@@ -355,7 +355,7 @@ jobs:
         run: |
           pip install mkdocs-material==9.5.35
           cd doc
-          mkdocs build --strict -d ../build-${{ github.run_id }}/devdoc
+           mkdocs build -f doc/mkdocs.yml --strict -d ../build-${{ github.run_id }}/devdoc
 
       - name: Upload docs artifact
         uses: actions/upload-artifact@v4.6.0

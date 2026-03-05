@@ -22,20 +22,20 @@
 
 #include "music_event_in_proxy.h"
 
-#include <boost/any.hpp>
-
-#include "dictionary.h"
-#include "nest_names.h"
-#include "vp_manager.h"
-
 #ifdef HAVE_MUSIC
+
+// External includes:
+#include <music.hh>
 
 // Includes from nestkernel:
 #include "connection_manager.h"
+#include "dictionary.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "music_manager.h"
 #include "nest_impl.h"
+#include "nest_names.h"
+#include "vp_manager.h"
 
 void
 nest::register_music_event_in_proxy( const std::string& name )

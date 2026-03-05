@@ -23,13 +23,14 @@
 #ifndef MUSIC_RATE_IN_HANDLER
 #define MUSIC_RATE_IN_HANDLER
 
+// Generated includes:
+#include "config.h"
+
 #ifdef HAVE_MUSIC
 
 #include <string>
 #include <vector>
 
-// Generated includes:
-#include "config.h"
 #include "nest_time.h"
 
 namespace MUSIC

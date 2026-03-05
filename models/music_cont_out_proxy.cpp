@@ -24,35 +24,29 @@
 
 #ifdef HAVE_MUSIC
 
+// C++ includes
 #include <bits/std_abs.h>
-#include <boost/any.hpp>
 #include <limits>
 #include <memory>
+#include <string>
 
+// Includes from nestkernel:
 #include "connection_manager.h"
 #include "dictionary.h"
 #include "event.h"
 #include "event_delivery_manager.h"
-#include "logging_manager.h"
-#include "model_manager.h"
-#include "mpi.h"
-#include "music/array_data.hh"
-#include "music/index_map.hh"
-#include "music/permutation_index.hh"
-#include "music/port.hh"
-#include "music/setup.hh"
-#include "nest_names.h"
-
-#include <string>
-
-// Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "logging_manager.h"
+#include "model_manager.h"
+#include "mpi.h"
 #include "music_manager.h"
 #include "nest_impl.h"
+#include "nest_names.h"
 #include "node_manager.h"
+
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "logging.h"

@@ -24,14 +24,9 @@
 
 #ifdef HAVE_MUSIC
 
-#include <boost/any.hpp>
-
 #include "dictionary.h"
 #include "logging_manager.h"
 #include "mpi.h"
-#include "music/array_data.hh"
-#include "music/port.hh"
-#include "music/setup.hh"
 #include "nest_names.h"
 #include "node.h"
 

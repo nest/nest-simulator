@@ -24,26 +24,23 @@
 
 #ifdef HAVE_MUSIC
 
+// C++ includes:
 #include <algorithm>
 #include <assert.h>
-#include <boost/any.hpp>
-
-#include "dictionary.h"
-#include "event.h"
-#include "music/permutation_index.hh"
-#include "music/port.hh"
-#include "music/setup.hh"
-#include "nest_names.h"
 
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "logging.h"
 #include "logging_manager.h"
+
 // Includes from nestkernel:
+#include "dictionary.h"
+#include "event.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "music_manager.h"
 #include "nest_impl.h"
+#include "nest_names.h"
 
 void
 nest::register_music_event_out_proxy( const std::string& name )

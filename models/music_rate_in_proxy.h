@@ -23,31 +23,25 @@
 #ifndef MUSIC_RATE_IN_PROXY_H
 #define MUSIC_RATE_IN_PROXY_H
 
-#include <string>
-
-class Dictionary;
-
-namespace nest
-{
-class DelayedRateConnectionEvent;
-class InstantaneousRateConnectionEvent;
-} // namespace nest
+// Generated includes:
+#include "config.h"
 
 #ifdef HAVE_MUSIC
 
+// C++ includes:
+#include <string>
+#include <vector>
+
 // External includes:
 #include <music.hh>
-// C++ includes:
-#include <vector>
 
 // Includes from nestkernel:
 #include "device_node.h"
+#include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
 
-// Generated includes:
-#include "config.h"
-#include "nest_time.h"
+class Dictionary;
 
 
 /* BeginUserDocs: device, rate, MUSIC

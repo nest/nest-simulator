@@ -23,39 +23,29 @@
 #ifndef MUSIC_EVENT_OUT_PROXY_H
 #define MUSIC_EVENT_OUT_PROXY_H
 
-#ifdef HAVE_MUSIC
-
-#include <stddef.h>
-#include <string>
-
 // Generated includes:
 #include "config.h"
-#include "music/index_map.hh"
-#include "nest_time.h"
-#include "node.h"
 
-class Dictionary;
+#ifdef HAVE_MUSIC
 
-namespace MUSIC
-{
-class EventOutputPort;
-class PermutationIndex;
-} // namespace MUSIC
-namespace nest
-{
-class SpikeEvent;
-} // namespace nest
+// C++ includes:
+#include <stddef.h>
+#include <string>
+#include <vector>
 
 // External includes:
 #include <music.hh>
-// C++ includes:
-#include <vector>
 
 // Includes from nestkernel:
 #include "device_node.h"
 #include "event.h"
 #include "exceptions.h"
+#include "music/index_map.hh"
+#include "nest_time.h"
 #include "nest_types.h"
+#include "node.h"
+
+class Dictionary;
 
 namespace nest
 {

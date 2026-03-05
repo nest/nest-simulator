@@ -23,38 +23,29 @@
 #ifndef MUSIC_RATE_OUT_PROXY_H
 #define MUSIC_RATE_OUT_PROXY_H
 
-class Dictionary;
-
-namespace MUSIC
-{
-class ContOutputPort;
-} // namespace MUSIC
-namespace nest
-{
-class InstantaneousRateConnectionEvent;
-} // namespace nest
+// Generated includes:
+#include "config.h"
 
 #ifdef HAVE_MUSIC
 
+// C++ includes:
 #include <stddef.h>
 #include <string>
-
-// Generated includes:
-#include "config.h"
-#include "music/index_map.hh"
-#include "nest_time.h"
+#include <vector>
 
 // External includes:
 #include <music.hh>
-// C++ includes:
-#include <vector>
 
 // Includes from nestkernel:
 #include "device_node.h"
 #include "event.h"
 #include "exceptions.h"
+#include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
+
+
+class Dictionary;
 
 /* BeginUserDocs: device, rate, MUSIC
 

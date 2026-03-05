@@ -22,16 +22,10 @@
 
 #include "music_message_in_proxy.h"
 
-#include "logging_manager.h"
-#include "music/port.hh"
-#include "music/setup.hh"
-
-namespace nest
-{
-class Node;
-} // namespace nest
-
 #ifdef HAVE_MUSIC
+
+// External includes:
+#include <music.hh>
 
 // Includes from libnestutil:
 #include "compose.hpp"
@@ -39,6 +33,7 @@ class Node;
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "logging.h"
+#include "logging_manager.h"
 #include "music_manager.h"
 #include "nest_impl.h"
 

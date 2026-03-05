@@ -22,6 +22,8 @@
 
 #include "music_rate_in_handler.h"
 
+#ifdef HAVE_MUSIC
+
 #include <algorithm>
 #include <stddef.h>
 
@@ -32,8 +34,6 @@
 #include "music/setup.hh"
 #include "node.h"
 #include "secondary_event.h"
-
-#ifdef HAVE_MUSIC
 
 // Includes from libnestutil:
 #include "compose.hpp"

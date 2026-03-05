@@ -26,7 +26,10 @@
 
 // C includes:
 #ifdef HAVE_MPI
-#ifndef HAVE_MUSIC
+#ifdef HAVE_MUSIC
+#include "music/runtime.hh"
+#include "music/setup.hh"
+#else
 #include <mpi.h>
 #endif
 #endif
@@ -36,8 +39,6 @@
 #include "exceptions.h"
 #include "logging.h"
 #include "logging_manager.h"
-#include "music/runtime.hh"
-#include "music/setup.hh"
 
 class Dictionary;
 

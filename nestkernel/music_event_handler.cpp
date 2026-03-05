@@ -22,6 +22,8 @@
 
 #include "music_event_handler.h"
 
+#ifdef HAVE_MUSIC
+
 #include <assert.h>
 
 #include "exceptions.h"
@@ -29,8 +31,6 @@
 #include "music/port.hh"
 #include "music/setup.hh"
 #include "node.h"
-
-#ifdef HAVE_MUSIC
 
 // Includes from libnestutil:
 #include "compose.hpp"

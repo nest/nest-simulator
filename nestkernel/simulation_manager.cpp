@@ -1125,7 +1125,7 @@ nest::SimulationManager::update_()
           const double communicate_time = end_current_communicate - start_current_communicate;
           start_current_communicate = end_current_communicate;
 
-          long end_local_spike_counter = kernel().event_delivery_manager.get_local_spike_counter();
+          const size_t end_local_spike_counter = kernel().event_delivery_manager.get_local_spike_counter();
           const size_t local_spike_counter = end_local_spike_counter - start_local_spike_counter;
           start_local_spike_counter = end_local_spike_counter;
 

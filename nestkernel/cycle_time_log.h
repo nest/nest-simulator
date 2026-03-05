@@ -40,9 +40,7 @@ class CycleTimeLog
 public:
   CycleTimeLog();
   void clear();
-  void add_entry( double cycle_update_time,
-    double communicate_time,
-    long local_spike_counter );
+  void add_entry( double cycle_update_time, double communicate_time, long local_spike_counter );
   void to_dict( DictionaryDatum& ) const;
 
 private:

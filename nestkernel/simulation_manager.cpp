@@ -108,7 +108,9 @@ nest::SimulationManager::initialize( const bool adjust_number_of_threads_or_rng_
   reset_timers_for_preparation();
   reset_timers_for_dynamics();
 
+#ifdef CYCLE_TIMERS
   cycle_time_log_.clear();
+#endif
 }
 
 void

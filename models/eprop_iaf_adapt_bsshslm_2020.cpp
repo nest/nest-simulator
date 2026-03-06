@@ -439,11 +439,11 @@ eprop_iaf_adapt_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis
     {
       assert( eprop_hist_it != eprop_history_.end() );
 
-      const double psi = eprop_hist_it->surrogate_gradient_; // surrogate gradient
-      const double L = eprop_hist_it->learning_signal_;      // learning signal
+      const double psi = eprop_hist_it->surrogate_gradient_;  // surrogate gradient
+      const double L = eprop_hist_it->learning_signal_;       // learning signal
 
       z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
-      const double e = psi * ( z_bar - P_.adapt_beta_ * epsilon ); // eligibility trace
+      const double e = psi * ( z_bar - P_.adapt_beta_ * epsilon );  // eligibility trace
       epsilon = V_.P_adapt_ * epsilon + e;
       e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
 

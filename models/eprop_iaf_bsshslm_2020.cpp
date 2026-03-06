@@ -398,11 +398,11 @@ eprop_iaf_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis,
     {
       assert( eprop_hist_it != eprop_history_.end() );
 
-      const double psi = eprop_hist_it->surrogate_gradient_; // surrogate gradient
-      const double L = eprop_hist_it->learning_signal_;      // learning signal
+      const double psi = eprop_hist_it->surrogate_gradient_;  // surrogate gradient
+      const double L = eprop_hist_it->learning_signal_;       // learning signal
 
       z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
-      const double e = psi * z_bar; // eligibility trace
+      const double e = psi * z_bar;  // eligibility trace
       e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
 
       gradient += L * e_bar;

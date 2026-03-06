@@ -388,10 +388,10 @@ eprop_iaf::compute_gradient( const long t_spike,
   const long isi_steps = t_spike - t_spike_previous;
   remaining_steps_until_cutoff = previous_was_flush_event ? remaining_steps_until_cutoff : get_eprop_isi_trace_cutoff();
 
-  double z_current_buffer = 0.0; // spike that triggered current computation
+  double z_current_buffer = 0.0;  // spike that triggered current computation
   if ( not previous_was_flush_event )
   {
-    gradient = 0.0; // gradient used for the weight update (to be calculated)
+    gradient = 0.0;  // gradient used for the weight update (to be calculated)
     z_current_buffer = 1.0;
   }
 
@@ -404,16 +404,16 @@ eprop_iaf::compute_gradient( const long t_spike,
   {
     assert( t == eprop_hist_it->t_ );
 
-    const double z = z_previous_buffer; // spiking variable
+    const double z = z_previous_buffer;  // spiking variable
     z_previous_buffer = z_current_buffer;
     z_current_buffer = 0.0;
 
-    const double psi = eprop_hist_it->surrogate_gradient_; // surrogate gradient
-    const double L = eprop_hist_it->learning_signal_;      // learning signal
-    const double fr_reg = eprop_hist_it->firing_rate_reg_; // firing rate regularization
+    const double psi = eprop_hist_it->surrogate_gradient_;  // surrogate gradient
+    const double L = eprop_hist_it->learning_signal_;       // learning signal
+    const double fr_reg = eprop_hist_it->firing_rate_reg_;  // firing rate regularization
 
     z_bar = V_.P_v_m_ * z_bar + z;
-    const double e = psi * z_bar; // eligibility trace
+    const double e = psi * z_bar;  // eligibility trace
     e_bar = P_.kappa_ * e_bar + e;
     e_bar_reg = P_.kappa_reg_ * e_bar_reg + ( 1.0 - P_.kappa_reg_ ) * e;
 

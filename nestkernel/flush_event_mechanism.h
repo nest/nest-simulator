@@ -112,6 +112,6 @@ protected:
   long last_event_time_;
 };
 
-} // namespace nest
+}  // namespace nest
 
-#endif // FLUSH_EVENT_MECHANISM_H
+#endif  // FLUSH_EVENT_MECHANISM_H

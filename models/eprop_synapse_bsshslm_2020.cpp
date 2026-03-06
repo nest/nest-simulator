@@ -142,4 +142,4 @@ Connector< eprop_synapse_bsshslm_2020< TargetIdentifierIndex > >::~Connector()
   C_.clear();
 }
 
-} // namespace nest
+}  // namespace nest

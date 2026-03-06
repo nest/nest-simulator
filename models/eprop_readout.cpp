@@ -313,10 +313,10 @@ eprop_readout::compute_gradient( const long t_spike,
   const long isi_steps = t_spike - t_spike_previous;
   remaining_steps_until_cutoff = previous_was_flush_event ? remaining_steps_until_cutoff : get_eprop_isi_trace_cutoff();
 
-  double z_current_buffer = 0.0; // spike that triggered current computation
+  double z_current_buffer = 0.0;  // spike that triggered current computation
   if ( not previous_was_flush_event )
   {
-    gradient = 0.0; // gradient used for the weight update (to be calculated)
+    gradient = 0.0;  // gradient used for the weight update (to be calculated)
     z_current_buffer = 1.0;
   }
 
@@ -329,11 +329,11 @@ eprop_readout::compute_gradient( const long t_spike,
   {
     assert( t == eprop_hist_it->t_ );
 
-    const double z = z_previous_buffer; // spiking variable
+    const double z = z_previous_buffer;  // spiking variable
     z_previous_buffer = z_current_buffer;
     z_current_buffer = 0.0;
 
-    const double E = eprop_hist_it->error_signal_; // error signal
+    const double E = eprop_hist_it->error_signal_;  // error signal
 
     z_bar = V_.P_v_m_ * z_bar + z;
     const double gradient_increment = E * z_bar;

@@ -382,8 +382,8 @@ eprop_readout_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis,
 {
   auto eprop_hist_it = get_eprop_history( t_previous_trigger_spike );
 
-  double gradient = 0.0; // gradient used for the weight update (to be calculated)
-  double z_bar = 0.0;    // low-pass filtered spiking variable
+  double gradient = 0.0;  // gradient used for the weight update (to be calculated)
+  double z_bar = 0.0;     // low-pass filtered spiking variable
 
   for ( const long presyn_isi : presyn_isis )
   {
@@ -393,7 +393,7 @@ eprop_readout_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis,
     {
       assert( eprop_hist_it != eprop_history_.end() );
 
-      const double E = eprop_hist_it->error_signal_; // error signal
+      const double E = eprop_hist_it->error_signal_;  // error signal
 
       z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
       gradient += E * z_bar;

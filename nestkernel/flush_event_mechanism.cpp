@@ -62,4 +62,4 @@ FlushEventMechanism::set_status( const Dictionary& d )
   }
 }
 
-} // namespace nest
+}  // namespace nest

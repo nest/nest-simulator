@@ -24,20 +24,34 @@
 #ifndef STEP_RATE_GENERATOR_H
 #define STEP_RATE_GENERATOR_H
 
+#include <math.h>
+#include <stddef.h>
 // C++ includes:
+#include <algorithm>
+#include <map>
+#include <string>
 #include <vector>
 
 // Includes from nestkernel:
 #include "connection.h"
 #include "device_node.h"
+#include "dictionary.h"
 #include "event.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
 #include "nest_types.h"
+#include "node.h"
+#include "recordables_map.h"
 #include "ring_buffer.h"
+#include "secondary_event.h"
 #include "stimulation_device.h"
 #include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
+class DataLoggingRequest;
 
 /* BeginUserDocs: device, generator, rate
 

@@ -23,15 +23,36 @@
 #ifndef EPROP_SYNAPSE_BSSHSLM_2020_H
 #define EPROP_SYNAPSE_BSSHSLM_2020_H
 
+#include <assert.h>
+#include <boost/type_index/type_index_facade.hpp>
+#include <cmath>
+#include <stddef.h>
+#include <string>
+#include <vector>
+
 // nestkernel
+#include "common_synapse_properties.h"
 #include "connection.h"
 #include "connector_base.h"
-#include "eprop_archiving_node.h"
+#include "connector_model.h"
+#include "dictionary.h"
+#include "enum_bitfield.h"
+#include "eprop_archiving_node_impl.h"
+#include "event.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "nest_types.h"
+#include "node.h"
+#include "simulation_manager.h"
 #include "target_identifier.h"
 #include "weight_optimizer.h"
 
 namespace nest
 {
+class TargetIdentifierIndex;
+class TargetIdentifierPtrRport;
 
 /* BeginUserDocs: synapse, e-prop plasticity
 
@@ -369,13 +390,10 @@ constexpr ConnectionModelProperties eprop_synapse_bsshslm_2020< targetidentifier
 // Explicitly declare specializations of Connector methods that need to do special things for eprop_synapse_bsshslm_2020
 template <>
 void Connector< eprop_synapse_bsshslm_2020< TargetIdentifierPtrRport > >::disable_connection( const size_t lcid );
-
 template <>
 void Connector< eprop_synapse_bsshslm_2020< TargetIdentifierIndex > >::disable_connection( const size_t lcid );
-
 template <>
 Connector< eprop_synapse_bsshslm_2020< TargetIdentifierPtrRport > >::~Connector();
-
 template <>
 Connector< eprop_synapse_bsshslm_2020< TargetIdentifierIndex > >::~Connector();
 
@@ -408,7 +426,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020( con
   , weight_( es.weight_ )
   , t_spike_previous_( 0 )
   , t_previous_update_( 0 )
-  , t_next_update_( kernel().simulation_manager.get_eprop_update_interval().get_steps() )
+  , t_next_update_( kernel::manager< SimulationManager >.get_eprop_update_interval().get_steps() )
   , t_previous_trigger_spike_( 0 )
   , tau_m_readout_( es.tau_m_readout_ )
   , kappa_( std::exp( -Time::get_resolution().get_ms() / tau_m_readout_ ) )
@@ -524,7 +542,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::send( Event& e,
   assert( target );
 
   const long t_spike = e.get_stamp().get_steps();
-  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
+  const long update_interval = kernel::manager< SimulationManager >.get_eprop_update_interval().get_steps();
   const long shift = target->get_shift();
 
   const long interval_step = ( t_spike - shift ) % update_interval;

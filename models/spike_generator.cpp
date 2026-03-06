@@ -22,14 +22,21 @@
 
 #include "spike_generator.h"
 
+#include <algorithm>
+#include <assert.h>
+#include <cmath>
+#include <iterator>
+#include <limits>
+#include <sstream>
+
 // Includes from nestkernel:
-#include "event_delivery_manager_impl.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
-
 // Includes from libnestutil:
 #include "dict_util.h"
+#include "event_delivery_manager.h"
 
 
 void
@@ -379,7 +386,7 @@ nest::spike_generator::update( Time const& sliceT0, const long from, const long 
       long lag = Time( tnext_stamp - sliceT0 ).get_steps() - 1;
 
       // all spikes are sent locally, so offset information is always preserved
-      kernel().event_delivery_manager.send( *this, *se, lag );
+      kernel::manager< EventDeliveryManager >.send( *this, *se, lag );
       delete se;
     }
 
@@ -413,7 +420,6 @@ nest::spike_generator::set_data_from_stimulation_backend( std::vector< double >&
   // For the input backend
   if ( not input_spikes.empty() )
   {
-
     Dictionary d;
     std::vector< double > times_ms;
     const size_t n_spikes = P_.spike_stamps_.size();

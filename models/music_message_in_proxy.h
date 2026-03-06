@@ -32,6 +32,7 @@
 #include <mpi.h>
 
 // C++ includes:
+#include <stddef.h>
 #include <string>
 #include <vector>
 
@@ -43,6 +44,10 @@
 
 // Includes from nestkernel:
 #include "device_node.h"
+#include "dictionary.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
 #include "nest_types.h"
 
 

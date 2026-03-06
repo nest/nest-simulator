@@ -23,16 +23,17 @@
 #ifndef ARCHIVING_NODE_H
 #define ARCHIVING_NODE_H
 
+#include <stddef.h>
 // C++ includes:
-#include <algorithm>
 #include <deque>
 
 // Includes from nestkernel:
+#include "dictionary.h"
 #include "histentry.h"
 #include "nest_time.h"
-#include "nest_types.h"
-#include "node.h"
 #include "structural_plasticity_node.h"
+
+class Dictionary;
 
 
 #define DEBUG_ARCHIVER 1
@@ -104,7 +105,7 @@ protected:
   /**
    * Return most recent spike time in ms
    */
-  inline double get_spiketime_ms() const;
+  double get_spiketime_ms() const;
 
   /**
    * Clear spike history

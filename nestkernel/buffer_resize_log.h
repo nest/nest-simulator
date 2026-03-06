@@ -23,11 +23,14 @@
 #ifndef BUFFER_RESIZE_LOG_H
 #define BUFFER_RESIZE_LOG_H
 
+#include <stddef.h>
 // C++ includes:
 #include <vector>
 
 // Includes from libnestutil:
 #include "dictionary.h"
+
+class Dictionary;
 
 namespace nest
 {

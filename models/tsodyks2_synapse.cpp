@@ -22,7 +22,9 @@
 
 #include "tsodyks2_synapse.h"
 
-// Includes from nestkernel:
+#include <boost/iterator/iterator_facade.hpp>
+#include <utility>
+
 #include "nest_impl.h"
 
 void

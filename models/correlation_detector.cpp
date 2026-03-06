@@ -22,18 +22,22 @@
 
 #include "correlation_detector.h"
 
+#include <assert.h>
 // C++ includes:
+#include <algorithm>
 #include <cmath>       // for less
 #include <functional>  // for bind2nd
 
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "dict_util.h"
+#include "dictionary.h"
+#include "event.h"
+#include "genericmodel_impl.h"
 #include "logging.h"
-
-// Includes from nestkernel:
-#include "model_manager_impl.h"
+#include "logging_manager.h"
 #include "nest_impl.h"
+#include "nest_timeconverter.h"
 
 void
 nest::register_correlation_detector( const std::string& name )
@@ -274,7 +278,6 @@ nest::correlation_detector::handle( SpikeEvent& e )
 
   if ( device_.is_active( stamp ) )
   {
-
     const long spike_i = stamp.get_steps();
     const size_t other = 1 - sender;  // port of the neuron not sending
     SpikelistType& otherSpikes = S_.incoming_[ other ];

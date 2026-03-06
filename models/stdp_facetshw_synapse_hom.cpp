@@ -21,9 +21,10 @@
  */
 
 #include "stdp_facetshw_synapse_hom.h"
-#include "stdp_facetshw_synapse_hom_impl.h"
 
-// Includes from nestkernel:
+#include <boost/iterator/iterator_facade.hpp>
+#include <utility>
+
 #include "nest_impl.h"
 
 void

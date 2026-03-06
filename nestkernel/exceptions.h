@@ -24,15 +24,18 @@
 #define EXCEPTIONS_H
 
 #include <exception>
-
+#include <stddef.h>
 // C++ includes:
 #include <sstream>
+#include <stdexcept>
+#include <string>
+#include <utility>
 
 // Includes from nestkernel:
 #include "nest_time.h"
-
 // Includes from thirdparty:
 #include "compose.hpp"
+#include "config.h"
 
 // Include MPI for MPI error string
 #ifdef HAVE_MPI

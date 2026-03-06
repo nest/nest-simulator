@@ -23,19 +23,25 @@
 
 #include "astrocyte_lr_1994.h"
 
+#include <assert.h>
+#include <gsl/gsl_errno.h>
+
+#include "connection_manager.h"
+#include "event.h"
+#include "event_delivery_manager.h"
+#include "secondary_event_impl.h"
+#include "simulation_manager.h"
+
 #ifdef HAVE_GSL
 
 // C++ includes:
 #include <cmath>
-#include <cstdio>
-#include <iostream>
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
-
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
@@ -50,8 +56,7 @@ register_astrocyte_lr_1994( const std::string& name )
   register_node_model< astrocyte_lr_1994 >( name );
 }
 
-// Override the create() method with one call to RecordablesMap::insert_()
-// for each quantity to be recorded.
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< astrocyte_lr_1994 >::create()
@@ -368,7 +373,7 @@ nest::astrocyte_lr_1994::init_buffers_()
   B_.spike_exc_.clear();  // includes resize
   B_.currents_.clear();
   B_.sic_values.resize(
-    kernel().connection_manager.get_min_delay(), 0.0 );  // set size of SIC buffer according to min_delay
+    kernel::manager< ConnectionManager >.get_min_delay(), 0.0 );  // set size of SIC buffer according to min_delay
 
   B_.logger_.reset();
 
@@ -484,7 +489,7 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
   // send SIC event
   SICEvent sic;
   sic.set_coeffarray( B_.sic_values );
-  kernel().event_delivery_manager.send_secondary( *this, sic );
+  kernel::manager< EventDeliveryManager >.send_secondary( *this, sic );
 }
 
 void
@@ -494,7 +499,7 @@ nest::astrocyte_lr_1994::handle( SpikeEvent& e )
 
   if ( e.get_weight() >= 0.0 )
   {
-    B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
   else
@@ -511,7 +516,7 @@ nest::astrocyte_lr_1994::handle( CurrentEvent& e )
   const double c = e.get_current();
   const double w = e.get_weight();
 
-  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ), w * c );
 }
 
 void

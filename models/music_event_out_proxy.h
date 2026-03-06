@@ -29,6 +29,8 @@
 #ifdef HAVE_MUSIC
 
 // C++ includes:
+#include <stddef.h>
+#include <string>
 #include <vector>
 
 // External includes:
@@ -38,7 +40,12 @@
 #include "device_node.h"
 #include "event.h"
 #include "exceptions.h"
+#include "music/index_map.hh"
+#include "nest_time.h"
 #include "nest_types.h"
+#include "node.h"
+
+class Dictionary;
 
 namespace nest
 {

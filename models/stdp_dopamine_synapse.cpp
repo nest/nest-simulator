@@ -22,13 +22,16 @@
 
 #include "stdp_dopamine_synapse.h"
 
+#include <boost/iterator/iterator_facade.hpp>
+#include <memory>
+#include <utility>
+
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
-#include "connector_model.h"
-#include "event.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
-
+#include "node_collection.h"
+#include "node_manager.h"
 
 void
 nest::register_stdp_dopamine_synapse( const std::string& name )
@@ -85,8 +88,8 @@ STDPDopaCommonProperties::set_status( const Dictionary& d, ConnectorModel& cm )
       throw BadProperty( "Property volume_transmitter must be a single element NodeCollection" );
     }
 
-    const size_t tid = kernel().vp_manager.get_thread_id();
-    Node* vt_node = kernel().node_manager.get_node_or_proxy( ( *vt_nc )[ 0 ], tid );
+    const size_t tid = kernel::manager< VPManager >.get_thread_id();
+    Node* vt_node = kernel::manager< NodeManager >.get_node_or_proxy( ( *vt_nc )[ 0 ], tid );
     volume_transmitter* vt = dynamic_cast< volume_transmitter* >( vt_node );
     if ( not vt )
     {

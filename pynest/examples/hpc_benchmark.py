@@ -99,10 +99,6 @@ import nest.raster_plot
 import numpy as np
 import scipy.special as sp
 
-M_INFO = 10
-M_ERROR = 30
-
-
 ###############################################################################
 # Parameter section
 # Define all relevant parameters: changes should be made here
@@ -328,7 +324,7 @@ def build_network(logger):
 
         if len(E_neurons) < nrec:
             nest.message(
-                M_ERROR,
+                nest.VerbosityLevel.ERROR,
                 "build_network",
                 """Spikes can only be recorded from local neurons, but the
                 number of neurons is smaller than the number of neurons

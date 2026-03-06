@@ -28,8 +28,9 @@
  * @file Provide classes to be used as template arguments to Connection<T>.
  */
 
-#include "compose.hpp"
-#include "kernel_manager.h"
+#include "nest_names.h"
+#include "node.h"
+#include "node_manager.h"
 
 namespace nest
 {
@@ -54,45 +55,17 @@ public:
   {
   }
 
-
   TargetIdentifierPtrRport( const TargetIdentifierPtrRport& t ) = default;
   TargetIdentifierPtrRport& operator=( const TargetIdentifierPtrRport& t ) = default;
 
+  void get_status( Dictionary& d ) const;
+  Node* get_target_ptr( const size_t ) const;
 
-  void
-  get_status( Dictionary& d ) const
-  {
-    // Do nothing if called on synapse prototype
-    if ( target_ )
-    {
-      d[ names::rport ] = rport_;
-      d[ names::target ] = target_->get_node_id();
-    }
-  }
+  size_t get_rport() const;
 
-  Node*
-  get_target_ptr( const size_t ) const
-  {
-    return target_;
-  }
+  void set_target( Node* target );
 
-  size_t
-  get_rport() const
-  {
-    return rport_;
-  }
-
-  void
-  set_target( Node* target )
-  {
-    target_ = target;
-  }
-
-  void
-  set_rport( size_t rprt )
-  {
-    rport_ = rprt;
-  }
+  void set_rport( size_t rprt );
 
 private:
   Node* target_;  //!< Target node
@@ -121,54 +94,93 @@ public:
   TargetIdentifierIndex( const TargetIdentifierIndex& t ) = default;
   TargetIdentifierIndex& operator=( const TargetIdentifierIndex& t ) = default;
 
-  void
-  get_status( Dictionary& d ) const
-  {
-    // Do nothing if called on synapse prototype
-    if ( target_ != invalid_targetindex )
-    {
-      d[ names::rport ] = 0;
-      d[ names::target ] = target_;
-    }
-  }
+  void get_status( Dictionary& d ) const;
 
-  Node*
-  get_target_ptr( const size_t tid ) const
-  {
-    assert( target_ != invalid_targetindex );
-    return kernel().node_manager.thread_lid_to_node( tid, target_ );
-  }
-
-  size_t
-  get_rport() const
-  {
-    return 0;
-  }
+  Node* get_target_ptr( const size_t tid ) const;
+  size_t get_rport() const;
 
   void set_target( Node* target );
 
-  void
-  set_rport( size_t rprt )
-  {
-    if ( rprt != 0 )
-    {
-      throw IllegalConnection(
-        "Only rport==0 allowed for HPC synapses. Use normal synapse models "
-        "instead. See Kunkel et al, Front Neuroinform 8:78 (2014), Sec "
-        "3.3.2." );
-    }
-  }
+  void set_rport( size_t rprt );
 
 private:
   targetindex target_;  //!< Target node
 };
 
+// --------------------------
+// TargetIdentifierPtrRport
+// --------------------------
+
+inline void
+TargetIdentifierPtrRport::get_status( Dictionary& d ) const
+{
+  // Do nothing if called on synapse prototype
+  if ( target_ )
+  {
+    d[ names::rport ] = rport_;
+    d[ names::target ] = target_->get_node_id();
+  }
+}
+
+inline Node*
+TargetIdentifierPtrRport::get_target_ptr( const size_t ) const
+{
+  return target_;
+}
+
+inline size_t
+TargetIdentifierPtrRport::get_rport() const
+{
+  return rport_;
+}
+
+inline void
+TargetIdentifierPtrRport::set_target( Node* target )
+{
+  target_ = target;
+}
+
+inline void
+TargetIdentifierPtrRport::set_rport( size_t rprt )
+{
+  rport_ = rprt;
+}
+
+
+// -----------------------
+// TargetIdentifierIndex
+// -----------------------
+
+inline void
+TargetIdentifierIndex::get_status( Dictionary& d ) const
+{
+  // Do nothing if called on synapse prototype
+  if ( target_ != invalid_targetindex )
+  {
+    d[ names::rport ] = 0;
+    d[ names::target ] = target_;
+  }
+}
+
+inline Node*
+TargetIdentifierIndex::get_target_ptr( const size_t tid ) const
+{
+  assert( target_ != invalid_targetindex );
+  return kernel::manager< NodeManager >.thread_lid_to_node( tid, target_ );
+}
+
+inline size_t
+TargetIdentifierIndex::get_rport() const
+{
+  return 0;
+}
+
 inline void
 TargetIdentifierIndex::set_target( Node* target )
 {
-  assert( kernel().node_manager.thread_local_data_is_up_to_date() );
+  assert( kernel::manager< NodeManager >.thread_local_data_is_up_to_date() );
 
-  size_t target_lid = target->get_thread_lid();
+  const size_t target_lid = target->get_thread_lid();
   if ( target_lid > max_targetindex )
   {
     throw IllegalConnection(
@@ -179,6 +191,16 @@ TargetIdentifierIndex::set_target( Node* target )
   target_ = target_lid;
 }
 
+inline void
+TargetIdentifierIndex::set_rport( size_t rprt )
+{
+  if ( rprt != 0 )
+  {
+    throw IllegalConnection(
+      "Only rport==0 allowed for HPC synapses. Use normal synapse models "
+      "instead. See Kunkel et al, Front Neuroinform 8:78 (2014), Sec 3.3.2." );
+  }
+}
 
 }  // namespace nest
 

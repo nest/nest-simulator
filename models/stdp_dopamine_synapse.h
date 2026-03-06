@@ -23,15 +23,33 @@
 #ifndef STDP_DOPAMINE_SYNAPSE_H
 #define STDP_DOPAMINE_SYNAPSE_H
 
+#include <cmath>
+#include <deque>
+#include <stddef.h>
+#include <string>
+#include <vector>
+
 // Includes from libnestutil:
 #include "numerics.h"
-
 // Includes from models:
 #include "volume_transmitter.h"
-
 // Includes from nestkernel:
+#include "common_synapse_properties.h"
 #include "connection.h"
+#include "connection_manager.h"
+#include "connector_model.h"
+#include "dictionary.h"
+#include "enum_bitfield.h"
+#include "event.h"
+#include "exceptions.h"
+#include "histentry.h"
+#include "kernel_manager.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "nest_types.h"
+#include "node.h"
 #include "spikecounter.h"
+#include "vp_manager.h"
 
 namespace nest
 {
@@ -361,7 +379,6 @@ template < typename targetidentifierT >
 void
 stdp_dopamine_synapse< targetidentifierT >::get_status( Dictionary& d ) const
 {
-
   // base class properties, different for individual synapse
   ConnectionBase::get_status( d );
   d[ names::weight ] = weight_;
@@ -395,7 +412,7 @@ void
 stdp_dopamine_synapse< targetidentifierT >::check_synapse_params( const Dictionary& syn_spec ) const
 {
   // Setting of parameter c and n not thread safe.
-  if ( kernel().vp_manager.get_num_threads() > 1 )
+  if ( kernel::manager< VPManager >.get_num_threads() > 1 )
   {
     if ( syn_spec.known( names::c ) )
     {
@@ -457,7 +474,8 @@ stdp_dopamine_synapse< targetidentifierT >::process_dopa_spikes_( const std::vec
   // process dopa spikes in (t0, t1]
   // propagate weight from t0 to t1
   if ( ( dopa_spikes.size() > dopa_spikes_idx_ + 1 )
-    and ( t1 - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_ > -1.0 * kernel().connection_manager.get_stdp_eps() ) )
+    and ( t1 - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_
+      > -1.0 * kernel::manager< ConnectionManager >.get_stdp_eps() ) )
   {
     // there is at least 1 dopa spike in (t0, t1]
     // propagate weight up to first dopa spike and update dopamine trace
@@ -471,7 +489,8 @@ stdp_dopamine_synapse< targetidentifierT >::process_dopa_spikes_( const std::vec
     // process remaining dopa spikes in (t0, t1]
     double cd;
     while ( ( dopa_spikes.size() > dopa_spikes_idx_ + 1 )
-      and ( t1 - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_ > -1.0 * kernel().connection_manager.get_stdp_eps() ) )
+      and ( t1 - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_
+        > -1.0 * kernel::manager< ConnectionManager >.get_stdp_eps() ) )
     {
       // propagate weight up to next dopa spike and update dopamine trace
       // weight and dopamine trace n are at time of last dopa spike td but
@@ -553,7 +572,7 @@ stdp_dopamine_synapse< targetidentifierT >::send( Event& e, size_t t, const STDP
     minus_dt = t_last_update_ - t0;
     // facilitate only in case of post- after presyn. spike
     // skip facilitation if pre- and postsyn. spike occur at the same time
-    if ( t_spike - start->t_ > kernel().connection_manager.get_stdp_eps() )
+    if ( t_spike - start->t_ > kernel::manager< ConnectionManager >.get_stdp_eps() )
     {
       facilitate_( Kplus_ * std::exp( minus_dt / cp.tau_plus_ ), cp );
     }

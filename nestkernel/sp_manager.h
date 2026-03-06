@@ -23,12 +23,15 @@
 #ifndef SP_MANAGER_H
 #define SP_MANAGER_H
 
+#include <assert.h>
+#include <stddef.h>
 // C++ includes:
+#include <string>
 #include <vector>
 
 // Includes from libnestutil:
+#include "dictionary.h"
 #include "manager_interface.h"
-
 // Includes from nestkernel:
 #include "growth_curve_factory.h"
 #include "nest_time.h"
@@ -39,8 +42,8 @@
 namespace nest
 {
 class Node;
-
 class SPBuilder;
+class GrowthCurve;
 
 /**
  * The SPManager class is in charge of managing the dynamic creation and
@@ -207,23 +210,16 @@ private:
   Dictionary growthcurvedict_;  //!< Dictionary for growth rules.
 };
 
-inline GrowthCurve*
-SPManager::new_growth_curve( std::string name )
+template < typename GrowthCurve >
+void
+SPManager::register_growth_curve( const std::string& name )
 {
-  const int nc_id = growthcurvedict_.get< int >( name );
-  return growthcurve_factories_.at( nc_id )->create();
-}
-
-inline bool
-SPManager::is_structural_plasticity_enabled() const
-{
-  return structural_plasticity_enabled_;
-}
-
-inline double
-SPManager::get_structural_plasticity_update_interval() const
-{
-  return structural_plasticity_update_interval_;
+  assert( not growthcurvedict_.known( name ) );
+  GenericGrowthCurveFactory* nc = new GrowthCurveFactory< GrowthCurve >();
+  assert( nc );
+  const int id = growthcurve_factories_.size();
+  growthcurve_factories_.push_back( nc );
+  growthcurvedict_[ name ] = id;
 }
 
 }  // namespace nest

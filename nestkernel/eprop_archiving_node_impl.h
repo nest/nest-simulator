@@ -32,20 +32,6 @@ namespace nest
 {
 
 template < typename HistEntryT >
-EpropArchivingNode< HistEntryT >::EpropArchivingNode()
-  : Node()
-  , eprop_indegree_( 0 )
-{
-}
-
-template < typename HistEntryT >
-EpropArchivingNode< HistEntryT >::EpropArchivingNode( const EpropArchivingNode& n )
-  : Node( n )
-  , eprop_indegree_( n.eprop_indegree_ )
-{
-}
-
-template < typename HistEntryT >
 void
 EpropArchivingNode< HistEntryT >::register_eprop_connection()
 {
@@ -132,7 +118,7 @@ EpropArchivingNode< HistEntryT >::erase_used_eprop_history()
     return;
   }
 
-  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
+  const long update_interval = kernel::manager< SimulationManager >.get_eprop_update_interval().get_steps();
 
   auto it_update_hist = update_history_.begin();
 

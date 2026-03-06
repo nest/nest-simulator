@@ -23,19 +23,26 @@
 #ifndef THRESHOLD_LIN_RATE_H
 #define THRESHOLD_LIN_RATE_H
 
+#include <boost/type_index/type_index_facade.hpp>
+#include <math.h>
 // C++ includes:
 #include <algorithm>
+#include <limits>
+#include <map>
+#include <string>
 
 // Includes from models:
+#include "dict_util.h"
 #include "rate_neuron_ipn.h"
-#include "rate_neuron_ipn_impl.h"
 #include "rate_neuron_opn.h"
-#include "rate_neuron_opn_impl.h"
 #include "rate_transformer_node.h"
-#include "rate_transformer_node_impl.h"
+#include "recordables_map.h"
+
+class Dictionary;
 
 namespace nest
 {
+class Node;
 
 /* BeginUserDocs: neuron, rate
 
@@ -184,9 +191,6 @@ void register_threshold_lin_rate_opn( const std::string& name );
 typedef rate_transformer_node< nest::nonlinearities_threshold_lin_rate > rate_transformer_threshold_lin;
 void register_rate_transformer_threshold_lin( const std::string& name );
 
-
-template <>
-void RecordablesMap< threshold_lin_rate_ipn >::create();
 template <>
 void RecordablesMap< threshold_lin_rate_opn >::create();
 template <>

@@ -23,18 +23,27 @@
 #ifndef NODE_MANAGER_H
 #define NODE_MANAGER_H
 
+#include <assert.h>
+#include <math.h>
+#include <stddef.h>
 // C++ includes:
+#include <exception>
+#include <iosfwd>
 #include <vector>
 
 // Includes from libnestutil:
 #include "manager_interface.h"
-#include "stopwatch.h"
-
+#include "stopwatch_impl.h"
 // Includes from nestkernel:
 #include "conn_builder.h"
+#include "dictionary.h"
+#include "kernel_manager.h"
 #include "nest_types.h"
+#include "node.h"
 #include "node_collection.h"
 #include "sparse_node_array.h"
+#include "stopwatch.h"
+#include "vp_manager.h"
 
 
 namespace nest
@@ -209,11 +218,7 @@ public:
    * @see prepare_nodes()
    * @return number of active nodes
    */
-  size_t
-  get_num_active_nodes()
-  {
-    return num_active_nodes_;
-  };
+  size_t get_num_active_nodes();
 
   /**
    * Invoke post_run_cleanup() on all nodes.
@@ -366,28 +371,55 @@ private:
   Stopwatch< StopwatchGranularity::Normal, StopwatchParallelism::MasterOnly > sw_construction_create_;
 };
 
-inline size_t
-NodeManager::size() const
-{
-  return local_nodes_[ 0 ].get_max_node_id();
-}
 
-inline Node*
-NodeManager::thread_lid_to_node( size_t t, targetindex thread_local_id ) const
+inline bool
+NodeManager::thread_local_data_is_up_to_date() const
 {
-  return local_nodes_[ t ].get_node_by_index( thread_local_id );
-}
+  // Our logic assumes that we never delete nodes from a network
+  assert( size() >= size_last_local_data_update_ );
 
-inline const std::vector< Node* >&
-NodeManager::get_wfr_nodes_on_thread( size_t t ) const
-{
-  return wfr_nodes_vec_.at( t );
+  return size() == size_last_local_data_update_;
 }
 
 inline bool
-NodeManager::wfr_is_used() const
+NodeManager::is_local_node( Node* n ) const
 {
-  return wfr_is_used_;
+  return kernel::manager< VPManager >.is_local_vp( n->get_vp() );
+}
+
+inline bool
+NodeManager::is_local_node_id( size_t node_id ) const
+{
+  const size_t vp = kernel::manager< VPManager >.node_id_to_vp( node_id );
+  return kernel::manager< VPManager >.is_local_vp( vp );
+}
+
+inline size_t
+NodeManager::get_max_num_local_nodes() const
+{
+  return static_cast< size_t >(
+    ceil( static_cast< double >( size() ) / kernel::manager< VPManager >.get_num_virtual_processes() ) );
+}
+
+inline size_t
+NodeManager::get_num_thread_local_devices( size_t t ) const
+{
+  return num_thread_local_devices_[ t ];
+}
+
+inline void
+NodeManager::prepare_node_( Node* n )
+{
+  // Frozen nodes are initialized and calibrated, so that they
+  // have ring buffers and can accept incoming spikes.
+  n->init();
+  n->pre_run_hook();
+}
+
+inline bool
+NodeManager::have_nodes_changed() const
+{
+  return have_nodes_changed_;
 }
 
 inline const SparseNodeArray&
@@ -397,24 +429,33 @@ NodeManager::get_local_nodes( size_t t ) const
 }
 
 inline bool
-NodeManager::have_nodes_changed() const
+NodeManager::wfr_is_used() const
 {
-  return have_nodes_changed_;
+  return wfr_is_used_;
 }
 
-inline void
-NodeManager::set_have_nodes_changed( const bool changed )
+inline const std::vector< Node* >&
+NodeManager::get_wfr_nodes_on_thread( size_t t ) const
 {
-  have_nodes_changed_ = changed;
+  return wfr_nodes_vec_.at( t );
 }
 
-inline bool
-NodeManager::thread_local_data_is_up_to_date() const
+inline Node*
+NodeManager::thread_lid_to_node( size_t t, targetindex thread_local_id ) const
 {
-  // Our logic assumes that we never delete nodes from a network
-  assert( size() >= size_last_local_data_update_ );
+  return local_nodes_[ t ].get_node_by_index( thread_local_id );
+}
 
-  return size() == size_last_local_data_update_;
+inline size_t
+NodeManager::size() const
+{
+  return local_nodes_[ 0 ].get_max_node_id();
+}
+
+inline size_t
+NodeManager::get_num_active_nodes()
+{
+  return num_active_nodes_;
 }
 
 }  // namespace

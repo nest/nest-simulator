@@ -23,16 +23,24 @@
 #ifndef TANH_RATE_H
 #define TANH_RATE_H
 
+#include <algorithm>
+#include <boost/type_index/type_index_facade.hpp>
+#include <map>
+#include <math.h>
+#include <string>
+
 // Includes from models:
+#include "dict_util.h"
 #include "rate_neuron_ipn.h"
-#include "rate_neuron_ipn_impl.h"
 #include "rate_neuron_opn.h"
-#include "rate_neuron_opn_impl.h"
 #include "rate_transformer_node.h"
-#include "rate_transformer_node_impl.h"
+#include "recordables_map.h"
+
+class Dictionary;
 
 namespace nest
 {
+class Node;
 
 /* BeginUserDocs: neuron, rate
 
@@ -176,9 +184,6 @@ void register_tanh_rate_opn( const std::string& name );
 typedef rate_transformer_node< nest::nonlinearities_tanh_rate > rate_transformer_tanh;
 void register_rate_transformer_tanh( const std::string& name );
 
-
-template <>
-void RecordablesMap< tanh_rate_ipn >::create();
 template <>
 void RecordablesMap< tanh_rate_opn >::create();
 template <>

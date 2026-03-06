@@ -23,11 +23,13 @@
 #ifndef DICT_UTIL_H
 #define DICT_UTIL_H
 
+#include "dictionary.h"
+
 // Includes from nestkernel:
 #include "kernel_manager.h"
-#include "vp_manager_impl.h"
-
-#include "dictionary.h"
+#include "nest.h"
+#include "node.h"
+#include "vp_manager.h"
 
 namespace nest
 {
@@ -46,8 +48,8 @@ update_value_param( Dictionary const& d, const std::string& key, T& value, nest:
   if ( it != d.end() and is_type< std::shared_ptr< nest::Parameter > >( it->second.item ) )
   {
     const auto param = d.get< ParameterPTR >( key );
-    const auto vp = kernel().vp_manager.node_id_to_vp( node->get_node_id() );
-    const auto tid = kernel().vp_manager.vp_to_thread( vp );
+    const auto vp = kernel::manager< VPManager >.node_id_to_vp( node->get_node_id() );
+    const auto tid = kernel::manager< VPManager >.vp_to_thread( vp );
     const auto rng = get_vp_specific_rng( tid );
     value = param->value( rng, node );
     return true;

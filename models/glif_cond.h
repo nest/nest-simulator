@@ -23,8 +23,21 @@
 #ifndef GLIF_COND_H
 #define GLIF_COND_H
 
+#include <map>
+#include <math.h>
+#include <stddef.h>
+#include <string>
+#include <vector>
+
 // Generated includes:
 #include "config.h"
+#include "dictionary.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "node.h"
+#include "recordables_map.h"
+#include "universal_data_logger.h"
 
 #ifdef HAVE_GSL
 
@@ -38,7 +51,7 @@
 #include "event.h"
 #include "nest_types.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 /* BeginUserDocs:  neuron, integrate-and-fire, conductance-based, adaptation, hard threshold
 
@@ -325,9 +338,9 @@ private:
       STATE_VECTOR_MIN_SIZE
     };
 
-    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 1;          // V_M
-    static const size_t NUMBER_OF_RECORDABLES_ELEMENTS = DG_SYN - 1;  // I, ASC, TH, Th_SPK, TH_VLT
-    static const size_t NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR = 2;   // DG_SYN, G_SYN
+    static constexpr size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 1;          // V_M
+    static constexpr size_t NUMBER_OF_RECORDABLES_ELEMENTS = DG_SYN - 1;  // I, ASC, TH, Th_SPK, TH_VLT
+    static constexpr size_t NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR = 2;   // DG_SYN, G_SYN
 
     std::vector< double > y_;  //!< neuron state
 
@@ -526,6 +539,15 @@ glif_cond::set_status( const Dictionary& d )
   P_ = ptmp;
   S_ = stmp;
 }
+
+inline void
+nest::glif_cond::handle( DataLoggingRequest& e )
+{
+  B_.logger_.handle( e );  // the logger does this for us
+}
+
+template <>
+void DynamicRecordablesMap< nest::glif_cond >::create( glif_cond& host );
 
 }  // namespace nest
 

@@ -23,8 +23,21 @@
 #ifndef IAF_CHXK_2008_H
 #define IAF_CHXK_2008_H
 
+#include <algorithm>
+#include <map>
+#include <math.h>
+#include <stddef.h>
+#include <string>
+#include <vector>
+
 // Generated includes:
 #include "config.h"
+#include "dictionary.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "node.h"
+#include "universal_data_logger.h"
 
 #ifdef HAVE_GSL
 
@@ -40,7 +53,7 @@
 #include "nest_types.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -463,7 +476,6 @@ iaf_chxk_2008::set_status( const Dictionary& d )
 }
 
 }  // namespace
-
 
 #endif  // HAVE_GSL
 #endif  // IAF_CHXK_2008_H

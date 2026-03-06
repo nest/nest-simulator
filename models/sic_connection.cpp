@@ -22,7 +22,9 @@
 
 #include "sic_connection.h"
 
-// Includes from nestkernel:
+#include <boost/iterator/iterator_facade.hpp>
+#include <utility>
+
 #include "nest_impl.h"
 
 void

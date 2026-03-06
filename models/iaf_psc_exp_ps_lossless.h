@@ -23,22 +23,32 @@
 #ifndef IAF_PSC_EXP_PS_LOSSLESS_H
 #define IAF_PSC_EXP_PS_LOSSLESS_H
 
+#include <math.h>
+#include <stddef.h>
 // C++ includes:
+#include <algorithm>
+#include <map>
+#include <string>
 #include <vector>
 
 // Generated includes:
 #include "config.h"
-
 // Includes from libnestutil:
 #include "archiving_node.h"
 #include "connection.h"
+#include "dictionary.h"
 #include "event.h"
+#include "exceptions.h"
 #include "iaf_propagator.h"
+#include "nest_names.h"
+#include "nest_time.h"
 #include "nest_types.h"
+#include "node.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
 #include "slice_ring_buffer.h"
 #include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 
 namespace nest
@@ -515,5 +525,6 @@ iaf_psc_exp_ps_lossless::set_status( const Dictionary& d )
   P_ = ptmp;
   S_ = stmp;
 }
+
 }  // namespace
 #endif  // IAF_PSC_EXP_PS_LOSSLESS_H

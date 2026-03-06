@@ -23,11 +23,27 @@
 #ifndef QUANTAL_STP_SYNAPSE_H
 #define QUANTAL_STP_SYNAPSE_H
 
+#include <cmath>
+#include <stddef.h>
+#include <string>
+
 // Includes from nestkernel:
+#include "common_synapse_properties.h"
 #include "connection.h"
+#include "connector_model.h"
+#include "dictionary.h"
+#include "enum_bitfield.h"
+#include "event.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "nest_impl.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "nest_types.h"
 
 namespace nest
 {
+class Node;
 
 /* BeginUserDocs: synapse, short-term plasticity
 
@@ -257,6 +273,71 @@ quantal_stp_synapse< targetidentifierT >::send( Event& e, size_t t, const Common
   t_lastspike_ = t_spike;
 
   return send_spike;
+}
+
+template < typename targetidentifierT >
+quantal_stp_synapse< targetidentifierT >::quantal_stp_synapse()
+  : ConnectionBase()
+  , weight_( 1.0 )
+  , U_( 0.5 )
+  , u_( U_ )
+  , tau_rec_( 800.0 )
+  , tau_fac_( 0.0 )
+  , n_( 1 )
+  , a_( n_ )
+  , t_lastspike_( -1.0 )
+{
+}
+
+template < typename targetidentifierT >
+void
+quantal_stp_synapse< targetidentifierT >::get_status( Dictionary& d ) const
+{
+  ConnectionBase::get_status( d );
+  d[ names::weight ] = weight_;
+  d[ names::dU ] = U_;
+  d[ names::u ] = u_;
+  d[ names::tau_rec ] = tau_rec_;
+  d[ names::tau_fac ] = tau_fac_;
+  d[ names::n ] = n_;
+  d[ names::a ] = a_;
+}
+
+
+template < typename targetidentifierT >
+void
+quantal_stp_synapse< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
+{
+  ConnectionBase::set_status( d, cm );
+
+  d.update_value( names::weight, weight_ );
+
+  d.update_value( names::dU, U_ );
+  d.update_value( names::u, u_ );
+  d.update_value( names::tau_rec, tau_rec_ );
+  d.update_value( names::tau_fac, tau_fac_ );
+  d.update_integer_value( names::n, n_ );
+  d.update_integer_value( names::a, a_ );
+
+  if ( U_ > 1.0 or U_ < 0.0 )
+  {
+    throw BadProperty( "'U' must be in [0,1]." );
+  }
+
+  if ( u_ > 1.0 or u_ < 0.0 )
+  {
+    throw BadProperty( "'u' must be in [0,1]." );
+  }
+
+  if ( tau_rec_ <= 0.0 )
+  {
+    throw BadProperty( "'tau_rec' must be > 0." );
+  }
+
+  if ( tau_fac_ < 0.0 )
+  {
+    throw BadProperty( "'tau_fac' must be >= 0." );
+  }
 }
 
 }  // namespace

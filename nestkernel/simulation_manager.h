@@ -23,20 +23,19 @@
 #ifndef SIMULATION_MANAGER_H
 #define SIMULATION_MANAGER_H
 
-// C includes:
+#include <assert.h>
+#include <stddef.h>
 #include <sys/time.h>
-
-// C++ includes:
-#include <vector>
 
 // Includes from libnestutil:
 #include "manager_interface.h"
-#include "stopwatch.h"
-
+#include "stopwatch_impl.h"
 // Includes from nestkernel:
 #include "cycle_time_log.h"
 #include "nest_time.h"
-#include "nest_types.h"
+#include "stopwatch.h"
+
+class Dictionary;
 
 
 namespace nest
@@ -112,7 +111,7 @@ public:
   /**
    * Get the time at the beginning of the previous time slice.
    */
-  Time const get_previous_slice_origin() const;
+  Time get_previous_slice_origin() const;
 
   /**
    * Precise time of simulation.
@@ -188,6 +187,16 @@ public:
   Time get_eprop_learning_window() const;
   bool get_eprop_reset_neurons_on_update() const;
 
+  //! Get the stopwatch to measure the time each thread is idle during network construction.
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded >&
+  get_omp_synchronization_construction_stopwatch();
+
+  //! Get the stopwatch to measure the time each thread is idle during simulation.
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded >&
+  get_omp_synchronization_simulation_stopwatch();
+
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly >& get_mpi_synchronization_stopwatch();
+
 private:
   void call_update_();  //!< actually run simulation, aka wrap update_
   void update_();       //! actually perform simulation
@@ -237,6 +246,10 @@ private:
   Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_deliver_spike_data_;
   Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_deliver_secondary_data_;
 
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_omp_synchronization_construction_;
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_omp_synchronization_simulation_;
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly > sw_mpi_synchronization_;
+
 #ifdef CYCLE_TIMERS
   CycleTimeLog cycle_time_log_;
 #endif
@@ -246,115 +259,133 @@ private:
   bool eprop_reset_neurons_on_update_;
 };
 
-inline Time const&
-SimulationManager::get_slice_origin() const
-{
-  return clock_;
-}
-
-inline Time const
-SimulationManager::get_time() const
-{
-  assert( not simulating_ );
-  return clock_ + Time::step( from_step_ );
-}
-
 inline bool
-SimulationManager::has_been_simulated() const
+nest::SimulationManager::get_eprop_reset_neurons_on_update() const
 {
-  return simulated_;
+  return eprop_reset_neurons_on_update_;
 }
 
-inline bool
-SimulationManager::has_been_prepared() const
+inline nest::Time
+nest::SimulationManager::get_eprop_learning_window() const
 {
-  return prepared_;
+  return Time::ms( eprop_learning_window_ );
+}
+
+inline nest::Time
+nest::SimulationManager::get_eprop_update_interval() const
+{
+  return Time::ms( eprop_update_interval_ );
 }
 
 inline size_t
-SimulationManager::get_slice() const
+nest::SimulationManager::get_wfr_interpolation_order() const
 {
-  return slice_;
+  return wfr_interpolation_order_;
 }
 
-inline Time const&
-SimulationManager::get_clock() const
+inline double
+nest::SimulationManager::get_wfr_tol() const
 {
-  return clock_;
+  return wfr_tol_;
 }
 
-inline Time
-SimulationManager::run_duration() const
+inline double
+nest::SimulationManager::get_wfr_comm_interval() const
 {
-  return to_do_total_ * Time::get_resolution();
+  return wfr_comm_interval_;
 }
 
-inline Time
-SimulationManager::run_start_time() const
+inline bool
+nest::SimulationManager::use_wfr() const
 {
-  assert( not simulating_ );  // implicit due to using get_time()
-  return get_time() - ( to_do_total_ - to_do_ ) * Time::get_resolution();
+  return use_wfr_;
 }
 
-inline Time
-SimulationManager::run_end_time() const
+inline long
+nest::SimulationManager::get_to_step() const
+{
+  return to_step_;
+}
+
+inline long
+nest::SimulationManager::get_from_step() const
+{
+  return from_step_;
+}
+
+inline nest::Time
+nest::SimulationManager::run_end_time() const
 {
   assert( not simulating_ );  // implicit due to using get_time()
   return ( get_time().get_steps() + to_do_ ) * Time::get_resolution();
 }
 
-inline long
-SimulationManager::get_from_step() const
+inline nest::Time
+nest::SimulationManager::run_start_time() const
 {
-  return from_step_;
+  assert( not simulating_ );  // implicit due to using get_time()
+  return get_time() - ( to_do_total_ - to_do_ ) * Time::get_resolution();
 }
 
-inline long
-SimulationManager::get_to_step() const
+inline nest::Time
+nest::SimulationManager::run_duration() const
 {
-  return to_step_;
+  return to_do_total_ * Time::get_resolution();
 }
 
-inline bool
-SimulationManager::use_wfr() const
+inline nest::Time const&
+nest::SimulationManager::get_clock() const
 {
-  return use_wfr_;
-}
-
-inline double
-SimulationManager::get_wfr_comm_interval() const
-{
-  return wfr_comm_interval_;
-}
-
-inline double
-SimulationManager::get_wfr_tol() const
-{
-  return wfr_tol_;
+  return clock_;
 }
 
 inline size_t
-SimulationManager::get_wfr_interpolation_order() const
+nest::SimulationManager::get_slice() const
 {
-  return wfr_interpolation_order_;
-}
-
-inline Time
-SimulationManager::get_eprop_update_interval() const
-{
-  return Time::ms( eprop_update_interval_ );
-}
-
-inline Time
-SimulationManager::get_eprop_learning_window() const
-{
-  return Time::ms( eprop_learning_window_ );
+  return slice_;
 }
 
 inline bool
-SimulationManager::get_eprop_reset_neurons_on_update() const
+nest::SimulationManager::has_been_prepared() const
 {
-  return eprop_reset_neurons_on_update_;
+  return prepared_;
+}
+
+inline bool
+nest::SimulationManager::has_been_simulated() const
+{
+  return simulated_;
+}
+
+inline nest::Time const
+nest::SimulationManager::get_time() const
+{
+  assert( not simulating_ );
+  return clock_ + Time::step( from_step_ );
+}
+
+inline nest::Time const&
+nest::SimulationManager::get_slice_origin() const
+{
+  return clock_;
+}
+
+inline nest::Stopwatch< nest::StopwatchGranularity::Detailed, nest::StopwatchParallelism::MasterOnly >&
+nest::SimulationManager::get_mpi_synchronization_stopwatch()
+{
+  return sw_mpi_synchronization_;
+}
+
+inline nest::Stopwatch< nest::StopwatchGranularity::Detailed, nest::StopwatchParallelism::Threaded >&
+nest::SimulationManager::get_omp_synchronization_simulation_stopwatch()
+{
+  return sw_omp_synchronization_simulation_;
+}
+
+inline nest::Stopwatch< nest::StopwatchGranularity::Detailed, nest::StopwatchParallelism::Threaded >&
+nest::SimulationManager::get_omp_synchronization_construction_stopwatch()
+{
+  return sw_omp_synchronization_construction_;
 }
 
 }

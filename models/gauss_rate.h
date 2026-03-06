@@ -23,21 +23,26 @@
 #ifndef GAUSS_RATE_H
 #define GAUSS_RATE_H
 
+#include <boost/type_index/type_index_facade.hpp>
 // C++ includes:
+#include <algorithm>
 #include <cmath>
+#include <map>
+#include <string>
 
 // Includes from models:
 #include "rate_neuron_ipn.h"
-#include "rate_neuron_ipn_impl.h"
 #include "rate_transformer_node.h"
-#include "rate_transformer_node_impl.h"
-
 // Includes from libnestutil:
 #include "dict_util.h"
+#include "recordables_map.h"
+
+class Dictionary;
 
 
 namespace nest
 {
+class Node;
 
 /* BeginUserDocs: neuron, rate
 
@@ -183,9 +188,6 @@ void register_gauss_rate_ipn( const std::string& name );
 typedef rate_transformer_node< nest::nonlinearities_gauss_rate > rate_transformer_gauss;
 void register_rate_transformer_gauss( const std::string& name );
 
-
-template <>
-void RecordablesMap< gauss_rate_ipn >::create();
 template <>
 void RecordablesMap< rate_transformer_gauss >::create();
 

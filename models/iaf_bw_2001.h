@@ -23,8 +23,26 @@
 #ifndef IAF_BW_2001_H
 #define IAF_BW_2001_H
 
+#include <algorithm>
+#include <assert.h>
+#include <map>
+#include <math.h>
+#include <stddef.h>
+#include <string>
+#include <typeinfo>
+#include <vector>
+
 // Generated includes:
 #include "config.h"
+#include "dictionary.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "node.h"
+#include "recordables_map.h"
+#include "simulation_manager.h"
+#include "universal_data_logger.h"
 
 #ifdef HAVE_GSL
 #ifdef HAVE_BOOST
@@ -40,7 +58,7 @@
 #include "event.h"
 #include "nest_types.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -523,6 +541,41 @@ iaf_bw_2001::set_status( const Dictionary& d )
   P_ = ptmp;
   S_ = stmp;
 };
+
+inline void
+iaf_bw_2001::handle( DataLoggingRequest& e )
+{
+  B_.logger_.handle( e );
+}
+
+inline void
+iaf_bw_2001::handle( SpikeEvent& e )
+{
+  assert( e.get_delay_steps() > 0 );
+
+  const double steps = e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() );
+
+  const auto rport = e.get_rport();
+
+  if ( rport < NMDA )
+  {
+    B_.spikes_[ rport - 1 ].add_value( steps, e.get_weight() * e.get_multiplicity() );
+  }
+  else
+  {
+    B_.spikes_[ rport - 1 ].add_value( steps, e.get_weight() * e.get_multiplicity() * e.get_offset() );
+  }
+}
+
+inline void
+iaf_bw_2001::handle( CurrentEvent& e )
+{
+  assert( e.get_delay_steps() > 0 );
+
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
+    e.get_weight() * e.get_current() );
+}
+
 }  // namespace
 
 #endif  // HAVE_BOOST

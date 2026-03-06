@@ -23,8 +23,21 @@
 #ifndef HH_PSC_ALPHA_CLOPATH_H
 #define HH_PSC_ALPHA_CLOPATH_H
 
+#include <algorithm>
+#include <map>
+#include <math.h>
+#include <stddef.h>
+#include <string>
+#include <vector>
+
 // Generated includes:
 #include "config.h"
+#include "dictionary.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "node.h"
+#include "universal_data_logger.h"
 
 #ifdef HAVE_GSL
 
@@ -41,7 +54,7 @@
 #include "nest_types.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {

@@ -24,8 +24,19 @@
 #ifndef EPROP_LEARNING_SIGNAL_CONNECTION_BSSHSLM_2020_H
 #define EPROP_LEARNING_SIGNAL_CONNECTION_BSSHSLM_2020_H
 
+#include <memory>
+#include <stddef.h>
+#include <string>
+
 // nestkernel
+#include "common_synapse_properties.h"
 #include "connection.h"
+#include "connector_model.h"
+#include "dictionary.h"
+#include "event.h"
+#include "nest_names.h"
+#include "node.h"
+#include "secondary_event.h"
 
 namespace nest
 {

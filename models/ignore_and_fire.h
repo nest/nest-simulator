@@ -23,13 +23,27 @@
 #ifndef IGNORE_AND_FIRE_H
 #define IGNORE_AND_FIRE_H
 
+#include <algorithm>
+#include <map>
+#include <math.h>
+#include <stddef.h>
+#include <string>
+#include <vector>
+
 // Includes from nestkernel:
 #include "archiving_node.h"
 #include "connection.h"
+#include "dictionary.h"
 #include "event.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
 #include "nest_types.h"
+#include "node.h"
+#include "recordables_map.h"
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -116,24 +130,24 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  size_t send_test_event( Node&, size_t, synindex, bool );
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  size_t handles_test_event( SpikeEvent&, size_t );
-  size_t handles_test_event( CurrentEvent&, size_t );
-  size_t handles_test_event( DataLoggingRequest&, size_t );
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( Dictionary& ) const;
-  void set_status( const Dictionary& );
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
-  void init_buffers_();
-  void pre_run_hook();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< ignore_and_fire >;

@@ -23,8 +23,10 @@
 #ifndef CLOPATH_ARCHIVING_NODE_H
 #define CLOPATH_ARCHIVING_NODE_H
 
+#include <stddef.h>
 // C++ includes:
 #include <deque>
+#include <vector>
 
 // Includes from nestkernel:
 #include "archiving_node.h"
@@ -32,6 +34,8 @@
 #include "nest_time.h"
 #include "nest_types.h"
 #include "synaptic_element.h"
+
+class Dictionary;
 
 
 namespace nest
@@ -133,17 +137,6 @@ private:
   size_t ltd_hist_current_;
 };
 
-inline double
-ClopathArchivingNode::get_theta_plus() const
-{
-  return theta_plus_;
-}
-
-inline double
-ClopathArchivingNode::get_theta_minus() const
-{
-  return theta_minus_;
-}
 
 }  // of namespace
 #endif

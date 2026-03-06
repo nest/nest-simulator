@@ -21,9 +21,10 @@
  */
 
 #include "cont_delay_synapse.h"
-#include "cont_delay_synapse_impl.h"
 
-// Includes from nestkernel:
+#include <boost/iterator/iterator_facade.hpp>
+#include <utility>
+
 #include "nest_impl.h"
 
 void

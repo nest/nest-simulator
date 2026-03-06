@@ -23,18 +23,32 @@
 #ifndef PP_COND_EXP_MC_URBANCZIK_H
 #define PP_COND_EXP_MC_URBANCZIK_H
 
+#include <algorithm>
+#include <assert.h>
+#include <deque>
+#include <map>
+#include <math.h>
+#include <stddef.h>
+#include <string>
+
 // Generated includes:
 #include "config.h"
+#include "dictionary.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "node.h"
+#include "universal_data_logger.h"
+#include "urbanczik_archiving_node_impl.h"
 
 #ifdef HAVE_GSL
-
-// C++ includes:
-#include <vector>
 
 // C includes:
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_odeiv.h>
+// C++ includes:
+#include <vector>
 
 // Includes from nestkernel:
 #include "connection.h"
@@ -43,9 +57,8 @@
 #include "random_generators.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 #include "urbanczik_archiving_node.h"
-#include "urbanczik_archiving_node_impl.h"
 
 
 namespace nest
@@ -299,7 +312,7 @@ private:
    * @note Start with 1 so we can forbid port 0 to avoid accidental
    *       creation of connections with no receptor type set.
    */
-  static const size_t MIN_SPIKE_RECEPTOR = 1;
+  static constexpr size_t MIN_SPIKE_RECEPTOR = 1;
 
   /**
    * Spike receptors.
@@ -313,14 +326,14 @@ private:
     SUP_SPIKE_RECEPTOR
   };
 
-  static const size_t NUM_SPIKE_RECEPTORS = SUP_SPIKE_RECEPTOR - MIN_SPIKE_RECEPTOR;
+  static constexpr size_t NUM_SPIKE_RECEPTORS = SUP_SPIKE_RECEPTOR - MIN_SPIKE_RECEPTOR;
 
   /**
    * Minimal current receptor type.
    *  @note Start with SUP_SPIKE_RECEPTOR to avoid any overlap and
    *        accidental mix-ups.
    */
-  static const size_t MIN_CURR_RECEPTOR = SUP_SPIKE_RECEPTOR;
+  static constexpr size_t MIN_CURR_RECEPTOR = SUP_SPIKE_RECEPTOR;
 
   /**
    * Current receptors.
@@ -332,7 +345,7 @@ private:
     SUP_CURR_RECEPTOR
   };
 
-  static const size_t NUM_CURR_RECEPTORS = SUP_CURR_RECEPTOR - MIN_CURR_RECEPTOR;
+  static constexpr size_t NUM_CURR_RECEPTORS = SUP_CURR_RECEPTOR - MIN_CURR_RECEPTOR;
 
   // Friends --------------------------------------------------------
 
@@ -410,7 +423,7 @@ public:
     };
 
     //! total size of state vector
-    static const size_t STATE_VEC_SIZE = STATE_VEC_COMPS * NCOMP;
+    static constexpr size_t STATE_VEC_SIZE = static_cast< size_t >( STATE_VEC_COMPS ) * static_cast< size_t >( NCOMP );
 
     //! neuron state, must be C-array for GSL solver
     double y_[ STATE_VEC_SIZE ];
@@ -654,7 +667,6 @@ pp_cond_exp_mc_urbanczik::set_status( const Dictionary& d )
 }
 
 }  // namespace
-
 
 #endif  // HAVE_GSL
 #endif  // PP_COND_EXP_MC_URBANCZIK_H

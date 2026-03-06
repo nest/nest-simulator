@@ -23,15 +23,22 @@
 #ifndef SPIKE_RECORDER_H
 #define SPIKE_RECORDER_H
 
+#include <stddef.h>
 // C++ includes:
+#include <string>
 #include <vector>
 
 // Includes from nestkernel:
 #include "device_node.h"
 #include "event.h"
 #include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
 #include "nest_types.h"
+#include "node.h"
 #include "recording_device.h"
+
+class Dictionary;
 
 /* BeginUserDocs: device, recorder, spike
 
@@ -79,6 +86,7 @@ EndUserDocs */
 
 namespace nest
 {
+class SpikeEvent;
 
 /**
  * Class spike_recorder

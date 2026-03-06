@@ -23,12 +23,26 @@
 #ifndef GLIF_PSC_DOUBLE_ALPHA_H
 #define GLIF_PSC_DOUBLE_ALPHA_H
 
+#include <algorithm>
+#include <map>
+#include <math.h>
+#include <stddef.h>
+#include <string>
+#include <vector>
+
 #include "archiving_node.h"
 #include "connection.h"
+#include "dictionary.h"
 #include "event.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
 #include "nest_types.h"
+#include "node.h"
+#include "recordables_map.h"
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 /* BeginUserDocs: neuron, integrate-and-fire, current-based, adaptation, hard threshold
 
@@ -490,6 +504,15 @@ glif_psc_double_alpha::set_status( const Dictionary& d )
   P_ = ptmp;
   S_ = stmp;
 }
+
+inline void
+glif_psc_double_alpha::handle( DataLoggingRequest& e )
+{
+  B_.logger_.handle( e );  // the logger does this for us
+}
+
+template <>
+void RecordablesMap< nest::glif_psc_double_alpha >::create();
 
 }  // namespace nest
 

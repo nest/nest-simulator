@@ -20,22 +20,35 @@
  *
  */
 
-#include "layer.h"
+#include "layer_impl.h"
+
+#include <algorithm>
+#include <assert.h>
+#include <functional>
+#include <iterator>
+#include <math.h>
+#include <memory>
+#include <numeric>
+#include <stddef.h>
+#include <string>
+#include <type_traits>
+#include <utility>
+#include <vector>
 
 // Includes from nestkernel:
+#include "dictionary.h"
 #include "exceptions.h"
-#include "kernel_manager.h"
-#include "nest_names.h"
-#include "node_collection.h"
-#include "parameter.h"
-
-
-// Includes from spatial:
-#include "connection_creator_impl.h"
 #include "free_layer.h"
 #include "grid_layer.h"
-#include "layer_impl.h"
-#include "mask_impl.h"
+#include "kernel_manager.h"
+#include "layer.h"
+#include "model_manager.h"
+#include "nest_names.h"
+#include "node_collection.h"
+#include "node_manager.h"
+#include "ntree_impl.h"
+#include "parameter.h"
+#include "position_impl.h"
 #include "spatial.h"
 
 namespace nest
@@ -55,7 +68,7 @@ AbstractLayer::create_layer( const Dictionary& layer_dict )
   AbstractLayer* layer_local = nullptr;
 
   auto element_name = layer_dict.get< std::string >( names::elements );
-  auto element_id = kernel().model_manager.get_node_model_id( element_name );
+  auto element_id = kernel::manager< ModelManager >.get_node_model_id( element_name );
 
   if ( layer_dict.known( names::positions ) )
   {
@@ -142,7 +155,7 @@ AbstractLayer::create_layer( const Dictionary& layer_dict )
   NodeCollectionMetadataPTR layer_meta( new LayerMetadata( layer_safe ) );
 
   // We have at least one element, create a NodeCollection for it
-  NodeCollectionPTR node_collection = kernel().node_manager.add_node( element_id, length );
+  NodeCollectionPTR node_collection = kernel::manager< NodeManager >.add_node( element_id, length );
 
   node_collection->set_metadata( layer_meta );
 
@@ -159,6 +172,19 @@ NodeCollectionMetadataPTR
 AbstractLayer::get_metadata() const
 {
   return node_collection_->get_metadata();
+}
+
+// Define the tiny accessors (moved from header)
+void
+AbstractLayer::set_node_collection( NodeCollectionPTR node_collection )
+{
+  node_collection_ = node_collection;
+}
+
+NodeCollectionPTR
+AbstractLayer::get_node_collection()
+{
+  return node_collection_;
 }
 
 }  // namespace nest

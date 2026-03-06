@@ -23,7 +23,20 @@
 #ifndef GAP_JUNCTION_H
 #define GAP_JUNCTION_H
 
+#include <memory>
+#include <stddef.h>
+#include <string>
+
+#include "common_synapse_properties.h"
 #include "connection.h"
+#include "connector_model.h"
+#include "dictionary.h"
+#include "enum_bitfield.h"
+#include "event.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "node.h"
+#include "secondary_event.h"
 
 namespace nest
 {
@@ -168,9 +181,7 @@ template < typename targetidentifierT >
 void
 gap_junction< targetidentifierT >::get_status( Dictionary& d ) const
 {
-  // We have to include the delay here to prevent
-  // errors due to internal calls of
-  // this function in SLI/pyNEST
+  // We have to include the delay here to prevent errors due to internal calls of this function in pyNEST
   ConnectionBase::get_status( d );
   d[ names::weight ] = weight_;
   d[ names::size_of ] = sizeof( *this );

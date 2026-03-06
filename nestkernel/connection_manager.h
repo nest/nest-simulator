@@ -23,25 +23,36 @@
 #ifndef CONNECTION_MANAGER_H
 #define CONNECTION_MANAGER_H
 
+#include <assert.h>
+#include <math.h>
+#include <stddef.h>
 // C++ includes:
+#include <deque>
+#include <map>
 #include <string>
+#include <utility>
+#include <vector>
 
 // Includes from libnestutil:
+#include "dictionary.h"
 #include "manager_interface.h"
-#include "stopwatch.h"
-
+#include "numerics.h"
+#include "stopwatch_impl.h"
 // Includes from nestkernel:
-#include "conn_builder.h"
+#include "conn_builder_factory.h"
 #include "connection_id.h"
 #include "connector_base.h"
+#include "kernel_manager.h"
+#include "model_manager.h"
+#include "mpi_manager.h"
 #include "nest_time.h"
-#include "nest_timeconverter.h"
 #include "nest_types.h"
 #include "node_collection.h"
 #include "per_thread_bool_indicator.h"
 #include "send_buffer_position.h"
 #include "source_table.h"
 #include "spike_data.h"
+#include "stopwatch.h"
 #include "target_table.h"
 #include "target_table_devices.h"
 
@@ -50,13 +61,22 @@ namespace nest
 {
 class GenericBipartiteConnBuilderFactory;
 class GenericThirdConnBuilderFactory;
-class spikecounter;
 class Node;
 class Event;
 class SecondaryEvent;
 class DelayChecker;
 class GrowthCurve;
 class SpikeData;
+class BipartiteConnBuilder;
+class ThirdOutBuilder;
+class ThirdInBuilder;
+class Time;
+class TimeConverter;
+class ConnectorModel;
+class Target;
+class TargetData;
+class TargetSendBufferPosition;
+class spikecounter;
 
 class ConnectionManager : public ManagerInterface
 {
@@ -71,9 +91,11 @@ public:
   };
 
   ConnectionManager();
+
   ~ConnectionManager() override;
 
   void initialize( const bool ) override;
+
   void finalize( const bool ) override;
   void set_status( const Dictionary& ) override;
   void get_status( Dictionary& ) override;
@@ -81,8 +103,11 @@ public:
   bool valid_connection_rule( std::string );
 
   void compute_target_data_buffer_size();
+
   void compute_compressed_secondary_recv_buffer_positions( const size_t tid );
+
   void collect_compressed_spike_data( const size_t tid );
+
   void clear_compressed_spike_data_map();
 
   /**
@@ -277,6 +302,7 @@ public:
   size_t get_target_node_id( const size_t tid, const synindex syn_id, const size_t lcid ) const;
 
   bool get_device_connected( size_t tid, size_t lcid ) const;
+
   /**
    * Triggered by volume transmitter in update.
    *
@@ -310,6 +336,7 @@ public:
    * Send event e to all device targets of source source_node_id
    */
   void send_to_devices( const size_t tid, const size_t source_node_id, Event& e );
+
   void send_to_devices( const size_t tid, const size_t source_node_id, SecondaryEvent& e );
 
   /**
@@ -474,12 +501,14 @@ private:
     NodeCollectionPTR target,
     synindex syn_id,
     long synapse_label ) const;
+
   void get_connections_to_targets_( const size_t tid,
     std::deque< ConnectionID >& connectome,
     NodeCollectionPTR source,
     NodeCollectionPTR target,
     synindex syn_id,
     long synapse_label ) const;
+
   void get_connections_from_sources_( const size_t tid,
     std::deque< ConnectionID >& connectome,
     NodeCollectionPTR source,
@@ -717,6 +746,81 @@ private:
   //! buffers
   std::vector< std::pair< size_t, std::map< size_t, CSDMapEntry >::const_iterator > > iteration_state_;
 };
+
+inline void
+ConnectionManager::connect_to_device_( Node& source,
+  Node& target,
+  const size_t s_node_id,
+  const size_t tid,
+  const synindex syn_id,
+  const Dictionary& params,
+  const double delay,
+  const double weight )
+{
+  // create entries in connection structure for connections to devices
+  target_table_devices_.add_connection_to_device( source, target, s_node_id, tid, syn_id, params, delay, weight );
+
+  increase_connection_count( tid, syn_id );
+}
+
+inline void
+ConnectionManager::connect_from_device_( Node& source,
+  Node& target,
+  const size_t tid,
+  const synindex syn_id,
+  const Dictionary& params,
+  const double delay,
+  const double weight )
+{
+  // create entries in connections vector of devices
+  target_table_devices_.add_connection_from_device( source, target, tid, syn_id, params, delay, weight );
+
+  increase_connection_count( tid, syn_id );
+}
+
+inline void
+ConnectionManager::compress_secondary_send_buffer_pos( const size_t tid )
+{
+  target_table_.compress_secondary_send_buffer_pos( tid );
+}
+
+inline void
+ConnectionManager::sync_has_primary_connections()
+{
+  has_primary_connections_ = kernel::manager< MPIManager >.any_true( has_primary_connections_ );
+}
+
+inline void
+ConnectionManager::check_secondary_connections_exist()
+{
+  secondary_connections_exist_ = kernel::manager< MPIManager >.any_true( secondary_connections_exist_ );
+}
+
+inline void
+ConnectionManager::unset_connections_have_changed()
+{
+  connections_have_changed_ = false;
+}
+
+inline void
+ConnectionManager::send_to_devices( const size_t tid, const size_t source_node_id, Event& e )
+{
+  target_table_devices_.send_to_device(
+    tid, source_node_id, e, kernel::manager< ModelManager >.get_connection_models( tid ) );
+}
+
+inline void
+ConnectionManager::send_to_devices( const size_t tid, const size_t source_node_id, SecondaryEvent& e )
+{
+  target_table_devices_.send_to_device(
+    tid, source_node_id, e, kernel::manager< ModelManager >.get_connection_models( tid ) );
+}
+
+inline void
+ConnectionManager::send_from_device( const size_t tid, const size_t ldid, Event& e )
+{
+  target_table_devices_.send_from_device( tid, ldid, e, kernel::manager< ModelManager >.get_connection_models( tid ) );
+}
 
 inline bool
 ConnectionManager::valid_connection_rule( std::string rule_name )

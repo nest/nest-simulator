@@ -24,12 +24,13 @@
 #ifndef LOGGING_EVENT_H
 #define LOGGING_EVENT_H
 
+#include <time.h>
 // C++ includes:
-#include <ostream>
+#include <iosfwd>
 #include <string>
 
 // Includes from libnestutil:
-#include "logging.h"
+#include "logging_manager.h"
 
 namespace nest
 {

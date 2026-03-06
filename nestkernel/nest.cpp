@@ -20,35 +20,46 @@
  *
  */
 
-#include "nest.h"
 
 // C++ includes:
 #include <cassert>
+#include <deque>
+#include <map>
+#include <memory>
+#include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
 
+#include "nest_impl.h"
 // Includes from nestkernel:
-#include "exceptions.h"
-#include "kernel_manager.h"
-#include "mpi_manager_impl.h"
-#include "parameter.h"
-
-#include "sp_manager.h"
-#include "sp_manager_impl.h"
-
-#include "connector_model_impl.h"
-
-#include "conn_builder_conngen.h"
-
-#include "grid_mask.h"
-#include "spatial.h"
-
-#include "connection_manager_impl.h"
-
-#include "genericmodel_impl.h"
-#include "model_manager.h"
-#include "model_manager_impl.h"
-
-#include "config.h"
+#include "compose.hpp"
+#include "connection_id.h"
+#include "connection_manager.h"
 #include "dictionary.h"
+#include "exceptions.h"
+#include "generic_factory_impl.h"
+#include "grid_mask.h"
+#include "io_manager.h"
+#include "kernel_manager.h"
+#include "logging_manager.h"
+#include "mask.h"
+#include "model.h"
+#include "model_manager.h"
+#include "module_manager.h"
+#include "mpi_manager.h"
+#include "nest.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "node_collection.h"
+#include "node_manager.h"
+#include "parameter.h"
+#include "position.h"
+#include "position_impl.h"
+#include "random_generators.h"
+#include "simulation_manager.h"
+#include "sp_manager.h"
+#include "spatial.h"
 
 namespace nest
 {
@@ -59,9 +70,8 @@ AbstractMask* create_doughnut( const Dictionary& d );
 void
 init_nest( int* argc, char** argv[] )
 {
-  KernelManager::create_kernel_manager();
-  kernel().mpi_manager.init_mpi( argc, argv );
-  kernel().initialize();
+  kernel::manager< MPIManager >.init_mpi( argc, argv );
+  kernel::manager< KernelManager >.initialize();
 
   // TODO: register_parameter() and register_mask() should be moved, see #3149
   register_parameter< ConstantParameter >( "constant" );
@@ -94,44 +104,44 @@ shutdown_nest( int exitcode )
   // We must MPI_Finalize before the KernelManager() destructor runs, because
   // both MusicManager and MPIManager may be involved, with mpi_finalize()
   // delegating to MusicManager, which is deleted long before MPIManager.
-  kernel().mpi_manager.mpi_finalize( exitcode );
+  kernel::manager< MPIManager >.mpi_finalize( exitcode );
 }
 
 void
 install_module( const std::string& module )
 {
-  kernel().module_manager.install( module );
+  kernel::manager< ModuleManager >.install( module );
 }
 
 void
 reset_kernel()
 {
-  kernel().reset();
+  kernel::manager< KernelManager >.reset();
 }
 
 void
 enable_structural_plasticity()
 {
-  kernel().sp_manager.enable_structural_plasticity();
+  kernel::manager< SPManager >.enable_structural_plasticity();
 }
 
 void
 disable_structural_plasticity()
 {
-  kernel().sp_manager.disable_structural_plasticity();
+  kernel::manager< SPManager >.disable_structural_plasticity();
 }
 
 void
 register_logger_client( const deliver_logging_event_ptr client_callback )
 {
-  kernel().logging_manager.register_logging_client( client_callback );
+  kernel::manager< LoggingManager >.register_logging_client( client_callback );
 }
 
 std::string
 print_nodes_to_string()
 {
   std::stringstream string_stream;
-  kernel().node_manager.print( string_stream );
+  kernel::manager< NodeManager >.print( string_stream );
   return string_stream.str();
 }
 
@@ -155,17 +165,17 @@ void
 set_kernel_status( const Dictionary& dict )
 {
   dict.init_access_flags();
-  kernel().set_status( dict );
+  kernel::manager< KernelManager >.set_status( dict );
   dict.all_entries_accessed( "SetKernelStatus", "params" );
 }
 
 Dictionary
 get_kernel_status()
 {
-  assert( kernel().is_initialized() );
+  assert( kernel::manager< KernelManager >.is_initialized() );
 
   Dictionary d;
-  kernel().get_status( d );
+  kernel::manager< KernelManager >.get_status( d );
 
   return d;
 }
@@ -220,7 +230,7 @@ set_nc_status( NodeCollectionPTR nc, std::vector< Dictionary >& params )
     // May consider ways to fix this.
     for ( auto const& node : *nc )
     {
-      kernel().node_manager.set_status( node.node_id, params[ 0 ] );
+      kernel::manager< NodeManager >.set_status( node.node_id, params[ 0 ] );
     }
   }
   else if ( nc->size() == params.size() )
@@ -228,7 +238,7 @@ set_nc_status( NodeCollectionPTR nc, std::vector< Dictionary >& params )
     size_t idx = 0;
     for ( auto const& node : *nc )
     {
-      kernel().node_manager.set_status( node.node_id, params[ idx ] );
+      kernel::manager< NodeManager >.set_status( node.node_id, params[ idx ] );
       ++idx;
     }
   }
@@ -246,7 +256,7 @@ set_connection_status( const std::deque< ConnectionID >& conns, const Dictionary
   dict.init_access_flags();
   for ( auto& conn : conns )
   {
-    kernel().connection_manager.set_synapse_status( conn.get_source_node_id(),
+    kernel::manager< ConnectionManager >.set_synapse_status( conn.get_source_node_id(),
       conn.get_target_node_id(),
       conn.get_target_thread(),
       conn.get_synapse_model_id(),
@@ -269,7 +279,7 @@ set_connection_status( const std::deque< ConnectionID >& conns, const std::vecto
     const auto conn = conns[ i ];
     const auto dict = dicts[ i ];
     dict.init_access_flags();
-    kernel().connection_manager.set_synapse_status( conn.get_source_node_id(),
+    kernel::manager< ConnectionManager >.set_synapse_status( conn.get_source_node_id(),
       conn.get_target_node_id(),
       conn.get_target_thread(),
       conn.get_synapse_model_id(),
@@ -287,7 +297,7 @@ get_connection_status( const std::deque< ConnectionID >& conns )
 
   for ( auto& conn : conns )
   {
-    const auto d = kernel().connection_manager.get_synapse_status( conn.get_source_node_id(),
+    const auto d = kernel::manager< ConnectionManager >.get_synapse_status( conn.get_source_node_id(),
       conn.get_target_node_id(),
       conn.get_target_thread(),
       conn.get_synapse_model_id(),
@@ -300,19 +310,19 @@ get_connection_status( const std::deque< ConnectionID >& conns )
 void
 set_node_status( const size_t node_id, const Dictionary& dict )
 {
-  kernel().node_manager.set_status( node_id, dict );
+  kernel::manager< NodeManager >.set_status( node_id, dict );
 }
 
 Dictionary
 get_node_status( const size_t node_id )
 {
-  return kernel().node_manager.get_status( node_id );
+  return kernel::manager< NodeManager >.get_status( node_id );
 }
 
 Dictionary
 get_connection_status( const ConnectionID& conn )
 {
-  return kernel().connection_manager.get_synapse_status( conn.get_source_node_id(),
+  return kernel::manager< ConnectionManager >.get_synapse_status( conn.get_source_node_id(),
     conn.get_target_node_id(),
     conn.get_target_thread(),
     conn.get_synapse_model_id(),
@@ -359,8 +369,8 @@ create( const std::string& model_name, const size_t n_nodes )
     throw BadParameterValue( "n_nodes > 0 expected" );
   }
 
-  const size_t model_id = kernel().model_manager.get_node_model_id( model_name );
-  return kernel().node_manager.add_node( model_id, n_nodes );
+  const size_t model_id = kernel::manager< ModelManager >.get_node_model_id( model_name );
+  return kernel::manager< NodeManager >.add_node( model_id, n_nodes );
 }
 
 NodeCollectionPTR
@@ -378,7 +388,7 @@ make_nodecollection( const std::vector< size_t >& node_ids )
 NodeCollectionPTR
 get_nodes( const Dictionary& params, const bool local_only )
 {
-  return kernel().node_manager.get_nodes( params, local_only );
+  return kernel::manager< NodeManager >.get_nodes( params, local_only );
 }
 
 bool
@@ -419,7 +429,7 @@ connect( NodeCollectionPTR sources,
   const Dictionary& connectivity,
   const std::vector< Dictionary >& synapse_params )
 {
-  kernel().connection_manager.connect( sources, targets, connectivity, synapse_params );
+  kernel::manager< ConnectionManager >.connect( sources, targets, connectivity, synapse_params );
 }
 
 void
@@ -428,7 +438,7 @@ disconnect( NodeCollectionPTR sources,
   const Dictionary& connectivity,
   const std::vector< Dictionary >& synapse_params )
 {
-  kernel().sp_manager.disconnect( sources, targets, connectivity, synapse_params );
+  kernel::manager< SPManager >.disconnect( sources, targets, connectivity, synapse_params );
 }
 
 void
@@ -439,7 +449,7 @@ connect_tripartite( NodeCollectionPTR sources,
   const Dictionary& third_connectivity,
   const std::map< std::string, std::vector< Dictionary > >& synapse_specs )
 {
-  kernel().connection_manager.connect_tripartite(
+  kernel::manager< ConnectionManager >.connect_tripartite(
     sources, targets, third, connectivity, third_connectivity, synapse_specs );
 }
 
@@ -453,13 +463,14 @@ connect_arrays( long* sources,
   size_t n,
   const std::string& syn_model )
 {
-  kernel().connection_manager.connect_arrays( sources, targets, weights, delays, p_keys, p_values, n, syn_model );
+  kernel::manager< ConnectionManager >.connect_arrays(
+    sources, targets, weights, delays, p_keys, p_values, n, syn_model );
 }
 
 void
 connect_sonata( const Dictionary& graph_specs, const long hyperslab_size )
 {
-  kernel().connection_manager.connect_sonata( graph_specs, hyperslab_size );
+  kernel::manager< ConnectionManager >.connect_sonata( graph_specs, hyperslab_size );
 }
 
 std::deque< ConnectionID >
@@ -467,7 +478,7 @@ get_connections( const Dictionary& dict )
 {
   dict.init_access_flags();
 
-  const auto& connectome = kernel().connection_manager.get_connections( dict );
+  const auto& connectome = kernel::manager< ConnectionManager >.get_connections( dict );
 
   dict.all_entries_accessed( "GetConnections", "params" );
 
@@ -478,12 +489,12 @@ void
 disconnect( const std::deque< ConnectionID >& conns )
 {
   // probably not strictly necessary here, but does nothing if all is up to date
-  kernel().node_manager.update_thread_local_node_data();
+  kernel::manager< NodeManager >.update_thread_local_node_data();
 
   for ( auto& conn : conns )
   {
-    const auto target_node = kernel().node_manager.get_node_or_proxy( conn.get_target_node_id() );
-    kernel().sp_manager.disconnect(
+    const auto target_node = kernel::manager< NodeManager >.get_node_or_proxy( conn.get_target_node_id() );
+    kernel::manager< SPManager >.disconnect(
       conn.get_source_node_id(), target_node, conn.get_target_thread(), conn.get_synapse_model_id() );
   }
 }
@@ -514,44 +525,44 @@ run( const double time )
     throw BadParameter( "The simulation time must be a multiple of the simulation resolution." );
   }
 
-  kernel().simulation_manager.run( t_sim );
+  kernel::manager< SimulationManager >.run( t_sim );
 }
 
 void
 prepare()
 {
-  kernel().prepare();
+  kernel::manager< KernelManager >.prepare();
 }
 
 void
 cleanup()
 {
-  kernel().cleanup();
+  kernel::manager< KernelManager >.cleanup();
 }
 
 void
 synchronize()
 {
-  kernel().mpi_manager.synchronize();
+  kernel::manager< MPIManager >.synchronize();
 }
 
 void
 copy_model( const std::string& oldmodname, const std::string& newmodname, const Dictionary& dict )
 {
-  kernel().model_manager.copy_model( oldmodname, newmodname, dict );
+  kernel::manager< ModelManager >.copy_model( oldmodname, newmodname, dict );
 }
 
 void
 set_model_defaults( const std::string& component, const Dictionary& dict )
 {
-  if ( kernel().model_manager.set_model_defaults( component, dict ) )
+  if ( kernel::manager< ModelManager >.set_model_defaults( component, dict ) )
   {
     return;
   }
 
-  if ( kernel().io_manager.is_valid_recording_backend( component ) )
+  if ( kernel::manager< IOManager >.is_valid_recording_backend( component ) )
   {
-    kernel().io_manager.set_recording_backend_status( component, dict );
+    kernel::manager< IOManager >.set_recording_backend_status( component, dict );
     return;
   }
 
@@ -563,8 +574,8 @@ get_model_defaults( const std::string& component )
 {
   try
   {
-    const size_t model_id = kernel().model_manager.get_node_model_id( component );
-    return kernel().model_manager.get_node_model( model_id )->get_status();
+    const size_t model_id = kernel::manager< ModelManager >.get_node_model_id( component );
+    return kernel::manager< ModelManager >.get_node_model( model_id )->get_status();
   }
   catch ( UnknownModelName& )
   {
@@ -573,17 +584,17 @@ get_model_defaults( const std::string& component )
 
   try
   {
-    const size_t synapse_model_id = kernel().model_manager.get_synapse_model_id( component );
-    return kernel().model_manager.get_connector_defaults( synapse_model_id );
+    const size_t synapse_model_id = kernel::manager< ModelManager >.get_synapse_model_id( component );
+    return kernel::manager< ModelManager >.get_connector_defaults( synapse_model_id );
   }
   catch ( UnknownSynapseType& )
   {
     // ignore errors; throw at the end of the function if that's reached
   }
 
-  if ( kernel().io_manager.is_valid_recording_backend( component ) )
+  if ( kernel::manager< IOManager >.is_valid_recording_backend( component ) )
   {
-    return kernel().io_manager.get_recording_backend_status( component );
+    return kernel::manager< IOManager >.get_recording_backend_status( component );
   }
 
   throw UnknownComponent( component );
@@ -690,7 +701,7 @@ apply( const ParameterPTR param, const NodeCollectionPTR nc )
   RngPtr rng = get_rank_synced_rng();
   for ( auto it = nc->begin(); it < nc->end(); ++it )
   {
-    auto node = kernel().node_manager.get_node_or_proxy( ( *it ).node_id );
+    auto node = kernel::manager< NodeManager >.get_node_or_proxy( ( *it ).node_id );
     result.push_back( param->value( rng, node ) );
   }
   return result;
@@ -774,7 +785,7 @@ message( const VerbosityLevel level,
   const std::string& file,
   const size_t line )
 {
-  nest::kernel().logging_manager.publish_log( level, function, message, file, line );
+  nest::kernel::manager< nest::LoggingManager >.publish_log( level, function, message, file, line );
 }
 
 }  // namespace nest

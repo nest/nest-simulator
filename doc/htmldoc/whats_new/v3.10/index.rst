@@ -46,7 +46,7 @@ If you have implemented your models using PyNEST, the only change you will need 
 
 .. code-block:: python
 
-   nest.set_verbosity("M_WARNING")
+   nest.set_verbosity("VerbosityLevel.WARNING")
 
 with
 

@@ -23,8 +23,25 @@
 #ifndef HH_COND_BETA_GAP_TRAUB_H
 #define HH_COND_BETA_GAP_TRAUB_H
 
+#include <algorithm>
+#include <map>
+#include <math.h>
+#include <stddef.h>
+#include <string>
+#include <vector>
+
 // Generated includes:
 #include "config.h"
+#include "dictionary.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "universal_data_logger.h"
+
+namespace nest
+{
+class GapJunctionEvent;
+}  // namespace nest
 
 #ifdef HAVE_GSL
 
@@ -42,7 +59,7 @@
 #include "node.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -517,7 +534,6 @@ hh_cond_beta_gap_traub::set_status( const Dictionary& d )
 }
 
 }  // namespace
-
 
 #endif  // HAVE_GSL
 #endif  // HH_COND_BETA_GAP_TRAUB_H

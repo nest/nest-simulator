@@ -23,18 +23,35 @@
 #ifndef EPROP_IAF_PSC_DELTA_H
 #define EPROP_IAF_PSC_DELTA_H
 
+#include <algorithm>
+#include <map>
+#include <math.h>
+#include <stddef.h>
+#include <string>
+#include <vector>
+
 // nestkernel
 #include "connection.h"
-#include "eprop_archiving_node_impl.h"
+#include "dictionary.h"
 #include "eprop_archiving_node_recurrent.h"
 #include "eprop_synapse.h"
 #include "event.h"
+#include "exceptions.h"
+#include "histentry.h"
+#include "nest_names.h"
+#include "nest_time.h"
 #include "nest_types.h"
+#include "node.h"
+#include "recordables_map.h"
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
+class CommonSynapseProperties;
+class LearningSignalConnectionEvent;
+class WeightOptimizer;
 
 /* BeginUserDocs: neuron, e-prop plasticity, current-based, integrate-and-fire
 

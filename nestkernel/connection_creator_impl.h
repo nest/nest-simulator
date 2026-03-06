@@ -25,14 +25,19 @@
 
 #include "connection_creator.h"
 
-// C++ includes:
+#include <algorithm>
+#include <cassert>
+#include <cmath>
+#include <iterator>
 #include <vector>
 
-// Includes from nestkernel:
+#include "connection_manager.h"
 #include "kernel_manager.h"
+#include "node_manager.h"
 
 namespace nest
 {
+
 template < int D >
 void
 ConnectionCreator::connect( Layer< D >& source,
@@ -101,7 +106,7 @@ ConnectionCreator::connect_to_target_( Iterator from,
     {
       for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
       {
-        kernel().connection_manager.connect( iter->second,
+        kernel::manager< ConnectionManager >.connect( iter->second,
           tgt_ptr,
           tgt_thread,
           synapse_model_[ indx ],
@@ -112,6 +117,7 @@ ConnectionCreator::connect_to_target_( Iterator from,
     }
   }
 }
+
 
 template < typename Iterator, int D >
 void
@@ -146,7 +152,7 @@ ConnectionCreator::connect_to_target_poisson_( Iterator from,
     {
       for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
       {
-        kernel().connection_manager.connect( iter->second,
+        kernel::manager< ConnectionManager >.connect( iter->second,
           tgt_ptr,
           tgt_thread,
           synapse_model_[ indx ],
@@ -157,6 +163,7 @@ ConnectionCreator::connect_to_target_poisson_( Iterator from,
     }
   }
 }
+
 
 template < int D >
 ConnectionCreator::PoolWrapper_< D >::PoolWrapper_()
@@ -247,11 +254,11 @@ ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source,
     pool.define( source.get_global_positions_vector( source_nc ) );
   }
 
-  std::vector< std::exception_ptr > exceptions_raised_( kernel().vp_manager.get_num_threads() );
+  std::vector< std::exception_ptr > exceptions_raised_( kernel::manager< VPManager >.get_num_threads() );
 
 #pragma omp parallel
   {
-    const int tid = kernel().vp_manager.get_thread_id();
+    const int tid = kernel::manager< VPManager >.get_thread_id();
     try
     {
       NodeCollection::const_iterator target_begin = target_nc->begin();
@@ -259,7 +266,7 @@ ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source,
 
       for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
       {
-        Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id, tid );
+        Node* const tgt = kernel::manager< NodeManager >.get_node_or_proxy( ( *tgt_it ).node_id, tid );
 
         if ( not tgt->is_proxy() )
         {
@@ -322,10 +329,10 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
     pool.define( source.get_global_positions_vector( source_nc ) );
   }
 
-  std::vector< std::exception_ptr > exceptions_raised_( kernel().vp_manager.get_num_threads() );
+  std::vector< std::exception_ptr > exceptions_raised_( kernel::manager< VPManager >.get_num_threads() );
 
   // We only need to check the first in the NodeCollection
-  Node* const first_in_tgt = kernel().node_manager.get_node_or_proxy( target_nc->operator[]( 0 ) );
+  Node* const first_in_tgt = kernel::manager< NodeManager >.get_node_or_proxy( target_nc->operator[]( 0 ) );
   if ( not first_in_tgt->has_proxies() )
   {
     throw IllegalConnection( "Spatial Connect with pairwise_bernoulli to devices is not possible." );
@@ -333,7 +340,7 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
 
 #pragma omp parallel
   {
-    const int tid = kernel().vp_manager.get_thread_id();
+    const int tid = kernel::manager< VPManager >.get_thread_id();
     try
     {
       NodeCollection::const_iterator target_begin = target_nc->thread_local_begin();
@@ -341,7 +348,7 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
 
       for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
       {
-        Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id, tid );
+        Node* const tgt = kernel::manager< NodeManager >.get_node_or_proxy( ( *tgt_it ).node_id, tid );
 
         assert( not tgt->is_proxy() );
 
@@ -404,11 +411,11 @@ ConnectionCreator::pairwise_poisson_( Layer< D >& source,
     pool.define( source.get_global_positions_vector( source_nc ) );
   }
 
-  std::vector< std::exception_ptr > exceptions_raised_( kernel().vp_manager.get_num_threads() );
+  std::vector< std::exception_ptr > exceptions_raised_( kernel::manager< VPManager >.get_num_threads() );
 
 #pragma omp parallel
   {
-    const int thread_id = kernel().vp_manager.get_thread_id();
+    const int thread_id = kernel::manager< VPManager >.get_thread_id();
     try
     {
       NodeCollection::const_iterator target_begin = target_nc->begin();
@@ -416,7 +423,7 @@ ConnectionCreator::pairwise_poisson_( Layer< D >& source,
 
       for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
       {
-        Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id, thread_id );
+        Node* const tgt = kernel::manager< NodeManager >.get_node_or_proxy( ( *tgt_it ).node_id, thread_id );
 
         if ( not tgt->is_proxy() )
         {
@@ -466,7 +473,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
   // 3. Draw source nodes and make connections
 
   // We only need to check the first in the NodeCollection
-  Node* const first_in_tgt = kernel().node_manager.get_node_or_proxy( target_nc->operator[]( 0 ) );
+  Node* const first_in_tgt = kernel::manager< NodeManager >.get_node_or_proxy( target_nc->operator[]( 0 ) );
   if ( not first_in_tgt->has_proxies() )
   {
     throw IllegalConnection( "Spatial Connect with fixed_indegree to devices is not possible." );
@@ -480,9 +487,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
   // the network untouched if any target does not have proxies
   for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
   {
-    Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id );
-
-    assert( not tgt->is_proxy() );
+    assert( not kernel::manager< NodeManager >.get_node_or_proxy( ( *tgt_it ).node_id )->is_proxy() );
   }
 
   if ( mask_.get() )
@@ -495,7 +500,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
     for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
     {
       size_t target_id = ( *tgt_it ).node_id;
-      Node* const tgt = kernel().node_manager.get_node_or_proxy( target_id );
+      Node* const tgt = kernel::manager< NodeManager >.get_node_or_proxy( target_id );
 
       size_t target_thread = tgt->get_thread();
       RngPtr rng = get_vp_specific_rng( target_thread );
@@ -570,7 +575,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           {
             const double w = weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
             const double d = delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
-            kernel().connection_manager.connect(
+            kernel::manager< ConnectionManager >.connect(
               source_id, tgt, target_thread, synapse_model_[ indx ], param_dicts_[ indx ][ target_thread ], d, w );
           }
 
@@ -609,7 +614,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           {
             const double w = weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
             const double d = delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
-            kernel().connection_manager.connect(
+            kernel::manager< ConnectionManager >.connect(
               source_id, tgt, target_thread, synapse_model_[ indx ], param_dicts_[ indx ][ target_thread ], d, w );
           }
 
@@ -629,7 +634,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
     for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
     {
       size_t target_id = ( *tgt_it ).node_id;
-      Node* const tgt = kernel().node_manager.get_node_or_proxy( target_id );
+      Node* const tgt = kernel::manager< NodeManager >.get_node_or_proxy( target_id );
       size_t target_thread = tgt->get_thread();
       RngPtr rng = get_vp_specific_rng( target_thread );
       Position< D > target_pos = target.get_position( ( *tgt_it ).nc_index );
@@ -696,7 +701,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           {
             const double w = weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
             const double d = delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
-            kernel().connection_manager.connect(
+            kernel::manager< ConnectionManager >.connect(
               source_id, tgt, target_thread, synapse_model_[ indx ], param_dicts_[ indx ][ target_thread ], d, w );
           }
 
@@ -733,7 +738,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           {
             const double w = weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
             const double d = delay_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
-            kernel().connection_manager.connect(
+            kernel::manager< ConnectionManager >.connect(
               source_id, tgt, target_thread, synapse_model_[ indx ], param_dicts_[ indx ][ target_thread ], d, w );
           }
 
@@ -758,7 +763,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
   // the network untouched if any target does not have proxies
 
   // We only need to check the first in the NodeCollection
-  Node* const first_in_tgt = kernel().node_manager.get_node_or_proxy( target_nc->operator[]( 0 ) );
+  Node* const first_in_tgt = kernel::manager< NodeManager >.get_node_or_proxy( target_nc->operator[]( 0 ) );
   if ( not first_in_tgt->has_proxies() )
   {
     throw IllegalConnection( "Spatial Connect with fixed_outdegree to devices is not possible." );
@@ -769,9 +774,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
 
   for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
   {
-    Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id );
-
-    assert( not tgt->is_proxy() );
+    assert( not kernel::manager< NodeManager >.get_node_or_proxy( ( *tgt_it ).node_id )->is_proxy() );
   }
 
   // Fixed_outdegree connections (fixed fan out)
@@ -795,7 +798,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
   {
     const Position< D > source_pos = source_pos_node_id_pair.first;
     const size_t source_id = source_pos_node_id_pair.second;
-    const auto src = kernel().node_manager.get_node_or_proxy( source_id );
+    const auto src = kernel::manager< NodeManager >.get_node_or_proxy( source_id );
     const std::vector< double > source_pos_vector = source_pos.get_vector();
 
     // We create a target pos vector here that can be updated with the
@@ -816,7 +819,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
       {
         // TODO: Why is probability calculated in source layer, but weight and delay in target layer?
         target_pos_node_id_pair.first.get_vector( target_pos_vector );
-        const auto tgt = kernel().node_manager.get_node_or_proxy( target_pos_node_id_pair.second );
+        const auto tgt = kernel::manager< NodeManager >.get_node_or_proxy( target_pos_node_id_pair.second );
         probabilities.push_back( kernel_->value( grng, source_pos_vector, target_pos_vector, source, tgt ) );
       }
     }
@@ -866,7 +869,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
       std::vector< double > rng_delay_vec;
       for ( size_t indx = 0; indx < weight_.size(); ++indx )
       {
-        const auto tgt = kernel().node_manager.get_node_or_proxy( target_pos_node_id_pairs[ indx ].second );
+        const auto tgt = kernel::manager< NodeManager >.get_node_or_proxy( target_pos_node_id_pairs[ indx ].second );
         rng_weight_vec.push_back( weight_[ indx ]->value( grng, source_pos_vector, target_pos_vector, target, tgt ) );
         rng_delay_vec.push_back( delay_[ indx ]->value( grng, source_pos_vector, target_pos_vector, target, tgt ) );
       }
@@ -875,17 +878,17 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
       // required for it. Each VP thus counts the connection as created, but only the VP hosting the
       // target neuron actually creates the connection.
       --number_of_connections;
-      if ( not kernel().node_manager.is_local_node_id( target_id ) )
+      if ( not kernel::manager< NodeManager >.is_local_node_id( target_id ) )
       {
         continue;
       }
 
-      Node* target_ptr = kernel().node_manager.get_node_or_proxy( target_id );
+      Node* target_ptr = kernel::manager< NodeManager >.get_node_or_proxy( target_id );
       const size_t target_thread = target_ptr->get_thread();
 
       for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
       {
-        kernel().connection_manager.connect( source_id,
+        kernel::manager< ConnectionManager >.connect( source_id,
           target_ptr,
           target_thread,
           synapse_model_[ indx ],
@@ -897,6 +900,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
   }
 }
 
-}  // namespace nest
+
+}
 
 #endif

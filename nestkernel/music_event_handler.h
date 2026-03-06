@@ -29,11 +29,15 @@
 #ifdef HAVE_MUSIC
 
 // C++ includes:
+#include <functional>
 #include <music.hh>
 #include <queue>
+#include <stddef.h>
+#include <string>
+#include <vector>
 
 // Includes from nestkernel:
-#include "nest_types.h"
+#include "nest_time.h"
 #include "node.h"
 
 

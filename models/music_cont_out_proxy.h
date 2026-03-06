@@ -33,6 +33,8 @@
 #include <mpi.h>
 
 // C++ includes:
+#include <stddef.h>
+#include <string>
 #include <vector>
 
 // External includes:
@@ -40,9 +42,13 @@
 
 // Includes from nestkernel:
 #include "device_node.h"
+#include "nest_time.h"
 #include "nest_timeconverter.h"
 #include "nest_types.h"
+#include "node.h"
 #include "node_collection.h"
+
+class Dictionary;
 
 
 namespace nest
@@ -170,7 +176,6 @@ protected:
 
 private:
   struct State_;  //!< Forward declarations
-
   struct Buffers_;
 
   struct Parameters_

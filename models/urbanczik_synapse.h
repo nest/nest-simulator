@@ -23,14 +23,25 @@
 #ifndef URBANCZIK_SYNAPSE_H
 #define URBANCZIK_SYNAPSE_H
 
+#include <stddef.h>
 // C++ includes:
 #include <cmath>
+#include <deque>
+#include <string>
 
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
 #include "connection.h"
 #include "connector_model.h"
+#include "dictionary.h"
+#include "enum_bitfield.h"
 #include "event.h"
+#include "exceptions.h"
+#include "histentry.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "nest_types.h"
+#include "node.h"
 #include "ring_buffer.h"
 
 
@@ -230,7 +241,7 @@ urbanczik_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSy
 
   // for now we only support two-compartment neurons
   // in this case the dendritic compartment has index 1
-  const int comp = 1;
+  constexpr int comp = 1;
 
   target->get_urbanczik_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish, comp );
 

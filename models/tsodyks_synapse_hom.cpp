@@ -22,8 +22,9 @@
 
 #include "tsodyks_synapse_hom.h"
 
-// Includes from nestkernel:
-#include "connector_model.h"
+#include <boost/iterator/iterator_facade.hpp>
+#include <utility>
+
 #include "nest_impl.h"
 
 void

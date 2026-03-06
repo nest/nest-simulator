@@ -23,11 +23,23 @@
 #ifndef STATICSYNAPSE_H
 #define STATICSYNAPSE_H
 
+#include <stddef.h>
+#include <string>
+
 // Includes from nestkernel:
+#include "common_synapse_properties.h"
 #include "connection.h"
+#include "connector_model.h"
+#include "dictionary.h"
+#include "enum_bitfield.h"
+#include "event.h"
+#include "event_delivery_manager.h"
+#include "nest_names.h"
+#include "nest_types.h"
 
 namespace nest
 {
+class Node;
 
 /* BeginUserDocs: synapse, static
 
@@ -186,7 +198,6 @@ template < typename targetidentifierT >
 void
 static_synapse< targetidentifierT >::get_status( Dictionary& d ) const
 {
-
   ConnectionBase::get_status( d );
   d[ names::weight ] = weight_;
   d[ names::size_of ] = sizeof( *this );

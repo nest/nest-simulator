@@ -23,21 +23,26 @@
 #ifndef MODEL_H
 #define MODEL_H
 
+#include <stddef.h>
 // C++ includes:
-#include <new>
 #include <string>
 #include <vector>
 
-// Includes from libnestutil:
-#include "allocator.h"
-
 // Includes from nestkernel:
+#include "dictionary.h"
+#include "nest_types.h"
 #include "node.h"
 
 
 namespace nest
 {
 class TimeConverter;
+class DelayedRateConnectionEvent;
+class DiffusionConnectionEvent;
+class GapJunctionEvent;
+class InstantaneousRateConnectionEvent;
+class LearningSignalConnectionEvent;
+class SICEvent;
 
 /**
  * Base class for all Models.
@@ -110,7 +115,11 @@ public:
    * @see Model::Model()
    * @see Node::get_name()
    */
-  std::string get_name() const;
+  std::string
+  get_name() const
+  {
+    return name_;
+  }
 
   /**
    * Return the available memory. The result is given in number of elements,
@@ -251,20 +260,5 @@ private:
   std::vector< std::vector< Node* > > memory_;
 };
 
-
-inline Node*
-Model::create( size_t t )
-{
-  assert( t < memory_.size() );
-  Node* n = create_();
-  memory_[ t ].emplace_back( n );
-  return n;
-}
-
-inline std::string
-Model::get_name() const
-{
-  return name_;
-}
 }
 #endif

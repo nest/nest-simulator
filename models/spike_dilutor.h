@@ -23,13 +23,22 @@
 #ifndef SPIKE_DILUTOR_H
 #define SPIKE_DILUTOR_H
 
+#include <stddef.h>
+#include <string>
+
 // Includes from nestkernel:
 #include "connection.h"
 #include "device_node.h"
 #include "event.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
 #include "nest_types.h"
+#include "node.h"
 #include "ring_buffer.h"
 #include "stimulation_device.h"
+
+class Dictionary;
 
 namespace nest
 {

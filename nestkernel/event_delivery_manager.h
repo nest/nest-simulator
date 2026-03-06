@@ -23,31 +23,43 @@
 #ifndef EVENT_DELIVERY_MANAGER_H
 #define EVENT_DELIVERY_MANAGER_H
 
+#include <assert.h>
+#include <stddef.h>
 // C++ includes:
-#include <cassert>
-#include <limits>
 #include <vector>
 
 // Includes from libnestutil:
 #include "manager_interface.h"
-#include "stopwatch.h"
-
+#include "stopwatch_impl.h"
 // Includes from nestkernel:
 #include "buffer_resize_log.h"
+#include "connection_manager.h"
 #include "event.h"
+#include "kernel_manager.h"
 #include "mpi_manager.h"  // OffGridSpike
-#include "nest_time.h"
-#include "nest_types.h"
 #include "node.h"
 #include "per_thread_bool_indicator.h"
 #include "secondary_event.h"
+#include "simulation_manager.h"
 #include "spike_data.h"
+#include "stopwatch.h"
+#include "target.h"
 #include "target_table.h"
 #include "vp_manager.h"
+
+class Dictionary;
 
 
 namespace nest
 {
+class OffGridSpikeData;
+class SecondaryEvent;
+class SpikeData;
+struct AssignedRanks;
+struct OffGridSpikeDataWithRank;
+struct SpikeDataWithRank;
+class Node;
+
 typedef MPIManager::OffGridSpike OffGridSpike;
 
 class TargetData;
@@ -378,7 +390,6 @@ private:
    */
   template < class EventT >
   void send_local_( Node& source, EventT& e, const long lag );
-  void send_local_( Node& source, SecondaryEvent& e, const long lag );
 
   //--------------------------------------------------//
 
@@ -485,35 +496,35 @@ private:
   Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly > sw_communicate_target_data_;
 };
 
-inline void
-EventDeliveryManager::reset_spike_register_( const size_t tid )
+template <>
+void EventDeliveryManager::send< SpikeEvent >( Node& source, SpikeEvent& e, const long lag );
+template <>
+void EventDeliveryManager::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const long lag );
+template <>
+void EventDeliveryManager::send_local_( Node& source, SecondaryEvent& e, const long lag );
+
+inline size_t
+EventDeliveryManager::write_toggle() const
 {
-  emitted_spikes_register_[ tid ]->clear();
-  off_grid_emitted_spikes_register_[ tid ]->clear();
+  return kernel::manager< SimulationManager >.get_slice() % 2;
 }
 
-inline bool
-EventDeliveryManager::is_marked_for_removal_( const Target& target )
+inline long
+EventDeliveryManager::get_slice_modulo( long d )
 {
-  return target.is_processed();
+  // Note, here d may be 0, since bin 0 represents the "current" time when all events due are read out.
+  assert( static_cast< std::vector< long >::size_type >( d ) < slice_moduli_.size() );
+
+  return slice_moduli_[ d ];
 }
 
-inline void
-EventDeliveryManager::send_to_node( Event& e )
+inline long
+EventDeliveryManager::get_modulo( long d )
 {
-  e();
-}
+  // Note, here d may be 0, since bin 0 represents the "current" time when all events due are read out.
+  assert( static_cast< std::vector< long >::size_type >( d ) < moduli_.size() );
 
-inline bool
-EventDeliveryManager::get_off_grid_communication() const
-{
-  return off_grid_spiking_;
-}
-
-inline void
-EventDeliveryManager::set_off_grid_communication( bool off_grid_spiking )
-{
-  off_grid_spiking_ = off_grid_spiking;
+  return moduli_[ d ];
 }
 
 inline size_t
@@ -523,24 +534,35 @@ EventDeliveryManager::read_toggle() const
   return 1 - write_toggle();
 }
 
-inline long
-EventDeliveryManager::get_modulo( long d )
+inline void
+EventDeliveryManager::set_off_grid_communication( bool off_grid_spiking )
 {
-  // Note, here d may be 0, since bin 0 represents the "current" time
-  // when all events due are read out.
-  assert( static_cast< std::vector< long >::size_type >( d ) < moduli_.size() );
-
-  return moduli_[ d ];
+  off_grid_spiking_ = off_grid_spiking;
 }
 
-inline long
-EventDeliveryManager::get_slice_modulo( long d )
+inline bool
+EventDeliveryManager::get_off_grid_communication() const
 {
-  // Note, here d may be 0, since bin 0 represents the "current" time
-  // when all events due are read out.
-  assert( static_cast< std::vector< long >::size_type >( d ) < slice_moduli_.size() );
+  return off_grid_spiking_;
+}
 
-  return slice_moduli_[ d ];
+inline void
+EventDeliveryManager::send_to_node( Event& e )
+{
+  e();
+}
+
+inline bool
+EventDeliveryManager::is_marked_for_removal_( const Target& target )
+{
+  return target.is_processed();
+}
+
+inline void
+EventDeliveryManager::reset_spike_register_( const size_t tid )
+{
+  emitted_spikes_register_[ tid ]->clear();
+  off_grid_emitted_spikes_register_[ tid ]->clear();
 }
 
 }  // namespace nest

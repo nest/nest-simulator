@@ -23,7 +23,25 @@
 #ifndef SIEGERT_NEURON_H
 #define SIEGERT_NEURON_H
 
+#include <algorithm>
+#include <map>
+#include <math.h>
+#include <stddef.h>
+#include <string>
+#include <vector>
+
 #include "config.h"
+#include "dictionary.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "universal_data_logger.h"
+
+namespace nest
+{
+class DataLoggingRequest;
+class DiffusionConnectionEvent;
+}  // namespace nest
 
 #ifdef HAVE_GSL
 
@@ -40,7 +58,7 @@
 #include "node.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {

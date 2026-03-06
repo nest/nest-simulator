@@ -22,7 +22,9 @@
 
 #include "stdp_nn_restr_synapse.h"
 
-// Includes from nestkernel:
+#include <boost/iterator/iterator_facade.hpp>
+#include <utility>
+
 #include "nest_impl.h"
 
 void

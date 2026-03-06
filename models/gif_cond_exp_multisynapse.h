@@ -23,7 +23,23 @@
 #ifndef GIF_COND_EXP_MULTISYNAPSE_H
 #define GIF_COND_EXP_MULTISYNAPSE_H
 
+#include <algorithm>
+#include <map>
+#include <math.h>
+#include <stddef.h>
+#include <string>
+#include <vector>
+
 #include "config.h"
+#include "dictionary.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "nest_types.h"
+#include "node.h"
+#include "random_generators.h"
+#include "recordables_map.h"
+#include "universal_data_logger.h"
 
 #ifdef HAVE_GSL
 
@@ -36,10 +52,9 @@
 #include "archiving_node.h"
 #include "connection.h"
 #include "event.h"
+#include "nest_impl.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
-
-#include "nest.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -342,8 +357,8 @@ private:
       STATE_VEC_SIZE
     };
 
-    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 1;  //!< V_M
-    static const size_t NUM_STATE_ELEMENTS_PER_RECEPTOR = 1;  //!< G
+    static constexpr size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 1;  //!< V_M
+    static constexpr size_t NUM_STATE_ELEMENTS_PER_RECEPTOR = 1;  //!< G
 
     std::vector< double > y_;  //!< neuron state
 

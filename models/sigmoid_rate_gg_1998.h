@@ -23,17 +23,24 @@
 #ifndef SIGMOID_RATE_GG_1998_H
 #define SIGMOID_RATE_GG_1998_H
 
+#include <boost/type_index/type_index_facade.hpp>
 // C++ includes:
+#include <algorithm>
 #include <cmath>
+#include <map>
+#include <string>
 
 // Includes from models:
+#include "dict_util.h"
 #include "rate_neuron_ipn.h"
-#include "rate_neuron_ipn_impl.h"
 #include "rate_transformer_node.h"
-#include "rate_transformer_node_impl.h"
+#include "recordables_map.h"
+
+class Dictionary;
 
 namespace nest
 {
+class Node;
 
 /* BeginUserDocs: neuron, rate
 
@@ -175,9 +182,6 @@ void register_sigmoid_rate_gg_1998_ipn( const std::string& name );
 typedef rate_transformer_node< nest::nonlinearities_sigmoid_rate_gg_1998 > rate_transformer_sigmoid_gg_1998;
 void register_rate_transformer_sigmoid_gg_1998( const std::string& name );
 
-
-template <>
-void RecordablesMap< sigmoid_rate_gg_1998_ipn >::create();
 template <>
 void RecordablesMap< rate_transformer_sigmoid_gg_1998 >::create();
 

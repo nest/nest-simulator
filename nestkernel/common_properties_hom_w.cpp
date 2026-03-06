@@ -1,5 +1,5 @@
 /*
- *  sp_manager_impl.h
+ *  common_properties_hom_w.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,33 +20,41 @@
  *
  */
 
-#ifndef SP_MANAGER_IMPL_H
-#define SP_MANAGER_IMPL_H
+#include "common_properties_hom_w.h"
 
-#include "sp_manager.h"
 
-// C++ includes:
-#include <string>
+#include "dictionary.h"
+#include "nest_names.h"
 
-// Includes from nestkernel:
-#include "growth_curve.h"
-#include "growth_curve_factory.h"
 
 namespace nest
 {
+class ConnectorModel;
 
-template < typename GrowthCurve >
-void
-SPManager::register_growth_curve( const std::string& name )
+CommonPropertiesHomW::CommonPropertiesHomW()
+  : CommonSynapseProperties()
+  , weight_( 1.0 )
 {
-  assert( not growthcurvedict_.known( name ) );
-  GenericGrowthCurveFactory* nc = new GrowthCurveFactory< GrowthCurve >();
-  assert( nc );
-  const int id = growthcurve_factories_.size();
-  growthcurve_factories_.push_back( nc );
-  growthcurvedict_[ name ] = id;
+}
+
+void
+CommonPropertiesHomW::get_status( Dictionary& d ) const
+{
+  CommonSynapseProperties::get_status( d );
+  d[ names::weight ] = weight_;
+}
+
+double
+CommonPropertiesHomW::get_weight() const
+{
+  return weight_;
+}
+
+void
+CommonPropertiesHomW::set_status( const Dictionary& d, ConnectorModel& cm )
+{
+  CommonSynapseProperties::set_status( d, cm );
+  d.update_value( names::weight, weight_ );
 }
 
 }  // namespace nest
-
-#endif /* SP_MANAGER_IMPL_H */

@@ -23,9 +23,22 @@
 #ifndef AEIF_COND_BETA_MULTISYNAPSE_H
 #define AEIF_COND_BETA_MULTISYNAPSE_H
 
+#include <map>
+#include <math.h>
+#include <sstream>
+#include <stddef.h>
+#include <string>
+#include <vector>
+
 // Generated includes:
 #include "config.h"
-#include <sstream>
+#include "dictionary.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "node.h"
+#include "recordables_map.h"
+#include "universal_data_logger.h"
 
 #ifdef HAVE_GSL
 
@@ -40,7 +53,7 @@
 #include "event.h"
 #include "nest_types.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -311,8 +324,8 @@ private:
       STATE_VECTOR_MIN_SIZE
     };
 
-    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 2;  // V_M, W
-    static const size_t NUM_STATE_ELEMENTS_PER_RECEPTOR = 2;  // DG, G
+    static constexpr size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 2;  // V_M, W
+    static constexpr size_t NUM_STATE_ELEMENTS_PER_RECEPTOR = 2;  // DG, G
 
     std::vector< double > y_;  //!< neuron state
     int r_;                    //!< number of refractory steps remaining

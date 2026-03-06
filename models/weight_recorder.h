@@ -23,16 +23,21 @@
 #ifndef WEIGHT_RECORDER_H
 #define WEIGHT_RECORDER_H
 
-// C++ includes:
-#include <vector>
+#include <memory>
+#include <stddef.h>
+#include <string>
 
 // Includes from nestkernel:
-#include "device_node.h"
 #include "event.h"
 #include "exceptions.h"
-#include "kernel_manager.h"
+#include "nest_names.h"
+#include "nest_time.h"
 #include "nest_types.h"
+#include "node.h"
+#include "node_collection.h"
 #include "recording_device.h"
+
+class Dictionary;
 
 /* BeginUserDocs: device, recorder
 
@@ -86,6 +91,7 @@ EndUserDocs */
 
 namespace nest
 {
+class WeightRecorderEvent;
 
 void register_weight_recorder( const std::string& name );
 

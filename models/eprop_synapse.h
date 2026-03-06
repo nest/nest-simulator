@@ -23,15 +23,32 @@
 #ifndef EPROP_SYNAPSE_H
 #define EPROP_SYNAPSE_H
 
+#include <assert.h>
+#include <boost/type_index/type_index_facade.hpp>
+#include <stddef.h>
+#include <string>
+
 // nestkernel
+#include "common_synapse_properties.h"
 #include "connection.h"
 #include "connector_base.h"
-#include "eprop_archiving_node.h"
+#include "connector_model.h"
+#include "dictionary.h"
+#include "enum_bitfield.h"
+#include "eprop_archiving_node_impl.h"
+#include "event.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "nest_types.h"
+#include "node.h"
 #include "target_identifier.h"
 #include "weight_optimizer.h"
 
 namespace nest
 {
+class TargetIdentifierIndex;
+class TargetIdentifierPtrRport;
 
 /* BeginUserDocs: synapse, e-prop plasticity
 
@@ -349,13 +366,10 @@ constexpr ConnectionModelProperties eprop_synapse< targetidentifierT >::properti
 // Explicitly declare specializations of Connector methods that need to do special things for eprop_synapse
 template <>
 void Connector< eprop_synapse< TargetIdentifierPtrRport > >::disable_connection( const size_t lcid );
-
 template <>
 void Connector< eprop_synapse< TargetIdentifierIndex > >::disable_connection( const size_t lcid );
-
 template <>
 Connector< eprop_synapse< TargetIdentifierPtrRport > >::~Connector();
-
 template <>
 Connector< eprop_synapse< TargetIdentifierIndex > >::~Connector();
 

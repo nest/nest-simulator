@@ -21,24 +21,21 @@
  */
 
 #include "sonata_connector.h"
-#include "config.h"
 
 #ifdef HAVE_HDF5
 
-// C++ includes:
-#include <boost/any.hpp>  // PYNEST-NG-FUTURE: remove when final boost::any_cast() disappears below
-#include <cstdlib>        // for div()
+// C++ includes:  // PYNEST-NG-FUTURE: remove when final boost::any_cast() disappears below
+#include <cstdlib>  // for div()
 #include <string>
 #include <vector>
 
 // Includes from libnestutil
 #include "dict_util.h"
-
 // Includes from nestkernel:
-#include "kernel_manager.h"
-#include "vp_manager_impl.h"
-
 #include "H5Cpp.h"
+#include "kernel_manager.h"
+#include "nest.h"
+#include "node_manager.h"
 
 extern "C" herr_t get_member_names_callback_( hid_t loc_id, const char* name, const H5L_info_t* linfo, void* opdata );
 
@@ -61,7 +58,6 @@ SonataConnector::~SonataConnector()
 void
 SonataConnector::connect()
 {
-
   // clang-format off
   /*
   Structure of SONATA edge files:
@@ -383,7 +379,6 @@ SonataConnector::sequential_chunkwise_connector_()
 void
 SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t offset )
 {
-
   // Read subsets
   std::vector< unsigned long > src_node_id_data_subset( hyperslab_size );
   std::vector< unsigned long > tgt_node_id_data_subset( hyperslab_size );
@@ -406,7 +401,7 @@ SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t off
     read_subset_( delay_dset_, delay_data_subset, H5::PredType::NATIVE_DOUBLE, hyperslab_size, offset );
   }
 
-  std::vector< std::exception_ptr > exceptions_raised_( kernel().vp_manager.get_num_threads() );
+  std::vector< std::exception_ptr > exceptions_raised_( kernel::manager< VPManager >.get_num_threads() );
 
   // Retrieve the correct NodeCollections
   const auto nest_nodes = graph_specs_.get< Dictionary >( "nodes" );
@@ -418,7 +413,7 @@ SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t off
 
 #pragma omp parallel
   {
-    const auto tid = kernel().vp_manager.get_thread_id();
+    const auto tid = kernel::manager< VPManager >.get_thread_id();
     RngPtr rng = get_vp_specific_rng( tid );
 
     try
@@ -430,7 +425,7 @@ SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t off
         const auto sonata_tgt_id = tgt_node_id_data_subset[ i ];
         const size_t tnode_id = ( *( tnode_begin + sonata_tgt_id ) ).node_id;
 
-        if ( not kernel().vp_manager.is_node_id_vp_local( tnode_id ) )
+        if ( not kernel::manager< VPManager >.is_node_id_vp_local( tnode_id ) )
         {
           continue;
         }
@@ -438,7 +433,7 @@ SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t off
         const auto sonata_src_id = src_node_id_data_subset[ i ];
         const size_t snode_id = ( *( snode_begin + sonata_src_id ) ).node_id;
 
-        Node* target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+        Node* target = kernel::manager< NodeManager >.get_node_or_proxy( tnode_id, tid );
         const size_t target_thread = target->get_thread();
 
         const auto edge_type_id = edge_type_id_data_subset[ i ];
@@ -450,7 +445,7 @@ SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t off
 
         get_synapse_params_( snode_id, *target, target_thread, rng, edge_type_id );
 
-        kernel().connection_manager.connect( snode_id,
+        kernel::manager< ConnectionManager >.connect( snode_id,
           target,
           target_thread,
           edge_type_id_2_syn_model_.at( edge_type_id ),
@@ -483,7 +478,6 @@ SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t off
 hsize_t
 SonataConnector::get_nrows_( H5::DataSet dataset )
 {
-
   H5::DataSpace dspace = dataset.getSpace();
   hsize_t dims_out[ 1 ];
   dspace.getSimpleExtentDims( dims_out, NULL );
@@ -495,7 +489,6 @@ SonataConnector::get_nrows_( H5::DataSet dataset )
 hsize_t
 SonataConnector::find_edge_groups_( H5::Group* pop_grp, std::vector< std::string >& edge_grp_names )
 {
-
   // Retrieve names of all first level datasets and groups of the population group
   std::vector< std::string > member_names;
   H5Literate( pop_grp->getId(), H5_INDEX_NAME, H5_ITER_INC, NULL, get_member_names_callback_, &member_names );
@@ -555,7 +548,7 @@ SonataConnector::create_edge_type_id_2_syn_spec_( Dictionary edge_params )
     const auto& syn_name = d.get< std::string >( "synapse_model" );
 
     // The following call will throw "UnknownSynapseType" if syn_name is not naming a known model
-    const size_t synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
+    const size_t synapse_model_id = kernel::manager< ModelManager >.get_synapse_model_id( syn_name );
 
     set_synapse_params_( d, synapse_model_id, type_id );
     edge_type_id_2_syn_model_[ type_id ] = synapse_model_id;
@@ -565,7 +558,7 @@ SonataConnector::create_edge_type_id_2_syn_spec_( Dictionary edge_params )
 void
 SonataConnector::set_synapse_params_( Dictionary syn_dict, size_t synapse_model_id, int type_id )
 {
-  Dictionary syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );
+  Dictionary syn_defaults = kernel::manager< ModelManager >.get_connector_defaults( synapse_model_id );
   ConnParameterMap synapse_params;
 
   for ( [[maybe_unused]] const auto& [ param_name, v_unused ] : syn_defaults )
@@ -578,7 +571,7 @@ SonataConnector::set_synapse_params_( Dictionary syn_dict, size_t synapse_model_
     if ( syn_dict.known( param_name ) )
     {
       synapse_params[ param_name ] = std::shared_ptr< ConnParameter >(
-        ConnParameter::create( syn_dict.at( param_name ), kernel().vp_manager.get_num_threads() ) );
+        ConnParameter::create( syn_dict.at( param_name ), kernel::manager< VPManager >.get_num_threads() ) );
     }
   }
 
@@ -586,12 +579,12 @@ SonataConnector::set_synapse_params_( Dictionary syn_dict, size_t synapse_model_
   // Now create Dictionary with dummy values that we will use to pass settings to the synapses created. We
   // create it here once to avoid re-creating the object over and over again.
   // TODO: See if nullptr can be changed to Dictionary
-  edge_type_id_2_param_dicts_[ type_id ].resize( kernel().vp_manager.get_num_threads() );
+  edge_type_id_2_param_dicts_[ type_id ].resize( kernel::manager< VPManager >.get_num_threads() );
   edge_type_id_2_syn_spec_[ type_id ] = synapse_params;
 
 #pragma omp parallel
   {
-    const auto tid = kernel().vp_manager.get_thread_id();
+    const auto tid = kernel::manager< VPManager >.get_thread_id();
 
     for ( auto param : synapse_params )
     {

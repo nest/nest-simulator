@@ -23,11 +23,27 @@
 #ifndef STDP_PL_SYNAPSE_HOM_H
 #define STDP_PL_SYNAPSE_HOM_H
 
+#include <assert.h>
+#include <stddef.h>
 // C++ includes:
 #include <cmath>
+#include <deque>
+#include <string>
 
 // Includes from nestkernel:
+#include "common_synapse_properties.h"
 #include "connection.h"
+#include "connection_manager.h"
+#include "connector_model.h"
+#include "dictionary.h"
+#include "enum_bitfield.h"
+#include "event.h"
+#include "histentry.h"
+#include "kernel_manager.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "nest_types.h"
+#include "node.h"
 
 namespace nest
 {
@@ -281,7 +297,7 @@ stdp_pl_synapse_hom< targetidentifierT >::send( Event& e, size_t t, const STDPPL
     start++;
     // get_history() should make sure that
     // start->t_ > t_lastspike - dendritic_delay, i.e. minus_dt < 0
-    assert( minus_dt < -1.0 * kernel().connection_manager.get_stdp_eps() );
+    assert( minus_dt < -1.0 * kernel::manager< ConnectionManager >.get_stdp_eps() );
     weight_ = facilitate_( weight_, Kplus_ * std::exp( minus_dt * cp.tau_plus_inv_ ), cp );
   }
 
@@ -314,7 +330,6 @@ template < typename targetidentifierT >
 void
 stdp_pl_synapse_hom< targetidentifierT >::get_status( Dictionary& d ) const
 {
-
   // base class properties, different for individual synapse
   ConnectionBase::get_status( d );
   d[ names::weight ] = weight_;

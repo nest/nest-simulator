@@ -22,30 +22,30 @@
 
 #include "io_manager.h"
 
-// Generated includes:
-#include "config.h"
-
 // C includes:
 #include <dirent.h>
 #include <errno.h>
-#include <sys/types.h>
-
 // C++ includes:
 #include <cstdlib>
 
+// Generated includes:
+#include "config.h"
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "logging.h"
-
-// Includes from nestkernel:
-#include "io_manager_impl.h"
-#include "kernel_manager.h"
+#include "logging_manager.h"
+#include "nest_names.h"
+#include "recording_backend.h"
 #include "recording_backend_ascii.h"
 #include "recording_backend_memory.h"
 #include "recording_backend_screen.h"
+#include "stimulation_backend.h"
+
 #ifdef HAVE_MPI
 #include "recording_backend_mpi.h"
 #include "stimulation_backend_mpi.h"
+#else
+#include "stimulation_backend.h"
 #endif
 #ifdef HAVE_SIONLIB
 #include "recording_backend_sionlib.h"
@@ -387,6 +387,24 @@ IOManager::get_recording_backend_device_status( const std::string& backend_name,
   Dictionary& d )
 {
   recording_backends_[ backend_name ]->get_device_status( device, d );
+}
+
+const std::string&
+IOManager::get_data_path() const
+{
+  return data_path_;
+}
+
+const std::string&
+IOManager::get_data_prefix() const
+{
+  return data_prefix_;
+}
+
+bool
+IOManager::overwrite_files() const
+{
+  return overwrite_files_;
 }
 
 }  // namespace nest

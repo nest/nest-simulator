@@ -23,19 +23,23 @@
 #ifndef CONNECTOR_MODEL_H
 #define CONNECTOR_MODEL_H
 
+#include <stddef.h>
 // C++ includes:
 #include <cmath>
+#include <memory>
 #include <string>
+#include <vector>
 
 // Includes from libnestutil:
-#include "numerics.h"
-
-// Includes from nestkernel:
 #include "enum_bitfield.h"
+#include "numerics.h"
+// Includes from nestkernel:
 #include "event.h"
-#include "nest_time.h"
 #include "nest_types.h"
 #include "secondary_event.h"
+#include "simulation_manager.h"
+
+class Dictionary;
 
 
 namespace nest
@@ -141,6 +145,9 @@ public:
   }
 
 protected:
+  // helper function to avoid circular dependency
+  static size_t get_synapse_model_id( const std::string& name );
+
   std::string name_;                      //!< name of the ConnectorModel
   bool default_delay_needs_check_;        //!< indicates whether the default delay must be checked
   ConnectionModelProperties properties_;  //!< connection properties
@@ -197,11 +204,7 @@ public:
 
   void check_synapse_params( const Dictionary& syn_spec ) const override;
 
-  std::unique_ptr< SecondaryEvent >
-  get_secondary_event() override
-  {
-    return default_connection_.get_secondary_event();
-  }
+  std::unique_ptr< SecondaryEvent > get_secondary_event() override;
 
   ConnectionT const&
   get_default_connection() const

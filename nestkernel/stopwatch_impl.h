@@ -29,28 +29,31 @@
 namespace nest
 {
 
-// In each of the following methods compile-time-evaluated ifs decide which code is actually included.
+/* In each of the following methods compile-time-evaluated ifs decide which code is actually included. */
 
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
 void
 Stopwatch< detailed_timer, threaded_timer >::start()
 {
-  if constexpr ( enable_timer and use_timer_array )
+  if constexpr ( enable_timer )
   {
-    kernel().vp_manager.assert_thread_parallel();
-    walltime_timer_[ kernel().vp_manager.get_thread_id() ].start();
-    cputime_timer_[ kernel().vp_manager.get_thread_id() ].start();
-  }
-  else
-  {
+    if constexpr ( use_timer_array )
+    {
+      kernel().vp_manager.assert_thread_parallel();
+      walltime_timer_[ kernel().vp_manager.get_thread_id() ].start();
+      cputime_timer_[ kernel().vp_manager.get_thread_id() ].start();
+    }
+    else
+    {
 // This code applies for MasterOnly timers started/stopped from serial context, but also for
 // Threaded timers called from parallel contexts if `-Dwith-threaded-timers=OFF` for backward
 // compatibility with pre-3.9 timers. Therefore, we need to restrict to the master thread here and
 // cannot assert a single-threaded context.
 #pragma omp master
-    {
-      walltime_timer_.start();
-      cputime_timer_.start();
+      {
+        walltime_timer_.start();
+        cputime_timer_.start();
+      }
     }
   }
 }
@@ -59,18 +62,21 @@ template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_ti
 void
 Stopwatch< detailed_timer, threaded_timer >::stop()
 {
-  if constexpr ( enable_timer and use_timer_array )
+  if constexpr ( enable_timer )
   {
-    kernel().vp_manager.assert_thread_parallel();
-    walltime_timer_[ kernel().vp_manager.get_thread_id() ].stop();
-    cputime_timer_[ kernel().vp_manager.get_thread_id() ].stop();
-  }
-  else
-  {
-#pragma omp master
+    if constexpr ( use_timer_array )
     {
-      walltime_timer_.stop();
-      cputime_timer_.stop();
+      kernel().vp_manager.assert_thread_parallel();
+      walltime_timer_[ kernel().vp_manager.get_thread_id() ].stop();
+      cputime_timer_[ kernel().vp_manager.get_thread_id() ].stop();
+    }
+    else
+    {
+#pragma omp master
+      {
+        walltime_timer_.stop();
+        cputime_timer_.stop();
+      }
     }
   }
 }
@@ -79,40 +85,48 @@ template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_ti
 bool
 Stopwatch< detailed_timer, threaded_timer >::is_running_() const
 {
-  if constexpr ( enable_timer and use_timer_array )
+  if constexpr ( enable_timer )
   {
-    kernel().vp_manager.assert_thread_parallel();
-    return walltime_timer_[ kernel().vp_manager.get_thread_id() ].is_running_();
-  }
-  else
-  {
-    bool is_running_ = false;
-#pragma omp master
+    if constexpr ( use_timer_array )
     {
-      is_running_ = walltime_timer_.is_running_();
+      kernel().vp_manager.assert_thread_parallel();
+      return walltime_timer_[ kernel().vp_manager.get_thread_id() ].is_running_();
     }
-    return is_running_;
+    else
+    {
+      bool is_running_ = false;
+#pragma omp master
+      {
+        is_running_ = walltime_timer_.is_running_();
+      }
+      return is_running_;
+    }
   }
+  return false;
 }
 
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
 double
 Stopwatch< detailed_timer, threaded_timer >::elapsed( timers::timeunit_t timeunit ) const
 {
-  if constexpr ( enable_timer and use_timer_array )
+  if constexpr ( enable_timer )
   {
-    kernel().vp_manager.assert_thread_parallel();
-    return walltime_timer_[ kernel().vp_manager.get_thread_id() ].elapsed( timeunit );
-  }
-  else
-  {
-    double elapsed = 0.;
-#pragma omp master
+    if constexpr ( use_timer_array )
     {
-      elapsed = walltime_timer_.elapsed( timeunit );
-    };
-    return elapsed;
+      kernel().vp_manager.assert_thread_parallel();
+      return walltime_timer_[ kernel().vp_manager.get_thread_id() ].elapsed( timeunit );
+    }
+    else
+    {
+      double elapsed = 0.;
+#pragma omp master
+      {
+        elapsed = walltime_timer_.elapsed( timeunit );
+      };
+      return elapsed;
+    }
   }
+  return 0.f;
 }
 
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
@@ -121,16 +135,19 @@ Stopwatch< detailed_timer, threaded_timer >::print( const std::string& msg,
   timers::timeunit_t timeunit,
   std::ostream& os ) const
 {
-  if constexpr ( enable_timer and use_timer_array )
+  if constexpr ( enable_timer )
   {
-    kernel().vp_manager.assert_thread_parallel();
-    walltime_timer_[ kernel().vp_manager.get_thread_id() ].print( msg, timeunit, os );
-  }
-  else
-  {
-#pragma omp master
+    if constexpr ( use_timer_array )
     {
-      walltime_timer_.print( msg, timeunit, os );
+      kernel().vp_manager.assert_thread_parallel();
+      walltime_timer_[ kernel().vp_manager.get_thread_id() ].print( msg, timeunit, os );
+    }
+    else
+    {
+#pragma omp master
+      {
+        walltime_timer_.print( msg, timeunit, os );
+      }
     }
   }
 }
@@ -164,29 +181,29 @@ Stopwatch< detailed_timer, threaded_timer >::get_status( Dictionary& d,
     {
       d[ walltime_name ] = walltime_timer_.elapsed();
       d[ cputime_name ] = cputime_timer_.elapsed();
-    }  // use_timer_array
-  }  // enable_timer
+    }
+  }
 }
 
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
 void
 Stopwatch< detailed_timer, threaded_timer >::reset()
 {
-  kernel().vp_manager.assert_single_threaded();
-  if constexpr ( enable_timer and use_timer_array )
+  if constexpr ( enable_timer )
   {
-    const size_t num_threads = kernel().vp_manager.get_num_threads();
-    walltime_timer_.resize( num_threads );
-    cputime_timer_.resize( num_threads );
-    for ( size_t i = 0; i < num_threads; ++i )
+    kernel().vp_manager.assert_single_threaded();
+    if constexpr ( use_timer_array )
     {
-      walltime_timer_[ i ].reset();
-      cputime_timer_[ i ].reset();
+      const size_t num_threads = kernel().vp_manager.get_num_threads();
+      walltime_timer_.resize( num_threads );
+      cputime_timer_.resize( num_threads );
+      for ( size_t i = 0; i < num_threads; ++i )
+      {
+        walltime_timer_[ i ].reset();
+        cputime_timer_[ i ].reset();
+      }
     }
-  }
-  else
-  {
-#pragma omp master
+    else
     {
       walltime_timer_.reset();
       cputime_timer_.reset();

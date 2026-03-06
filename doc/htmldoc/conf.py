@@ -38,6 +38,11 @@ repo_root_dir = os.path.abspath("../..")
 pynest_dir = os.path.join(repo_root_dir, "pynest")
 # Add the NEST Python module to the path (just the py files, the binaries are mocked)
 sys.path.append(pynest_dir)
+# Suppress the NEST welcome message during docs build. Without this, importing
+# nest triggers ll_api.init() which prints version info using mocked kernel
+# values, producing nonsensical output like
+# "Version: nest.nestkernel_api.llapi_get_kernel_status.build_info.version".
+os.environ.setdefault("PYNEST_QUIET", "1")
 
 # -- General configuration ------------------------------------------------
 

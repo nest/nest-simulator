@@ -69,7 +69,7 @@ The sampling interval for recordings (given in ms) can be controlled
 using the ``multimeter`` parameter ``interval``. The default value of
 1.0 ms can be changed by supplying a new value either in the call to
 ``Create`` or by using ``SetStatus`` on the model instance. To sample
- values at every simulation time step, use
+values at every simulation time step, use
 
 ::
 

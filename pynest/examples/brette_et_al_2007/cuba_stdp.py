@@ -24,7 +24,7 @@ Benchmark 5 of the simulator review (CUBA-STDP)
 ------------------------------------------------
 
 The fifth simulator review benchmark is implemented as a variation of the
-Brunel Network. This script creates a sparsely coupled network of excitatory
+Brunel Network [1]_. This script creates a sparsely coupled network of excitatory
 and inhibitory neurons. Connections within and across both populations are
 created at random. Both neuron populations receive Poisson background
 input. The spike output of 500 neurons are recorded. Neurons are modeled as

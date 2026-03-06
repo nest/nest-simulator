@@ -673,6 +673,12 @@ NodeCollectionPrimitive::slice( size_t start, size_t end, size_t stride ) const
   return sliced_nc;
 }
 
+void
+NodeCollectionPrimitive::print_me( std::ostream& os ) const
+{
+  os << *this;
+}
+
 std::ostream&
 operator<<( std::ostream& out, const NodeCollectionPrimitive& nc )
 {
@@ -1344,6 +1350,12 @@ NodeCollectionComposite::has_proxies() const
 {
   return std::all_of(
     parts_.begin(), parts_.end(), []( const NodeCollectionPrimitive& prim ) { return prim.has_proxies(); } );
+}
+
+void
+NodeCollectionComposite::print_me( std::ostream& os ) const
+{
+  os << *this;
 }
 
 std::ostream&

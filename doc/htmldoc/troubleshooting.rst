@@ -37,7 +37,7 @@ to see if your question has been resolved.
 
 
 **If the error still persists**, you may have more than one installation of the <package>.  A conflict may occur between different package binaries:
-Your system may prefentially choose a system-wide installation of a package (e.g., /usr/bin/<package>), rather than a
+Your system may preferentially choose a system-wide installation of a package (e.g., /usr/bin/<package>), rather than a
 local environment installation (e.g., /home/user/ENV/bin/<package>).
 
 

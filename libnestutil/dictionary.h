@@ -115,6 +115,17 @@ public:
   any_type& at( const std::string& key );
   const any_type& at( const std::string& key ) const;
 
+  /**
+   * @brief Check whether the dictionary is equal to another dictionary.
+   *
+   * Two dictionaries are equal only if they contain the exact same entries with the same values.
+   *
+   * @param other dictionary to check against.
+   * @return true if the dictionary is equal to the other dictionary, false if not.
+   */
+  bool operator==( const Dictionary& other ) const;
+
+
   auto begin() const;
   auto end() const;
 
@@ -486,6 +497,12 @@ std::vector< double > dictionary_::cast_value_< std::vector< double > >( const a
 template <>
 std::vector< std::string > dictionary_::cast_value_< std::vector< std::string > >( const any_type& value,
   const std::string& key ) const;
+
+inline bool
+Dictionary::operator==( const Dictionary& other ) const
+{
+  return **this == *other;
+}
 
 inline auto
 Dictionary::size() const

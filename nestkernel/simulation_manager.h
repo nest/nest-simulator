@@ -31,6 +31,7 @@
 #include "manager_interface.h"
 #include "stopwatch_impl.h"
 // Includes from nestkernel:
+#include "cycle_time_log.h"
 #include "nest_time.h"
 #include "stopwatch.h"
 
@@ -248,6 +249,10 @@ private:
   Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_omp_synchronization_construction_;
   Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_omp_synchronization_simulation_;
   Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly > sw_mpi_synchronization_;
+
+#ifdef CYCLE_TIMERS
+  CycleTimeLog cycle_time_log_;
+#endif
 
   double eprop_update_interval_;
   double eprop_learning_window_;

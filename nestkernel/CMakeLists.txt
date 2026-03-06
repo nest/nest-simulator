@@ -120,6 +120,7 @@ set ( nestkernel_sources
       buffer_resize_log.h buffer_resize_log.cpp
       nest_extension_interface.h
       stopwatch.h
+      cycle_time_log.h cycle_time_log.cpp
       )
 
 if ( HAVE_SIONLIB )

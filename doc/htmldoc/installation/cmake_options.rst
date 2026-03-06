@@ -181,7 +181,6 @@ External libraries
 +-------------------------------------------------------+------------------------------------------------------------------------------------------------+
 | ``-Dwith-gsl=[OFF|ON|</path/to/gsl>]``                | Build with the GSL library [default=ON]. To set a specific library, give the install path.     |
 +-------------------------------------------------------+------------------------------------------------------------------------------------------------+
-+-------------------------------------------------------+------------------------------------------------------------------------------------------------+
 | ``-Dwith-hdf5=[OFF|ON|</path/to/hdf5>]``              | Build with `HDF5 <https://hdfgroup.org/>`_ library [default=OFF]. To set a specific library,   |
 |                                                       | give the install path. HDF5 is required for SONATA support, see :ref:`nest_sonata`.            |
 +-------------------------------------------------------+------------------------------------------------------------------------------------------------+
@@ -199,7 +198,7 @@ NEST properties
 +-----------------------------------------------+----------------------------------------------------------------+
 | ``-Dwith-detailed-timers=[OFF|ON]``           | Build with detailed internal time measurements [default=OFF].  |
 |                                               | Detailed timers can affect the performance.                    |
-+----------------------------------------------------------------------------------------------------------------+
++-----------------------------------------------+----------------------------------------------------------------+
 | ``-Dwith-mpi-sync-timer=[OFF|ON]``            | Build with mpi synchronization barrier and timer [default=OFF].|
 |                                               | Can affect the performance.                                    |
 +-----------------------------------------------+----------------------------------------------------------------+
@@ -210,8 +209,9 @@ NEST properties
 +-----------------------------------------------+----------------------------------------------------------------+
 | ``-Dwith-full-logging=[OFF|ON]``              | Write debug output to file ``dump_<num_ranks>_<rank>.log``     |
 |                                               | [default=OFF]. Developers should wrap debugging output in      |
-|                                               | macro ``FULL_LOGGING_ONLY()`` and call kernel::manager<KernelManager>().write_dump()`  |
-|                                               | from inside it. The macro can contain almost any valid code.   |
+|                                               | macro ``FULL_LOGGING_ONLY()`` and call                         |
+|                                               | ``kernel::manager<KernelManager>().write_dump()`` from inside  |
+|                                               | it. The macro can contain almost any valid code.               |
 +-----------------------------------------------+----------------------------------------------------------------+
 
 Generic build configuration
@@ -267,7 +267,7 @@ following steps in order to add support for MPI:
      contain the `include`, `lib` and `bin` subdirectories of the MPI
      installation.
 
-  3. IfO 2. does not work, but you know the correct compiler wrapper
+  3. If 2. does not work, but you know the correct compiler wrapper
      for your installation, try adding the following to the invocation
      of ``cmake``::
 
@@ -285,7 +285,7 @@ installation path to the ``-Dwith-sionlib=<path>`` option when calling
 In order to run the distributed tests upon ``make installcheck``, NEST
 needs to know how to execute the launcher of your MPI implementation.
 CMake is usually able to detect the command line for this, but you can
-customize it using the follwing configuration variables (common
+customize it using the following configuration variables (common
 defaults are shown below)::
 
     -DMPIEXEC=/usr/bin/mpirun
@@ -312,7 +312,7 @@ Support for libneurosim
 In order to allow NEST to create connections using external libraries,
 it provides support for the Connection Generator Interface from
 *libneurosim*. To request the use of libneurosim, you have to use the
-follwing switch for the invocation of ``cmake``. It expects either
+following switch for the invocation of ``cmake``. It expects either
 *ON* or *OFF*, or the directory where libneurosim is installed::
 
     -Dwith-libneurosim=[OFF|ON|</path/to/libneurosim>]

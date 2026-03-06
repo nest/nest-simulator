@@ -670,8 +670,9 @@ function( NEST_PROCESS_FULL_LOGGING )
 endfunction ()
 
 function(NEST_PROCESS_LTO)
+    set(WITH_LTO OFF PARENT_SCOPE)
     if (${with-lto} STREQUAL "ON")
-        set(WITH_LTO OFF PARENT_SCOPE)
+        set(WITH_LTO ON PARENT_SCOPE)
 
         # enable link-time optimizations
         include(CheckIPOSupported)

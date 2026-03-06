@@ -62,8 +62,8 @@ public:
 
   void initialize( const bool ) override;
   void finalize( const bool ) override;
-  virtual void set_status( const Dictionary& ) override;
-  virtual void get_status( Dictionary& ) override;
+  void set_status( const Dictionary& ) override;
+  void get_status( Dictionary& ) override;
 
   void init_mpi( int* argc, char** argv[] );
 #ifdef HAVE_MPI

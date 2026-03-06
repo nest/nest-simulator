@@ -23,7 +23,6 @@
 #include "inhomogeneous_poisson_generator.h"
 
 #include <assert.h>
-#include <boost/any.hpp>
 #include <sstream>
 
 // Includes from nestkernel:

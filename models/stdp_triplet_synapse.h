@@ -25,7 +25,6 @@
 
 #include <assert.h>
 #include <bits/std_abs.h>
-#include <boost/any.hpp>
 #include <cmath>
 #include <deque>
 #include <math.h>

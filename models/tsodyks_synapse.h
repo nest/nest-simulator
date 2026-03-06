@@ -23,7 +23,6 @@
 #ifndef TSODYKS_SYNAPSE_H
 #define TSODYKS_SYNAPSE_H
 
-#include <boost/any.hpp>
 #include <stddef.h>
 // C++ includes:
 #include <cmath>

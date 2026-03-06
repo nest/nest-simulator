@@ -24,7 +24,6 @@
 #define GIF_COND_EXP_MULTISYNAPSE_H
 
 #include <algorithm>
-#include <boost/any.hpp>
 #include <map>
 #include <math.h>
 #include <stddef.h>
@@ -358,8 +357,8 @@ private:
       STATE_VEC_SIZE
     };
 
-    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 1;  //!< V_M
-    static const size_t NUM_STATE_ELEMENTS_PER_RECEPTOR = 1;  //!< G
+    static constexpr size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 1;  //!< V_M
+    static constexpr size_t NUM_STATE_ELEMENTS_PER_RECEPTOR = 1;  //!< G
 
     std::vector< double > y_;  //!< neuron state
 

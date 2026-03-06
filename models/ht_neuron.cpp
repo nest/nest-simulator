@@ -22,7 +22,6 @@
 
 #include "ht_neuron.h"
 
-#include <boost/any.hpp>
 #include <gsl/gsl_errno.h>
 
 #include "dictionary.h"
@@ -119,13 +118,13 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
 
   // intrinsic currents
   // I_Na(p), m_inf^3 according to Compte et al, J Neurophysiol 2003 89:2707
-  const double INaP_thresh = -55.7;
-  const double INaP_slope = 7.7;
+  constexpr double INaP_thresh = -55.7;
+  constexpr double INaP_slope = 7.7;
   const double m_inf_NaP = 1.0 / ( 1.0 + std::exp( -( V - INaP_thresh ) / INaP_slope ) );
   node.S_.I_NaP_ = -node.P_.g_peak_NaP * std::pow( m_inf_NaP, node.P_.N_NaP ) * ( V - node.P_.E_rev_NaP );
 
   // I_DK
-  const double d_half = 0.25;
+  constexpr double d_half = 0.25;
   const double m_inf_KNa = 1.0 / ( 1.0 + std::pow( d_half / y[ S::D_IKNa ], 3.5 ) );
   node.S_.I_KNa_ = -node.P_.g_peak_KNa * m_inf_KNa * ( V - node.P_.E_rev_KNa );
 
@@ -183,7 +182,7 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
 inline double
 nest::ht_neuron::m_eq_h_( double V ) const
 {
-  const double I_h_Vthreshold = -75.0;
+  constexpr double I_h_Vthreshold = -75.0;
   return 1.0 / ( 1.0 + std::exp( ( V - I_h_Vthreshold ) / 5.5 ) );
 }
 
@@ -202,10 +201,10 @@ nest::ht_neuron::m_eq_T_( double V ) const
 inline double
 nest::ht_neuron::D_eq_KNa_( double V ) const
 {
-  const double D_influx_peak = 0.025;
-  const double D_thresh = -10.0;
-  const double D_slope = 5.0;
-  const double D_eq = 0.001;
+  constexpr double D_influx_peak = 0.025;
+  constexpr double D_thresh = -10.0;
+  constexpr double D_slope = 5.0;
+  constexpr double D_eq = 0.001;
 
   const double D_influx = D_influx_peak / ( 1.0 + std::exp( -( V - D_thresh ) / D_slope ) );
   return P_.tau_D_KNa * D_influx + D_eq;

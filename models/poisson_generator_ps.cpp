@@ -23,7 +23,6 @@
 #include "poisson_generator_ps.h"
 
 #include <assert.h>
-#include <boost/any.hpp>
 // C++ includes:
 #include <algorithm>
 #include <limits>

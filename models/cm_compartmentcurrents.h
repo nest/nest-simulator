@@ -23,7 +23,6 @@
 #define CM_COMPARTMENTCURRENTS_H
 
 #include <assert.h>
-#include <boost/any.hpp>
 #include <cmath>
 #include <map>
 #include <stdlib.h>

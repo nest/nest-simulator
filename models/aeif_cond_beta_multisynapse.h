@@ -325,8 +325,8 @@ private:
       STATE_VECTOR_MIN_SIZE
     };
 
-    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 2;  // V_M, W
-    static const size_t NUM_STATE_ELEMENTS_PER_RECEPTOR = 2;  // DG, G
+    static constexpr size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 2;  // V_M, W
+    static constexpr size_t NUM_STATE_ELEMENTS_PER_RECEPTOR = 2;  // DG, G
 
     std::vector< double > y_;  //!< neuron state
     int r_;                    //!< number of refractory steps remaining

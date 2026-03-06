@@ -23,7 +23,6 @@
 #ifndef SIC_CONNECTION_H
 #define SIC_CONNECTION_H
 
-#include <boost/any.hpp>
 #include <memory>
 #include <stddef.h>
 #include <string>

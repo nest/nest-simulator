@@ -24,7 +24,6 @@
 #define EPROP_READOUT_BSSHSLM_2020_H
 
 #include <algorithm>
-#include <boost/any.hpp>
 #include <map>
 #include <math.h>
 #include <stddef.h>
@@ -446,7 +445,7 @@ private:
 
   //! Minimal spike receptor type. Start with 1 to forbid port 0 and avoid accidental creation of connections with no
   //! receptor type set.
-  static const size_t MIN_RATE_RECEPTOR = 1;
+  static constexpr size_t MIN_RATE_RECEPTOR = 1;
 
   //! Enumeration of spike receptor types.
   enum RateSynapseTypes

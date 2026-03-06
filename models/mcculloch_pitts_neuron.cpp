@@ -22,7 +22,6 @@
 
 #include "mcculloch_pitts_neuron.h"
 
-#include <boost/any.hpp>
 
 #include "dict_util.h"
 #include "dictionary.h"

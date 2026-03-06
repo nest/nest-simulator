@@ -24,7 +24,6 @@
 #define TSODYKS_SYNAPSE_HOM_H
 
 
-#include <boost/any.hpp>
 #include <cmath>
 #include <stddef.h>
 #include <string>

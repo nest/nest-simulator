@@ -240,7 +240,7 @@ nest::siegert_neuron::siegert( double mu, double sigma_square )
   // Effective shift of threshold and reset due to colored noise:
   // alpha = |zeta(1/2)|*sqrt(2) with zeta being the Riemann zeta
   // function (Fourcaud & Brunel, 2002)
-  const double alpha = 2.0652531522312172;
+  constexpr double alpha = 2.0652531522312172;
   double threshold_shift = alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
 
   // Scaled and shifted threshold and reset
@@ -249,15 +249,15 @@ nest::siegert_neuron::siegert( double mu, double sigma_square )
 
   // Prepare numerical integration
   double integral, result, error;
-  const size_t max_subintervals = 1000;
+  constexpr size_t max_subintervals = 1000;
   double erfcx_scale = 1.0;
   gsl_function F;
   F.function = &erfcx;
   F.params = &erfcx_scale;
   // Error tolerances for numerical integration, 1.49e-8 is approximately
   // machine precision for single-precision floats, i.e. 2^(-26).
-  const double err_abs = 0.0;
-  const double err_rel = 1.49e-8;
+  constexpr double err_abs = 0.0;
+  constexpr double err_rel = 1.49e-8;
 
   // Evaluate integral of exp( s^2 ) * ( 1 + erf( s ) ) from y_r to y_th
   // depending on the sign of y_th and y_r. Uses the scaled complementary

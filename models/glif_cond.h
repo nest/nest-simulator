@@ -339,9 +339,9 @@ private:
       STATE_VECTOR_MIN_SIZE
     };
 
-    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 1;          // V_M
-    static const size_t NUMBER_OF_RECORDABLES_ELEMENTS = DG_SYN - 1;  // I, ASC, TH, Th_SPK, TH_VLT
-    static const size_t NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR = 2;   // DG_SYN, G_SYN
+    static constexpr size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 1;          // V_M
+    static constexpr size_t NUMBER_OF_RECORDABLES_ELEMENTS = DG_SYN - 1;  // I, ASC, TH, Th_SPK, TH_VLT
+    static constexpr size_t NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR = 2;   // DG_SYN, G_SYN
 
     std::vector< double > y_;  //!< neuron state
 

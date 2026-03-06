@@ -23,7 +23,6 @@
 #include "spike_train_injector.h"
 
 #include <assert.h>
-#include <boost/any.hpp>
 #include <cmath>
 #include <limits>
 #include <sstream>

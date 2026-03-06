@@ -24,7 +24,6 @@
 #define IAF_COND_ALPHA_MC_H
 
 #include <algorithm>
-#include <boost/any.hpp>
 #include <map>
 #include <math.h>
 #include <stddef.h>
@@ -242,7 +241,7 @@ private:
    * @note Start with 1 so we can forbid port 0 to avoid accidental
    *       creation of connections with no receptor type set.
    */
-  static const size_t MIN_SPIKE_RECEPTOR = 1;
+  static constexpr size_t MIN_SPIKE_RECEPTOR = 1;
 
   /**
    * Spike receptors.
@@ -258,14 +257,14 @@ private:
     SUP_SPIKE_RECEPTOR
   };
 
-  static const size_t NUM_SPIKE_RECEPTORS = SUP_SPIKE_RECEPTOR - MIN_SPIKE_RECEPTOR;
+  static constexpr size_t NUM_SPIKE_RECEPTORS = SUP_SPIKE_RECEPTOR - MIN_SPIKE_RECEPTOR;
 
   /**
    * Minimal current receptor type.
    *  @note Start with SUP_SPIKE_RECEPTOR to avoid any overlap and
    *        accidental mix-ups.
    */
-  static const size_t MIN_CURR_RECEPTOR = SUP_SPIKE_RECEPTOR;
+  static constexpr size_t MIN_CURR_RECEPTOR = SUP_SPIKE_RECEPTOR;
 
   /**
    * Current receptors.
@@ -278,7 +277,7 @@ private:
     SUP_CURR_RECEPTOR
   };
 
-  static const size_t NUM_CURR_RECEPTORS = SUP_CURR_RECEPTOR - MIN_CURR_RECEPTOR;
+  static constexpr size_t NUM_CURR_RECEPTORS = SUP_CURR_RECEPTOR - MIN_CURR_RECEPTOR;
 
   // Friends --------------------------------------------------------
 
@@ -362,7 +361,7 @@ public:
     };
 
     //! total size of state vector
-    static const size_t STATE_VEC_SIZE = STATE_VEC_COMPS * NCOMP;
+    static constexpr size_t STATE_VEC_SIZE = static_cast< size_t >( STATE_VEC_COMPS ) * static_cast< size_t >( NCOMP );
 
     //! neuron state, must be C-array for GSL solver
     double y_[ STATE_VEC_SIZE ];

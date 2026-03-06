@@ -20,13 +20,9 @@
  *
  */
 
-#include <bits/std_abs.h>
-#include <boost/any.hpp>
-#include <boost/type_index/type_index_facade.hpp>
-#include <math.h>
-#include <stddef.h>
+
 // C++ includes:
-#include <algorithm>
+#include <bits/std_abs.h>
 #include <cassert>
 #include <deque>
 #include <map>

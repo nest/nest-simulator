@@ -22,7 +22,6 @@
 
 #include "sigmoid_rate.h"
 
-#include <boost/any.hpp>
 
 #include "dict_util.h"
 #include "dictionary.h"

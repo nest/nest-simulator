@@ -24,7 +24,6 @@
 #define IAF_BW_2001_EXACT
 
 #include <algorithm>
-#include <boost/any.hpp>
 #include <map>
 #include <math.h>
 #include <stddef.h>

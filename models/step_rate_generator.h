@@ -24,7 +24,6 @@
 #ifndef STEP_RATE_GENERATOR_H
 #define STEP_RATE_GENERATOR_H
 
-#include <boost/any.hpp>
 #include <math.h>
 #include <stddef.h>
 // C++ includes:

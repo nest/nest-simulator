@@ -25,7 +25,6 @@
 
 #include <algorithm>
 #include <assert.h>
-#include <boost/any.hpp>
 #include <cmath>
 #include <map>
 #include <stddef.h>

@@ -24,7 +24,6 @@
 #define AEIF_COND_EXP_H
 
 #include <algorithm>
-#include <boost/any.hpp>
 #include <map>
 #include <math.h>
 #include <stddef.h>

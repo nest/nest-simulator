@@ -23,7 +23,6 @@
 #include "correlation_detector.h"
 
 #include <assert.h>
-#include <boost/any.hpp>
 // C++ includes:
 #include <algorithm>
 #include <cmath>       // for less

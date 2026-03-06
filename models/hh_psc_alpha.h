@@ -24,7 +24,6 @@
 #define HH_PSC_ALPHA_H
 
 #include <algorithm>
-#include <boost/any.hpp>
 #include <map>
 #include <math.h>
 #include <stddef.h>

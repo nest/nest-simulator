@@ -242,7 +242,7 @@ urbanczik_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSy
 
   // for now we only support two-compartment neurons
   // in this case the dendritic compartment has index 1
-  const int comp = 1;
+  constexpr int comp = 1;
 
   target->get_urbanczik_history( t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish, comp );
 

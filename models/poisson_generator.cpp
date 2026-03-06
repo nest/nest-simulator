@@ -22,7 +22,6 @@
 
 #include "poisson_generator.h"
 
-#include <boost/any.hpp>
 
 #include "exceptions.h"
 #include "genericmodel_impl.h"

@@ -23,7 +23,6 @@
 #ifndef DIFFUSION_CONNECTION_H
 #define DIFFUSION_CONNECTION_H
 
-#include <boost/any.hpp>
 #include <memory>
 #include <stddef.h>
 #include <string>

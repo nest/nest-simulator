@@ -23,7 +23,6 @@
 #ifndef QUANTAL_STP_SYNAPSE_H
 #define QUANTAL_STP_SYNAPSE_H
 
-#include <boost/any.hpp>
 #include <cmath>
 #include <stddef.h>
 #include <string>

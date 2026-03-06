@@ -22,7 +22,6 @@
 
 #include "gauss_rate.h"
 
-#include <boost/any.hpp>
 
 #include "dictionary.h"
 #include "genericmodel_impl.h"

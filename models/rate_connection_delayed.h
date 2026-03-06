@@ -24,7 +24,6 @@
 #ifndef RATE_CONNECTION_DELAYED_H
 #define RATE_CONNECTION_DELAYED_H
 
-#include <boost/any.hpp>
 #include <memory>
 #include <stddef.h>
 #include <string>

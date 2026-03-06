@@ -24,27 +24,15 @@
 #define MUSIC_MANAGER_H
 
 #include "config.h"
-#include "mpi.h"
-#include "nest_time.h"
 
 #ifdef HAVE_MUSIC
 #include <music.hh>
 #endif
-#include <map>
-#include <stddef.h>
 #include <string>
 
 // Includes from nestkernel:
 #include "manager_interface.h"
 #include "nest_types.h"
-
-class Dictionary;
-
-namespace MUSIC
-{
-class Runtime;
-class Setup;
-}  // namespace MUSIC
 
 #ifdef HAVE_MUSIC
 #include "music_event_handler.h"

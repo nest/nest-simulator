@@ -23,7 +23,6 @@
 #ifndef IAF_PSC_ALPHA_MULTISYNAPSE_H
 #define IAF_PSC_ALPHA_MULTISYNAPSE_H
 
-#include <boost/any.hpp>
 #include <math.h>
 #include <stddef.h>
 // Generated includes:
@@ -218,8 +217,8 @@ private:
       I_SYN  // 2
     };
 
-    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = I_SYN;  // V_M, I
-    static const size_t NUM_STATE_ELEMENTS_PER_RECEPTOR = 1;      // I_SYN
+    static constexpr size_t NUMBER_OF_FIXED_STATES_ELEMENTS = I_SYN;  // V_M, I
+    static constexpr size_t NUM_STATE_ELEMENTS_PER_RECEPTOR = 1;      // I_SYN
 
     double I_const_;  //!< Constant current
     std::vector< double > y1_syn_;

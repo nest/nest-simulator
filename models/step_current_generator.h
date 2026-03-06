@@ -24,7 +24,6 @@
 #ifndef STEP_CURRENT_GENERATOR_H
 #define STEP_CURRENT_GENERATOR_H
 
-#include <boost/any.hpp>
 #include <math.h>
 #include <stddef.h>
 // C++ includes:

@@ -25,7 +25,6 @@
 #define iaf_psc_exp_htum_H
 
 #include <algorithm>
-#include <boost/any.hpp>
 #include <map>
 #include <math.h>
 #include <stddef.h>

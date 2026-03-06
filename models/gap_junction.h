@@ -23,7 +23,6 @@
 #ifndef GAP_JUNCTION_H
 #define GAP_JUNCTION_H
 
-#include <boost/any.hpp>
 #include <memory>
 #include <stddef.h>
 #include <string>

@@ -23,7 +23,6 @@
 #ifndef IAF_PSC_ALPHA_PS_H
 #define IAF_PSC_ALPHA_PS_H
 
-#include <boost/any.hpp>
 #include <math.h>
 #include <stddef.h>
 // C++ includes:

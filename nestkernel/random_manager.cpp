@@ -22,10 +22,9 @@
 
 #include "random_manager.h"
 
-#include <assert.h>
-#include <boost/any.hpp>
 // C++ includes:
 #include <algorithm>
+#include <assert.h>
 #include <limits>
 #include <random>
 #include <utility>

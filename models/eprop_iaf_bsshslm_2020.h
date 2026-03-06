@@ -24,7 +24,6 @@
 #define EPROP_IAF_BSSHSLM_2020_H
 
 #include <algorithm>
-#include <boost/any.hpp>
 #include <map>
 #include <math.h>
 #include <stddef.h>

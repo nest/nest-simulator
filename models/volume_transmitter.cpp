@@ -22,7 +22,6 @@
 
 #include "volume_transmitter.h"
 
-#include <boost/any.hpp>
 
 // Includes from nestkernel:
 #include "genericmodel_impl.h"

@@ -20,9 +20,10 @@
  *
  */
 
+#include "layer_impl.h"
+
 #include <algorithm>
 #include <assert.h>
-#include <boost/any.hpp>
 #include <functional>
 #include <iterator>
 #include <math.h>
@@ -34,7 +35,6 @@
 #include <utility>
 #include <vector>
 
-#include "layer_impl.h"
 // Includes from nestkernel:
 #include "dictionary.h"
 #include "exceptions.h"

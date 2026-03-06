@@ -23,7 +23,6 @@
 #ifndef NOISE_GENERATOR_H
 #define NOISE_GENERATOR_H
 
-#include <boost/any.hpp>
 #include <math.h>
 #include <stddef.h>
 // C++ includes:

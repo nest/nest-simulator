@@ -22,11 +22,9 @@
 
 #include "conn_builder.h"
 
-#include <assert.h>
-#include <boost/any.hpp>
-#include <boost/type_index/type_index_facade.hpp>
 // Includes from C++:
 #include <algorithm>
+#include <assert.h>
 #include <cmath>
 #include <iterator>
 #include <memory>

@@ -22,7 +22,6 @@
 
 #include "multimeter.h"
 
-#include <boost/any.hpp>
 
 // Includes from libnestutil:
 #include "dict_util.h"

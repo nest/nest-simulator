@@ -119,7 +119,7 @@ set ( nestkernel_sources
       stimulation_backend.h
       buffer_resize_log.h buffer_resize_log.cpp
       nest_extension_interface.h
-      stopwatch.h
+      stopwatch.h stopwatch_impl.h
       cycle_time_log.h cycle_time_log.cpp
       )
 

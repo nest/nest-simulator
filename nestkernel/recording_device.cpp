@@ -23,7 +23,6 @@
 // Includes from libnestutil:
 #include "recording_device.h"
 
-#include <boost/any.hpp>
 #include <map>
 #include <nest_names.h>
 

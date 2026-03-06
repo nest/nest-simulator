@@ -24,7 +24,6 @@
 #define SP_MANAGER_H
 
 #include <assert.h>
-#include <boost/any.hpp>
 #include <stddef.h>
 // C++ includes:
 #include <string>

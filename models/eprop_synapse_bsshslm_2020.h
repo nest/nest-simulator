@@ -24,7 +24,6 @@
 #define EPROP_SYNAPSE_BSSHSLM_2020_H
 
 #include <assert.h>
-#include <boost/any.hpp>
 #include <boost/type_index/type_index_facade.hpp>
 #include <cmath>
 #include <stddef.h>

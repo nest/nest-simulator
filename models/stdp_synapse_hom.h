@@ -24,7 +24,6 @@
 #define STDP_SYNAPSE_HOM_H
 
 #include <assert.h>
-#include <boost/any.hpp>
 #include <stddef.h>
 // C++ includes:
 #include <cmath>

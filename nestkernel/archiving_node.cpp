@@ -23,7 +23,6 @@
 #include "archiving_node.h"
 
 #include <algorithm>
-#include <boost/any.hpp>
 #include <cmath>
 #include <iterator>
 #include <string>

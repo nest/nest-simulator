@@ -22,7 +22,6 @@
 
 #include "logging_manager.h"
 
-#include <boost/any.hpp>
 // C++ includes:
 #include <cassert>
 #include <iostream>

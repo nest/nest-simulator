@@ -22,7 +22,6 @@
 
 #include "conn_parameter.h"
 
-#include <boost/any.hpp>
 #include <boost/type_index/type_index_facade.hpp>
 #include <memory>
 #include <string>

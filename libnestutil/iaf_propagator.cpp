@@ -22,7 +22,6 @@
 
 #include "iaf_propagator.h"
 
-#include <bits/std_abs.h>
 #include <cmath>
 
 #include "numerics.h"

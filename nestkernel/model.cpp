@@ -23,7 +23,6 @@
 #include "model.h"
 
 #include <assert.h>
-#include <boost/any.hpp>
 
 // Includes from libnestutil:
 #include "compose.hpp"

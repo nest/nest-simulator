@@ -22,7 +22,6 @@
 
 #include "model_manager.h"
 
-#include <boost/any.hpp>
 // C++ includes:
 #include <algorithm>
 #include <exception>

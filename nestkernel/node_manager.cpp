@@ -22,7 +22,6 @@
 
 #include "node_manager.h"
 
-#include <boost/any.hpp>
 // C++ includes:
 #include <algorithm>
 #include <cmath>

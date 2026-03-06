@@ -24,7 +24,6 @@
 // Includes from nestkernel:
 #include "stimulation_device.h"
 
-#include <boost/any.hpp>
 #include <map>
 #include <nest_names.h>
 

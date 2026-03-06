@@ -22,7 +22,6 @@
 
 #include "module_manager.h"
 
-#include <boost/any.hpp>
 #include <exception>
 #include <vector>
 

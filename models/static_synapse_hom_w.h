@@ -23,7 +23,6 @@
 #ifndef STATICSYNAPSE_HOM_W_H
 #define STATICSYNAPSE_HOM_W_H
 
-#include <boost/any.hpp>
 #include <stddef.h>
 #include <string>
 

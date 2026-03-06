@@ -22,7 +22,6 @@
 
 #include "clopath_archiving_node.h"
 
-#include <boost/any.hpp>
 #include <math.h>
 #include <string>
 

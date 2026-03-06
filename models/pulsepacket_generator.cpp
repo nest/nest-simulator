@@ -23,8 +23,6 @@
 #include "pulsepacket_generator.h"
 
 #include <assert.h>
-#include <bits/std_abs.h>
-#include <boost/any.hpp>
 // C++ includes:
 #include <algorithm>
 

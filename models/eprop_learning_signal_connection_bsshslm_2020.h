@@ -24,7 +24,6 @@
 #ifndef EPROP_LEARNING_SIGNAL_CONNECTION_BSSHSLM_2020_H
 #define EPROP_LEARNING_SIGNAL_CONNECTION_BSSHSLM_2020_H
 
-#include <boost/any.hpp>
 #include <memory>
 #include <stddef.h>
 #include <string>

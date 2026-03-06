@@ -20,7 +20,6 @@
  *
  */
 
-#include <boost/any.hpp>
 #include <nest_names.h>
 // C++ includes:
 #include <iostream>

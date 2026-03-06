@@ -23,7 +23,6 @@
 #include "io_manager.h"
 
 // C includes:
-#include <boost/any.hpp>
 #include <dirent.h>
 #include <errno.h>
 // C++ includes:

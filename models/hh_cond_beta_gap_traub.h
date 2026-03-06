@@ -24,7 +24,6 @@
 #define HH_COND_BETA_GAP_TRAUB_H
 
 #include <algorithm>
-#include <boost/any.hpp>
 #include <map>
 #include <math.h>
 #include <stddef.h>

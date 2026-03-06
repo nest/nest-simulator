@@ -22,7 +22,6 @@
 
 #include "delay_checker.h"
 
-#include <boost/any.hpp>
 #include <simulation_manager.h>
 // C++ includes:
 #include <algorithm>  // min, max

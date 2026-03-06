@@ -21,7 +21,6 @@
  */
 
 #include <assert.h>
-#include <boost/any.hpp>
 #include <stddef.h>
 // C++ includes:
 #include <algorithm>  // rotate

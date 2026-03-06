@@ -24,7 +24,6 @@
 
 #include <algorithm>
 #include <assert.h>
-#include <boost/any.hpp>
 #include <utility>
 
 #include "cm_compartmentcurrents.h"

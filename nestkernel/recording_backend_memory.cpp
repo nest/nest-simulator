@@ -24,7 +24,6 @@
 #include "recording_backend_memory.h"
 
 #include <assert.h>
-#include <boost/any.hpp>
 #include <nest_names.h>
 #include <utility>
 

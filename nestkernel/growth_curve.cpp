@@ -22,7 +22,6 @@
 
 #include "growth_curve.h"
 
-#include <boost/any.hpp>
 // C++ includes:
 #include <algorithm>
 #include <cmath>

@@ -23,7 +23,6 @@
 #include "synaptic_element.h"
 
 #include <assert.h>
-#include <boost/any.hpp>
 #include <cmath>
 #include <string>
 

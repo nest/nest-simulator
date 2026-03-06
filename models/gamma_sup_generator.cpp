@@ -23,7 +23,6 @@
 #include "gamma_sup_generator.h"
 
 #include <assert.h>
-#include <boost/any.hpp>
 #include <math.h>
 
 // Includes from libnestutil:

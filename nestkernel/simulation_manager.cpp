@@ -23,7 +23,6 @@
 #include "simulation_manager.h"
 
 // C includes:
-#include <boost/any.hpp>
 #include <sys/time.h>
 // C++ includes:
 #include <algorithm>

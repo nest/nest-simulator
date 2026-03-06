@@ -22,7 +22,6 @@
 
 
 // C++ includes:
-#include <bits/std_abs.h>
 #include <cassert>
 #include <deque>
 #include <map>

@@ -23,7 +23,6 @@
 #ifndef GLIF_COND_H
 #define GLIF_COND_H
 
-#include <boost/any.hpp>
 #include <map>
 #include <math.h>
 #include <stddef.h>

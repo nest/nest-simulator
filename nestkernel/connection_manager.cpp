@@ -20,8 +20,6 @@
  *
  */
 
-#include <bits/std_abs.h>
-#include <boost/any.hpp>
 #include <stddef.h>
 // C++ includes:
 #include <algorithm>

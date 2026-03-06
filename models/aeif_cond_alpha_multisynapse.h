@@ -23,7 +23,6 @@
 #ifndef AEIF_COND_ALPHA_MULTISYNAPSE_H
 #define AEIF_COND_ALPHA_MULTISYNAPSE_H
 
-#include <boost/any.hpp>
 #include <map>
 #include <math.h>
 #include <sstream>

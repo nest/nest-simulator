@@ -25,7 +25,6 @@
 #ifdef HAVE_MUSIC
 
 // C++ includes
-#include <bits/std_abs.h>
 #include <limits>
 #include <memory>
 #include <string>

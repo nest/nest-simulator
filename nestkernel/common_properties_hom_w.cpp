@@ -22,7 +22,6 @@
 
 #include "common_properties_hom_w.h"
 
-#include <boost/any.hpp>
 
 #include "dictionary.h"
 #include "nest_names.h"

@@ -23,7 +23,6 @@
 #ifndef HT_SYNAPSE_H
 #define HT_SYNAPSE_H
 
-#include <boost/any.hpp>
 #include <cmath>
 #include <stddef.h>
 #include <string>

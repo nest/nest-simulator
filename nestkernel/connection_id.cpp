@@ -22,7 +22,6 @@
 
 #include "connection_id.h"
 
-#include <boost/any.hpp>
 #include <ostream>
 
 // Includes from nestkernel:

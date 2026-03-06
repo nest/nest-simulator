@@ -22,7 +22,6 @@
 
 #include "connection_creator.h"
 
-#include <boost/any.hpp>
 #include <string>
 
 #include "exceptions.h"

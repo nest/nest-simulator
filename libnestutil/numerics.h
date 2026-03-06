@@ -23,7 +23,6 @@
 #ifndef NUMERICS_H
 #define NUMERICS_H
 
-#include <bits/std_abs.h>
 #include <stddef.h>
 // C++ includes:
 #include <cassert>

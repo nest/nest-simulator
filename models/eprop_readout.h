@@ -24,7 +24,6 @@
 #define EPROP_READOUT_H
 
 #include <algorithm>
-#include <boost/any.hpp>
 #include <map>
 #include <math.h>
 #include <model_manager.h>

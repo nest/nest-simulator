@@ -23,7 +23,6 @@
 #ifndef STDP_DOPAMINE_SYNAPSE_H
 #define STDP_DOPAMINE_SYNAPSE_H
 
-#include <boost/any.hpp>
 #include <cmath>
 #include <deque>
 #include <stddef.h>

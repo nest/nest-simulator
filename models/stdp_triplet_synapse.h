@@ -24,7 +24,6 @@
 #define STDP_TRIPLET_SYNAPSE_H
 
 #include <assert.h>
-#include <bits/std_abs.h>
 #include <cmath>
 #include <deque>
 #include <math.h>

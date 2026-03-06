@@ -23,7 +23,6 @@
 #include "kernel_manager.h"
 
 #include <assert.h>
-#include <boost/any.hpp>
 #include <stdexcept>
 #include <stdlib.h>
 

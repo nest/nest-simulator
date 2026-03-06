@@ -22,7 +22,6 @@
 
 #include "device.h"
 
-#include <boost/any.hpp>
 
 // Includes from nestkernel:
 #include "dictionary.h"

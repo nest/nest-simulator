@@ -22,7 +22,6 @@
 
 #include "common_synapse_properties.h"
 
-#include <boost/any.hpp>
 #include <memory>
 #include <stddef.h>
 #include <string>

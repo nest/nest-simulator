@@ -28,7 +28,6 @@
 #include <gsl/gsl_sf_gamma.h>
 // C++ includes:
 #include <assert.h>
-#include <bits/std_abs.h>
 #include <cmath>
 
 // Includes from libnestutil:

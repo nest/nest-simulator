@@ -24,7 +24,6 @@
 #include "recording_backend_ascii.h"
 
 #include <assert.h>
-#include <boost/any.hpp>
 // C++ includes:
 #include <cmath>
 #include <iomanip>

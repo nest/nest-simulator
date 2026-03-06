@@ -22,7 +22,6 @@
 
 #include "proxynode.h"
 
-#include <boost/any.hpp>
 #include <string>
 
 #include "dictionary.h"

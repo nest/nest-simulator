@@ -23,7 +23,6 @@
 #ifndef CONN_PARAMETER_H
 #define CONN_PARAMETER_H
 
-#include <boost/any.hpp>
 #include <stddef.h>
 // C++ includes:
 #include <limits>

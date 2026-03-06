@@ -23,7 +23,6 @@
 #include "structural_plasticity_node.h"
 
 #include <assert.h>
-#include <boost/any.hpp>
 #include <cmath>
 #include <nest_names.h>
 #include <utility>

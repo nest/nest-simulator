@@ -23,7 +23,6 @@
 #include "weight_recorder.h"
 
 #include <algorithm>
-#include <boost/any.hpp>
 #include <iterator>
 #include <vector>
 

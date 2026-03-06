@@ -24,9 +24,8 @@
 
 #ifdef HAVE_HDF5
 
-// C++ includes:
-#include <boost/any.hpp>  // PYNEST-NG-FUTURE: remove when final boost::any_cast() disappears below
-#include <cstdlib>        // for div()
+// C++ includes:  // PYNEST-NG-FUTURE: remove when final boost::any_cast() disappears below
+#include <cstdlib>  // for div()
 #include <string>
 #include <vector>
 

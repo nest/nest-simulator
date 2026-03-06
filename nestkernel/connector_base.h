@@ -31,9 +31,9 @@
 #include <vector>
 
 // Includes from libnestutil:
-#include "compose.hpp"
 #include "sort.h"
 #include "vector_util.h"
+#include <format>
 
 // Includes from nestkernel:
 #include "common_synapse_properties.h"

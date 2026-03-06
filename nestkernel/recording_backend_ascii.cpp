@@ -27,7 +27,7 @@
 #include <iomanip>
 
 // Includes from libnestutil:
-#include "compose.hpp"
+#include <format>
 
 // Includes from nestkernel:
 #include "recording_device.h"
@@ -255,8 +255,8 @@ nest::RecordingBackendASCII::DeviceData::open_file()
   std::ifstream test( filename.c_str() );
   if ( test.good() and not kernel().io_manager.overwrite_files() )
   {
-    std::string msg = String::compose(
-      "The file '%1' already exists and overwriting files is disabled. To overwrite files, set "
+    std::string msg = std::format(
+      "The file '{}' already exists and overwriting files is disabled. To overwrite files, set "
       "the kernel property overwrite_files to true. To change the name or location of the file, "
       "change the kernel properties data_path or data_prefix, or the device property label.",
       filename );
@@ -269,7 +269,7 @@ nest::RecordingBackendASCII::DeviceData::open_file()
 
   if ( not file_.good() )
   {
-    std::string msg = String::compose( "I/O error while opening file '%1'.", filename );
+    std::string msg = std::format( "I/O error while opening file '{}'.", filename );
     LOG( VerbosityLevel::ERROR, "RecordingBackendASCII::prepare()", msg );
     throw IOError();
   }

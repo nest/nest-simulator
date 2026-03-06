@@ -112,7 +112,7 @@ nest::StimulationDevice::Parameters_::set( const Dictionary& d )
 
     if ( not kernel().io_manager.is_valid_stimulation_backend( stimulus_source ) )
     {
-      std::string msg = String::compose( "Unknown input backend '%1'", stimulus_source );
+      std::string msg = std::format( "Unknown input backend '{}'", stimulus_source );
       throw BadProperty( msg );
     }
     stimulus_source_ = stimulus_source;

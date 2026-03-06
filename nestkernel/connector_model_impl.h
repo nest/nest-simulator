@@ -29,8 +29,8 @@
 #include "config.h"
 
 // Includes from libnestutil:
-#include "compose.hpp"
 #include "enum_bitfield.h"
+#include <format>
 
 // Includes from nestkernel:
 #include "connector_base.h"
@@ -150,7 +150,7 @@ GenericConnectorModel< ConnectionT >::check_synapse_params( const Dictionary& sy
     if ( dummy.known( key ) )
     {
       throw NotImplemented(
-        String::compose( "Synapse parameter \"%1\" can only be set via SetDefaults() or CopyModel().", key ) );
+        std::format( "Synapse parameter \"{}\" can only be set via SetDefaults() or CopyModel().", key ) );
     }
   }
 
@@ -191,8 +191,8 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
     catch ( BadDelay& e )
     {
       throw BadDelay( default_connection_.get_delay(),
-        String::compose( "Default delay of '%1' must be between min_delay %2 "
-                         "and max_delay %3.",
+        std::format( "Default delay of '{}' must be between min_delay {} "
+                     "and max_delay {}.",
           get_name(),
           Time::delay_steps_to_ms( kernel().connection_manager.get_min_delay() ),
           Time::delay_steps_to_ms( kernel().connection_manager.get_max_delay() ) ) );

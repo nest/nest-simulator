@@ -28,8 +28,8 @@
 #include <numeric>
 
 // Includes from libnestutil:
-#include "compose.hpp"
 #include "logging.h"
+#include <format>
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
@@ -185,7 +185,7 @@ nest::music_rate_out_proxy::pre_run_hook()
     S_.published_ = true;
 
 
-    std::string msg = String::compose( "Mapping MUSIC output port '%1' with width=%2.", P_.port_name_, S_.port_width_ );
+    std::string msg = std::format( "Mapping MUSIC output port '{}' with width={}.", P_.port_name_, S_.port_width_ );
     LOG( VerbosityLevel::INFO, "MusicRateHandler::publish_port()", msg.c_str() );
   }
 }

@@ -30,7 +30,7 @@
 #include "config.h"
 
 // Includes from libnestutil:
-#include "compose.hpp"
+#include <format>
 
 // Includes from nestkernel:
 #include "recording_device.h"
@@ -196,8 +196,8 @@ nest::RecordingBackendSIONlib::open_files_()
       std::ifstream test( filename.c_str() );
       if ( test.good() & not kernel().io_manager.overwrite_files() )
       {
-        std::string msg = String::compose(
-          "The device file '%1' exists already and will not be overwritten. "
+        std::string msg = std::format(
+          "The device file '{}' exists already and will not be overwritten. "
           "Please change data_path, or data_prefix, or set /overwrite_files "
           "to true in the root node.",
           filename );
@@ -583,7 +583,7 @@ nest::RecordingBackendSIONlib::SIONBuffer::write( const char* v, size_t n )
   }
   else
   {
-    std::string msg = String::compose( "SIONBuffer: buffer overflow: ptr=%1, n=%2, max_size=%3.", ptr_, n, max_size_ );
+    std::string msg = std::format( "SIONBuffer: buffer overflow: ptr={}, n={}, max_size={}.", ptr_, n, max_size_ );
     LOG( VerbosityLevel::ERROR, "RecordingBackendSIONlib::write()", msg );
 
     throw IOError();

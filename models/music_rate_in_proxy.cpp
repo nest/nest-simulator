@@ -25,8 +25,8 @@
 #ifdef HAVE_MUSIC
 
 // Includes from libnestutil:
-#include "compose.hpp"
 #include "logging.h"
+#include <format>
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"

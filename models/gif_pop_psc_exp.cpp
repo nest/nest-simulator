@@ -34,8 +34,8 @@
 #include "gif_pop_psc_exp.h"
 
 // Includes from libnestutil:
-#include "compose.hpp"
 #include "dict_util.h"
+#include <format>
 
 // Includes from nestkernel:
 #include "model_manager_impl.h"
@@ -162,8 +162,8 @@ nest::gif_pop_psc_exp::Parameters_::set( const Dictionary& d, Node* node )
   if ( tau_sfa_.size() != q_sfa_.size() )
   {
     throw BadProperty(
-      String::compose( "'tau_sfa' and 'q_sfa' need to have the same dimension.\nSize of "
-                       "tau_sfa: %1\nSize of q_sfa: %2",
+      std::format( "'tau_sfa' and 'q_sfa' need to have the same dimension.\nSize of "
+                   "tau_sfa: {}\nSize of q_sfa: {}",
         tau_sfa_.size(),
         q_sfa_.size() ) );
   }

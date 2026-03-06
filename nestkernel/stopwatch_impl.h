@@ -52,7 +52,7 @@ Stopwatch< detailed_timer, threaded_timer >::start()
       walltime_timer_.start();
       cputime_timer_.start();
     }
-  }  // use_timer_array and enable_timer
+  }
 }
 
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
@@ -72,7 +72,7 @@ Stopwatch< detailed_timer, threaded_timer >::stop()
       walltime_timer_.stop();
       cputime_timer_.stop();
     }
-  }  // use_timer_array
+  }
 }
 
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
@@ -92,7 +92,7 @@ Stopwatch< detailed_timer, threaded_timer >::is_running_() const
       is_running_ = walltime_timer_.is_running_();
     }
     return is_running_;
-  }  // use_timer_array
+  }
 }
 
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
@@ -112,7 +112,7 @@ Stopwatch< detailed_timer, threaded_timer >::elapsed( timers::timeunit_t timeuni
       elapsed = walltime_timer_.elapsed( timeunit );
     };
     return elapsed;
-  }  // use_timer_array
+  }
 }
 
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
@@ -132,7 +132,7 @@ Stopwatch< detailed_timer, threaded_timer >::print( const std::string& msg,
     {
       walltime_timer_.print( msg, timeunit, os );
     }
-  }  // use_timer_array
+  }
 }
 
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >

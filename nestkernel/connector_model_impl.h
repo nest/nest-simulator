@@ -101,9 +101,9 @@ GenericConnectorModel< ConnectionT >::get_status( Dictionary& d ) const
   // then get default properties for individual synapses
   default_connection_.get_status( d );
 
-  d[ names::receptor_type ] = std::vector< long >( receptor_type_ );
+  d[ names::receptor_type ] = static_cast< long >( receptor_type_ );
   d[ names::synapse_model ] = name_;
-  d[ names::synapse_modelid ] = std::vector< long >( kernel().model_manager.get_synapse_model_id( name_ ) );
+  d[ names::synapse_modelid ] = static_cast< long >( kernel().model_manager.get_synapse_model_id( name_ ) );
   d[ names::requires_symmetric ] = has_property( ConnectionModelProperties::REQUIRES_SYMMETRIC );
   d[ names::has_delay ] = has_property( ConnectionModelProperties::HAS_DELAY );
 }

@@ -120,6 +120,14 @@ cdef object vec_of_dict_to_list(vector[Dictionary] cvec):
     return tmp
 
 
+cdef object vec_of_vec_of_dict_to_list(vector[vector[Dictionary]] cvec):
+    cdef tmp = []
+    cdef vector[vector[Dictionary]].iterator it = cvec.begin()
+    while it != cvec.end():
+        tmp.append(vec_of_dict_to_list(deref(it)))
+        inc(it)
+    return tmp
+
 def make_tuple_or_ndarray(operand):
         if len(operand) > 0 and isinstance(operand[0], numbers.Number):
             return numpy.array(operand)
@@ -140,58 +148,71 @@ cdef object dictionary_to_pydict(Dictionary cdict):
     return tmp
 
 cdef object any_to_pyobj(any_type operand):
-    if holds_alternative[int](operand):
-        return get[int](operand)
-    #if holds_alternative[uint](operand):
-    #    return get[uint](operand)
+    cdef NodeCollectionPTR ncptr
+
     if holds_alternative[long](operand):
         return get[long](operand)
-    #if holds_alternative[size_t](operand):
-    #    return get[size_t](operand)
-    #if holds_alternative[uint64_t](operand):
-    #    return get[uint64_t](operand)
-    #if holds_alternative[int64_t](operand):
-    #    return get[int64_t](operand)
     if holds_alternative[double](operand):
         return get[double](operand)
     if holds_alternative[cbool](operand):
         return get[cbool](operand)
     if holds_alternative[string](operand):
         return string_to_pystr(get[string](operand))
-    if holds_alternative[vector[int]](operand):
-        return numpy.array(get[vector[int]](operand))
+
     if holds_alternative[vector[long]](operand):
         return numpy.array(get[vector[long]](operand))
+    if holds_alternative[vector[vector[long]]](operand):
+        return numpy.array(get[vector[vector[long]]](operand))
+    if holds_alternative[vector[vector[vector[long]]]](operand):
+        return numpy.array(get[vector[vector[vector[long]]]](operand))
+    if holds_alternative[vector[vector[vector[vector[long]]]]](operand):
+        return numpy.array(get[vector[vector[vector[vector[long]]]]](operand))
+
     if holds_alternative[vector[cbool]](operand):
         return numpy.array(get[vector[cbool]](operand))
-    #if holds_alternative[vector[size_t]](operand):
-    #    return numpy.array(get[vector[size_t]](operand))
+
     if holds_alternative[vector[double]](operand):
         return numpy.array(get[vector[double]](operand))
     if holds_alternative[vector[vector[double]]](operand):
         return numpy.array(get[vector[vector[double]]](operand))
     if holds_alternative[vector[vector[vector[double]]]](operand):
         return numpy.array(get[vector[vector[vector[double]]]](operand))
-    if holds_alternative[vector[vector[vector[long]]]](operand):
-        return numpy.array(get[vector[vector[vector[long]]]](operand))
+    if holds_alternative[vector[vector[vector[vector[double]]]]](operand):
+        return numpy.array(get[vector[vector[vector[vector[double]]]]](operand))
+
     if holds_alternative[vector[string]](operand):
-        # PYNEST-NG: Do we want to have this or are bytestrings fine?
-        # return get[vector[string]](operand)
-        return list(map(lambda x: x.decode("utf-8"), get[vector[string]](operand)))
-    if holds_alternative[vector[Dictionary]](operand):
-        return vec_of_dict_to_list(get[vector[Dictionary]](operand))
-    if holds_alternative[EmptyList](operand):
-        # PYNEST-NG: This will create a Python list first and then convert to
-        # either tuple or numpy array, which will copy the data element-wise.
-        return make_tuple_or_ndarray(any_vector_to_list(get[EmptyList](operand)))
+        return [s.decode("utf-8") for s in get[vector[string]](operand)]
+    if holds_alternative[vector[vector[string]]](operand):
+        return [[s.decode("utf-8") for s in vs]
+                for vs in get[vector[vector[string]]](operand)]
+
     if holds_alternative[Dictionary](operand):
         return dictionary_to_pydict(get[Dictionary](operand))
+    if holds_alternative[vector[Dictionary]](operand):
+        return vec_of_dict_to_list(get[vector[Dictionary]](operand))
+    if holds_alternative[vector[vector[Dictionary]]](operand):
+        return vec_of_vec_of_dict_to_list(get[vector[vector[Dictionary]]](operand))
+
+    if holds_alternative[EmptyList](operand):
+        assert False, "Should never get an EmptyList from C++"
+        return None
+
     if holds_alternative[NodeCollectionPTR](operand):
         obj = NodeCollectionObject()
         obj._set_nc(get[NodeCollectionPTR](operand))
         return nest.NodeCollection(obj)
+    if holds_alternative[vector[NodeCollectionPTR]](operand):
+        res = []
+        for ncptr in get[vector[NodeCollectionPTR]](operand):
+            obj = NodeCollectionObject()
+            obj._set_nc(ncptr)
+            res.append(nest.NodeCollection(obj))
+        return res
+
     if holds_alternative[VerbosityLevel](operand):
         return get[VerbosityLevel](operand)
+
+    assert False, f"Operand: ]{debug_type(operand)}["
 
 
 cdef is_list_tuple_ndarray_of_float(v):

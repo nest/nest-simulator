@@ -127,6 +127,31 @@ dictionary_::cast_value_< std::vector< double > >( const any_type& value, const 
 }
 
 
+template <>
+std::vector< std::string >
+dictionary_::cast_value_< std::vector< std::string > >( const any_type& value, const std::string& key ) const
+{
+  if ( std::holds_alternative< EmptyList >( value ) )
+  {
+    return std::vector< std::string >();
+  }
+
+  try
+  {
+    if ( const std::vector< std::string >* v = std::get_if< std::vector< std::string > >( &value ) )
+    {
+      return *v;
+    }
+    throw std::bad_variant_access(); // deflect to error handling below
+  }
+  catch ( const std::bad_variant_access& )
+  {
+    const std::string msg =
+      String::compose( "Failed to cast '%1' from %2 to type std::vector<double>", key, debug_type( value ) );
+    throw nest::TypeMismatch( msg );
+  }
+}
+
 std::string
 debug_type( const any_type& operand )
 {

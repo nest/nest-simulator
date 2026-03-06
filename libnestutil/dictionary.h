@@ -61,28 +61,24 @@ struct EmptyList
 template < typename... Scalars >
 struct DictionarySchemaBuilder
 {
-  template < typename T >
-  static constexpr bool is_defined_scalar = ( std::is_same_v< T, Scalars > or ... );
-  ;
-
   template < typename... Extras >
-  using VariantType = std::variant< Scalars..., // scalar types
-    std::vector< Scalars >...,                  // vector variants of the scalar types
-    Extras...                                   // any extra types
+  using VariantType = std::variant< Scalars...,              // scalar types
+    std::vector< Scalars >...,                               // vector variants of the scalar types
+    std::vector< std::vector< Scalars > >...,                // vector-vector variants of the scalar types
+    std::vector< std::vector< std::vector< Scalars > > >..., // vector-vector variants of the scalar types
+    std::vector< std::vector< std::vector< std::vector< Scalars > > > >..., // vector-vector variants of the scalar
+                                                                            // types
+    Extras...                                                               // any extra types
     >;
 };
 
-using DictionarySchema = DictionarySchemaBuilder< int, long, double, bool, std::string, Dictionary >;
+using DictionarySchema = DictionarySchemaBuilder< long, double, bool, std::string, Dictionary >;
 
 using any_type = DictionarySchema::VariantType< std::shared_ptr< nest::NodeCollection >,
+  std::vector< std::shared_ptr< nest::NodeCollection > >,
   std::shared_ptr< nest::Parameter >,
   nest::VerbosityLevel,
-  EmptyList,
-  // std::vector< std::string >,
-  std::vector< std::vector< long > >,
-  std::vector< std::vector< double > >,
-  std::vector< std::vector< std::vector< long > > >,
-  std::vector< std::vector< std::vector< double > > > >;
+  EmptyList >;
 
 
 // Define a simple Concept for "Integer Integers" (excluding bool and char)
@@ -99,6 +95,7 @@ is_type( const any_type& operand )
 {
   return std::holds_alternative< T >( operand );
 }
+
 
 class Dictionary : public std::shared_ptr< dictionary_ >
 {
@@ -455,13 +452,9 @@ public:
 
 std::ostream& operator<<( std::ostream& os, const dictionary_& dict );
 
-template <>
-double dictionary_::cast_value_< double >( const any_type& value, const std::string& key ) const;
-
 //! Specialization that allows passing long where double is expected
 template <>
-std::vector< double > dictionary_::cast_value_< std::vector< double > >( const any_type& value,
-  const std::string& key ) const;
+double dictionary_::cast_value_< double >( const any_type& value, const std::string& key ) const;
 
 inline auto
 Dictionary::begin() const
@@ -478,11 +471,20 @@ Dictionary::end() const
 /**
  * Specialization that allows passing long vectors where double vectors are expected.
  *
+ * Also handles empty vectors.
+ *
  * @note This specialization forwards to cast_vector_value_<double>, but is required explicitly,
  *       because, e.g., get(), calls cast_value_() directly even if the argument is a vector.
  */
 template <>
 std::vector< double > dictionary_::cast_value_< std::vector< double > >( const any_type& value,
+  const std::string& key ) const;
+
+/**
+ * Specialization that allows passing empty lists.
+ */
+template <>
+std::vector< std::string > dictionary_::cast_value_< std::vector< std::string > >( const any_type& value,
   const std::string& key ) const;
 
 inline auto

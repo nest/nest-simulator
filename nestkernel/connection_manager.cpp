@@ -250,8 +250,7 @@ nest::ConnectionManager::get_synapse_status( const size_t source_node_id,
   const Node* source = kernel().node_manager.get_node_or_proxy( source_node_id, tid );
   const Node* target = kernel().node_manager.get_node_or_proxy( target_node_id, tid );
 
-  // synapses from neurons to neurons and from neurons to globally
-  // receiving devices
+  // synapses from neurons to neurons and from neurons to globally receiving devices
   if ( ( source->has_proxies() and target->has_proxies() and connections_[ tid ][ syn_id ] )
     or ( ( source->has_proxies() and not target->has_proxies() and not target->local_receiver()
       and connections_[ tid ][ syn_id ] ) ) )

@@ -4,7 +4,8 @@
 # any (sub)directory of NEST. Internally it uses clang-format to do
 # the actual formatting.
 #
-# NEST C/C++ code should be formatted according to clang-format version 17.0.4.
+# NEST C/C++ code should be formatted according to clang-format defined by
+# `CLANG_REQUIRE_VERSION` in `../.github/workflows/nestbuildmatrix.yml`.
 # If you would like to see how the code will be formatted with a different
 # clang-format version, execute e.g. `CLANG_FORMAT=clang-format-14 ./format_all_c_c++_files.sh`.
 #
@@ -29,7 +30,7 @@ function process_dir {
     return
   fi
 
-  find "$dir" -maxdepth 1 -printf "%f\n" | while read -r f; do
+  find "$dir" -mindepth 1 -maxdepth 1 | while read -r f; do
     if [[ -d "$f" ]]; then
       # Recursively process sub-directories.
       process_dir "$f"
@@ -61,7 +62,6 @@ function process_dir {
 }
 
 function help_output {
-  echo "The $CLANG_FORMAT_FILE requires clang-format version 13 or later."
   echo "Use like: [CLANG_FORMAT=<clang-format>] ./build_support/$(basename "$0") [start folder, defaults to '$PWD']"
   exit 0
 }

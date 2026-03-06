@@ -85,9 +85,10 @@ shell script to run ``clang-format`` manually:
 
 .. note::
 
-   We use ``clang-format`` version 17.0.4 in our CI. If your ``clang-format`` executable is
-   not version 17, you need to specify an executable with version 17.0.4 explicitly with
-   the `--clang-format` option to ensure consistency with the NEST CI.
+   We use a specific ``clang-format`` version in CI, defined by ``CLANG_REQUIRE_VERSION`` in
+   `nestbuildmatrix.yml <https://github.com/nest/nest-simulator/blob/master/.github/workflows/nestbuildmatrix.yml>`_.
+   If your version differs, specify the correct executable with the ``--clang-format`` option to ensure
+   consistency with the NEST CI.
 
 Local static analysis
 ---------------------

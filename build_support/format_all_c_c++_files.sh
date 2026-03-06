@@ -29,7 +29,7 @@ function process_dir {
     return
   fi
 
-  find "$dir" -maxdepth 1 -printf "%f\n" | while read -r f; do
+  find "$dir" -mindepth 1 -maxdepth 1 -printf "%f\n" | while read -r f; do
     if [[ -d "$f" ]]; then
       # Recursively process sub-directories.
       process_dir "$f"

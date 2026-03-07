@@ -937,6 +937,7 @@ INPUT                  = @PROJECT_SOURCE_DIR@/README.md \
                          @PROJECT_SOURCE_DIR@/doc \
                          @PROJECT_SOURCE_DIR@/libnestutil \
                          @PROJECT_SOURCE_DIR@/models \
+                         @PROJECT_SOURCE_DIR@/doc/devdoc \
                          @PROJECT_SOURCE_DIR@/nest \
                          @PROJECT_SOURCE_DIR@/nestkernel
 
@@ -981,7 +982,8 @@ INPUT_FILE_ENCODING    =
 FILE_PATTERNS          = *.c \
                          *.cpp \
                          *.cc \
-                         *.h
+                         *.h \
+                         *.md
 
 # The RECURSIVE tag can be used to specify whether or not subdirectories should
 # be searched for input files as well.

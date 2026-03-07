@@ -106,10 +106,6 @@ nest::SimulationManager::initialize( const bool adjust_number_of_threads_or_rng_
 
   reset_timers_for_preparation();
   reset_timers_for_dynamics();
-
-#ifdef CYCLE_TIMERS
-  cycle_time_log_.clear();
-#endif
 }
 
 void
@@ -495,12 +491,6 @@ nest::SimulationManager::get_status( Dictionary& d )
   d[ names::eprop_update_interval ] = eprop_update_interval_;
   d[ names::eprop_learning_window ] = eprop_learning_window_;
   d[ names::eprop_reset_neurons_on_update ] = eprop_reset_neurons_on_update_;
-
-#ifdef CYCLE_TIMERS
-  Dictionary log_events;
-  cycle_time_log_.to_dict( log_events );
-  d[ names::cycle_time_log ] = log_events;
-#endif
 }
 
 void
@@ -853,11 +843,6 @@ nest::SimulationManager::update_()
 
   std::vector< std::exception_ptr > exceptions_raised( kernel().vp_manager.get_num_threads() );
 
-#ifdef CYCLE_TIMERS
-  double start_current_communicate = kernel().event_delivery_manager.get_sw_communicate_spike_data().elapsed();
-  size_t start_local_spike_counter = kernel().event_delivery_manager.get_local_spike_counter();
-#endif
-
 // parallel section begins
 #pragma omp parallel
   {
@@ -1119,21 +1104,6 @@ nest::SimulationManager::update_()
           // exceptions in parallel context. So we set a flag and process it immediately
           // after the master section.
           update_time_limit_exceeded = update_time > update_time_limit_;
-
-#ifdef CYCLE_TIMERS
-
-          const double end_current_communicate =
-            kernel().event_delivery_manager.get_sw_communicate_spike_data().elapsed();
-          const double communicate_time = end_current_communicate - start_current_communicate;
-          start_current_communicate = end_current_communicate;
-
-          const size_t end_local_spike_counter = kernel().event_delivery_manager.get_local_spike_counter();
-          const size_t local_spike_counter = end_local_spike_counter - start_local_spike_counter;
-          start_local_spike_counter = end_local_spike_counter;
-
-          cycle_time_log_.add_entry( update_time, communicate_time, local_spike_counter );
-
-#endif
         }
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier

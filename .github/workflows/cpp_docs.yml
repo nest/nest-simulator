@@ -4,7 +4,7 @@ on:
   # workflow only triggers when C++ file, the doxygen config, or css are changed
   pull_request:
     branches:
-      - master
+      - main
     paths:
       - '**/*.cpp'
       - '**/*.h'
@@ -33,104 +33,21 @@ env:
 permissions: {}
 
 jobs:
-  determine-versions:
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    permissions:
-      contents: read
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
-    steps:
-      - name: Compute versions matrix (master + latest two releases)
-        id: set-matrix
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
-        with:
-          script: |
-            try {
-              const owner = context.repo.owner;
-              const repo = context.repo.repo;
-
-              core.startGroup('Compute versions matrix debug');
-              core.info(`Repository: ${owner}/${repo}`);
-
-              const versions = [{ version: 'master', branch: 'master' }];
-
-              core.info( 'Fetching tags (per_page=20) ...');
-              const tagResp = await github.rest.repos.listTags({ owner, repo, per_page: 20 });
-              const allTagNames = tagResp.data.map(x => x.name);
-              core.info(`Total tags returned: ${tagResp.data.length}`);
-              core.info('All tag names: ' + JSON.stringify(allTagNames));
-
-              const mmPattern = /^v(\d+)\.(\d+)$/;
-              core.info(`Filter regex: ${mmPattern}`);
-              const mmTags = allTagNames.filter(name => mmPattern.test(name));
-              core.info('Filtered major.minor tags: ' + JSON.stringify(mmTags));
-
-              const semverSort = (a, b) => {
-                const [, amaj, amin] = a.match(/^v(\d+)\.(\d+)$/);
-                const [, bmaj, bmin] = b.match(/^v(\d+)\.(\d+)$/);
-                const ai = parseInt(amaj, 10);
-                const aj = parseInt(amin, 10);
-                const bi = parseInt(bmaj, 10);
-                const bj = parseInt(bmin, 10);
-                if (ai !== bi) return bi - ai; // major desc
-                return bj - aj; // minor desc
-              };
-
-              const sorted = [...mmTags].sort(semverSort);
-              core.info('Sorted matching tags (desc): ' + JSON.stringify(sorted));
-
-              const picked = sorted.slice(0, 2);
-              core.info('Picked latest two: ' + JSON.stringify(picked));
-              if (picked.length === 0) {
-                core.warning('No tags matched the pattern vX.Y. Is your repo using tags like vX.Y.Z?');
-              }
-
-              for (const name of picked) {
-                versions.push({ version: name, branch: name });
-              }
-
-              const matrix = { include: versions };
-              core.setOutput('matrix', JSON.stringify(matrix));
-              core.info( 'Final matrix: ' + JSON.stringify(matrix, null, 2));
-              core.endGroup();
-            } catch (err) {
-              core.error( 'Error while computing versions matrix: ' + (err && err.stack ? err.stack : err));
-              throw err;
-            }
-  # Separate job for push events that builds all versions
   build-docs-push:
     if: github.event_name == 'push'
-    needs: determine-versions
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
       contents: read
-    strategy:
-      matrix: ${{ fromJson(needs.determine-versions.outputs.matrix) }}
     steps:
        - name: Checkout repository
          uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
-         with:
-           ref: ${{ matrix.branch }}
 
        - name: Harden Runner
          uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
          with:
            egress-policy: audit
            disable-telemetry: true
-
-       - name: Get master config files
-         if: matrix.version != 'master'
-         run: |
-           git fetch $GITHUB_SERVER_URL/$GITHUB_REPOSITORY master --depth=1 || true
-           git show FETCH_HEAD:doc/fulldoc.conf.in > doc/fulldoc.conf.in.master 2>/dev/null || true
-           git show FETCH_HEAD:doc/htmldoc/static/css/doxygen-awesome.css > doc/htmldoc/static/css/doxygen-awesome.css.master 2>/dev/null || true
-           if [ ! -s doc/fulldoc.conf.in.master ]; then
-             echo "Using current branch doxyfile (master version not available)"
-             cp doc/fulldoc.conf.in doc/fulldoc.conf.in.master 2>/dev/null || true
-           fi
 
        - name: Install dependencies
          run: |
@@ -146,25 +63,21 @@ jobs:
 
        - name: Configure with CMake
          run: |
-           mkdir -p build-${{ matrix.version }}
-           cd build-${{ matrix.version }}
-           if [ "${{ matrix.version }}" != "master" ] && [ -f ../doc/fulldoc.conf.in.master ]; then
-             cp ../doc/fulldoc.conf.in.master ../doc/fulldoc.conf.in
-             cp ../doc/htmldoc/static/css/doxygen-awesome.css.master ../doc/htmldoc/static/css/doxygen-awesome.css 2>/dev/null || true
-           fi
+           mkdir -p build
+           cd build
            cmake -Dwith-devdoc=ON -Dwith-python=OFF ..
            sed -i "s|^PLANTUML_JAR_PATH.*|PLANTUML_JAR_PATH      = $GITHUB_WORKSPACE/plantuml.jar|" doc/fulldoc.conf
 
        - name: Generate Doxygen documentation
          run: |
-           cd build-${{ matrix.version }}
+           cd build
            doxygen doc/fulldoc.conf
 
-       - name: Upload docs artifact ${{ matrix.version }}
+       - name: Upload docs artifact
          uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
          with:
-           name: docs-${{ matrix.version }}
-           path: build-${{ matrix.version }}/doc/doxygen/html/
+           name: docs-main
+           path: build/doc/doxygen/html/
 
   prepare-pages:
     needs: build-docs-push
@@ -173,11 +86,11 @@ jobs:
     permissions:
       contents: read
     steps:
-      - name: Download all docs artifacts
+      - name: Download docs artifact
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
-          path: artifacts
-          pattern: docs-*
+          name: docs-main
+          path: _site
 
       - name: Harden Runner
         uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
@@ -185,54 +98,7 @@ jobs:
           egress-policy: audit
           disable-telemetry: true
 
-      # Combine all versions' artifacts into 1 because GitHub pages requires a single deployment
-      - name: Prepare combined site directory
-        run: |
-          set -euo pipefail
-          mkdir -p _site
-          shopt -s nullglob
-          for d in artifacts/docs-*; do
-            version=${d#artifacts/docs-}
-            mkdir -p "_site/${version}"
-            # Copy doxygen HTML to versioned folder
-            if [ -d "${d}/html" ]; then
-              cp -r "${d}/html"/* "_site/${version}/"
-            fi
-          done
-          # Dynamic index listing built versions
-          cat > _site/index.html << 'HTML_HEAD'
-          <!doctype html>
-          <html>
-            <head>
-              <meta charset="utf-8" />
-              <meta name="viewport" content="width=device-width, initial-scale=1" />
-              <title>NEST Simulator Documentation</title>
-              <style>
-                body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 40px; }
-                a { display:inline-block; margin: 8px 12px; padding: 10px 14px; background:#ff6633; color:#fff; border-radius:6px; text-decoration:none; }
-                a:hover { background:#072f42; }
-                h1 { margin-bottom: 20px; }
-                h2 { margin-top: 30px; }
-              </style>
-            </head>
-            <body>
-              <h1>NEST Simulator Documentation</h1>
-              <h2>C++ API (Doxygen)</h2>
-              <p>Select a version:</p>
-              <div>
-          HTML_HEAD
-          for d in $(ls -1 _site | sort -Vr); do
-            if [ -d "_site/$d" ]; then
-              echo "                <a href=\"$d/\">$d</a>" >> _site/index.html
-            fi
-          done
-          cat >> _site/index.html << 'HTML_FOOT'
-              </div>
-            </body>
-          </html>
-          HTML_FOOT
-
-      - name: Upload Pages artifact (combined)
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:
           path: _site
@@ -272,51 +138,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
         with:
-          fetch-depth: 0  # Need full history to compare with base branch
+          fetch-depth: 1
 
       - name: Harden Runner
         uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
         with:
           egress-policy: audit
           disable-telemetry: true
-
-      - name: Check which config files changed
-        id: check-changes
-        run: |
-          git fetch origin ${{ github.base_ref }} --depth=1
-          # Check if Doxyfile or CSS changed in this PR
-          DOXYFILE_CHANGED=false
-          CSS_CHANGED=false
-
-          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q "^doc/fulldoc.conf.in$"; then
-            DOXYFILE_CHANGED=true
-            echo "Doxyfile changed in this PR"
-          fi
-
-          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q "^doc/htmldoc/static/css/doxygen-awesome.css$"; then
-            CSS_CHANGED=true
-            echo "CSS file changed in this PR"
-          fi
-
-          echo "doxyfile_changed=$DOXYFILE_CHANGED" >> $GITHUB_OUTPUT
-          echo "css_changed=$CSS_CHANGED" >> $GITHUB_OUTPUT
-
-      - name: Get master config files (if not changed in PR)
-        if: steps.check-changes.outputs.doxyfile_changed != 'true' || steps.check-changes.outputs.css_changed != 'true'
-        run: |
-          git fetch $GITHUB_SERVER_URL/$GITHUB_REPOSITORY master --depth=1 || true
-          if [ "${{ steps.check-changes.outputs.doxyfile_changed }}" != "true" ]; then
-            git show FETCH_HEAD:doc/fulldoc.conf.in > $RUNNER_TEMP/fulldoc.conf.in.master 2>/dev/null || true
-            if [ -s $RUNNER_TEMP/fulldoc.conf.in.master ]; then
-              echo "Using master Doxyfile (not changed in PR)"
-            else
-              echo "Master Doxyfile not available, using current"
-            fi
-          fi
-          if [ "${{ steps.check-changes.outputs.css_changed }}" != "true" ]; then
-            git show FETCH_HEAD:doc/htmldoc/static/css/doxygen-awesome.css > $RUNNER_TEMP/doxygen-awesome.css.master 2>/dev/null || true
-            echo "Using master CSS (not changed in PR)"
-          fi
 
       - name: Install dependencies
         run: |
@@ -332,30 +160,18 @@ jobs:
 
       - name: Configure with CMake
         run: |
-          mkdir -p build-${{ github.run_id }}
-          cd build-${{ github.run_id }}
-          if [ "${{ steps.check-changes.outputs.doxyfile_changed }}" != "true" ] && [ -f $RUNNER_TEMP/fulldoc.conf.in.master ]; then
-            cp $RUNNER_TEMP/fulldoc.conf.in.master ../doc/fulldoc.conf.in
-            echo "Copied master Doxyfile"
-          else
-            echo "Using PR version of Doxyfile for preview"
-          fi
-          if [ "${{ steps.check-changes.outputs.css_changed }}" != "true" ] && [ -f $RUNNER_TEMP/doxygen-awesome.css.master ]; then
-            cp $RUNNER_TEMP/doxygen-awesome.css.master ../doc/htmldoc/static/css/doxygen-awesome.css
-            echo "Copied master CSS"
-          else
-            echo "Using PR version of CSS for preview"
-          fi
+          mkdir -p build
+          cd build
           cmake -Dwith-devdoc=ON -Dwith-python=OFF ..
           sed -i "s|^PLANTUML_JAR_PATH.*|PLANTUML_JAR_PATH      = $GITHUB_WORKSPACE/plantuml.jar|" doc/fulldoc.conf
 
       - name: Generate Doxygen documentation
         run: |
-          cd build-${{ github.run_id }}
+          cd build
           doxygen doc/fulldoc.conf
 
       - name: Upload docs artifact
         uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
         with:
           name: docs-${{ github.run_id }}
-          path: build-${{ github.run_id }}/doc/doxygen/html/
+          path: build/doc/doxygen/html/

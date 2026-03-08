@@ -36,18 +36,15 @@ Images go in `doc/devdoc/static/img/` and can be embedded with:
 
 ### Linking to C++ Symbols
 
-From any markdown page you can link directly to C++ documentation using the
-`\ref` command:
+From any markdown page you can link directly to C++ documentation:
 
 | Target | Syntax | Example |
 |--------|--------|---------|
-| Class | `\ref ClassName` | `\ref KernelManager` |
-| Method | `\ref ClassName::method` | `\ref KernelManager::get_node` |
-| Namespaced class | `\ref ns::ClassName` | `\ref nest::Node` |
-| File page | `\ref path/to/file.h` | `\ref nestkernel/node.h` |
-| `\defgroup` group | `\ref group_name` | `\ref user_interface` |
+| Namespaced class | `ns::ClassName` | `nest::Node` |
+| Method | `ns::ClassName::method()` | ` nest::SimulationManager::has_been_simulated()` |
+| File page | ` path/to/file.h` | `nestkernel/node.h` |
 
 The path for file links must match what is listed in the Doxygen `INPUT`
 setting relative to the source root (e.g. `nestkernel/kernel_manager.h`).
-Group names are defined with `\defgroup` in header files and are used
-extensively throughout the NEST kernel headers.
+Always qualify class and method names with their namespace; unqualified names
+are not resolved from markdown pages. Method links require trailing `()`.

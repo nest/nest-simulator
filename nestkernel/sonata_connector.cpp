@@ -29,11 +29,15 @@
 #include <string>
 #include <vector>
 
+#include "H5Cpp.h"
+
 // Includes from libnestutil
 #include "dict_util.h"
+
 // Includes from nestkernel:
-#include "H5Cpp.h"
+#include "connection_manager.h"
 #include "kernel_manager.h"
+#include "model_manager.h"
 #include "nest.h"
 #include "node_manager.h"
 

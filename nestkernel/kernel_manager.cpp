@@ -183,10 +183,6 @@ KernelManager::KernelManager()
 
 KernelManager::~KernelManager()
 {
-  if ( initialized_ )
-  {
-    KernelManager::finalize();
-  }
 }
 
 void
@@ -250,6 +246,7 @@ KernelManager::change_number_of_threads( size_t new_num_threads )
   assert( not kernel::manager< SimulationManager >.has_been_simulated() );
   assert( not kernel::manager< SPManager >.is_structural_plasticity_enabled() or new_num_threads == 1 );
 
+  // Finalize in reverse order of initialization with old thread number set
   for ( auto it = managers.rbegin(); it != managers.rend(); ++it )
   {
     ( *it )->finalize( /* adjust_number_of_threads_or_rng_only */ true );

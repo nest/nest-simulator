@@ -68,8 +68,6 @@ ModelManager::ModelManager()
 
 ModelManager::~ModelManager()
 {
-  clear_connection_models_();
-  clear_node_models_();
 }
 
 void

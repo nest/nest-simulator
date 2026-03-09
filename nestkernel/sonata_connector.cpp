@@ -56,7 +56,6 @@ SonataConnector::SonataConnector( const Dictionary& graph_specs, const long hype
 
 SonataConnector::~SonataConnector()
 {
-  edge_type_id_2_syn_spec_.clear();
 }
 
 void

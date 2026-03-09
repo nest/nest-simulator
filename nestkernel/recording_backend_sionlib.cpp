@@ -33,9 +33,11 @@
 #include "compose.hpp"
 
 // Includes from nestkernel:
+#include "event.h"
 #include "io_manager.h"
 #include "logging.h"
 #include "logging_manager.h"
+#include "nest_names.h"
 #include "recording_backend_sionlib.h"
 #include "recording_device.h"
 #include "simulation_manager.h"

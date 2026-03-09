@@ -25,6 +25,7 @@
 
 // C++ includes:
 #include <cassert>
+#include <chrono>
 #include <iostream>
 #include <vector>
 
@@ -59,21 +60,6 @@ enum class StopwatchParallelism
   MasterOnly,  //!< Only the master thread owns a stopwatch
   Threaded     //!< Every thread measures an individual stopwatch
 };
-
-/**
- * This template has two template arguments. The first one "detailed_timer" controls the granularity of the stopwatch,
- * i.e., if the timer is considered a normal or detailed timer. The second one "threaded_timer" defines if the timer is
- * supposed to be measured by each thread individually. In case a timer is specified as threaded, but threaded timers
- * are turned off globally, the stopwatch will run in master-only mode instead.
- *
- * In all cases, both the (monotonic) wall-time and cpu time are measured.
- *
- * Note: Forward class declaration required here because friend declaration in timers::StopwatchTimer must refer to
- * nest::Stopwatch to be correct, and that requires the name to be known from before. See
- * https://stackoverflow.com/questions/30418270/clang-bug-namespaced-template-class-friend for details.
- */
-template < StopwatchGranularity, StopwatchParallelism >
-class Stopwatch;
 
 /********************************************************************************
  * Stopwatch                                                                    *
@@ -123,9 +109,6 @@ enum class timeunit_t : size_t
 template < clockid_t clock_type >
 class StopwatchTimer
 {
-  template < StopwatchGranularity, StopwatchParallelism >
-  friend class nest::Stopwatch;
-
 public:
   //! Creates a stopwatch that is not running.
   StopwatchTimer()
@@ -268,23 +251,63 @@ operator<<( std::ostream& os, const StopwatchTimer< clock_type >& stopwatch )
 
 }  // namespace timers
 
+struct NoOpStopwatch
+{
+  constexpr void
+  start() noexcept
+  {
+  }
+  constexpr void
+  stop() noexcept
+  {
+  }
+  constexpr void
+  reset() noexcept
+  {
+  }
+  constexpr bool
+  is_running_() const noexcept
+  {
+    return false;
+  }
+  void
+  print( const std::string&, timers::timeunit_t, std::ostream& ) const
+  {
+  }
+  constexpr double
+  elapsed() const noexcept
+  {
+    return std::numeric_limits< double >().quiet_NaN();
+  }
+  constexpr double
+  elapsed( timers::timeunit_t ) const noexcept
+  {
+    return std::numeric_limits< double >().quiet_NaN();
+  }
+};
 
-//! Stopwatch template specialization.
+/**
+ * This template has two template arguments. The first one "detailed_timer" controls the granularity of the stopwatch,
+ * i.e., if the timer is considered a normal or detailed timer. The second one "threaded_timer" defines if the timer is
+ * supposed to be measured by each thread individually. In case a timer is specified as threaded, but threaded timers
+ * are turned off globally, the stopwatch will run in master-only mode instead.
+ *
+ * In all cases, both the (monotonic) wall-time and cpu time are measured.
+ */
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
 class Stopwatch
 {
   static constexpr bool enable_timer = detailed_timer == StopwatchGranularity::Normal or use_detailed_timers;
   static constexpr bool use_timer_array = threaded_timer == StopwatchParallelism::Threaded and use_threaded_timers;
 
-  // Define StopwatchTimetType< ClockType > depending on timer compilation switches
-  // The outer conditional selects the empty type std::tuple<> is enable_timer is false, otherwise it selects the inner
-  // conditional. The inner conditional selects a vector of timers if use_timer_array is true, a single timer otherwise.
+  // Define StopwatchTimerType< ClockType > depending on timer compilation switches
   template < clockid_t ClockType >
-  using StopwatchTimerType = std::conditional_t< enable_timer,
-    std::conditional_t< use_timer_array,
-      std::vector< timers::StopwatchTimer< ClockType > >,
-      timers::StopwatchTimer< ClockType > >,
-    std::tuple<> >;
+  using InternalTimerType = std::conditional_t< use_timer_array,
+    std::vector< timers::StopwatchTimer< ClockType > >,
+    timers::StopwatchTimer< ClockType > >;
+  // If enabled, use InternalTimerType, otherwise use NoOpStopwatch.
+  template < clockid_t ClockType >
+  using StopwatchTimerType = std::conditional_t< enable_timer, InternalTimerType< ClockType >, NoOpStopwatch >;
 
 public:
   void start();
@@ -305,8 +328,9 @@ private:
   bool is_running_() const;
 
   // We use a monotonic timer to make sure the stopwatch is not influenced by time jumps (e.g. summer/winter time).
-  StopwatchTimerType< CLOCK_MONOTONIC > walltime_timer_;
-  StopwatchTimerType< CLOCK_THREAD_CPUTIME_ID > cputime_timer_;
+  // [[no_unique_address]] ensures these take up 0 bytes in case the NoOp version is used.
+  [[no_unique_address]] StopwatchTimerType< CLOCK_MONOTONIC > walltime_timer_;
+  [[no_unique_address]] StopwatchTimerType< CLOCK_THREAD_CPUTIME_ID > cputime_timer_;
 };
 
 } /* namespace nest */

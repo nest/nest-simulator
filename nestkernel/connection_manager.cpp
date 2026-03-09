@@ -68,6 +68,9 @@
 #include "secondary_event.h"
 #include "send_buffer_position.h"
 #include "simulation_manager.h"
+#ifdef HAVE_HDF5
+#include "sonata_connector.h"
+#endif
 #include "source_table.h"
 #include "sp_manager.h"
 #include "spike_data.h"

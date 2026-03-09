@@ -202,67 +202,29 @@ get_nc_status( NodeCollectionPTR nc )
   for ( auto it = nc->begin(); it < nc->end(); ++it, ++node_index )
   {
     const auto node_status = get_node_status( ( *it ).node_id );
-
-    for ( const auto& kv_pair : node_status )
+    for ( const auto& [ key, entry ] : node_status )
     {
-      // Visit the variant to determine type T
-      std::visit(
-        overloaded { [ &result, &kv_pair, num_nodes, node_index ]( const auto& val )
-          {
-            using T = std::decay_t< decltype( val ) >;
-
-            auto map_it = result.find( kv_pair.first );
-
-            if ( map_it == result.end() )
-            {
-              std::vector< T > vec( num_nodes, default_result_value< T >() );
-              result[ kv_pair.first ] = std::move( vec );
-
-              // TODO: Fix to avoid running find again
-              map_it = result.find( kv_pair.first );
-            }
-
-            try
-            {
-              // Throws std::bad_variant_access if Node N has a different type than Node 0 (e.g., int vs
-              // double)
-              auto& vec = std::get< std::vector< T > >( map_it->second.item );
-              vec[ node_index ] = val;
-            }
-            catch ( const std::bad_variant_access& )
-            {
-              throw std::runtime_error( String::compose(
-                "Type mismatch detected for key '%1' at index %2. Retrieving node collection status data "
-                "for heterogeneous collections as long as nodes have the same data types "
-                "for properties of the same name.",
-                kv_pair.first,
-                node_index ) );
-            }
-          },
-          [ &kv_pair, node_index ]< typename Q >( const std::vector< std::vector< std::vector< std::vector< Q > > > >& )
-          {
-            throw std::runtime_error(
-              String::compose( "IDX %1: Key '%2', vvvvQ", std::to_string( node_index ), kv_pair.first ) );
-          },
-          [ &kv_pair, node_index ]( const std::vector< std::shared_ptr< nest::NodeCollection > >& )
-          {
-            throw std::runtime_error(
-              String::compose( "IDX %1: Key '%2', vNC", std::to_string( node_index ), kv_pair.first ) );
-          },
-          [ &kv_pair, node_index ]( const std::shared_ptr< nest::Parameter >& ) {
-            throw std::runtime_error(
-              String::compose( "IDX %1: Key '%2', P", std::to_string( node_index ), kv_pair.first ) );
-          },
-          [ &kv_pair, node_index ]( const VerbosityLevel& ) {
-            throw std::runtime_error(
-              String::compose( "IDX %1: Key '%2', VL", std::to_string( node_index ), kv_pair.first ) );
-          },
-          [ &kv_pair, node_index ]( const EmptyList& )
-          {
-            throw std::runtime_error(
-              String::compose( "IDX %1: Key '%2', EL", std::to_string( node_index ), kv_pair.first ) );
-          } },
-        kv_pair.second.item );
+      const auto p = result.find( key );
+      if ( p != result.end() )
+      {
+        // key exists
+        try
+        {
+          auto& v = std::get< AnyVector >( p->second.item );
+          v[ node_index ] = entry.item;
+        }
+        catch ( const std::bad_variant_access& e )
+        {
+          throw std::runtime_error( "did not find anyvector" );
+        }
+      }
+      else
+      {
+        // key does not exist yet
+        auto new_entry = AnyVector( num_nodes );
+        new_entry[ node_index ] = entry.item;
+        result[ key ] = new_entry;
+      }
     }
   }
 

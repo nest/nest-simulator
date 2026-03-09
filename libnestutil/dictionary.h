@@ -39,7 +39,7 @@
 
 class dictionary_;
 class Dictionary;
-
+class AnyVector;
 namespace nest
 {
 class Parameter;
@@ -62,7 +62,8 @@ template < typename... Scalars >
 struct DictionarySchemaBuilder
 {
   template < typename... Extras >
-  using VariantType = std::variant< Scalars...,              // scalar types
+  using VariantType = std::variant< std::monostate,
+    Scalars...,                                              // scalar types
     std::vector< Scalars >...,                               // vector variants of the scalar types
     std::vector< std::vector< Scalars > >...,                // vector-vector variants of the scalar types
     std::vector< std::vector< std::vector< Scalars > > >..., // vector-vector variants of the scalar types
@@ -78,7 +79,18 @@ using any_type = DictionarySchema::VariantType< std::shared_ptr< nest::NodeColle
   std::vector< std::shared_ptr< nest::NodeCollection > >,
   std::shared_ptr< nest::Parameter >,
   nest::VerbosityLevel,
+  AnyVector,
   EmptyList >;
+
+class AnyVector : public std::vector< any_type >
+{
+  using vectype_ = std::vector< any_type >;
+  using vectype_::vectype_; // Inherit constructors
+};
+
+std::ostream& operator<<( std::ostream& os, const std::monostate& );
+
+std::ostream& operator<<( std::ostream& os, const AnyVector& av );
 
 
 // Define a simple Concept for "Integer Integers" (excluding bool and char)

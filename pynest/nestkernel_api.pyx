@@ -147,6 +147,15 @@ cdef object dictionary_to_pydict(Dictionary cdict):
         inc(it)
     return tmp
 
+cdef anyvec_to_objtuple(any_type operand):
+    cdef AnyVector a_vec = get[AnyVector](operand)
+    cdef tmp = []
+    cdef vector[any_type].const_iterator it = a_vec.begin()
+    while it != a_vec.end():
+        tmp.append(any_to_pyobj(deref(it)))
+        inc(it)
+    return tmp
+
 cdef object any_to_pyobj(any_type operand):
     cdef NodeCollectionPTR ncptr
 
@@ -208,6 +217,10 @@ cdef object any_to_pyobj(any_type operand):
             obj._set_nc(ncptr)
             res.append(nest.NodeCollection(obj))
         return res
+    if holds_alternative[monostate](operand):
+        return None
+    if holds_alternative[AnyVector](operand):
+        return anyvec_to_objtuple(operand)
 
     if holds_alternative[VerbosityLevel](operand):
         return get[VerbosityLevel](operand)

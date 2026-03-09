@@ -61,6 +61,7 @@ cdef extern from "dictionary.h":
 cdef extern from "dictionary.h" namespace "std":
     T get[T](any_type& operand)
     cbool holds_alternative[T](const any_type&)
+    struct monostate
 
 
 cdef extern from "dictionary.h":
@@ -72,6 +73,9 @@ cdef extern from "dictionary.h":
         cbool known(const string&)
     string debug_type(const any_type&)
     string debug_dict_types(const Dictionary&)
+    cppclass AnyVector:
+        vector[any_type].const_iterator begin()
+        vector[any_type].const_iterator end()
 
 
 cdef extern from "logging.h" namespace "nest":

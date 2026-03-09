@@ -239,6 +239,26 @@ operator<<( std::ostream& os, const Dictionary& dict )
   return os << "}";
 }
 
+std::ostream&
+operator<<( std::ostream& os, const std::monostate& )
+{
+  os << "None";
+  return os;
+}
+
+std::ostream&
+operator<<( std::ostream& os, const AnyVector& av )
+{
+  os << "[";
+  for ( auto v : av )
+  {
+    std::visit( []( const auto& arg ) { std::cout << arg << " "; }, v );
+  }
+  os << "\b]";
+  return os;
+}
+
+
 /**
  * Return true only if first and second both hold type T and compare equal as T.
  */

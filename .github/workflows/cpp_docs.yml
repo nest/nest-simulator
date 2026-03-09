@@ -49,17 +49,28 @@ jobs:
            egress-policy: audit
            disable-telemetry: true
 
+       - name: Cache Doxygen and PlantUML
+         id: cache-deps
+         uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+         with:
+           path: |
+             doxygen-${{ env.DOXYGEN_VERSION }}
+             ${{ github.workspace }}/plantuml.jar
+           key: doxygen-${{ env.DOXYGEN_VERSION }}-plantuml-${{ env.PLANTUML_SHA256 }}
+
        - name: Install dependencies
          run: |
            sudo apt-get update
            sudo apt-get install -y graphviz cmake build-essential default-jre-headless
-           DOXYGEN_TAG=$(echo "$DOXYGEN_VERSION" | tr '.' '_')
-           wget -q "https://github.com/doxygen/doxygen/releases/download/Release_${DOXYGEN_TAG}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz" -O doxygen.tar.gz
-           echo "$DOXYGEN_SHA256  doxygen.tar.gz" | sha256sum -c
-           tar -xzf doxygen.tar.gz
+           if [ "${{ steps.cache-deps.outputs.cache-hit }}" != "true" ]; then
+             DOXYGEN_TAG=$(echo "$DOXYGEN_VERSION" | tr '.' '_')
+             wget -q "https://github.com/doxygen/doxygen/releases/download/Release_${DOXYGEN_TAG}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz" -O doxygen.tar.gz
+             echo "$DOXYGEN_SHA256  doxygen.tar.gz" | sha256sum -c
+             tar -xzf doxygen.tar.gz
+             wget -q "$PLANTUML_JAR_URL" -O "$GITHUB_WORKSPACE/plantuml.jar"
+             echo "$PLANTUML_SHA256  $GITHUB_WORKSPACE/plantuml.jar" | sha256sum -c
+           fi
            sudo install "doxygen-${DOXYGEN_VERSION}/bin/doxygen" /usr/local/bin/doxygen
-           wget -q "$PLANTUML_JAR_URL" -O "$GITHUB_WORKSPACE/plantuml.jar"
-           echo "$PLANTUML_SHA256  $GITHUB_WORKSPACE/plantuml.jar" | sha256sum -c
 
        - name: Configure with CMake
          run: |
@@ -67,6 +78,8 @@ jobs:
            cd build
            cmake -Dwith-devdoc=ON -Dwith-python=OFF ..
            sed -i "s|^PLANTUML_JAR_PATH.*|PLANTUML_JAR_PATH      = $GITHUB_WORKSPACE/plantuml.jar|" doc/fulldoc.conf
+           GIT_HASH=$(git rev-parse --short HEAD)
+           sed -i "s|^PROJECT_NUMBER.*|PROJECT_NUMBER         = main@${GIT_HASH}|" doc/fulldoc.conf
 
        - name: Generate Doxygen documentation
          run: |
@@ -146,17 +159,28 @@ jobs:
           egress-policy: audit
           disable-telemetry: true
 
+      - name: Cache Doxygen and PlantUML
+        id: cache-deps
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: |
+            doxygen-${{ env.DOXYGEN_VERSION }}
+            ${{ github.workspace }}/plantuml.jar
+          key: doxygen-${{ env.DOXYGEN_VERSION }}-plantuml-${{ env.PLANTUML_SHA256 }}
+
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y graphviz cmake build-essential default-jre-headless
-          DOXYGEN_TAG=$(echo "$DOXYGEN_VERSION" | tr '.' '_')
-          wget -q "https://github.com/doxygen/doxygen/releases/download/Release_${DOXYGEN_TAG}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz" -O doxygen.tar.gz
-          echo "$DOXYGEN_SHA256  doxygen.tar.gz" | sha256sum -c
-          tar -xzf doxygen.tar.gz
+          if [ "${{ steps.cache-deps.outputs.cache-hit }}" != "true" ]; then
+            DOXYGEN_TAG=$(echo "$DOXYGEN_VERSION" | tr '.' '_')
+            wget -q "https://github.com/doxygen/doxygen/releases/download/Release_${DOXYGEN_TAG}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz" -O doxygen.tar.gz
+            echo "$DOXYGEN_SHA256  doxygen.tar.gz" | sha256sum -c
+            tar -xzf doxygen.tar.gz
+            wget -q "$PLANTUML_JAR_URL" -O "$GITHUB_WORKSPACE/plantuml.jar"
+            echo "$PLANTUML_SHA256  $GITHUB_WORKSPACE/plantuml.jar" | sha256sum -c
+          fi
           sudo install "doxygen-${DOXYGEN_VERSION}/bin/doxygen" /usr/local/bin/doxygen
-          wget -q "$PLANTUML_JAR_URL" -O "$GITHUB_WORKSPACE/plantuml.jar"
-          echo "$PLANTUML_SHA256  $GITHUB_WORKSPACE/plantuml.jar" | sha256sum -c
 
       - name: Configure with CMake
         run: |
@@ -164,6 +188,8 @@ jobs:
           cd build
           cmake -Dwith-devdoc=ON -Dwith-python=OFF ..
           sed -i "s|^PLANTUML_JAR_PATH.*|PLANTUML_JAR_PATH      = $GITHUB_WORKSPACE/plantuml.jar|" doc/fulldoc.conf
+          GIT_HASH=$(git rev-parse --short HEAD)
+          sed -i "s|^PROJECT_NUMBER.*|PROJECT_NUMBER         = main@${GIT_HASH}|" doc/fulldoc.conf
 
       - name: Generate Doxygen documentation
         run: |

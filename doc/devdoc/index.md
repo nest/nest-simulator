@@ -15,7 +15,14 @@ material relevant to contributors working on the NEST source code.
 - \subpage devdoc_coding_conventions "Coding Conventions" — C++ style rules,
   naming schemes, and patterns used throughout the codebase.
 
-## Contributing to This Documentation
+### C++ code documentation
+
+- \ref nest "nest namespace"
+- [Class List](annotated.html)
+- [Namespaces](namespaces.html)
+- [File list](files.html)
+
+## Contribute to developer documentation
 
 Add or update pages in `doc/devdoc/` as markdown (`.md`) files. Each file
 should begin with a level-1 heading followed by a Doxygen page label:

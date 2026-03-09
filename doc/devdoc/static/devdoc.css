@@ -1,0 +1,8 @@
+/* NEST developer documentation – extra styles */
+
+/* Branch banner (injected by footer.html) */
+#devdoc-branch-banner {
+    font-size: 1em;
+    padding: 8px 20px;
+    font-weight: 500;
+}

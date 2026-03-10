@@ -9,16 +9,16 @@ on:
       - '**/*.cpp'
       - '**/*.h'
       - 'doc/fulldoc.conf.in'
-      - 'doc/htmldoc/static/css/doxygen-awesome.css'
-      - 'doc/devdoc/**'
+      - 'doc/developer_space/static/css/doxygen-awesome.css'
+      - 'doc/developer_space/**'
   push:
     paths:
       - '.github/workflows/cpp_docs.yml'
       - '**/*.cpp'
       - '**/*.h'
       - 'doc/fulldoc.conf.in'
-      - 'doc/htmldoc/static/css/doxygen-awesome.css'
-      - 'doc/devdoc/**'
+      - 'doc/developer_space/static/css/doxygen-awesome.css'
+      - 'doc/developer_space/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

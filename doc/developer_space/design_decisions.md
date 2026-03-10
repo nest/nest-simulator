@@ -44,7 +44,7 @@ what technical debt is incurred.
 
 ### Use of the KernelManager singleton
 
-**Date:** (historical)
+**Date:** pre-NEST 3.0 (exact date unknown)
 **Status:** Accepted
 
 **Context:**

@@ -15,6 +15,9 @@ material relevant to contributors working on the NEST source code.
 - \subpage devdoc_coding_conventions "Coding Conventions" — C++ style rules,
   naming schemes, and patterns used throughout the codebase.
 
+- \subpage devdoc_workflow "Developer Documentation Workflow" — How to write
+  Doxygen comments, build docs locally, and review the CI artifact on pull requests.
+
 ### C++ code documentation
 
 - \ref nest "nest namespace"
@@ -24,7 +27,7 @@ material relevant to contributors working on the NEST source code.
 
 ## Contribute to developer documentation
 
-Add or update pages in `doc/devdoc/` as markdown (`.md`) files. Each file
+Add or update pages in `doc/developer_space/` as markdown (`.md`) files. Each file
 should begin with a level-1 heading followed by a Doxygen page label:
 
 ```markdown
@@ -35,7 +38,7 @@ To nest the page under this index in the HTML tree nav, add it to this file
 using `\subpage devdoc_my_page "Link text"`. For cross-references from other
 pages (not intended as children), use `\ref devdoc_my_page "Link text"`.
 
-Images go in `doc/devdoc/static/img/` and can be embedded with:
+Images go in `doc/developer_space/static/img/` and can be embedded with:
 
 ```markdown
 ![Alt text](static/img/my_image.png)

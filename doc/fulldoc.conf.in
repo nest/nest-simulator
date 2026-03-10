@@ -61,7 +61,7 @@ PROJECT_BRIEF          =
 # pixels and the maximum width should not exceed 200 pixels. Doxygen will copy
 # the logo to the output directory.
 
-PROJECT_LOGO           =
+PROJECT_LOGO           =  @PROJECT_SOURCE_DIR@/doc/htmldoc/static/img/nest_logo.png
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) path
 # into which the generated documentation will be written. If a relative path is
@@ -1311,7 +1311,6 @@ HTML_FILE_EXTENSION    = .html
 
 HTML_HEADER            =
 
-HTML_LOGO              = @PROJECT_SOURCE_DIR@/doc/htmldoc/static/img/nest_logo.png
 
 # The HTML_FOOTER tag can be used to specify a user-defined HTML footer for each
 # generated HTML page. If the tag is left blank doxygen will generate a standard

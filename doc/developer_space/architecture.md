@@ -23,7 +23,7 @@ Key classes:
 The Python interface (`pynest/`) wraps the C++ kernel via a compiled C
 extension module. High-level API functions are implemented in Python in
 `pynest/nest/lib/`. PyNEST calls into the kernel directly using the
-`nest::` C++ API — there is no intermediate scripting layer.
+`nest::` C++ API.
 
 ### Models
 

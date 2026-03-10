@@ -55,7 +55,7 @@ if ( !vec.empty() )     // avoid
 
 No space before a semicolon: `return a + 3;`
 
-### Function signatures (`.cpp` files)
+### Function signatures (.cpp files)
 
 Put a line break after the return type. Parameters either all fit on one line, or
 each goes on its own line:

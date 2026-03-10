@@ -69,7 +69,8 @@ global state) must be handled explicitly inside each manager.
 
 ### Disentangle Kernel-Manager Include Tree (PR #3544)
 
-**Date:** 2024 (merged for NEST 3.10)
+**Date Created:** 09.08.25
+**Date Merged:**
 **Status:** Accepted
 
 **Context:**

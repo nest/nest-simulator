@@ -328,5 +328,4 @@ has a nice help page that outlines the process for
 `submitting pull requests
 <https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests#initiating-the-pull-request>`_.
 
-Please check out our :ref:`coding style guidelines <code_style_cpp>` and
-:ref:`code review guidelines <code_guidelines>` prior to submitting it.
+Please check out our :ref:`code review guidelines <code_guidelines>` prior to submitting it.

@@ -18,15 +18,17 @@ The C++ developer documentation is deployed to GitHub Pages:
 
 - https://nest.github.io/nest-simulator/index.html
 
-You can view the latest master version along with the 2 most recent releases of NEST.
+Note that you are viewing the documentation in the main branch, which has
+active development.
 
 ## GitHub workflow on pull request
 
 If you create a pull request against `nest/nest-simulator` and have modified
 
 - any C++ file (`*.cpp`, `*.h`),
-- the Doxygen config file (`doc/fulldoc.conf.in`), or
-- the Doxygen CSS file (`doc/developer_space/static/css/doxygen-awesome.css`),
+- the Doxygen config file (`doc/fulldoc.conf.in`),
+- the Doxygen CSS file (`doc/developer_space/static/css/doxygen-awesome.css`), or
+- any file under `doc/developer_space/` (including these markdown pages),
 
 then GitHub will build the C++ documentation and upload it as an artifact. You can download
 and view the HTML pages locally.
@@ -41,9 +43,8 @@ and view the HTML pages locally.
 4. Click the artifact name to download it as a ZIP file.
 5. Extract the ZIP file and open `index.html` in your web browser.
 
-> **Note:** If you modified `doc/fulldoc.conf.in` or `doc/developer_space/static/css/doxygen-awesome.css`
-> in your PR, the artifact will reflect your modified configuration, allowing you to preview how
-> the changes affect the documentation appearance.
+> **Note:** The artifact reflects the full built output from your PR, including any changes to
+> `doc/fulldoc.conf.in`, stylesheets, or markdown pages under `doc/developer_space/`.
 
 ## Local build
 
@@ -54,9 +55,16 @@ and view the HTML pages locally.
    sudo apt install doxygen graphviz
    ```
 
-   > **Note:** CI uses Doxygen **1.12.0**. The version shipped by `apt` is typically older
-   > and may produce slightly different output. For exact parity with CI, download the
-   > matching release from the [Doxygen GitHub releases page](https://github.com/doxygen/doxygen/releases/tag/Release_1_12_0).
+   > **Note:** The version shipped by `apt` is typically older than what CI uses and may
+   > produce slightly different output. For exact parity with CI, download the matching
+   > release:
+   > ```bash
+   > DOXYGEN_VERSION=$(grep 'DOXYGEN_VERSION:' .github/workflows/cpp_docs.yml | awk '{print $2}')
+   > DOXYGEN_TAG=$(echo "$DOXYGEN_VERSION" | tr '.' '_')
+   > wget "https://github.com/doxygen/doxygen/releases/download/Release_${DOXYGEN_TAG}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz"
+   > tar -xzf "doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz"
+   > sudo install "doxygen-${DOXYGEN_VERSION}/bin/doxygen" /usr/local/bin/doxygen
+   > ```
 
    macOS ([Homebrew](https://brew.sh/)):
    ```bash
@@ -71,13 +79,38 @@ and view the HTML pages locally.
    cmake -Dwith-devdoc=ON <path/to/source>
    ```
 
-4. Generate HTML:
+4. **Optional — render PlantUML diagrams.**
+
+   Without this step, `\startuml`...`\enduml` blocks (e.g. the subsystem diagram in
+   `architecture.md`) will be silently skipped and left blank in the output.
+
+   a. Install a Java runtime (needed to run PlantUML):
+
+      ```bash
+      sudo apt install default-jre-headless   # Linux
+      brew install openjdk                     # macOS
+      ```
+
+   b. Download the PlantUML jar, using the same version as CI:
+
+      ```bash
+      PLANTUML_URL=$(grep 'PLANTUML_JAR_URL:' .github/workflows/cpp_docs.yml | awk '{print $2}')
+      wget "$PLANTUML_URL" -O plantuml.jar
+      ```
+
+   c. After the `cmake` step, set `PLANTUML_JAR_PATH` in the generated config:
+
+      ```bash
+      sed -i "s|^PLANTUML_JAR_PATH.*|PLANTUML_JAR_PATH      = $(pwd)/plantuml.jar|" build/doc/fulldoc.conf
+      ```
+
+5. Generate HTML:
 
    ```bash
    make docs
    ```
 
-5. Open the docs in a browser:
+6. Open the docs in a browser:
 
    The output is written to `<build>/doc/doxygen/html/`. From the build directory:
    ```bash

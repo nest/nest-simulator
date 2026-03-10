@@ -111,4 +111,3 @@ Developer guides
    guidelines/*
    guidelines/styleguide/styleguide
    templates/*
-   cppcomments

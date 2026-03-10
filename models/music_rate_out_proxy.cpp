@@ -196,7 +196,7 @@ nest::music_rate_out_proxy::get_status( Dictionary& d ) const
   P_.get( d );
   S_.get( d );
 
-  d[ names::connection_count ] = static_cast<long>(V_.index_map_.size());
+  d[ names::connection_count ] = static_cast< long >( V_.index_map_.size() );
 
   // make a copy, since MUSIC uses int instead of long int
   std::vector< long > pInd_map_long( V_.index_map_.size() );

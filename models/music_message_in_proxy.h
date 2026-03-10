@@ -121,7 +121,7 @@ public:
     Dictionary dict;
     dict[ names::messages ] = messages;
     dict[ names::message_times ] = std::vector< double >( message_times );
-    d[ names::n_messages ] = static_cast<long>(messages.size());
+    d[ names::n_messages ] = static_cast< long >( messages.size() );
     d[ names::data ] = dict;
   }
 

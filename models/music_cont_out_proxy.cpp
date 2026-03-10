@@ -164,7 +164,7 @@ void
 nest::music_cont_out_proxy::State_::get( Dictionary& d ) const
 {
   d[ names::published ] = published_;
-  d[ names::port_width ] = static_cast<long>(port_width_);
+  d[ names::port_width ] = static_cast< long >( port_width_ );
 }
 
 /* ----------------------------------------------------------------

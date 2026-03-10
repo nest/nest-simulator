@@ -191,6 +191,7 @@ def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
         "E_L": 0.0,
         "eprop_isi_trace_cutoff": 100,
         "f_target": 10.0,
+        "flush_event_send_interval": duration["sequence"],
         "gamma": 10.0,
         "I_e": 0.0,
         "kappa": 0.97,

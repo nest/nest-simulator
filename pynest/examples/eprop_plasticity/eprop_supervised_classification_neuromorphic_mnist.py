@@ -217,6 +217,9 @@ params_nrn_rec = {
     "E_L": 0.0,
     "eprop_isi_trace_cutoff": 100,
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
+    "flush_event_send_interval": duration[
+        "sequence"
+    ],  # ms, inactivity period before flushing outgoing synapses to free memory
     "gamma": 0.5,  # height scaling of the pseudo-derivative
     "I_e": 0.0,
     "kappa": 0.99,  # low-pass filter of the eligibility trace

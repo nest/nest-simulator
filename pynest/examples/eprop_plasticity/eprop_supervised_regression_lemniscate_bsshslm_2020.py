@@ -195,6 +195,9 @@ params_nrn_rec = {
     "c_reg": 150.0,  # coefficient of firing rate regularization
     "E_L": 0.0,
     "f_target": 20.0,  # spikes/s, target firing rate for firing rate regularization
+    "flush_event_send_interval": duration[
+        "sequence"
+    ],  # ms, inactivity period before flushing outgoing synapses to free memory
     "gamma": 0.3,  # height scaling of the pseudo-derivative
     "I_e": 0.0,
     "regular_spike_arrival": False,

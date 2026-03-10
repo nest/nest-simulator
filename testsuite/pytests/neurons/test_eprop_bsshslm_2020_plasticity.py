@@ -157,6 +157,7 @@ def test_eprop_regression():
         "c_reg": 300.0,
         "E_L": 0.0,
         "f_target": 10.0,
+        "flush_event_send_interval": duration["sequence"],
         "gamma": 0.3,
         "I_e": 0.0,
         "regular_spike_arrival": False,
@@ -505,6 +506,7 @@ def test_eprop_classification(batch_size, loss_nest_reference):
         "c_reg": 300.0,
         "E_L": 0.0,
         "f_target": 10.0,
+        "flush_event_send_interval": duration["sequence"],
         "gamma": 0.3,
         "I_e": 0.0,
         "regular_spike_arrival": True,
@@ -513,7 +515,6 @@ def test_eprop_classification(batch_size, loss_nest_reference):
         "tau_m": 20.0,
         "V_m": 0.0,
         "V_th": 0.6,
-        "flush_event_send_interval": 3 * duration["sequence"],
     }
 
     params_nrn_reg["gamma"] /= params_nrn_reg["V_th"]
@@ -527,6 +528,7 @@ def test_eprop_classification(batch_size, loss_nest_reference):
         "c_reg": 300.0,
         "E_L": 0.0,
         "f_target": 10.0,
+        "flush_event_send_interval": duration["sequence"],
         "gamma": 0.3,
         "I_e": 0.0,
         "regular_spike_arrival": True,
@@ -535,7 +537,6 @@ def test_eprop_classification(batch_size, loss_nest_reference):
         "tau_m": 20.0,
         "V_m": 0.0,
         "V_th": 0.6,
-        "flush_event_send_interval": 3 * duration["sequence"],
     }
 
     params_nrn_ad["gamma"] /= params_nrn_ad["V_th"]

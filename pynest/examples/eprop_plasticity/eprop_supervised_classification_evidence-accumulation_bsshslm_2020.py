@@ -217,6 +217,9 @@ params_nrn_reg = {
     "c_reg": 300.0,  # coefficient of firing rate regularization - 2*learning_window*(TF c_reg) for technical reasons
     "E_L": 0.0,
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
+    "flush_event_send_interval": duration[
+        "sequence"
+    ],  # ms, inactivity period before flushing outgoing synapses to free memory
     "gamma": 0.3,  # height scaling of the pseudo-derivative
     "I_e": 0.0,
     "regular_spike_arrival": True,
@@ -239,6 +242,7 @@ params_nrn_ad = {
     "c_reg": 300.0,
     "E_L": 0.0,
     "f_target": 10.0,
+    "flush_event_send_interval": duration["sequence"],
     "gamma": 0.3,
     "I_e": 0.0,
     "regular_spike_arrival": True,

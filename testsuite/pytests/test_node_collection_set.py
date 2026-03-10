@@ -36,10 +36,11 @@ def reset():
 def test_node_collection_set_single_param():
     """Test ``set`` with a single parameter."""
 
-    nodes = nest.Create("iaf_psc_alpha", 10)
+    num_nodes = 10
+    nodes = nest.Create("iaf_psc_alpha", num_nodes)
     nodes.set(tau_Ca=500.0)
 
-    nptest.assert_equal(nodes.tau_Ca, 500.0)
+    assert nodes.tau_Ca == (500.0,) * num_nodes
 
 
 def test_node_collection_set_list_of_single_param():
@@ -64,10 +65,11 @@ def test_node_collection_set_list_of_single_param_wrong_length_raises():
 def test_node_collection_set_dict_single_param():
     """Test ``set`` with dictionary containing a single parameter."""
 
-    nodes = nest.Create("iaf_psc_alpha", 10)
+    num_nodes = 10
+    nodes = nest.Create("iaf_psc_alpha", num_nodes)
     nodes.set({"C_m": 100.0})
 
-    nptest.assert_equal(nodes.C_m, 100.0)
+    assert nodes.C_m == (100.0,) * num_nodes
 
 
 def test_node_collection_set_list_of_dicts():
@@ -94,25 +96,27 @@ def test_node_collection_set_list_of_dicts():
 def test_node_collection_set_dict_multiple_params():
     """Test ``set`` with dictionary containing multiple parameters."""
 
-    nodes = nest.Create("iaf_psc_alpha", 10)
+    num_nodes = 10
+    nodes = nest.Create("iaf_psc_alpha", num_nodes)
     nodes.set({"t_ref": 44.0, "tau_m": 2.0, "tau_minus": 42.0})
 
-    nptest.assert_equal(nodes.t_ref, 44.0)
-    nptest.assert_equal(nodes.tau_m, 2.0)
-    nptest.assert_equal(nodes.tau_minus, 42.0)
+    assert nodes.t_ref == (44.0,) * num_nodes
+    assert nodes.tau_m == (2.0,) * num_nodes
+    assert nodes.tau_minus == (42.0,) * num_nodes
 
 
 def test_node_collection_set_dict_with_lists():
     """Test ``set`` with dictionary containing multiple parameter lists."""
 
-    nodes = nest.Create("iaf_psc_alpha", 3)
+    num_nodes = 3
+    nodes = nest.Create("iaf_psc_alpha", num_nodes)
     Vm_ref = [-11.0, -12.0, -13.0]
     Cm_ref = 177.0
     tau_minus_ref = [22.0, 24.0, 26.0]
     nodes.set({"V_m": Vm_ref, "C_m": Cm_ref, "tau_minus": tau_minus_ref})
 
     nptest.assert_array_equal(nodes.V_m, Vm_ref)
-    nptest.assert_equal(nodes.C_m, Cm_ref)
+    assert nodes.C_m == (177.0,) * num_nodes
     nptest.assert_array_equal(nodes.tau_minus, tau_minus_ref)
 
 
@@ -207,13 +211,14 @@ def test_sliced_node_collection_set():
 def test_node_collection_set_attribute():
     """Test the ``__setattr__`` method."""
 
-    nodes = nest.Create("iaf_psc_alpha", 10)
+    num_nodes = 10
+    nodes = nest.Create("iaf_psc_alpha", num_nodes)
     V_reset_ref = [-85.0, -82.0, -80.0, -77.0, -75.0, -72.0, -70.0, -67.0, -65.0, -62.0]
 
     nodes.C_m = 100.0
     nodes.V_reset = V_reset_ref
 
-    nptest.assert_equal(nodes.C_m, 100.0)
+    assert nodes.C_m == (100.0,) * num_nodes
     nptest.assert_array_equal(nodes.V_reset, V_reset_ref)
 
 

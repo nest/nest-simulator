@@ -616,11 +616,11 @@ def llapi_copy_model(oldmodname, newmodname, object params):
 def llapi_get_nc_status(NodeCollectionObject nc, object key=None):
     statuses = dictionary_to_pydict( get_nc_status(nc.thisptr) )
     if key is None:
-        return statuses #dictionary_to_pydict(statuses)
+        return statuses
     elif isinstance(key, str):
-        if key not in statuses:    #.known(pystr_to_string(key)):
+        if key not in statuses:
             raise KeyError(key)
-        value = statuses[key]  #pystr_to_string(key)])
+        value = statuses[key]
         # PYNEST-NG-FUTURE: This is backwards-compatible, but makes it harder
         # to write scalable code. Maybe just return value as is?
         return value[0] if len(value) == 1 else value

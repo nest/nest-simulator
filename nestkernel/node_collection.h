@@ -624,7 +624,7 @@ public:
    *
    * @note Important for resolution from NodeCollectionPTR to subclasses.
    */
-  virtual void print_me( std::ostream& ) const = 0;
+  virtual std::ostream& print_me( std::ostream& ) const = 0;
 
   /**
    * Get the node ID in the specified index in the NodeCollection.
@@ -871,7 +871,7 @@ public:
    */
   NodeCollectionPrimitive();
 
-  void print_me( std::ostream& ) const override;
+  std::ostream& print_me( std::ostream& ) const override;
   void print_primitive( std::ostream& ) const;
 
   size_t operator[]( const size_t ) const override;
@@ -922,11 +922,7 @@ public:
    * @return True if the other primitive overlaps, false otherwise.
    */
   bool overlapping( const NodeCollectionPrimitive& rhs ) const;
-
-  friend std::ostream& operator<<( std::ostream& out, const NodeCollectionPrimitive& nc );
 };
-
-std::ostream& operator<<( std::ostream& out, const NodeCollectionPrimitive& nc );
 
 NodeCollectionPTR operator+( NodeCollectionPTR lhs, NodeCollectionPTR rhs );
 
@@ -1065,7 +1061,7 @@ public:
    */
   NodeCollectionComposite( const NodeCollectionComposite& ) = default;
 
-  void print_me( std::ostream& ) const override;
+  std::ostream& print_me( std::ostream& ) const override;
 
   size_t operator[]( const size_t ) const override;
 
@@ -1107,11 +1103,14 @@ public:
   long get_nc_index( const size_t ) const override;
 
   bool has_proxies() const override;
-
-  friend std::ostream& operator<<( std::ostream& out, const NodeCollectionComposite& nc );
 };
 
-std::ostream& operator<<( std::ostream& out, const NodeCollectionComposite& nc );
+inline std::ostream&
+operator<<( std::ostream& out, const NodeCollectionPTR nc )
+{
+  return nc->print_me( out );
+}
+
 
 inline bool
 NodeCollection::operator!=( NodeCollectionPTR rhs ) const

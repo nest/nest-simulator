@@ -134,7 +134,7 @@ pprint_to_string( NodeCollectionPTR nc )
 {
   assert( nc );
   std::stringstream stream;
-  nc->print_me( stream );
+  stream << nc;
   return stream.str();
 }
 

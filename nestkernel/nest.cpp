@@ -164,33 +164,6 @@ get_kernel_status()
   return d;
 }
 
-template < class... Ts >
-struct overloaded : Ts...
-{
-  using Ts::operator()...;
-};
-
-template < typename T >
-T
-default_result_value()
-{
-  return T {};
-}
-
-template <>
-double
-default_result_value< double >()
-{
-  return numerics::nan;
-}
-
-template <>
-long
-default_result_value< long >()
-{
-  return -1;
-}
-
 // TODO: Add the possibility to filter for specific keys
 Dictionary
 get_nc_status( NodeCollectionPTR nc )
@@ -215,13 +188,15 @@ get_nc_status( NodeCollectionPTR nc )
         }
         catch ( const std::bad_variant_access& e )
         {
-          throw std::runtime_error( "did not find anyvector" );
+          throw std::runtime_error( String::compose(
+            "result[%1] contained type %2, expected vector<any_type>.", key, debug_type( p->second.item ) ) );
         }
       }
       else
       {
         // key does not exist yet
-        auto new_entry = AnyVector( num_nodes );
+        auto new_entry =
+          AnyVector( num_nodes ); // all elements initialized with std::monostate, translates to None in Python
         new_entry[ node_index ] = entry.item;
         result[ key ] = new_entry;
       }

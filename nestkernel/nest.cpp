@@ -451,12 +451,12 @@ connect_tripartite( NodeCollectionPTR sources,
 }
 
 void
-connect_arrays( long* sources,
-  long* targets,
-  double* weights,
-  double* delays,
+connect_arrays( const long* sources,
+  const long* targets,
+  const double* weights,
+  const double* delays,
   const std::vector< std::string >& p_keys,
-  double* p_values,
+  const double* p_values,
   size_t n,
   const std::string& syn_model )
 {

@@ -602,12 +602,12 @@ nest::ConnectionManager::connect( const size_t snode_id,
 }
 
 void
-nest::ConnectionManager::connect_arrays( long* sources,
-  long* targets,
-  double* weights,
-  double* delays,
+nest::ConnectionManager::connect_arrays( const long* sources,
+  const long* targets,
+  const double* weights,
+  const double* delays,
   const std::vector< std::string >& p_keys,
-  double* p_values,
+  const double* p_values,
   size_t n,
   const std::string& syn_model )
 {
@@ -617,7 +617,7 @@ nest::ConnectionManager::connect_arrays( long* sources,
 
   // Mapping pointers to the first parameter value of each parameter to their respective names.
   // The bool indicates whether the value is an integer or not, and is determined at a later point.
-  std::map< std::string, std::pair< double*, bool > > param_pointers;
+  std::map< std::string, std::pair< const double*, bool > > param_pointers;
   if ( p_keys.size() != 0 )
   {
     size_t i = 0;

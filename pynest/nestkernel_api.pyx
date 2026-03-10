@@ -911,20 +911,20 @@ def llapi_connect_arrays(sources, targets, weights, delays, synapse_model, syn_p
             raise ValueError('syn_param_values must be a matrix with arrays of the same length as sources and targets.')
 
     # Get pointers to the first element in each NumPy array
-    cdef long[::1] sources_mv = numpy.ascontiguousarray(sources, dtype=numpy.int64)
-    cdef long* sources_ptr = &sources_mv[0]
+    cdef const long[::1] sources_mv = numpy.ascontiguousarray(sources, dtype=numpy.int64)
+    cdef const long* sources_ptr = &sources_mv[0]
 
-    cdef long[::1] targets_mv = numpy.ascontiguousarray(targets, dtype=numpy.int64)
-    cdef long* targets_ptr = &targets_mv[0]
+    cdef const long[::1] targets_mv = numpy.ascontiguousarray(targets, dtype=numpy.int64)
+    cdef const long* targets_ptr = &targets_mv[0]
 
-    cdef double[::1] weights_mv
-    cdef double* weights_ptr = NULL
+    cdef const double[::1] weights_mv
+    cdef const double* weights_ptr = NULL
     if weights is not None:
         weights_mv = numpy.ascontiguousarray(weights, dtype=numpy.double)
         weights_ptr = &weights_mv[0]
 
-    cdef double[::1] delays_mv
-    cdef double* delays_ptr = NULL
+    cdef const double[::1] delays_mv
+    cdef const double* delays_ptr = NULL
     if delays is not None:
         delays_mv = numpy.ascontiguousarray(delays, dtype=numpy.double)
         delays_ptr = &delays_mv[0]
@@ -935,8 +935,8 @@ def llapi_connect_arrays(sources, targets, weights, delays, synapse_model, syn_p
         for key in syn_param_keys:
             param_keys_ptr.push_back(pystr_to_string(key))
 
-    cdef double[:, ::1] param_values_mv
-    cdef double* param_values_ptr = NULL
+    cdef const double[:, ::1] param_values_mv
+    cdef const double* param_values_ptr = NULL
     if syn_param_values is not None:
         param_values_mv = numpy.ascontiguousarray(syn_param_values, dtype=numpy.double)
         param_values_ptr = &param_values_mv[0][0]

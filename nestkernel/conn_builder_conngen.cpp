@@ -100,6 +100,8 @@ ConnectionGeneratorBuilder::connect_()
       throw BadProperty( "The parameter map has to contain the indices of weight and delay." );
     }
 
+    // Getting long here into size_t does not need protection, because we only permit 0 and 1 as values
+    // and check this right below.
     const size_t d_idx = params_map_.get< long >( names::delay );
     const size_t w_idx = params_map_.get< long >( names::weight );
 

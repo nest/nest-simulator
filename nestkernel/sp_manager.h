@@ -210,7 +210,7 @@ private:
 inline GrowthCurve*
 SPManager::new_growth_curve( std::string name )
 {
-  const int nc_id = growthcurvedict_.get< long >( name );
+  const long nc_id = growthcurvedict_.get< long >( name );
   return growthcurve_factories_.at( nc_id )->create();
 }
 

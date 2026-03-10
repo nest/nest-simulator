@@ -628,7 +628,19 @@ nest::RecordingBackendSIONlib::Parameters_::set( const RecordingBackendSIONlib&,
   d.update_value( names::buffer_size, buffer_size_ );
   d.update_value( names::sion_chunksize, sion_chunksize_ );
   d.update_value( names::sion_collective, sion_collective_ );
-  d.update_value( names::sion_n_files, sion_n_files_ );
+  long sion_n_files_long = sion_n_files_;
+  if (  d.update_value( names::sion_n_files, sion_n_files_long ) )
+  {
+    if ( sion_n_files_long < 1 ) 
+  {
+    throw BadProperty("sion_n_files >= 1 required.");
+  }
+    if ( sion_n_files_long > std::numeric_limits<int>::max() )
+  {
+    throw BadProperty(String::compose("sion_n_files <= %1 required", std::to_string(std::numeric_limits<int>::max())));
+  }
+    sion_n_files_ = static_cast<int>(sion_n_files_long);
+  }
 }
 
 void

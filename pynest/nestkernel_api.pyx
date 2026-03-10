@@ -107,10 +107,6 @@ cdef class MaskObject:
         self.thisptr = mask_ptr
 
 
-cdef object any_vector_to_list(EmptyList cvec):
-    return []
-
-
 cdef object vec_of_dict_to_list(vector[Dictionary] cvec):
     cdef tmp = []
     cdef vector[Dictionary].iterator it = cvec.begin()
@@ -169,8 +165,6 @@ cdef object any_to_pyobj(any_type operand):
         return numpy.array(get[vector[vector[long]]](operand))
     if holds_alternative[vector[vector[vector[long]]]](operand):
         return numpy.array(get[vector[vector[vector[long]]]](operand))
-    if holds_alternative[vector[vector[vector[vector[long]]]]](operand):
-        return numpy.array(get[vector[vector[vector[vector[long]]]]](operand))
 
     if holds_alternative[vector[cbool]](operand):
         return numpy.array(get[vector[cbool]](operand))
@@ -181,8 +175,6 @@ cdef object any_to_pyobj(any_type operand):
         return numpy.array(get[vector[vector[double]]](operand))
     if holds_alternative[vector[vector[vector[double]]]](operand):
         return numpy.array(get[vector[vector[vector[double]]]](operand))
-    if holds_alternative[vector[vector[vector[vector[double]]]]](operand):
-        return numpy.array(get[vector[vector[vector[vector[double]]]]](operand))
 
     if holds_alternative[vector[string]](operand):
         return [s.decode("utf-8") for s in get[vector[string]](operand)]
@@ -205,6 +197,7 @@ cdef object any_to_pyobj(any_type operand):
         obj = NodeCollectionObject()
         obj._set_nc(get[NodeCollectionPTR](operand))
         return nest.NodeCollection(obj)
+
     if holds_alternative[vector[NodeCollectionPTR]](operand):
         res = []
         for ncptr in get[vector[NodeCollectionPTR]](operand):
@@ -212,15 +205,21 @@ cdef object any_to_pyobj(any_type operand):
             obj._set_nc(ncptr)
             res.append(nest.NodeCollection(obj))
         return res
+
+    # This monostate represents missing NodeCollection status data (nodes on other ranks)
+    # Translates to None for NEST 3.9 compatibility
     if holds_alternative[monostate](operand):
         return None
+
+    # get_nc_status() returns a vector<any_type> for NEST 3.9 compatibility
+    # This alternative starts the unpacking of that vector into a tuple
     if holds_alternative[AnyVector](operand):
         return anyvec_to_objtuple(operand)
 
     if holds_alternative[VerbosityLevel](operand):
         return get[VerbosityLevel](operand)
 
-    assert False, f"Operand: ]{debug_type(operand)}["
+    raise RuntimeError(f"Cannot convert value of type '{debug_type(operand)}' returned by NEST kernel to Python object.")
 
 
 cdef is_list_tuple_ndarray_of_float(v):
@@ -615,7 +614,6 @@ def llapi_copy_model(oldmodname, newmodname, object params):
 
 
 def llapi_get_nc_status(NodeCollectionObject nc, object key=None):
-    #cdef Dictionary statuses = get_nc_status(nc.thisptr)
     statuses = dictionary_to_pydict( get_nc_status(nc.thisptr) )
     if key is None:
         return statuses #dictionary_to_pydict(statuses)

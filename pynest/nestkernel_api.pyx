@@ -149,12 +149,7 @@ cdef object dictionary_to_pydict(Dictionary cdict):
 
 cdef anyvec_to_objtuple(any_type operand):
     cdef AnyVector a_vec = get[AnyVector](operand)
-    cdef tmp = []
-    cdef vector[any_type].const_iterator it = a_vec.begin()
-    while it != a_vec.end():
-        tmp.append(any_to_pyobj(deref(it)))
-        inc(it)
-    return tmp
+    return tuple(any_to_pyobj(obj) for obj in a_vec)
 
 cdef object any_to_pyobj(any_type operand):
     cdef NodeCollectionPTR ncptr

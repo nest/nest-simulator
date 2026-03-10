@@ -58,18 +58,20 @@ struct EmptyList
   bool operator==( const EmptyList& ) const = default;
 };
 
+// TODO PyNEST-NG: check if we need all scalars in all nested vector levels, keeping the variant smaller may
+// improve performance.
 template < typename... Scalars >
 struct DictionarySchemaBuilder
 {
   template < typename... Extras >
-  using VariantType = std::variant< std::monostate,
+  using VariantType = std::variant< std::monostate,          // default-initialized any_type value, representing missing
+                                                             // non-local nodes in a node-colection
     Scalars...,                                              // scalar types
     std::vector< Scalars >...,                               // vector variants of the scalar types
-    std::vector< std::vector< Scalars > >...,                // vector-vector variants of the scalar types
-    std::vector< std::vector< std::vector< Scalars > > >..., // vector-vector variants of the scalar types
-    std::vector< std::vector< std::vector< std::vector< Scalars > > > >..., // vector-vector variants of the scalar
-                                                                            // types
-    Extras...                                                               // any extra types
+    std::vector< std::vector< Scalars > >...,                // vec-vec variants of the scalar types
+    std::vector< std::vector< std::vector< Scalars > > >..., // vec-vec-vec variants of the scalar types (for
+                                                             // correlomatrix-detector)
+    Extras...                                                // any extra types (see definition of any_type below)
     >;
 };
 
@@ -79,7 +81,7 @@ using any_type = DictionarySchema::VariantType< std::shared_ptr< nest::NodeColle
   std::vector< std::shared_ptr< nest::NodeCollection > >,
   std::shared_ptr< nest::Parameter >,
   nest::VerbosityLevel,
-  AnyVector,
+  AnyVector, // this is only used to hold status data from elements of a node collection in a NEST 3.9 compatible way
   EmptyList >;
 
 class AnyVector : public std::vector< any_type >

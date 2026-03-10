@@ -345,7 +345,7 @@ stdp_nn_pre_centered_synapse< targetidentifierT >::get_status( Dictionary& d ) c
   d[ names::mu_minus ] = mu_minus_;
   d[ names::Wmax ] = Wmax_;
   d[ names::Kplus ] = Kplus_;
-  d[ names::size_of ] = sizeof( *this );
+  d[ names::size_of ] = static_cast< long >( sizeof( *this ) );
 }
 
 template < typename targetidentifierT >

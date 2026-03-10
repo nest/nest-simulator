@@ -127,6 +127,31 @@ dictionary_::cast_value_< std::vector< double > >( const any_type& value, const 
 }
 
 
+template <>
+std::vector< std::string >
+dictionary_::cast_value_< std::vector< std::string > >( const any_type& value, const std::string& key ) const
+{
+  if ( std::holds_alternative< EmptyList >( value ) )
+  {
+    return std::vector< std::string >();
+  }
+
+  try
+  {
+    if ( const std::vector< std::string >* v = std::get_if< std::vector< std::string > >( &value ) )
+    {
+      return *v;
+    }
+    throw std::bad_variant_access(); // deflect to error handling below
+  }
+  catch ( const std::bad_variant_access& )
+  {
+    const std::string msg =
+      String::compose( "Failed to cast '%1' from %2 to type std::vector<double>", key, debug_type( value ) );
+    throw nest::TypeMismatch( msg );
+  }
+}
+
 std::string
 debug_type( const any_type& operand )
 {
@@ -214,6 +239,26 @@ operator<<( std::ostream& os, const Dictionary& dict )
   return os << "}";
 }
 
+std::ostream&
+operator<<( std::ostream& os, const std::monostate& )
+{
+  os << "None";
+  return os;
+}
+
+std::ostream&
+operator<<( std::ostream& os, const AnyVector& av )
+{
+  os << "[";
+  for ( auto v : av )
+  {
+    std::visit( []( const auto& arg ) { std::cout << arg << " "; }, v );
+  }
+  os << "\b]";
+  return os;
+}
+
+
 /**
  * Return true only if first and second both hold type T and compare equal as T.
  */
@@ -226,9 +271,59 @@ equal_as_( const any_type& first, const any_type& second )
 }
 
 bool
+value_equal( const any_type& first, const any_type& second )
+{
+  // helper to provide error in case we forgot a type in the equal_as_ chain.
+  auto fail = []( const any_type& first, const any_type& second )
+  {
+    throw std::runtime_error(
+      String::compose( "Fail to compare: left '%1', right '%2'", debug_type( first ), debug_type( second ) ) );
+    return false;
+  };
+
+  // Short-circuits as soon as an equal_as_() call evaluates to true
+  // clang-format off
+  return (
+     equal_as_< long >( first, second )
+    or equal_as_< double >( first, second )
+    or equal_as_< bool >( first, second )
+    or equal_as_< std::string >( first, second )
+    or equal_as_< std::vector< long > >( first, second )
+    or equal_as_< std::vector< double > >( first, second )
+    or equal_as_< std::vector< std::string > >( first, second )
+    or equal_as_< std::vector< std::vector< double > > >( first, second )
+    or equal_as_< Dictionary >( first, second )
+    or equal_as_< std::shared_ptr< nest::Parameter > >( first, second )
+    or fail( first, second )
+  );
+  // clang-format on
+}
+
+bool
 dictionary_::operator==( const dictionary_& other ) const
 {
-  return static_cast< const maptype_& >( *this ) == static_cast< const maptype_& >( other );
+  if ( size() != other.size() )
+  {
+    return false;
+  }
+  // Iterate elements in the other Dictionary
+  for ( const auto& [ other_key, other_entry ] : other )
+  {
+    // Check if it exists in this Dictionary
+    if ( not known( other_key ) )
+    {
+      return false;
+    }
+
+    // Check for equality
+    const auto& this_entry = maptype_::at( other_key );
+    if ( not value_equal( this_entry.item, other_entry.item ) )
+    {
+      return false;
+    }
+  }
+  // All elements are equal
+  return true;
 }
 
 void

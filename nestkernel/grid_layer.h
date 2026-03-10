@@ -213,7 +213,10 @@ GridLayer< D >::get_status( Dictionary& d, NodeCollection const* const nc ) cons
 {
   Layer< D >::get_status( d, nc );
 
-  d[ names::shape ] = std::vector< size_t >( dims_.get_vector() );
+  std::vector< long > dtmp;
+  const auto& dv = dims_.get_vector();
+  std::copy( dv.begin(), dv.end(), std::back_inserter( dtmp ) );
+  d[ names::shape ] = dtmp;
 }
 
 template < int D >

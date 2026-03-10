@@ -108,7 +108,7 @@ Layer< D >::get_status( Dictionary& d, NodeCollection const* const nc ) const
   {
     // This is for backward compatibility with some tests and scripts
     // TODO: Rename parameter
-    d[ names::network_size ] = nc->size();
+    d[ names::network_size ] = static_cast< long >( nc->size() );
   }
 }
 
@@ -335,7 +335,7 @@ Layer< D >::dump_connections( std::ostream& out,
       conn.get_synapse_model_id(),
       conn.get_port() );
 
-    const auto target_node_id = result_dict.get< size_t >( names::target );
+    const auto target_node_id = result_dict.get< long >( names::target );
     const auto weight = result_dict.get< double >( names::weight );
     const auto delay = result_dict.get< double >( names::delay );
 

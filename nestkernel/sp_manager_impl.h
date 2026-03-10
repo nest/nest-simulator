@@ -44,7 +44,7 @@ SPManager::register_growth_curve( const std::string& name )
   assert( nc );
   const int id = growthcurve_factories_.size();
   growthcurve_factories_.push_back( nc );
-  growthcurvedict_[ name ] = id;
+  growthcurvedict_[ name ] = static_cast< long >( id );
 }
 
 } // namespace nest

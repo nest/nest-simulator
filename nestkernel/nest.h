@@ -158,12 +158,12 @@ void connect_tripartite( NodeCollectionPTR sources,
  * and M additional synapse parameters, p_keys has a size of M, and the p_values array
  * has length of M*n.
  */
-void connect_arrays( long* sources,
-  long* targets,
-  double* weights,
-  double* delays,
+void connect_arrays( const long* sources,
+  const long* targets,
+  const double* weights,
+  const double* delays,
   const std::vector< std::string >& p_keys,
-  double* p_values,
+  const double* p_values,
   size_t n,
   const std::string& syn_model );
 

@@ -175,83 +175,30 @@ get_nc_status( NodeCollectionPTR nc )
   for ( auto it = nc->begin(); it < nc->end(); ++it, ++node_index )
   {
     const auto node_status = get_node_status( ( *it ).node_id );
-
-    if ( node_index == 0 ) // schema definition step
+    for ( const auto& [ key, entry ] : node_status )
     {
-      for ( const auto& kv_pair : node_status )
+      const auto p = result.find( key );
+      if ( p != result.end() )
       {
-        // Visit the variant to determine type T
-        std::visit(
-          [ &result, &kv_pair, num_nodes ]( const auto& val )
-          {
-            using T = std::decay_t< decltype( val ) >;
-
-            if constexpr ( not DictionarySchema::is_defined_scalar< T > )
-            {
-              // Logic for Vectors: Explicitly forbidden
-              throw std::runtime_error( String::compose(
-                "Invalid Schema: Key '%1' contains a vector, but only scalar values are allowed.", kv_pair.first ) );
-            }
-            else
-            {
-              // Create vector<T> of size N
-              std::vector< T > vec( num_nodes );
-
-              // Assign the first value
-              vec[ 0 ] = val;
-
-              // Store in result
-              result[ kv_pair.first ] = std::move( vec );
-            }
-          },
-          kv_pair.second.item );
-      }
-    }
-    else // Fill step (including validation)
-    {
-      for ( const auto& kv_pair : node_status )
-      {
-        auto map_it = result.find( kv_pair.first );
-
-        // Strict Key Existence Check
-        if ( map_it == result.end() )
+        // key exists
+        try
         {
-          throw std::runtime_error( String::compose( "Sparse data detected: New key '%1' found late at index %2.",
-            kv_pair.first,
-            std::to_string( node_index ) ) );
+          auto& v = std::get< AnyVector >( p->second.item );
+          v[ node_index ] = entry.item;
         }
-
-        // We visit the input value and try to cast the existing vector to matching type.
-        std::visit(
-          [ &map_it, node_index, key = kv_pair.first ]( const auto& val )
-          {
-            using T = std::decay_t< decltype( val ) >;
-
-            if constexpr ( not DictionarySchema::is_defined_scalar< T > )
-            {
-              // Logic for Vectors: Explicitly forbidden
-              throw std::runtime_error( String::compose(
-                "Invalid Schema: Key '%1' contains a vector, but only scalar values are allowed.", key ) );
-            }
-            else
-            {
-              try
-              {
-                // Throws std::bad_variant_access if Node N has a different type than Node 0 (e.g., int vs double)
-                auto& vec = std::get< std::vector< T > >( map_it->second.item );
-                vec[ node_index ] = val;
-              }
-              catch ( const std::bad_variant_access& )
-              {
-                throw std::runtime_error( String::compose(
-                  "Type mismatch detected for key '%1' at index %2. Retrieving node collection status data "
-                  "only works for homogeneous neuron models.",
-                  key,
-                  std::to_string( node_index ) ) );
-              }
-            }
-          },
-          kv_pair.second.item );
+        catch ( const std::bad_variant_access& e )
+        {
+          throw std::runtime_error( String::compose(
+            "result[%1] contained type %2, expected vector<any_type>.", key, debug_type( p->second.item ) ) );
+        }
+      }
+      else
+      {
+        // key does not exist yet
+        auto new_entry =
+          AnyVector( num_nodes ); // all elements initialized with std::monostate, translates to None in Python
+        new_entry[ node_index ] = entry.item;
+        result[ key ] = new_entry;
       }
     }
   }
@@ -468,7 +415,7 @@ get_metadata( const NodeCollectionPTR nc )
   if ( meta.get() )
   {
     meta->get_status( status_dict, nc );
-    status_dict[ names::network_size ] = nc->size();
+    status_dict[ names::network_size ] = static_cast< long >( nc->size() );
   }
   return status_dict;
 }
@@ -504,12 +451,12 @@ connect_tripartite( NodeCollectionPTR sources,
 }
 
 void
-connect_arrays( long* sources,
-  long* targets,
-  double* weights,
-  double* delays,
+connect_arrays( const long* sources,
+  const long* targets,
+  const double* weights,
+  const double* delays,
   const std::vector< std::string >& p_keys,
-  double* p_values,
+  const double* p_values,
   size_t n,
   const std::string& syn_model )
 {

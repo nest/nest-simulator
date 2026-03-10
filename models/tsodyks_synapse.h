@@ -320,7 +320,7 @@ tsodyks_synapse< targetidentifierT >::get_status( Dictionary& d ) const
   d[ names::x ] = x_;
   d[ names::y ] = y_;
   d[ names::u ] = u_;
-  d[ names::size_of ] = sizeof( *this );
+  d[ names::size_of ] = static_cast< long >( sizeof( *this ) );
 }
 
 template < typename targetidentifierT >

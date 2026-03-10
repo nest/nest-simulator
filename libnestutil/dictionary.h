@@ -39,7 +39,7 @@
 
 class dictionary_;
 class Dictionary;
-
+class AnyVector;
 namespace nest
 {
 class Parameter;
@@ -58,31 +58,41 @@ struct EmptyList
   bool operator==( const EmptyList& ) const = default;
 };
 
+// TODO PyNEST-NG: check if we need all scalars in all nested vector levels, keeping the variant smaller may
+// improve performance.
 template < typename... Scalars >
 struct DictionarySchemaBuilder
 {
-  template < typename T >
-  static constexpr bool is_defined_scalar = ( std::is_same_v< T, Scalars > or ... );
-  ;
-
   template < typename... Extras >
-  using VariantType = std::variant< Scalars..., // scalar types
-    std::vector< Scalars >...,                  // vector variants of the scalar types
-    Extras...                                   // any extra types
+  using VariantType = std::variant< std::monostate,          // default-initialized any_type value, representing missing
+                                                             // non-local nodes in a node-colection
+    Scalars...,                                              // scalar types
+    std::vector< Scalars >...,                               // vector variants of the scalar types
+    std::vector< std::vector< Scalars > >...,                // vec-vec variants of the scalar types
+    std::vector< std::vector< std::vector< Scalars > > >..., // vec-vec-vec variants of the scalar types (for
+                                                             // correlomatrix-detector)
+    Extras...                                                // any extra types (see definition of any_type below)
     >;
 };
 
-using DictionarySchema =
-  DictionarySchemaBuilder< size_t, long, int, unsigned int, double, bool, std::string, Dictionary >;
+using DictionarySchema = DictionarySchemaBuilder< long, double, bool, std::string, Dictionary >;
 
 using any_type = DictionarySchema::VariantType< std::shared_ptr< nest::NodeCollection >,
+  std::vector< std::shared_ptr< nest::NodeCollection > >,
   std::shared_ptr< nest::Parameter >,
   nest::VerbosityLevel,
-  EmptyList,
-  std::vector< std::vector< long > >,
-  std::vector< std::vector< double > >,
-  std::vector< std::vector< std::vector< long > > >,
-  std::vector< std::vector< std::vector< double > > > >;
+  AnyVector, // this is only used to hold status data from elements of a node collection in a NEST 3.9 compatible way
+  EmptyList >;
+
+class AnyVector : public std::vector< any_type >
+{
+  using vectype_ = std::vector< any_type >;
+  using vectype_::vectype_; // Inherit constructors
+};
+
+std::ostream& operator<<( std::ostream& os, const std::monostate& );
+
+std::ostream& operator<<( std::ostream& os, const AnyVector& av );
 
 
 // Define a simple Concept for "Integer Integers" (excluding bool and char)
@@ -99,6 +109,7 @@ is_type( const any_type& operand )
 {
   return std::holds_alternative< T >( operand );
 }
+
 
 class Dictionary : public std::shared_ptr< dictionary_ >
 {
@@ -117,6 +128,17 @@ public:
   any_type& operator[]( std::string&& key ) const;
   any_type& at( const std::string& key );
   const any_type& at( const std::string& key ) const;
+
+  /**
+   * @brief Check whether the dictionary is equal to another dictionary.
+   *
+   * Two dictionaries are equal only if they contain the exact same entries with the same values.
+   *
+   * @param other dictionary to check against.
+   * @return true if the dictionary is equal to the other dictionary, false if not.
+   */
+  bool operator==( const Dictionary& other ) const;
+
 
   auto begin() const;
   auto end() const;
@@ -455,13 +477,9 @@ public:
 
 std::ostream& operator<<( std::ostream& os, const dictionary_& dict );
 
-template <>
-double dictionary_::cast_value_< double >( const any_type& value, const std::string& key ) const;
-
 //! Specialization that allows passing long where double is expected
 template <>
-std::vector< double > dictionary_::cast_value_< std::vector< double > >( const any_type& value,
-  const std::string& key ) const;
+double dictionary_::cast_value_< double >( const any_type& value, const std::string& key ) const;
 
 inline auto
 Dictionary::begin() const
@@ -478,12 +496,27 @@ Dictionary::end() const
 /**
  * Specialization that allows passing long vectors where double vectors are expected.
  *
+ * Also handles empty vectors.
+ *
  * @note This specialization forwards to cast_vector_value_<double>, but is required explicitly,
  *       because, e.g., get(), calls cast_value_() directly even if the argument is a vector.
  */
 template <>
 std::vector< double > dictionary_::cast_value_< std::vector< double > >( const any_type& value,
   const std::string& key ) const;
+
+/**
+ * Specialization that allows passing empty lists.
+ */
+template <>
+std::vector< std::string > dictionary_::cast_value_< std::vector< std::string > >( const any_type& value,
+  const std::string& key ) const;
+
+inline bool
+Dictionary::operator==( const Dictionary& other ) const
+{
+  return **this == *other;
+}
 
 inline auto
 Dictionary::size() const

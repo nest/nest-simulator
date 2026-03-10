@@ -746,7 +746,7 @@ NodeManager::set_status( size_t node_id, const Dictionary& d )
 void
 NodeManager::get_status( Dictionary& d )
 {
-  d[ names::network_size ] = size();
+  d[ names::network_size ] = static_cast< long >( size() );
   sw_construction_create_.get_status( d, names::time_construction_create, names::time_construction_create_cpu );
 }
 

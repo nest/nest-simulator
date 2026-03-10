@@ -160,7 +160,7 @@ nest::gif_cond_exp_multisynapse::Parameters_::get( Dictionary& d ) const
   d[ names::V_T_star ] = V_T_star_;
   d[ names::lambda_0 ] = lambda_0_ * 1000.0; // convert to 1/s
   d[ names::t_ref ] = t_ref_;
-  d[ names::n_receptors ] = n_receptors();
+  d[ names::n_receptors ] = static_cast< long >( n_receptors() );
   d[ names::E_rev ] = E_rev_;
   d[ names::has_connections ] = has_connections_;
   d[ names::gsl_error_tol ] = gsl_error_tol;

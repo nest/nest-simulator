@@ -107,10 +107,6 @@ cdef class MaskObject:
         self.thisptr = mask_ptr
 
 
-cdef object any_vector_to_list(EmptyList cvec):
-    return []
-
-
 cdef object vec_of_dict_to_list(vector[Dictionary] cvec):
     cdef tmp = []
     cdef vector[Dictionary].iterator it = cvec.begin()
@@ -119,6 +115,14 @@ cdef object vec_of_dict_to_list(vector[Dictionary] cvec):
         inc(it)
     return tmp
 
+
+cdef object vec_of_vec_of_dict_to_list(vector[vector[Dictionary]] cvec):
+    cdef tmp = []
+    cdef vector[vector[Dictionary]].iterator it = cvec.begin()
+    while it != cvec.end():
+        tmp.append(vec_of_dict_to_list(deref(it)))
+        inc(it)
+    return tmp
 
 def make_tuple_or_ndarray(operand):
         if len(operand) > 0 and isinstance(operand[0], numbers.Number):
@@ -139,57 +143,83 @@ cdef object dictionary_to_pydict(Dictionary cdict):
         inc(it)
     return tmp
 
+cdef anyvec_to_objtuple(any_type operand):
+    cdef AnyVector a_vec = get[AnyVector](operand)
+    return tuple(any_to_pyobj(obj) for obj in a_vec)
+
 cdef object any_to_pyobj(any_type operand):
-    if holds_alternative[int](operand):
-        return get[int](operand)
-    if holds_alternative[uint](operand):
-        return get[uint](operand)
+    cdef NodeCollectionPTR ncptr
+
     if holds_alternative[long](operand):
         return get[long](operand)
-    if holds_alternative[size_t](operand):
-        return get[size_t](operand)
-    if holds_alternative[uint64_t](operand):
-        return get[uint64_t](operand)
-    if holds_alternative[int64_t](operand):
-        return get[int64_t](operand)
     if holds_alternative[double](operand):
         return get[double](operand)
     if holds_alternative[cbool](operand):
         return get[cbool](operand)
     if holds_alternative[string](operand):
         return string_to_pystr(get[string](operand))
-    if holds_alternative[vector[int]](operand):
-        return numpy.array(get[vector[int]](operand))
+
     if holds_alternative[vector[long]](operand):
         return numpy.array(get[vector[long]](operand))
-    if holds_alternative[vector[size_t]](operand):
-        return numpy.array(get[vector[size_t]](operand))
+    if holds_alternative[vector[vector[long]]](operand):
+        return numpy.array(get[vector[vector[long]]](operand))
+    if holds_alternative[vector[vector[vector[long]]]](operand):
+        return numpy.array(get[vector[vector[vector[long]]]](operand))
+
+    if holds_alternative[vector[cbool]](operand):
+        return numpy.array(get[vector[cbool]](operand))
+
     if holds_alternative[vector[double]](operand):
         return numpy.array(get[vector[double]](operand))
     if holds_alternative[vector[vector[double]]](operand):
         return numpy.array(get[vector[vector[double]]](operand))
     if holds_alternative[vector[vector[vector[double]]]](operand):
         return numpy.array(get[vector[vector[vector[double]]]](operand))
-    if holds_alternative[vector[vector[vector[long]]]](operand):
-        return numpy.array(get[vector[vector[vector[long]]]](operand))
+
     if holds_alternative[vector[string]](operand):
-        # PYNEST-NG: Do we want to have this or are bytestrings fine?
-        # return get[vector[string]](operand)
-        return list(map(lambda x: x.decode("utf-8"), get[vector[string]](operand)))
-    if holds_alternative[vector[Dictionary]](operand):
-        return vec_of_dict_to_list(get[vector[Dictionary]](operand))
-    if holds_alternative[EmptyList](operand):
-        # PYNEST-NG: This will create a Python list first and then convert to
-        # either tuple or numpy array, which will copy the data element-wise.
-        return make_tuple_or_ndarray(any_vector_to_list(get[EmptyList](operand)))
+        return [s.decode("utf-8") for s in get[vector[string]](operand)]
+    if holds_alternative[vector[vector[string]]](operand):
+        return [[s.decode("utf-8") for s in vs]
+                for vs in get[vector[vector[string]]](operand)]
+
     if holds_alternative[Dictionary](operand):
         return dictionary_to_pydict(get[Dictionary](operand))
+    if holds_alternative[vector[Dictionary]](operand):
+        return vec_of_dict_to_list(get[vector[Dictionary]](operand))
+    if holds_alternative[vector[vector[Dictionary]]](operand):
+        return vec_of_vec_of_dict_to_list(get[vector[vector[Dictionary]]](operand))
+
+    if holds_alternative[EmptyList](operand):
+        assert False, "Should never get an EmptyList from C++"
+        return None
+
     if holds_alternative[NodeCollectionPTR](operand):
         obj = NodeCollectionObject()
         obj._set_nc(get[NodeCollectionPTR](operand))
         return nest.NodeCollection(obj)
+
+    if holds_alternative[vector[NodeCollectionPTR]](operand):
+        res = []
+        for ncptr in get[vector[NodeCollectionPTR]](operand):
+            obj = NodeCollectionObject()
+            obj._set_nc(ncptr)
+            res.append(nest.NodeCollection(obj))
+        return res
+
+    # This monostate represents missing NodeCollection status data (nodes on other ranks)
+    # Translates to None for NEST 3.9 compatibility
+    if holds_alternative[monostate](operand):
+        return None
+
+    # get_nc_status() returns a vector<any_type> for NEST 3.9 compatibility
+    # This alternative starts the unpacking of that vector into a tuple
+    if holds_alternative[AnyVector](operand):
+        return anyvec_to_objtuple(operand)
+
     if holds_alternative[VerbosityLevel](operand):
         return get[VerbosityLevel](operand)
+
+    raise RuntimeError(f"Cannot convert value of type '{debug_type(operand)}' returned by NEST kernel to Python object.")
 
 
 cdef is_list_tuple_ndarray_of_float(v):
@@ -584,13 +614,13 @@ def llapi_copy_model(oldmodname, newmodname, object params):
 
 
 def llapi_get_nc_status(NodeCollectionObject nc, object key=None):
-    cdef Dictionary statuses = get_nc_status(nc.thisptr)
+    statuses = dictionary_to_pydict( get_nc_status(nc.thisptr) )
     if key is None:
-        return dictionary_to_pydict(statuses)
+        return statuses
     elif isinstance(key, str):
-        if not statuses.known(pystr_to_string(key)):
+        if key not in statuses:
             raise KeyError(key)
-        value = any_to_pyobj(statuses[pystr_to_string(key)])
+        value = statuses[key]
         # PYNEST-NG-FUTURE: This is backwards-compatible, but makes it harder
         # to write scalable code. Maybe just return value as is?
         return value[0] if len(value) == 1 else value
@@ -881,20 +911,20 @@ def llapi_connect_arrays(sources, targets, weights, delays, synapse_model, syn_p
             raise ValueError('syn_param_values must be a matrix with arrays of the same length as sources and targets.')
 
     # Get pointers to the first element in each NumPy array
-    cdef long[::1] sources_mv = numpy.ascontiguousarray(sources, dtype=numpy.int64)
-    cdef long* sources_ptr = &sources_mv[0]
+    cdef const long[::1] sources_mv = numpy.ascontiguousarray(sources, dtype=numpy.int64)
+    cdef const long* sources_ptr = &sources_mv[0]
 
-    cdef long[::1] targets_mv = numpy.ascontiguousarray(targets, dtype=numpy.int64)
-    cdef long* targets_ptr = &targets_mv[0]
+    cdef const long[::1] targets_mv = numpy.ascontiguousarray(targets, dtype=numpy.int64)
+    cdef const long* targets_ptr = &targets_mv[0]
 
-    cdef double[::1] weights_mv
-    cdef double* weights_ptr = NULL
+    cdef const double[::1] weights_mv
+    cdef const double* weights_ptr = NULL
     if weights is not None:
         weights_mv = numpy.ascontiguousarray(weights, dtype=numpy.double)
         weights_ptr = &weights_mv[0]
 
-    cdef double[::1] delays_mv
-    cdef double* delays_ptr = NULL
+    cdef const double[::1] delays_mv
+    cdef const double* delays_ptr = NULL
     if delays is not None:
         delays_mv = numpy.ascontiguousarray(delays, dtype=numpy.double)
         delays_ptr = &delays_mv[0]
@@ -905,8 +935,8 @@ def llapi_connect_arrays(sources, targets, weights, delays, synapse_model, syn_p
         for key in syn_param_keys:
             param_keys_ptr.push_back(pystr_to_string(key))
 
-    cdef double[:, ::1] param_values_mv
-    cdef double* param_values_ptr = NULL
+    cdef const double[:, ::1] param_values_mv
+    cdef const double* param_values_ptr = NULL
     if syn_param_values is not None:
         param_values_mv = numpy.ascontiguousarray(syn_param_values, dtype=numpy.double)
         param_values_ptr = &param_values_mv[0][0]

@@ -674,18 +674,18 @@ NodeCollectionPrimitive::slice( size_t start, size_t end, size_t stride ) const
 }
 
 std::ostream&
-operator<<( std::ostream& out, const NodeCollectionPrimitive& nc )
+NodeCollectionPrimitive::print_me( std::ostream& out ) const
 {
   out << "NodeCollection(";
-  if ( nc.empty() )
+  if ( empty() )
   {
     out << "<empty>";
   }
   else
   {
-    std::string metadata = nc.metadata_.get() ? nc.metadata_->get_type() : "None";
+    const std::string metadata = metadata_.get() ? metadata_->get_type() : "None";
     out << "metadata=" << metadata << ", ";
-    nc.print_primitive( out );
+    print_primitive( out );
   }
   out << ")";
 
@@ -1347,13 +1347,13 @@ NodeCollectionComposite::has_proxies() const
 }
 
 std::ostream&
-operator<<( std::ostream& out, const NodeCollectionComposite& nc )
+NodeCollectionComposite::print_me( std::ostream& out ) const
 {
-  std::string metadata = nc.parts_[ 0 ].get_metadata().get() ? nc.parts_[ 0 ].get_metadata()->get_type() : "None";
+  std::string metadata = parts_[ 0 ].get_metadata().get() ? parts_[ 0 ].get_metadata()->get_type() : "None";
   std::string nc_str = "NodeCollection(";
   std::string space( nc_str.size(), ' ' );
 
-  if ( nc.is_sliced_ )
+  if ( is_sliced_ )
   {
     size_t current_part = 0;
     size_t current_offset = 0;
@@ -1361,19 +1361,19 @@ operator<<( std::ostream& out, const NodeCollectionComposite& nc )
     size_t primitive_last = 0;
 
     size_t primitive_size = 0;
-    NodeIDTriple first_in_primitive = *nc.begin();
+    NodeIDTriple first_in_primitive = *begin();
 
     std::vector< std::string > string_vector;
 
     out << nc_str << "metadata=" << metadata << ",";
 
-    const auto end_it = nc.end();
-    for ( nc_const_iterator it = nc.begin(); it < end_it; ++it )
+    const auto end_it = end();
+    for ( nc_const_iterator it = begin(); it < end_it; ++it )
     {
       std::tie( current_part, current_offset ) = it.get_part_offset();
       if ( current_part != previous_part ) // New primitive
       {
-        if ( it > nc.begin() )
+        if ( it > begin() )
         {
           // Need to count the primitive, so can't start at begin()
           out << "\n" + space
@@ -1387,9 +1387,9 @@ operator<<( std::ostream& out, const NodeCollectionComposite& nc )
           {
             out << "first=" << first_in_primitive.node_id << ", last=";
             out << primitive_last;
-            if ( nc.stride_ > 1 )
+            if ( stride_ > 1 )
             {
-              out << ", step=" << nc.stride_ << ";";
+              out << ", step=" << stride_ << ";";
             }
           }
         }
@@ -1415,9 +1415,9 @@ operator<<( std::ostream& out, const NodeCollectionComposite& nc )
     {
       out << "first=" << first_in_primitive.node_id << ", last=";
       out << primitive_last;
-      if ( nc.stride_ > 1 )
+      if ( stride_ > 1 )
       {
-        out << ", step=" << nc.stride_;
+        out << ", step=" << stride_;
       }
     }
   }
@@ -1425,9 +1425,9 @@ operator<<( std::ostream& out, const NodeCollectionComposite& nc )
   {
     // Unsliced Composite NodeCollection
     out << nc_str << "metadata=" << metadata << ",";
-    for ( auto it = nc.parts_.begin(); it < nc.parts_.end(); ++it )
+    for ( auto it = parts_.begin(); it < parts_.end(); ++it )
     {
-      if ( it == nc.parts_.end() - 1 )
+      if ( it == parts_.end() - 1 )
       {
         out << "\n" + space;
         it->print_primitive( out );

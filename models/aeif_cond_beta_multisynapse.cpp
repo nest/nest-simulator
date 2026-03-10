@@ -189,7 +189,7 @@ aeif_cond_beta_multisynapse::Parameters_::get( Dictionary& d ) const
   d[ names::g_L ] = g_L;
   d[ names::E_L ] = E_L;
   d[ names::V_reset ] = V_reset_;
-  d[ names::n_receptors ] = n_receptors();
+  d[ names::n_receptors ] = static_cast< long >( n_receptors() );
   d[ names::E_rev ] = E_rev;
   d[ names::tau_rise ] = tau_rise;
   d[ names::tau_decay ] = tau_decay;

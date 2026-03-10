@@ -224,12 +224,12 @@ nest::RecordingBackendMemory::DeviceData::get_status( Dictionary& d ) const
     events = d.get< Dictionary >( names::events );
   }
 
-  auto& senders = events.get_vector< int >( names::senders );
+  auto& senders = events.get_vector< long >( names::senders );
   senders.insert( senders.end(), senders_.begin(), senders_.end() );
 
   if ( time_in_steps_ )
   {
-    auto& times = events.get_vector< int >( names::times );
+    auto& times = events.get_vector< long >( names::times );
     times.insert( times.end(), times_steps_.begin(), times_steps_.end() );
 
     auto& offsets = events.get_vector< double >( names::offsets );
@@ -248,7 +248,7 @@ nest::RecordingBackendMemory::DeviceData::get_status( Dictionary& d ) const
   }
   for ( size_t i = 0; i < long_values_.size(); ++i )
   {
-    auto& long_name = events.get_vector< int >( long_value_names_[ i ] );
+    auto& long_name = events.get_vector< long >( long_value_names_[ i ] );
     long_name.insert( long_name.end(), long_values_[ i ].begin(), long_values_[ i ].end() );
   }
 

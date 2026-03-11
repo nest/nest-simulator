@@ -260,7 +260,7 @@ eprop_iaf_psc_delta_adapt::State_::set( const Dictionary& d, const Parameters_& 
   // adaptive threshold can only be set indirectly via the adaptation variable
   if ( update_value_param( d, names::adaptation, adapt_, node ) )
   {
-    // if E_L changed in this SetStatus call, p.V_th_ has been adjusted and no further action is needed
+    // if E_L changed in this set call, p.V_th_ has been adjusted and no further action is needed
     v_th_adapt_ = p.V_th_ + p.adapt_beta_ * adapt_;
   }
   else

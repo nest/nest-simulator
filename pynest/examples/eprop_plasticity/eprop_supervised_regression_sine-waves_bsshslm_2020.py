@@ -382,7 +382,7 @@ for input_spike_bool in input_spike_bools:
 
 ####################
 
-nest.SetStatus(gen_spk_in, params_gen_spk_in)
+gen_spk_in.set(params_gen_spk_in)
 
 # %% ###########################################################################################################
 # Create output
@@ -418,7 +418,7 @@ params_gen_rate_target = {
 
 ####################
 
-nest.SetStatus(gen_rate_target, params_gen_rate_target)
+gen_rate_target.set(params_gen_rate_target)
 
 # %% ###########################################################################################################
 # Force final update

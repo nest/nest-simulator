@@ -644,8 +644,8 @@ class TrainingPipeline:
         nest.SetDefaults("eprop_synapse_bsshslm_2020", params_common_syn_eprop)
 
         params_gen_spk_in, params_gen_rate_target = get_params_task_input_output(self.n_iter_sim)
-        nest.SetStatus(gen_spk_in, params_gen_spk_in)
-        nest.SetStatus(gen_rate_target, params_gen_rate_target)
+        gen_spk_in.set(params_gen_spk_in)
+        gen_rate_target.set(params_gen_rate_target)
 
         self.simulate("total_offset")
         self.simulate("extension_sim")

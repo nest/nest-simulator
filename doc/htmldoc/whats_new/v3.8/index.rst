@@ -22,7 +22,7 @@ simplified NMDA dynamics.
 It contains exponential conductance-based AMPA and GABA synapses along with NMDA synapses
 weighted such that it approximates the original linear dynamics.
 
-For futher information see:
+For further information see:
 
 * :doc:`/auto_examples/wang_decision_making`
 * :doc:`/models/iaf_bw_2001`

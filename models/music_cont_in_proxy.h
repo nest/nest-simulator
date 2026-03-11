@@ -130,25 +130,25 @@ private:
 
   struct Parameters_
   {
-    std::string port_name_; //!< the name of MUSIC port to connect to
+    std::string port_name_;  //!< the name of MUSIC port to connect to
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( Dictionary& ) const;                 //!< Store current values in Dictionary
-    void set( const Dictionary&, State_&, Node* ); //!< Set values from Dictionary
+    void get( Dictionary& ) const;                  //!< Store current values in Dictionary
+    void set( const Dictionary&, State_&, Node* );  //!< Set values from Dictionary
   };
 
   // ------------------------------------------------------------
 
   struct State_
   {
-    bool published_; //!< indicates whether this node has been published already
-                     //!< with MUSIC
-    int port_width_; //!< the width of the MUSIC port
+    bool published_;  //!< indicates whether this node has been published already
+                      //!< with MUSIC
+    int port_width_;  //!< the width of the MUSIC port
 
-    State_(); //!< Sets default state value
+    State_();  //!< Sets default state value
 
-    void get( Dictionary& ) const; //!< Store current values in Dictionary
+    void get( Dictionary& ) const;  //!< Store current values in Dictionary
     //! Set values from Dictionary
     void set( const Dictionary&, const Parameters_& );
   };
@@ -157,14 +157,14 @@ private:
 
   struct Buffers_
   {
-    std::vector< double > data_; //!< The buffer for incoming data
+    std::vector< double > data_;  //!< The buffer for incoming data
   };
 
   // ------------------------------------------------------------
 
   struct Variables_
   {
-    MUSIC::ContInputPort* MP_; //!< The MUSIC cont port for input of data
+    MUSIC::ContInputPort* MP_;  //!< The MUSIC cont port for input of data
   };
 
   // ------------------------------------------------------------
@@ -175,7 +175,7 @@ private:
   Variables_ V_;
 };
 
-} // namespace
+}  // namespace
 
 #endif
 

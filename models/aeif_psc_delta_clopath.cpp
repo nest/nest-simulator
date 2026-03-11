@@ -138,28 +138,28 @@ nest::aeif_psc_delta_clopath_dynamics( double, const double y[], double f[], voi
  * ---------------------------------------------------------------- */
 
 nest::aeif_psc_delta_clopath::Parameters_::Parameters_()
-  : V_peak_( 33.0 )         // mV
-  , V_reset_( -60.0 )       // mV
-  , t_ref_( 0.0 )           // ms
-  , g_L( 30.0 )             // nS
-  , C_m( 281.0 )            // pF
-  , E_L( -70.6 )            // mV
-  , Delta_T( 2.0 )          // mV
-  , tau_w( 144.0 )          // ms
-  , tau_z( 40.0 )           // ms
-  , tau_V_th( 50.0 )        // ms
-  , V_th_max( 30.4 )        // mV
-  , V_th_rest( -50.4 )      // mV
-  , tau_u_bar_plus( 7.0 )   // ms
-  , tau_u_bar_minus( 10.0 ) // ms
-  , tau_u_bar_bar( 500.0 )  // ms
-  , a( 4.0 )                // nS
-  , b( 80.5 )               // pA
-  , I_sp( 400.0 )           // pA
-  , I_e( 0.0 )              // pA
+  : V_peak_( 33.0 )          // mV
+  , V_reset_( -60.0 )        // mV
+  , t_ref_( 0.0 )            // ms
+  , g_L( 30.0 )              // nS
+  , C_m( 281.0 )             // pF
+  , E_L( -70.6 )             // mV
+  , Delta_T( 2.0 )           // mV
+  , tau_w( 144.0 )           // ms
+  , tau_z( 40.0 )            // ms
+  , tau_V_th( 50.0 )         // ms
+  , V_th_max( 30.4 )         // mV
+  , V_th_rest( -50.4 )       // mV
+  , tau_u_bar_plus( 7.0 )    // ms
+  , tau_u_bar_minus( 10.0 )  // ms
+  , tau_u_bar_bar( 500.0 )   // ms
+  , a( 4.0 )                 // nS
+  , b( 80.5 )                // pA
+  , I_sp( 400.0 )            // pA
+  , I_e( 0.0 )               // pA
   , gsl_error_tol( 1e-6 )
-  , t_clamp_( 2.0 )  // ms
-  , V_clamp_( 33.0 ) // mV
+  , t_clamp_( 2.0 )   // ms
+  , V_clamp_( 33.0 )  // mV
 {
 }
 
@@ -408,16 +408,16 @@ nest::aeif_psc_delta_clopath::~aeif_psc_delta_clopath()
 void
 nest::aeif_psc_delta_clopath::init_buffers_()
 {
-  B_.spikes_.clear();   // includes resize
-  B_.currents_.clear(); // includes resize
+  B_.spikes_.clear();    // includes resize
+  B_.currents_.clear();  // includes resize
   ClopathArchivingNode::clear_history();
 
   B_.logger_.reset();
 
   B_.step_ = Time::get_resolution().get_ms();
   B_.IntegrationStep_ =
-    B_.step_; // reasonable initial value for numerical integrator step size; this will anyway be overwritten by
-              // gsl_odeiv_evolve_apply(), but it might confuse the integrator if it contains uninitialised data
+    B_.step_;  // reasonable initial value for numerical integrator step size; this will anyway be overwritten by
+               // gsl_odeiv_evolve_apply(), but it might confuse the integrator if it contains uninitialised data
 
   if ( not B_.s_ )
   {
@@ -497,11 +497,11 @@ nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
-        &B_.sys_,             // system of ODE
-        &t,                   // from t
-        B_.step_,             // to t <= step
-        &B_.IntegrationStep_, // integration step size
-        S_.y_ );              // neuronal state
+        &B_.sys_,              // system of ODE
+        &t,                    // from t
+        B_.step_,              // to t <= step
+        &B_.IntegrationStep_,  // integration step size
+        S_.y_ );               // neuronal state
 
       if ( status != GSL_SUCCESS )
       {
@@ -520,23 +520,23 @@ nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const
         // neuron not refractory
         S_.y_[ State_::V_M ] = S_.y_[ State_::V_M ] + B_.spikes_.get_value( lag );
       }
-      else // neuron is absolute refractory
+      else  // neuron is absolute refractory
       {
-        B_.spikes_.get_value( lag ); // clear buffer entry, ignore spike
+        B_.spikes_.get_value( lag );  // clear buffer entry, ignore spike
       }
 
       // set the right threshold depending on Delta_T
       if ( P_.Delta_T == 0. )
       {
-        V_.V_peak_ = S_.y_[ State_::V_TH ]; // same as IAF dynamics for spikes if
-                                            // Delta_T == 0.
+        V_.V_peak_ = S_.y_[ State_::V_TH ];  // same as IAF dynamics for spikes if
+                                             // Delta_T == 0.
       }
 
       if ( S_.y_[ State_::V_M ] >= V_.V_peak_ and S_.clamp_r_ == 0 )
       {
         S_.y_[ State_::V_M ] = P_.V_clamp_;
-        S_.y_[ State_::W ] += P_.b;   // spike-driven adaptation
-        S_.y_[ State_::Z ] = P_.I_sp; // depolarizing spike afterpotential current
+        S_.y_[ State_::W ] += P_.b;    // spike-driven adaptation
+        S_.y_[ State_::Z ] = P_.I_sp;  // depolarizing spike afterpotential current
         S_.y_[ State_::V_TH ] = P_.V_th_max;
 
         /* Initialize clamping step counter.
@@ -623,4 +623,4 @@ nest::aeif_psc_delta_clopath::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-#endif // HAVE_GSL
+#endif  // HAVE_GSL

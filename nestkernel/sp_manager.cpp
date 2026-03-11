@@ -203,7 +203,7 @@ SPManager::disconnect( const size_t snode_id, Node* target, size_t target_thread
   {
     kernel().connection_manager.disconnect( target_thread, syn_id, snode_id, target->get_node_id() );
   }
-  else if ( target->local_receiver() ) // normal devices
+  else if ( target->local_receiver() )  // normal devices
   {
     if ( source->is_proxy() )
     {
@@ -217,7 +217,7 @@ SPManager::disconnect( const size_t snode_id, Node* target, size_t target_thread
 
     kernel().connection_manager.disconnect( target_thread, syn_id, snode_id, target->get_node_id() );
   }
-  else // globally receiving devices iterate over all target threads
+  else  // globally receiving devices iterate over all target threads
   {
     // we do not allow to connect a device to a global receiver at the moment
     if ( not source->has_proxies() )
@@ -274,7 +274,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
   syn_specs[ 0 ].init_access_flags();
 
   if ( not sp_conn_builders_.empty() )
-  { // Implement a getter for sp_conn_builders_
+  {  // Implement a getter for sp_conn_builders_
 
     for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin(); i != sp_conn_builders_.end(); i++ )
     {
@@ -328,10 +328,10 @@ void
 SPManager::update_structural_plasticity( SPBuilder* sp_builder )
 {
   // Index of neurons having a vacant synaptic element
-  std::vector< size_t > pre_vacant_id;  // pre synaptic elements (e.g Axon)
-  std::vector< size_t > post_vacant_id; // postsynaptic element (e.g Den)
-  std::vector< int > pre_vacant_n;      // number of synaptic elements
-  std::vector< int > post_vacant_n;     // number of synaptic elements
+  std::vector< size_t > pre_vacant_id;   // pre synaptic elements (e.g Axon)
+  std::vector< size_t > post_vacant_id;  // postsynaptic element (e.g Den)
+  std::vector< int > pre_vacant_n;       // number of synaptic elements
+  std::vector< int > post_vacant_n;      // number of synaptic elements
 
   // Index of neuron deleting a synaptic element
   std::vector< size_t > pre_deleted_id, post_deleted_id;
@@ -476,7 +476,7 @@ SPManager::delete_synapses_from_pre( const std::vector< size_t >& pre_deleted_id
     }
     global_shuffle( global_targets, -( *n_it ) );
 
-    for ( int i = 0; i < -( *n_it ); ++i ) // n is negative
+    for ( int i = 0; i < -( *n_it ); ++i )  // n is negative
     {
       delete_synapse( *id_it, global_targets[ i ], synapse_model, se_pre_name, se_post_name );
     }
@@ -555,7 +555,7 @@ SPManager::delete_synapses_from_post( std::vector< size_t >& post_deleted_id,
     }
     global_shuffle( global_sources, -( *n_it ) );
 
-    for ( int i = 0; i < -( *n_it ); i++ ) // n is negative
+    for ( int i = 0; i < -( *n_it ); i++ )  // n is negative
     {
       delete_synapse( global_sources[ i ], *id_it, synapse_model, se_pre_name, se_post_name );
     }
@@ -701,4 +701,4 @@ nest::SPManager::disable_structural_plasticity()
   structural_plasticity_enabled_ = false;
 }
 
-} // namespace nest
+}  // namespace nest

@@ -36,7 +36,6 @@ docstring!
 ]]
 """
 
-
 from msilib.schema import Error
 
 

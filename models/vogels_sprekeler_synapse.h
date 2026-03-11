@@ -320,6 +320,6 @@ vogels_sprekeler_synapse< targetidentifierT >::set_status( const Dictionary& d, 
     throw BadProperty( "State Kplus must be positive." );
   }
 }
-} // of namespace nest
+}  // of namespace nest
 
-#endif // of #ifndef VOGELS_SPREKELER_SYNAPSE_H
+#endif  // of #ifndef VOGELS_SPREKELER_SYNAPSE_H

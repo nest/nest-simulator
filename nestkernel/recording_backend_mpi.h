@@ -181,6 +181,6 @@ private:
 };
 
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef RECORDING_BACKEND_MPI_H */

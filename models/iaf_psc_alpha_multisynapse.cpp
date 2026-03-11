@@ -90,15 +90,15 @@ iaf_psc_alpha_multisynapse::get_data_access_functor( size_t elem )
  * ---------------------------------------------------------------- */
 
 iaf_psc_alpha_multisynapse::Parameters_::Parameters_()
-  : Tau_( 10.0 )             // ms
-  , C_( 250.0 )              // pF
-  , refractory_time_( 2.0 )  // ms
-  , E_L_( -70.0 )            // mV
-  , I_e_( 0.0 )              // pA
-  , V_reset_( -70.0 - E_L_ ) // mV, rel to E_L_
-  , Theta_( -55.0 - E_L_ )   // mV, rel to E_L_
+  : Tau_( 10.0 )              // ms
+  , C_( 250.0 )               // pF
+  , refractory_time_( 2.0 )   // ms
+  , E_L_( -70.0 )             // mV
+  , I_e_( 0.0 )               // pA
+  , V_reset_( -70.0 - E_L_ )  // mV, rel to E_L_
+  , Theta_( -55.0 - E_L_ )    // mV, rel to E_L_
   , LowerBound_( -std::numeric_limits< double >::infinity() )
-  , tau_syn_( 1, 2.0 ) // ms
+  , tau_syn_( 1, 2.0 )  // ms
   , has_connections_( false )
 {
 }
@@ -119,9 +119,9 @@ iaf_psc_alpha_multisynapse::State_::State_()
 void
 iaf_psc_alpha_multisynapse::Parameters_::get( Dictionary& d ) const
 {
-  d[ names::E_L ] = E_L_; // resting potential
+  d[ names::E_L ] = E_L_;  // resting potential
   d[ names::I_e ] = I_e_;
-  d[ names::V_th ] = Theta_ + E_L_; // threshold value
+  d[ names::V_th ] = Theta_ + E_L_;  // threshold value
   d[ names::V_reset ] = V_reset_ + E_L_;
   d[ names::C_m ] = C_;
   d[ names::tau_m ] = Tau_;
@@ -212,7 +212,7 @@ iaf_psc_alpha_multisynapse::Parameters_::set( const Dictionary& d, Node* node )
 void
 iaf_psc_alpha_multisynapse::State_::get( Dictionary& d, const Parameters_& p ) const
 {
-  d[ names::V_m ] = V_m_ + p.E_L_; // Membrane potential
+  d[ names::V_m ] = V_m_ + p.E_L_;  // Membrane potential
 }
 
 void
@@ -270,8 +270,8 @@ iaf_psc_alpha_multisynapse::iaf_psc_alpha_multisynapse( const iaf_psc_alpha_mult
 void
 iaf_psc_alpha_multisynapse::init_buffers_()
 {
-  B_.spikes_.clear();   // includes resize
-  B_.currents_.clear(); // includes resize
+  B_.spikes_.clear();    // includes resize
+  B_.currents_.clear();  // includes resize
 
   B_.logger_.reset();
 
@@ -336,7 +336,7 @@ iaf_psc_alpha_multisynapse::update( Time const& origin, const long from, const l
       // lower bound of membrane potential
       S_.V_m_ = ( S_.V_m_ < P_.LowerBound_ ? P_.LowerBound_ : S_.V_m_ );
     }
-    else // neuron is absolute refractory
+    else  // neuron is absolute refractory
     {
       --S_.refractory_steps_;
     }
@@ -351,7 +351,7 @@ iaf_psc_alpha_multisynapse::update( Time const& origin, const long from, const l
       S_.y1_syn_[ i ] += V_.PSCInitialValues_[ i ] * B_.spikes_[ i ].get_value( lag );
     }
 
-    if ( S_.V_m_ >= P_.Theta_ ) // threshold crossing
+    if ( S_.V_m_ >= P_.Theta_ )  // threshold crossing
     {
       S_.refractory_steps_ = V_.RefractoryCounts_;
       S_.V_m_ = P_.V_reset_;
@@ -415,10 +415,10 @@ iaf_psc_alpha_multisynapse::handle( DataLoggingRequest& e )
 void
 iaf_psc_alpha_multisynapse::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;                       // temporary copy in case of errors
-  const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
-  State_ stmp = S_;                            // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
+  Parameters_ ptmp = P_;                        // temporary copy in case of errors
+  const double delta_EL = ptmp.set( d, this );  // throws if BadProperty
+  State_ stmp = S_;                             // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );          // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -430,7 +430,7 @@ iaf_psc_alpha_multisynapse::set_status( const Dictionary& d )
    * Here is where we must update the recordablesMap_ if new receptors
    * are added!
    */
-  if ( ptmp.tau_syn_.size() > P_.tau_syn_.size() ) // Number of receptors increased
+  if ( ptmp.tau_syn_.size() > P_.tau_syn_.size() )  // Number of receptors increased
   {
     for ( size_t i_syn = P_.tau_syn_.size(); i_syn < ptmp.tau_syn_.size(); ++i_syn )
     {
@@ -440,7 +440,7 @@ iaf_psc_alpha_multisynapse::set_status( const Dictionary& d )
     }
   }
   else if ( ptmp.tau_syn_.size() < P_.tau_syn_.size() )
-  { // Number of receptors decreased
+  {  // Number of receptors decreased
     for ( size_t i_syn = ptmp.tau_syn_.size(); i_syn < P_.tau_syn_.size(); ++i_syn )
     {
       recordablesMap_.erase( get_i_syn_name( i_syn ) );
@@ -452,4 +452,4 @@ iaf_psc_alpha_multisynapse::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-} // namespace
+}  // namespace

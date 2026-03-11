@@ -154,6 +154,7 @@
  presynaptic element and the postsynaptic element. structural_plasticity_update_interval integertype - Defines the time
  interval in ms at which the structural plasticity manager will make changes in the structure of the network (creation
                                                      and deletion of plastic synapses), defaults to 10000.
+ cycle_time_log                        dict        - Information on the duration and spike counts within each update.
  synapse_models                        arraytype   - The list of the available synapse models (read only).
 
  Waveform relaxation method (wfr)
@@ -196,8 +197,8 @@ private:
 
   static KernelManager* kernel_manager_instance_;
 
-  KernelManager( KernelManager const& );  // do not implement
-  void operator=( KernelManager const& ); // do not implement
+  KernelManager( KernelManager const& );   // do not implement
+  void operator=( KernelManager const& );  // do not implement
 
   Dictionary get_build_info_();
 
@@ -308,14 +309,14 @@ public:
   }
 
 private:
-  size_t get_memsize_linux_() const;  //!< return VmSize in kB
-  size_t get_memsize_darwin_() const; //!< return resident_size in kB
+  size_t get_memsize_linux_() const;   //!< return VmSize in kB
+  size_t get_memsize_darwin_() const;  //!< return resident_size in kB
 
   //! All managers, order determines initialization and finalization order (latter backwards)
   std::vector< ManagerInterface* > managers;
 
-  bool initialized_;   //!< true if the kernel is initialized
-  std::ofstream dump_; //!< for FULL_LOGGING output
+  bool initialized_;    //!< true if the kernel is initialized
+  std::ofstream dump_;  //!< for FULL_LOGGING output
 
   Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_omp_synchronization_construction_;
   Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_omp_synchronization_simulation_;
@@ -342,7 +343,7 @@ get_vp_specific_rng( size_t tid )
   return kernel().random_manager.get_vp_specific_rng( tid );
 }
 
-} // namespace nest
+}  // namespace nest
 
 inline nest::KernelManager&
 nest::KernelManager::get_kernel_manager()

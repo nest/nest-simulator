@@ -126,6 +126,6 @@ GenericFactory< BaseT >::new_from_dict_( const Dictionary& d )
   return new T( d );
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif

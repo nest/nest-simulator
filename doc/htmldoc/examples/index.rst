@@ -214,7 +214,7 @@ PyNEST examples
 .. grid:: 1 1 2 3
 
     .. grid-item-card:: :doc:`../auto_examples/eprop_plasticity/index`
-           :img-top: ../static/img/pynest/eprop_supervised_classification_infrastructure.png
+           :img-top: ../../../pynest/examples/eprop_plasticity/eprop_supervised_regression_sine-waves.png
 
            * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_classification_evidence-accumulation_bsshslm_2020`
            * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_sine-waves_bsshslm_2020`

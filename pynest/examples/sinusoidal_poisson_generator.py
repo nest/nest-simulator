@@ -35,7 +35,6 @@ the ``individual_spike_trains`` switch.
 
 """
 
-
 ###############################################################################
 # We import the modules required to simulate, analyze and plot this example.
 

@@ -235,6 +235,14 @@ New NEST
    }
 
 
+NEST requires C++20
+-------------------
+
+From NEST 3.10 on, we use some C++20 features in NEST code. Therefore,
+NEST needs to be built with a compiler that supports C++20. Most
+recent C++ compilers should do so.
+
+
 Model improvements
 ------------------
 

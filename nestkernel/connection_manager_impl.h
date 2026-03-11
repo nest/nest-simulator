@@ -81,6 +81,6 @@ ConnectionManager::send_from_device( const size_t tid, const size_t ldid, Event&
   target_table_devices_.send_from_device( tid, ldid, e, kernel().model_manager.get_connection_models( tid ) );
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* CONNECTION_MANAGER_IMPL_H */

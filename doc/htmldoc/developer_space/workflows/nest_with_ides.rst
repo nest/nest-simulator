@@ -75,7 +75,7 @@ Setting up the project
    #. Under ``C/C++ Build > Environment``, prepend
       ``${MAMBA_ENV}/bin`` to ``PATH``
    #. Under ``C/C++ General > Paths and Symbols – [Tab] Includes``, add the
-      following two direcories
+      following two directories
 
       * ``${BUILD_DIR}/libnestutil`` (contains ``config.h``)
       * ``${mamba_env}/include`` (all headers from packages provided in Mamba environment)
@@ -96,10 +96,10 @@ Usage
 ~~~~~
 
 * Eclipse should now find all includes.
-* It should intepret switches such as ``HAVE_GSL`` and ``HAVE_MPI``
+* It should interpret switches such as ``HAVE_GSL`` and ``HAVE_MPI``
   correctly, i.e., shade the code for the option that is not given.
   If this does not seem to work, try to rebuild the C/C++ index by
-  opening C++ source file and chosing ``Project > C/C++ Index >
+  opening C++ source file and choosing ``Project > C/C++ Index >
   Rebuild``.
 * Clicking the hammer icon should compile and install NEST. Errors
   will be shown in the console and summarized in the warnings tab
@@ -276,7 +276,7 @@ MacPorts
       sudo port install gsl +gcc48
       sudo port install cmake       # build tools
 
-3. NEST on Mac requires OpenMPI 1.6 from MacPorts to work properly, so we have to get this older version for MacPort. Download the portsfile `Portfile-openmpi-1.6.4.txt <http://www.nest-simulator.org/wp-content/uploads/2014/12/Portfile-openmpi-1.6.4.txt>`_ and save it under the name ``Portfile`` in an arbitraty directory.
+3. NEST on Mac requires OpenMPI 1.6 from MacPorts to work properly, so we have to get this older version for MacPort. Download the portsfile `Portfile-openmpi-1.6.4.txt <http://www.nest-simulator.org/wp-content/uploads/2014/12/Portfile-openmpi-1.6.4.txt>`_ and save it under the name ``Portfile`` in an arbitrary directory.
 4. In Terminal, move to the directory containing Portfile and run
 
    .. code-block:: sh

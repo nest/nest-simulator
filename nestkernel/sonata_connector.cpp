@@ -26,7 +26,7 @@
 #ifdef HAVE_HDF5
 
 // C++ includes:
-#include <cstdlib> // for div()
+#include <cstdlib>  // for div()
 #include <string>
 #include <vector>
 
@@ -153,14 +153,14 @@ SonataConnector::connect()
 
       close_dsets_();
 
-    } // end iteration over population groups
+    }  // end iteration over population groups
 
     // Reset and close H5 objects in scope
     reset_params_();
     edges_top_level_grp->close();
     file->close();
 
-  } // end iteration over edge files
+  }  // end iteration over edge files
 }
 
 H5::H5File*
@@ -364,7 +364,7 @@ SonataConnector::sequential_chunkwise_connector_()
   auto dv = std::div( static_cast< long long >( num_conn ), static_cast< long long >( hyperslab_size_ ) );
 
   // Iterate chunks
-  hsize_t offset = 0; // start coordinates of data selection
+  hsize_t offset = 0;  // start coordinates of data selection
   for ( long long i = 0; i < dv.quot; i++ )
   {
     connect_chunk_( hyperslab_size_, offset );
@@ -457,8 +457,8 @@ SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t off
           delay,
           weight );
 
-      } // end for
-    }   // end try
+      }  // end for
+    }  // end try
 
     catch ( ... )
     {
@@ -466,7 +466,7 @@ SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t off
       exceptions_raised_.at( tid ) = std::current_exception();
     }
 
-  } // end parallel region
+  }  // end parallel region
 
   // Check if any exceptions have been raised
   for ( auto eptr : exceptions_raised_ )
@@ -477,7 +477,7 @@ SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t off
     }
   }
 
-} // end create_connections_()
+}  // end create_connections_()
 
 hsize_t
 SonataConnector::get_nrows_( H5::DataSet dataset )
@@ -569,7 +569,7 @@ SonataConnector::set_synapse_params_( Dictionary syn_dict, size_t synapse_model_
   {
     if ( skip_syn_params_.find( param_name ) != skip_syn_params_.end() )
     {
-      continue; // weight, delay or other not-settable parameter
+      continue;  // weight, delay or other not-settable parameter
     }
 
     if ( syn_dict.known( param_name ) )
@@ -601,7 +601,7 @@ SonataConnector::set_synapse_params_( Dictionary syn_dict, size_t synapse_model_
         edge_type_id_2_param_dicts_.at( type_id ).at( tid )[ param.first ] = 0.0;
       }
     }
-  } // end parallel region
+  }  // end parallel region
 }
 
 void
@@ -663,7 +663,7 @@ SonataConnector::reset_params_()
   edge_type_id_2_param_dicts_.clear();
 }
 
-} // end namespace nest
+}  // end namespace nest
 
 herr_t
 get_member_names_callback_( hid_t loc_id, const char* name, const H5L_info_t*, void* opdata )
@@ -681,4 +681,4 @@ get_member_names_callback_( hid_t loc_id, const char* name, const H5L_info_t*, v
   return 0;
 }
 
-#endif // ifdef HAVE_HDF5
+#endif  // ifdef HAVE_HDF5

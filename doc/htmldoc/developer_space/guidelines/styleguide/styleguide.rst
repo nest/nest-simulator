@@ -618,7 +618,7 @@ Please ensure your reference follows the following guidelines.
 *  Use et al. for references with more than five authors.
 *  Put surname before first name for all authors.
 *  Do not put commas after surname.
-*  Use inital for first name of all authors.
+*  Use initial for first name of all authors.
 *  Put year, in parentheses, after authors.
 *  Write article titles in sentence case.
 *  Write the full title of journal.

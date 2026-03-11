@@ -120,7 +120,7 @@ ConnectionLabel< ConnectionT >::get_label() const
 }
 
 
-} // namespace nest
+}  // namespace nest
 
 
 #endif /* CONNECTION_LABEL_H */

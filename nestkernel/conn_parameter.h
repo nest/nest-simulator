@@ -421,6 +421,6 @@ private:
   ParameterPTR parameter_;
 };
 
-} // namespace nest
+}  // namespace nest
 
 #endif

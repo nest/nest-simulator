@@ -39,6 +39,7 @@ References
 .. [1] R. Urbanczik, W. Senn (2014): Learning by the Dendritic Prediction of
        Somatic Spiking. Neuron, 81, 521-528.
 """
+
 import nest
 import numpy as np
 from matplotlib import pyplot as plt

@@ -64,14 +64,14 @@ template < typename... Scalars >
 struct DictionarySchemaBuilder
 {
   template < typename... Extras >
-  using VariantType = std::variant< std::monostate,          // default-initialized any_type value, representing missing
-                                                             // non-local nodes in a node-colection
-    Scalars...,                                              // scalar types
-    std::vector< Scalars >...,                               // vector variants of the scalar types
-    std::vector< std::vector< Scalars > >...,                // vec-vec variants of the scalar types
-    std::vector< std::vector< std::vector< Scalars > > >..., // vec-vec-vec variants of the scalar types (for
-                                                             // correlomatrix-detector)
-    Extras...                                                // any extra types (see definition of any_type below)
+  using VariantType = std::variant< std::monostate,  // default-initialized any_type value, representing missing
+                                                     // non-local nodes in a node-colection
+    Scalars...,                                      // scalar types
+    std::vector< Scalars >...,                       // vector variants of the scalar types
+    std::vector< std::vector< Scalars > >...,        // vec-vec variants of the scalar types
+    std::vector< std::vector< std::vector< Scalars > > >...,  // vec-vec-vec variants of the scalar types (for
+                                                              // correlomatrix-detector)
+    Extras...                                                 // any extra types (see definition of any_type below)
     >;
 };
 
@@ -81,13 +81,13 @@ using any_type = DictionarySchema::VariantType< std::shared_ptr< nest::NodeColle
   std::vector< std::shared_ptr< nest::NodeCollection > >,
   std::shared_ptr< nest::Parameter >,
   nest::VerbosityLevel,
-  AnyVector, // this is only used to hold status data from elements of a node collection in a NEST 3.9 compatible way
+  AnyVector,  // this is only used to hold status data from elements of a node collection in a NEST 3.9 compatible way
   EmptyList >;
 
 class AnyVector : public std::vector< any_type >
 {
   using vectype_ = std::vector< any_type >;
-  using vectype_::vectype_; // Inherit constructors
+  using vectype_::vectype_;  // Inherit constructors
 };
 
 std::ostream& operator<<( std::ostream& os, const std::monostate& );
@@ -211,8 +211,8 @@ struct DictEntry_
     return item == other.item;
   }
 
-  any_type item;         //!< actual item stored
-  mutable bool accessed; //!< initially false, set to true once entry is accessed
+  any_type item;          //!< actual item stored
+  mutable bool accessed;  //!< initially false, set to true once entry is accessed
 };
 
 class dictionary_ : public std::map< std::string, DictEntry_ >
@@ -225,7 +225,7 @@ class dictionary_ : public std::map< std::string, DictEntry_ >
   // automatic hashing of keys (currently strings) which might make
   // lookups more efficient
   using maptype_ = std::map< std::string, DictEntry_ >;
-  using maptype_::maptype_; // Inherit constructors
+  using maptype_::maptype_;  // Inherit constructors
 
   /**
    * @brief Cast the specified non-vector value to the specified type.

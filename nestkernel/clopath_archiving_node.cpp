@@ -250,4 +250,4 @@ nest::ClopathArchivingNode::write_LTP_history( const double t_ltp_ms, double u, 
   }
 }
 
-} // of namespace nest
+}  // of namespace nest

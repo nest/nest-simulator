@@ -90,7 +90,7 @@ nest::RandomManager::initialize( const bool adjust_number_of_threads_or_rng_only
 #pragma omp parallel
   {
     const auto tid = kernel().vp_manager.get_thread_id();
-    const std::uint32_t vp = kernel().vp_manager.get_vp(); // type required for rng initializer
+    const std::uint32_t vp = kernel().vp_manager.get_vp();  // type required for rng initializer
     vp_synced_rngs_[ tid ] = rng_types_[ current_rng_type_ ]->create( { base_seed_, THREAD_SYNCED_SEEDER_ } );
     vp_specific_rngs_[ tid ] = rng_types_[ current_rng_type_ ]->create( { base_seed_, THREAD_SPECIFIC_SEEDER_, vp } );
   }
@@ -134,7 +134,7 @@ nest::RandomManager::get_status( Dictionary& d )
   }
 
   d[ names::rng_types ] = rng_types;
-  d[ names::rng_seed ] = static_cast< long >( base_seed_ ); // casting to avoid checking for exotic types
+  d[ names::rng_seed ] = static_cast< long >( base_seed_ );  // casting to avoid checking for exotic types
   d[ names::rng_type ] = current_rng_type_;
 }
 

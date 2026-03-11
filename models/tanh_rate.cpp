@@ -93,4 +93,4 @@ RecordablesMap< nest::rate_transformer_tanh >::create()
   insert_( names::rate, &nest::rate_transformer_tanh::get_rate_ );
 }
 
-} // namespace nest
+}  // namespace nest

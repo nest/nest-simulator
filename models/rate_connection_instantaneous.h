@@ -155,7 +155,7 @@ public:
   }
 
 private:
-  double weight_; //!< connection weight
+  double weight_;  //!< connection weight
 };
 
 template < typename targetidentifierT >
@@ -191,6 +191,6 @@ rate_connection_instantaneous< targetidentifierT >::get_secondary_event()
   return std::make_unique< InstantaneousRateConnectionEvent >();
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef RATE_CONNECTION_INSTANTANEOUS_H */

@@ -81,4 +81,4 @@ STDPPLHomCommonProperties::set_status( const Dictionary& d, ConnectorModel& cm )
   d.update_value( names::mu, mu_ );
 }
 
-} // of namespace nest
+}  // of namespace nest

@@ -200,6 +200,6 @@ static_synapse< targetidentifierT >::set_status( const Dictionary& d, ConnectorM
   d.update_value( names::weight, weight_ );
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef STATICSYNAPSE_H */

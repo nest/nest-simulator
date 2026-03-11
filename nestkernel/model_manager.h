@@ -264,8 +264,8 @@ private:
    */
   std::vector< std::vector< ConnectorModel* > > connection_models_;
 
-  Dictionary modeldict_;   //!< Dictionary of all node models
-  Dictionary synapsedict_; //!< Dictionary of all synapse models
+  Dictionary modeldict_;    //!< Dictionary of all node models
+  Dictionary synapsedict_;  //!< Dictionary of all synapse models
 
   Model* proxynode_model_;
 
@@ -320,6 +320,6 @@ ModelManager::get_secondary_event_prototype( const synindex syn_id, const size_t
   return get_connection_model( syn_id, tid ).get_secondary_event();
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* MODEL_MANAGER_H */

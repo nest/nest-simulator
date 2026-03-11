@@ -100,6 +100,6 @@ CommonSynapseProperties::get_weight_recorder() const
   return weight_recorder_;
 }
 
-} // of namespace nest
+}  // of namespace nest
 
 #endif /* #ifndef COMMON_SYNAPSE_PROPERTIES_H */

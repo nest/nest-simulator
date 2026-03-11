@@ -110,13 +110,13 @@ MusicRateInHandler::publish_port()
       *it = 0;
     }
 
-    MUSIC::ArrayData data_map( static_cast< void* >( &( data_[ 0 ] ) ), MPI::DOUBLE, 0, port_width_ );
+    MUSIC::ArrayData data_map( static_cast< void* >( &( data_[ 0 ] ) ), MPI_DOUBLE, 0, port_width_ );
 
     MP_->map( &data_map );
     published_ = true;
 
     std::string msg = String::compose( "Mapping MUSIC input port '%1' with width=%2.", port_name_, port_width_ );
-    LOG( M_INFO, "music_rate_in_handler::publish_port()", msg.c_str() );
+    LOG( VerbosityLevel::INFO, "music_rate_in_handler::publish_port()", msg.c_str() );
   }
 }
 
@@ -140,6 +140,6 @@ MusicRateInHandler::update( Time const&, const long, const long )
   }
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifdef HAVE_MUSIC */

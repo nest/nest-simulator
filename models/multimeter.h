@@ -34,10 +34,6 @@
 #include "nest_timeconverter.h"
 #include "recording_device.h"
 
-// Includes from sli:
-#include "dictutils.h"
-#include "name.h"
-
 /* BeginUserDocs: device, recorder
 
 Short description
@@ -72,11 +68,12 @@ recordables to have them sampled during simulation.
 The sampling interval for recordings (given in ms) can be controlled
 using the ``multimeter`` parameter ``interval``. The default value of
 1.0 ms can be changed by supplying a new value either in the call to
-``Create`` or by using ``SetStatus`` on the model instance.
+``Create`` or by using ``SetStatus`` on the model instance. To sample
+values at every simulation time step, use
 
 ::
 
-   nest.SetStatus(mm, {'interval': 0.1})
+   nest.SetStatus(mm, {'interval': nest.resolution})
 
 The recording interval must be greater than or equal to the
 :ref:`simulation resolution <simulation_resolution>`, which defaults
@@ -121,6 +118,7 @@ record_from
 interval
     A float (default: 1.0) specifying the interval in ms, at which
     data is collected from the nodes, the multimeter is connected to.
+    Must be a multiple of the resolution.
 
 See also
 ++++++++
@@ -155,7 +153,7 @@ public:
     return false;
   }
 
-  Name
+  std::string
   get_element_type() const override
   {
     return names::recorder;
@@ -177,8 +175,8 @@ public:
   SignalType sends_signal() const override;
 
   Type get_type() const override;
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
   void calibrate_time( const TimeConverter& tc ) override;
 
@@ -199,15 +197,15 @@ private:
 
   struct Parameters_
   {
-    Time interval_;                   //!< recording interval, in ms
-    Time offset_;                     //!< offset relative to 0, in ms
-    std::vector< Name > record_from_; //!< which data to record
+    Time interval_;                           //!< recording interval, in ms
+    Time offset_;                             //!< offset relative to 0, in ms
+    std::vector< std::string > record_from_;  //!< which data to record
 
     Parameters_();
     Parameters_( const Parameters_& );
     Parameters_& operator=( const Parameters_& );
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const Buffers_&, Node* node );
+    void get( Dictionary& ) const;
+    void set( const Dictionary&, const Buffers_&, Node* node );
   };
 
   // ------------------------------------------------------------
@@ -233,14 +231,14 @@ private:
 
 
 inline void
-nest::multimeter::get_status( DictionaryDatum& d ) const
+nest::multimeter::get_status( Dictionary& d ) const
 {
   RecordingDevice::get_status( d );
   P_.get( d );
 
   if ( is_model_prototype() )
   {
-    return; // no data to collect
+    return;  // no data to collect
   }
 
   // if we are the device on thread 0, also get the data from the
@@ -257,11 +255,11 @@ nest::multimeter::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-nest::multimeter::set_status( const DictionaryDatum& d )
+nest::multimeter::set_status( const Dictionary& d )
 {
   // protect multimeter from being frozen
   bool freeze = false;
-  if ( updateValue< bool >( d, names::frozen, freeze ) and freeze )
+  if ( d.update_value( names::frozen, freeze ) and freeze )
   {
     throw BadProperty( "multimeter cannot be frozen." );
   }
@@ -298,6 +296,6 @@ public:
   voltmeter( const voltmeter& );
 };
 
-} // namespace nest
+}  // namespace nest
 
 #endif

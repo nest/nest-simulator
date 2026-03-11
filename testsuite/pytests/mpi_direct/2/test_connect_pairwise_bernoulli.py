@@ -1,0 +1,1 @@
+../../connect/test_connect_pairwise_bernoulli.py

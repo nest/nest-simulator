@@ -65,7 +65,7 @@ code repository <https://github.com/nest/nest-simulator>`_ and create a `pull
 request <https://github.com/nest/nest-simulator/pulls>`_. Just follow the
 workflow below!
 
-If you have not done so alrealdy first
+If you have not done so already first
 
 * Fork the nest-simulator repository (see :ref:`here <fork>` for details on first time setup)
 

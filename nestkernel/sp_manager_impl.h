@@ -39,14 +39,14 @@ template < typename GrowthCurve >
 void
 SPManager::register_growth_curve( const std::string& name )
 {
-  assert( not growthcurvedict_->known( name ) );
+  assert( not growthcurvedict_.known( name ) );
   GenericGrowthCurveFactory* nc = new GrowthCurveFactory< GrowthCurve >();
   assert( nc );
   const int id = growthcurve_factories_.size();
   growthcurve_factories_.push_back( nc );
-  growthcurvedict_->insert( name, id );
+  growthcurvedict_[ name ] = id;
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* SP_MANAGER_IMPL_H */

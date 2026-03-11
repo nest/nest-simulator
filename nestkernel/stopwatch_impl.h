@@ -29,8 +29,7 @@
 namespace nest
 {
 
-// In each of the following methods compile-time-evaluated ifs decide which code
-// is actually included.
+/* In each of the following methods compile-time-evaluated ifs decide which code is actually included. */
 
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
 void
@@ -55,8 +54,8 @@ Stopwatch< detailed_timer, threaded_timer >::start()
         walltime_timer_.start();
         cputime_timer_.start();
       }
-    } // use_timer_array
-  }   // enable_timer
+    }
+  }
 }
 
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
@@ -78,8 +77,8 @@ Stopwatch< detailed_timer, threaded_timer >::stop()
         walltime_timer_.stop();
         cputime_timer_.stop();
       }
-    } // use_timer_array
-  }   // enable_timer
+    }
+  }
 }
 
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
@@ -101,12 +100,9 @@ Stopwatch< detailed_timer, threaded_timer >::is_running_() const
         is_running_ = walltime_timer_.is_running_();
       }
       return is_running_;
-    } // use_timer_array
+    }
   }
-  else
-  {
-    return false;
-  } // enable_timer
+  return false;
 }
 
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
@@ -128,12 +124,9 @@ Stopwatch< detailed_timer, threaded_timer >::elapsed( timers::timeunit_t timeuni
         elapsed = walltime_timer_.elapsed( timeunit );
       };
       return elapsed;
-    } // use_timer_array
+    }
   }
-  else
-  {
-    return std::numeric_limits< double >().quiet_NaN();
-  } // enable_timer
+  return 0.f;
 }
 
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
@@ -155,15 +148,15 @@ Stopwatch< detailed_timer, threaded_timer >::print( const std::string& msg,
       {
         walltime_timer_.print( msg, timeunit, os );
       }
-    } // use_timer_array
-  }   // enable_timer
+    }
+  }
 }
 
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
 void
-Stopwatch< detailed_timer, threaded_timer >::get_status( DictionaryDatum& d,
-  const Name& walltime_name,
-  const Name& cputime_name ) const
+Stopwatch< detailed_timer, threaded_timer >::get_status( Dictionary& d,
+  const std::string& walltime_name,
+  const std::string& cputime_name ) const
 {
   if constexpr ( enable_timer )
   {
@@ -175,21 +168,21 @@ Stopwatch< detailed_timer, threaded_timer >::get_status( DictionaryDatum& d,
         walltime_timer_.end(),
         wall_times.begin(),
         []( const timers::StopwatchTimer< CLOCK_MONOTONIC >& timer ) { return timer.elapsed(); } );
-      def< ArrayDatum >( d, walltime_name, ArrayDatum( wall_times ) );
+      d[ walltime_name ] = wall_times;
 
       std::vector< double > cpu_times( cputime_timer_.size() );
       std::transform( cputime_timer_.begin(),
         cputime_timer_.end(),
         cpu_times.begin(),
         []( const timers::StopwatchTimer< CLOCK_THREAD_CPUTIME_ID >& timer ) { return timer.elapsed(); } );
-      def< ArrayDatum >( d, cputime_name, ArrayDatum( cpu_times ) );
+      d[ cputime_name ] = cpu_times;
     }
     else
     {
-      def< double >( d, walltime_name, walltime_timer_.elapsed() );
-      def< double >( d, cputime_name, cputime_timer_.elapsed() );
-    } // use_timer_array
-  }   // enable_timer
+      d[ walltime_name ] = walltime_timer_.elapsed();
+      d[ cputime_name ] = cputime_timer_.elapsed();
+    }
+  }
 }
 
 template < StopwatchGranularity detailed_timer, StopwatchParallelism threaded_timer >
@@ -212,15 +205,12 @@ Stopwatch< detailed_timer, threaded_timer >::reset()
     }
     else
     {
-#pragma omp master
-      {
-        walltime_timer_.reset();
-        cputime_timer_.reset();
-      }
-    } // use_timer_array
-  }   // enable_timer
+      walltime_timer_.reset();
+      cputime_timer_.reset();
+    }
+  }
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif

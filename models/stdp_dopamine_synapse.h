@@ -154,12 +154,12 @@ public:
   /**
    * Get all properties and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
   /**
    * Set properties from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   long get_vt_node_id() const;
 
@@ -230,12 +230,12 @@ public:
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   /**
    * Checks to see if illegal parameters are given in syn_spec.
@@ -244,7 +244,7 @@ public:
    * tau_n, tau_plus, c and n. The last two are prohibited only if we have more
    * than one thread.
    */
-  void check_synapse_params( const DictionaryDatum& d ) const;
+  void check_synapse_params( const Dictionary& d ) const;
 
   /**
    * Send an event to the receiver of this connection.
@@ -359,31 +359,31 @@ stdp_dopamine_synapse< targetidentifierT >::stdp_dopamine_synapse()
 
 template < typename targetidentifierT >
 void
-stdp_dopamine_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
+stdp_dopamine_synapse< targetidentifierT >::get_status( Dictionary& d ) const
 {
 
   // base class properties, different for individual synapse
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
+  d[ names::weight ] = weight_;
 
   // own properties, different for individual synapse
-  def< double >( d, names::Kplus, Kplus_ );
-  def< double >( d, names::c, c_ );
-  def< double >( d, names::n, n_ );
+  d[ names::Kplus ] = Kplus_;
+  d[ names::c ] = c_;
+  d[ names::n ] = n_;
 }
 
 template < typename targetidentifierT >
 void
-stdp_dopamine_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+stdp_dopamine_synapse< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   // base class properties
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
+  d.update_value( names::weight, weight_ );
 
-  updateValue< double >( d, names::Kplus, Kplus_ );
-  updateValue< double >( d, names::c, c_ );
-  updateValue< double >( d, names::n, n_ );
+  d.update_value( names::c, c_ );
+  d.update_value( names::n, n_ );
 
+  d.update_value( names::Kplus, Kplus_ );
   if ( Kplus_ < 0 )
   {
     throw BadProperty( "Kplus must be non-negative." );
@@ -392,19 +392,19 @@ stdp_dopamine_synapse< targetidentifierT >::set_status( const DictionaryDatum& d
 
 template < typename targetidentifierT >
 void
-stdp_dopamine_synapse< targetidentifierT >::check_synapse_params( const DictionaryDatum& syn_spec ) const
+stdp_dopamine_synapse< targetidentifierT >::check_synapse_params( const Dictionary& syn_spec ) const
 {
   // Setting of parameter c and n not thread safe.
   if ( kernel().vp_manager.get_num_threads() > 1 )
   {
-    if ( syn_spec->known( names::c ) )
+    if ( syn_spec.known( names::c ) )
     {
       throw NotImplemented(
         "For multi-threading Connect doesn't support the setting "
         "of parameter c in stdp_dopamine_synapse. "
         "Use SetDefaults() or CopyModel()." );
     }
-    if ( syn_spec->known( names::n ) )
+    if ( syn_spec.known( names::n ) )
     {
       throw NotImplemented(
         "For multi-threading Connect doesn't support the setting "
@@ -464,7 +464,7 @@ stdp_dopamine_synapse< targetidentifierT >::process_dopa_spikes_( const std::vec
     // weight and eligibility c are at time t0 but dopamine trace n is at time
     // of last dopa spike
     double n0 =
-      n_ * std::exp( ( dopa_spikes[ dopa_spikes_idx_ ].spike_time_ - t0 ) / cp.tau_n_ ); // dopamine trace n at time t0
+      n_ * std::exp( ( dopa_spikes[ dopa_spikes_idx_ ].spike_time_ - t0 ) / cp.tau_n_ );  // dopamine trace n at time t0
     update_weight_( c_, n0, t0 - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_, cp );
     update_dopamine_( dopa_spikes, cp );
 
@@ -478,7 +478,7 @@ stdp_dopamine_synapse< targetidentifierT >::process_dopa_spikes_( const std::vec
       // eligibility c is at time
       // t0
       cd = c_
-        * std::exp( ( t0 - dopa_spikes[ dopa_spikes_idx_ ].spike_time_ ) / cp.tau_c_ ); // eligibility c at time of td
+        * std::exp( ( t0 - dopa_spikes[ dopa_spikes_idx_ ].spike_time_ ) / cp.tau_c_ );  // eligibility c at time of td
       update_weight_(
         cd, n_, dopa_spikes[ dopa_spikes_idx_ ].spike_time_ - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_, cp );
       update_dopamine_( dopa_spikes, cp );
@@ -487,7 +487,7 @@ stdp_dopamine_synapse< targetidentifierT >::process_dopa_spikes_( const std::vec
     // propagate weight up to t1
     // weight and dopamine trace n are at time of last dopa spike td but
     // eligibility c is at time t0
-    cd = c_ * std::exp( ( t0 - dopa_spikes[ dopa_spikes_idx_ ].spike_time_ ) / cp.tau_c_ ); // eligibility c at time td
+    cd = c_ * std::exp( ( t0 - dopa_spikes[ dopa_spikes_idx_ ].spike_time_ ) / cp.tau_c_ );  // eligibility c at time td
     update_weight_( cd, n_, dopa_spikes[ dopa_spikes_idx_ ].spike_time_ - t1, cp );
   }
   else
@@ -496,7 +496,7 @@ stdp_dopamine_synapse< targetidentifierT >::process_dopa_spikes_( const std::vec
     // weight and eligibility c are at time t0 but dopamine trace n is at time
     // of last dopa spike
     double n0 =
-      n_ * std::exp( ( dopa_spikes[ dopa_spikes_idx_ ].spike_time_ - t0 ) / cp.tau_n_ ); // dopamine trace n at time t0
+      n_ * std::exp( ( dopa_spikes[ dopa_spikes_idx_ ].spike_time_ - t0 ) / cp.tau_n_ );  // dopamine trace n at time t0
     update_weight_( c_, n0, t0 - t1, cp );
   }
 
@@ -620,6 +620,6 @@ stdp_dopamine_synapse< targetidentifierT >::trigger_update_weight( size_t t,
   dopa_spikes_idx_ = 0;
 }
 
-} // of namespace nest
+}  // of namespace nest
 
-#endif // of #ifndef STDP_DOPAMINE_SYNAPSE_H
+#endif  // of #ifndef STDP_DOPAMINE_SYNAPSE_H

@@ -105,5 +105,5 @@ params = {
 # Run the simulation
 
 if __name__ == "__main__":
-    nest.set_verbosity("M_WARNING")
+    nest.verbosity = nest.VerbosityLevel.WARNING
     results = run_simulation(params)

@@ -39,8 +39,6 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -48,7 +46,7 @@
 
 nest::RecordablesMap< nest::iaf_cond_exp_sfa_rr > nest::iaf_cond_exp_sfa_rr::recordablesMap_;
 
-namespace nest // template specialization must be placed in namespace
+namespace nest  // template specialization must be placed in namespace
 {
 void
 register_iaf_cond_exp_sfa_rr( const std::string& name )
@@ -118,23 +116,23 @@ nest::iaf_cond_exp_sfa_rr_dynamics( double, const double y[], double f[], void* 
  * ---------------------------------------------------------------- */
 
 nest::iaf_cond_exp_sfa_rr::Parameters_::Parameters_()
-  : V_th_( -57.0 )    // mV
-  , V_reset_( -70.0 ) // mV
-  , t_ref_( 0.5 )     // ms
-  , g_L( 28.95 )      // nS
-  , C_m( 289.5 )      // pF
-  , E_ex( 0.0 )       // mV
-  , E_in( -75.0 )     // mV
-  , E_L( -70.0 )      // mV
-  , tau_synE( 1.5 )   // ms
-  , tau_synI( 10.0 )  // ms
-  , I_e( 0.0 )        // pA
-  , tau_sfa( 110.0 )  // ms
-  , tau_rr( 1.97 )    // ms
-  , E_sfa( -70.0 )    // mV
-  , E_rr( -70.0 )     // mV
-  , q_sfa( 14.48 )    // nS
-  , q_rr( 3214.0 )    // nS
+  : V_th_( -57.0 )     // mV
+  , V_reset_( -70.0 )  // mV
+  , t_ref_( 0.5 )      // ms
+  , g_L( 28.95 )       // nS
+  , C_m( 289.5 )       // pF
+  , E_ex( 0.0 )        // mV
+  , E_in( -75.0 )      // mV
+  , E_L( -70.0 )       // mV
+  , tau_synE( 1.5 )    // ms
+  , tau_synI( 10.0 )   // ms
+  , I_e( 0.0 )         // pA
+  , tau_sfa( 110.0 )   // ms
+  , tau_rr( 1.97 )     // ms
+  , E_sfa( -70.0 )     // mV
+  , E_rr( -70.0 )      // mV
+  , q_sfa( 14.48 )     // nS
+  , q_rr( 3214.0 )     // nS
 {
 }
 
@@ -173,54 +171,54 @@ nest::iaf_cond_exp_sfa_rr::State_::operator=( const State_& s )
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_cond_exp_sfa_rr::Parameters_::get( DictionaryDatum& d ) const
+nest::iaf_cond_exp_sfa_rr::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::V_th, V_th_ );
-  def< double >( d, names::V_reset, V_reset_ );
-  def< double >( d, names::t_ref, t_ref_ );
-  def< double >( d, names::g_L, g_L );
-  def< double >( d, names::E_L, E_L );
-  def< double >( d, names::E_ex, E_ex );
-  def< double >( d, names::E_in, E_in );
-  def< double >( d, names::C_m, C_m );
-  def< double >( d, names::tau_syn_ex, tau_synE );
-  def< double >( d, names::tau_syn_in, tau_synI );
-  def< double >( d, names::I_e, I_e );
+  d[ names::V_th ] = V_th_;
+  d[ names::V_reset ] = V_reset_;
+  d[ names::t_ref ] = t_ref_;
+  d[ names::g_L ] = g_L;
+  d[ names::E_L ] = E_L;
+  d[ names::E_ex ] = E_ex;
+  d[ names::E_in ] = E_in;
+  d[ names::C_m ] = C_m;
+  d[ names::tau_syn_ex ] = tau_synE;
+  d[ names::tau_syn_in ] = tau_synI;
+  d[ names::I_e ] = I_e;
 
-  def< double >( d, names::tau_sfa, tau_sfa );
-  def< double >( d, names::tau_rr, tau_rr );
-  def< double >( d, names::E_sfa, E_sfa );
-  def< double >( d, names::E_rr, E_rr );
-  def< double >( d, names::q_sfa, q_sfa );
-  def< double >( d, names::q_rr, q_rr );
+  d[ names::tau_sfa ] = tau_sfa;
+  d[ names::tau_rr ] = tau_rr;
+  d[ names::E_sfa ] = E_sfa;
+  d[ names::E_rr ] = E_rr;
+  d[ names::q_sfa ] = q_sfa;
+  d[ names::q_rr ] = q_rr;
 }
 
 void
-nest::iaf_cond_exp_sfa_rr::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::iaf_cond_exp_sfa_rr::Parameters_::set( const Dictionary& d, Node* node )
 {
   // allow setting the membrane potential
-  updateValueParam< double >( d, names::V_th, V_th_, node );
-  updateValueParam< double >( d, names::V_reset, V_reset_, node );
-  updateValueParam< double >( d, names::t_ref, t_ref_, node );
-  updateValueParam< double >( d, names::E_L, E_L, node );
+  update_value_param( d, names::V_th, V_th_, node );
+  update_value_param( d, names::V_reset, V_reset_, node );
+  update_value_param( d, names::t_ref, t_ref_, node );
+  update_value_param( d, names::E_L, E_L, node );
 
-  updateValueParam< double >( d, names::E_ex, E_ex, node );
-  updateValueParam< double >( d, names::E_in, E_in, node );
+  update_value_param( d, names::E_ex, E_ex, node );
+  update_value_param( d, names::E_in, E_in, node );
 
-  updateValueParam< double >( d, names::C_m, C_m, node );
-  updateValueParam< double >( d, names::g_L, g_L, node );
+  update_value_param( d, names::C_m, C_m, node );
+  update_value_param( d, names::g_L, g_L, node );
 
-  updateValueParam< double >( d, names::tau_syn_ex, tau_synE, node );
-  updateValueParam< double >( d, names::tau_syn_in, tau_synI, node );
+  update_value_param( d, names::tau_syn_ex, tau_synE, node );
+  update_value_param( d, names::tau_syn_in, tau_synI, node );
 
-  updateValueParam< double >( d, names::I_e, I_e, node );
+  update_value_param( d, names::I_e, I_e, node );
 
-  updateValueParam< double >( d, names::E_sfa, E_sfa, node );
-  updateValueParam< double >( d, names::E_rr, E_rr, node );
-  updateValueParam< double >( d, names::q_sfa, q_sfa, node );
-  updateValueParam< double >( d, names::q_rr, q_rr, node );
-  updateValueParam< double >( d, names::tau_sfa, tau_sfa, node );
-  updateValueParam< double >( d, names::tau_rr, tau_rr, node );
+  update_value_param( d, names::E_sfa, E_sfa, node );
+  update_value_param( d, names::E_rr, E_rr, node );
+  update_value_param( d, names::q_sfa, q_sfa, node );
+  update_value_param( d, names::q_rr, q_rr, node );
+  update_value_param( d, names::tau_sfa, tau_sfa, node );
+  update_value_param( d, names::tau_rr, tau_rr, node );
   if ( V_reset_ >= V_th_ )
   {
     throw BadProperty( "Reset potential must be smaller than threshold." );
@@ -240,23 +238,23 @@ nest::iaf_cond_exp_sfa_rr::Parameters_::set( const DictionaryDatum& d, Node* nod
 }
 
 void
-nest::iaf_cond_exp_sfa_rr::State_::get( DictionaryDatum& d ) const
+nest::iaf_cond_exp_sfa_rr::State_::get( Dictionary& d ) const
 {
-  def< double >( d, names::V_m, y_[ V_M ] ); // Membrane potential
-  def< double >( d, names::g_ex, y_[ G_EXC ] );
-  def< double >( d, names::g_in, y_[ G_INH ] );
-  def< double >( d, names::g_sfa, y_[ G_SFA ] );
-  def< double >( d, names::g_rr, y_[ G_RR ] );
+  d[ names::V_m ] = y_[ V_M ];  // Membrane potential
+  d[ names::g_ex ] = y_[ G_EXC ];
+  d[ names::g_in ] = y_[ G_INH ];
+  d[ names::g_sfa ] = y_[ G_SFA ];
+  d[ names::g_rr ] = y_[ G_RR ];
 }
 
 void
-nest::iaf_cond_exp_sfa_rr::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
+nest::iaf_cond_exp_sfa_rr::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
-  updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
-  updateValueParam< double >( d, names::g_ex, y_[ G_EXC ], node );
-  updateValueParam< double >( d, names::g_in, y_[ G_INH ], node );
-  updateValueParam< double >( d, names::g_sfa, y_[ G_SFA ], node );
-  updateValueParam< double >( d, names::g_rr, y_[ G_RR ], node );
+  update_value_param( d, names::V_m, y_[ V_M ], node );
+  update_value_param( d, names::g_ex, y_[ G_EXC ], node );
+  update_value_param( d, names::g_in, y_[ G_INH ], node );
+  update_value_param( d, names::g_sfa, y_[ G_SFA ], node );
+  update_value_param( d, names::g_rr, y_[ G_RR ], node );
 }
 
 nest::iaf_cond_exp_sfa_rr::Buffers_::Buffers_( iaf_cond_exp_sfa_rr& n )
@@ -324,9 +322,9 @@ nest::iaf_cond_exp_sfa_rr::~iaf_cond_exp_sfa_rr()
 void
 nest::iaf_cond_exp_sfa_rr::init_buffers_()
 {
-  B_.spike_exc_.clear(); // includes resize
-  B_.spike_inh_.clear(); // includes resize
-  B_.currents_.clear();  // includes resize
+  B_.spike_exc_.clear();  // includes resize
+  B_.spike_inh_.clear();  // includes resize
+  B_.currents_.clear();   // includes resize
   ArchivingNode::clear_history();
 
   B_.logger_.reset();
@@ -409,11 +407,11 @@ nest::iaf_cond_exp_sfa_rr::update( Time const& origin, const long from, const lo
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
-        &B_.sys_,             // system of ODE
-        &t,                   // from t
-        B_.step_,             // to t <= step
-        &B_.IntegrationStep_, // integration step size
-        S_.y_ );              // neuronal state
+        &B_.sys_,              // system of ODE
+        &t,                    // from t
+        B_.step_,              // to t <= step
+        &B_.IntegrationStep_,  // integration step size
+        S_.y_ );               // neuronal state
       if ( status != GSL_SUCCESS )
       {
         throw GSLSolverFailure( get_name(), status );
@@ -425,7 +423,7 @@ nest::iaf_cond_exp_sfa_rr::update( Time const& origin, const long from, const lo
 
     // absolute refractory period
     if ( S_.r_ )
-    { // neuron is absolute refractory
+    {  // neuron is absolute refractory
       --S_.r_;
       S_.y_[ State_::V_M ] = P_.V_reset_;
     }
@@ -487,4 +485,4 @@ nest::iaf_cond_exp_sfa_rr::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-#endif // HAVE_GSL
+#endif  // HAVE_GSL

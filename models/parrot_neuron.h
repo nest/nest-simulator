@@ -105,15 +105,15 @@ public:
   void handle( SpikeEvent& ) override;
   size_t handles_test_event( SpikeEvent&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_buffers_() override;
   void
   pre_run_hook() override
   {
-  } // no variables
+  }  // no variables
 
   void update( Time const&, const long, const long ) override;
 
@@ -165,6 +165,6 @@ parrot_neuron::receives_signal() const
   return ALL;
 }
 
-} // namespace
+}  // namespace
 
-#endif // PARROT_NEURON_H
+#endif  // PARROT_NEURON_H

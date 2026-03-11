@@ -114,8 +114,8 @@ public:
 
   size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
   StimulationDevice::Type get_type() const override;
   void set_data_from_stimulation_backend( std::vector< double >& input_param ) override;
@@ -133,22 +133,22 @@ private:
 
   struct Parameters_
   {
-    std::vector< double > pulse_times_; //!< times of pulses
-    long a_;                            //!< number of pulses in a packet
-    double sdev_;                       //!< standard deviation of the packet
+    std::vector< double > pulse_times_;  //!< times of pulses
+    long a_;                             //!< number of pulses in a packet
+    double sdev_;                        //!< standard deviation of the packet
 
     double sdev_tolerance_;
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const;  //!< Store current values in dictionary
 
     /**
      * Set values from dictionary.
      * @note Buffer is passed so that the position etc can be reset
      *       parameters have been changed.
      */
-    void set( const DictionaryDatum&, pulsepacket_generator&, Node* );
+    void set( const Dictionary&, pulsepacket_generator&, Node* );
   };
 
   // ------------------------------------------------------------
@@ -162,7 +162,7 @@ private:
 
   struct Variables_
   {
-    normal_distribution normal_dist_; //!< normal distribution
+    normal_distribution normal_dist_;  //!< normal distribution
 
     /** Indices into sorted vector of sorted pulse-center times
      *  (P_.pulse_times_). Spike times to be sent are calculated from
@@ -198,17 +198,17 @@ pulsepacket_generator::send_test_event( Node& target, size_t receptor_type, syni
 }
 
 inline void
-pulsepacket_generator::get_status( DictionaryDatum& d ) const
+pulsepacket_generator::get_status( Dictionary& d ) const
 {
   P_.get( d );
   StimulationDevice::get_status( d );
 }
 
 inline void
-pulsepacket_generator::set_status( const DictionaryDatum& d )
+pulsepacket_generator::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;      // temporary copy in case of errors
-  ptmp.set( d, *this, this ); // throws if BadProperty
+  Parameters_ ptmp = P_;       // temporary copy in case of errors
+  ptmp.set( d, *this, this );  // throws if BadProperty
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
@@ -225,6 +225,6 @@ pulsepacket_generator::get_type() const
   return StimulationDevice::Type::CURRENT_GENERATOR;
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif

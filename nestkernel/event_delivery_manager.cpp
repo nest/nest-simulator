@@ -23,8 +23,8 @@
 #include "event_delivery_manager.h"
 
 // C++ includes:
-#include <algorithm> // rotate
-#include <numeric>   // accumulate
+#include <algorithm>  // rotate
+#include <numeric>    // accumulate
 
 // Includes from nestkernel:
 #include "connection_manager.h"
@@ -38,8 +38,6 @@
 #include "vp_manager.h"
 #include "vp_manager_impl.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 namespace nest
 {
@@ -113,7 +111,7 @@ EventDeliveryManager::initialize( const bool adjust_number_of_threads_or_rng_onl
     {
       off_grid_emitted_spikes_register_[ tid ] = new std::vector< OffGridSpikeDataWithRank >();
     }
-  } // of omp parallel
+  }  // of omp parallel
 }
 
 void
@@ -124,7 +122,7 @@ EventDeliveryManager::finalize( const bool )
   {
     delete vec_spikedata_ptr;
   }
-  emitted_spikes_register_.clear(); // remove stale pointers
+  emitted_spikes_register_.clear();  // remove stale pointers
 
   for ( auto& vec_spikedata_ptr : off_grid_emitted_spikes_register_ )
   {
@@ -140,13 +138,14 @@ EventDeliveryManager::finalize( const bool )
   recv_buffer_off_grid_spike_data_.clear();
 }
 
+
 void
-EventDeliveryManager::set_status( const DictionaryDatum& dict )
+EventDeliveryManager::set_status( const Dictionary& dict )
 {
-  updateValue< bool >( dict, names::off_grid_spiking, off_grid_spiking_ );
+  dict.update_value( names::off_grid_spiking, off_grid_spiking_ );
 
   double bsl = send_recv_buffer_shrink_limit_;
-  if ( updateValue< double >( dict, names::spike_buffer_shrink_limit, bsl ) )
+  if ( dict.update_value( names::spike_buffer_shrink_limit, bsl ) )
   {
     if ( bsl < 0 )
     {
@@ -156,7 +155,7 @@ EventDeliveryManager::set_status( const DictionaryDatum& dict )
   }
 
   double bss = send_recv_buffer_shrink_spare_;
-  if ( updateValue< double >( dict, names::spike_buffer_shrink_spare, bss ) )
+  if ( dict.update_value( names::spike_buffer_shrink_spare, bss ) )
   {
     if ( bss < 0 or bss > 1 )
     {
@@ -166,7 +165,7 @@ EventDeliveryManager::set_status( const DictionaryDatum& dict )
   }
 
   double bge = send_recv_buffer_grow_extra_;
-  if ( updateValue< double >( dict, names::spike_buffer_grow_extra, bge ) )
+  if ( dict.update_value( names::spike_buffer_grow_extra, bge ) )
   {
     if ( bge < 0 )
     {
@@ -177,18 +176,17 @@ EventDeliveryManager::set_status( const DictionaryDatum& dict )
 }
 
 void
-EventDeliveryManager::get_status( DictionaryDatum& dict )
+EventDeliveryManager::get_status( Dictionary& dict )
 {
-  def< bool >( dict, names::off_grid_spiking, off_grid_spiking_ );
-  def< unsigned long >(
-    dict, names::local_spike_counter, std::accumulate( local_spike_counter_.begin(), local_spike_counter_.end(), 0 ) );
-  def< double >( dict, names::spike_buffer_shrink_limit, send_recv_buffer_shrink_limit_ );
-  def< double >( dict, names::spike_buffer_shrink_spare, send_recv_buffer_shrink_spare_ );
-  def< double >( dict, names::spike_buffer_grow_extra, send_recv_buffer_grow_extra_ );
+  dict[ names::off_grid_spiking ] = off_grid_spiking_;
+  dict[ names::local_spike_counter ] = std::accumulate( local_spike_counter_.begin(), local_spike_counter_.end(), 0 );
+  dict[ names::spike_buffer_shrink_limit ] = send_recv_buffer_shrink_limit_;
+  dict[ names::spike_buffer_shrink_spare ] = send_recv_buffer_shrink_spare_;
+  dict[ names::spike_buffer_grow_extra ] = send_recv_buffer_grow_extra_;
 
-  DictionaryDatum log_events = DictionaryDatum( new Dictionary );
-  ( *dict )[ names::spike_buffer_resize_log ] = log_events;
+  Dictionary log_events;
   send_recv_buffer_resize_log_.to_dict( log_events );
+  dict[ names::spike_buffer_resize_log ] = log_events;
 
   sw_collocate_spike_data_.get_status( dict, names::time_collocate_spike_data, names::time_collocate_spike_data_cpu );
   sw_communicate_spike_data_.get_status(
@@ -694,7 +692,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
         }
       }
     }
-    else // compressed spikes
+    else  // compressed spikes
     {
       for ( size_t i = 0; i < num_batches; ++i )
       {
@@ -770,8 +768,8 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
           kernel().connection_manager.send( tid, syn_id_batch[ j ], lcid_batch[ j ], cm, se_batch[ j ] );
         }
       }
-    } // if-else not compressed
-  }   // for rank
+    }  // if-else not compressed
+  }  // for rank
 }
 
 
@@ -801,7 +799,7 @@ EventDeliveryManager::gather_target_data( const size_t tid )
       {
         resize_send_recv_buffers_target_data();
       }
-    } // of omp master; (no barrier)
+    }  // of omp master; (no barrier)
     kernel().get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
     kernel().get_omp_synchronization_construction_stopwatch().stop();
@@ -829,7 +827,7 @@ EventDeliveryManager::gather_target_data( const size_t tid )
       sw_communicate_target_data_.start();
       kernel().mpi_manager.communicate_target_data_Alltoall( send_buffer_target_data_, recv_buffer_target_data_ );
       sw_communicate_target_data_.stop();
-    } // of omp master (no barriers!)
+    }  // of omp master (no barriers!)
 #pragma omp barrier
 
     const bool distribute_completed = distribute_target_data_buffers_( tid );
@@ -844,7 +842,7 @@ EventDeliveryManager::gather_target_data( const size_t tid )
       }
 #pragma omp barrier
     }
-  } // of while
+  }  // of while
 
   kernel().connection_manager.clear_source_table( tid );
 }
@@ -873,7 +871,7 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid )
       {
         resize_send_recv_buffers_target_data();
       }
-    } // of omp master; no barrier
+    }  // of omp master; no barrier
     kernel().get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
     kernel().get_omp_synchronization_construction_stopwatch().stop();
@@ -900,7 +898,7 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid )
       sw_communicate_target_data_.start();
       kernel().mpi_manager.communicate_target_data_Alltoall( send_buffer_target_data_, recv_buffer_target_data_ );
       sw_communicate_target_data_.stop();
-    } // of omp master (no barrier)
+    }  // of omp master (no barrier)
 #pragma omp barrier
 
     // Up to here, gather_completed_checker_ just has local info: has this thread been able to write
@@ -915,13 +913,13 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid )
 #pragma omp master
       {
         buffer_size_target_data_has_changed_ = kernel().mpi_manager.increase_buffer_size_target_data();
-      } // of omp master (no barrier)
+      }  // of omp master (no barrier)
       kernel().get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
       kernel().get_omp_synchronization_construction_stopwatch().stop();
     }
 
-  } // of while
+  }  // of while
 
   kernel().connection_manager.clear_source_table( tid );
 }
@@ -958,7 +956,7 @@ EventDeliveryManager::collocate_target_data_buffers_( const size_t tid,
   {
     valid_next_target_data = kernel().connection_manager.get_next_target_data(
       tid, assigned_ranks.begin, assigned_ranks.end, source_rank, next_target_data );
-    if ( valid_next_target_data ) // add valid entry to MPI buffer
+    if ( valid_next_target_data )  // add valid entry to MPI buffer
     {
       if ( send_buffer_position.is_chunk_filled( source_rank ) )
       {
@@ -972,7 +970,7 @@ EventDeliveryManager::collocate_target_data_buffers_( const size_t tid,
         // we have just rejected an entry, so source table can not be
         // fully read
         is_source_table_read = false;
-        if ( send_buffer_position.are_all_chunks_filled() ) // buffer is full
+        if ( send_buffer_position.are_all_chunks_filled() )  // buffer is full
         {
           return is_source_table_read;
         }
@@ -987,7 +985,7 @@ EventDeliveryManager::collocate_target_data_buffers_( const size_t tid,
         send_buffer_position.increase( source_rank );
       }
     }
-    else // all connections have been processed
+    else  // all connections have been processed
     {
       // mark end of valid data for each rank
       for ( size_t rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
@@ -1002,8 +1000,8 @@ EventDeliveryManager::collocate_target_data_buffers_( const size_t tid,
         }
       }
       return is_source_table_read;
-    } // of else
-  }   // of while(true)
+    }  // of else
+  }  // of while(true)
 }
 
 bool
@@ -1086,4 +1084,18 @@ nest::EventDeliveryManager::distribute_target_data_buffers_( const size_t tid )
   return are_others_completed;
 }
 
-} // of namespace nest
+#ifdef CYCLE_TIMERS
+Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly >
+EventDeliveryManager::get_sw_communicate_spike_data() const
+{
+  return sw_communicate_spike_data_;
+}
+
+size_t
+EventDeliveryManager::get_local_spike_counter() const
+{
+  return std::accumulate( local_spike_counter_.begin(), local_spike_counter_.end(), 0 );
+}
+#endif
+
+}  // of namespace nest

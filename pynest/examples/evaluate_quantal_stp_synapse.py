@@ -121,7 +121,7 @@ qsyn_params["weight"] = 1.0 / n_sites
 # make NEST less verbose, and set some kernel attributes.
 
 nest.ResetKernel()
-nest.set_verbosity("M_ERROR")
+nest.verbosity = nest.VerbosityLevel.ERROR
 nest.resolution = resolution
 nest.rng_seed = seed
 

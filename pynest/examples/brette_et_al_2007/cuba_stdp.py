@@ -24,7 +24,7 @@ Benchmark 5 of the simulator review (CUBA-STDP)
 ------------------------------------------------
 
 The fifth simulator review benchmark is implemented as a variation of the
-Brunel Network. This script creates a sparsely coupled network of excitatory
+Brunel Network [1]_. This script creates a sparsely coupled network of excitatory
 and inhibitory neurons. Connections within and across both populations are
 created at random. Both neuron populations receive Poisson background
 input. The spike output of 500 neurons are recorded. Neurons are modeled as
@@ -112,7 +112,7 @@ Nrec = 500  # number of neurons per population to record from
 # Build and run simulation
 
 nest.ResetKernel()
-nest.set_verbosity("M_INFO")
+nest.verbosity = nest.VerbosityLevel.INFO
 
 # Set kernel parameters
 nest.SetKernelStatus(
@@ -217,8 +217,8 @@ nest.Simulate(simtime)
 
 # Get timing from kernel status
 kernel_status = nest.GetKernelStatus()
-build_time = kernel_status["network_build_time"]
-sim_time = kernel_status["simulation_time"]
+build_time = kernel_status["time_construction_create"] + kernel_status["time_construction_connect"]
+sim_time = kernel_status["time_simulate"]
 
 # Calculate number of synapses
 N = NE + NI

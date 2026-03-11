@@ -291,7 +291,7 @@ public:
   }
 
 private:
-  RandomEngineT rng_; //!< Wrapped RNG engine.
+  RandomEngineT rng_;  //!< Wrapped RNG engine.
   std::uniform_int_distribution< unsigned long > uniform_ulong_dist_;
   std::uniform_real_distribution<> uniform_double_dist_0_1_;
 };
@@ -409,9 +409,9 @@ public:
   }
 
 private:
-  DistributionT distribution_; //!< Wrapped RandomDistribution
+  DistributionT distribution_;  //!< Wrapped RandomDistribution
 };
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifndef RANDOM_GENERATORS_H */

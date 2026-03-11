@@ -37,9 +37,6 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-// sli
-#include "dictutils.h"
-
 namespace nest
 {
 
@@ -115,55 +112,55 @@ eprop_iaf_psc_delta::Buffers_::Buffers_( const Buffers_&, eprop_iaf_psc_delta& n
  * ---------------------------------------------------------------- */
 
 void
-eprop_iaf_psc_delta::Parameters_::get( DictionaryDatum& d ) const
+eprop_iaf_psc_delta::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::E_L, E_L_ );
-  def< double >( d, names::I_e, I_e_ );
-  def< double >( d, names::V_th, V_th_ + E_L_ );
-  def< double >( d, names::V_reset, V_reset_ + E_L_ );
-  def< double >( d, names::V_min, V_min_ + E_L_ );
-  def< double >( d, names::C_m, C_m_ );
-  def< double >( d, names::tau_m, tau_m_ );
-  def< double >( d, names::t_ref, t_ref_ );
-  def< bool >( d, names::refractory_input, with_refr_input_ );
-  def< double >( d, names::c_reg, c_reg_ );
-  def< double >( d, names::f_target, f_target_ );
-  def< double >( d, names::beta, beta_ );
-  def< double >( d, names::gamma, gamma_ );
-  def< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_ );
-  def< double >( d, names::kappa, kappa_ );
-  def< double >( d, names::kappa_reg, kappa_reg_ );
-  def< double >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
+  d[ names::E_L ] = E_L_;
+  d[ names::I_e ] = I_e_;
+  d[ names::V_th ] = V_th_ + E_L_;
+  d[ names::V_reset ] = V_reset_ + E_L_;
+  d[ names::V_min ] = V_min_ + E_L_;
+  d[ names::C_m ] = C_m_;
+  d[ names::tau_m ] = tau_m_;
+  d[ names::t_ref ] = t_ref_;
+  d[ names::refractory_input ] = with_refr_input_;
+  d[ names::c_reg ] = c_reg_;
+  d[ names::f_target ] = f_target_;
+  d[ names::beta ] = beta_;
+  d[ names::gamma ] = gamma_;
+  d[ names::surrogate_gradient_function ] = surrogate_gradient_function_;
+  d[ names::kappa ] = kappa_;
+  d[ names::kappa_reg ] = kappa_reg_;
+  d[ names::eprop_isi_trace_cutoff ] = eprop_isi_trace_cutoff_;
 }
 
 double
-eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
+eprop_iaf_psc_delta::Parameters_::set( const Dictionary& d, Node* node )
 {
   // if leak potential is changed, adjust all variables defined relative to it
   const double ELold = E_L_;
-  updateValueParam< double >( d, names::E_L, E_L_, node );
+  update_value_param( d, names::E_L, E_L_, node );
   const double delta_EL = E_L_ - ELold;
 
-  V_reset_ -= updateValueParam< double >( d, names::V_reset, V_reset_, node ) ? E_L_ : delta_EL;
-  V_th_ -= updateValueParam< double >( d, names::V_th, V_th_, node ) ? E_L_ : delta_EL;
-  V_min_ -= updateValueParam< double >( d, names::V_min, V_min_, node ) ? E_L_ : delta_EL;
+  V_reset_ -= update_value_param( d, names::V_reset, V_reset_, node ) ? E_L_ : delta_EL;
+  V_th_ -= update_value_param( d, names::V_th, V_th_, node ) ? E_L_ : delta_EL;
+  V_min_ -= update_value_param( d, names::V_min, V_min_, node ) ? E_L_ : delta_EL;
 
-  updateValueParam< double >( d, names::I_e, I_e_, node );
-  updateValueParam< double >( d, names::C_m, C_m_, node );
-  updateValueParam< double >( d, names::tau_m, tau_m_, node );
-  updateValueParam< double >( d, names::t_ref, t_ref_, node );
-  updateValueParam< bool >( d, names::refractory_input, with_refr_input_, node );
-  updateValueParam< double >( d, names::c_reg, c_reg_, node );
+  update_value_param( d, names::I_e, I_e_, node );
+  update_value_param( d, names::C_m, C_m_, node );
+  update_value_param( d, names::tau_m, tau_m_, node );
+  update_value_param( d, names::t_ref, t_ref_, node );
+  update_value_param( d, names::refractory_input, with_refr_input_, node );
+  update_value_param( d, names::c_reg, c_reg_, node );
 
-  if ( updateValueParam< double >( d, names::f_target, f_target_, node ) )
+  if ( update_value_param( d, names::f_target, f_target_, node ) )
   {
-    f_target_ /= 1000.0; // convert from spikes/s to spikes/ms
+    f_target_ /= 1000.0;  // convert from spikes/s to spikes/ms
   }
 
-  updateValueParam< double >( d, names::beta, beta_, node );
-  updateValueParam< double >( d, names::gamma, gamma_, node );
+  update_value_param( d, names::beta, beta_, node );
+  update_value_param( d, names::gamma, gamma_, node );
 
-  if ( updateValueParam< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_, node ) )
+  if ( update_value_param( d, names::surrogate_gradient_function, surrogate_gradient_function_, node ) )
   {
     eprop_iaf_psc_delta* nrn = dynamic_cast< eprop_iaf_psc_delta* >( node );
     assert( nrn );
@@ -171,9 +168,9 @@ eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
     nrn->compute_surrogate_gradient_ = compute_surrogate_gradient;
   }
 
-  updateValueParam< double >( d, names::kappa, kappa_, node );
-  updateValueParam< double >( d, names::kappa_reg, kappa_reg_, node );
-  updateValueParam< double >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );
+  update_value_param( d, names::kappa, kappa_, node );
+  update_value_param( d, names::kappa_reg, kappa_reg_, node );
+  update_value_param( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );
 
   if ( V_th_ < V_min_ )
   {
@@ -234,17 +231,17 @@ eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-eprop_iaf_psc_delta::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+eprop_iaf_psc_delta::State_::get( Dictionary& d, const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, v_m_ + p.E_L_ );
-  def< double >( d, names::surrogate_gradient, surrogate_gradient_ );
-  def< double >( d, names::learning_signal, learning_signal_ );
+  d[ names::V_m ] = v_m_ + p.E_L_;
+  d[ names::surrogate_gradient ] = surrogate_gradient_;
+  d[ names::learning_signal ] = learning_signal_;
 }
 
 void
-eprop_iaf_psc_delta::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
+eprop_iaf_psc_delta::State_::set( const Dictionary& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  v_m_ -= updateValueParam< double >( d, names::V_m, v_m_, node ) ? p.E_L_ : delta_EL;
+  v_m_ -= update_value_param< double >( d, names::V_m, v_m_, node ) ? p.E_L_ : delta_EL;
 }
 
 /* ----------------------------------------------------------------
@@ -275,15 +272,15 @@ eprop_iaf_psc_delta::eprop_iaf_psc_delta( const eprop_iaf_psc_delta& n )
 void
 eprop_iaf_psc_delta::init_buffers_()
 {
-  B_.spikes_.clear();   // includes resize
-  B_.currents_.clear(); // includes resize
-  B_.logger_.reset();   // includes resize
+  B_.spikes_.clear();    // includes resize
+  B_.currents_.clear();  // includes resize
+  B_.logger_.reset();    // includes resize
 }
 
 void
 eprop_iaf_psc_delta::pre_run_hook()
 {
-  B_.logger_.init(); // ensures initialization in case multimeter connected after Simulate
+  B_.logger_.init();  // ensures initialization in case multimeter connected after Simulate
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
   V_.eprop_isi_trace_cutoff_steps_ = Time( Time::ms( P_.eprop_isi_trace_cutoff_ ) ).get_steps();
@@ -312,7 +309,7 @@ eprop_iaf_psc_delta::update( Time const& origin, const long from, const long to 
 
     const auto z_in = B_.spikes_.get_value( lag );
 
-    if ( S_.r_ == 0 ) // not refractory, can spike
+    if ( S_.r_ == 0 )  // not refractory, can spike
     {
       S_.v_m_ = V_.P_i_in_ * ( S_.i_in_ + P_.I_e_ ) + V_.P_v_m_ * S_.v_m_ + z_in;
 
@@ -334,7 +331,7 @@ eprop_iaf_psc_delta::update( Time const& origin, const long from, const long to 
       --S_.r_;
     }
 
-    double z = 0.0; // spike state variable
+    double z = 0.0;  // spike state variable
 
     S_.surrogate_gradient_ = ( this->*compute_surrogate_gradient_ )( S_.r_, S_.v_m_, P_.V_th_, P_.beta_, P_.gamma_ );
 
@@ -390,7 +387,7 @@ eprop_iaf_psc_delta::handle( LearningSignalConnectionEvent& e )
   {
     const long time_step = e.get_stamp().get_steps();
     const double weight = e.get_weight();
-    const double error_signal = e.get_coeffvalue( it_event ); // get_coeffvalue advances iterator
+    const double error_signal = e.get_coeffvalue( it_event );  // get_coeffvalue advances iterator
     const double learning_signal = weight * error_signal;
 
     write_learning_signal_to_history( time_step, learning_signal );
@@ -415,13 +412,13 @@ eprop_iaf_psc_delta::compute_gradient( const long t_spike,
   const CommonSynapseProperties& cp,
   WeightOptimizer* optimizer )
 {
-  double e = 0.0;                // eligibility trace
-  double z = 0.0;                // spiking variable
-  double z_current_buffer = 1.0; // buffer containing the spike that triggered the current integration
-  double psi = 0.0;              // surrogate gradient
-  double L = 0.0;                // learning signal
-  double firing_rate_reg = 0.0;  // firing rate regularization
-  double grad = 0.0;             // gradient
+  double e = 0.0;                 // eligibility trace
+  double z = 0.0;                 // spiking variable
+  double z_current_buffer = 1.0;  // buffer containing the spike that triggered the current integration
+  double psi = 0.0;               // surrogate gradient
+  double L = 0.0;                 // learning signal
+  double firing_rate_reg = 0.0;   // firing rate regularization
+  double grad = 0.0;              // gradient
 
   const EpropSynapseCommonProperties& ecp = static_cast< const EpropSynapseCommonProperties& >( cp );
   const auto optimize_each_step = ( *ecp.optimizer_cp_ ).optimize_each_step_;
@@ -471,4 +468,4 @@ eprop_iaf_psc_delta::compute_gradient( const long t_spike,
   }
 }
 
-} // namespace nest
+}  // namespace nest

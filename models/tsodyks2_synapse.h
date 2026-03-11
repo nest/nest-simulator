@@ -167,12 +167,12 @@ public:
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   /**
    * Send an event to the receiver of this connection.
@@ -211,12 +211,12 @@ public:
 
 private:
   double weight_;
-  double U_;           //!< unit increment of a facilitating synapse
-  double u_;           //!< dynamic value of probability of release
-  double x_;           //!< current fraction of the synaptic weight
-  double tau_rec_;     //!< [ms] time constant for recovery
-  double tau_fac_;     //!< [ms] time constant for facilitation
-  double t_lastspike_; //!< time point of last spike emitted
+  double U_;            //!< unit increment of a facilitating synapse
+  double u_;            //!< dynamic value of probability of release
+  double x_;            //!< current fraction of the synaptic weight
+  double tau_rec_;      //!< [ms] time constant for recovery
+  double tau_fac_;      //!< [ms] time constant for facilitation
+  double t_lastspike_;  //!< time point of last spike emitted
 };
 
 template < typename targetidentifierT >
@@ -240,11 +240,11 @@ tsodyks2_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSyn
 
     const double h = t_spike - t_lastspike_;
     double x_decay = std::exp( -h / tau_rec_ );
-    double u_decay = ( tau_fac_ == 0 ) ? 0.0 : std::exp( -h / tau_fac_ ); // tau_fac == 0 disables facilitation
+    double u_decay = ( tau_fac_ == 0 ) ? 0.0 : std::exp( -h / tau_fac_ );  // tau_fac == 0 disables facilitation
 
     // now we compute spike number n+1
-    x_ = 1. + ( x_ - x_ * u_ - 1. ) * x_decay; // Eq. 5 from reference [3]_
-    u_ = U_ + u_ * ( 1. - U_ ) * u_decay;      // Eq. 4 from [3]_
+    x_ = 1. + ( x_ - x_ * u_ - 1. ) * x_decay;  // Eq. 5 from reference [3]_
+    u_ = U_ + u_ * ( 1. - U_ ) * u_decay;       // Eq. 4 from [3]_
   }
 
   // We use the current values for the spike number n.
@@ -275,53 +275,53 @@ tsodyks2_synapse< targetidentifierT >::tsodyks2_synapse()
 
 template < typename targetidentifierT >
 void
-tsodyks2_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
+tsodyks2_synapse< targetidentifierT >::get_status( Dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
+  d[ names::weight ] = weight_;
 
-  def< double >( d, names::dU, U_ );
-  def< double >( d, names::u, u_ );
-  def< double >( d, names::tau_rec, tau_rec_ );
-  def< double >( d, names::tau_fac, tau_fac_ );
-  def< double >( d, names::x, x_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::dU ] = U_;
+  d[ names::u ] = u_;
+  d[ names::tau_rec ] = tau_rec_;
+  d[ names::tau_fac ] = tau_fac_;
+  d[ names::x ] = x_;
+  d[ names::size_of ] = sizeof( *this );
 }
 
 template < typename targetidentifierT >
 void
-tsodyks2_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+tsodyks2_synapse< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
+  d.update_value( names::weight, weight_ );
 
-  updateValue< double >( d, names::dU, U_ );
+  d.update_value( names::dU, U_ );
   if ( U_ > 1.0 or U_ < 0.0 )
   {
     throw BadProperty( "'U' must be in [0,1]." );
   }
 
-  updateValue< double >( d, names::u, u_ );
+  d.update_value( names::u, u_ );
   if ( u_ > 1.0 or u_ < 0.0 )
   {
     throw BadProperty( "'u' must be in [0,1]." );
   }
 
-  updateValue< double >( d, names::tau_rec, tau_rec_ );
+  d.update_value( names::tau_rec, tau_rec_ );
   if ( tau_rec_ <= 0.0 )
   {
     throw BadProperty( "'tau_rec' must be > 0." );
   }
 
-  updateValue< double >( d, names::tau_fac, tau_fac_ );
+  d.update_value( names::tau_fac, tau_fac_ );
   if ( tau_fac_ < 0.0 )
   {
     throw BadProperty( "'tau_fac' must be >= 0." );
   }
 
-  updateValue< double >( d, names::x, x_ );
+  d.update_value( names::x, x_ );
 }
 
-} // namespace
+}  // namespace
 
-#endif // TSODYKS2_SYNAPSE_H
+#endif  // TSODYKS2_SYNAPSE_H

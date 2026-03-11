@@ -56,6 +56,6 @@ IOManager::register_stimulation_backend( const std::string& name )
   stimulation_backends_.insert( std::make_pair( name, stimulation_backend ) );
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifndef IO_MANAGER_IMPL_H */

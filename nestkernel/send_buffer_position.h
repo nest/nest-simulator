@@ -41,9 +41,9 @@ namespace nest
 class SendBufferPosition
 {
 private:
-  std::vector< size_t > begin_; //!< first entry for rank
-  std::vector< size_t > end_;   //!< one beyond last entry for rank
-  std::vector< size_t > idx_;   //!< next entry in rank to write to
+  std::vector< size_t > begin_;  //!< first entry for rank
+  std::vector< size_t > end_;    //!< one beyond last entry for rank
+  std::vector< size_t > idx_;    //!< next entry in rank to write to
 
 public:
   SendBufferPosition();
@@ -224,6 +224,6 @@ TargetSendBufferPosition::increase( const size_t rank )
   ++num_target_data_written_;
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* SEND_BUFFER_POSITION_H */

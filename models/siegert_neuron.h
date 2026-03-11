@@ -222,9 +222,9 @@ private:
     /** reset value in mV. */
     double V_reset_;
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( Dictionary& ) const; //!< Store current values in Dictionary
+    void get( Dictionary& ) const;  //!< Store current values in Dictionary
 
     void set( const Dictionary&, Node* node );
   };
@@ -236,9 +236,9 @@ private:
    */
   struct State_
   {
-    double r_; //!< Rate
+    double r_;  //!< Rate
 
-    State_(); //!< Default initialization
+    State_();  //!< Default initialization
 
     void get( Dictionary& ) const;
     void set( const Dictionary&, Node* node );
@@ -254,11 +254,11 @@ private:
     Buffers_( siegert_neuron& );
     Buffers_( const Buffers_&, siegert_neuron& );
 
-    std::vector< double > drift_input_;     //!< buffer for drift term received by DiffusionConnection
-    std::vector< double > diffusion_input_; //!< buffer for diffusion term
+    std::vector< double > drift_input_;      //!< buffer for drift term received by DiffusionConnection
+    std::vector< double > diffusion_input_;  //!< buffer for diffusion term
     // received by DiffusionConnection
-    std::vector< double > last_y_values;           //!< remembers y_values from last wfr_update
-    UniversalDataLogger< siegert_neuron > logger_; //!< Logger for all analog data
+    std::vector< double > last_y_values;            //!< remembers y_values from last wfr_update
+    UniversalDataLogger< siegert_neuron > logger_;  //!< Logger for all analog data
   };
 
   // ----------------------------------------------------------------
@@ -303,9 +303,9 @@ siegert_neuron::update( Time const& origin, const long from, const long to )
 inline bool
 siegert_neuron::wfr_update( Time const& origin, const long from, const long to )
 {
-  State_ old_state = S_; // save state before wfr update
+  State_ old_state = S_;  // save state before wfr update
   const bool wfr_tol_exceeded = update_( origin, from, to, true );
-  S_ = old_state; // restore old state
+  S_ = old_state;  // restore old state
 
   return not wfr_tol_exceeded;
 }
@@ -349,10 +349,10 @@ siegert_neuron::get_status( Dictionary& d ) const
 inline void
 siegert_neuron::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d, this );   // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, this );   // throws if BadProperty
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
+  ptmp.set( d, this );    // throws if BadProperty
+  State_ stmp = S_;       // temporary copy in case of errors
+  stmp.set( d, this );    // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -365,7 +365,7 @@ siegert_neuron::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-} // namespace
+}  // namespace
 
-#endif // HAVE_GSL
-#endif // SIEGERT_NEURON_H
+#endif  // HAVE_GSL
+#endif  // SIEGERT_NEURON_H

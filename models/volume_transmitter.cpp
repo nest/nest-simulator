@@ -47,7 +47,7 @@ nest::register_volume_transmitter( const std::string& name )
  * ---------------------------------------------------------------- */
 
 nest::volume_transmitter::Parameters_::Parameters_()
-  : deliver_interval_( 1 ) // in steps of mindelay
+  : deliver_interval_( 1 )  // in steps of mindelay
 {
 }
 
@@ -89,7 +89,7 @@ nest::volume_transmitter::init_buffers_()
 {
   B_.neuromodulatory_spikes_.clear();
   B_.spikecounter_.clear();
-  B_.spikecounter_.push_back( spikecounter( 0.0, 0.0 ) ); // insert pseudo last dopa spike at t = 0.0
+  B_.spikecounter_.push_back( spikecounter( 0.0, 0.0 ) );  // insert pseudo last dopa spike at t = 0.0
 }
 
 void

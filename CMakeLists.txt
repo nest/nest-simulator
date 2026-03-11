@@ -26,7 +26,7 @@ project( nest CXX C )
 
 set( CMAKE_CXX_STANDARD 20 )
 set( CMAKE_CXX_STANDARD_REQUIRED True )
-set( CMAKE_CXX_EXTENSIONS OFF )          # -std=c++20 instead of gnu++17
+set( CMAKE_CXX_EXTENSIONS OFF )          # -std=c++20 instead of gnu++20
 
 set( NEST_USER_EMAIL "users@nest-simulator.org" )
 
@@ -72,6 +72,7 @@ set( with-models OFF CACHE STRING "The models to include as a semicolon-separate
 set( tics_per_ms "1000.0" CACHE STRING "Specify elementary unit of time [default=1000 tics per ms]." )
 set( tics_per_step "100" CACHE STRING "Specify resolution [default=100 tics per step]." )
 set( with-detailed-timers OFF CACHE STRING "Build with detailed internal time measurements [default=OFF]. Detailed timers can affect the performance." )
+set( with-cycle-timers OFF CACHE STRING "Build with internal cycle time measurements [default=OFF, can only be enabled when detailed timers is ON]. Can affect the performance." )
 set( with-mpi-sync-timer OFF CACHE STRING "Build with mpi synchronization barrier and timer [default=OFF]. Can affect the performance." )
 set( with-threaded-timers ON CACHE STRING "Build with one internal timer per thread [default=ON]. Multi-threaded timers can affect the performance." )
 set( target-bits-split "standard" CACHE STRING "Split of the 64-bit target neuron identifier type [default='standard']. 'standard' is recommended for most users. If running on more than 262144 MPI processes or more than 512 threads, change to 'hpc'." )
@@ -150,6 +151,7 @@ nest_process_with_gsl()
 nest_process_with_openmp()
 nest_process_with_mpi()
 nest_process_with_detailed_timers()
+nest_process_with_cycle_timers()
 nest_process_with_threaded_timers()
 nest_process_with_mpi_sync_timer()
 nest_process_with_libneurosim()
@@ -326,11 +328,6 @@ configure_file(
 configure_file(
     "${PROJECT_SOURCE_DIR}/bin/nest-config.in"
     "${PROJECT_BINARY_DIR}/bin/nest-config" @ONLY
-)
-
-configure_file(
-    "${PROJECT_SOURCE_DIR}/bin/nest_vars.sh.in"
-    "${PROJECT_BINARY_DIR}/bin/nest_vars.sh" @ONLY
 )
 
 configure_file(

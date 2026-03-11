@@ -110,7 +110,7 @@ ModelManager::register_specific_connection_model_( const std::string& name )
     }
     connection_models_.at( kernel().vp_manager.get_thread_id() ).push_back( conn_model );
     kernel().connection_manager.resize_connections();
-  } // end of parallel section
+  }  // end of parallel section
 }
 
 inline Node*
@@ -123,6 +123,6 @@ ModelManager::get_proxy_node( size_t tid, size_t node_id )
   return proxy;
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifndef MODEL_MANAGER_IMPL_H */

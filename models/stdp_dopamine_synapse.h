@@ -464,7 +464,7 @@ stdp_dopamine_synapse< targetidentifierT >::process_dopa_spikes_( const std::vec
     // weight and eligibility c are at time t0 but dopamine trace n is at time
     // of last dopa spike
     double n0 =
-      n_ * std::exp( ( dopa_spikes[ dopa_spikes_idx_ ].spike_time_ - t0 ) / cp.tau_n_ ); // dopamine trace n at time t0
+      n_ * std::exp( ( dopa_spikes[ dopa_spikes_idx_ ].spike_time_ - t0 ) / cp.tau_n_ );  // dopamine trace n at time t0
     update_weight_( c_, n0, t0 - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_, cp );
     update_dopamine_( dopa_spikes, cp );
 
@@ -478,7 +478,7 @@ stdp_dopamine_synapse< targetidentifierT >::process_dopa_spikes_( const std::vec
       // eligibility c is at time
       // t0
       cd = c_
-        * std::exp( ( t0 - dopa_spikes[ dopa_spikes_idx_ ].spike_time_ ) / cp.tau_c_ ); // eligibility c at time of td
+        * std::exp( ( t0 - dopa_spikes[ dopa_spikes_idx_ ].spike_time_ ) / cp.tau_c_ );  // eligibility c at time of td
       update_weight_(
         cd, n_, dopa_spikes[ dopa_spikes_idx_ ].spike_time_ - dopa_spikes[ dopa_spikes_idx_ + 1 ].spike_time_, cp );
       update_dopamine_( dopa_spikes, cp );
@@ -487,7 +487,7 @@ stdp_dopamine_synapse< targetidentifierT >::process_dopa_spikes_( const std::vec
     // propagate weight up to t1
     // weight and dopamine trace n are at time of last dopa spike td but
     // eligibility c is at time t0
-    cd = c_ * std::exp( ( t0 - dopa_spikes[ dopa_spikes_idx_ ].spike_time_ ) / cp.tau_c_ ); // eligibility c at time td
+    cd = c_ * std::exp( ( t0 - dopa_spikes[ dopa_spikes_idx_ ].spike_time_ ) / cp.tau_c_ );  // eligibility c at time td
     update_weight_( cd, n_, dopa_spikes[ dopa_spikes_idx_ ].spike_time_ - t1, cp );
   }
   else
@@ -496,7 +496,7 @@ stdp_dopamine_synapse< targetidentifierT >::process_dopa_spikes_( const std::vec
     // weight and eligibility c are at time t0 but dopamine trace n is at time
     // of last dopa spike
     double n0 =
-      n_ * std::exp( ( dopa_spikes[ dopa_spikes_idx_ ].spike_time_ - t0 ) / cp.tau_n_ ); // dopamine trace n at time t0
+      n_ * std::exp( ( dopa_spikes[ dopa_spikes_idx_ ].spike_time_ - t0 ) / cp.tau_n_ );  // dopamine trace n at time t0
     update_weight_( c_, n0, t0 - t1, cp );
   }
 
@@ -620,6 +620,6 @@ stdp_dopamine_synapse< targetidentifierT >::trigger_update_weight( size_t t,
   dopa_spikes_idx_ = 0;
 }
 
-} // of namespace nest
+}  // of namespace nest
 
-#endif // of #ifndef STDP_DOPAMINE_SYNAPSE_H
+#endif  // of #ifndef STDP_DOPAMINE_SYNAPSE_H

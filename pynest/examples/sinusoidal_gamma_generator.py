@@ -37,7 +37,6 @@ different settings for rate, phase and frequency are demonstrated.
 
 """
 
-
 ###############################################################################
 # First, we import all necessary modules to simulate, analyze and
 # plot this example.

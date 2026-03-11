@@ -46,8 +46,8 @@ nest::register_inhomogeneous_poisson_generator( const std::string& name )
  * ---------------------------------------------------------------- */
 
 nest::inhomogeneous_poisson_generator::Parameters_::Parameters_()
-  : rate_times_()  // ms
-  , rate_values_() // spikes/ms,
+  : rate_times_()   // ms
+  , rate_values_()  // spikes/ms,
   , allow_offgrid_times_( false )
 
 {
@@ -257,7 +257,7 @@ nest::inhomogeneous_poisson_generator::update( Time const& origin, const long fr
     // on class StimulationDevice.
     if ( B_.idx_ < P_.rate_times_.size() and curr_time + 1 == P_.rate_times_[ B_.idx_ ].get_steps() )
     {
-      B_.rate_ = P_.rate_values_[ B_.idx_ ] / 1000.0; // scale the rate to ms^-1
+      B_.rate_ = P_.rate_values_[ B_.idx_ ] / 1000.0;  // scale the rate to ms^-1
       ++B_.idx_;
     }
 
@@ -276,7 +276,7 @@ nest::inhomogeneous_poisson_generator::event_hook( DSSpikeEvent& e )
   poisson_distribution::param_type param( B_.rate_ * V_.h_ );
   long n_spikes = V_.poisson_dist_( get_vp_specific_rng( get_thread() ), param );
 
-  if ( n_spikes > 0 ) // we must not send events with multiplicity 0
+  if ( n_spikes > 0 )  // we must not send events with multiplicity 0
   {
     e.set_multiplicity( n_spikes );
     e.get_receiver().handle( e );
@@ -290,7 +290,7 @@ nest::inhomogeneous_poisson_generator::event_hook( DSSpikeEvent& e )
 void
 nest::inhomogeneous_poisson_generator::set_data_from_stimulation_backend( std::vector< double >& rate_time_update )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
   // For the input backend
   if ( not rate_time_update.empty() )
   {

@@ -199,6 +199,6 @@ static_synapse_hom_w< targetidentifierT >::get_status( Dictionary& d ) const
   d[ names::size_of ] = static_cast< long >( sizeof( *this ) );
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef STATICSYNAPSE_HOM_W_H */

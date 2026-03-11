@@ -561,6 +561,6 @@ eprop_synapse< targetidentifierT >::set_status( const Dictionary& d, ConnectorMo
   }
 }
 
-} // namespace nest
+}  // namespace nest
 
-#endif // EPROP_SYNAPSE_H
+#endif  // EPROP_SYNAPSE_H

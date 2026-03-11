@@ -32,9 +32,9 @@
 #include "vp_manager_impl.h"
 
 // C++ includes:
-#include <algorithm> // copy
-#include <cmath>     // lcm
-#include <numeric>   // accumulate
+#include <algorithm>  // copy
+#include <cmath>      // lcm
+#include <numeric>    // accumulate
 
 
 namespace nest
@@ -75,7 +75,7 @@ nc_const_iterator::nc_const_iterator( NodeCollectionPTR collection_ptr,
   , composite_collection_( nullptr )
 {
   assert( not collection_ptr.get() or collection_ptr.get() == &collection );
-  assert( element_idx_ <= collection.size() ); // allow == for end()
+  assert( element_idx_ <= collection.size() );  // allow == for end()
 
   FULL_LOGGING_ONLY(
     kernel().write_to_dump( String::compose( "NCIT Prim ctor rk %1, thr %2, pix %3, eix %4, step %5, kind %6, rvp %7",
@@ -246,13 +246,13 @@ nc_const_iterator::advance_local_iter_to_new_part_( size_t n )
         break;
       }
       default:
-        assert( false ); // should not be here, otherwise kind_ is inconsistent
+        assert( false );  // should not be here, otherwise kind_ is inconsistent
         break;
       }
     }
     else
     {
-      break; // no more parts to search
+      break;  // no more parts to search
     }
   }
 
@@ -501,8 +501,8 @@ NodeCollection::to_array( const std::string& selection ) const
         {
           node_ids.push_back( ( *it ).node_id );
         }
-      } // end critical
-    }   // end parallel
+      }  // end critical
+    }  // end parallel
   }
   else
   {
@@ -569,7 +569,7 @@ NodeCollectionPrimitive::operator+( NodeCollectionPTR rhs ) const
 
   auto const* const rhs_ptr = dynamic_cast< NodeCollectionPrimitive const* >( rhs.get() );
 
-  if ( rhs_ptr ) // if rhs is Primitive
+  if ( rhs_ptr )  // if rhs is Primitive
   {
     if ( overlapping( *rhs_ptr ) )
     {
@@ -595,11 +595,11 @@ NodeCollectionPrimitive::operator+( NodeCollectionPTR rhs ) const
       return std::make_shared< NodeCollectionComposite >( primitives );
     }
   }
-  else // if rhs is not Primitive, i.e. Composite
+  else  // if rhs is not Primitive, i.e. Composite
   {
     auto const* const rhs_ptr = dynamic_cast< NodeCollectionComposite* >( rhs.get() );
     assert( rhs_ptr );
-    return rhs_ptr->operator+( *this ); // use Composite operator+
+    return rhs_ptr->operator+( *this );  // use Composite operator+
   }
 }
 
@@ -612,9 +612,9 @@ NodeCollectionPrimitive::rank_local_begin( NodeCollectionPTR cp ) const
     kernel().mpi_manager.get_process_id_of_vp( kernel().vp_manager.node_id_to_vp( first_ ) );
   const size_t elem_idx = ( rank - first_elem_rank + num_processes ) % num_processes;
 
-  if ( elem_idx > size() ) // Too few node IDs to be shared among all MPI processes.
+  if ( elem_idx > size() )  // Too few node IDs to be shared among all MPI processes.
   {
-    return const_iterator( cp, *this, size(), 1, nc_const_iterator::NCIteratorKind::END ); // end iterator
+    return const_iterator( cp, *this, size(), 1, nc_const_iterator::NCIteratorKind::END );  // end iterator
   }
   else
   {
@@ -630,9 +630,9 @@ NodeCollectionPrimitive::thread_local_begin( NodeCollectionPTR cp ) const
   const size_t vp_first_node = kernel().vp_manager.node_id_to_vp( first_ );
   const size_t offset = ( current_vp - vp_first_node + num_vps ) % num_vps;
 
-  if ( offset >= size() ) // Too few node IDs to be shared among all vps.
+  if ( offset >= size() )  // Too few node IDs to be shared among all vps.
   {
-    return nc_const_iterator( cp, *this, size(), 1, nc_const_iterator::NCIteratorKind::END ); // end iterator
+    return nc_const_iterator( cp, *this, size(), 1, nc_const_iterator::NCIteratorKind::END );  // end iterator
   }
   else
   {
@@ -744,7 +744,7 @@ NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionPrimitive&
   size_t end,
   size_t stride )
   : parts_( { primitive } )
-  , size_( 1 + ( end - start - 1 ) / stride ) // see comment on constructor
+  , size_( 1 + ( end - start - 1 ) / stride )  // see comment on constructor
   , stride_( stride )
   , first_part_( 0 )
   , first_elem_( start )
@@ -801,7 +801,7 @@ NodeCollectionComposite::NodeCollectionComposite( const std::vector< NodeCollect
 
   // Only after sorting can we set up the remaining fields
   last_part_ = n_parts - 1;
-  last_elem_ = parts_[ last_part_ ].size() - 1; // well defined because we allow no empty parts
+  last_elem_ = parts_[ last_part_ ].size() - 1;  // well defined because we allow no empty parts
 
   cumul_abs_size_.resize( n_parts );
   cumul_abs_size_[ 0 ] = parts_[ 0 ].size();
@@ -819,7 +819,7 @@ NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionComposite&
   size_t end,
   size_t stride )
   : parts_( composite.parts_ )
-  , size_( 1 + ( end - start - 1 ) / stride ) // see comment on constructor
+  , size_( 1 + ( end - start - 1 ) / stride )  // see comment on constructor
   , stride_( stride )
   , first_part_( 0 )
   , first_elem_( 0 )
@@ -852,7 +852,7 @@ NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionComposite&
     last_part_ = first_part_;
     last_elem_ = first_elem_;
 
-    cumul_abs_size_[ first_part_ ] = parts_[ first_part_ ].size(); // absolute size of the one valid part
+    cumul_abs_size_[ first_part_ ] = parts_[ first_part_ ].size();  // absolute size of the one valid part
     first_in_part_[ first_part_ ] = first_elem_;
   }
   else
@@ -926,7 +926,7 @@ NodeCollectionComposite::operator+( NodeCollectionPTR rhs ) const
   }
 
   auto const* const rhs_ptr = dynamic_cast< NodeCollectionPrimitive const* >( rhs.get() );
-  if ( rhs_ptr ) // if rhs is Primitive
+  if ( rhs_ptr )  // if rhs is Primitive
   {
     // check primitives in the composite for overlap
     for ( auto part_it = parts_.begin(); part_it < parts_.end(); ++part_it )
@@ -938,7 +938,7 @@ NodeCollectionComposite::operator+( NodeCollectionPTR rhs ) const
     }
     return NodeCollectionPTR( *this + *rhs_ptr );
   }
-  else // rhs is Composite
+  else  // rhs is Composite
   {
     auto const* const rhs_ptr = dynamic_cast< NodeCollectionComposite const* >( rhs.get() );
     assert( rhs_ptr );
@@ -1024,14 +1024,14 @@ NodeCollectionComposite::operator[]( const size_t i ) const
     // Composite is not sliced, we can do a more efficient search.
     // TODO: Is this actually more efficient?
     size_t tot_prev_node_ids = 0;
-    for ( const auto& part : parts_ ) // iterate over NodeCollections
+    for ( const auto& part : parts_ )  // iterate over NodeCollections
     {
-      if ( tot_prev_node_ids + part.size() > i ) // is i in current NodeCollection?
+      if ( tot_prev_node_ids + part.size() > i )  // is i in current NodeCollection?
       {
-        size_t local_i = i - tot_prev_node_ids; // get local i
+        size_t local_i = i - tot_prev_node_ids;  // get local i
         return part[ local_i ];
       }
-      else // i is not in current NodeCollection
+      else  // i is not in current NodeCollection
       {
         tot_prev_node_ids += part.size();
       }
@@ -1053,7 +1053,7 @@ NodeCollectionComposite::operator==( NodeCollectionPTR rhs ) const
     return false;
   }
   auto rhs_nc = rhs_ptr->parts_.begin();
-  for ( auto lhs_nc = parts_.begin(); lhs_nc < parts_.end(); ++lhs_nc, ++rhs_nc ) // iterate over NodeCollections
+  for ( auto lhs_nc = parts_.begin(); lhs_nc < parts_.end(); ++lhs_nc, ++rhs_nc )  // iterate over NodeCollections
   {
     if ( not( ( *lhs_nc ) == ( *rhs_nc ) ) )
     {
@@ -1239,9 +1239,9 @@ NodeCollectionComposite::slice( size_t start, size_t end, size_t stride ) const
 void
 NodeCollectionComposite::merge_parts_( std::vector< NodeCollectionPrimitive >& parts ) const
 {
-  bool did_merge = true; // initialize to enter the while loop
+  bool did_merge = true;  // initialize to enter the while loop
   size_t last_i = 0;
-  while ( did_merge ) // if parts is changed, it has to be checked again
+  while ( did_merge )  // if parts is changed, it has to be checked again
   {
     did_merge = false;
     for ( size_t i = last_i; i < parts.size() - 1; ++i )
@@ -1371,7 +1371,7 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
     for ( nc_const_iterator it = begin(); it < end_it; ++it )
     {
       std::tie( current_part, current_offset ) = it.get_part_offset();
-      if ( current_part != previous_part ) // New primitive
+      if ( current_part != previous_part )  // New primitive
       {
         if ( it > begin() )
         {
@@ -1445,4 +1445,4 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
   return out;
 }
 
-} // namespace nest
+}  // namespace nest

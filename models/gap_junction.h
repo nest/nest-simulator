@@ -158,7 +158,7 @@ public:
   }
 
 private:
-  double weight_; //!< connection weight
+  double weight_;  //!< connection weight
 };
 
 template < typename targetidentifierT >
@@ -197,6 +197,6 @@ gap_junction< targetidentifierT >::set_status( const Dictionary& d, ConnectorMod
   d.update_value( names::weight, weight_ );
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef GAP_JUNCTION_H */

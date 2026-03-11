@@ -66,7 +66,7 @@ RecordablesMap< gif_cond_exp_multisynapse >::create()
   insert_( names::E_sfa, &gif_cond_exp_multisynapse::get_E_sfa_ );
   insert_( names::I_stc, &gif_cond_exp_multisynapse::get_I_stc_ );
 }
-} // namespace
+}  // namespace
 
 extern "C" int
 nest::gif_cond_exp_multisynapse_dynamics( double, const double* y, double* f, void* pnode )
@@ -112,21 +112,21 @@ nest::gif_cond_exp_multisynapse_dynamics( double, const double* y, double* f, vo
  * ---------------------------------------------------------------- */
 
 nest::gif_cond_exp_multisynapse::Parameters_::Parameters_()
-  : g_L_( 4.0 )        // nS
-  , E_L_( -70.0 )      // mV
-  , V_reset_( -55.0 )  // mV
-  , Delta_V_( 0.5 )    // mV
-  , V_T_star_( -35 )   // mV
-  , lambda_0_( 0.001 ) // 1/ms
-  , t_ref_( 4.0 )      // ms
-  , c_m_( 80.0 )       // pF
-  , tau_stc_()         // ms
-  , q_stc_()           // pA
-  , tau_sfa_()         // ms
-  , q_sfa_()           // mV
-  , tau_syn_( 1, 2.0 ) // ms
-  , E_rev_( 1, 0.0 )   // mV
-  , I_e_( 0.0 )        // pA
+  : g_L_( 4.0 )         // nS
+  , E_L_( -70.0 )       // mV
+  , V_reset_( -55.0 )   // mV
+  , Delta_V_( 0.5 )     // mV
+  , V_T_star_( -35 )    // mV
+  , lambda_0_( 0.001 )  // 1/ms
+  , t_ref_( 4.0 )       // ms
+  , c_m_( 80.0 )        // pF
+  , tau_stc_()          // ms
+  , q_stc_()            // pA
+  , tau_sfa_()          // ms
+  , q_sfa_()            // mV
+  , tau_syn_( 1, 2.0 )  // ms
+  , E_rev_( 1, 0.0 )    // mV
+  , I_e_( 0.0 )         // pA
   , has_connections_( false )
   , gsl_error_tol( 1e-3 )
 {
@@ -158,7 +158,7 @@ nest::gif_cond_exp_multisynapse::Parameters_::get( Dictionary& d ) const
   d[ names::V_reset ] = V_reset_;
   d[ names::Delta_V ] = Delta_V_;
   d[ names::V_T_star ] = V_T_star_;
-  d[ names::lambda_0 ] = lambda_0_ * 1000.0; // convert to 1/s
+  d[ names::lambda_0 ] = lambda_0_ * 1000.0;  // convert to 1/s
   d[ names::t_ref ] = t_ref_;
   d[ names::n_receptors ] = static_cast< long >( n_receptors() );
   d[ names::E_rev ] = E_rev_;
@@ -184,7 +184,7 @@ nest::gif_cond_exp_multisynapse::Parameters_::set( const Dictionary& d, Node* no
 
   if ( update_value_param( d, names::lambda_0, lambda_0_, node ) )
   {
-    lambda_0_ /= 1000.0; // convert to 1/ms
+    lambda_0_ /= 1000.0;  // convert to 1/ms
   }
 
   update_value_param( d, names::t_ref, t_ref_, node );
@@ -199,7 +199,7 @@ nest::gif_cond_exp_multisynapse::Parameters_::set( const Dictionary& d, Node* no
   bool Erev_flag = d.update_value( names::E_rev, E_rev_ );
   bool tau_flag = d.update_value( names::tau_syn, tau_syn_ );
   if ( Erev_flag or tau_flag )
-  { // receptor arrays have been modified
+  {  // receptor arrays have been modified
     if ( ( E_rev_.size() != old_n_receptors or tau_syn_.size() != old_n_receptors )
       and ( not Erev_flag or not tau_flag ) )
     {
@@ -291,9 +291,9 @@ nest::gif_cond_exp_multisynapse::Parameters_::set( const Dictionary& d, Node* no
 void
 nest::gif_cond_exp_multisynapse::State_::get( Dictionary& d, const Parameters_& ) const
 {
-  d[ names::V_m ] = y_[ V_M ]; // Membrane potential
-  d[ names::E_sfa ] = sfa_;    // Adaptive threshold potential
-  d[ names::I_stc ] = stc_;    // Spike-triggered current
+  d[ names::V_m ] = y_[ V_M ];  // Membrane potential
+  d[ names::E_sfa ] = sfa_;     // Adaptive threshold potential
+  d[ names::I_stc ] = stc_;     // Spike-triggered current
 
 
   std::vector< double > g;
@@ -387,11 +387,11 @@ nest::gif_cond_exp_multisynapse::init_buffers_()
   B_.spikes_.resize( P_.n_receptors() );
   for ( size_t i = 0; i < P_.n_receptors(); ++i )
   {
-    B_.spikes_[ i ].clear(); // includes resize
+    B_.spikes_[ i ].clear();  // includes resize
   }
 
-  B_.currents_.clear(); //!< includes resize
-  B_.logger_.reset();   //!< includes resize
+  B_.currents_.clear();  //!< includes resize
+  B_.logger_.reset();    //!< includes resize
   ArchivingNode::clear_history();
 
   const int state_size = 1 + ( State_::STATE_VEC_SIZE - 1 ) * P_.n_receptors();
@@ -504,11 +504,11 @@ nest::gif_cond_exp_multisynapse::update( Time const& origin, const long from, co
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
-        &B_.sys_,             // system of ODE
-        &t,                   // from t
-        B_.step_,             // to t <= step
-        &B_.IntegrationStep_, // integration step size
-        &S_.y_[ 0 ] );        // neuronal state converted to double[]
+        &B_.sys_,              // system of ODE
+        &t,                    // from t
+        B_.step_,              // to t <= step
+        &B_.IntegrationStep_,  // integration step size
+        &S_.y_[ 0 ] );         // neuronal state converted to double[]
 
       if ( status != GSL_SUCCESS )
       {
@@ -521,7 +521,7 @@ nest::gif_cond_exp_multisynapse::update( Time const& origin, const long from, co
       S_.y_[ State_::G + ( State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * i ) ] += B_.spikes_[ i ].get_value( lag );
     }
 
-    if ( S_.r_ref_ == 0 ) // neuron is not in refractory period
+    if ( S_.r_ref_ == 0 )  // neuron is not in refractory period
     {
 
       const double lambda = P_.lambda_0_ * std::exp( ( S_.y_[ State_::V_M ] - S_.sfa_ ) / P_.Delta_V_ );
@@ -554,7 +554,7 @@ nest::gif_cond_exp_multisynapse::update( Time const& origin, const long from, co
       }
     }
     else
-    { // neuron is absolute refractory
+    {  // neuron is absolute refractory
       --S_.r_ref_;
       S_.y_[ State_::V_M ] = P_.V_reset_;
     }
@@ -602,4 +602,4 @@ nest::gif_cond_exp_multisynapse::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-#endif // HAVE_GSL
+#endif  // HAVE_GSL

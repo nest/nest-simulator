@@ -154,12 +154,12 @@ private:
     //! Allow and round up amplitude times not on steps
     bool allow_offgrid_amp_times_;
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
     Parameters_( const Parameters_&, Buffers_& );
     Parameters_( const Parameters_& );
     Parameters_& operator=( const Parameters_& p );
 
-    void get( Dictionary& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const;  //!< Store current values in dictionary
     //! Set values from dictionary
     void set( const Dictionary&, Buffers_&, Node* );
 
@@ -176,9 +176,9 @@ private:
 
   struct State_
   {
-    double I_; //!< Instantaneous current value; used for recording current
+    double I_;  //!< Instantaneous current value; used for recording current
 
-    State_(); //!< Sets default parameter values
+    State_();  //!< Sets default parameter values
   };
 
   // ------------------------------------------------------------
@@ -191,8 +191,8 @@ private:
 
   struct Buffers_
   {
-    size_t idx_; //!< index of current amplitude
-    double amp_; //!< current amplitude
+    size_t idx_;  //!< index of current amplitude
+    double amp_;  //!< current amplitude
 
     explicit Buffers_( step_current_generator& );
     Buffers_( const Buffers_&, step_current_generator& );
@@ -248,8 +248,8 @@ step_current_generator::get_status( Dictionary& d ) const
 inline void
 step_current_generator::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;   // temporary copy in case of errors
-  ptmp.set( d, B_, this ); // throws if BadProperty
+  Parameters_ ptmp = P_;    // temporary copy in case of errors
+  ptmp.set( d, B_, this );  // throws if BadProperty
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
@@ -272,6 +272,6 @@ step_current_generator::get_type() const
 {
   return StimulationDevice::Type::CURRENT_GENERATOR;
 }
-} // namespace
+}  // namespace
 
 #endif /* #ifndef STEP_CURRENT_GENERATOR_H */

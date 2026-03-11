@@ -152,7 +152,7 @@ ignore_and_fire::ignore_and_fire( const ignore_and_fire& n )
 void
 ignore_and_fire::init_buffers_()
 {
-  B_.input_buffer_.clear(); // includes resize
+  B_.input_buffer_.clear();  // includes resize
 
   B_.logger_.reset();
 
@@ -227,4 +227,4 @@ ignore_and_fire::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-} // namespace
+}  // namespace

@@ -307,6 +307,6 @@ public:
   static const std::vector< long > NO_LONG_VALUES;
 };
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef RECORDING_BACKEND_H */

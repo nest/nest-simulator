@@ -20,11 +20,11 @@
 set( TESTSUBDIRS
     pytests
     cpptests
-    sli2py_music
+    musictests
 )
 
 add_subdirectory( cpptests )
-add_subdirectory( sli2py_music )
+add_subdirectory( musictests )
 
 install( DIRECTORY ${TESTSUBDIRS}
     DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
@@ -37,6 +37,6 @@ install( PROGRAMS
 )
 
 install( FILES
-    junit_xml.sh run_test.sh summarize_tests.py
+    junit_xml.sh summarize_tests.py
     DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
 )

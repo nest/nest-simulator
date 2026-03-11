@@ -169,17 +169,17 @@ private:
     // boolean flag which indicates whether the neuron has connections
     bool has_connections_;
 
-    size_t n_receptors_() const; //!< Returns the size of tau_syn_
+    size_t n_receptors_() const;  //!< Returns the size of tau_syn_
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( Dictionary& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const;  //!< Store current values in dictionary
 
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      */
     double set( const Dictionary&, Node* node );
-  }; // Parameters_
+  };  // Parameters_
 
   // ----------------------------------------------------------------
 
@@ -203,21 +203,21 @@ private:
     enum StateVecElems
     {
       V_M = 0,
-      I,    // 1
-      I_SYN // 2
+      I,     // 1
+      I_SYN  // 2
     };
 
-    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = I_SYN; // V_M, I
-    static const size_t NUM_STATE_ELEMENTS_PER_RECEPTOR = 1;     // I_SYN
+    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = I_SYN;  // V_M, I
+    static const size_t NUM_STATE_ELEMENTS_PER_RECEPTOR = 1;      // I_SYN
 
-    double I_const_; //!< synaptic dc input current, variable 0
+    double I_const_;  //!< synaptic dc input current, variable 0
     std::vector< double > i_syn_;
-    double V_m_; //!< membrane potential, variable 2
+    double V_m_;  //!< membrane potential, variable 2
 
     //! absolute refractory counter (no membrane potential propagation)
     int refractory_steps_;
 
-    State_(); //!< Default initialization
+    State_();  //!< Default initialization
 
     void get( Dictionary&, const Parameters_& ) const;
 
@@ -227,7 +227,7 @@ private:
      * @param Change in reversal potential E_L specified by this dict
      */
     void set( const Dictionary&, const Parameters_&, const double, Node* );
-  }; // State_
+  };  // State_
 
   // ----------------------------------------------------------------
 
@@ -271,7 +271,7 @@ private:
 
     unsigned int receptor_types_size_;
 
-  }; // Variables
+  };  // Variables
 
   /**
    * Instances of private data structures for the different types
@@ -359,6 +359,6 @@ iaf_psc_exp_multisynapse::get_status( Dictionary& d ) const
   d[ names::recordables ] = recordablesMap_.get_list();
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef IAF_PSC_EXP_MULTISYNAPSE_H */

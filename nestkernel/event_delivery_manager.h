@@ -35,7 +35,7 @@
 // Includes from nestkernel:
 #include "buffer_resize_log.h"
 #include "event.h"
-#include "mpi_manager.h" // OffGridSpike
+#include "mpi_manager.h"  // OffGridSpike
 #include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
@@ -266,6 +266,20 @@ public:
    */
   virtual void reset_timers_for_dynamics();
 
+#ifdef CYCLE_TIMERS
+  /**
+   * Returns the elapsed time of sw_communicate_spike_data_
+   * Used in SimulationManager::update_() for cycle timers
+   */
+  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly > get_sw_communicate_spike_data() const;
+
+  /**
+   * Accumulates the spike counts stored in local_spike_counter_
+   * Used in SimulationManager::update_() for cycle timers
+   */
+  size_t get_local_spike_counter() const;
+#endif
+
 private:
   template < typename SpikeDataT >
   void gather_spike_data_( std::vector< SpikeDataT >& send_buffer, std::vector< SpikeDataT >& recv_buffer );
@@ -368,8 +382,8 @@ private:
 
   //--------------------------------------------------//
 
-  bool off_grid_spiking_; //!< indicates whether spikes are not constrained to
-                          //!< the grid
+  bool off_grid_spiking_;  //!< indicates whether spikes are not constrained to
+                           //!< the grid
 
   /**
    * Table of pre-computed modulos.
@@ -451,9 +465,9 @@ private:
    */
   size_t global_max_spikes_per_rank_;
 
-  double send_recv_buffer_shrink_limit_; //!< shrink buffer only if below this limit
-  double send_recv_buffer_shrink_spare_; //!< leave this fraction more space than minimally needed
-  double send_recv_buffer_grow_extra_;   //!< when growing, add this fraction extra space
+  double send_recv_buffer_shrink_limit_;  //!< shrink buffer only if below this limit
+  double send_recv_buffer_shrink_spare_;  //!< leave this fraction more space than minimally needed
+  double send_recv_buffer_grow_extra_;    //!< when growing, add this fraction extra space
 
   /**
    * Log all resize events.
@@ -529,6 +543,6 @@ EventDeliveryManager::get_slice_modulo( long d )
   return slice_moduli_[ d ];
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* EVENT_DELIVERY_MANAGER_H */

@@ -402,7 +402,7 @@ nest::spike_generator::event_hook( DSSpikeEvent& e )
 void
 nest::spike_generator::set_data_from_stimulation_backend( std::vector< double >& input_spikes )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
 
   if ( ptmp.precise_times_ and not input_spikes.empty() )
   {

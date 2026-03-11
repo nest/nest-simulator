@@ -64,9 +64,9 @@ nest::ConnBuilder::ConnBuilder( const std::string& primary_rule,
   const Dictionary& third_conn_spec,
   const std::map< std::string, std::vector< Dictionary > >& syn_specs )
   : third_in_builder_( new ThirdInBuilder( sources,
-    third,
-    third_conn_spec,
-    const_cast< std::map< std::string, std::vector< Dictionary > >& >( syn_specs )[ names::third_in ] ) )
+      third,
+      third_conn_spec,
+      const_cast< std::map< std::string, std::vector< Dictionary > >& >( syn_specs )[ names::third_in ] ) )
   , third_out_builder_( kernel().connection_manager.get_third_conn_builder( third_rule,
       third,
       targets,
@@ -93,7 +93,7 @@ nest::ConnBuilder::~ConnBuilder()
 void
 nest::ConnBuilder::connect()
 {
-  primary_builder_->connect(); // triggers third_out_builder_
+  primary_builder_->connect();  // triggers third_out_builder_
   if ( third_in_builder_ )
   {
     third_in_builder_->connect();
@@ -316,7 +316,7 @@ nest::BipartiteConnBuilder::connect()
 
       std::swap( sources_, targets_ );
       connect_();
-      std::swap( sources_, targets_ ); // re-establish original state
+      std::swap( sources_, targets_ );  // re-establish original state
     }
   }
   // check if any exceptions have been raised
@@ -548,7 +548,7 @@ nest::BipartiteConnBuilder::set_synapse_params( const Dictionary& syn_defaults,
   {
     if ( skip_syn_params_.find( param_name ) != skip_syn_params_.end() )
     {
-      continue; // weight, delay or other not-settable parameter
+      continue;  // weight, delay or other not-settable parameter
     }
 
     if ( syn_params.known( param_name ) )
@@ -697,7 +697,7 @@ nest::ThirdInBuilder::connect_()
   }
 
   // now find global maximum; for simplicity, we will use this to configure buffers
-  std::vector< long > max_stc( num_ranks ); // MPIManager does not support size_t
+  std::vector< long > max_stc( num_ranks );  // MPIManager does not support size_t
   max_stc[ kernel().mpi_manager.get_rank() ] =
     *std::max_element( source_third_per_rank.begin(), source_third_per_rank.end() );
   kernel().mpi_manager.communicate( max_stc );
@@ -712,7 +712,7 @@ nest::ThirdInBuilder::connect_()
   const size_t slots_per_rank = 2 * global_max_stc;
 
   // send buffer for third rank-third gid pairs
-  std::vector< size_t > send_stg( num_ranks * slots_per_rank, 0 ); // send buffer
+  std::vector< size_t > send_stg( num_ranks * slots_per_rank, 0 );  // send buffer
 
   // vector mapping destination rank to next entry in send_stg to write to
   // initialization based on example in https://en.cppreference.com/w/cpp/iterator/back_insert_iterator
@@ -727,7 +727,7 @@ nest::ThirdInBuilder::connect_()
     for ( auto& stg : *stgp )
     {
       const auto ix = rank_idx[ stg.third_rank ];
-      send_stg[ ix ] = stg.third_gid; // write third gid first because we need to look at it first below
+      send_stg[ ix ] = stg.third_gid;  // write third gid first because we need to look at it first below
       send_stg[ ix + 1 ] = stg.source_gid;
       rank_idx[ stg.third_rank ] += 2;
     }
@@ -857,7 +857,7 @@ nest::ThirdBernoulliWithPoolBuilder::ThirdBernoulliWithPoolBuilder( const NodeCo
       Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id );
       if ( not tgt->is_proxy() )
       {
-        tgt->set_tmp_nc_index( idx++ ); // must be postfix
+        tgt->set_tmp_nc_index( idx++ );  // must be postfix
       }
     }
   }
@@ -938,7 +938,7 @@ nest::ThirdBernoulliWithPoolBuilder::get_first_pool_index_( const size_t target_
     return target_index * pool_size_;
   }
 
-  return target_index / targets_per_third_; // intentional integer division
+  return target_index / targets_per_third_;  // intentional integer division
 }
 
 
@@ -1009,7 +1009,7 @@ nest::OneToOneBuilder::connect_()
 
           const size_t tnode_id = n->get_node_id();
           const long lid = targets_->get_nc_index( tnode_id );
-          if ( lid < 0 ) // Is local node in target list?
+          if ( lid < 0 )  // Is local node in target list?
           {
             continue;
           }
@@ -1434,7 +1434,7 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( NodeCollectionPTR sources,
           "FixedInDegreeBuilder::connect",
           "Multapses are prohibited and you request more than 90% connectivity. Expect long connecting times!" );
       }
-    } // if (not allow_multapses_ )
+    }  // if (not allow_multapses_ )
 
     if ( value < 0 )
     {
@@ -1752,16 +1752,16 @@ nest::FixedTotalNumberBuilder::connect_()
   // K from gsl is equivalent to M = n_vps
   // N is already taken from stack
   // p[] is targets_on_vp
-  std::vector< long > num_conns_on_vp( M, 0 ); // corresponds to n[]
+  std::vector< long > num_conns_on_vp( M, 0 );  // corresponds to n[]
 
   // calculate exact multinomial distribution
   // get global rng that is tested for synchronization for all threads
   RngPtr grng = get_rank_synced_rng();
 
   // begin code adapted from gsl 1.8 //
-  double sum_dist = 0.0; // corresponds to sum_p
+  double sum_dist = 0.0;  // corresponds to sum_p
   // norm is equivalent to size_targets
-  unsigned int sum_partitions = 0; // corresponds to sum_n
+  unsigned int sum_partitions = 0;  // corresponds to sum_n
 
   binomial_distribution bino_dist;
   for ( int k = 0; k < M; k++ )
@@ -1929,7 +1929,7 @@ nest::BernoulliBuilder::connect_()
       // Capture the current exception object and create an std::exception_ptr
       exceptions_raised_.at( tid ) = std::current_exception();
     }
-  } // of omp parallel
+  }  // of omp parallel
 }
 
 void
@@ -2045,7 +2045,7 @@ nest::PoissonBuilder::connect_()
     {
       exceptions_raised_.at( tid ) = std::current_exception();
     }
-  } // of omp parallel
+  }  // of omp parallel
 }
 
 void

@@ -66,21 +66,21 @@ RecordablesMap< gif_psc_exp_multisynapse >::create()
  * ---------------------------------------------------------------- */
 
 nest::gif_psc_exp_multisynapse::Parameters_::Parameters_()
-  : g_L_( 4.0 )        // nS
-  , E_L_( -70.0 )      // mV
-  , V_reset_( -55.0 )  // mV
-  , Delta_V_( 0.5 )    // mV
-  , V_T_star_( -35 )   // mV
-  , lambda_0_( 0.001 ) // 1/ms
-  , t_ref_( 4.0 )      // ms
-  , c_m_( 80.0 )       // pF
-  , tau_stc_()         // ms
-  , q_stc_()           // nA
-  , tau_sfa_()         // ms
-  , q_sfa_()           // mV
-  , tau_syn_( 1, 2.0 ) // ms
+  : g_L_( 4.0 )         // nS
+  , E_L_( -70.0 )       // mV
+  , V_reset_( -55.0 )   // mV
+  , Delta_V_( 0.5 )     // mV
+  , V_T_star_( -35 )    // mV
+  , lambda_0_( 0.001 )  // 1/ms
+  , t_ref_( 4.0 )       // ms
+  , c_m_( 80.0 )        // pF
+  , tau_stc_()          // ms
+  , q_stc_()            // nA
+  , tau_sfa_()          // ms
+  , q_sfa_()            // mV
+  , tau_syn_( 1, 2.0 )  // ms
   , has_connections_( false )
-  , I_e_( 0.0 ) // pA
+  , I_e_( 0.0 )  // pA
 {
 }
 
@@ -111,7 +111,7 @@ nest::gif_psc_exp_multisynapse::Parameters_::get( Dictionary& d ) const
   d[ names::V_reset ] = V_reset_;
   d[ names::Delta_V ] = Delta_V_;
   d[ names::V_T_star ] = V_T_star_;
-  d[ names::lambda_0 ] = lambda_0_ * 1000.0; // convert to 1/s
+  d[ names::lambda_0 ] = lambda_0_ * 1000.0;  // convert to 1/s
   d[ names::t_ref ] = t_ref_;
 
   d[ names::n_receptors ] = static_cast< long >( n_receptors_() );
@@ -137,7 +137,7 @@ nest::gif_psc_exp_multisynapse::Parameters_::set( const Dictionary& d, Node* nod
 
   if ( update_value_param( d, names::lambda_0, lambda_0_, node ) )
   {
-    lambda_0_ /= 1000.0; // convert to 1/ms
+    lambda_0_ /= 1000.0;  // convert to 1/ms
   }
 
   update_value_param( d, names::t_ref, t_ref_, node );
@@ -226,9 +226,9 @@ nest::gif_psc_exp_multisynapse::Parameters_::set( const Dictionary& d, Node* nod
 void
 nest::gif_psc_exp_multisynapse::State_::get( Dictionary& d, const Parameters_& ) const
 {
-  d[ names::V_m ] = V_;     // Membrane potential
-  d[ names::E_sfa ] = sfa_; // Adaptive threshold potential
-  d[ names::I_stc ] = stc_; // Spike-triggered current
+  d[ names::V_m ] = V_;      // Membrane potential
+  d[ names::E_sfa ] = sfa_;  // Adaptive threshold potential
+  d[ names::I_stc ] = stc_;  // Spike-triggered current
 }
 
 void
@@ -275,9 +275,9 @@ nest::gif_psc_exp_multisynapse::gif_psc_exp_multisynapse( const gif_psc_exp_mult
 void
 nest::gif_psc_exp_multisynapse::init_buffers_()
 {
-  B_.spikes_.clear();   //!< includes resize
-  B_.currents_.clear(); //!< includes resize
-  B_.logger_.reset();   //!< includes resize
+  B_.spikes_.clear();    //!< includes resize
+  B_.currents_.clear();  //!< includes resize
+  B_.logger_.reset();    //!< includes resize
   ArchivingNode::clear_history();
 }
 
@@ -362,10 +362,10 @@ nest::gif_psc_exp_multisynapse::update( Time const& origin, const long from, con
       sum_syn_pot += V_.P21_syn_[ i ] * S_.i_syn_[ i ];
       // exponential decaying PSCs
       S_.i_syn_[ i ] = V_.P11_syn_[ i ] * S_.i_syn_[ i ];
-      S_.i_syn_[ i ] += B_.spikes_[ i ].get_value( lag ); // collecting spikes
+      S_.i_syn_[ i ] += B_.spikes_[ i ].get_value( lag );  // collecting spikes
     }
 
-    if ( S_.r_ref_ == 0 ) // neuron is not in refractory period
+    if ( S_.r_ref_ == 0 )  // neuron is not in refractory period
     {
       // effect of synaptic currents (sum_syn_pot) is added here
       S_.V_ = V_.P30_ * ( S_.I_stim_ + P_.I_e_ - S_.stc_ ) + V_.P33_ * S_.V_ + V_.P31_ * P_.E_L_ + sum_syn_pot;
@@ -400,8 +400,8 @@ nest::gif_psc_exp_multisynapse::update( Time const& origin, const long from, con
     }
     else
     {
-      --S_.r_ref_;         // neuron is absolute refractory
-      S_.V_ = P_.V_reset_; // reset the membrane potential
+      --S_.r_ref_;          // neuron is absolute refractory
+      S_.V_ = P_.V_reset_;  // reset the membrane potential
     }
 
     // Set new input current
@@ -441,4 +441,4 @@ nest::gif_psc_exp_multisynapse::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-} // namespace
+}  // namespace

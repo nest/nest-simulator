@@ -116,7 +116,7 @@ dictionary_::cast_value_< std::vector< double > >( const any_type& value, const 
       std::copy( v->begin(), v->end(), std::back_inserter( res ) );
       return res;
     }
-    throw std::bad_variant_access(); // deflect to error handling below
+    throw std::bad_variant_access();  // deflect to error handling below
   }
   catch ( const std::bad_variant_access& )
   {
@@ -142,7 +142,7 @@ dictionary_::cast_value_< std::vector< std::string > >( const any_type& value, c
     {
       return *v;
     }
-    throw std::bad_variant_access(); // deflect to error handling below
+    throw std::bad_variant_access();  // deflect to error handling below
   }
   catch ( const std::bad_variant_access& )
   {
@@ -219,7 +219,8 @@ operator<<( std::ostream& os, const Dictionary& dict )
 {
   const auto max_key_length = std::max_element( dict.begin(),
     dict.end(),
-    []( const dictionary_::value_type s1, const dictionary_::value_type s2 ) {
+    []( const dictionary_::value_type s1, const dictionary_::value_type s2 )
+    {
       return s1.first.length() < s2.first.length();
     } )->first.length();
   const std::string pre_padding = "    ";
@@ -334,7 +335,7 @@ dictionary_::register_access_( const DictEntry_& entry ) const
     // if() above avoids any unnecessary updates, atomic prevents any potential
     // data races in case the compiler does behind-the-scences magic.
 #pragma omp atomic write
-    entry.accessed = true; // accessed is mutable
+    entry.accessed = true;  // accessed is mutable
   }
 }
 
@@ -439,7 +440,7 @@ dictionary_::all_entries_accessed( const std::string& where,
   {
     const auto missed = std::accumulate( not_accessed_keys.begin(),
       not_accessed_keys.end(),
-      key_type(), // creates empty instance of key type (string)
+      key_type(),  // creates empty instance of key type (string)
       []( const key_type& a, const key_type& b ) { return a + " " + b; } );
 
     throw nest::UnaccessedDictionaryEntry( what, where, missed );

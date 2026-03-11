@@ -169,7 +169,7 @@ public:
 
 private:
   const bool force_singlethreading_;
-  size_t n_threads_; //!< Number of threads per process.
+  size_t n_threads_;  //!< Number of threads per process.
 };
 }
 

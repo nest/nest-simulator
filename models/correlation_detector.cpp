@@ -23,8 +23,8 @@
 #include "correlation_detector.h"
 
 // C++ includes:
-#include <cmath>      // for less
-#include <functional> // for bind2nd
+#include <cmath>       // for less
+#include <functional>  // for bind2nd
 
 // Includes from libnestutil:
 #include "compose.hpp"
@@ -276,7 +276,7 @@ nest::correlation_detector::handle( SpikeEvent& e )
   {
 
     const long spike_i = stamp.get_steps();
-    const size_t other = 1 - sender; // port of the neuron not sending
+    const size_t other = 1 - sender;  // port of the neuron not sending
     SpikelistType& otherSpikes = S_.incoming_[ other ];
     const double tau_edge = P_.tau_max_.get_steps() + 0.5 * P_.delta_tau_.get_steps();
 
@@ -307,10 +307,10 @@ nest::correlation_detector::handle( SpikeEvent& e )
       // subsequently for both spikes, such that the first spike arriving here
       // will not yet be aware of the spike arriving as second
       // (which is not yet in the deque)
-      S_.n_events_[ sender ]++; // count this spike
+      S_.n_events_[ sender ]++;  // count this spike
 
-      const long sign = 2 * sender - 1; // takes into account relative timing
-                                        // of spike from source 1 and source 2
+      const long sign = 2 * sender - 1;  // takes into account relative timing
+                                         // of spike from source 1 and source 2
 
       for ( SpikelistType::const_iterator spike_j = otherSpikes.begin(); spike_j != otherSpikes.end(); ++spike_j )
       {
@@ -328,7 +328,7 @@ nest::correlation_detector::handle( SpikeEvent& e )
         S_.count_histogram_[ bin ] += e.get_multiplicity();
       }
 
-    } // t in [TStart, Tstop]
+    }  // t in [TStart, Tstop]
 
     // store the spike time in the according deque
     // spikes are not guaranteed to arrive in temporal order,
@@ -344,7 +344,7 @@ nest::correlation_detector::handle( SpikeEvent& e )
     // if no element greater found, insert_pos == end(), so append at the end of
     // the deque
     S_.incoming_[ sender ].insert( insert_pos, sp_i );
-  } // device active
+  }  // device active
 }
 
 void

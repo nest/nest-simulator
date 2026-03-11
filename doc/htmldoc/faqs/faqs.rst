@@ -83,7 +83,7 @@ Connections
        syns = nest.GetDefaults('iaf_cond_alpha_mc')['receptor_types']
        nest.CopyModel('static_synapse', 'exc_dist_syn', {'receptor_type': syns['distal_exc']})
        n = nest.Create('iaf_cond_alpha_mc', 100)
-       nest.Connect(n, n[:1], sync_spec={'model'='exc_dist_syn'})
+       nest.Connect(n, n[:1], syn_spec={'model': 'exc_dist_syn'})
        nest.Simulate(10)
 
 .. _faqs_precise_neurons:

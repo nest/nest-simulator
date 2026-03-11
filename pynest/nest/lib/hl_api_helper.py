@@ -262,8 +262,7 @@ def __show_help_in_modal_window(obj, help_text):
         "<style>.modal-body p { display: block;unicode-bidi: embed; "
         "font-family: monospace; white-space: pre; }</style>"
     )
-    s = Template(
-        """
+    s = Template("""
        require(
            ["base/js/dialog"],
            function(dialog) {
@@ -276,8 +275,7 @@ def __show_help_in_modal_window(obj, help_text):
                });
            }
        );
-       """
-    )
+       """)
 
     from IPython.display import HTML, Javascript, display
 

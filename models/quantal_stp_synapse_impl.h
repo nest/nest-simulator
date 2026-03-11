@@ -98,6 +98,6 @@ quantal_stp_synapse< targetidentifierT >::set_status( const Dictionary& d, Conne
   }
 }
 
-} // of namespace nest
+}  // of namespace nest
 
-#endif // #ifndef QUANTAL_STP_SYNAPSE_IMPL_H
+#endif  // #ifndef QUANTAL_STP_SYNAPSE_IMPL_H

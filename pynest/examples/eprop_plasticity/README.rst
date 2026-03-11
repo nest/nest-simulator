@@ -29,7 +29,7 @@ e-prop model map
   .. grid-item-card::
     :columns: 12
 
-    .. image:: /static/img/eprop_model_diagram.svg
+    .. image:: eprop_model_diagram.svg
 
 References
 ----------

@@ -226,6 +226,6 @@ eprop_learning_signal_connection< targetidentifierT >::get_secondary_event()
   return std::make_unique< LearningSignalConnectionEvent >();
 }
 
-} // namespace nest
+}  // namespace nest
 
-#endif // EPROP_LEARNING_SIGNAL_CONNECTION_H
+#endif  // EPROP_LEARNING_SIGNAL_CONNECTION_H

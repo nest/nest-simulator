@@ -117,7 +117,7 @@ public:
 
   // data members common to all connections
   double tau_plus_;
-  double tau_plus_inv_; //!< 1 / tau_plus for efficiency
+  double tau_plus_inv_;  //!< 1 / tau_plus for efficiency
   double lambda_;
   double alpha_;
   double mu_;
@@ -335,6 +335,6 @@ stdp_pl_synapse_hom< targetidentifierT >::set_status( const Dictionary& d, Conne
   d.update_value( names::Kplus, Kplus_ );
 }
 
-} // of namespace nest
+}  // of namespace nest
 
-#endif // of #ifndef STDP_PL_SYNAPSE_HOM_H
+#endif  // of #ifndef STDP_PL_SYNAPSE_HOM_H

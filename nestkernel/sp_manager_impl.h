@@ -47,6 +47,6 @@ SPManager::register_growth_curve( const std::string& name )
   growthcurvedict_[ name ] = static_cast< long >( id );
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* SP_MANAGER_IMPL_H */

@@ -420,7 +420,7 @@ public:
       ++lcid_offset;
     }
 
-    return 1 + lcid_offset; // event was delivered to at least one target
+    return 1 + lcid_offset;  // event was delivered to at least one target
   }
 
   // Implemented in connector_base_impl.h
@@ -519,6 +519,6 @@ public:
   }
 };
 
-} // of namespace nest
+}  // of namespace nest
 
 #endif

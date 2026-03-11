@@ -95,7 +95,7 @@ You can also install with extra packages using the ``#egg=`` syntax:
    Installing from GitHub installs the latest development version which may be less stable than the released versions on PyPI.
 
 Install from a local repository
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To install from a local copy of the NEST repository:
 

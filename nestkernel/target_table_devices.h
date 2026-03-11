@@ -233,8 +233,8 @@ TargetTableDevices::send_from_device( const size_t tid,
   const std::vector< ConnectorModel* >& cm )
 {
   for ( std::vector< ConnectorBase* >::iterator it = target_from_devices_[ tid ][ ldid ].begin();
-        it != target_from_devices_[ tid ][ ldid ].end();
-        ++it )
+    it != target_from_devices_[ tid ][ ldid ].end();
+    ++it )
   {
     if ( *it )
     {
@@ -261,6 +261,6 @@ TargetTableDevices::is_device_connected( const size_t tid, const size_t lcid ) c
   return false;
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif

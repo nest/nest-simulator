@@ -234,6 +234,33 @@ New NEST
      // ...
    }
 
+Data types for Dictionary elements
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Python does not support unsigned integer types. Therefore, integers in ``Dictionary``s must be of type ``long``. Other integer types, e.g., ``int```
+or ``size_t`` are no longer supported. Therefore, values need to be cast to ``long`` upon assignment to a dictionary element, e.g.,
+
+.. code-block:: C++
+
+   d[ names::n_receptors ] = static_cast< long >( n_receptors() );
+
+Given that long can hold up to 2^63-1 ≈ 9e18, it is considered safe to do such a typecast without checking the value that is converted.
+
+When receiving integer values from the Python level through a ``Dictionary``, one needs to protect against negative values where only positive
+values are acceptable, e.g.:
+
+.. code-block:: C++
+
+   long mbstd = 0;
+   if ( dict.update_value( names::max_buffer_size_target_data, mbstd ) )
+   {
+     if ( mbstd < 0 )
+     {
+       throw BadProperty( "max_buffer_size_target_data ≥ 0 required." );
+     }
+     max_buffer_size_target_data_ = mbstd;
+   };
+
 
 NEST requires C++20
 -------------------

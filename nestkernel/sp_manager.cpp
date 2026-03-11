@@ -650,17 +650,20 @@ nest::SPManager::global_shuffle( std::vector< size_t >& v )
   global_shuffle( v, v.size() );
 }
 
-void nest::SPManager::global_shuffle(std::vector<size_t>& v, size_t n) {
-    assert(n <= v.size());
+void
+nest::SPManager::global_shuffle( std::vector< size_t >& v, size_t n )
+{
+  assert( n <= v.size() );
 
-    // We select an element from [ith index, vector end-index(remaining range)]
-    for (size_t i = 0; i < n; ++i) {
-        size_t rnd = i + get_rank_synced_rng()->ulrand(v.size() - i); // Random index in range [i, v.size()-1]
-        std::swap(v[i], v[rnd]); // Swap selected element to the front
-    }
+  // We select an element from [ith index, vector end-index(remaining range)]
+  for ( size_t i = 0; i < n; ++i )
+  {
+    size_t rnd = i + get_rank_synced_rng()->ulrand( v.size() - i );  // Random index in range [i, v.size()-1]
+    std::swap( v[ i ], v[ rnd ] );                                   // Swap selected element to the front
+  }
 
-    // Resize the vector to keep only the first 'n' elements
-    v.resize(n);
+  // Resize the vector to keep only the first 'n' elements
+  v.resize( n );
 }
 
 

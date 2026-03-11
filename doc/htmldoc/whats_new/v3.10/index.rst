@@ -234,8 +234,8 @@ New NEST
      // ...
    }
 
-Data types for Dictionary elements
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Integer types for Dictionary elements
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Python does not support unsigned integer types. Therefore, integers in ``Dictionary``s must be of type ``long``. Other integer types, e.g., ``int```
 or ``size_t`` are no longer supported. Therefore, values need to be cast to ``long`` upon assignment to a dictionary element, e.g.,

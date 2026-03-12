@@ -260,46 +260,6 @@ operator<<( std::ostream& os, const AnyVector& av )
 }
 
 
-/**
- * Return true only if first and second both hold type T and compare equal as T.
- */
-template < typename T >
-bool
-equal_as_( const any_type& first, const any_type& second )
-{
-  // Compiler will short-circuit to false if not same type
-  return is_type< T >( first ) and is_type< T >( second ) and std::get< T >( first ) == std::get< T >( second );
-}
-
-bool
-value_equal( const any_type& first, const any_type& second )
-{
-  // helper to provide error in case we forgot a type in the equal_as_ chain.
-  auto fail = []( const any_type& first, const any_type& second )
-  {
-    throw std::runtime_error(
-      String::compose( "Fail to compare: left '%1', right '%2'", debug_type( first ), debug_type( second ) ) );
-    return false;
-  };
-
-  // Short-circuits as soon as an equal_as_() call evaluates to true
-  // clang-format off
-  return (
-     equal_as_< long >( first, second )
-    or equal_as_< double >( first, second )
-    or equal_as_< bool >( first, second )
-    or equal_as_< std::string >( first, second )
-    or equal_as_< std::vector< long > >( first, second )
-    or equal_as_< std::vector< double > >( first, second )
-    or equal_as_< std::vector< std::string > >( first, second )
-    or equal_as_< std::vector< std::vector< double > > >( first, second )
-    or equal_as_< Dictionary >( first, second )
-    or equal_as_< std::shared_ptr< nest::Parameter > >( first, second )
-    or fail( first, second )
-  );
-  // clang-format on
-}
-
 bool
 dictionary_::operator==( const dictionary_& other ) const
 {
@@ -307,22 +267,26 @@ dictionary_::operator==( const dictionary_& other ) const
   {
     return false;
   }
+
   // Iterate elements in the other Dictionary
   for ( const auto& [ other_key, other_entry ] : other )
   {
     // Check if it exists in this Dictionary
+    // Because we know that both dicts have the same size, this suffices to
+    // to confirm that both dictionaries have the same keys.
     if ( not known( other_key ) )
     {
       return false;
     }
 
-    // Check for equality
+    // Check for equality using operator==() for variants
     const auto& this_entry = maptype_::at( other_key );
-    if ( not value_equal( this_entry.item, other_entry.item ) )
+    if ( this_entry != other_entry )
     {
       return false;
     }
   }
+
   // All elements are equal
   return true;
 }

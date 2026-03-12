@@ -75,11 +75,11 @@ nest::weight_recorder::Parameters_::set( const Dictionary& d )
     if ( d.known( key ) )
     {
       const auto value = d.at( key );
-      if ( is_type< NodeCollectionPTR >( value ) )
+      if ( std::holds_alternative< NodeCollectionPTR >( value ) )
       {
         nc = d.get< NodeCollectionPTR >( key );
       }
-      else if ( is_type< std::vector< long > >( value ) )
+      else if ( std::holds_alternative< std::vector< long > >( value ) )
       {
         const std::vector< long >& nodes_long = d.get< std::vector< long > >( key );
         std::vector< size_t > nodes_size_t;

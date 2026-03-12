@@ -652,7 +652,7 @@ nest::ConnectionManager::connect_arrays( const long* sources,
       }
 
       // If the default value is an integer, the synapse parameter must also be an integer.
-      if ( is_type< long >( syn_model_default_it->second.item ) )
+      if ( std::holds_alternative< long >( syn_model_default_it->second.item ) )
       {
         param_pointers[ param_key ].second = true;
         param_dicts[ i ][ param_key ] = 0;

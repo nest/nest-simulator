@@ -136,7 +136,7 @@ FreeLayer< D >::set_status( const Dictionary& d )
   if ( d.known( names::positions ) )
   {
     const auto positions = d.at( names::positions );
-    if ( is_type< std::vector< std::vector< double > > >( positions ) )
+    if ( std::holds_alternative< std::vector< std::vector< double > > >( positions ) )
     {
       positions_.clear();
       positions_.reserve( num_local_nodes_ );
@@ -169,7 +169,7 @@ FreeLayer< D >::set_status( const Dictionary& d )
       }
       assert( positions_.size() == num_local_nodes_ );
     }
-    else if ( is_type< std::shared_ptr< nest::Parameter > >( positions ) )
+    else if ( std::holds_alternative< std::shared_ptr< nest::Parameter > >( positions ) )
     {
       auto pd = d.get< ParameterPTR >( names::positions );
       auto pos = dynamic_cast< DimensionParameter* >( pd.get() );

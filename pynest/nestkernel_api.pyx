@@ -116,14 +116,6 @@ cdef object vec_of_dict_to_list(vector[Dictionary] cvec):
     return tmp
 
 
-cdef object vec_of_vec_of_dict_to_list(vector[vector[Dictionary]] cvec):
-    cdef tmp = []
-    cdef vector[vector[Dictionary]].iterator it = cvec.begin()
-    while it != cvec.end():
-        tmp.append(vec_of_dict_to_list(deref(it)))
-        inc(it)
-    return tmp
-
 def make_tuple_or_ndarray(operand):
         if len(operand) > 0 and isinstance(operand[0], numbers.Number):
             return numpy.array(operand)
@@ -178,17 +170,11 @@ cdef object any_to_pyobj(any_type operand):
 
     if holds_alternative[vector[string]](operand):
         return [s.decode("utf-8") for s in get[vector[string]](operand)]
-    #if holds_alternative[vector[vector[string]]](operand):
-    #    return [[s.decode("utf-8") for s in vs]
-    #            for vs in get[vector[vector[string]]](operand)]
 
     if holds_alternative[Dictionary](operand):
         return dictionary_to_pydict(get[Dictionary](operand))
     if holds_alternative[vector[Dictionary]](operand):
         return vec_of_dict_to_list(get[vector[Dictionary]](operand))
-    #if holds_alternative[vector[vector[Dictionary]]](operand):
-    #    return vec_of_vec_of_dict_to_list(get[vector[vector[Dictionary]]](operand))
-
     if holds_alternative[EmptyList](operand):
         assert False, "Should never get an EmptyList from C++"
         return None
@@ -197,14 +183,6 @@ cdef object any_to_pyobj(any_type operand):
         obj = NodeCollectionObject()
         obj._set_nc(get[NodeCollectionPTR](operand))
         return nest.NodeCollection(obj)
-
-    #if holds_alternative[vector[NodeCollectionPTR]](operand):
-    #    res = []
-    #    for ncptr in get[vector[NodeCollectionPTR]](operand):
-    #        obj = NodeCollectionObject()
-    #        obj._set_nc(ncptr)
-    #        res.append(nest.NodeCollection(obj))
-    #    return res
 
     # This monostate represents missing NodeCollection status data (nodes on other ranks)
     # Translates to None for NEST 3.9 compatibility

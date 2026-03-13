@@ -297,7 +297,7 @@ public:
   /**
    * Return reference to vector of type T stored under key.
    *
-   * * If key does not exist in dict, create empty vector<T> and return it.
+   * If key does not exist in dict, create empty vector<T> and return it.
    */
   template < typename T >
   std::vector< T >&
@@ -307,7 +307,7 @@ public:
     auto [ iter, success ] = maptype_::try_emplace( key, std::vector< T >() );
 
     return std::get< std::vector< T > >( iter->second.item );
-  };
+  }
 
   /**
    * @brief Update the specified non-vector value if there exists a value at key.

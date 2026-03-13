@@ -75,7 +75,7 @@ public:
   // TODO-PYNEST-NG: We need to either make this non-abstract or add every single non-abstract parameter subclass to the
   //  std::variant acceptec-types collection.
   virtual double
-  value( RngPtr rng, Node* node )
+  value( RngPtr, Node* )
   {
     return 0.;
   }

@@ -396,7 +396,7 @@ def llapi_distance(object conn):  # PYNEST-NG-FUTURE: should there be a SynapseC
 
 def llapi_make_nodecollection(object node_ids):
     cdef NodeCollectionPTR gids
-    # node_ids list is automatically converted to an vector
+    # node_ids list is automatically converted to a vector
     gids = make_nodecollection(node_ids)
     obj = NodeCollectionObject()
     obj._set_nc(gids)

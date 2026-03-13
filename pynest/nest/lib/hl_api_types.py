@@ -298,9 +298,6 @@ class NodeCollection:
         if not isinstance(other, NodeCollection):
             raise NotImplementedError("Cannot compare NodeCollection to {}".format(type(other).__name__))
 
-        if self.__len__() != other.__len__():
-            return False
-
         return nestkernel.llapi_eq_nc(self._datum, other._datum)
 
     def __neq__(self, other):

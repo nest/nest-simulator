@@ -1401,7 +1401,7 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( NodeCollectionPTR sources,
     throw BadProperty( "Source array must not be empty." );
   }
   auto indegree = conn_spec.at( names::indegree );
-  if ( is_type< std::shared_ptr< nest::Parameter > >( indegree ) )
+  if ( std::holds_alternative< std::shared_ptr< nest::Parameter > >( indegree ) )
   {
     indegree_ = std::get< ParameterPTR >( indegree );
     // TODO: Checks of parameter range
@@ -1565,7 +1565,7 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
     throw BadProperty( "Target array must not be empty." );
   }
   auto outdegree = conn_spec.at( names::outdegree );
-  if ( is_type< std::shared_ptr< nest::Parameter > >( outdegree ) )
+  if ( std::holds_alternative< std::shared_ptr< nest::Parameter > >( outdegree ) )
   {
     outdegree_ = std::get< ParameterPTR >( outdegree );
     // TODO: Checks of parameter range
@@ -1858,7 +1858,7 @@ nest::BernoulliBuilder::BernoulliBuilder( NodeCollectionPTR sources,
   : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
 {
   auto p = conn_spec.at( names::p );
-  if ( is_type< std::shared_ptr< nest::Parameter > >( p ) )
+  if ( std::holds_alternative< std::shared_ptr< nest::Parameter > >( p ) )
   {
     p_ = std::get< ParameterPTR >( p );
     // TODO: Checks of parameter range
@@ -1974,7 +1974,7 @@ nest::PoissonBuilder::PoissonBuilder( NodeCollectionPTR sources,
 {
 
   auto p = conn_spec.at( names::pairwise_avg_num_conns );
-  if ( is_type< std::shared_ptr< nest::Parameter > >( p ) )
+  if ( std::holds_alternative< std::shared_ptr< nest::Parameter > >( p ) )
   {
     pairwise_avg_num_conns_ = std::get< ParameterPTR >( p );
   }

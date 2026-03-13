@@ -68,20 +68,19 @@ struct DictionarySchemaBuilder
                                                      // non-local nodes in a node-colection
     Scalars...,                                      // scalar types
     std::vector< Scalars >...,                       // vector variants of the scalar types
-    std::vector< std::vector< Scalars > >...,        // vec-vec variants of the scalar types
-    std::vector< std::vector< std::vector< Scalars > > >...,  // vec-vec-vec variants of the scalar types (for
-                                                              // correlomatrix-detector)
-    Extras...                                                 // any extra types (see definition of any_type below)
+    Extras...                                        // any extra types (see definition of any_type below)
     >;
 };
 
-using DictionarySchema = DictionarySchemaBuilder< long, double, bool, std::string, Dictionary >;
+using DictionarySchema = DictionarySchemaBuilder< double, long, bool, std::string, Dictionary >;
 
 using any_type = DictionarySchema::VariantType< std::shared_ptr< nest::NodeCollection >,
-  std::vector< std::shared_ptr< nest::NodeCollection > >,
+  std::vector< std::vector< double > >,
+  std::vector< std::vector< std::vector< double > > >,
+  std::vector< std::vector< std::vector< long > > >,
   std::shared_ptr< nest::Parameter >,
-  nest::VerbosityLevel,
   AnyVector,  // this is only used to hold status data from elements of a node collection in a NEST 3.9 compatible way
+  nest::VerbosityLevel,
   EmptyList >;
 
 class AnyVector : public std::vector< any_type >
@@ -101,15 +100,7 @@ concept Integer = std::integral< T > and not std::same_as< T, bool > and not std
 
 // Define a concept that T must be holdable by any_type
 template < typename T >
-concept DictionaryType = std::is_constructible_v< any_type, T >;
-
-template < typename T >
-bool
-is_type( const any_type& operand )
-{
-  return std::holds_alternative< T >( operand );
-}
-
+concept DictionaryEntryType = std::is_constructible_v< any_type, T >;
 
 class Dictionary : public std::shared_ptr< dictionary_ >
 {
@@ -155,7 +146,7 @@ public:
   void
   all_entries_accessed( const std::string& where, const std::string& what, const bool thread_local_dict = false ) const;
 
-  template < DictionaryType T >
+  template < DictionaryEntryType T >
   T get( const std::string& key ) const;
 
   template < typename T >
@@ -169,12 +160,6 @@ public:
 
   bool update_dictionary( dictionary_& dict_out ) const;
 };
-
-namespace nest
-{
-class Parameter;
-class NodeCollection;
-}
 
 /**
  * @brief Get the typename of the operand.
@@ -302,7 +287,7 @@ public:
    * @throws TypeMismatch if the value is not of specified type T.
    * @return the value at key cast to the specified type.
    */
-  template < DictionaryType T >
+  template < DictionaryEntryType T >
   T
   get( const std::string& key ) const
   {
@@ -574,7 +559,7 @@ Dictionary::all_entries_accessed( const std::string& where,
   ( *this )->all_entries_accessed( where, what, thread_local_dict );
 }
 
-template < DictionaryType T >
+template < DictionaryEntryType T >
 inline T
 Dictionary::get( const std::string& key ) const
 {

@@ -518,10 +518,10 @@ public:
    */
   size_t get_step_size() const;
 
-  friend std::ostream& operator<<( std::ostream& os, const nc_const_iterator& e );
+  friend std::ostream& operator<<( std::ostream& os, const nc_const_iterator& nci );
 };
 
-std::ostream& operator<<( std::ostream& os, const nc_const_iterator& e );
+std::ostream& operator<<( std::ostream& os, const nc_const_iterator& nci );
 
 
 /**

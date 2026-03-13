@@ -153,8 +153,6 @@ cdef object any_to_pyobj(any_type operand):
 
     if holds_alternative[vector[long]](operand):
         return numpy.array(get[vector[long]](operand))
-    #if holds_alternative[vector[vector[long]]](operand):
-    #    return numpy.array(get[vector[vector[long]]](operand))
     if holds_alternative[vector[vector[vector[long]]]](operand):
         return numpy.array(get[vector[vector[vector[long]]]](operand))
 

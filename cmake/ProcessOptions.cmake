@@ -434,6 +434,9 @@ function(NEST_PROCESS_WITH_CYCLE_TIMERS)
   if ("${with-detailed-timers}" STREQUAL "ON" AND "${with-cycle-timers}"   STREQUAL "ON")
     set(CYCLE_TIMERS ON PARENT_SCOPE)
   endif()
+  if ("${with-cycle-timers}" STREQUAL "ON" AND NOT "${with-detailed-timers}" STREQUAL "ON")
+    message(FATAL_ERROR "To enable cycle timers, you must also enable detailed timers")
+  endif()
 endfunction()
 
 

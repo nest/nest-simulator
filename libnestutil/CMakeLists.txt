@@ -18,7 +18,6 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 set(nestutil_sources
-    allocator.h allocator.cpp
     beta_normalization_factor.h
     block_vector.h
     dictionary.h dictionary.cpp

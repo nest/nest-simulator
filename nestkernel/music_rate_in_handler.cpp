@@ -25,8 +25,8 @@
 #ifdef HAVE_MUSIC
 
 // Includes from libnestutil:
-#include "compose.hpp"
 #include "logging.h"
+#include <format>
 
 // Includes from nestkernel:
 #include "event.h"
@@ -115,7 +115,7 @@ MusicRateInHandler::publish_port()
     MP_->map( &data_map );
     published_ = true;
 
-    std::string msg = String::compose( "Mapping MUSIC input port '%1' with width=%2.", port_name_, port_width_ );
+    std::string msg = std::format( "Mapping MUSIC input port '{}' with width={}.", port_name_, port_width_ );
     LOG( VerbosityLevel::INFO, "music_rate_in_handler::publish_port()", msg.c_str() );
   }
 }

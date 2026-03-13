@@ -29,10 +29,10 @@
 #include "universal_data_logger_impl.h"
 
 // Includes from libnestutil:
-#include "compose.hpp"
 #include "dict_util.h"
 #include "iaf_propagator.h"
 #include "numerics.h"
+#include <format>
 
 namespace nest
 {
@@ -151,8 +151,8 @@ nest::gif_psc_exp::Parameters_::set( const Dictionary& d, Node* node )
   if ( tau_sfa_.size() != q_sfa_.size() )
   {
     throw BadProperty(
-      String::compose( "'tau_sfa' and 'q_sfa' need to have the same dimensions.\nSize of "
-                       "tau_sfa: %1\nSize of q_sfa: %2",
+      std::format( "'tau_sfa' and 'q_sfa' need to have the same dimensions.\nSize of "
+                   "tau_sfa: {}\nSize of q_sfa: {}",
         tau_sfa_.size(),
         q_sfa_.size() ) );
   }
@@ -160,8 +160,8 @@ nest::gif_psc_exp::Parameters_::set( const Dictionary& d, Node* node )
   if ( tau_stc_.size() != q_stc_.size() )
   {
     throw BadProperty(
-      String::compose( "'tau_stc' and 'q_stc' need to have the same dimensions.\nSize of "
-                       "tau_stc: %1\nSize of q_stc: %2",
+      std::format( "'tau_stc' and 'q_stc' need to have the same dimensions.\nSize of "
+                   "tau_stc: {}\nSize of q_stc: {}",
         tau_stc_.size(),
         q_stc_.size() ) );
   }

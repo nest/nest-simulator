@@ -234,8 +234,8 @@ set_nc_status( NodeCollectionPTR nc, std::vector< Dictionary >& params )
   }
   else
   {
-    std::string msg = String::compose(
-      "List of dictionaries must be the same size as the NodeCollection (%1), %2 given.", nc->size(), params.size() );
+    std::string msg = std::format(
+      "List of dictionaries must be the same size as the NodeCollection ({}), {} given.", nc->size(), params.size() );
     throw BadParameter( msg );
   }
 }

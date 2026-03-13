@@ -28,8 +28,8 @@
 #include <music.hh>
 
 // Includes from libnestutil:
-#include "compose.hpp"
 #include "logging.h"
+#include <format>
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
@@ -152,8 +152,8 @@ nest::music_message_in_proxy::pre_run_hook()
     V_.MP_->map( &B_.message_handler_, acceptable_latency );
     S_.published_ = true;
 
-    std::string msg = String::compose(
-      "Mapping MUSIC input port '%1' with width=%2 and acceptable latency=%3 "
+    std::string msg = std::format(
+      "Mapping MUSIC input port '{}' with width={} and acceptable latency={} "
       "ms.",
       P_.port_name_,
       S_.port_width_,

@@ -29,8 +29,8 @@
 #include <vector>
 
 // Includes from libnestutil:
-#include "compose.hpp"
 #include "dictionary.h"
+#include <format>
 
 // Includes from nestkernel:
 #include "connector_model_impl.h"
@@ -213,8 +213,8 @@ ModelManager::copy_connection_model_( const size_t old_id, const std::string& ne
 
   if ( new_id == invalid_synindex )
   {
-    const std::string msg = String::compose(
-      "CopyModel cannot generate another synapse. Maximal synapse model count of %1 exceeded.", MAX_SYN_ID );
+    const std::string msg = std::format(
+      "CopyModel cannot generate another synapse. Maximal synapse model count of {} exceeded.", MAX_SYN_ID );
     LOG( VerbosityLevel::ERROR, "ModelManager::copy_connection_model_", msg );
     throw KernelException( "Synapse model count exceeded" );
   }

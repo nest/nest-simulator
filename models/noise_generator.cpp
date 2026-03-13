@@ -23,10 +23,10 @@
 #include "noise_generator.h"
 
 // Includes from libnestutil:
-#include "compose.hpp"
 #include "dict_util.h"
 #include "logging.h"
 #include "numerics.h"
+#include <format>
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
@@ -403,7 +403,7 @@ nest::noise_generator::calibrate_time( const TimeConverter& tc )
   {
     const double old = P_.dt_.get_ms();
     P_.dt_ = P_.get_default_dt();
-    std::string msg = String::compose( "Default for dt changed from %1 to %2 ms", old, P_.dt_.get_ms() );
+    std::string msg = std::format( "Default for dt changed from {} to {} ms", old, P_.dt_.get_ms() );
     LOG( VerbosityLevel::INFO, get_name(), msg );
   }
 }

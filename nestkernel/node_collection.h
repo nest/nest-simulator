@@ -39,7 +39,7 @@
 
 
 // Includes from thirdparty:
-#include "compose.hpp"
+#include <format>
 
 namespace nest
 {
@@ -1246,7 +1246,7 @@ NodeCollectionPrimitive::operator[]( const size_t idx ) const
   // throw exception if outside of NodeCollection
   if ( first_ + idx > last_ )
   {
-    throw std::out_of_range( String::compose( "pos %1 points outside of the NodeCollection", idx ) );
+    throw std::out_of_range( std::format( "pos %1 points outside of the NodeCollection", idx ) );
   }
   return first_ + idx;
 }

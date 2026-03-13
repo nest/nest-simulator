@@ -25,8 +25,8 @@
 #ifdef HAVE_MUSIC
 
 // Includes from libnestutil:
-#include "compose.hpp"
 #include "logging.h"
+#include <format>
 
 // Includes from nestkernel:
 #include "event.h"
@@ -129,13 +129,13 @@ MusicEventHandler::publish_port()
       music_port_->map( music_perm_ind_, this, acceptable_latency_s );
     }
 
-    std::string msg = String::compose( "Mapping MUSIC input port '%1' with width=%2 , acceptable latency=%3 ms",
+    std::string msg = std::format( "Mapping MUSIC input port '{}' with width={} , acceptable latency={} ms",
       portname_,
       music_port_width,
       acceptable_latency_ );
     if ( max_buffered_ > 0 )
     {
-      msg += String::compose( " and max buffered=%1 ticks", max_buffered_ );
+      msg += std::format( " and max buffered={} ticks", max_buffered_ );
     }
     msg += ".";
     LOG( VerbosityLevel::INFO, "MusicEventHandler::publish_port()", msg.c_str() );

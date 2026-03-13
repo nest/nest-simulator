@@ -34,8 +34,8 @@
 #include <cstdlib>
 
 // Includes from libnestutil:
-#include "compose.hpp"
 #include "logging.h"
+#include <format>
 
 // Includes from nestkernel:
 #include "io_manager_impl.h"
@@ -158,13 +158,13 @@ IOManager::set_data_path_prefix_( const Dictionary& dict )
       switch ( errno )
       {
       case ENOTDIR:
-        msg = String::compose( "'%1' is not a directory.", tmp );
+        msg = std::format( "'{}' is not a directory.", tmp );
         break;
       case ENOENT:
-        msg = String::compose( "Directory '%1' does not exist.", tmp );
+        msg = std::format( "Directory '{}' does not exist.", tmp );
         break;
       default:
-        msg = String::compose( "Errno %1 received when trying to open '%2'", errno, tmp );
+        msg = std::format( "Errno {} received when trying to open '{}'", errno, tmp );
         break;
       }
 

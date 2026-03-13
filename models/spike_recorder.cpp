@@ -24,7 +24,7 @@
 
 
 // Includes from libnestutil:
-#include "compose.hpp"
+#include <format>
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"

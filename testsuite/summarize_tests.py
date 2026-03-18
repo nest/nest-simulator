@@ -71,6 +71,7 @@ def parse_result_file(fname):
             "Errors": 1,
             "Time": 0,
             "Failed tests": [f"ERROR: XML file {fname} not parsable with error {err}"],
+            "Skipped tests": [],
         }
 
     if isinstance(results, jp.junitparser.JUnitXml):
@@ -85,14 +86,22 @@ def parse_result_file(fname):
         for case in results
         if case.result and not isinstance(case.result[0], jp.junitparser.Skipped)
     ]
+    skipped_tests = [
+        ".".join((case.classname, case.name))
+        for case in results
+        if (
+            case.result and isinstance(case.result[0], jp.junitparser.Skipped) and case.result[0].type == "pytest.skip"
+        )  # Skipped can also contain xfail
+    ]
 
     return {
         "Tests": results.tests,
-        "Skipped": results.skipped,
+        "Skipped": len(skipped_tests),  # results.skipped also counts xfail
         "Failures": results.failures,
         "Errors": results.errors,
         "Time": results.time,
         "Failed tests": failed_tests,
+        "Skipped tests": skipped_tests,
     }
 
 
@@ -121,7 +130,7 @@ if __name__ == "__main__":
         del expected_num_tests["06 musictests"]
 
     results = {}
-    totals = {"Tests": 0, "Skipped": 0, "Failures": 0, "Errors": 0, "Time": 0, "Failed tests": []}
+    totals = {"Tests": 0, "Skipped": 0, "Failures": 0, "Errors": 0, "Time": 0, "Failed tests": [], "Skipped tests": []}
     missing_tests = []
 
     for pfile in sorted(glob.glob(os.path.join(test_outdir, "*.xml"))):
@@ -150,6 +159,17 @@ if __name__ == "__main__":
 
     print()
     print()
+
+    if totals["Skipped tests"]:
+        print(tline)
+        print("Skipped tests")
+        print(tline)
+        for t in totals["Skipped tests"]:
+            print(f"    | {t}")  # | marks line for parsing
+        print(tline)
+        print()
+        print()
+
     print(tline)
     print("NEST Testsuite Results")
 

@@ -29,32 +29,27 @@
 #if defined( HAVE_LIBNEUROSIM )
 
 // External includes:
+#include "dictionary.h"
+#include <memory>
+#include <neurosim/connection_generator.h>
 #include <neurosim/pyneurosim.h>
-
-// Includes from conngen:
-#include "conngenmodule.h"
+#include <string>
 
 #define CYTHON_isConnectionGenerator( x ) PNS::isConnectionGenerator( x )
 
-Datum*
-CYTHON_unpackConnectionGeneratorDatum( PyObject* obj )
+static inline void
+CYTHON_insertConnectionGenerator( Dictionary& d, const std::string& key, PyObject* obj )
 {
-  Datum* ret = NULL;
-  ConnectionGenerator* cg = NULL;
-
-  cg = PNS::unpackConnectionGenerator( obj );
-  if ( cg != NULL )
+  ConnectionGenerator* raw = PNS::unpackConnectionGenerator( obj );
+  if ( raw )
   {
-    ret = static_cast< Datum* >( new nest::ConnectionGeneratorDatum( cg ) );
+    d[ key ] = std::shared_ptr< ConnectionGenerator >( raw );
   }
-
-  return ret;
 }
 
 #else  // #if defined( HAVE_LIBNEUROSIM )
 
 #define CYTHON_isConnectionGenerator( x ) 0
-#define CYTHON_unpackConnectionGeneratorDatum( x ) NULL
 
 #endif  // #if defined( HAVE_LIBNEUROSIM )
 

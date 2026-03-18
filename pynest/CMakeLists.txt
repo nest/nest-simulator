@@ -36,7 +36,7 @@ if ( HAVE_PYTHON )
   endif ()
 
   # PYNEST-NG-FUTURE: somehow it works without models being in here, but why?
-  target_link_libraries( nestkernel_api nestutil nestkernel )
+  target_link_libraries( nestkernel_api nestutil nestkernel ${LIBNEUROSIM_LIBRARIES} )
 
   if ( APPLE )
     set_target_properties( nestkernel_api PROPERTIES LINK_FLAGS "-undefined dynamic_lookup" )

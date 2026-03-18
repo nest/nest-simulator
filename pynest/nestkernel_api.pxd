@@ -130,6 +130,11 @@ cdef extern from "mask.h" namespace "nest":
         MaskPTR()
 
 
+cdef extern from "pynestkernel_aux.h":
+    bint CYTHON_isConnectionGenerator(object)
+    void CYTHON_insertConnectionGenerator(Dictionary& d, string key, object obj)
+
+
 cdef extern from "nest.h" namespace "nest":
     void init_nest( int* argc, char** argv[] )
     void shutdown_nest( int exitcode )

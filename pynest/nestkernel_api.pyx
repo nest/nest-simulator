@@ -252,6 +252,8 @@ cdef Dictionary pydict_to_Dictionary(object py_dict) except *:  # Adding "except
             cdict[pystr_to_string(key)] = (<ParameterObject>value).thisptr
         elif type(value) is type(nest.VerbosityLevel.ALL):  # ALL will always exist
             cdict[pystr_to_string(key)] = <VerbosityLevel>(value)
+        elif CYTHON_isConnectionGenerator(value):
+            CYTHON_insertConnectionGenerator(cdict, pystr_to_string(key), value)
         else:
             typename = type(value)
             if type(value) is list:

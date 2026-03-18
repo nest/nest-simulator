@@ -26,14 +26,20 @@
 // Generated includes:
 #include "config.h"
 
+// Always required: Dictionary and std::string must be visible in both the
+// HAVE_LIBNEUROSIM and no-op branches because Cython emits calls to both
+// CYTHON_isConnectionGenerator and CYTHON_insertConnectionGenerator
+// unconditionally in the generated C++ regardless of the preprocessor state.
+#include "dictionary.h"
+#include <Python.h>
+#include <string>
+
 #if defined( HAVE_LIBNEUROSIM )
 
 // External includes:
-#include "dictionary.h"
 #include <memory>
 #include <neurosim/connection_generator.h>
 #include <neurosim/pyneurosim.h>
-#include <string>
 
 #define CYTHON_isConnectionGenerator( x ) PNS::isConnectionGenerator( x )
 
@@ -50,6 +56,12 @@ CYTHON_insertConnectionGenerator( Dictionary& d, const std::string& key, PyObjec
 #else  // #if defined( HAVE_LIBNEUROSIM )
 
 #define CYTHON_isConnectionGenerator( x ) 0
+
+static inline void
+CYTHON_insertConnectionGenerator( Dictionary& /* d */, const std::string& /* key */, PyObject* /* obj */ )
+{
+  // no-op: libneurosim not available
+}
 
 #endif  // #if defined( HAVE_LIBNEUROSIM )
 

@@ -293,7 +293,8 @@ public:
    *
    * @tparam T Type of the value. If the value is not of the specified type, a TypeMismatch error is thrown.
    * @param key key where the value is located in the dictionary.
-   * @throws TypeMismatch if the value is not of specified type T.
+   * @throws @c std::out_of_range if @c key is not on dictionary
+   * @throws @ref TypeMismatch if the value is not of specified type T.
    * @return the value at key cast to the specified type.
    */
   template < DictionaryEntryType T >

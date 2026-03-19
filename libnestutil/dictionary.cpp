@@ -255,8 +255,14 @@ operator<<( std::ostream& os, const AnyVector& av )
   {
     std::visit( []( const auto& arg ) { std::cout << arg << " "; }, v );
   }
-  os << "\b]";
+  os << "\b]";  // \b removes empty space after last element
   return os;
+}
+
+std::ostream&
+operator<<( std::ostream& os, const EmptyList& )
+{
+  return os << "[]";
 }
 
 

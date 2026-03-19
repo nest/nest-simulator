@@ -305,7 +305,7 @@ public:
    * If key does not exist in dict, create empty vector<T> and return it.
    */
   template < typename T >
-  std::vector< T >& get_vector( const std::string& key );
+  std::vector< T >& get_or_create_vector( const std::string& key );
 
   /**
    * @brief Update the specified non-vector value if there exists a value at key.
@@ -475,11 +475,11 @@ public:
   }
 
   /**
-   * See @ref Dictionary::get_vector
+   * See @ref Dictionary::get_or_create_vector
    */
   template < typename T >
   std::vector< T >&
-  get_vector( const std::string& key )
+  get_or_create_vector( const std::string& key )
   {
     // try_emplace will only insert if key doesn't exist.
     auto [ iter, success ] = maptype_::try_emplace( key, std::vector< T >() );
@@ -697,9 +697,9 @@ Dictionary::get( const std::string& key ) const
 }
 template < typename T >
 std::vector< T >&
-Dictionary::get_vector( const std::string& key )
+Dictionary::get_or_create_vector( const std::string& key )
 {
-  return ( *this )->get_vector< T >( key );
+  return ( *this )->get_or_create_vector< T >( key );
 }
 
 template < typename T >

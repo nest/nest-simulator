@@ -30,7 +30,7 @@ permissions: {}
 
 jobs:
   build-docs-push:
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' && github.repository == 'nest/nest-simulator'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:

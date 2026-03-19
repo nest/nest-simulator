@@ -38,7 +38,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapse, spike-timing-dependent plasticity, Clopath plasticity
+/* BeginUserDocs: synapse, chemical, functional, stdp, 3-factor
 
 Short description
 +++++++++++++++++

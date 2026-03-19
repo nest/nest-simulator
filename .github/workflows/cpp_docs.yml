@@ -1,17 +1,11 @@
 name: Build and Deploy C++ Documentation
 
 on:
-  # workflow only triggers when C++ file, the doxygen config, or css are changed
-  pull_request:
+  # Automatically deploy when relevant files are merged into main
+  push:
     branches:
       - main
-    paths:
-      - '**/*.cpp'
-      - '**/*.h'
-      - 'doc/fulldoc.conf.in'
-      - 'doc/developer_space/static/css/doxygen-awesome.css'
-      - 'doc/developer_space/**'
-  push:
+      - githubpages  # temporary: remove once testing is complete
     paths:
       - '.github/workflows/cpp_docs.yml'
       - '**/*.cpp'
@@ -19,6 +13,8 @@ on:
       - 'doc/fulldoc.conf.in'
       - 'doc/developer_space/static/css/doxygen-awesome.css'
       - 'doc/developer_space/**'
+  # Contributors can manually trigger a preview build from the Actions tab
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -140,9 +136,9 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
-  # build the documentation for pull requests
+  # build the documentation for manual preview runs
   build-docs-pull:
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:

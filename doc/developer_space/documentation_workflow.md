@@ -65,28 +65,22 @@ This means the docs can change at any time, as developers actively work on **mai
 
 ## View the docs built on your pull request
 
-If you create a pull request against `nest/nest-simulator` and have modified
+The documentation workflow does **not** run automatically on pull requests. To preview
+the docs built from your branch, trigger the workflow manually from **your fork's** Actions tab:
 
-- any C++ file (`*.cpp`, `*.h`),
-- the Doxygen config file (`doc/fulldoc.conf.in`),
-- the Doxygen CSS file (`doc/developer_space/static/css/doxygen-awesome.css`), or
-- any file under `doc/developer_space/` (including these markdown pages),
-
-then GitHub will build the C++ documentation and upload it as an artifact. You can download
-and view the HTML pages locally.
-
-### Where to find the artifact
-
-1. Navigate to your pull request page on GitHub and select the **Checks** tab.
-2. In the left column select the **Build and Deploy C++ Documentation** workflow
-   (or wait for it to complete if it is still running).
-3. This takes you to the workflow **Summary** page. In the **Artifacts** section at the
-   bottom you will find a downloadable archive named `docs-<run_id>`.
-4. Click the artifact name to download it as a ZIP file.
+1. In your fork on GitHub, go to **Actions → Build and Deploy C++ Documentation**.
+2. Click **Run workflow**, select your feature branch from the dropdown, and click the
+   green **Run workflow** button.
+3. Wait for the run to complete, then open the workflow **Summary** page.
+4. In the **Artifacts** section at the bottom, download the archive named `docs-<run_id>`.
 5. Extract the ZIP file and open `index.html` in your web browser.
 
-> **Note:** The artifact reflects the full built output from your PR, including any changes to
-> `doc/fulldoc.conf.in`, stylesheets, or markdown pages under `doc/developer_space/`.
+> **Note:** This runs entirely within your fork and does **not** affect the upstream
+> GitHub Pages deployment. Deployment to GitHub Pages only happens automatically when
+> a PR is merged into **main** on the upstream repository.
+
+> **Note:** The workflow file must exist on your fork's default branch for the Actions tab
+> to show it. If you forked the repository, it will already be present.
 
 ## Local build
 

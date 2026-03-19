@@ -35,12 +35,17 @@ repos:
           #
           # note that these differ from arguments in .github/workflows/nestbuildmatrix.yml
           # IF YOU READ THIS: recheck for consistency with `find . -iname "*.sh" -o -iname "*.sh.in"`
-          "bin/nest_vars.sh.in",   # testsuite/do_tests.sh:112 requires this for `. "${PREFIX}/bin/nest_vars.sh"`
-          "testsuite/run_test.sh",
+          "build_support/check_forbidden_types.sh",
+          "build_support/format_all_c_c++_files.sh",
+          "build_support/install_csa-libneurosim.sh",
+          "build_support/install_music.sh",
+          "build_support/install_sionlib.sh",
+          "build_support/version_info.sh",
+          "cmake/CheckFiles/check_return_val.sh",
+          "pynest/examples/list_examples.sh",
+          "pynest/examples/run_examples.sh",
           "testsuite/do_tests.sh",
           "testsuite/junit_xml.sh",
-          "pynest/examples/run_examples.sh",
-          "pynest/examples/list_examples.sh",
         ]
 
   - repo: https://github.com/pre-commit/mirrors-clang-format

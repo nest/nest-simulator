@@ -71,7 +71,7 @@ Welcome to the NEST Simulator documentation!
 
                   Simulate a game of PONG with NEST
 
-                .. figure:: static/img/pynest/eprop_supervised_classification_infrastructure.png
+                .. figure:: ../../pynest/examples/eprop_plasticity/eprop_supervised_regression_sine-waves.png
                   :target: auto_examples/eprop_plasticity/index.html
 
                   Explore eligibility propagation plasticity

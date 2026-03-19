@@ -10,7 +10,7 @@ Benchmarking NEST
 NEST performance
 ~~~~~~~~~~~~~~~~
 
-We regulary test NEST performance at various network sizes.
+We regularly test NEST performance at various network sizes.
 For results of these experiments see our :doc:`NEST performance benchmarks <benchmarks:index>` page.
 
 beNNch

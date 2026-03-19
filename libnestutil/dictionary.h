@@ -37,71 +37,172 @@
 
 #include "logging.h"
 
-class dictionary_;
-class Dictionary;
-class AnyVector;
 namespace nest
 {
 class Parameter;
 class NodeCollection;
 }
 
-// PyNEST passes vector with element type any if and only if it needs to pass an empty vector, because the element type
-// of empty lists cannot be inferred at the Python level.
-struct EmptyList
-{
-  friend std::ostream&
-  operator<<( std::ostream& os, const EmptyList& )
-  {
-    return os << "[]";
-  }
-  bool operator==( const EmptyList& ) const = default;
-};
+/**
+ * @defgroup nestdict Data types related to the @ref Dictionary class in NEST
+ *
+ * The @ref Dictionary class provides the data exchange interface between the NEST kernel
+ * and the Python level as well as with C++ applications. This group collects data types
+ * related to the implementation of the @Dictionary class.
+ *
+ * The @ref Dictionary class is essentially an @c std::map<> with access checking to allow
+ * detection of misspelled or unknown entries passed in to NEST. Since dictionaries need to
+ * be able to contain dictionaries, the outward-facing @ref Dictionary class holds a pointer
+ * to the @ref dictionary_ instance actually implementing the dictionary as a @c std::map<>.
+ *
+ * The dictionary entries are of type @c DictEntry_ combining the actual data and the access flag.
+ * The actual data are represented as instances of @ref any_type , which is a C++20 @c std::variant .
+ */
+class dictionary_;
+class Dictionary;
+class AnyVector;
+struct EmptyList;
 
-// TODO PyNEST-NG: check if we need all scalars in all nested vector levels, keeping the variant smaller may
-// improve performance.
+
+/**
+ * Add a set of standard datatypes to @ref any_type variant.
+ *
+ * The main purpose of this type is to automatically generate variants representing the basic scalar types,
+ * strings, and dictionaries and one-dimensional @c std::vector<> of these. More specific types are added
+ * later in the actual declaration of @ref any_type.
+ *
+ * The first entry in the @c std::variant<> must be @c std::monostate , so that default-initialized @ref any_value
+ * instances will have this type. This is needed fill the entries corresponding to non-local nodes when status
+ * information for a @ref NodeCollection is returned.
+ *
+ * @ingroup nestdict
+ */
 template < typename... Scalars >
 struct DictionarySchemaBuilder
 {
   template < typename... Extras >
-  using VariantType = std::variant< std::monostate,  // default-initialized any_type value, representing missing
-                                                     // non-local nodes in a node-colection
-    Scalars...,                                      // scalar types
-    std::vector< Scalars >...,                       // vector variants of the scalar types
-    Extras...                                        // any extra types (see definition of any_type below)
-    >;
+  using VariantType = std::variant< std::monostate, Scalars..., std::vector< Scalars >..., Extras... >;
 };
 
+/**
+ * Basic scalar data types, strings and dictionaries to be included in variant.
+ *
+ * This schema includes all types that should enter the variant as themselves and as vectors.
+ * Only @c long is included as integer type, because Python only knows signed integers.
+ *
+ * @ingroup nestdict
+ */
 using DictionarySchema = DictionarySchemaBuilder< double, long, bool, std::string, Dictionary >;
 
+/**
+ * Complete @c any_type by adding specific data types.
+ *
+ * Add here data types that are required but were not added through the schema. The aim is to have
+ * as few types in the variant as possible and we therefore limit multi-dimensional vectors to those
+ * element types where they are needed (3-dim vectors are required for correlo-dectectors).
+ *
+ * @ref AnyVector is essentially a flexible Python list type. It is needed to return status data
+ * combining actual data from local nodes with @c std::monostate values marking the absence of data. These
+ * are converted to @c None at the Python level to maintain the NEST 3.9 user interface.
+ *
+ * @ingroup nestdict
+ */
 using any_type = DictionarySchema::VariantType< std::shared_ptr< nest::NodeCollection >,
   std::vector< std::vector< double > >,
   std::vector< std::vector< std::vector< double > > >,
   std::vector< std::vector< std::vector< long > > >,
   std::shared_ptr< nest::Parameter >,
-  AnyVector,  // this is only used to hold status data from elements of a node collection in a NEST 3.9 compatible way
+  AnyVector,
   nest::VerbosityLevel,
   EmptyList >;
 
+/**
+ * Vector of @ref any_type
+ *
+ * This type is required to collect status data from elements of a @ref NodeCollection .
+ *
+ * The main need for this vector type is to combine actual data from local nodes with
+ * @c std::monostate entries for non-local nodes when returning status data from @ref NodeCollection .
+ *
+ * We define it as a class of its own to get around circular definition problems.
+ *
+ * @ingroup nestdict
+ */
 class AnyVector : public std::vector< any_type >
 {
   using vectype_ = std::vector< any_type >;
   using vectype_::vectype_;  // Inherit constructors
 };
 
+/**
+ * Datatype to allow empty Python lists to be represented without defaulting to a datatype.
+ *
+ * Python lists are converted to @c std::vector, which requires chosing a data type. For non-empty types the
+ * type can be inferred from the elements, but this is not possible for empty lists. Here, only the C++ level
+ * knows what type would be expected. To avoid type collisions, the Cython interface represents empty lists
+ * as @c EmptyList which can be cast to vectors of any element data type at the C++ level.
+ *
+ * @ingroup nestdict
+ */
+struct EmptyList
+{
+  bool operator==( const EmptyList& ) const = default;
+};
+
+/**
+ * Print @ref EmptyList.
+ *
+ * @ingroup nestdict
+ */
+std::ostream& operator<<( std::ostream& os, const EmptyList& );
+
+/**
+ * Print @c std@::monostate as "None".
+ *
+ * @ingroup nestdict
+ */
 std::ostream& operator<<( std::ostream& os, const std::monostate& );
 
+/**
+ * Print @ref AnyVector.
+ *
+ * @ingroup nestdict
+ */
 std::ostream& operator<<( std::ostream& os, const AnyVector& av );
 
+/**
+ * Print @ref dictionary_.
+ *
+ * @ingroup nestdict
+ */
+std::ostream& operator<<( std::ostream& os, const dictionary_& dict );
 
-// Define a simple Concept for "Integer Integers" (excluding bool and char)
+/**
+ * A concept for "integer integers", excluding @c bool and @c char.
+ *
+ * @ingroup nestdict
+ */
 template < typename T >
 concept Integer = std::integral< T > and not std::same_as< T, bool > and not std::same_as< T, char >;
 
-// Define a concept that T must be holdable by any_type
+/**
+ * A concept for data types that can be stored in a @ref Dictionary as @ref any_type .
+ *
+ * @ingroup nestdict
+ */
+
 template < typename T >
 concept DictionaryEntryType = std::is_constructible_v< any_type, T >;
 
+/**
+ * Dictionary class for interface to Python and C++ API.
+ *
+ * Only this class should be used in code outside @c dictionary.{h,cpp}.
+ *
+ * Methods that behave as in @c std::map are not documented explicitly.
+ *
+ * @ingroup nestdict
+ */
 class Dictionary : public std::shared_ptr< dictionary_ >
 {
 public:
@@ -123,7 +224,7 @@ public:
   /**
    * @brief Check whether the dictionary is equal to another dictionary.
    *
-   * Two dictionaries are equal only if they contain the exact same entries with the same values.
+   * Two dictionaries are equal if and only if they contain the exact same entries with the same values.
    *
    * @param other dictionary to check against.
    * @return true if the dictionary is equal to the other dictionary, false if not.
@@ -139,42 +240,127 @@ public:
   void clear() const;
   auto find( const std::string& key ) const;
 
+  /**
+   * Check whether there exists a value with specified key in the dictionary.
+   *
+   * @param key key where the value may be located in the dictionary.
+   * @return @c true if there is a value with the specified key, @c false if not.
+   *
+   * @note This does @b not mark the entry as accessed, because we sometimes need to confirm
+   * that a certain key is not in a dictionary.
+   */
   bool known( const std::string& key ) const;
+
+  /**
+   * Mark to support checking for unaccessed entries
+   *
+   * @todo Should be removed, see #3791
+   */
   void mark_as_accessed( const std::string& key ) const;
+
+  /**
+   * Return @c true if @ref mark_as_accessed has been called at least once for @ref key
+   *
+   * @todo Should be removed, see #3791
+   */
   bool has_been_accessed( const std::string& key ) const;
+
+  /**
+   * Initialize access flags to prepare for later error checking with @ref all_entries_accessed.
+   *
+   * @param thread_local_dict Pass @c true if calling this method on a thread-specific dictionary. Used for internal
+   * error checking (assert).
+   */
   void init_access_flags( const bool thread_local_dict = false ) const;
+
+  /**
+   * Confirm that all entries in dictioary have been accessed.
+   *
+   * Requires that @ref init_access_flags has been called previously and does nothing if @c dict_miss_is_error has been
+   * set to @c false.
+   *
+   * @throws @ref nest::UnaccessedDictionaryEntry if at least one dictionary entry has not been marked as accessed
+   * @param where Information about calling location, will be included in error message
+   * @param what Information about dictionary inspected, will be included in error message
+   * @param thread_local_dict Pass @c true if calling this method on a thread-specific dictionary. Used for internal
+   * error checking (assert).
+   */
   void
   all_entries_accessed( const std::string& where, const std::string& what, const bool thread_local_dict = false ) const;
 
+  /**
+   * @brief Get the value at key in the specified type.
+   *
+   * @tparam T Type of the value. If the value is not of the specified type, a TypeMismatch error is thrown.
+   * @param key key where the value is located in the dictionary.
+   * @throws @c std::out_of_range if @c key is not on dictionary
+   * @throws @ref TypeMismatch if the value is not of specified type T.
+   * @return the value at key cast to the specified type.
+   */
   template < DictionaryEntryType T >
   T get( const std::string& key ) const;
 
+  /**
+   * Return reference to vector of type T stored under key.
+   *
+   * If key does not exist in dict, create empty vector<T> and return it.
+   */
   template < typename T >
-  std::vector< T >& get_vector( const std::string& key );
+  std::vector< T >& get_or_create_vector( const std::string& key );
 
+  /**
+   * @brief Update the specified non-vector value if there exists a value at key.
+   *
+   * @param key key where the value may be located in the dictionary.
+   * @param value object to update if there exists a value at key.
+   * @throws TypeMismatch if the value at key is not the same type as the value argument.
+   * @return @true if @c key was found in dictionary and @c value was updated, else @false
+   *
+   * @note Only use this where the user is not allowed to use random or spatial parameters.
+   *       Otherwise, use @ref update_value_param .
+   */
   template < typename T >
   bool update_value( const std::string& key, T& value ) const;
+
+  /**
+   * @brief Update the specified value if there exists an integer value at key.
+   *
+   * @param key key where the value may be located in the dictionary.
+   * @param value object to update if there exists a value at key.
+   * @throws TypeMismatch if the value at key is not an integer.
+   * @return @true if @c key was found in dictionary and @c value was updated, else @false
+   */
 
   template < Integer T >
   bool update_integer_value( const std::string& key, T& value ) const;
 
+  /**
+   * @brief Update the provided dictionary with all key-value pairs in this dictionary.
+   *
+   * @param dict_out the dictionary to be updated.
+   * @return @c true if any values were updated in or added to @c dict_out .
+   */
   bool update_dictionary( dictionary_& dict_out ) const;
 };
 
 /**
- * @brief Get the typename of the operand.
+ * @brief Return typename of @c operand
  *
- * @param operand to get the typename of.
- * @return std::string of the typename.
+ * @ingroup nestdict
  */
 std::string debug_type( const any_type& operand );
 
+/**
+ * @brief Return multi-line string displaying dictionary content.
+ *
+ * @ingroup nestdict
+ */
 std::string debug_dict_types( const Dictionary& dict );
 
 /**
- * @brief A Python-like dictionary_, based on std::map.
+ * Represent value in dictionary entry with access information.
  *
- * Values are stored as any_type objects, with std::string keys.
+ * @c accessed flag is mutable so access (error) checking does not interfer with logcial const-ness
  */
 struct DictEntry_
 {
@@ -184,6 +370,7 @@ struct DictEntry_
     , accessed( false )
   {
   }
+
   DictEntry_( const any_type& item )
     : item( item )
     , accessed( false )
@@ -200,15 +387,13 @@ struct DictEntry_
   mutable bool accessed;  //!< initially false, set to true once entry is accessed
 };
 
+/**
+ * @brief A Python-like dictionary_, based on std::map.
+ *
+ * Values are stored as @ref DictEntry_ items providing access checking.
+ */
 class dictionary_ : public std::map< std::string, DictEntry_ >
 {
-  // PYNEST-NG-FUTURE: Meta-information about entries:
-  //                   * Value type (enum?)
-  //                   * Whether value is writable
-  //                   * Docstring for each entry
-  // TODO: PYNEST-NG: maybe change to unordered map, as that provides
-  // automatic hashing of keys (currently strings) which might make
-  // lookups more efficient
   using maptype_ = std::map< std::string, DictEntry_ >;
   using maptype_::maptype_;  // Inherit constructors
 
@@ -276,16 +461,12 @@ class dictionary_ : public std::map< std::string, DictEntry_ >
       value );
   }
 
+  //! Mark dictionary entry as accessed
   void register_access_( const DictEntry_& entry ) const;
 
 public:
   /**
-   * @brief Get the value at key in the specified type.
-   *
-   * @tparam T Type of the value. If the value is not of the specified type, a TypeMismatch error is thrown.
-   * @param key key where the value is located in the dictionary.
-   * @throws TypeMismatch if the value is not of specified type T.
-   * @return the value at key cast to the specified type.
+   * See @ref Dictionary::get
    */
   template < DictionaryEntryType T >
   T
@@ -295,13 +476,11 @@ public:
   }
 
   /**
-   * Return reference to vector of type T stored under key.
-   *
-   * If key does not exist in dict, create empty vector<T> and return it.
+   * See @ref Dictionary::get_or_create_vector
    */
   template < typename T >
   std::vector< T >&
-  get_vector( const std::string& key )
+  get_or_create_vector( const std::string& key )
   {
     // try_emplace will only insert if key doesn't exist.
     auto [ iter, success ] = maptype_::try_emplace( key, std::vector< T >() );
@@ -310,15 +489,7 @@ public:
   }
 
   /**
-   * @brief Update the specified non-vector value if there exists a value at key.
-   *
-   * @param key key where the value may be located in the dictionary.
-   * @param value object to update if there exists a value at key.
-   * @throws TypeMismatch if the value at key is not the same type as the value argument.
-   * @return Whether value was updated.
-   *
-   * @note Only use this where the user is not allowed to use random or spatial parameters.
-   *       Otherwise, use update_value_param().
+   * See @ref Dictionary::update_value
    */
   template < typename T >
   bool
@@ -334,12 +505,7 @@ public:
   }
 
   /**
-   * @brief Update the specified value if there exists an integer value at key.
-   *
-   * @param key key where the value may be located in the dictionary.
-   * @param value object to update if there exists a value at key.
-   * @throws TypeMismatch if the value at key is not an integer.
-   * @return Whether the value was updated.
+   * See @ref Dictionary::update_integer_value
    */
   template < Integer T >
   bool
@@ -355,10 +521,7 @@ public:
   }
 
   /**
-   * @brief Update the provided dictionary with all key-value pairs in this dictionary.
-   *
-   * @param dict_out the dictionary to be updated.
-   * @return Whether any values were updated or added to the provided dictionary.
+   * See @ref Dictionary::update_dictionary
    */
   bool
   update_dictionary( dictionary_& dict_out ) const
@@ -371,13 +534,7 @@ public:
   }
 
   /**
-   * @brief Check whether there exists a value with specified key in the dictionary.
-   *
-   * @param key key where the value may be located in the dictionary.
-   * @return true if there is a value with the specified key, false if not.
-   *
-   * @note This does **not** mark the entry, because we sometimes need to confirm
-   * that a certain key is not in a dictionary.
+   * See @ref Dictionary::known
    */
   bool
   known( const std::string& key ) const
@@ -386,7 +543,7 @@ public:
   }
 
   /**
-   * @brief Mark entry with given key as accessed.
+   * See @ref Dictionary::marked_as_accessed
    */
   void
   mark_as_accessed( const std::string& key ) const
@@ -395,7 +552,7 @@ public:
   }
 
   /**
-   * @brief Return true if entry has been marked as accessed.
+   * See @ref Dictionary::has_been_accessed
    */
   bool
   has_been_accessed( const std::string& key ) const
@@ -404,49 +561,26 @@ public:
   }
 
   /**
-   * @brief Check whether the dictionary is equal to another dictionary.
-   *
-   * Two dictionaries are equal only if they contain the exact same entries with the same values.
-   *
-   * @param other dictionary to check against.
-   * @return true if the dictionary is equal to the other dictionary, false if not.
+   * See @ref Dictionary::operator==
    */
   bool operator==( const dictionary_& other ) const;
 
   /**
-   * @brief Check whether the dictionary is unequal to another dictionary.
-   *
-   * Two dictionaries are unequal if they do not contain the exact same entries with the same values.
-   *
-   * @param other dictionary to check against.
-   * @return true if the dictionary is unequal to the other dictionary, false if not.
+   * See @ref Dictionary::operator!=
    */
   bool
-  operator!=( const Dictionary& other ) const
+  operator!=( const dictionary_& other ) const
   {
     return not( *this == other );
   }
 
   /**
-   * @brief Initializes or resets access flags for the current dictionary.
-   *
-   * @note The method assumes that the dictionary was defined in global scope, whence it should
-   * only be called from a serial context. If the dict is in thread-specific, pass `true` to
-   * allow call in parallel context.
+   * See @ref Dictionary::init_access_flags
    */
   void init_access_flags( const bool thread_local_dict = false ) const;
 
   /**
-   * @brief Check that all elements in the dictionary have been accessed.
-   *
-   * @param where Which function the error occurs in.
-   * @param what Which parameter triggers the error.
-   * @param thread_local_dict See note below.
-   * @throws UnaccessedDictionaryEntry if there are unaccessed dictionary entries.
-   *
-   * @note The method assumes that the dictionary was defined in global scope, whence it should
-   * only be called from a serial context. If the dict is in thread-specific, pass `true` to
-   * allow call in parallel context.
+   * See @ref Dictionary::all_entries_accessedinit_access_flags
    */
   void
   all_entries_accessed( const std::string& where, const std::string& what, const bool thread_local_dict = false ) const;
@@ -460,7 +594,6 @@ public:
   const_iterator find( const std::string& key ) const;
 };
 
-std::ostream& operator<<( std::ostream& os, const dictionary_& dict );
 
 //! Specialization that allows passing long where double is expected
 template <>
@@ -479,19 +612,17 @@ Dictionary::end() const
 }
 
 /**
- * Specialization that allows passing long vectors where double vectors are expected.
- *
- * Also handles empty vectors.
+ * Specialization that allows passing long or empty vectors where double vectors are expected.
  *
  * @note This specialization forwards to cast_vector_value_<double>, but is required explicitly,
- *       because, e.g., get(), calls cast_value_() directly even if the argument is a vector.
+ *       because, e.g., @c get() calls @c 0cast_value_() directly even if the argument is a vector.
  */
 template <>
 std::vector< double > dictionary_::cast_value_< std::vector< double > >( const any_type& value,
   const std::string& key ) const;
 
 /**
- * Specialization that allows passing empty lists.
+ * Specialization that allows passing empty lists where a list of strings is expected.
  */
 template <>
 std::vector< std::string > dictionary_::cast_value_< std::vector< std::string > >( const any_type& value,
@@ -567,9 +698,9 @@ Dictionary::get( const std::string& key ) const
 }
 template < typename T >
 std::vector< T >&
-Dictionary::get_vector( const std::string& key )
+Dictionary::get_or_create_vector( const std::string& key )
 {
-  return ( *this )->get_vector< T >( key );
+  return ( *this )->get_or_create_vector< T >( key );
 }
 
 template < typename T >

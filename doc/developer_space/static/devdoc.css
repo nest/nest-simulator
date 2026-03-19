@@ -1,5 +1,17 @@
 /* NEST developer documentation – extra styles */
 
+/* Stack logo above project name/number instead of side-by-side */
+#projectrow,
+#projectlogo,
+#projectalign {
+    display: block;
+}
+
+#projectlogo {
+    text-align: center;
+    padding-bottom: 4px;
+}
+
 /* Branch banner (injected by footer.html) */
 #devdoc-branch-banner {
     font-size: 1em;

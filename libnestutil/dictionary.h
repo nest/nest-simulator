@@ -171,11 +171,11 @@ std::ostream& operator<<( std::ostream& os, const std::monostate& );
 std::ostream& operator<<( std::ostream& os, const AnyVector& av );
 
 /**
- * Print @ref dictionary_.
+ * Print @ref Dictionary.
  *
  * @ingroup nestdict
  */
-std::ostream& operator<<( std::ostream& os, const dictionary_& dict );
+std::ostream& operator<<( std::ostream& os, const Dictionary& dict );
 
 /**
  * A concept for "integer integers", excluding @c bool and @c char.

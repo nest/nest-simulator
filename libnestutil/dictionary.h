@@ -101,7 +101,7 @@ using DictionarySchema = DictionarySchemaBuilder< double, long, bool, std::strin
  * as few types in the variant as possible and we therefore limit multi-dimensional vectors to those
  * element types where they are needed (3-dim vectors are required for correlo-dectectors).
  *
- * @ref AnyVector is essentially a flexible Python list type. It is needed to returns status data
+ * @ref AnyVector is essentially a flexible Python list type. It is needed to return status data
  * combining actual data from local nodes with @c std::monostate values marking the absence of data. These
  * are converted to @c None at the Python level to maintain the NEST 3.9 user interface.
  *

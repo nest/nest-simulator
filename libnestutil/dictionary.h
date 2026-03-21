@@ -50,9 +50,9 @@ class NodeCollection;
  * and the Python level as well as with C++ applications. This group collects data types
  * related to the implementation of the @Dictionary class.
  *
- * The @ref Dictionary class is essentially an @c std::map<> with access checking to allow
+ * The @ref Dictionary class provides a map-like interface with access checking to allow
  * detection of misspelled or unknown entries passed in to NEST. Since dictionaries need to
- * be able to contain dictionaries, the outward-facing @ref Dictionary class holds a pointer
+ * be able to contain dictionaries, the outward-facing @ref Dictionary class acts as a handle
  * to the @ref dictionary_ instance actually implementing the dictionary as a @c std::map<>.
  *
  * The dictionary entries are of type @c DictEntry_ combining the actual data and the access flag.
@@ -72,7 +72,7 @@ struct EmptyList;
  * later in the actual declaration of @ref any_type.
  *
  * The first entry in the @c std::variant<> must be @c std::monostate , so that default-initialized @ref any_value
- * instances will have this type. This is needed fill the entries corresponding to non-local nodes when status
+ * instances will have this type. This is needed to fill the entries corresponding to non-local nodes when status
  * information for a @ref NodeCollection is returned.
  *
  * @ingroup nestdict
@@ -231,7 +231,6 @@ public:
    */
   bool operator==( const Dictionary& other ) const;
 
-
   auto begin() const;
   auto end() const;
 
@@ -314,7 +313,7 @@ public:
    * @param key key where the value may be located in the dictionary.
    * @param value object to update if there exists a value at key.
    * @throws TypeMismatch if the value at key is not the same type as the value argument.
-   * @return @true if @c key was found in dictionary and @c value was updated, else @false
+   * @return @c true if @c key was found in dictionary and @c value was updated, else @c false
    *
    * @note Only use this where the user is not allowed to use random or spatial parameters.
    *       Otherwise, use @ref update_value_param .
@@ -328,7 +327,7 @@ public:
    * @param key key where the value may be located in the dictionary.
    * @param value object to update if there exists a value at key.
    * @throws TypeMismatch if the value at key is not an integer.
-   * @return @true if @c key was found in dictionary and @c value was updated, else @false
+   * @return @c true if @c key was found in dictionary and @c value was updated, else @c false
    */
 
   template < Integer T >
@@ -344,7 +343,7 @@ public:
 };
 
 /**
- * @brief Return typename of @c operand
+ * @brief Return typename of @c operand.
  *
  * @ingroup nestdict
  */
@@ -360,7 +359,7 @@ std::string debug_dict_types( const Dictionary& dict );
 /**
  * Represent value in dictionary entry with access information.
  *
- * @c accessed flag is mutable so access (error) checking does not interfer with logcial const-ness
+ * @c accessed flag is mutable so access (error) checking does not interfere with logcial const-ness.
  */
 struct DictEntry_
 {
@@ -388,7 +387,7 @@ struct DictEntry_
 };
 
 /**
- * @brief A Python-like dictionary_, based on std::map.
+ * @brief A Python-like dictionary_, based on @c std::map.
  *
  * Values are stored as @ref DictEntry_ items providing access checking.
  */

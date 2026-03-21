@@ -54,12 +54,12 @@ operator<<( std::ostream& os, const std::vector< T >& vec )
 }
 
 any_type&
-Dictionary::operator[]( const std::string& key ) const
+Dictionary::operator[]( const std::string& key )
 {
   return ( **this )[ key ];
 }
 any_type&
-Dictionary::operator[]( std::string&& key ) const
+Dictionary::operator[]( std::string&& key )
 {
   return ( **this )[ std::move( key ) ];
 }

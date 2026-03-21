@@ -211,8 +211,8 @@ public:
   {
   }
 
-  any_type& operator[]( const std::string& key ) const;
-  any_type& operator[]( std::string&& key ) const;
+  any_type& operator[]( const std::string& key );
+  any_type& operator[]( std::string&& key );
   any_type& at( const std::string& key );
   const any_type& at( const std::string& key ) const;
 
@@ -232,7 +232,7 @@ public:
 
   auto size() const;
   auto empty() const;
-  void clear() const;
+  void clear();
   auto find( const std::string& key ) const;
 
   /**
@@ -642,7 +642,7 @@ Dictionary::empty() const
 }
 
 inline void
-Dictionary::clear() const
+Dictionary::clear()
 {
   ( *this )->clear();
 }

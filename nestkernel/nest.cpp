@@ -172,7 +172,7 @@ get_nc_status( NodeCollectionPTR nc )
   const size_t num_nodes = nc->size();
 
   size_t node_index = 0;
-  for ( auto it = nc->begin(); it < nc->end(); ++it, ++node_index )
+  for ( auto it = nc->begin(); it != nc->end(); ++it, ++node_index )
   {
     const auto node_status = get_node_status( ( *it ).node_id );
     for ( const auto& [ key, entry ] : node_status )
@@ -608,8 +608,7 @@ create_parameter( const any_type& value )
       {
         return val;
       }
-      else if constexpr ( std::is_same_v< T, double > or std::is_same_v< T, long > or std::is_same_v< T, Dictionary& >
-        or std::is_same_v< T, int > )
+      else if constexpr ( std::is_same_v< T, double > or std::is_same_v< T, long > or std::is_same_v< T, Dictionary > )
       {
         // Convert int to long, otherwise keep the type (T) as is
         using ArgT = std::conditional_t< std::is_same_v< T, int >, long, T >;

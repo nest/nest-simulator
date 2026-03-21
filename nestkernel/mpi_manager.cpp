@@ -249,7 +249,7 @@ nest::MPIManager::set_status( const Dictionary& dict )
       throw BadProperty( "max_buffer_size_target_data ≥ 0 required." );
     }
     max_buffer_size_target_data_ = mbstd;
-  };
+  }
 
   dict.update_value( names::shrink_factor_buffer_spike_data, shrink_factor_buffer_spike_data_ );
 }

@@ -211,11 +211,6 @@ public:
   {
   }
 
-  operator dictionary_&() const
-  {
-    return **this;
-  }
-
   any_type& operator[]( const std::string& key ) const;
   any_type& operator[]( std::string&& key ) const;
   any_type& at( const std::string& key );
@@ -340,7 +335,7 @@ public:
    * @param dict_out the dictionary to be updated.
    * @return @c true if any values were updated in or added to @c dict_out .
    */
-  bool update_dictionary( dictionary_& dict_out ) const;
+  bool update_dictionary( Dictionary& dict_out ) const;
 };
 
 /**
@@ -524,7 +519,7 @@ public:
    * See @ref Dictionary::update_dictionary
    */
   bool
-  update_dictionary( dictionary_& dict_out ) const
+  update_dictionary( Dictionary& dict_out ) const
   {
     for ( auto [ key, value ] : *this )
     {
@@ -718,7 +713,7 @@ Dictionary::update_integer_value( const std::string& key, T& value ) const
 }
 
 inline bool
-Dictionary::update_dictionary( dictionary_& out_dict ) const
+Dictionary::update_dictionary( Dictionary& out_dict ) const
 {
   return ( *this )->update_dictionary( out_dict );
 }

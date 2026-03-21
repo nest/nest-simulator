@@ -261,7 +261,7 @@ operator<<( std::ostream& os, const AnyVector& av )
   os << "[";
   for ( const auto& v : av )
   {
-    std::visit( []( const auto& arg ) { os << arg << " "; }, v );
+    std::visit( [ &os ]( const auto& arg ) { os << arg << " "; }, v );
   }
   os << "\b]";  // \b removes empty space after last element
   return os;

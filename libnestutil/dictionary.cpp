@@ -329,7 +329,7 @@ dictionary_::operator[]( const std::string& key )
 any_type&
 dictionary_::operator[]( std::string&& key )
 {
-  auto& entry = maptype_::operator[]( key );
+  auto& entry = maptype_::operator[]( std::move( key ) );
   // op[] inserts entry if key was not known before, so we are sure entry exists
   register_access_( entry );
   return entry.item;

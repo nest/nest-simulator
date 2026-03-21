@@ -269,7 +269,7 @@ public:
   void init_access_flags( const bool thread_local_dict = false ) const;
 
   /**
-   * Confirm that all entries in dictioary have been accessed.
+   * Confirm that all entries in dictionary have been accessed.
    *
    * Requires that @ref init_access_flags has been called previously and does nothing if @c dict_miss_is_error has been
    * set to @c false.

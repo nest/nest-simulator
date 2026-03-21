@@ -147,7 +147,7 @@ dictionary_::cast_value_< std::vector< std::string > >( const any_type& value, c
   catch ( const std::bad_variant_access& )
   {
     const std::string msg =
-      String::compose( "Failed to cast '%1' from %2 to type std::vector<double>", key, debug_type( value ) );
+      String::compose( "Failed to cast '%1' from %2 to type std::vector<string>", key, debug_type( value ) );
     throw nest::TypeMismatch( msg );
   }
 }
@@ -259,9 +259,9 @@ std::ostream&
 operator<<( std::ostream& os, const AnyVector& av )
 {
   os << "[";
-  for ( auto v : av )
+  for ( const auto& v : av )
   {
-    std::visit( []( const auto& arg ) { std::cout << arg << " "; }, v );
+    std::visit( []( const auto& arg ) { os << arg << " "; }, v );
   }
   os << "\b]";  // \b removes empty space after last element
   return os;

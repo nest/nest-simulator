@@ -67,9 +67,11 @@ For more information on e-prop plasticity, see the documentation on the other e-
  * :doc:`eprop_readout<../models/eprop_readout/>`
  * :doc:`eprop_learning_signal_connection<../models/eprop_learning_signal_connection/>`
 
-For more information on the optimizers, see the documentation of the weight optimizer:
+For more information on the optimizers, see the documentation of the
+:doc:`weight_optimizer<../models/weight_optimizer/>`.
 
- * :doc:`weight_optimizer<../models/weight_optimizer/>`
+For more information on triggering synaptic plasticity computations to reduce memory usage, see the documentation of the
+:doc:`flush_event_mechanism<../model_details/flush_event_mechanism/>`.
 
 Details on the event-based NEST implementation of e-prop can be found in [2]_.
 

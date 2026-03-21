@@ -647,7 +647,7 @@ create_parameter( const Dictionary& param_dict )
   {
     throw BadProperty( "Parameter definition dictionary must contain one single key only." );
   }
-  const std::string n = param_dict.begin()->first;
+  const std::string& n = param_dict.begin()->first;
   const Dictionary& pdict = param_dict.get< Dictionary >( n );
   pdict.init_access_flags();
   ParameterPTR parameter = create_parameter( n, pdict );

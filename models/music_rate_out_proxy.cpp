@@ -176,7 +176,7 @@ nest::music_rate_out_proxy::pre_run_hook()
 
 
     MUSIC::ArrayData* dmap =
-      new MUSIC::ArrayData( static_cast< void* >( &( B_.data_.front() ) ), MPI::DOUBLE, 0, S_.port_width_ );
+      new MUSIC::ArrayData( static_cast< void* >( &( B_.data_.front() ) ), MPI_DOUBLE, 0, S_.port_width_ );
 
 
     // Setup an array map
@@ -209,11 +209,11 @@ nest::music_rate_out_proxy::get_status( Dictionary& d ) const
 void
 nest::music_rate_out_proxy::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d, S_ );     // throws if BadProperty
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
+  ptmp.set( d, S_ );      // throws if BadProperty
 
   State_ stmp = S_;
-  stmp.set( d, P_ ); // throws if BadProperty
+  stmp.set( d, P_ );  // throws if BadProperty
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

@@ -113,4 +113,4 @@ PerThreadBoolIndicator::any_true() const
   return ret;
 }
 
-} // namespace nest
+}  // namespace nest

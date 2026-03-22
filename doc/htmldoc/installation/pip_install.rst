@@ -58,6 +58,66 @@ Or install NEST with one of the following options:
    pip install nest-simulator[sonata,server]
    pip install nest-simulator[examples,server]
 
+Install latest development version
+----------------------------------
+
+Install from GitHub
+~~~~~~~~~~~~~~~~~~~
+
+**Required dependencies:**
+
+Before installing from GitHub, ensure you have the necessary build dependencies.
+On Ubuntu/Debian, install them with:
+
+.. code-block:: bash
+
+   sudo apt-get update
+   sudo apt-get install -y git python3 python3-pip libboost-dev python3-venv
+
+To install the latest development version directly from the NEST GitHub repository:
+
+.. code-block:: bash
+
+   pip install git+https://github.com/nest/nest-simulator.git
+
+You can also install with extra packages using the ``#egg=`` syntax:
+
+.. code-block:: bash
+
+   # Install with all extras (see pyproject.toml to view what's installed)
+   pip install "git+https://github.com/nest/nest-simulator.git#egg=nest-simulator[full]"
+
+   # Install with specific extras
+   pip install "git+https://github.com/nest/nest-simulator.git#egg=nest-simulator[sonata,server]"
+
+.. note::
+
+   Installing from GitHub installs the latest development version which may be less stable than the released versions on PyPI.
+
+Install from a local repository
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To install from a local copy of the NEST repository:
+
+.. code-block:: bash
+
+   # Clone the repository if you haven't already
+   git clone https://github.com/nest/nest-simulator.git
+   cd nest-simulator
+
+   # Install in editable mode (recommended for development)
+   pip install -e .
+
+   # Install with extras (see pyproject.toml to view what's installed)
+   pip install -e ".[full]"
+   pip install -e ".[sonata,server]"
+
+
+.. note::
+
+   When installing from a local repository, ensure you have all required build dependencies installed.
+
+
 Install other desired packages (e.g., you may also want to use NEST in a Jupyter instance):
 
 .. code-block:: bash

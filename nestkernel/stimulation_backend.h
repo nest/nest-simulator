@@ -184,6 +184,6 @@ public:
   void clear( const StimulationDevice& ) {};
 };
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef STIMULATION_BACKEND_H */

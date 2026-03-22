@@ -151,6 +151,6 @@ spike_recorder::receives_signal() const
   return ALL;
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef SPIKE_RECORDER_H */

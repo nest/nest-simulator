@@ -152,9 +152,9 @@ private:
     /** Firing rate in spikes/s. */
     double rate_;
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( Dictionary& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const;  //!< Store current values in dictionary
 
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
@@ -171,7 +171,7 @@ private:
   {
     double refr_spikes_buffer_;
 
-    State_(); //!< Default initialization
+    State_();  //!< Default initialization
 
     void get( Dictionary&, const Parameters_& ) const;
 
@@ -296,10 +296,10 @@ ignore_and_fire::get_status( Dictionary& d ) const
 inline void
 ignore_and_fire::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;     // temporary copy in case of errors
-  ptmp.set( d, this );       // throws if BadProperty
-  State_ stmp = S_;          // temporary copy in case of errors
-  stmp.set( d, ptmp, this ); // throws if BadProperty
+  Parameters_ ptmp = P_;      // temporary copy in case of errors
+  ptmp.set( d, this );        // throws if BadProperty
+  State_ stmp = S_;           // temporary copy in case of errors
+  stmp.set( d, ptmp, this );  // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -314,6 +314,6 @@ ignore_and_fire::set_status( const Dictionary& d )
   ignore_and_fire::calc_initial_variables_();
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef IGNORE_AND_FIRE_H */

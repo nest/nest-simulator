@@ -205,9 +205,9 @@ public:
   }
 
 private:
-  double weight_;       //!< synaptic weight
-  double delay_offset_; //!< fractional delay < h,
-                        //!< total delay = delay_ - delay_offset_
+  double weight_;        //!< synaptic weight
+  double delay_offset_;  //!< fractional delay < h,
+                         //!< total delay = delay_ - delay_offset_
 };
 
 /**
@@ -248,6 +248,6 @@ cont_delay_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonS
 template < typename targetidentifierT >
 constexpr ConnectionModelProperties cont_delay_synapse< targetidentifierT >::properties;
 
-} // of namespace nest
+}  // of namespace nest
 
-#endif // of #ifndef CONT_DELAY_SYNAPSE_H
+#endif  // of #ifndef CONT_DELAY_SYNAPSE_H

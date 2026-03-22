@@ -207,11 +207,11 @@ private:
     /** Emit individual spike trains for each target, or same for all? */
     bool individual_spike_trains_;
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
     Parameters_( const Parameters_& );
     Parameters_& operator=( const Parameters_& p );
 
-    void get( Dictionary& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const;  //!< Store current values in dictionary
 
     /**
      * Set values from dictionary.
@@ -227,11 +227,11 @@ private:
     double y_0_;
     double y_1_;
 
-    double rate_; //!< current rate, kept for recording
+    double rate_;  //!< current rate, kept for recording
 
-    State_(); //!< Sets default state value
+    State_();  //!< Sets default state value
 
-    void get( Dictionary& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const;  //!< Store current values in dictionary
   };
 
   // ------------------------------------------------------------
@@ -256,11 +256,11 @@ private:
 
   struct Variables_
   {
-    poisson_distribution poisson_dist_; //!< poisson distribution
+    poisson_distribution poisson_dist_;  //!< poisson distribution
 
-    double h_;   //! time resolution (ms)
-    double sin_; //!< sin(h om) in propagator
-    double cos_; //!< cos(h om) in propagator
+    double h_;    //! time resolution (ms)
+    double sin_;  //!< sin(h om) in propagator
+    double cos_;  //!< cos(h om) in propagator
   };
 
   double
@@ -322,9 +322,9 @@ sinusoidal_poisson_generator::get_status( Dictionary& d ) const
 inline void
 sinusoidal_poisson_generator::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
 
-  ptmp.set( d, *this, this ); // throws if BadProperty
+  ptmp.set( d, *this, this );  // throws if BadProperty
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
   // in the parent class are internally consistent.
@@ -334,6 +334,6 @@ sinusoidal_poisson_generator::set_status( const Dictionary& d )
   P_ = ptmp;
 }
 
-} // namespace
+}  // namespace
 
-#endif // SINUSOIDAL_POISSON_GENERATOR_H
+#endif  // SINUSOIDAL_POISSON_GENERATOR_H

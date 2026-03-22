@@ -135,12 +135,12 @@ private:
 public:
   /** sets default parameters */
   gainfunction_mcculloch_pitts()
-    : theta_( 0.0 ) // mV
+    : theta_( 0.0 )  // mV
   {
   }
 
-  void get( Dictionary& ) const;             //!< Store current values in dictionary
-  void set( const Dictionary&, Node* node ); //!< Set values from dictionary
+  void get( Dictionary& ) const;              //!< Store current values in dictionary
+  void set( const Dictionary&, Node* node );  //!< Set values from dictionary
 
   bool operator()( RngPtr, double h );
 };
@@ -158,6 +158,6 @@ void register_mcculloch_pitts_neuron( const std::string& name );
 template <>
 void RecordablesMap< mcculloch_pitts_neuron >::create();
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifndef MCCULLOCH_PITTS_NEURON_H */

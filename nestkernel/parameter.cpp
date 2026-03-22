@@ -514,4 +514,4 @@ dimension_parameter( const ParameterPTR x_parameter, const ParameterPTR y_parame
   return ParameterPTR( new DimensionParameter( x_parameter, y_parameter, z_parameter ) );
 }
 
-} // namespace nest
+}  // namespace nest

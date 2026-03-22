@@ -96,11 +96,11 @@ class SpikeData
 protected:
   static constexpr int MAX_LAG = generate_max_value( NUM_BITS_LAG );
 
-  size_t lcid_ : NUM_BITS_LCID;                      //!< local connection index
-  unsigned int marker_ : NUM_BITS_MARKER_SPIKE_DATA; //!< status flag
-  unsigned int lag_ : NUM_BITS_LAG;                  //!< lag in this min-delay interval
-  unsigned int tid_ : NUM_BITS_TID;                  //!< thread index
-  synindex syn_id_ : NUM_BITS_SYN_ID;                //!< synapse-type index
+  size_t lcid_ : NUM_BITS_LCID;                       //!< local connection index
+  unsigned int marker_ : NUM_BITS_MARKER_SPIKE_DATA;  //!< status flag
+  unsigned int lag_ : NUM_BITS_LAG;                   //!< lag in this min-delay interval
+  unsigned int tid_ : NUM_BITS_TID;                   //!< thread index
+  synindex syn_id_ : NUM_BITS_SYN_ID;                 //!< synapse-type index
 
 public:
   SpikeData();
@@ -242,7 +242,7 @@ SpikeData::operator=( const SpikeData& rhs )
 inline void
 SpikeData::set( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag, const double )
 {
-  assert( tid <= MAX_TID ); // MAX_TID is allowed since it is not used as invalid value
+  assert( tid <= MAX_TID );  // MAX_TID is allowed since it is not used as invalid value
   assert( syn_id < MAX_SYN_ID );
   assert( lcid < MAX_LCID );
   assert( lag < MAX_LAG );
@@ -440,7 +440,7 @@ OffGridSpikeData::set( const size_t tid,
   const unsigned int lag,
   const double offset )
 {
-  assert( tid <= MAX_TID ); // MAX_TID is allowed since it is not used as invalid value
+  assert( tid <= MAX_TID );  // MAX_TID is allowed since it is not used as invalid value
   assert( syn_id < MAX_SYN_ID );
   assert( lcid < MAX_LCID );
   assert( lag < MAX_LAG );
@@ -478,8 +478,8 @@ struct SpikeDataWithRank
 {
   SpikeDataWithRank( const Target& target, const size_t lag );
 
-  const size_t rank;          //!< rank of target neuron
-  const SpikeData spike_data; //! data on spike transmitted
+  const size_t rank;           //!< rank of target neuron
+  const SpikeData spike_data;  //! data on spike transmitted
 };
 
 inline SpikeDataWithRank::SpikeDataWithRank( const Target& target, const size_t lag )
@@ -497,8 +497,8 @@ struct OffGridSpikeDataWithRank
 {
   OffGridSpikeDataWithRank( const Target& target, const size_t lag, const double offset );
 
-  const size_t rank;                 //!< rank of target neuron
-  const OffGridSpikeData spike_data; //! data on spike transmitted
+  const size_t rank;                  //!< rank of target neuron
+  const OffGridSpikeData spike_data;  //! data on spike transmitted
 };
 
 inline OffGridSpikeDataWithRank::OffGridSpikeDataWithRank( const Target& target, const size_t lag, const double offset )
@@ -508,6 +508,6 @@ inline OffGridSpikeDataWithRank::OffGridSpikeDataWithRank( const Target& target,
 }
 
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* SPIKE_DATA_H */

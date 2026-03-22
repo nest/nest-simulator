@@ -146,9 +146,9 @@ private:
    */
   struct Parameters_
   {
-    double rate_;      //!< rate of component gamma process [Hz]
-    long gamma_shape_; //!< gamma shape parameter [1]
-    long n_proc_;      //!< number of component processes
+    double rate_;       //!< rate of component gamma process [Hz]
+    long gamma_shape_;  //!< gamma shape parameter [1]
+    long n_proc_;       //!< number of component processes
 
     /**
      * Number of targets.
@@ -158,25 +158,25 @@ private:
      */
     size_t num_targets_;
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( Dictionary& ) const;             //!< Store current values in dictionary
-    void set( const Dictionary&, Node* node ); //!< Set values from dictionary
+    void get( Dictionary& ) const;              //!< Store current values in dictionary
+    void set( const Dictionary&, Node* node );  //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------
 
   class Internal_states_
   {
-    binomial_distribution bino_dist_;   //!< binomial distribution
-    poisson_distribution poisson_dist_; //!< poisson distribution
-    std::vector< unsigned long > occ_;  //!< occupation numbers of internal states
+    binomial_distribution bino_dist_;    //!< binomial distribution
+    poisson_distribution poisson_dist_;  //!< poisson distribution
+    std::vector< unsigned long > occ_;   //!< occupation numbers of internal states
 
   public:
     Internal_states_( size_t num_bins,
       unsigned long ini_occ_ref,
-      unsigned long ini_occ_act );                              //!< initialize occupation numbers
-    unsigned long update( double transition_prob, RngPtr rng ); //!< update age dist and generate spikes
+      unsigned long ini_occ_act );                               //!< initialize occupation numbers
+    unsigned long update( double transition_prob, RngPtr rng );  //!< update age dist and generate spikes
   };
 
 
@@ -193,8 +193,8 @@ private:
 
   struct Variables_
   {
-    double transition_prob_; //!< transition probabililty to go to next
-                             //!< internal state
+    double transition_prob_;  //!< transition probabililty to go to next
+                              //!< internal state
 
     /**
      * @name update-hook communication.
@@ -206,8 +206,8 @@ private:
      *   t_min_active_ < t <= t_max_active_
      */
     //@{
-    double t_min_active_; //!< start of generator activity in slice
-    double t_max_active_; //!< end of generator activity in slice
+    double t_min_active_;  //!< start of generator activity in slice
+    double t_max_active_;  //!< end of generator activity in slice
     //@}
   };
 
@@ -253,8 +253,8 @@ gamma_sup_generator::get_status( Dictionary& d ) const
 inline void
 gamma_sup_generator::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d, this );   // throws if BadProperty
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
+  ptmp.set( d, this );    // throws if BadProperty
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set
@@ -277,6 +277,6 @@ gamma_sup_generator::get_type() const
   return StimulationDevice::Type::SPIKE_GENERATOR;
 }
 
-} // namespace
+}  // namespace
 
 #endif

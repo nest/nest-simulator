@@ -26,7 +26,7 @@
 #include "rate_neuron_ipn.h"
 
 // C++ includes:
-#include <cmath> // in case we need isnan() // fabs
+#include <cmath>  // in case we need isnan() // fabs
 #include <cstdio>
 #include <iomanip>
 #include <iostream>
@@ -59,8 +59,8 @@ RecordablesMap< rate_neuron_ipn< TNonlinearities > > rate_neuron_ipn< TNonlinear
 
 template < class TNonlinearities >
 nest::rate_neuron_ipn< TNonlinearities >::Parameters_::Parameters_()
-  : tau_( 10.0 )   // ms
-  , lambda_( 1.0 ) // ms
+  : tau_( 10.0 )    // ms
+  , lambda_( 1.0 )  // ms
   , sigma_( 1.0 )
   , mu_( 0.0 )
   , rectify_rate_( 0.0 )
@@ -153,15 +153,15 @@ template < class TNonlinearities >
 void
 nest::rate_neuron_ipn< TNonlinearities >::State_::get( Dictionary& d ) const
 {
-  d[ names::rate ] = rate_;   // Rate
-  d[ names::noise ] = noise_; // Noise
+  d[ names::rate ] = rate_;    // Rate
+  d[ names::noise ] = noise_;  // Noise
 }
 
 template < class TNonlinearities >
 void
 nest::rate_neuron_ipn< TNonlinearities >::State_::set( const Dictionary& d, Node* node )
 {
-  update_value_param( d, names::rate, rate_, node ); // Rate
+  update_value_param( d, names::rate, rate_, node );  // Rate
 }
 
 template < class TNonlinearities >
@@ -210,8 +210,8 @@ template < class TNonlinearities >
 void
 nest::rate_neuron_ipn< TNonlinearities >::init_buffers_()
 {
-  B_.delayed_rates_ex_.clear(); // includes resize
-  B_.delayed_rates_in_.clear(); // includes resize
+  B_.delayed_rates_ex_.clear();  // includes resize
+  B_.delayed_rates_in_.clear();  // includes resize
 
   // resize buffers
   const size_t buffer_size = kernel().connection_manager.get_min_delay();
@@ -226,7 +226,7 @@ nest::rate_neuron_ipn< TNonlinearities >::init_buffers_()
     B_.random_numbers[ i ] = V_.normal_dist_( get_vp_specific_rng( get_thread() ) );
   }
 
-  B_.logger_.reset(); // includes resize
+  B_.logger_.reset();  // includes resize
   ArchivingNode::clear_history();
 }
 
@@ -234,7 +234,7 @@ template < class TNonlinearities >
 void
 nest::rate_neuron_ipn< TNonlinearities >::pre_run_hook()
 {
-  B_.logger_.init(); // ensures initialization in case mm connected after Simulate
+  B_.logger_.init();  // ensures initialization in case mm connected after Simulate
 
   const double h = Time::get_resolution().get_ms();
 
@@ -297,8 +297,8 @@ nest::rate_neuron_ipn< TNonlinearities >::update_( Time const& origin,
     }
     double instant_rates_in = B_.instant_rates_in_[ lag ];
     double instant_rates_ex = B_.instant_rates_ex_[ lag ];
-    double H_ex = 1.; // valid value for non-multiplicative coupling
-    double H_in = 1.; // valid value for non-multiplicative coupling
+    double H_ex = 1.;  // valid value for non-multiplicative coupling
+    double H_in = 1.;  // valid value for non-multiplicative coupling
     if ( P_.mult_coupling_ )
     {
       H_ex = nonlinearities_.mult_coupling_ex( new_rates[ lag ] );
@@ -469,6 +469,6 @@ nest::rate_neuron_ipn< TNonlinearities >::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef RATE_NEURON_IPN_IMPL_H */

@@ -85,4 +85,4 @@ ConnectionID::print_me( std::ostream& out ) const
       << port_ << ">";
 }
 
-} // namespace
+}  // namespace

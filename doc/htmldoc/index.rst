@@ -22,6 +22,12 @@ Welcome to the NEST Simulator documentation!
           ranging from algorithmically determined connections to data-driven connectivity.
           Create connections between neurons using numerous synapse models from STDP to gap junctions.
 
+          To get started you can:
+
+          ``pip install nest-simulator``
+
+          see :ref:`here <install_nest>` for all installation options!
+
 
        .. grid-item::
 
@@ -65,7 +71,7 @@ Welcome to the NEST Simulator documentation!
 
                   Simulate a game of PONG with NEST
 
-                .. figure:: static/img/pynest/eprop_supervised_classification_infrastructure.png
+                .. figure:: ../../pynest/examples/eprop_plasticity/eprop_supervised_regression_sine-waves.png
                   :target: auto_examples/eprop_plasticity/index.html
 
                   Explore eligibility propagation plasticity

@@ -69,6 +69,6 @@ private:
   double weight_;
 };
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifndef COMMON_PROPERTIES_HOM_W_H */

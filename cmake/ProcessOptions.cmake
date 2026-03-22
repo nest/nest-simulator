@@ -173,9 +173,8 @@ function( NEST_PROCESS_STATIC_LIBRARIES )
 
     # Note: "$ORIGIN" (on Linux) and "@loader_path" (on MacOS) are not CMake variables, but special keywords for the
     # Linux resp. the macOS dynamic loader. They refer to the path in which the object is located, e.g.
-    # ``${CMAKE_INSTALL_PREFIX}/bin`` for the nest and sli executables, ``${CMAKE_INSTALL_PREFIX}/lib/nest`` for all
-    # dynamic libraries except PyNEST (libnestkernel.so, etc.), and  something like
-    # ``${CMAKE_INSTALL_PREFIX}/lib/python3.x/site-packages/nest`` for ``pynestkernel.so``. The RPATH is relative to
+    # ``${CMAKE_INSTALL_PREFIX}/bin`` for helper scripts and  something like
+# ``${CMAKE_INSTALL_PREFIX}/lib/python3.x/site-packages/nest`` for ``nestkernel_api.so``. The RPATH is relative to
     # this origin, so the binary ``bin/nest`` can find the files in the relative location ``../lib/nest``, and
     # similarly for PyNEST and the other libraries. For simplicity, we set all the possibilities on all generated
     # objects.
@@ -429,6 +428,17 @@ function( NEST_PROCESS_WITH_DETAILED_TIMERS )
     set( TIMER_DETAILED ON PARENT_SCOPE )
   endif ()
 endfunction()
+
+function(NEST_PROCESS_WITH_CYCLE_TIMERS)
+  set(CYCLE_TIMERS OFF PARENT_SCOPE)
+  if ("${with-detailed-timers}" STREQUAL "ON" AND "${with-cycle-timers}"   STREQUAL "ON")
+    set(CYCLE_TIMERS ON PARENT_SCOPE)
+  endif()
+  if ("${with-cycle-timers}" STREQUAL "ON" AND NOT "${with-detailed-timers}" STREQUAL "ON")
+    message(FATAL_ERROR "To enable cycle timers, you must also enable detailed timers")
+  endif()
+endfunction()
+
 
 function( NEST_PROCESS_WITH_THREADED_TIMERS )
   set( THREADED_TIMERS OFF PARENT_SCOPE )

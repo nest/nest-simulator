@@ -161,6 +161,6 @@ StructuralPlasticityNode::get_Ca_minus() const
   return Ca_minus_;
 }
 
-} // of namespace
+}  // of namespace
 
 #endif /* #ifndef STRUCTURAL_PLASTICITY_NODE_H */

@@ -332,6 +332,6 @@ clopath_synapse< targetidentifierT >::set_status( const Dictionary& d, Connector
   }
 }
 
-} // of namespace nest
+}  // of namespace nest
 
-#endif // of #ifndef CLOPATH_SYNAPSE_H
+#endif  // of #ifndef CLOPATH_SYNAPSE_H

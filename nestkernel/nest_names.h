@@ -134,6 +134,7 @@ const std::string continuous( "continuous" );
 const std::string count_covariance( "count_covariance" );
 const std::string count_histogram( "count_histogram" );
 const std::string covariance( "covariance" );
+const std::string cycle_time_log( "cycle_time_log" );
 
 const std::string Delta_T( "Delta_T" );
 const std::string Delta_V( "Delta_V" );
@@ -721,8 +722,8 @@ const std::string y_1( "y_1" );
 const std::string z( "z" );
 const std::string z_connected( "z_connected" );
 
-} // namespace names
+}  // namespace names
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifndef NEST_NAMES_H */

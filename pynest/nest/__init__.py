@@ -21,9 +21,9 @@
 
 r"""PyNEST - Python interface for the NEST Simulator
 
-* ``nest.helpdesk()`` opens the NEST documentation in your browser.
-
 * ``nest.__version__`` displays the NEST version.
+
+* ``nest.build_info`` provides detailed information about the NEST build.
 
 * ``nest.node_models`` shows all available neuron and device models.
 
@@ -270,6 +270,11 @@ class NestModule(types.ModuleType):
         ),
         readonly=True,
     )
+    cycle_time_log = KernelAttribute(
+        "dict",
+        ("Information on the duration and spike counts within each update cycle."),
+        readonly=True,
+    )
 
     use_wfr = KernelAttribute("bool", "Whether to use waveform relaxation method", default=True)
     wfr_comm_interval = KernelAttribute(
@@ -514,8 +519,7 @@ def _lazy_module_property(module_name, optional=False, optional_hint=""):
         except ImportError as e:
             if optional:
                 raise ImportError(
-                    f"This functionality requires the optional module \
-                    {module_name}.{optional_hint}"
+                    f"This functionality requires the optional module {module_name}.{optional_hint}"
                 ) from None
             else:
                 raise e from None

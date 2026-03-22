@@ -59,7 +59,7 @@ nest::gamma_sup_generator::Internal_states_::Internal_states_( size_t num_bins,
 unsigned long
 nest::gamma_sup_generator::Internal_states_::update( double transition_prob, RngPtr rng )
 {
-  std::vector< unsigned long > n_trans; // only set from poisson_dist_, bino_dist_ or 0, thus >= 0
+  std::vector< unsigned long > n_trans;  // only set from poisson_dist_, bino_dist_ or 0, thus >= 0
   n_trans.resize( occ_.size() );
 
   // go through all states and draw number of transitioning components
@@ -123,7 +123,7 @@ nest::gamma_sup_generator::Internal_states_::update( double transition_prob, Rng
  * ---------------------------------------------------------------- */
 
 nest::gamma_sup_generator::Parameters_::Parameters_()
-  : rate_( 0.0 ) // Hz
+  : rate_( 0.0 )  // Hz
   , gamma_shape_( 1 )
   , n_proc_( 1 )
   , num_targets_( 0 )
@@ -237,7 +237,7 @@ nest::gamma_sup_generator::update( Time const& T, const long from, const long to
 
     if ( not StimulationDevice::is_active( t ) )
     {
-      continue; // no spike at this lag
+      continue;  // no spike at this lag
     }
 
     DSSpikeEvent se;
@@ -259,7 +259,7 @@ nest::gamma_sup_generator::event_hook( DSSpikeEvent& e )
   unsigned long n_spikes =
     B_.internal_states_[ prt ].update( V_.transition_prob_, get_vp_specific_rng( get_thread() ) );
 
-  if ( n_spikes > 0 ) // we must not send events with multiplicity 0
+  if ( n_spikes > 0 )  // we must not send events with multiplicity 0
   {
     e.set_multiplicity( n_spikes );
     e.get_receiver().handle( e );
@@ -273,7 +273,7 @@ nest::gamma_sup_generator::event_hook( DSSpikeEvent& e )
 void
 nest::gamma_sup_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
 
   // For the input backend
   if ( not input_param.empty() )

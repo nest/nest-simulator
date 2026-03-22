@@ -23,7 +23,6 @@
 Functions to build and simulate networks with the SONATA format
 """
 
-
 import itertools
 import json
 import os

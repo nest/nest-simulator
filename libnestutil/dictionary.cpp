@@ -54,12 +54,12 @@ operator<<( std::ostream& os, const std::vector< T >& vec )
 }
 
 any_type&
-Dictionary::operator[]( const std::string& key ) const
+Dictionary::operator[]( const std::string& key )
 {
   return ( **this )[ key ];
 }
 any_type&
-Dictionary::operator[]( std::string&& key ) const
+Dictionary::operator[]( std::string&& key )
 {
   return ( **this )[ std::move( key ) ];
 }
@@ -223,19 +223,27 @@ operator<<( std::ostream& os, const Dictionary& dict )
     {
       return s1.first.length() < s2.first.length();
     } )->first.length();
+
+  const auto max_type_length =
+    debug_type( std::max_element( dict.begin(),
+                  dict.end(),
+                  []( const dictionary_::value_type s1, const dictionary_::value_type s2 )
+                  { return debug_type( s1.second.item ).length() < debug_type( s2.second.item ).length(); } )
+                  ->second.item )
+      .length();
+
   const std::string pre_padding = "    ";
   os << "Dictionary{\n";
-  for ( auto& kv : dict )
+  for ( const auto& [ key, val ] : dict )
   {
-    std::string type;
-    std::stringstream value_stream;
+    const auto& item = val.item;
+    const auto& type = debug_type( item );
 
-    const auto& item = kv.second.item;
-
-    const auto post_padding = max_key_length - kv.first.length() + 5;
-    os << pre_padding << kv.first << std::setw( post_padding ) << "(" << debug_type( item ) << ")"
-       << " " << std::setw( 25 - type.length() );
+    const auto key_padding = max_key_length - key.length() + 2;
+    const auto type_padding = max_type_length - type.length() + 2;
+    os << pre_padding << key << std::setw( key_padding ) << "(" << type << ") " << std::setw( type_padding );
     std::visit( [ &os ]( const auto& arg ) { os << arg; }, item );
+    os << "\n";
   }
   return os << "}";
 }
@@ -253,7 +261,7 @@ operator<<( std::ostream& os, const AnyVector& av )
   os << "[";
   for ( const auto& v : av )
   {
-    std::visit( []( const auto& arg ) { os << arg << " "; }, v );
+    std::visit( [ &os ]( const auto& arg ) { os << arg << " "; }, v );
   }
   os << "\b]";  // \b removes empty space after last element
   return os;
@@ -303,7 +311,7 @@ dictionary_::register_access_( const DictEntry_& entry ) const
   if ( not entry.accessed )
   {
     // if() above avoids any unnecessary updates, atomic prevents any potential
-    // data races in case the compiler does behind-the-scences magic.
+    // data races in case the compiler does behind-the-scenes magic.
 #pragma omp atomic write
     entry.accessed = true;  // accessed is mutable
   }

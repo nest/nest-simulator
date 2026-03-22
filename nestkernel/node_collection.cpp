@@ -265,15 +265,6 @@ nc_const_iterator::advance_local_iter_to_new_part_( size_t n )
   }
 }
 
-std::ostream&
-operator<<( std::ostream& out, const nc_const_iterator& nc )
-{
-  out << "[[" << &nc << " pc: " << nc.primitive_collection_ << ", cc: " << nc.composite_collection_
-      << ", px: " << nc.part_idx_ << ", ex: " << nc.element_idx_ << "]]";
-
-  return out;
-}
-
 NodeIDTriple
 nc_const_iterator::operator*() const
 {

@@ -610,9 +610,7 @@ create_parameter( const any_type& value )
       }
       else if constexpr ( std::is_same_v< T, double > or std::is_same_v< T, long > or std::is_same_v< T, Dictionary > )
       {
-        // Convert int to long, otherwise keep the type (T) as is
-        using ArgT = std::conditional_t< std::is_same_v< T, int >, long, T >;
-        return create_parameter( static_cast< const ArgT& >( val ) );
+        return create_parameter( static_cast< const T& >( val ) );
       }
       else
       {
@@ -646,7 +644,7 @@ create_parameter( const Dictionary& param_dict )
   {
     throw BadProperty( "Parameter definition dictionary must contain one single key only." );
   }
-  const std::string n = param_dict.begin()->first;
+  const std::string& n = param_dict.begin()->first;
   const Dictionary& pdict = param_dict.get< Dictionary >( n );
   pdict.init_access_flags();
   ParameterPTR parameter = create_parameter( n, pdict );

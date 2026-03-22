@@ -171,11 +171,11 @@ std::ostream& operator<<( std::ostream& os, const std::monostate& );
 std::ostream& operator<<( std::ostream& os, const AnyVector& av );
 
 /**
- * Print @ref dictionary_.
+ * Print @ref Dictionary.
  *
  * @ingroup nestdict
  */
-std::ostream& operator<<( std::ostream& os, const dictionary_& dict );
+std::ostream& operator<<( std::ostream& os, const Dictionary& dict );
 
 /**
  * A concept for "integer integers", excluding @c bool and @c char.
@@ -211,13 +211,8 @@ public:
   {
   }
 
-  operator dictionary_&() const
-  {
-    return **this;
-  }
-
-  any_type& operator[]( const std::string& key ) const;
-  any_type& operator[]( std::string&& key ) const;
+  any_type& operator[]( const std::string& key );
+  any_type& operator[]( std::string&& key );
   any_type& at( const std::string& key );
   const any_type& at( const std::string& key ) const;
 
@@ -236,7 +231,7 @@ public:
 
   auto size() const;
   auto empty() const;
-  void clear() const;
+  void clear();
   auto find( const std::string& key ) const;
 
   /**
@@ -273,7 +268,7 @@ public:
   void init_access_flags( const bool thread_local_dict = false ) const;
 
   /**
-   * Confirm that all entries in dictioary have been accessed.
+   * Confirm that all entries in dictionary have been accessed.
    *
    * Requires that @ref init_access_flags has been called previously and does nothing if @c dict_miss_is_error has been
    * set to @c false.
@@ -339,7 +334,7 @@ public:
    * @param dict_out the dictionary to be updated.
    * @return @c true if any values were updated in or added to @c dict_out .
    */
-  bool update_dictionary( dictionary_& dict_out ) const;
+  bool update_dictionary( Dictionary& dict_out ) const;
 };
 
 /**
@@ -523,7 +518,7 @@ public:
    * See @ref Dictionary::update_dictionary
    */
   bool
-  update_dictionary( dictionary_& dict_out ) const
+  update_dictionary( Dictionary& dict_out ) const
   {
     for ( auto [ key, value ] : *this )
     {
@@ -646,7 +641,7 @@ Dictionary::empty() const
 }
 
 inline void
-Dictionary::clear() const
+Dictionary::clear()
 {
   ( *this )->clear();
 }
@@ -717,7 +712,7 @@ Dictionary::update_integer_value( const std::string& key, T& value ) const
 }
 
 inline bool
-Dictionary::update_dictionary( dictionary_& out_dict ) const
+Dictionary::update_dictionary( Dictionary& out_dict ) const
 {
   return ( *this )->update_dictionary( out_dict );
 }

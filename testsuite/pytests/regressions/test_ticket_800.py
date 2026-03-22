@@ -37,7 +37,9 @@ Author: Hans Ekkehard Plesser, 2014-12-13
 good_random_parameters = [
     ("uniform", {"min": 0.0, "max": 1.0}),
     ("normal", {"mean": 0.0, "std": 1.0}),
+    ("normal", {"mean": 0.0, "std": 0.0}),
     ("lognormal", {"mean": 0.0, "std": 1.0}),
+    ("lognormal", {"mean": 0.0, "std": 0.0}),
     ("exponential", {"beta": 1.0}),
 ]
 

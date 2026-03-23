@@ -93,7 +93,7 @@ Parameter              Unit Math equivalent           Default   Description
                                                                 once per spike
 ``Wmax``                pA  :math:`W_{ji}^\text{max}`   100.0   Maximal value for synaptic weight
 ``Wmin``                pA  :math:`W_{ji}^\text{min}`  -100.0   Minimal value for synaptic weight
-====================== ==== ========================= ========= =============================================
+====================== ==== ========================= ========= ============================================
 
 ========= ==== =============== ================== ==============
 **Gradient descent parameters (default optimizer)**

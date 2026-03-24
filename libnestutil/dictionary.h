@@ -75,6 +75,10 @@ struct EmptyList;
  * instances will have this type. This is needed to fill the entries corresponding to non-local nodes when status
  * information for a @ref NodeCollection is returned.
  *
+ * @note Conversion from Dictionary elements to and from Python datatypes is done by @c
+ * nestkernel_api.pyx:any_to_pyobj() and @c nestkernel_api.pyx:pydict_to_Dictionary(), respectively. If you add a type
+ * to the variant, you most likely need to add corresponding conversions to those functions.
+ *
  * @ingroup nestdict
  */
 template < typename... Scalars >

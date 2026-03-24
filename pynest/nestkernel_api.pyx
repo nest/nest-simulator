@@ -29,6 +29,7 @@ from cython.operator cimport preincrement as inc
 from libc.stdint cimport int64_t, uint64_t
 from libc.stdlib cimport free, malloc
 from libcpp.deque cimport deque as std_deque
+from libcpp.limits cimport numeric_limits
 from libcpp.map cimport map as std_map
 from libcpp.string cimport string as std_string
 from libcpp.vector cimport vector as std_vector
@@ -140,6 +141,8 @@ cdef anyvec_to_objtuple(any_type operand):
     return tuple(any_to_pyobj(obj) for obj in a_vec)
 
 cdef object any_to_pyobj(any_type operand):
+    """Convert an object of any of the types in the any_type variant to a Python object."""
+
     cdef NodeCollectionPTR ncptr
 
     if holds_alternative[long](operand):
@@ -174,8 +177,7 @@ cdef object any_to_pyobj(any_type operand):
     if holds_alternative[vector[Dictionary]](operand):
         return vec_of_dict_to_list(get[vector[Dictionary]](operand))
     if holds_alternative[EmptyList](operand):
-        assert False, "Should never get an EmptyList from C++"
-        return None
+        return []
 
     if holds_alternative[NodeCollectionPTR](operand):
         obj = NodeCollectionObject()
@@ -211,14 +213,17 @@ cdef is_list_tuple_ndarray_of_int(v):
 
 
 cdef Dictionary pydict_to_Dictionary(object py_dict) except *:  # Adding "except *" makes cython propagate the error if it is raised.
+    """Convert a Python dictionary to a C++ Dictionary with elements represented by the any_type variant."""
+
     cdef Dictionary cdict = Dictionary()
     for key, value in py_dict.items():
         if type(value) is tuple:
             value = list(value)
 
         if type(value) is int or isinstance(value, numpy.integer):
-	    # PYTEST-NG: Should we guard against overflow given that python int has infinite range?
-            cdict[pystr_to_string(key)] = <long>value
+            if value < (min_val := numeric_limits[long].min()) or value > (max_val := numeric_limits[long].max()):
+                raise OverflowError(f"Integer {value} out of range for C++ long [{min_val}, {max_val}]")
+            cdict[pystr_to_string(key)] = <long>(value)
         elif type(value) is float or isinstance(value, numpy.floating):
             cdict[pystr_to_string(key)] = <double>value
         elif type(value) is bool:
@@ -233,7 +238,7 @@ cdef Dictionary pydict_to_Dictionary(object py_dict) except *:  # Adding "except
         elif is_list_tuple_ndarray_of_float(value):
             cdict[pystr_to_string(key)] = pylist_or_ndarray_to_doublevec(value)
         elif is_list_tuple_ndarray_of_int(value):
-            cdict[pystr_to_string(key)] = pylist_to_intvec(value)
+            cdict[pystr_to_string(key)] = pylist_to_longvec(value)
         elif type(value) is list and len(value) > 0 and isinstance(value[0], (list, tuple)):
             cdict[pystr_to_string(key)] = list_of_list_to_doublevec(value)
         elif type(value) is list and len(value) > 0 and isinstance(value[0], numpy.ndarray):
@@ -254,7 +259,7 @@ cdef Dictionary pydict_to_Dictionary(object py_dict) except *:  # Adding "except
             cdict[pystr_to_string(key)] = <VerbosityLevel>(value)
         else:
             typename = type(value)
-            if type(value) is list:
+            if typename is list:
                 assert len(value) > 0   # empty list should have been caught above
                 typename = f"list of {type(value[0])}"
             raise AttributeError(f'when converting Python Dictionary: value of key ({key}) is not a known type, got {typename}')
@@ -283,7 +288,7 @@ cdef vector[std_vector[double]] list_of_list_to_doublevec(object pylist):
     return vec
 
 
-cdef vector[long] pylist_to_intvec(object pylist):
+cdef vector[long] pylist_to_longvec(object pylist):
     cdef vector[long] vec
     for val in pylist:
         vec.push_back(val)

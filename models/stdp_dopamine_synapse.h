@@ -77,7 +77,7 @@ Parameters
                                                 is simply the multiplier for facilitation (as in the
                                                 stdp_synapse model). If b is not zero, then A_plus
                                                 will be the multiplier for facilitation only if n - b
-                                                is positive, where n is the instantenous dopamine
+                                                is positive, where n is the instantaneous dopamine
                                                 concentration in the volume transmitter. If n - b is
                                                 negative, A_plus will be the multiplier for
                                                 depression.
@@ -87,7 +87,7 @@ Parameters
                                                 is simply the multiplier for depression (as in the
                                                 stdp_synapse model). If b is not zero, then A_minus
                                                 will be the multiplier for depression only if n - b
-                                                is positive, where n is the instantenous dopamine
+                                                is positive, where n is the instantaneous dopamine
                                                 concentration in the volume transmitter. If n - b is
                                                 negative, A_minus will be the multiplier for
                                                 facilitation.

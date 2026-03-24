@@ -63,18 +63,18 @@ synapses can only be connected to neuron models that are capable of
 archiving. So far, compatible models are ``eprop_iaf_bsshslm_2020``,
 ``eprop_iaf_adapt_bsshslm_2020``, and ``eprop_readout_bsshslm_2020``.
 
-For more information on e-prop plasticity, see the documentation on the other e-prop models:
+For more information, see the following topics:
 
- * :doc:`eprop_iaf_bsshslm_2020<../models/eprop_iaf_bsshslm_2020/>`
- * :doc:`eprop_iaf_adapt_bsshslm_2020<../models/eprop_iaf_adapt_bsshslm_2020/>`
- * :doc:`eprop_readout_bsshslm_2020<../models/eprop_readout_bsshslm_2020/>`
- * :doc:`eprop_learning_signal_connection_bsshslm_2020<../models/eprop_learning_signal_connection_bsshslm_2020/>`
+* other e-prop plasticity models:
 
-For more information on the optimizers, see the documentation of the
-:doc:`weight_optimizer<../models/weight_optimizer/>`.
+      * :doc:`eprop_iaf_bsshslm_2020<../models/eprop_iaf_bsshslm_2020/>`
+      * :doc:`eprop_iaf_adapt_bsshslm_2020<../models/eprop_iaf_adapt_bsshslm_2020/>`
+      * :doc:`eprop_readout_bsshslm_2020<../models/eprop_readout_bsshslm_2020/>`
+      * :doc:`eprop_learning_signal_connection_bsshslm_2020<../models/eprop_learning_signal_connection_bsshslm_2020/>`
 
-For more information on triggering synaptic plasticity computations to reduce memory usage, see the documentation of the
-:doc:`flush_event_mechanism<../model_details/flush_event_mechanism/>`.
+* :doc:`weight optimizer<../models/weight_optimizer/>`
+* triggering synaptic plasticity computations to reduce memory usage via the
+  :ref:`flush event mechanism<flush_event_mechanism>`
 
 Details on the event-based NEST implementation of e-prop can be found in [2]_.
 

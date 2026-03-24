@@ -5,7 +5,7 @@ architecture decisions, design rationale, coding conventions, and other
 material relevant to contributors working on the NEST source code.
 
 Please ensure you are familiar with [all the relevant workflows for contributing
-code and documentation](https://nest-simulator.readthedocs.io/en/latest/contribute/index.html#contribute-to-nest)
+code and documentation](https://nest-simulator.readthedocs.io/en/stable/contribute/index.html#contribute-to-nest).
 
 ## Contents
 

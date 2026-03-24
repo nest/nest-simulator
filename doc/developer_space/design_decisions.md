@@ -42,34 +42,12 @@ what technical debt is incurred.
 
 <!-- Add entries below using the template above. -->
 
-### Use of the KernelManager singleton
-
-**Date:** pre-NEST 3.0 (exact date unknown)
-**Status:** Accepted
-
-**Context:**
-The kernel owns numerous subsystem managers (node, connection, simulation,
-MPI, etc.). These need to be accessible from many places in the codebase
-without passing references through every call chain.
-
-**Decision:**
-A single `KernelManager` singleton holds all subsystem managers and is
-accessed via a global `nest::kernel()` function.
-
-**Rationale:**
-Simplifies access patterns substantially. The kernel is intrinsically a
-global resource for a given simulation process.
-
-**Consequences:**
-Testing individual subsystems in isolation requires careful initialization of
-the full `KernelManager`. Parallelism considerations (e.g., thread-local vs.
-global state) must be handled explicitly inside each manager.
 
 ---
 
 ### Disentangle Kernel-Manager Include Tree (PR #3544)
 
-**Date Created:** 09.08.25
+**Date Created:** 2025-08-09
 **Date Merged:**
 **Status:** Accepted
 

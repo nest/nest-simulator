@@ -38,7 +38,7 @@ User (PyNEST) -> pynest C extension -> nestkernel C++ -> NodeManager / Connectio
                                                             -> Node::update() per neuron
 ```
 
-### Subsystem component diagram
+### Simplified subsystem component diagram
 
 \startuml
 skinparam componentStyle rectangle

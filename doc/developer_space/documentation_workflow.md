@@ -1,14 +1,14 @@
 # Developer Documentation Workflow {#devdoc_workflow}
 
-## Updating NEST source code (C++)
+## Update NEST source code (C++)
 
 For developer documentation of the C++ code, we use [Doxygen](http://doxygen.org/) comments
 extensively throughout NEST. If you add or modify the code, please ensure you document your
-changes with the correct Doxygen syntax (see \ref devdoc_coding_conventions "Coding conventions").
+changes with the correct Doxygen syntax (see also \ref devdoc_coding_conventions "Coding conventions").
 
-If you want to update PyNEST (see [our Read the Docs pages](https://nest-simulator.readthedocs.io/en/latest/contribute/index.html)).
+For information on updating PyNEST, see [our Read the Docs contribution guide](https://nest-simulator.readthedocs.io/en/stable/contribute/index.html).
 
-### Contribute to developer documentation
+## Contribute to developer documentation
 
 Add or update pages in `doc/developer_space/` as markdown (`.md`) files. Each file
 should begin with a level-1 heading followed by a Doxygen page label:
@@ -34,8 +34,8 @@ From any markdown page you can link directly to C++ documentation:
 | Target | Syntax | Example |
 |--------|--------|---------|
 | Namespaced class | `ns::ClassName` | `nest::Node` |
-| Method | `ns::ClassName::method()` | ` nest::SimulationManager::has_been_simulated()` |
-| File page | ` path/to/file.h` | `nestkernel/node.h` |
+| Method | `ns::ClassName::method()` | `nest::SimulationManager::has_been_simulated()` |
+| File page | `path/to/file.h` | `nestkernel/node.h` |
 
 The path for file links must match what is listed in the Doxygen `INPUT`
 setting relative to the source root (e.g. `nestkernel/kernel_manager.h`).
@@ -43,10 +43,12 @@ Always qualify class and method names with their namespace; unqualified names
 are not resolved from markdown pages. Method links require trailing `()`.
 
 Additional documentation for developers and contributors can be found on
-[Read the Docs](https://nest-simulator.readthedocs.io/en/latest/developer_space/),
+[Read the Docs](https://nest-simulator.readthedocs.io/en/stable/developer_space/),
 including reviewer guidelines, git workflows etc.
 
-## Documentation deployment: GitHub Pages
+## Documentation deployment
+
+### GitHub Pages
 
 The C++ developer documentation is deployed to GitHub Pages:
 
@@ -63,7 +65,7 @@ any of the following files were modified:
 
 This means the docs can change at any time, as developers actively work on **main**.
 
-## View the docs built on your pull request
+### View the docs built on your pull request
 
 The documentation workflow does **not** run automatically on pull requests. To preview
 the docs built from your branch, trigger the workflow manually from **your fork's** Actions tab:
@@ -79,7 +81,7 @@ the docs built from your branch, trigger the workflow manually from **your fork'
 > GitHub Pages deployment. Deployment to GitHub Pages only happens automatically when
 > a PR is merged into **main** on the upstream repository.
 
-> **Note:** The workflow file must exist on your fork's default branch for the Actions tab
+> **Note:** The workflow file must exist on your fork's **default branch** for the Actions tab
 > to show it. If you forked the repository, it will already be present.
 
 ## Local build
@@ -90,17 +92,6 @@ the docs built from your branch, trigger the workflow manually from **your fork'
    ```bash
    sudo apt install doxygen graphviz
    ```
-
-   > **Note:** The version shipped by `apt` is typically older than what CI uses and may
-   > produce slightly different output. For exact parity with CI, download the matching
-   > release:
-   > ```bash
-   > DOXYGEN_VERSION=$(grep 'DOXYGEN_VERSION:' .github/workflows/cpp_docs.yml | awk '{print $2}')
-   > DOXYGEN_TAG=$(echo "$DOXYGEN_VERSION" | tr '.' '_')
-   > wget "https://github.com/doxygen/doxygen/releases/download/Release_${DOXYGEN_TAG}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz"
-   > tar -xzf "doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz"
-   > sudo install "doxygen-${DOXYGEN_VERSION}/bin/doxygen" /usr/local/bin/doxygen
-   > ```
 
    macOS ([Homebrew](https://brew.sh/)):
    ```bash

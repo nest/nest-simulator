@@ -317,7 +317,7 @@ References
 
 .. [4] Shrestha SB, Orchard G (2018). SLAYER: Spike Layer Error Reassignment in
        Time. Advances in Neural Information Processing Systems, 31:1412-1421.
-       https://proceedings.neurips.cc/paper_files/paper/2018/hash/82.. rubric:: References
+       https://proceedings.neurips.cc/paper_files/paper/2018/hash/82
 
 .. [5] Zenke F, Ganguli S (2018). SuperSpike: Supervised Learning in Multilayer
        Spiking Neural Networks. Neural Computation, 30:1514–1541.

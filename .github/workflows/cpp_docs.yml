@@ -21,8 +21,6 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  DOXYGEN_VERSION: 1.12.0
-  DOXYGEN_SHA256: 3c42c3f3fb206732b503862d9c9c11978920a8214f223a3950bbf2520be5f647
   PLANTUML_JAR_URL: https://github.com/plantuml/plantuml/releases/download/v1.2023.10/plantuml.jar
   PLANTUML_SHA256: ee06454723028763dd8280459e8fd8f31fcd85b1ae8d9ab0e32122243c098c3b
 
@@ -45,28 +43,21 @@ jobs:
            egress-policy: audit
            disable-telemetry: true
 
-       - name: Cache Doxygen and PlantUML
+       - name: Cache PlantUML
          id: cache-deps
          uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
          with:
-           path: |
-             doxygen-${{ env.DOXYGEN_VERSION }}
-             ${{ github.workspace }}/plantuml.jar
-           key: doxygen-${{ env.DOXYGEN_VERSION }}-plantuml-${{ env.PLANTUML_SHA256 }}
+           path: ${{ github.workspace }}/plantuml.jar
+           key: plantuml-${{ env.PLANTUML_SHA256 }}
 
        - name: Install dependencies
          run: |
            sudo apt-get update
-           sudo apt-get install -y graphviz cmake build-essential default-jre-headless
+           sudo apt-get install -y graphviz cmake build-essential default-jre-headless doxygen
            if [ "${{ steps.cache-deps.outputs.cache-hit }}" != "true" ]; then
-             DOXYGEN_TAG=$(echo "$DOXYGEN_VERSION" | tr '.' '_')
-             wget -q "https://github.com/doxygen/doxygen/releases/download/Release_${DOXYGEN_TAG}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz" -O doxygen.tar.gz
-             echo "$DOXYGEN_SHA256  doxygen.tar.gz" | sha256sum -c
-             tar -xzf doxygen.tar.gz
              wget -q "$PLANTUML_JAR_URL" -O "$GITHUB_WORKSPACE/plantuml.jar"
              echo "$PLANTUML_SHA256  $GITHUB_WORKSPACE/plantuml.jar" | sha256sum -c
            fi
-           sudo install "doxygen-${DOXYGEN_VERSION}/bin/doxygen" /usr/local/bin/doxygen
 
        - name: Configure with CMake
          run: |
@@ -155,28 +146,21 @@ jobs:
           egress-policy: audit
           disable-telemetry: true
 
-      - name: Cache Doxygen and PlantUML
+      - name: Cache PlantUML
         id: cache-deps
         uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
         with:
-          path: |
-            doxygen-${{ env.DOXYGEN_VERSION }}
-            ${{ github.workspace }}/plantuml.jar
-          key: doxygen-${{ env.DOXYGEN_VERSION }}-plantuml-${{ env.PLANTUML_SHA256 }}
+          path: ${{ github.workspace }}/plantuml.jar
+          key: plantuml-${{ env.PLANTUML_SHA256 }}
 
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y graphviz cmake build-essential default-jre-headless
+          sudo apt-get install -y graphviz cmake build-essential default-jre-headless doxygen
           if [ "${{ steps.cache-deps.outputs.cache-hit }}" != "true" ]; then
-            DOXYGEN_TAG=$(echo "$DOXYGEN_VERSION" | tr '.' '_')
-            wget -q "https://github.com/doxygen/doxygen/releases/download/Release_${DOXYGEN_TAG}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz" -O doxygen.tar.gz
-            echo "$DOXYGEN_SHA256  doxygen.tar.gz" | sha256sum -c
-            tar -xzf doxygen.tar.gz
             wget -q "$PLANTUML_JAR_URL" -O "$GITHUB_WORKSPACE/plantuml.jar"
             echo "$PLANTUML_SHA256  $GITHUB_WORKSPACE/plantuml.jar" | sha256sum -c
           fi
-          sudo install "doxygen-${DOXYGEN_VERSION}/bin/doxygen" /usr/local/bin/doxygen
 
       - name: Configure with CMake
         run: |

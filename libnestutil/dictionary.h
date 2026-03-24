@@ -520,7 +520,7 @@ public:
   bool
   update_dictionary( Dictionary& dict_out ) const
   {
-    for ( auto [ key, value ] : *this )
+    for ( const auto& [ key, value ] : *this )
     {
       dict_out[ key ] = value.item;
     }

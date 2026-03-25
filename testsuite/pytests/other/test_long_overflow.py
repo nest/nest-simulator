@@ -26,18 +26,24 @@ Confirm that out-of-bounds Python integers raise exceptions.
 import nest
 import pytest
 
+LONG_MIN = -(2**63)
+LONG_MAX = 2**63 - 1
+
+LONG_BELOW_MIN = LONG_MIN - 1
+LONG_ABOVE_MAX = LONG_MAX + 1
+
 
 @pytest.fixture
 def neuron():
     return nest.Create("iaf_psc_alpha")
 
 
-@pytest.mark.parametrize("python_int", [-(2**63), 2**63 - 1])
+@pytest.mark.parametrize("python_int", [LONG_MIN, LONG_MAX])
 def test_within_bounds(neuron, python_int):
     neuron.V_m = python_int
 
 
-@pytest.mark.parametrize("python_int", [-(2**63) - 1, 2**63])
+@pytest.mark.parametrize("python_int", [LONG_BELOW_MIN, LONG_ABOVE_MAX])
 def test_outside_bounds(neuron, python_int):
     with pytest.raises(OverflowError):
         neuron.V_m = python_int

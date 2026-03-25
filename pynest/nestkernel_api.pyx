@@ -141,7 +141,7 @@ cdef anyvec_to_objtuple(any_type operand):
     return tuple(any_to_pyobj(obj) for obj in a_vec)
 
 cdef object any_to_pyobj(any_type operand):
-    """Convert an object of any of the types in the any_type variant to a Python object."""
+    """Convert an object of any of the types in the ``any_type`` variant to a Python object."""
 
     cdef NodeCollectionPTR ncptr
 
@@ -213,7 +213,7 @@ cdef is_list_tuple_ndarray_of_int(v):
 
 
 cdef Dictionary pydict_to_Dictionary(object py_dict) except *:  # Adding "except *" makes cython propagate the error if it is raised.
-    """Convert a Python dictionary to a C++ Dictionary with elements represented by the any_type variant."""
+    """Convert a Python dictionary to a C++ ``Dictionary`` with elements represented by the any_type variant."""
 
     cdef Dictionary cdict = Dictionary()
     for key, value in py_dict.items():

@@ -29,6 +29,7 @@
 // C++ includes:
 #include <cassert>
 #include <cmath>
+#include <cstddef>
 #include <limits>
 
 #if HAVE_EXPM1

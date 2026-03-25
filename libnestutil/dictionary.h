@@ -76,7 +76,7 @@ struct EmptyList;
  * information for a @ref NodeCollection is returned.
  *
  * @note Conversion from @ref Dictionary elements to and from Python datatypes is done by
- * @ref nestkernel_api.pyx:any_to_pyobj and @ref nestkernel_api.pyx:pydict_to_Dictionary, respectively. If you add a
+ * @c nestkernel_api.pyx:any_to_pyobj and @c nestkernel_api.pyx:pydict_to_Dictionary, respectively. If you add a
  * type to the variant, you most likely need to add corresponding conversions to those functions.
  *
  * @ingroup nestdict

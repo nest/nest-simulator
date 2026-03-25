@@ -34,6 +34,7 @@
 #include "stopwatch.h"
 
 // Includes from nestkernel:
+#include "cycle_time_log.h"
 #include "nest_time.h"
 #include "nest_types.h"
 
@@ -235,6 +236,10 @@ private:
   Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_gather_target_data_;
   Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_deliver_spike_data_;
   Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_deliver_secondary_data_;
+
+#ifdef CYCLE_TIMERS
+  CycleTimeLog cycle_time_log_;
+#endif
 
   double eprop_update_interval_;
   double eprop_learning_window_;

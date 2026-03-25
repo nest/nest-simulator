@@ -170,6 +170,11 @@ class NestModule(types.ModuleType):
         ),
         default=1000.0,
     )
+    cycle_time_log = KernelAttribute(
+        "dict",
+        ("Information on the duration and spike counts within each update cycle."),
+        readonly=True,
+    )
     tics_per_step = KernelAttribute(
         "int",
         "The number of tics per simulation time step. Calculated as tics_per_step = resolution * tics_per_ms",

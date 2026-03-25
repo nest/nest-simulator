@@ -88,7 +88,7 @@ check_cxx_symbol_exists( M_PI "cmath" HAVE_M_PI )
 
 # Check functions exist
 include( CheckFunctionExists )
-check_function_exists( expm1 "math.h" HAVE_EXPM1 )
+check_function_exists( expm1 HAVE_EXPM1 )
 
 # given a list, filter all header files
 function( FILTER_HEADERS in_list out_list )

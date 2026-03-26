@@ -125,7 +125,7 @@ examples:
   - voltmeter
 - name: clopath_synapse_small_network
   path: clopath_synapse_small_network.py
-  type: skip
+  type: python
   notes: SIGABRT in poisson_generator::pre_run_hook with OpenMP+MPI build; possible
     NEST bug
   convert_to_notebook: true
@@ -1060,7 +1060,7 @@ examples:
   - spike_recorder
 - name: ignore_and_fire
   path: ignore_and_fire/
-  type: snakemake
+  type:  skip
   convert_to_notebook: false
   category: networks
   last_change: "no change"

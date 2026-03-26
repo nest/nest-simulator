@@ -519,7 +519,7 @@ eprop_synapse< targetidentifierT >::get_status( Dictionary& d ) const
 {
   ConnectionBase::get_status( d );
   d[ names::weight ] = weight_;
-  d[ names::size_of ] = sizeof( *this );
+  d[ names::size_of ] = static_cast< long >( sizeof( *this ) );
 
   Dictionary optimizer_dict;
 

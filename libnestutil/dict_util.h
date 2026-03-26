@@ -43,7 +43,7 @@ update_value_param( Dictionary const& d, const std::string& key, T& value, nest:
 {
   assert( node != nullptr );
   const auto it = d.find( key );
-  if ( it != d.end() and is_type< std::shared_ptr< nest::Parameter > >( it->second.item ) )
+  if ( it != d.end() and std::holds_alternative< std::shared_ptr< nest::Parameter > >( it->second.item ) )
   {
     const auto param = d.get< ParameterPTR >( key );
     const auto vp = kernel().vp_manager.node_id_to_vp( node->get_node_id() );

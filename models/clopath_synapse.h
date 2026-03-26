@@ -305,7 +305,7 @@ clopath_synapse< targetidentifierT >::get_status( Dictionary& d ) const
   d[ names::tau_x ] = tau_x_;
   d[ names::Wmin ] = Wmin_;
   d[ names::Wmax ] = Wmax_;
-  d[ names::size_of ] = sizeof( *this );
+  d[ names::size_of ] = static_cast< long >( sizeof( *this ) );
 }
 
 template < typename targetidentifierT >

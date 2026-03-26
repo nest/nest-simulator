@@ -211,7 +211,7 @@ eprop_learning_signal_connection_bsshslm_2020< targetidentifierT >::get_status( 
 {
   ConnectionBase::get_status( d );
   d[ names::weight ] = weight_;
-  d[ names::size_of ] = sizeof( *this );
+  d[ names::size_of ] = static_cast< long >( sizeof( *this ) );
 }
 
 template < typename targetidentifierT >

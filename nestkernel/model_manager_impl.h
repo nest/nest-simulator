@@ -97,7 +97,7 @@ ModelManager::register_specific_connection_model_( const std::string& name )
     throw KernelException( "Synapse model count exceeded" );
   }
 
-  synapsedict_[ name ] = new_syn_id;
+  synapsedict_[ name ] = static_cast< long >( new_syn_id );
 
 #pragma omp parallel
   {

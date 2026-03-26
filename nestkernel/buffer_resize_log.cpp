@@ -58,13 +58,13 @@ BufferResizeLog::add_entry( size_t global_max_spikes_sent, size_t new_buffer_siz
 void
 BufferResizeLog::to_dict( Dictionary& events ) const
 {
-  auto& times = events.get_vector< int >( names::times );
+  auto& times = events.get_or_create_vector< long >( names::times );
   times.insert( times.end(), time_steps_.begin(), time_steps_.end() );
 
-  auto& gmss = events.get_vector< int >( names::global_max_spikes_sent );
+  auto& gmss = events.get_or_create_vector< long >( names::global_max_spikes_sent );
   gmss.insert( gmss.end(), global_max_spikes_sent_.begin(), global_max_spikes_sent_.end() );
 
-  auto& nbs = events.get_vector< int >( names::new_buffer_size );
+  auto& nbs = events.get_or_create_vector< long >( names::new_buffer_size );
   nbs.insert( nbs.end(), new_buffer_size_.begin(), new_buffer_size_.end() );
 }
 

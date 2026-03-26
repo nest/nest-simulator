@@ -70,7 +70,7 @@ void
 nest::music_event_out_proxy::Parameters_::set( const Dictionary& d, State_& s )
 {
   // TODO: This is not possible, as P_ does not know about get_name()
-  //  if(d->known(names::port_name) and s.published_)
+  //  if(d.known(names::port_name) and s.published_)
   //    throw MUSICPortAlreadyPublished(get_name(), P_.port_name_);
 
   if ( not s.published_ )
@@ -180,7 +180,7 @@ nest::music_event_out_proxy::get_status( Dictionary& d ) const
   P_.get( d );
   S_.get( d );
 
-  d[ names::connection_count ] = V_.index_map_.size();
+  d[ names::connection_count ] = static_cast< long >( V_.index_map_.size() );
 
   // make a copy, since MUSIC uses int instead of long int
   std::vector< long > pInd_map_long( V_.index_map_.size() );

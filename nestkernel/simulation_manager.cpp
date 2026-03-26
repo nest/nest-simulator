@@ -460,7 +460,7 @@ nest::SimulationManager::get_status( Dictionary& d )
   d[ names::ms_per_tic ] = Time::get_ms_per_tic();
   d[ names::tics_per_ms ] = Time::get_tics_per_ms();
   d[ names::tics_per_step ] =
-    static_cast< size_t >( Time::get_tics_per_step() );  // casting to avoid extra checks of any types
+    static_cast< long >( Time::get_tics_per_step() );  // casting to avoid extra checks of any types
   d[ names::resolution ] = Time::get_resolution().get_ms();
 
   d[ names::T_min ] = Time::min().get_ms();
@@ -476,7 +476,7 @@ nest::SimulationManager::get_status( Dictionary& d )
   d[ names::wfr_comm_interval ] = wfr_comm_interval_;
   d[ names::wfr_tol ] = wfr_tol_;
   d[ names::wfr_max_iterations ] = wfr_max_iterations_;
-  d[ names::wfr_interpolation_order ] = wfr_interpolation_order_;
+  d[ names::wfr_interpolation_order ] = static_cast< long >( wfr_interpolation_order_ );
 
   d[ names::update_time_limit ] = update_time_limit_;
   d[ names::min_update_time ] = min_update_time_;

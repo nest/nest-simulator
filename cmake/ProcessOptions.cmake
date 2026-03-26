@@ -144,9 +144,9 @@ function( NEST_PROCESS_STATIC_LIBRARIES )
     set( CMAKE_SKIP_RPATH TRUE PARENT_SCOPE )
 
     if ( UNIX OR APPLE )
-      # On Linux .a is the static library suffix, on Mac OS X .lib can also
-      # be used, so we'll add both to the preference list.
-      set( CMAKE_FIND_LIBRARY_SUFFIXES ".a;.lib;.dylib;.so" PARENT_SCOPE )
+      # On Linux .a is the static library suffix, on macOS .lib can also
+      # be used, so we'll add both to the preference list. macOS also uses .tbd.
+      set( CMAKE_FIND_LIBRARY_SUFFIXES ".a;.lib;.dylib;.tbd;.so" PARENT_SCOPE )
     endif ()
 
     if ( Fugaku )
@@ -208,7 +208,7 @@ function( NEST_PROCESS_STATIC_LIBRARIES )
 
     if ( UNIX OR APPLE )
       # reverse the search order for lib extensions
-      set( CMAKE_FIND_LIBRARY_SUFFIXES ".so;.dylib;.a;.lib" PARENT_SCOPE )
+      set( CMAKE_FIND_LIBRARY_SUFFIXES ".so;.dylib;.tbd;.a;.lib" PARENT_SCOPE )
     endif ()
   endif ()
 endfunction()

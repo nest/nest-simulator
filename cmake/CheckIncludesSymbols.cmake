@@ -86,9 +86,21 @@ include( CheckCXXSymbolExists )
 check_cxx_symbol_exists( M_E "cmath" HAVE_M_E )
 check_cxx_symbol_exists( M_PI "cmath" HAVE_M_PI )
 
-# Check functions exist
-include( CheckFunctionExists )
-check_function_exists( expm1 HAVE_EXPM1 )
+# Check function exist
+# For potentially overladed functions CMake recommends to test compilation:
+# https://cmake.org/cmake/help/latest/module/CheckCXXSymbolExists.html#module:CheckCXXSymbolExists
+include( CheckSourceCompiles )
+check_source_compiles( CXX
+  [[
+    #include <cmath>
+
+    int main()
+    {
+    std::expm1(1.0);
+    return 0;
+    }
+  ]]
+  HAVE_EXPM1 )
 
 # given a list, filter all header files
 function( FILTER_HEADERS in_list out_list )

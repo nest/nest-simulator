@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# sync_examples.py
+# check_examples_registry.py
 #
 # This file is part of NEST.
 #
@@ -21,7 +21,10 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-YAML synchronization script for NEST examples.
+Registry validation script for NEST examples.
+
+Validates that pynest/examples/ and examples.yml are in sync — it does not
+modify examples.yml.  Run this before prerelease_check.py.
 
 This script:
 1. Scans pynest/examples/ for Python files and subdirectories
@@ -31,8 +34,8 @@ This script:
 5. Provides suggested YAML additions for review
 
 Usage:
-    python sync_examples.py --examples-dir pynest/examples
-    python sync_examples.py --examples-dir pynest/examples --output suggestions.yml
+    python check_examples_registry.py --examples-dir pynest/examples
+    python check_examples_registry.py --examples-dir pynest/examples --output suggestions.yml
 
 Output includes:
 - List of missing entries (new files to add)
@@ -41,7 +44,6 @@ Output includes:
 """
 
 import argparse
-import os
 import sys
 from pathlib import Path
 
@@ -86,7 +88,7 @@ def get_entry_point_files(directory):
     Priority:
     1. Known entry point patterns (run_simulation.py, etc.)
     2. Single .py file if only one exists
-    3. Empty list if ambiguous or none found
+    3. All .py files if ambiguous (all are registered as separate entries)
     """
     if not directory.is_dir():
         return []
@@ -258,13 +260,14 @@ def generate_suggested_yaml(missing):
         suggested.append(f"    type: python")
         suggested.append(f"    convert_to_notebook: true")
         suggested.append(f"    category: {item['category']}")
+        suggested.append(f'    last_change: "no change"')
         suggested.append("")
 
     return "\n".join(suggested)
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Sync examples.yml with pynest/examples/ directory")
+    parser = argparse.ArgumentParser(description="Validate examples.yml registry against pynest/examples/ directory")
     parser.add_argument("--examples-dir", required=True, help="Path to pynest/examples/ directory")
     parser.add_argument("--output", type=str, help="Output file for suggested YAML additions")
 
@@ -273,13 +276,9 @@ def main():
     examples_dir = Path(args.examples_dir).resolve()
     yaml_file = examples_dir / "examples.yml"
 
-    try:
-        yaml_data = load_yaml_file(yaml_file)
-        validate_yaml(yaml_data)
-        print(f"✓ YAML file is valid: {yaml_file}")
-    except SystemExit as e:
-        if e.code != 0:
-            raise
+    yaml_data = load_yaml_file(yaml_file)
+    validate_yaml(yaml_data)
+    print(f"✓ YAML file is valid: {yaml_file}")
 
     print("\nScanning examples directory...")
     discovered = scan_examples_directory(examples_dir)

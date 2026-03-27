@@ -17,11 +17,11 @@
 # The branch can also be selected from the GitHub UI:
 #   Actions → Pre-release examples check → Run workflow → select branch
 #
-# Steps (all must pass before dispatch fires):
-#   1. YAML sync     — sync_examples.py: every .py file is registered; no orphaned entries
+# Checks (all must pass before dispatch fires):
+#   1. Registry sync — check_examples_registry.py: every .py file registered; no orphaned entries
 #   2. Change check  — prerelease_check.py: changed/new files have last_change updated
 #   3. Field check   — prerelease_check.py: all entries have required fields non-empty
-#   4. Dispatch      — repository_dispatch to nest/nest-simulator-examples
+#   4. Path check    — prerelease_check.py: helper_scripts and data_files paths exist on disk
 #
 # If any check fails, the workflow exits with a summary of what needs fixing.
 # Update examples.yml, commit, and re-run.
@@ -59,7 +59,7 @@ jobs:
           egress-policy: audit
           disable-telemetry: true
 
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v4.2.2
         with:
           fetch-depth: 0  # full history required for git diff across tags
 
@@ -80,25 +80,27 @@ jobs:
           echo "Previous stable release : $PREV"
           echo "Current ref             : ${{ github.ref_name }}"
 
-      - uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
+      - uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v5.6.0
         with:
           python-version: "3.11"
 
       - name: Install dependencies
         run: pip install pyyaml
 
-      - name: "Check 1: YAML sync — all files registered, no orphaned entries"
-        run: python .github/scripts/sync_examples.py --examples-dir pynest/examples
+      - name: "Check 1: Registry sync — all files registered, no orphaned entries"
+        run: python .github/scripts/check_examples_registry.py --examples-dir pynest/examples
 
-      - name: "Check 2+3+4: Changed files, required fields, and paths"
+      - name: "Checks 2-4: Changed files, required fields, and paths"
         run: |
           python .github/scripts/prerelease_check.py \
             --examples-dir pynest/examples \
-            --previous-tag ${{ steps.prev_tag.outputs.tag }} \
-            --current-tag ${{ github.ref_name }}
+            --previous-tag ${{ steps.prev_tag.outputs.tag }}
 
       - name: Generate GitHub App token
         id: app-token
+        # Only runs when the GitHub App is configured; skipped silently otherwise.
+        if: vars.APP_ID != ''
+        continue-on-error: true
         uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859 # v3.0.0
         with:
           app-id: ${{ vars.APP_ID }}

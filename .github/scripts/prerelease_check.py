@@ -23,35 +23,33 @@
 """
 Pre-release validation for pynest/examples/examples.yml.
 
-Run this after sync_examples.py (which checks file/YAML sync).
+Run this after check_examples_registry.py (which checks file/YAML sync).
 This script checks:
 
-  1. Changed files: any example file changed since PREVIOUS_TAG must have
+  2. Changed files: any example file changed since PREVIOUS_TAG must have
      its last_change field updated from "no change".
-  2. New files: any example file that did not exist in PREVIOUS_TAG must have
-     last_change starting with "new since".
+     New files must have last_change starting with "new since".
   3. Required fields: all YAML entries must have non-empty values for every
-     required field.
+     required field.  type:skip entries must have a non-empty notes field.
+     type:skip entries must not have convert_to_notebook: true.
   4. Paths: all helper_scripts and data_files paths must exist on disk.
+
+Check numbers correspond to the steps in trigger-examples-on-prerelease.yml.
+Check 1 (registry sync) is performed by check_examples_registry.py.
 
 If all checks pass, exit 0 — safe to trigger downstream dispatch.
 If any check fails, exit 1 — fix examples.yml and re-run.
 
 Usage:
     python prerelease_check.py --examples-dir pynest/examples --previous-tag vMAJOR.MINOR
-    python prerelease_check.py --examples-dir pynest/examples --previous-tag vMAJOR.MINOR --current-tag vMAJOR.MINOR-rcN
 """
 
 import argparse
-import re
 import subprocess
 import sys
 from pathlib import Path
 
 import yaml
-
-# Accepted tag formats: vMAJOR.MINOR  vMAJOR.MINOR-rcN  vMAJOR.MINOR.PATCH
-_TAG_RE = re.compile(r"^v[0-9]+\.[0-9]+(?:[.\-][\w.]+)?$")
 
 REQUIRED_FIELDS = ["name", "path", "type", "category", "convert_to_notebook", "last_change"]
 
@@ -94,7 +92,7 @@ def get_changed_files(prev_tag, examples_dir, repo_root):
     return changed
 
 
-def existed_in_tag(rel_path, tag, examples_dir, repo_root):
+def exists_at_tag(rel_path, tag, examples_dir, repo_root):
     """Return True if examples_dir/rel_path existed in the given tag."""
     rel_examples = examples_dir.relative_to(repo_root)
     result = subprocess.run(
@@ -106,7 +104,7 @@ def existed_in_tag(rel_path, tag, examples_dir, repo_root):
     return bool(result.stdout.strip())
 
 
-def load_entries(examples_dir):
+def load_yaml_entries(examples_dir):
     yaml_file = examples_dir / "examples.yml"
     with open(yaml_file) as f:
         data = yaml.safe_load(f)
@@ -117,24 +115,21 @@ def main():
     parser = argparse.ArgumentParser(description="Pre-release validation for examples.yml")
     parser.add_argument("--examples-dir", required=True, help="Path to pynest/examples/ directory")
     parser.add_argument("--previous-tag", required=True, help="Last stable release tag, e.g. vMAJOR.MINOR")
-    parser.add_argument("--current-tag", default="HEAD", help="Current tag or ref (default: HEAD)")
     args = parser.parse_args()
 
     examples_dir = Path(args.examples_dir).resolve()
     prev_tag = args.previous_tag
-    current_tag = args.current_tag
     repo_root = get_repo_root()
 
     print(f"Examples directory       : {examples_dir}")
     print(f"Previous stable release  : {prev_tag}")
-    print(f"Current ref              : {current_tag}")
     print()
 
-    entries = load_entries(examples_dir)
+    entries = load_yaml_entries(examples_dir)
     by_path = {e["path"]: e for e in entries}
     failures = []
 
-    # ── Check 1+2: changed and new files ─────────────────────────────────────
+    # ── Check 2: changed and new files ───────────────────────────────────────
     print(f"Checking for changes in pynest/examples/ since {prev_tag}...")
     changed_files = get_changed_files(prev_tag, examples_dir, repo_root)
 
@@ -148,12 +143,12 @@ def main():
     for rel_path in sorted(changed_files):
         entry = by_path.get(rel_path)
         if entry is None:
-            # Not registered in YAML — sync_examples.py catches this.
+            # Not registered in YAML — check_examples_registry.py catches this.
             continue
 
         name = entry.get("name", rel_path)
         last_change = entry.get("last_change") or ""
-        is_new = not existed_in_tag(rel_path, prev_tag, examples_dir, repo_root)
+        is_new = not exists_at_tag(rel_path, prev_tag, examples_dir, repo_root)
 
         if is_new:
             if not last_change.startswith("new"):
@@ -181,6 +176,10 @@ def main():
                 field_failures.append(f"  {name}: field '{field}' is missing or empty")
         if entry.get("convert_to_notebook") is True and not entry.get("models"):
             field_failures.append(f"  {name}: convert_to_notebook=true but 'models' is missing or empty")
+        if entry.get("type") == "skip" and not entry.get("notes"):
+            field_failures.append(f"  {name}: type=skip but 'notes' is missing or empty (shown in dashboard)")
+        if entry.get("type") == "skip" and entry.get("convert_to_notebook") is True:
+            field_failures.append(f"  {name}: type=skip and convert_to_notebook=true are contradictory")
 
     if field_failures:
         print(f"  {len(field_failures)} field issue(s) found.")

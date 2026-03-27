@@ -860,8 +860,6 @@ examples:
   last_change: "no change"
   models:
   - iaf_psc_alpha
-  - in
-  - pyr
 - name: spatial_conncon_sources
   path: spatial/conncon_sources.py
   type: python
@@ -870,8 +868,6 @@ examples:
   last_change: "no change"
   models:
   - iaf_psc_alpha
-  - in
-  - pyr
 - name: spatial_conncon_targets
   path: spatial/conncon_targets.py
   type: python
@@ -880,8 +876,6 @@ examples:
   last_change: "no change"
   models:
   - iaf_psc_alpha
-  - in
-  - pyr
 - name: spatial_connex
   path: spatial/connex.py
   type: python
@@ -890,8 +884,6 @@ examples:
   last_change: "no change"
   models:
   - iaf_psc_alpha
-  - in
-  - pyr
 - name: spatial_connex_ew
   path: spatial/connex_ew.py
   type: python
@@ -900,8 +892,6 @@ examples:
   last_change: "no change"
   models:
   - iaf_psc_alpha
-  - in
-  - pyr
 - name: spatial_ctx_2n
   path: spatial/ctx_2n.py
   type: python
@@ -910,8 +900,6 @@ examples:
   last_change: "no change"
   models:
   - iaf_psc_alpha
-  - in
-  - pyr
 - name: spatial_gaussex
   path: spatial/gaussex.py
   type: python
@@ -920,8 +908,6 @@ examples:
   last_change: "no change"
   models:
   - iaf_psc_alpha
-  - in
-  - pyr
 - name: spatial_grid_iaf
   path: spatial/grid_iaf.py
   type: python
@@ -930,8 +916,6 @@ examples:
   last_change: "no change"
   models:
   - iaf_psc_alpha
-  - in
-  - pyr
 - name: spatial_grid_iaf_irr
   path: spatial/grid_iaf_irr.py
   type: python
@@ -940,8 +924,6 @@ examples:
   last_change: "no change"
   models:
   - iaf_psc_alpha
-  - in
-  - pyr
 - name: spatial_grid_iaf_oc
   path: spatial/grid_iaf_oc.py
   type: python
@@ -950,8 +932,6 @@ examples:
   last_change: "no change"
   models:
   - iaf_psc_alpha
-  - in
-  - pyr
 - name: spatial_nodes_source_target
   path: spatial/nodes_source_target.py
   type: python
@@ -960,8 +940,6 @@ examples:
   last_change: "no change"
   models:
   - iaf_psc_alpha
-  - in
-  - pyr
 - name: spatial_test_3d
   path: spatial/test_3d.py
   type: python
@@ -970,8 +948,6 @@ examples:
   last_change: "no change"
   models:
   - iaf_psc_alpha
-  - in
-  - pyr
 - name: spatial_test_3d_exp
   path: spatial/test_3d_exp.py
   type: python
@@ -980,8 +956,6 @@ examples:
   last_change: "no change"
   models:
   - iaf_psc_alpha
-  - in
-  - pyr
 - name: spatial_test_3d_gauss
   path: spatial/test_3d_gauss.py
   type: python
@@ -990,8 +964,6 @@ examples:
   last_change: "no change"
   models:
   - iaf_psc_alpha
-  - in
-  - pyr
 - name: EI_clustered_network
   path: EI_clustered_network/run_simulation.py
   type: python

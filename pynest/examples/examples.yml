@@ -1,3 +1,74 @@
+# Registry of all PyNEST examples in pynest/examples/.
+#
+# This file is the single source of truth for example metadata.  It is read by:
+#   - check_examples_registry.py  : validates every .py file is registered (CI Check 1)
+#   - prerelease_check.py         : validates metadata before a release (CI Checks 2-4)
+#   - run-examples.yml            : selects and runs examples in downstream CI
+#   - convert-notebooks-on-prerelease.yml : converts selected examples to Jupyter notebooks in downstream CI
+#   - Sphinx listexamples directive: links model doc pages to relevant examples
+#   - Sphinx add_button_notebook: adds EBRAINS button to relevant examples
+#
+# ── Required fields ─────────────────────────────────────────────────────────────
+#
+# name: str
+#   Unique identifier for the example.  Used in CI output, the dashboard, and
+#   Sphinx cross-references.
+#
+# path: str
+#   Path to the entry-point script, relative to pynest/examples/.
+#   For multi-file examples, this is the main script (e.g. run_simulation.py).
+#   Used by check_examples_registry.py (orphaned-entry check), prerelease_check.py
+#   (git diff and path validation), run-examples.yml (execution), and
+#   convert-notebooks-on-prerelease.yml (jupytext conversion).
+#
+# type: python | snakemake | skip
+#   Controls how run-examples.yml handles the entry:
+#     python    — run via run_example.py
+#     snakemake — run via `snakemake` in the example directory
+#     skip      — excluded from CI runs; must have a non-empty 'notes' field
+#                 explaining why; entry appears in the dashboard skipped dropdown.
+#
+# convert_to_notebook: true | false
+#   If true, convert-notebooks-on-prerelease.yml converts the example to a
+#   Jupyter notebook for EBRAINS.  Requires 'models' to be non-empty
+#   (enforced by prerelease_check.py).
+#   Use false for examples that depend on MPI, special hardware, or large data.
+#   Used also in Sphinx extensions to filter for relevant examples.
+#
+# category: str
+#   Thematic group (e.g. neurons, networks, synapses, spatial).
+#   Used by the Sphinx listexamples directive to group examples on model pages.
+#
+# last_change: "no change" | "changes since version vMAJOR.MINOR" | "new since version vMAJOR.MINOR"
+#   Must be updated for every .py file that changes between releases.
+#   prerelease_check.py enforces this before dispatch fires.
+#   inject_version_cell.py (nest-simulator-examples) injects this text as the
+#   first cell of each converted notebook so readers know what changed.
+#
+# models: list[str]
+#   Used by the Sphinx listexamples directive to link model pages to examples.
+#   Required (non-empty) when convert_to_notebook: true.
+#   Note: do not list example-local CopyModel aliases — only the source model names.
+#
+# ── Optional fields ──────────────────────────────────────────────────────────────
+#
+# notes: str
+#   Free-text explanation.  Required for type: skip entries (shown in the CI
+#   dashboard skipped-examples dropdown).  May also appear on type: python entries
+#   to document known issues or caveats.
+#
+# helper_scripts: list[str]
+#   Additional .py files the example imports, relative to pynest/examples/.
+#   prerelease_check.py verifies all listed paths exist on disk (CI Check 4).
+#
+# data_files: list[{path: str, formats: list[str], description: str}]
+#   Data files bundled with the example (relative to pynest/examples/).
+#   prerelease_check.py verifies that each 'path' exists on disk (CI Check 4).
+#
+# post_script: str
+#   A script to run after the main example, relative to pynest/examples/.
+#   Used by run-examples.yml (e.g. to generate a GIF from simulation output).
+#
 examples:
 - name: aeif_cond_beta_multisynapse
   path: aeif_cond_beta_multisynapse.py

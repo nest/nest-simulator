@@ -1101,20 +1101,6 @@ examples:
   - iaf_psc_exp
   - poisson_generator
   - spike_recorder
-- name: ignore_and_fire
-  path: ignore_and_fire/
-  type:  skip
-  convert_to_notebook: false
-  category: networks
-  last_change: "no change"
-  run_command: snakemake -c4
-  helper_scripts:
-  - ignore_and_fire/extract_reference_data.py
-  - ignore_and_fire/generate_figures_for_docs.py
-  data_files:
-  - path: ignore_and_fire/data/
-    formats: [dat, json]
-    description: "Precomputed reference simulation data (spike trains and connectivity), organised by network size"
 - name: music_cont_out_proxy
   path: music_cont_out_proxy_example/nest_script.py
   type: skip

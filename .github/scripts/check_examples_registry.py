@@ -257,10 +257,10 @@ def generate_suggested_yaml(missing):
 
         suggested.append(f"  - name: {item['name']}")
         suggested.append(f"    path: {item['path']}")
-        suggested.append(f"    type: python")
-        suggested.append(f"    convert_to_notebook: true")
+        suggested.append("    type: python")
+        suggested.append("    convert_to_notebook: true")
         suggested.append(f"    category: {item['category']}")
-        suggested.append(f'    last_change: "no change"')
+        suggested.append('    last_change: "no change"')
         suggested.append("")
 
     return "\n".join(suggested)

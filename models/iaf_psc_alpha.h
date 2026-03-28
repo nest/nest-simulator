@@ -206,7 +206,6 @@ Examples using this model
 .. listexamples:: iaf_psc_alpha
 
 EndUserDocs */
-
 // clang-format on
 
 void register_iaf_psc_alpha( const std::string& name );

@@ -77,7 +77,7 @@ def test_create_with_params_dict():
     voltage = 12.0
     nodes = nest.Create("iaf_psc_alpha", num_nodes, {"V_m": voltage})
 
-    nptest.assert_equal(nodes.V_m, voltage)
+    assert nodes.V_m == (voltage,) * num_nodes
 
 
 def test_create_accepts_empty_params_dict():

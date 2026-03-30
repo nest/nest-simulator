@@ -265,13 +265,6 @@ nc_const_iterator::advance_local_iter_to_new_part_( size_t n )
   }
 }
 
-void
-nc_const_iterator::print_me( std::ostream& out ) const
-{
-  out << "[[" << this << " pc: " << primitive_collection_ << ", cc: " << composite_collection_ << ", px: " << part_idx_
-      << ", ex: " << element_idx_ << "]]";
-}
-
 NodeIDTriple
 nc_const_iterator::operator*() const
 {
@@ -671,7 +664,7 @@ NodeCollectionPrimitive::slice( size_t start, size_t end, size_t stride ) const
   return sliced_nc;
 }
 
-void
+std::ostream&
 NodeCollectionPrimitive::print_me( std::ostream& out ) const
 {
   out << "NodeCollection(";
@@ -681,11 +674,13 @@ NodeCollectionPrimitive::print_me( std::ostream& out ) const
   }
   else
   {
-    std::string metadata = metadata_.get() ? metadata_->get_type() : "None";
+    const std::string metadata = metadata_.get() ? metadata_->get_type() : "None";
     out << "metadata=" << metadata << ", ";
     print_primitive( out );
   }
   out << ")";
+
+  return out;
 }
 
 void
@@ -1342,12 +1337,12 @@ NodeCollectionComposite::has_proxies() const
     parts_.begin(), parts_.end(), []( const NodeCollectionPrimitive& prim ) { return prim.has_proxies(); } );
 }
 
-void
+std::ostream&
 NodeCollectionComposite::print_me( std::ostream& out ) const
 {
   std::string metadata = parts_[ 0 ].get_metadata().get() ? parts_[ 0 ].get_metadata()->get_type() : "None";
-  std::string nc = "NodeCollection(";
-  std::string space( nc.size(), ' ' );
+  std::string nc_str = "NodeCollection(";
+  std::string space( nc_str.size(), ' ' );
 
   if ( is_sliced_ )
   {
@@ -1361,7 +1356,7 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
 
     std::vector< std::string > string_vector;
 
-    out << nc << "metadata=" << metadata << ",";
+    out << nc_str << "metadata=" << metadata << ",";
 
     const auto end_it = end();
     for ( nc_const_iterator it = begin(); it < end_it; ++it )
@@ -1420,7 +1415,7 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
   else
   {
     // Unsliced Composite NodeCollection
-    out << nc << "metadata=" << metadata << ",";
+    out << nc_str << "metadata=" << metadata << ",";
     for ( auto it = parts_.begin(); it < parts_.end(); ++it )
     {
       if ( it == parts_.end() - 1 )
@@ -1437,6 +1432,8 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
     }
   }
   out << ")";
+
+  return out;
 }
 
 }  // namespace nest

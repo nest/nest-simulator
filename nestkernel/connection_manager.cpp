@@ -22,9 +22,6 @@
 
 #include "connection_manager.h"
 
-// Generated includes:
-#include "config.h"
-
 // C++ includes:
 #include <algorithm>
 #include <cassert>
@@ -41,7 +38,6 @@
 // Includes from nestkernel:
 #include "clopath_archiving_node.h"
 #include "conn_builder.h"
-#include "conn_builder_conngen.h"
 #include "conn_builder_factory.h"
 #include "connection_id.h"
 #include "connection_label.h"
@@ -49,19 +45,19 @@
 #include "connector_base.h"
 #include "connector_model.h"
 #include "delay_checker.h"
-#include "eprop_archiving_node.h"
 #include "eprop_archiving_node_readout.h"
 #include "eprop_archiving_node_recurrent.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
-#include "mpi_manager_impl.h"
 #include "nest_names.h"
 #include "nest_types.h"
 #include "node.h"
-#include "sonata_connector.h"
 #include "stopwatch_impl.h"
 #include "target_table_devices_impl.h"
-#include "vp_manager_impl.h"
+
+#ifdef HAVE_HDF5
+#include "sonata_connector.h"
+#endif
 
 
 nest::ConnectionManager::ConnectionManager()
@@ -221,7 +217,7 @@ nest::ConnectionManager::get_status( Dictionary& dict )
   dict[ names::max_delay ] = Time( Time::step( max_delay_ ) ).get_ms();
 
   const size_t n = get_num_connections();
-  dict[ names::num_connections ] = n;
+  dict[ names::num_connections ] = static_cast< long >( n );
   dict[ names::keep_source_table ] = keep_source_table_;
   dict[ names::use_compressed_spikes ] = use_compressed_spikes_;
 
@@ -245,17 +241,16 @@ nest::ConnectionManager::get_synapse_status( const size_t source_node_id,
   kernel().model_manager.assert_valid_syn_id( syn_id, kernel().vp_manager.get_thread_id() );
 
   Dictionary dict;
-  dict[ names::source ] = source_node_id;
+  dict[ names::source ] = static_cast< long >( source_node_id );
   dict[ names::synapse_model ] = kernel().model_manager.get_connection_model( syn_id, /* thread */ 0 ).get_name();
-  dict[ names::target_thread ] = tid;
-  dict[ names::synapse_id ] = syn_id;
-  dict[ names::port ] = lcid;
+  dict[ names::target_thread ] = static_cast< long >( tid );
+  dict[ names::synapse_id ] = static_cast< long >( syn_id );
+  dict[ names::port ] = static_cast< long >( lcid );
 
   const Node* source = kernel().node_manager.get_node_or_proxy( source_node_id, tid );
   const Node* target = kernel().node_manager.get_node_or_proxy( target_node_id, tid );
 
-  // synapses from neurons to neurons and from neurons to globally
-  // receiving devices
+  // synapses from neurons to neurons and from neurons to globally receiving devices
   if ( ( source->has_proxies() and target->has_proxies() and connections_[ tid ][ syn_id ] )
     or ( ( source->has_proxies() and not target->has_proxies() and not target->local_receiver()
       and connections_[ tid ][ syn_id ] ) ) )
@@ -396,7 +391,7 @@ nest::ConnectionManager::get_conn_builder( const std::string& name,
     throw IllegalConnection( String::compose( "Unknown connection rule '%1'.", name ) );
   }
 
-  const size_t rule_id = connruledict_.get< size_t >( name );
+  const size_t rule_id = connruledict_.get< long >( name );
   BipartiteConnBuilder* cb =
     connbuilder_factories_.at( rule_id )->create( sources, targets, third_out, conn_spec, syn_specs );
   assert( cb );
@@ -416,7 +411,7 @@ nest::ConnectionManager::get_third_conn_builder( const std::string& name,
     throw IllegalConnection( String::compose( "Unknown third-factor connection rule '%1'.", name ) );
   }
 
-  const size_t rule_id = thirdconnruledict_.get< size_t >( name );
+  const size_t rule_id = thirdconnruledict_.get< long >( name );
   ThirdOutBuilder* cb =
     thirdconnbuilder_factories_.at( rule_id )->create( sources, targets, third_in, conn_spec, syn_specs );
   assert( cb );
@@ -607,12 +602,12 @@ nest::ConnectionManager::connect( const size_t snode_id,
 }
 
 void
-nest::ConnectionManager::connect_arrays( long* sources,
-  long* targets,
-  double* weights,
-  double* delays,
+nest::ConnectionManager::connect_arrays( const long* sources,
+  const long* targets,
+  const double* weights,
+  const double* delays,
   const std::vector< std::string >& p_keys,
-  double* p_values,
+  const double* p_values,
   size_t n,
   const std::string& syn_model )
 {
@@ -622,7 +617,7 @@ nest::ConnectionManager::connect_arrays( long* sources,
 
   // Mapping pointers to the first parameter value of each parameter to their respective names.
   // The bool indicates whether the value is an integer or not, and is determined at a later point.
-  std::map< std::string, std::pair< double*, bool > > param_pointers;
+  std::map< std::string, std::pair< const double*, bool > > param_pointers;
   if ( p_keys.size() != 0 )
   {
     size_t i = 0;
@@ -657,7 +652,7 @@ nest::ConnectionManager::connect_arrays( long* sources,
       }
 
       // If the default value is an integer, the synapse parameter must also be an integer.
-      if ( is_type< long >( syn_model_default_it->second.item ) )
+      if ( std::holds_alternative< long >( syn_model_default_it->second.item ) )
       {
         param_pointers[ param_key ].second = true;
         param_dicts[ i ][ param_key ] = 0;

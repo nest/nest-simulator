@@ -59,7 +59,7 @@ def test_copymodel_with_secondary_events():
     nest.Simulate(10.0)
 
     # Check that both neurons have become depolarized due to input from neuron_in
-    assert all(neurons_out.V_m > V_m_ini)
+    assert all(Vm_out > Vm_ini for Vm_out, Vm_ini in zip(neurons_out.V_m, V_m_ini))
 
     # Check stronger effect on second neuron due to larger weight
     assert neurons_out[1].V_m > neurons_out[0].V_m

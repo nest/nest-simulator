@@ -1119,7 +1119,6 @@ nest::SimulationManager::update_()
           // exceptions in parallel context. So we set a flag and process it immediately
           // after the master section.
           update_time_limit_exceeded = update_time > update_time_limit_;
-
 #ifdef CYCLE_TIMERS
 
           const double end_current_communicate =

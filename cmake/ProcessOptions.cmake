@@ -439,7 +439,6 @@ function(NEST_PROCESS_WITH_CYCLE_TIMERS)
   endif()
 endfunction()
 
-
 function( NEST_PROCESS_WITH_THREADED_TIMERS )
   set( THREADED_TIMERS OFF PARENT_SCOPE )
   if ( ${with-threaded-timers} STREQUAL "ON" )

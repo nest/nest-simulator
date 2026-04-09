@@ -575,8 +575,13 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::send( Event& e,
 
   if ( t_spike_previous_ > 0 )
   {
-    presyn_isis_.push_back(
-      std::min( t_spike, t_next_update_ + shift ) - std::min( t_spike_previous_, t_next_update_ + shift ) );
+    const long presyn_isi =
+      std::min( t_spike, t_next_update_ + shift ) - std::min( t_spike_previous_, t_next_update_ + shift );
+
+    if ( presyn_isi > 0 )
+    {
+      presyn_isis_.push_back( presyn_isi );
+    }
   }
 
   if ( t_spike > t_next_update_ + shift )
@@ -586,8 +591,11 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::send( Event& e,
 
     target->write_update_to_history( t_previous_update_, t_current_update, is_flush_event, previous_was_flush_event_ );
 
-    gradient_ += target->compute_gradient(
-      presyn_isis_, t_previous_update_, t_previous_trigger_spike_, kappa_, cp.average_gradient_ );
+    if ( not presyn_isis_.empty() and t_spike_previous_ > 0 )
+    {
+      gradient_ += target->compute_gradient(
+        presyn_isis_, t_previous_update_, t_previous_trigger_spike_, kappa_, cp.average_gradient_ );
+    }
 
     if ( not is_flush_event )
     {

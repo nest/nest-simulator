@@ -402,7 +402,7 @@ eprop_iaf::compute_gradient( const long t_spike,
 
   for ( long t = t_begin; t < t_end; ++t, ++eprop_hist_it )
   {
-    assert( t == eprop_hist_it->t_ );
+    require_eprop_history_entry( eprop_hist_it, t );
 
     const double z = z_previous_buffer;  // spiking variable
     z_previous_buffer = z_current_buffer;

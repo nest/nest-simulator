@@ -70,6 +70,18 @@ public:
     const long t_current_update,
     const bool is_flush_event,
     const bool previous_was_flush_event ) override;
+
+  /**
+   * @brief Requires that an e-prop history iterator points to the expected time step.
+   *
+   * @param eprop_hist_it Iterator into the e-prop history.
+   * @param time_step The expected time step.
+   *
+   * @throws KernelException if the iterator is at the end or points to a different time step.
+   */
+  void require_eprop_history_entry( const typename std::vector< HistEntryT >::iterator eprop_hist_it,
+    const long time_step ) const;
+
   /**
    * Retrieves the update history entry for a specific time step.
    *

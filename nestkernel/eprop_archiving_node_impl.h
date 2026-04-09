@@ -121,6 +121,29 @@ EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous
 }
 
 template < typename HistEntryT >
+void
+EpropArchivingNode< HistEntryT >::require_eprop_history_entry(
+  const typename std::vector< HistEntryT >::iterator eprop_hist_it,
+  const long time_step ) const
+{
+  if ( eprop_hist_it == eprop_history_.end() )
+  {
+    throw KernelException(
+      String::compose( "Expected in neuron with ID %1 e-prop history entry at t=%2, got end of e-prop history.",
+        get_node_id(),
+        time_step ) );
+  }
+
+  if ( eprop_hist_it->t_ != time_step )
+  {
+    throw KernelException( String::compose( "Expected in neuron with ID %1 e-prop history entry at t=%2, got t=%3.",
+      get_node_id(),
+      time_step,
+      eprop_hist_it->t_ ) );
+  }
+}
+
+template < typename HistEntryT >
 std::vector< HistEntryEpropUpdate >::iterator
 EpropArchivingNode< HistEntryT >::get_update_history( const long time_step )
 {

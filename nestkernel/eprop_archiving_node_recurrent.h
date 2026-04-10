@@ -236,6 +236,9 @@ public:
    */
   void reset_spike_count();
 
+  void get_status( Dictionary& d ) const override;
+  void set_status( const Dictionary& d ) override;
+
   //! Firing rate regularization.
   double firing_rate_reg_;
 
@@ -264,6 +267,44 @@ private:
    */
   static std::map< std::string, surrogate_gradient_function > surrogate_gradient_funcs_;
 };
+
+template < bool hist_shift_required >
+inline void
+EpropArchivingNodeRecurrent< hist_shift_required >::get_status( Dictionary& d ) const
+{
+  d[ names::flush_event_send_interval ] = flush_event_send_interval_;
+
+  if constexpr ( not hist_shift_required )
+  {
+    d[ names::eprop_isi_trace_cutoff ] = eprop_isi_trace_cutoff_;
+  }
+}
+
+template < bool hist_shift_required >
+inline void
+EpropArchivingNodeRecurrent< hist_shift_required >::set_status( const Dictionary& d )
+{
+  FlushEventMechanism::set_status( d );
+
+  if constexpr ( not hist_shift_required )
+  {
+    d.update_value( names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
+
+    if ( eprop_isi_trace_cutoff_ < 0.0 )
+    {
+      throw BadProperty( "Computation cutoff of eprop trace eprop_isi_trace_cutoff ≥ 0 required." );
+    }
+  }
+  else
+  {
+    if ( flush_event_send_interval_ < kernel().simulation_manager.get_eprop_update_interval().get_ms() )
+    {
+      throw BadProperty(
+        "Interval since previous event after which a flush event is sent flush_event_send_interval ≥ "
+        "eprop_update_interval required." );
+    }
+  }
+}
 
 template < bool hist_shift_required >
 inline void

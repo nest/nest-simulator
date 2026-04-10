@@ -282,55 +282,6 @@ EpropArchivingNode< HistEntryT >::get_eprop_history_duration() const
   return Time::get_resolution().get_ms() * eprop_history_.size();
 }
 
-template < typename HistEntryT >
-inline void
-EpropArchivingNode< HistEntryT >::get_status( Dictionary& d ) const
-{
-  if ( get_name().find( "bsshslm_2020" ) == std::string::npos )
-  {
-    d[ names::eprop_isi_trace_cutoff ] = eprop_isi_trace_cutoff_;
-  }
-
-  if ( get_name().find( "readout" ) == std::string::npos )
-  {
-    d[ names::flush_event_send_interval ] = flush_event_send_interval_;
-  }
-}
-
-template < typename HistEntryT >
-inline void
-EpropArchivingNode< HistEntryT >::set_status( const Dictionary& d )
-{
-  const std::string node_name = get_name();
-  const bool is_readout = node_name.find( "readout" ) != std::string::npos;
-  const bool is_bsshslm_2020 = node_name.find( "bsshslm_2020" ) != std::string::npos;
-
-  if ( not is_readout )
-  {
-    FlushEventMechanism::set_status( d );
-  }
-
-  if ( not is_bsshslm_2020 )
-  {
-    d.update_value( names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
-
-    if ( eprop_isi_trace_cutoff_ < 0.0 )
-    {
-      throw BadProperty( "Computation cutoff of eprop trace eprop_isi_trace_cutoff ≥ 0 required." );
-    }
-  }
-  else
-  {
-    if ( not is_readout
-      and flush_event_send_interval_ < kernel().simulation_manager.get_eprop_update_interval().get_ms() )
-    {
-      throw BadProperty(
-        "Interval since previous event after which a flush event is sent flush_event_send_interval ≥ "
-        "eprop_update_interval required." );
-    }
-  }
-}
-
 }  // namespace nest
 
 #endif  // EPROP_ARCHIVING_NODE_IMPL_H

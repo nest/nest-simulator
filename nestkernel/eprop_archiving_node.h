@@ -124,9 +124,6 @@ public:
    */
   double get_eprop_history_duration() const;
 
-  void get_status( Dictionary& d ) const override;
-  void set_status( const Dictionary& d ) override;
-
   /**
    * @brief Retrieves the eprop ISI trace cutoff.
    *

@@ -707,7 +707,7 @@ eprop_iaf_psc_delta_adapt::handles_test_event( DataLoggingRequest& dlr, size_t r
 inline void
 eprop_iaf_psc_delta_adapt::get_status( Dictionary& d ) const
 {
-  EpropArchivingNode::get_status( d );
+  EpropArchivingNodeRecurrent::get_status( d );
   P_.get( d );
   S_.get( d, P_ );
   d[ names::recordables ] = recordablesMap_.get_list();
@@ -716,7 +716,7 @@ eprop_iaf_psc_delta_adapt::get_status( Dictionary& d ) const
 inline void
 eprop_iaf_psc_delta_adapt::set_status( const Dictionary& d )
 {
-  EpropArchivingNode::set_status( d );
+  EpropArchivingNodeRecurrent::set_status( d );
   // temporary copies in case of errors
   Parameters_ ptmp = P_;
   State_ stmp = S_;

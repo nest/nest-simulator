@@ -542,7 +542,7 @@ eprop_readout::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type
 inline void
 eprop_readout::get_status( Dictionary& d ) const
 {
-  EpropArchivingNode::get_status( d );
+  EpropArchivingNodeReadout::get_status( d );
   P_.get( d );
   S_.get( d, P_ );
   d[ names::recordables ] = recordablesMap_.get_list();
@@ -557,7 +557,7 @@ eprop_readout::get_status( Dictionary& d ) const
 inline void
 eprop_readout::set_status( const Dictionary& d )
 {
-  EpropArchivingNode::set_status( d );
+  EpropArchivingNodeReadout::set_status( d );
   // temporary copies in case of errors
   Parameters_ ptmp = P_;
   State_ stmp = S_;

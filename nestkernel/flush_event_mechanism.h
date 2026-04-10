@@ -90,12 +90,12 @@ public:
   }
 
   /**
-   * Retrieve flush event parameters and add to status dictionary.
+   * Retrieves flush event parameters and adds them to the status dictionary.
    */
   void get_status( Dictionary& d ) const;
 
   /**
-   * Set flush event parameters from status dictionary.
+   * Sets flush event parameters from the status dictionary.
    * Validates that flush_event_send_interval > 0.
    */
   void set_status( const Dictionary& d );

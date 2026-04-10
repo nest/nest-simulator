@@ -76,13 +76,9 @@ public:
   }
 
   /**
-   * Gets the interval between two events in steps.
+   * Re-calculates dependent parameters.
    */
-  long
-  get_flush_event_send_interval_steps() const
-  {
-    return Time( Time::ms( flush_event_send_interval_ ) ).get_steps();
-  }
+  void pre_run_hook();
 
   /**
    * Checks if an flush event is due at the current time.
@@ -90,7 +86,7 @@ public:
   bool
   flush_event_is_due( const long current_time ) const
   {
-    return last_event_time_ > 0 and ( current_time - last_event_time_ >= get_flush_event_send_interval_steps() );
+    return last_event_time_ > 0 and ( current_time - last_event_time_ >= flush_event_send_interval_steps_ );
   }
 
   /**
@@ -110,6 +106,9 @@ protected:
 
   //! Time of last spike or flush event (steps).
   long last_event_time_;
+
+  //! Interval since previous event after which a flush event is sent (steps).
+  long flush_event_send_interval_steps_;
 };
 
 }  // namespace nest

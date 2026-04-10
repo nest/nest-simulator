@@ -128,7 +128,8 @@ private:
   void
   pre_run_hook() override
   {
-  }  // no variables
+    FlushEventMechanism::pre_run_hook();
+  }
 
   void update( Time const&, const long, const long ) override;
 

@@ -143,13 +143,6 @@ protected:
   //! Returns correct shift for history depending on whether it is a normal or a bsshslm_2020 model.
   virtual long model_dependent_history_shift_() const = 0;
 
-  /**
-   * Provides access to the template flag from the base class.
-   *
-   * @todo This should be removed once we revise the class structure.
-   */
-  virtual bool history_shift_required_() const = 0;
-
   //! Number of incoming eprop synapses
   size_t eprop_indegree_;
 

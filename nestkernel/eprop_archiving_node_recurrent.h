@@ -244,7 +244,6 @@ public:
 
 protected:
   long model_dependent_history_shift_() const override;
-  bool history_shift_required_() const override;
 
   //! Pointer to member function selected for computing the surrogate gradient.
   surrogate_gradient_function compute_surrogate_gradient_ =
@@ -292,13 +291,6 @@ EpropArchivingNodeRecurrent< hist_shift_required >::model_dependent_history_shif
   {
     return -delay_rec_out_;
   }
-}
-
-template < bool hist_shift_required >
-bool
-EpropArchivingNodeRecurrent< hist_shift_required >::history_shift_required_() const
-{
-  return hist_shift_required;
 }
 
 }

@@ -34,15 +34,15 @@ namespace nest
 
 FlushEventMechanism::FlushEventMechanism()
   : flush_event_send_interval_( std::numeric_limits< double >::infinity() )
+  , flush_event_send_interval_steps_( Time( Time::ms( flush_event_send_interval_ ) ).get_steps() )
   , last_event_time_( 0 )
-  , flush_event_send_interval_steps_( std::numeric_limits< long >::max() )
 {
 }
 
 FlushEventMechanism::FlushEventMechanism( const FlushEventMechanism& n )
   : flush_event_send_interval_( n.flush_event_send_interval_ )
-  , last_event_time_( n.last_event_time_ )
   , flush_event_send_interval_steps_( n.flush_event_send_interval_steps_ )
+  , last_event_time_( n.last_event_time_ )
 {
 }
 

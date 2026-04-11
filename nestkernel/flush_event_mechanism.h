@@ -104,11 +104,11 @@ protected:
   //! Interval since previous event after which a flush event is sent (ms).
   double flush_event_send_interval_;
 
-  //! Time of last spike or flush event (steps).
-  long last_event_time_;
-
   //! Interval since previous event after which a flush event is sent (steps).
   long flush_event_send_interval_steps_;
+
+  //! Time of last spike or flush event (steps).
+  long last_event_time_;
 };
 
 }  // namespace nest

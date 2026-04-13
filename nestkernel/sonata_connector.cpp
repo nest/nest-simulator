@@ -26,7 +26,7 @@
 #ifdef HAVE_HDF5
 
 // C++ includes:
-#include <cstdlib  // for div()
+#include <cstdlib>  // for div()
 #include <string>
 #include <vector>
 

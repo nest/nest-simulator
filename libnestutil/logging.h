@@ -27,7 +27,7 @@
  *
  */
 #define LOG( s, fctn, msg ) \
-  nest::kernel::manager< LoggingManager >.publish_log( ( s ), ( fctn ), ( msg ), __FILE__, __LINE__ )
+  nest::kernel::manager< nest::LoggingManager >.publish_log( ( s ), ( fctn ), ( msg ), __FILE__, __LINE__ )
 
 
 namespace nest

@@ -32,6 +32,7 @@
 #include "config.h"
 // Includes from libnestutil:
 #include "compose.hpp"
+#include "kernel_manager.h"
 #include "logging.h"
 #include "logging_manager.h"
 #include "nest_names.h"

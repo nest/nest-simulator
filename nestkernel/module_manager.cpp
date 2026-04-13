@@ -104,7 +104,7 @@ ModuleManager::get_status( Dictionary& d )
 }
 
 void
-ModuleManager::set_status( const Dictionary& d )
+ModuleManager::set_status( const Dictionary& )
 {
 }
 

@@ -24,6 +24,7 @@
 #define EPROP_ARCHIVING_NODE_H
 
 // nestkernel
+#include "flush_event_mechanism.h"
 #include "histentry.h"
 #include "nest_time.h"
 #include "nest_types.h"
@@ -47,9 +48,8 @@ namespace nest
  * @tparam HistEntryT The type of history entry.
  */
 template < typename HistEntryT >
-class EpropArchivingNode : public Node
+class EpropArchivingNode : public Node, public FlushEventMechanism
 {
-
 public:
   /**
    * Constructs a new EpropArchivingNode object.
@@ -59,15 +59,28 @@ public:
   /**
    * Constructs a new EpropArchivingNode object by copying another EpropArchivingNode object.
    *
-   * @param other The other object to copy.
+   * @param n The other object to copy.
    */
-  EpropArchivingNode( const EpropArchivingNode& other );
+  EpropArchivingNode( const EpropArchivingNode& n );
 
   void register_eprop_connection() override;
+  void initialize_update_history() override;
 
   void write_update_to_history( const long t_previous_update,
     const long t_current_update,
-    const long eprop_isi_trace_cutoff = 0 ) override;
+    const bool is_flush_event,
+    const bool previous_was_flush_event ) override;
+
+  /**
+   * @brief Requires that an e-prop history iterator points to the expected time step.
+   *
+   * @param eprop_hist_it Iterator into the e-prop history.
+   * @param time_step The expected time step.
+   *
+   * @throws KernelException if the iterator is at the end or points to a different time step.
+   */
+  void require_eprop_history_entry( const typename std::vector< HistEntryT >::iterator eprop_hist_it,
+    const long time_step ) const;
 
   /**
    * Retrieves the update history entry for a specific time step.
@@ -91,7 +104,7 @@ public:
    * Erases e-prop history entries for update intervals during which no spikes were sent to the target neuron,
    * and any entries older than the earliest time stamp required by the first update in the history.
    */
-  void erase_used_eprop_history();
+  void erase_used_eprop_history() override;
 
   /**
    * @brief Erases the used eprop history.
@@ -99,9 +112,10 @@ public:
    * Erases e-prop history entries between the last and penultimate updates if they exceed the inter-spike
    * interval trace cutoff and any entries older than the earliest time stamp required by the first update.
    *
-   * @param eprop_isi_trace_cutoff The cutoff value for the inter-spike integration of the eprop trace.
+   * @param t_spike The time step of the current spike.
+   * @param t_spike_previous The time step of the previous spike.
    */
-  void erase_used_eprop_history( const long eprop_isi_trace_cutoff );
+  void erase_used_eprop_history( const long t_spike, const long t_spike_previous ) override;
 
   /**
    * @brief Retrieves eprop history size.
@@ -110,19 +124,27 @@ public:
    */
   double get_eprop_history_duration() const;
 
+  /**
+   * @brief Retrieves the eprop ISI trace cutoff.
+   *
+   * Retrieves the time interval from the previous spike until the cutoff of
+   * e-prop update computation between two spikes (ms).
+   */
+  long
+  get_eprop_isi_trace_cutoff() const
+  {
+    return Time( Time::ms( eprop_isi_trace_cutoff_ ) ).get_steps();
+  }
+
 protected:
   //! Returns correct shift for history depending on whether it is a normal or a bsshslm_2020 model.
   virtual long model_dependent_history_shift_() const = 0;
 
-  /**
-   * Provides access to the template flag from the base class.
-   *
-   * @todo This should be removed once we revise the class structure.
-   */
-  virtual bool history_shift_required_() const = 0;
-
   //! Number of incoming eprop synapses
   size_t eprop_indegree_;
+
+  //! Time interval from the previous spike until the cutoff of e-prop update computation between two spikes (ms).
+  double eprop_isi_trace_cutoff_;
 
   //! History of updates still needed by at least one synapse.
   std::vector< HistEntryEpropUpdate > update_history_;

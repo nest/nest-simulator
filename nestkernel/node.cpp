@@ -219,6 +219,12 @@ Node::register_eprop_connection()
   throw IllegalConnection( "The target node does not support eprop synapses." );
 }
 
+void
+Node::initialize_update_history()
+{
+  throw IllegalConnection( "The target node does not support eprop synapses." );
+}
+
 long
 Node::get_shift() const
 {
@@ -226,13 +232,19 @@ Node::get_shift() const
 }
 
 void
-Node::write_update_to_history( const long, const long, const long )
+Node::write_update_to_history( const long, const long, const bool, const bool )
 {
   throw IllegalConnection( "The target node is not an e-prop neuron." );
 }
 
-long
-Node::get_eprop_isi_trace_cutoff() const
+void
+Node::erase_used_eprop_history()
+{
+  throw IllegalConnection( "The target node is not an e-prop neuron." );
+}
+
+void
+Node::erase_used_eprop_history( const long, const long )
 {
   throw IllegalConnection( "The target node is not an e-prop neuron." );
 }
@@ -554,7 +566,12 @@ nest::Node::compute_gradient( const long,
   double&,
   double&,
   const CommonSynapseProperties&,
-  WeightOptimizer* )
+  WeightOptimizer*,
+  bool,
+  bool,
+  double&,
+  long&,
+  long& )
 {
   throw IllegalConnection( "The target node does not support compute_gradient()." );
 }

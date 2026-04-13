@@ -150,15 +150,17 @@ ModuleManager::install( const std::string& name )
 
   // see if we can find the "module" symbol in the module
   NESTExtensionInterface* extension = reinterpret_cast< NESTExtensionInterface* >( lt_dlsym( hModule, "module" ) );
-  char* errstr = ( char* ) lt_dlerror();
-  if ( errstr )
+  char* errcstr = ( char* ) lt_dlerror();
+  if ( errcstr )
   {
+    std::string errstr( errcstr );
     lt_dlclose( hModule );  // close module again
     lt_dlerror();           // remove any error caused by lt_dlclose()
     throw DynamicModuleManagementError(
-            "Module '" + name + "' could not be loaded.\n"
+            "Module '" + name + "' could not be loaded: could not find "
+            "module symbol in module.\n"
             "The dynamic loader returned the following error: '"
-            + std::string(errstr) + "'.");
+            + errstr + "'.");
   }
 
   // all is well and we can register module components

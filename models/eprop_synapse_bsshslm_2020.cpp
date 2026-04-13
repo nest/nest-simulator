@@ -22,7 +22,6 @@
 
 #include "eprop_synapse_bsshslm_2020.h"
 
-#include <boost/iterator/iterator_facade.hpp>
 #include <utility>
 
 #include "block_vector.h"

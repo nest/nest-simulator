@@ -22,7 +22,6 @@
 
 #include "buffer_resize_log.h"
 
-#include <boost/type_index/type_index_facade.hpp>
 
 // Includes from nestkernel:
 #include "dictionary.h"

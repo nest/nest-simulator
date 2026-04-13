@@ -27,8 +27,8 @@
 #include <iomanip>
 #include <ostream>
 
-#include "kernel_manager.h"
 // C++ includes:
+#include "kernel_manager.h"
 #include "logging_manager.h"
 
 nest::LoggingEvent::LoggingEvent( const VerbosityLevel s,

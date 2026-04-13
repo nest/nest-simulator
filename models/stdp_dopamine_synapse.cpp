@@ -22,9 +22,7 @@
 
 #include "stdp_dopamine_synapse.h"
 
-#include <boost/iterator/iterator_facade.hpp>
 #include <memory>
-#include <utility>
 
 // Includes from nestkernel:
 #include "common_synapse_properties.h"

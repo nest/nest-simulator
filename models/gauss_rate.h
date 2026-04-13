@@ -23,7 +23,6 @@
 #ifndef GAUSS_RATE_H
 #define GAUSS_RATE_H
 
-#include <boost/type_index/type_index_facade.hpp>
 // C++ includes:
 #include <algorithm>
 #include <cmath>

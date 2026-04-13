@@ -24,7 +24,6 @@
 #define STDP_SYNAPSE_FACETSHW_HOM_H
 
 #include <assert.h>
-#include <boost/type_index/type_index_facade.hpp>
 #include <stddef.h>
 // C++ includes:
 #include <cmath>

@@ -23,7 +23,6 @@
 #ifndef MULTIMETER_H
 #define MULTIMETER_H
 
-#include <boost/type_index/type_index_facade.hpp>
 #include <stddef.h>
 // C++ includes:
 #include <string>

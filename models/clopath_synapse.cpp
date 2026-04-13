@@ -22,9 +22,7 @@
 
 #include "clopath_synapse.h"
 
-#include <boost/iterator/iterator_facade.hpp>
-#include <utility>
-
+// Includes from nestkernel:
 #include "nest_impl.h"
 
 void

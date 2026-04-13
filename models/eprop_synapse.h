@@ -24,7 +24,6 @@
 #define EPROP_SYNAPSE_H
 
 #include <assert.h>
-#include <boost/type_index/type_index_facade.hpp>
 #include <stddef.h>
 #include <string>
 

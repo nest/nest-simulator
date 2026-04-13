@@ -24,7 +24,6 @@
 #define TANH_RATE_H
 
 #include <algorithm>
-#include <boost/type_index/type_index_facade.hpp>
 #include <map>
 #include <math.h>
 #include <string>

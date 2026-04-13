@@ -22,7 +22,6 @@
 
 #include "stdp_synapse_hom.h"
 
-#include <boost/iterator/iterator_facade.hpp>
 #include <utility>
 
 // Includes from nestkernel:

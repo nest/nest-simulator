@@ -24,7 +24,9 @@
 #define GENERICMODEL_IMPL_H
 
 #include "genericmodel.h"
+#include "kernel_manager.h"
 #include "logging.h"
+#include "logging_manager.h"
 #include "nest_names.h"
 
 namespace nest

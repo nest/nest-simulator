@@ -23,7 +23,6 @@
 #ifndef THRESHOLD_LIN_RATE_H
 #define THRESHOLD_LIN_RATE_H
 
-#include <boost/type_index/type_index_facade.hpp>
 #include <math.h>
 // C++ includes:
 #include <algorithm>

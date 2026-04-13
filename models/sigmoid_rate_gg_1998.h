@@ -23,7 +23,6 @@
 #ifndef SIGMOID_RATE_GG_1998_H
 #define SIGMOID_RATE_GG_1998_H
 
-#include <boost/type_index/type_index_facade.hpp>
 // C++ includes:
 #include <algorithm>
 #include <cmath>

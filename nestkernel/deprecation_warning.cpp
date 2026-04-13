@@ -22,6 +22,7 @@
 
 #include "deprecation_warning.h"
 
+#include "kernel_manager.h"
 #include "logging.h"
 #include "logging_manager.h"
 

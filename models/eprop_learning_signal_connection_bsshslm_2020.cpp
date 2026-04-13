@@ -22,9 +22,7 @@
 
 #include "eprop_learning_signal_connection_bsshslm_2020.h"
 
-#include <boost/iterator/iterator_facade.hpp>
-#include <utility>
-
+// Includes from nestkernel:
 #include "nest_impl.h"
 
 // nestkernel

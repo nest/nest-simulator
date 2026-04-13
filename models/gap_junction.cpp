@@ -22,9 +22,7 @@
 
 #include "gap_junction.h"
 
-#include <boost/iterator/iterator_facade.hpp>
-#include <utility>
-
+// Includes from nestkernel:
 #include "nest_impl.h"
 
 void

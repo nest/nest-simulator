@@ -23,10 +23,35 @@
 #ifndef LOGGING_H
 #define LOGGING_H
 
-#include "kernel_manager.h"
-#include "logging_manager.h"
-
+/**
+ *
+ */
 #define LOG( s, fctn, msg ) \
   nest::kernel::manager< LoggingManager >.publish_log( ( s ), ( fctn ), ( msg ), __FILE__, __LINE__ )
+
+
+namespace nest
+{
+
+class LoggingEvent;
+class LoggingDeliverer;
+
+//! Report only messages at levels higher than chosen level to user or logs. Default INFO.
+enum class VerbosityLevel
+{
+  ALL = 0,
+  DEBUG = 5,
+  STATUS = 7,
+  INFO = 10,
+  PROGRESS = 15,
+  DEPRECATED = 18,
+  WARNING = 20,
+  ERROR = 30,
+  FATAL = 40,
+  QUIET = 100
+};
+
+typedef void ( *deliver_logging_event_ptr )( const LoggingEvent& e );
+}
 
 #endif

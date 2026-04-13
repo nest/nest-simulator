@@ -23,6 +23,7 @@
 #ifndef NEST_IMPL_H
 #define NEST_IMPL_H
 
+#include "connection_label_impl.h"
 #include "generic_factory_impl.h"
 #include "kernel_manager.h"
 #include "mask_impl.h"

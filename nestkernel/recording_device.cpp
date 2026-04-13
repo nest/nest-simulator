@@ -112,9 +112,10 @@ nest::RecordingDevice::State_::State_()
 void
 nest::RecordingDevice::State_::get( Dictionary& d ) const
 {
-  size_t n_events = 0;
+  long n_events = 0;
   d.update_value( names::n_events, n_events );
-  d[ names::n_events ] = n_events + n_events_;
+  assert( n_events >= 0 );
+  d[ names::n_events ] = static_cast< long >( n_events + n_events_ );
 }
 
 void

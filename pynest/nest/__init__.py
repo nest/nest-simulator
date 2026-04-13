@@ -275,7 +275,6 @@ class NestModule(types.ModuleType):
         ("Information on the duration and spike counts within each update cycle."),
         readonly=True,
     )
-
     use_wfr = KernelAttribute("bool", "Whether to use waveform relaxation method", default=True)
     wfr_comm_interval = KernelAttribute(
         "float",

@@ -57,7 +57,7 @@ ConnectionCreator::ConnectionCreator( const Dictionary& dict )
   // Need to store number of connections in a temporary variable to be able to detect negative values.
   if ( dict.known( names::number_of_connections ) )
   {
-    if ( is_type< ParameterPTR >( dict.at( names::number_of_connections ) ) )
+    if ( std::holds_alternative< ParameterPTR >( dict.at( names::number_of_connections ) ) )
     {
       dict.update_value< ParameterPTR >( names::number_of_connections, number_of_connections_ );
     }

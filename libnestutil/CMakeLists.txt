@@ -18,7 +18,6 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 set(nestutil_sources
-    allocator.h allocator.cpp
     beta_normalization_factor.h
     block_vector.h
     dictionary.h dictionary.cpp
@@ -32,7 +31,6 @@ set(nestutil_sources
     numerics.h numerics.cpp
     regula_falsi.h
     sort.h
-    string_util.h
     vector_util.h
 )
 

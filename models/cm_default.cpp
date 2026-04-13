@@ -131,7 +131,7 @@ nest::cm_default::set_status( const Dictionary& statusdict )
    */
   const auto add_compartments_list_or_dict = [ this, &statusdict ]( const std::string name )
   {
-    if ( is_type< std::vector< Dictionary > >( statusdict.at( name ) ) )
+    if ( std::holds_alternative< std::vector< Dictionary > >( statusdict.at( name ) ) )
     {
       const auto compartments = statusdict.get< std::vector< Dictionary > >( name );
       // A list of compartments is provided, we add them all to the tree
@@ -140,7 +140,7 @@ nest::cm_default::set_status( const Dictionary& statusdict )
         add_compartment_( compartment_dict );
       }
     }
-    else if ( is_type< Dictionary >( statusdict.at( name ) ) )
+    else if ( std::holds_alternative< Dictionary >( statusdict.at( name ) ) )
     {
       // A single compartment is provided, we add add it to the tree
       add_compartment_( statusdict.get< Dictionary >( name ) );
@@ -162,7 +162,7 @@ nest::cm_default::set_status( const Dictionary& statusdict )
    */
   const auto add_receptors_list_or_dict = [ this, &statusdict ]( const std::string name )
   {
-    if ( is_type< std::vector< Dictionary > >( statusdict.at( name ) ) )
+    if ( std::holds_alternative< std::vector< Dictionary > >( statusdict.at( name ) ) )
     {
       const auto receptors = statusdict.get< std::vector< Dictionary > >( name );
       for ( const auto& receptor_dict : receptors )
@@ -170,7 +170,7 @@ nest::cm_default::set_status( const Dictionary& statusdict )
         add_receptor_( receptor_dict );
       }
     }
-    else if ( is_type< Dictionary >( statusdict.at( name ) ) )
+    else if ( std::holds_alternative< Dictionary >( statusdict.at( name ) ) )
     {
       add_receptor_( statusdict.get< Dictionary >( name ) );
     }

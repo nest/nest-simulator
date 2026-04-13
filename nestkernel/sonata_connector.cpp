@@ -21,15 +21,14 @@
  */
 
 #include "sonata_connector.h"
+#include "config.h"
 
 #ifdef HAVE_HDF5
 
-// C++ includes:  // PYNEST-NG-FUTURE: remove when final boost::any_cast() disappears below
-#include <cstdlib>  // for div()
+// C++ includes:
+#include <cstdlib  // for div()
 #include <string>
 #include <vector>
-
-#include "H5Cpp.h"
 
 // Includes from libnestutil
 #include "dict_util.h"
@@ -56,11 +55,13 @@ SonataConnector::SonataConnector( const Dictionary& graph_specs, const long hype
 
 SonataConnector::~SonataConnector()
 {
+  edge_type_id_2_syn_spec_.clear();
 }
 
 void
 SonataConnector::connect()
 {
+
   // clang-format off
   /*
   Structure of SONATA edge files:
@@ -544,9 +545,7 @@ SonataConnector::create_edge_type_id_2_syn_spec_( Dictionary edge_params )
   for ( const auto& [ syn_k, syn_v ] : edge_params )
   {
     const int type_id = std::stoi( syn_k );
-
-    // PYNEST-NG-FUTURE: Could avoid explicit any_cast here by adding extraction method to DictEntry_
-    const auto& d = boost::any_cast< Dictionary >( syn_v.item );
+    const auto& d = std::get< Dictionary >( syn_v.item );
 
     const auto& syn_name = d.get< std::string >( "synapse_model" );
 

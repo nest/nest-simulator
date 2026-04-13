@@ -119,7 +119,7 @@ nest::correlospinmatrix_detector::Parameters_::get( Dictionary& d ) const
   d[ names::tau_max ] = tau_max_.get_ms();
   d[ names::Tstart ] = Tstart_.get_ms();
   d[ names::Tstop ] = Tstop_.get_ms();
-  d[ names::N_channels ] = N_channels_;
+  d[ names::N_channels ] = static_cast< long >( N_channels_ );
 }
 
 void

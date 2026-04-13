@@ -23,17 +23,20 @@
 #ifndef NODE_COLLECTION_H
 #define NODE_COLLECTION_H
 
-#include <stddef.h>
 // C++ includes:
 #include <iosfwd>
 #include <iterator>
 #include <memory>
+#include <stddef.h>
+#include <stdexcept>  // out_of_range
 #include <string>
 #include <utility>
 #include <vector>
 
 // Includes from libnestuil:
 #include "dictionary.h"
+#include "exceptions.h"
+
 // Includes from thirdparty:
 #include "compose.hpp"
 
@@ -517,8 +520,6 @@ public:
    * iterator's step is 12.
    */
   size_t get_step_size() const;
-
-  void print_me( std::ostream& ) const;
 };
 
 
@@ -620,8 +621,10 @@ public:
   /**
    * Print out the contents of the NodeCollection in a pretty and informative
    * way.
+   *
+   * @note Important for resolution from NodeCollectionPTR to subclasses.
    */
-  virtual void print_me( std::ostream& ) const = 0;
+  virtual std::ostream& print_me( std::ostream& ) const = 0;
 
   /**
    * Get the node ID in the specified index in the NodeCollection.
@@ -868,7 +871,7 @@ public:
    */
   NodeCollectionPrimitive();
 
-  void print_me( std::ostream& ) const override;
+  std::ostream& print_me( std::ostream& ) const override;
   void print_primitive( std::ostream& ) const;
 
   size_t operator[]( const size_t ) const override;
@@ -1058,7 +1061,7 @@ public:
    */
   NodeCollectionComposite( const NodeCollectionComposite& ) = default;
 
-  void print_me( std::ostream& ) const override;
+  std::ostream& print_me( std::ostream& ) const override;
 
   size_t operator[]( const size_t ) const override;
 

@@ -126,7 +126,7 @@ nest::ppd_sup_generator::Parameters_::get( Dictionary& d ) const
 {
   d[ names::rate ] = rate_;
   d[ names::dead_time ] = dead_time_;
-  d[ names::n_proc ] = n_proc_;
+  d[ names::n_proc ] = static_cast< long >( n_proc_ );
   d[ names::frequency ] = frequency_;
   d[ names::relative_amplitude ] = amplitude_;
 }

@@ -90,11 +90,11 @@ public:
 
   void deprecation_warning( const std::string& ) override;
 
-  size_t get_element_size() const override;
-
 private:
   void set_status_( const Dictionary& ) override;
   Dictionary get_status_() override;
+
+  size_t get_element_size() const override;
 
   /**
    * Call placement new on the supplied memory position.

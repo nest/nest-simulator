@@ -296,11 +296,11 @@ KernelManager::get_status( Dictionary& dict )
   dict[ "build_info" ] = get_build_info_();
   if ( NEST_HOSTOS == std::string( "linux" ) )
   {
-    dict[ "memory_size" ] = get_memsize_linux_();
+    dict[ "memory_size" ] = static_cast< long >( get_memsize_linux_() );
   }
   else if ( NEST_HOSTOS == std::string( "darwin" ) )
   {
-    dict[ "memory_size" ] = get_memsize_darwin_();
+    dict[ "memory_size" ] = static_cast< long >( get_memsize_darwin_() );
   }
   else
   {

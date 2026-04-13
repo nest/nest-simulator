@@ -116,12 +116,11 @@ Position< D, T >::operator[]( int i ) const
   return x_[ i ];
 }
 
-
 template < int D, class T >
 const std::vector< T >
 Position< D, T >::get_vector() const
 {
-  return std::vector< T >( x_.begin(), x_.end() );
+  return std::vector< T >( x_.begin(), x_.end() );  // should be efficient due to RVO
 }
 
 template < int D, class T >

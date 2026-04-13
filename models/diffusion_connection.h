@@ -199,7 +199,7 @@ diffusion_connection< targetidentifierT >::get_status( Dictionary& d ) const
   d[ names::weight ] = weight_;
   d[ names::drift_factor ] = drift_factor_;
   d[ names::diffusion_factor ] = diffusion_factor_;
-  d[ names::size_of ] = sizeof( *this );
+  d[ names::size_of ] = static_cast< long >( sizeof( *this ) );
 }
 
 template < typename targetidentifierT >

@@ -179,7 +179,7 @@ rate_connection_instantaneous< targetidentifierT >::get_status( Dictionary& d ) 
 {
   ConnectionBase::get_status( d );
   d[ names::weight ] = weight_;
-  d[ names::size_of ] = sizeof( *this );
+  d[ names::size_of ] = static_cast< long >( sizeof( *this ) );
 }
 
 template < typename targetidentifierT >

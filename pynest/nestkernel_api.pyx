@@ -29,6 +29,7 @@ from cython.operator cimport preincrement as inc
 from libc.stdint cimport int64_t, uint64_t
 from libc.stdlib cimport free, malloc
 from libcpp.deque cimport deque as std_deque
+from libcpp.limits cimport numeric_limits
 from libcpp.map cimport map as std_map
 from libcpp.string cimport string as std_string
 from libcpp.vector cimport vector as std_vector
@@ -107,20 +108,11 @@ cdef class MaskObject:
         self.thisptr = mask_ptr
 
 
-cdef object vec_of_any_to_list(vector[any] cvec):
-    cdef tmp = []
-    cdef vector[any].iterator it = cvec.begin()
-    while it != cvec.end():
-        tmp.append(any_to_pyobj(deref(it)))
-        inc(it)
-    return tmp
-
-
 cdef object vec_of_dict_to_list(vector[Dictionary] cvec):
     cdef tmp = []
     cdef vector[Dictionary].iterator it = cvec.begin()
     while it != cvec.end():
-        tmp.append(Dictionary_to_pydict(deref(it)))
+        tmp.append(dictionary_to_pydict(deref(it)))
         inc(it)
     return tmp
 
@@ -131,63 +123,10 @@ def make_tuple_or_ndarray(operand):
         else:
             return tuple(operand)
 
-cdef object any_to_pyobj(any operand):
-    if is_type[int](operand):
-        return any_cast[int](operand)
-    if is_type[uint](operand):
-        return any_cast[uint](operand)
-    if is_type[long](operand):
-        return any_cast[long](operand)
-    if is_type[size_t](operand):
-        return any_cast[size_t](operand)
-    if is_type[uint64_t](operand):
-        return any_cast[uint64_t](operand)
-    if is_type[int64_t](operand):
-        return any_cast[int64_t](operand)
-    if is_type[double](operand):
-        return any_cast[double](operand)
-    if is_type[cbool](operand):
-        return any_cast[cbool](operand)
-    if is_type[std_string](operand):
-        return string_to_pystr(any_cast[std_string](operand))
-    if is_type[std_vector[int]](operand):
-        return numpy.array(any_cast[std_vector[int]](operand))
-    if is_type[std_vector[long]](operand):
-        return numpy.array(any_cast[std_vector[long]](operand))
-    if is_type[std_vector[size_t]](operand):
-        return numpy.array(any_cast[std_vector[size_t]](operand))
-    if is_type[std_vector[double]](operand):
-        return numpy.array(any_cast[std_vector[double]](operand))
-    if is_type[std_vector[std_vector[double]]](operand):
-        return numpy.array(any_cast[std_vector[std_vector[double]]](operand))
-    if is_type[std_vector[std_vector[std_vector[double]]]](operand):
-        return numpy.array(any_cast[std_vector[std_vector[std_vector[double]]]](operand))
-    if is_type[std_vector[std_vector[std_vector[long]]]](operand):
-        return numpy.array(any_cast[std_vector[std_vector[std_vector[long]]]](operand))
-    if is_type[std_vector[std_string]](operand):
-        # PYNEST-NG-FUTURE: Do we want to have this or are bytestrings fine?
-        # return any_cast[std_vector[std_string]](operand)
-        return list(map(lambda x: x.decode("utf-8"), any_cast[std_vector[std_string]](operand)))
-    if is_type[std_vector[Dictionary]](operand):
-        return vec_of_dict_to_list(any_cast[std_vector[Dictionary]](operand))
-    if is_type[std_vector[any]](operand):
-        # PYNEST-NG-FUTURE: This will create a Python list first and then convert to
-        # either tuple or numpy array, which will copy the data element-wise.
-        # Could we do this more effienctly?
-        return make_tuple_or_ndarray(vec_of_any_to_list(any_cast[std_vector[any]](operand)))
-    if is_type[Dictionary](operand):
-        return Dictionary_to_pydict(any_cast[Dictionary](operand))
-    if is_type[NodeCollectionPTR](operand):
-        obj = NodeCollectionObject()
-        obj._set_nc(any_cast[NodeCollectionPTR](operand))
-        return nest.NodeCollection(obj)
-    if is_type[VerbosityLevel](operand):
-        return any_cast[VerbosityLevel](operand)
-
-cdef object Dictionary_to_pydict(Dictionary cdict):
+cdef object dictionary_to_pydict(Dictionary cdict):
     cdef tmp = {}
 
-    cdef Dictionary.const_iterator it = cdict.begin()
+    cdef dictionary_.const_iterator it = cdict.begin()
     while it != cdict.end():
         key = string_to_pystr(deref(it).first)
         tmp[key] = any_to_pyobj(deref(it).second.item)
@@ -196,6 +135,69 @@ cdef object Dictionary_to_pydict(Dictionary cdict):
             raise RuntimeError('Could not convert: ' + key + ' of type ' + string_to_pystr(debug_type(deref(it).second.item)))
         inc(it)
     return tmp
+
+cdef anyvec_to_objtuple(any_type operand):
+    cdef AnyVector a_vec = get[AnyVector](operand)
+    return tuple(any_to_pyobj(obj) for obj in a_vec)
+
+cdef object any_to_pyobj(any_type operand):
+    """Convert an object of any of the types in the ``any_type`` variant to a Python object."""
+
+    cdef NodeCollectionPTR ncptr
+
+    if holds_alternative[long](operand):
+        return get[long](operand)
+    if holds_alternative[double](operand):
+        return get[double](operand)
+    if holds_alternative[cbool](operand):
+        return get[cbool](operand)
+    if holds_alternative[string](operand):
+        return string_to_pystr(get[string](operand))
+
+    if holds_alternative[vector[long]](operand):
+        return numpy.array(get[vector[long]](operand))
+    if holds_alternative[vector[vector[vector[long]]]](operand):
+        return numpy.array(get[vector[vector[vector[long]]]](operand))
+
+    if holds_alternative[vector[cbool]](operand):
+        return numpy.array(get[vector[cbool]](operand))
+
+    if holds_alternative[vector[double]](operand):
+        return numpy.array(get[vector[double]](operand))
+    if holds_alternative[vector[vector[double]]](operand):
+        return numpy.array(get[vector[vector[double]]](operand))
+    if holds_alternative[vector[vector[vector[double]]]](operand):
+        return numpy.array(get[vector[vector[vector[double]]]](operand))
+
+    if holds_alternative[vector[string]](operand):
+        return [s.decode("utf-8") for s in get[vector[string]](operand)]
+
+    if holds_alternative[Dictionary](operand):
+        return dictionary_to_pydict(get[Dictionary](operand))
+    if holds_alternative[vector[Dictionary]](operand):
+        return vec_of_dict_to_list(get[vector[Dictionary]](operand))
+    if holds_alternative[EmptyList](operand):
+        return []
+
+    if holds_alternative[NodeCollectionPTR](operand):
+        obj = NodeCollectionObject()
+        obj._set_nc(get[NodeCollectionPTR](operand))
+        return nest.NodeCollection(obj)
+
+    # This monostate represents missing NodeCollection status data (nodes on other ranks)
+    # Translates to None for NEST 3.9 compatibility
+    if holds_alternative[monostate](operand):
+        return None
+
+    # get_nc_status() returns a vector<any_type> for NEST 3.9 compatibility
+    # This alternative starts the unpacking of that vector into a tuple
+    if holds_alternative[AnyVector](operand):
+        return anyvec_to_objtuple(operand)
+
+    if holds_alternative[VerbosityLevel](operand):
+        return get[VerbosityLevel](operand)
+
+    raise RuntimeError(f"Cannot convert value of type '{debug_type(operand)}' returned by NEST kernel to Python object.")
 
 
 cdef is_list_tuple_ndarray_of_float(v):
@@ -211,14 +213,17 @@ cdef is_list_tuple_ndarray_of_int(v):
 
 
 cdef Dictionary pydict_to_Dictionary(object py_dict) except *:  # Adding "except *" makes cython propagate the error if it is raised.
+    """Convert a Python dictionary to a C++ ``Dictionary`` with elements represented by the any_type variant."""
+
     cdef Dictionary cdict = Dictionary()
     for key, value in py_dict.items():
         if type(value) is tuple:
             value = list(value)
 
         if type(value) is int or isinstance(value, numpy.integer):
-	    # PYTEST-NG: Should we guard against overflow given that python int has infinite range?
-            cdict[pystr_to_string(key)] = <long>value
+            if value < (min_val := numeric_limits[long].min()) or value > (max_val := numeric_limits[long].max()):
+                raise OverflowError(f"Integer {value} out of range for C++ long [{min_val}, {max_val}]")
+            cdict[pystr_to_string(key)] = <long>(value)
         elif type(value) is float or isinstance(value, numpy.floating):
             cdict[pystr_to_string(key)] = <double>value
         elif type(value) is bool:
@@ -227,13 +232,13 @@ cdef Dictionary pydict_to_Dictionary(object py_dict) except *:  # Adding "except
             cdict[pystr_to_string(key)] = <string>pystr_to_string(value)
         elif type(value) is list and len(value) == 0:
             # We cannot infer the intended element type from an empty list.
-            # We therefore pass an empty vector[any]. vector[any] will always be empty
-            # and an empty vector will always be vector[any] in the PyNEST interface.
+            # We therefore pass an empty EmptyList. EmptyList will always be empty
+            # and an empty vector will always be EmptyList in the PyNEST interface.
             cdict[pystr_to_string(key)] = empty_any_vec()
         elif is_list_tuple_ndarray_of_float(value):
             cdict[pystr_to_string(key)] = pylist_or_ndarray_to_doublevec(value)
         elif is_list_tuple_ndarray_of_int(value):
-            cdict[pystr_to_string(key)] = pylist_to_intvec(value)
+            cdict[pystr_to_string(key)] = pylist_to_longvec(value)
         elif type(value) is list and len(value) > 0 and isinstance(value[0], (list, tuple)):
             cdict[pystr_to_string(key)] = list_of_list_to_doublevec(value)
         elif type(value) is list and len(value) > 0 and isinstance(value[0], numpy.ndarray):
@@ -254,7 +259,7 @@ cdef Dictionary pydict_to_Dictionary(object py_dict) except *:  # Adding "except
             cdict[pystr_to_string(key)] = <VerbosityLevel>(value)
         else:
             typename = type(value)
-            if type(value) is list:
+            if typename is list:
                 assert len(value) > 0   # empty list should have been caught above
                 typename = f"list of {type(value[0])}"
             raise AttributeError(f'when converting Python Dictionary: value of key ({key}) is not a known type, got {typename}')
@@ -262,8 +267,8 @@ cdef Dictionary pydict_to_Dictionary(object py_dict) except *:  # Adding "except
     return cdict
 
 
-cdef vector[any] empty_any_vec():
-    cdef vector[any] empty_vec
+cdef EmptyList empty_any_vec():
+    cdef EmptyList empty_vec
     return empty_vec
 
 
@@ -283,7 +288,7 @@ cdef vector[std_vector[double]] list_of_list_to_doublevec(object pylist):
     return vec
 
 
-cdef vector[long] pylist_to_intvec(object pylist):
+cdef vector[long] pylist_to_longvec(object pylist):
     cdef vector[long] vec
     for val in pylist:
         vec.push_back(val)
@@ -396,7 +401,7 @@ def llapi_distance(object conn):  # PYNEST-NG-FUTURE: should there be a SynapseC
 
 def llapi_make_nodecollection(object node_ids):
     cdef NodeCollectionPTR gids
-    # node_ids list is automatically converted to an std::vector
+    # node_ids list is automatically converted to a vector
     gids = make_nodecollection(node_ids)
     obj = NodeCollectionObject()
     obj._set_nc(gids)
@@ -541,11 +546,11 @@ def llapi_to_string(NodeCollectionObject nc):
 
 def llapi_get_kernel_status():
     cdef Dictionary cdict = get_kernel_status()
-    return Dictionary_to_pydict(cdict)
+    return dictionary_to_pydict(cdict)
 
 
 def llapi_get_defaults(object model_name):
-    return Dictionary_to_pydict(get_model_defaults(pystr_to_string(model_name)))
+    return dictionary_to_pydict(get_model_defaults(pystr_to_string(model_name)))
 
 
 def llapi_set_defaults(object model_name, object params):
@@ -590,13 +595,13 @@ def llapi_copy_model(oldmodname, newmodname, object params):
 
 
 def llapi_get_nc_status(NodeCollectionObject nc, object key=None):
-    cdef Dictionary statuses = get_nc_status(nc.thisptr)
+    statuses = dictionary_to_pydict( get_nc_status(nc.thisptr) )
     if key is None:
-        return Dictionary_to_pydict(statuses)
+        return statuses
     elif isinstance(key, str):
-        if not statuses.known(pystr_to_string(key)):
+        if key not in statuses:
             raise KeyError(key)
-        value = any_to_pyobj(statuses[pystr_to_string(key)])
+        value = statuses[key]
         # PYNEST-NG-FUTURE: This is backwards-compatible, but makes it harder
         # to write scalable code. Maybe just return value as is?
         return value[0] if len(value) == 1 else value
@@ -631,7 +636,7 @@ def llapi_nc_find(NodeCollectionObject nc, long node_id):
 
 
 def llapi_get_nc_metadata(NodeCollectionObject nc):
-    return Dictionary_to_pydict(get_metadata(nc.thisptr))
+    return dictionary_to_pydict(get_metadata(nc.thisptr))
 
 
 def llapi_take_array_index(NodeCollectionObject node_collection, object array):
@@ -887,20 +892,20 @@ def llapi_connect_arrays(sources, targets, weights, delays, synapse_model, syn_p
             raise ValueError('syn_param_values must be a matrix with arrays of the same length as sources and targets.')
 
     # Get pointers to the first element in each NumPy array
-    cdef long[::1] sources_mv = numpy.ascontiguousarray(sources, dtype=numpy.int64)
-    cdef long* sources_ptr = &sources_mv[0]
+    cdef const long[::1] sources_mv = numpy.ascontiguousarray(sources, dtype=numpy.int64)
+    cdef const long* sources_ptr = &sources_mv[0]
 
-    cdef long[::1] targets_mv = numpy.ascontiguousarray(targets, dtype=numpy.int64)
-    cdef long* targets_ptr = &targets_mv[0]
+    cdef const long[::1] targets_mv = numpy.ascontiguousarray(targets, dtype=numpy.int64)
+    cdef const long* targets_ptr = &targets_mv[0]
 
-    cdef double[::1] weights_mv
-    cdef double* weights_ptr = NULL
+    cdef const double[::1] weights_mv
+    cdef const double* weights_ptr = NULL
     if weights is not None:
         weights_mv = numpy.ascontiguousarray(weights, dtype=numpy.double)
         weights_ptr = &weights_mv[0]
 
-    cdef double[::1] delays_mv
-    cdef double* delays_ptr = NULL
+    cdef const double[::1] delays_mv
+    cdef const double* delays_ptr = NULL
     if delays is not None:
         delays_mv = numpy.ascontiguousarray(delays, dtype=numpy.double)
         delays_ptr = &delays_mv[0]
@@ -911,8 +916,8 @@ def llapi_connect_arrays(sources, targets, weights, delays, synapse_model, syn_p
         for key in syn_param_keys:
             param_keys_ptr.push_back(pystr_to_string(key))
 
-    cdef double[:, ::1] param_values_mv
-    cdef double* param_values_ptr = NULL
+    cdef const double[:, ::1] param_values_mv
+    cdef const double* param_values_ptr = NULL
     if syn_param_values is not None:
         param_values_mv = numpy.ascontiguousarray(syn_param_values, dtype=numpy.double)
         param_values_ptr = &param_values_mv[0][0]

@@ -217,9 +217,21 @@ SPManager::register_growth_curve( const std::string& name )
   assert( not growthcurvedict_.known( name ) );
   GenericGrowthCurveFactory* nc = new GrowthCurveFactory< GrowthCurve >();
   assert( nc );
-  const int id = growthcurve_factories_.size();
+  const size_t id = growthcurve_factories_.size();
   growthcurve_factories_.push_back( nc );
-  growthcurvedict_[ name ] = id;
+  growthcurvedict_[ name ] = static_cast< long >( id );
+}
+
+inline bool
+SPManager::is_structural_plasticity_enabled() const
+{
+  return structural_plasticity_enabled_;
+}
+
+inline double
+SPManager::get_structural_plasticity_update_interval() const
+{
+  return structural_plasticity_update_interval_;
 }
 
 }  // namespace nest

@@ -27,6 +27,7 @@
 // C++ includes:
 #include <cassert>
 #include <cmath>
+#include <cstddef>
 #include <limits>
 
 // Generated includes:

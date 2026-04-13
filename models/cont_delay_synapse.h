@@ -280,7 +280,7 @@ cont_delay_synapse< targetidentifierT >::get_status( Dictionary& d ) const
 
   d[ names::weight ] = weight_;
   d[ names::delay ] = Time( Time::step( get_delay_steps() ) ).get_ms() - delay_offset_;
-  d[ names::size_of ] = sizeof( *this );
+  d[ names::size_of ] = static_cast< long >( sizeof( *this ) );
 }
 
 template < typename targetidentifierT >

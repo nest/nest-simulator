@@ -75,11 +75,12 @@ GridLayer< D >::set_status( const Dictionary& d )
 
 template < int D >
 void
-GridLayer< D >::get_status( Dictionary& d, NodeCollection const* nc ) const
+GridLayer< D >::get_status( Dictionary& d, NodeCollection const* const nc ) const
 {
   Layer< D >::get_status( d, nc );
 
-  d[ names::shape ] = std::vector< size_t >( dims_.get_vector() );
+  const auto dv = dims_.get_vector();
+  d[ names::shape ] = std::vector< long >( dv.begin(), dv.end() );
 }
 
 template < int D >

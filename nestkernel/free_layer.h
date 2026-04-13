@@ -26,12 +26,12 @@
 // C++ includes:
 #include <algorithm>
 #include <limits>
-#include <sstream>
+#include <vector>
 
 // Includes from nestkernel:
+#include "dictionary.h"
 #include "nest_names.h"
 #include "node_manager.h"
-
 
 // Includes from spatial:
 #include "layer.h"

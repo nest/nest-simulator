@@ -166,12 +166,12 @@ void connect_tripartite( NodeCollectionPTR sources,
  * and M additional synapse parameters, p_keys has a size of M, and the p_values array
  * has length of M*n.
  */
-void connect_arrays( long* sources,
-  long* targets,
-  double* weights,
-  double* delays,
+void connect_arrays( const long* sources,
+  const long* targets,
+  const double* weights,
+  const double* delays,
   const std::vector< std::string >& p_keys,
-  double* p_values,
+  const double* p_values,
   size_t n,
   const std::string& syn_model );
 
@@ -243,7 +243,7 @@ void copy_model( const std::string& oldmodname, const std::string& newmodname, c
 void set_model_defaults( const std::string& model_name, const Dictionary& );
 Dictionary get_model_defaults( const std::string& model_name );
 
-ParameterPTR create_parameter( const boost::any& );
+ParameterPTR create_parameter( const any_type& );
 ParameterPTR create_parameter( const double );
 ParameterPTR create_parameter( const long );
 ParameterPTR create_parameter( const Dictionary& param_dict );

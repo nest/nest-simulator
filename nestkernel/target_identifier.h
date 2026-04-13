@@ -117,8 +117,8 @@ TargetIdentifierPtrRport::get_status( Dictionary& d ) const
   // Do nothing if called on synapse prototype
   if ( target_ )
   {
-    d[ names::rport ] = rport_;
-    d[ names::target ] = target_->get_node_id();
+    d[ names::rport ] = static_cast< long >( rport_ );
+    d[ names::target ] = static_cast< long >( target_->get_node_id() );
   }
 }
 

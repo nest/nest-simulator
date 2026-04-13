@@ -79,7 +79,7 @@ Connector< ConnectionT >::get_synapse_status( const size_t tid, const size_t lci
 
   // get target node ID here, where tid is available
   // necessary for hpc synapses using TargetIdentifierIndex
-  dict[ names::target ] = C_[ lcid ].get_target( tid )->get_node_id();
+  dict[ names::target ] = static_cast< long >( C_[ lcid ].get_target( tid )->get_node_id() );
 }
 
 template < typename ConnectionT >

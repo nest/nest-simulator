@@ -67,7 +67,7 @@ public:
    *
    * The type name must not already exist. The
    * class for the subtype is supplied via the template argument. This
-   * class should have a constructor taking a const dictionary& as
+   * class should have a constructor taking a const Dictionary& as
    * parameter.
    * @param name subtype name.
    * @returns true if subtype was successfully registered.
@@ -79,7 +79,7 @@ public:
    * Register a new subtype. The type name must not already exist.
    * @param name    Subtype name.
    * @param creator A factory function creating objects of this subtype
-   *                from a const dictionary& containing parameters
+   *                from a const Dictionary& containing parameters
    * @returns true if mask was successfully registered.
    */
   bool register_subtype( const std::string& name, CreatorFunction creator );

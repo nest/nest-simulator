@@ -21,6 +21,8 @@
  */
 
 
+#include "nest_impl.h"
+
 // C++ includes:
 #include <cassert>
 #include <deque>
@@ -31,7 +33,6 @@
 #include <utility>
 #include <vector>
 
-#include "nest_impl.h"
 // Includes from nestkernel:
 #include "compose.hpp"
 #include "connection_id.h"
@@ -150,7 +151,7 @@ pprint_to_string( NodeCollectionPTR nc )
 {
   assert( nc );
   std::stringstream stream;
-  nc->print_me( stream );
+  stream << nc;
   return stream.str();
 }
 
@@ -180,12 +181,15 @@ get_kernel_status()
   return d;
 }
 
+// TODO: Add the possibility to filter for specific keys
 Dictionary
 get_nc_status( NodeCollectionPTR nc )
 {
   Dictionary result;
+  const size_t num_nodes = nc->size();
+
   size_t node_index = 0;
-  for ( NodeCollection::const_iterator it = nc->begin(); it < nc->end(); ++it, ++node_index )
+  for ( auto it = nc->begin(); it != nc->end(); ++it, ++node_index )
   {
     const auto node_status = get_node_status( ( *it ).node_id );
     for ( const auto& [ key, entry ] : node_status )
@@ -194,18 +198,28 @@ get_nc_status( NodeCollectionPTR nc )
       if ( p != result.end() )
       {
         // key exists
-        auto& v = boost::any_cast< std::vector< boost::any >& >( p->second.item );
-        v[ node_index ] = entry.item;
+        try
+        {
+          auto& v = std::get< AnyVector >( p->second.item );
+          v[ node_index ] = entry.item;
+        }
+        catch ( const std::bad_variant_access& e )
+        {
+          throw std::runtime_error( String::compose(
+            "result[%1] contained type %2, expected vector<any_type>.", key, debug_type( p->second.item ) ) );
+        }
       }
       else
       {
         // key does not exist yet
-        auto new_entry = std::vector< boost::any >( nc->size(), nullptr );
+        auto new_entry =
+          AnyVector( num_nodes );  // all elements initialized with std::monostate, translates to None in Python
         new_entry[ node_index ] = entry.item;
         result[ key ] = new_entry;
       }
     }
   }
+
   return result;
 }
 
@@ -418,7 +432,7 @@ get_metadata( const NodeCollectionPTR nc )
   if ( meta.get() )
   {
     meta->get_status( status_dict, nc );
-    status_dict[ names::network_size ] = nc->size();
+    status_dict[ names::network_size ] = static_cast< long >( nc->size() );
   }
   return status_dict;
 }
@@ -454,12 +468,12 @@ connect_tripartite( NodeCollectionPTR sources,
 }
 
 void
-connect_arrays( long* sources,
-  long* targets,
-  double* weights,
-  double* delays,
+connect_arrays( const long* sources,
+  const long* targets,
+  const double* weights,
+  const double* delays,
   const std::vector< std::string >& p_keys,
-  double* p_values,
+  const double* p_values,
   size_t n,
   const std::string& syn_model )
 {
@@ -602,30 +616,27 @@ get_model_defaults( const std::string& component )
 }
 
 ParameterPTR
-create_parameter( const boost::any& value )
+create_parameter( const any_type& value )
 {
-  if ( is_type< double >( value ) )
-  {
-    return create_parameter( boost::any_cast< double >( value ) );
-  }
-  else if ( is_type< int >( value ) )
-  {
-    return create_parameter( static_cast< long >( boost::any_cast< int >( value ) ) );
-  }
-  else if ( is_type< long >( value ) )
-  {
-    return create_parameter( boost::any_cast< long >( value ) );
-  }
-  else if ( is_type< Dictionary >( value ) )
-  {
-    return create_parameter( boost::any_cast< Dictionary >( value ) );
-  }
-  else if ( is_type< ParameterPTR >( value ) )
-  {
-    return boost::any_cast< ParameterPTR >( value );
-  }
-  throw BadProperty(
-    std::string( "Parameter must be parametertype, constant or dictionary, got " ) + debug_type( value ) );
+  return std::visit(
+    [ &value ]( auto&& val ) -> ParameterPTR
+    {
+      using T = std::decay_t< decltype( val ) >;
+      if constexpr ( std::is_same_v< T, ParameterPTR > )
+      {
+        return val;
+      }
+      else if constexpr ( std::is_same_v< T, double > or std::is_same_v< T, long > or std::is_same_v< T, Dictionary > )
+      {
+        return create_parameter( static_cast< const T& >( val ) );
+      }
+      else
+      {
+        throw BadProperty(
+          std::string( "Parameter must be parametertype, constant or dictionary, got " ) + debug_type( value ) );
+      }
+    },
+    value );
 }
 
 ParameterPTR
@@ -651,10 +662,10 @@ create_parameter( const Dictionary& param_dict )
   {
     throw BadProperty( "Parameter definition dictionary must contain one single key only." );
   }
-  const auto n = param_dict.begin()->first;
-  const auto pdict = param_dict.get< Dictionary >( n );
+  const std::string& n = param_dict.begin()->first;
+  const Dictionary& pdict = param_dict.get< Dictionary >( n );
   pdict.init_access_flags();
-  auto parameter = create_parameter( n, pdict );
+  ParameterPTR parameter = create_parameter( n, pdict );
   pdict.all_entries_accessed( "create_parameter", "param" );
   return parameter;
 }

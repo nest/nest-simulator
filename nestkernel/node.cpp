@@ -153,8 +153,8 @@ Node::get_status_base()
   dict[ names::local ] = kernel::manager< NodeManager >.is_local_node( this );
   dict[ names::model ] = get_name();
   dict[ names::model_id ] = get_model_id();
-  dict[ names::global_id ] = get_node_id();
-  dict[ names::vp ] = get_vp();
+  dict[ names::global_id ] = static_cast< long >( get_node_id() );
+  dict[ names::vp ] = static_cast< long >( get_vp() );
   dict[ names::element_type ] = get_element_type();
 
   // add information available only for local nodes
@@ -162,8 +162,8 @@ Node::get_status_base()
   {
     dict[ names::frozen ] = is_frozen();
     dict[ names::node_uses_wfr ] = node_uses_wfr();
-    dict[ names::thread_local_id ] = get_thread_lid();
-    dict[ names::thread ] = get_thread();
+    dict[ names::thread_local_id ] = static_cast< long >( get_thread_lid() );
+    dict[ names::thread ] = static_cast< long >( get_thread() );
   }
 
   // now call the child class' hook

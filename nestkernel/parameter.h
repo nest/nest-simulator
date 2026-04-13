@@ -23,10 +23,10 @@
 #ifndef PARAMETER_H_
 #define PARAMETER_H_
 
-#include <stddef.h>
 // C++ includes:
 #include <cmath>
 #include <memory>
+#include <stddef.h>
 #include <vector>
 
 // Includes from nestkernel:
@@ -76,7 +76,13 @@ public:
    * @param node pointer to the node, used when the node position is relevant
    * @returns the value of the parameter.
    */
-  virtual double value( RngPtr rng, Node* node ) = 0;
+  // TODO-PYNEST-NG: We need to either make this non-abstract or add every single non-abstract parameter subclass to the
+  //  std::variant acceptec-types collection.
+  virtual double
+  value( RngPtr, Node* )
+  {
+    return 0.;
+  }
 
   /**
    * Generates a value based on parameter specifications and arguments.
@@ -206,7 +212,7 @@ public:
   double value( RngPtr rng, Node* ) override;
 
 private:
-  double max_;
+  long max_;
 };
 
 

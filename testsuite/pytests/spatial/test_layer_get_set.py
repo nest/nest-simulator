@@ -23,6 +23,8 @@
 Tests for ``get`` and ``set`` functions for spatial ``NodeCollection``.
 """
 
+import math
+
 import nest
 import numpy.testing as nptest
 import pytest
@@ -90,9 +92,11 @@ def test_layer_set_nonexistent_param_raises():
 
 def test_layer_get_node_param():
     """Test ``get`` on layered ``NodeCollection`` node parameter."""
-    layer = nest.Create("iaf_psc_alpha", positions=nest.spatial.grid(shape=[2, 2]))
 
-    nptest.assert_equal(layer.get("V_m"), -70.0)
+    shape = [2, 2]
+    layer = nest.Create("iaf_psc_alpha", positions=nest.spatial.grid(shape=shape))
+
+    assert layer.get("V_m") == (-70.0,) * math.prod(shape)
 
 
 @pytest.mark.parametrize(

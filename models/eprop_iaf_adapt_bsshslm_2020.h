@@ -186,7 +186,7 @@ Parameter                   Unit    Math equivalent         Default          Des
 ``V_min``                   mV      :math:`v_\text{min}`    negative maximum Absolute lower bound of the
                                                             value            membrane voltage
                                                             representable by
-                                                            a ``double``
+                                                            ``double``
                                                             type in C++
 ``V_th``                    mV      :math:`v_\text{th}`                -55.0 Spike threshold voltage
 =========================== ======= ======================= ================ ===================================
@@ -196,6 +196,10 @@ Parameter                   Unit    Math equivalent         Default          Des
 ----------------------------------------------------------------------------------------------------------------
 Parameter                       Unit    Math equivalent         Default            Description
 =============================== ======= ======================= ================== =============================
+``flush_event_send_interval``   ms                              maximum value      Interval since previous event
+                                                                representable by   after which a flush event is
+                                                                ``double`` type in sent
+                                                                C++
 ``c_reg``                               :math:`c_\text{reg}`                 0.0   Coefficient of firing rate
                                                                                    regularization
 ``f_target``                    Hz      :math:`f^\text{target}`             10.0   Target firing rate of rate
@@ -317,8 +321,8 @@ public:
   size_t handles_test_event( LearningSignalConnectionEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_buffers_() override;
@@ -390,10 +394,10 @@ private:
     Parameters_();
 
     //! Get the parameters and their values.
-    void get( DictionaryDatum& ) const;
+    void get( Dictionary& ) const;
 
     //! Set the parameters and throw errors in case of invalid values.
-    double set( const DictionaryDatum&, Node* );
+    double set( const Dictionary&, Node* );
   };
 
   //! Structure of state variables.
@@ -430,10 +434,10 @@ private:
     State_();
 
     //! Get the state variables and their values.
-    void get( DictionaryDatum&, const Parameters_& ) const;
+    void get( Dictionary&, const Parameters_& ) const;
 
     //! Set the state variables.
-    void set( const DictionaryDatum&, const Parameters_&, double, Node* );
+    void set( const Dictionary&, const Parameters_&, double, Node* );
   };
 
   //! Structure of buffers.
@@ -593,16 +597,18 @@ eprop_iaf_adapt_bsshslm_2020::handles_test_event( DataLoggingRequest& dlr, size_
 }
 
 inline void
-eprop_iaf_adapt_bsshslm_2020::get_status( DictionaryDatum& d ) const
+eprop_iaf_adapt_bsshslm_2020::get_status( Dictionary& d ) const
 {
+  EpropArchivingNodeRecurrent::get_status( d );
   P_.get( d );
   S_.get( d, P_ );
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
-eprop_iaf_adapt_bsshslm_2020::set_status( const DictionaryDatum& d )
+eprop_iaf_adapt_bsshslm_2020::set_status( const Dictionary& d )
 {
+  EpropArchivingNodeRecurrent::set_status( d );
   // temporary copies in case of errors
   Parameters_ ptmp = P_;
   State_ stmp = S_;
@@ -615,6 +621,6 @@ eprop_iaf_adapt_bsshslm_2020::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
-} // namespace nest
+}  // namespace nest
 
-#endif // EPROP_IAF_ADAPT_BSSHSLM_2020_H
+#endif  // EPROP_IAF_ADAPT_BSSHSLM_2020_H

@@ -32,8 +32,6 @@
 #include "kernel_manager.h"
 #include "nest_impl.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 namespace nest
 {
@@ -46,13 +44,14 @@ register_parrot_neuron( const std::string& name )
 
 parrot_neuron::parrot_neuron()
   : ArchivingNode()
+  , FlushEventMechanism()
 {
 }
 
 void
 parrot_neuron::init_buffers_()
 {
-  B_.n_spikes_.clear(); // includes resize
+  B_.n_spikes_.clear();  // includes resize
   ArchivingNode::clear_history();
 }
 
@@ -61,6 +60,7 @@ parrot_neuron::update( Time const& origin, const long from, const long to )
 {
   for ( long lag = from; lag < to; ++lag )
   {
+    const long t = origin.get_steps() + lag;
     const unsigned long current_spikes_n = static_cast< unsigned long >( B_.n_spikes_.get_value( lag ) );
     if ( current_spikes_n > 0 )
     {
@@ -72,22 +72,32 @@ parrot_neuron::update( Time const& origin, const long from, const long to )
       // set the spike times, respecting the multiplicity
       for ( unsigned long i = 0; i < current_spikes_n; i++ )
       {
-        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+        set_spiketime( Time::step( t + 1 ) );
       }
+      set_last_event_time( t );
+    }
+    else if ( flush_event_is_due( t ) )
+    {
+      SpikeEvent se;
+      se.set_flush_event_flag( true );
+      kernel().event_delivery_manager.send( *this, se, lag );
+      set_last_event_time( t );
     }
   }
 }
 
 void
-parrot_neuron::get_status( DictionaryDatum& d ) const
+parrot_neuron::get_status( Dictionary& d ) const
 {
   ArchivingNode::get_status( d );
+  FlushEventMechanism::get_status( d );
 }
 
 void
-parrot_neuron::set_status( const DictionaryDatum& d )
+parrot_neuron::set_status( const Dictionary& d )
 {
   ArchivingNode::set_status( d );
+  FlushEventMechanism::set_status( d );
 }
 
 void
@@ -101,4 +111,4 @@ parrot_neuron::handle( SpikeEvent& e )
   }
 }
 
-} // namespace
+}  // namespace

@@ -139,9 +139,9 @@ public:
     return true;
   }
 
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   void
   set_weight( double w )
@@ -150,7 +150,7 @@ public:
   }
 
 private:
-  double weight_; //!< connection weight
+  double weight_;  //!< connection weight
 };
 
 template < typename targetidentifierT >
@@ -158,19 +158,19 @@ constexpr ConnectionModelProperties rate_connection_delayed< targetidentifierT >
 
 template < typename targetidentifierT >
 void
-rate_connection_delayed< targetidentifierT >::get_status( DictionaryDatum& d ) const
+rate_connection_delayed< targetidentifierT >::get_status( Dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::weight ] = weight_;
+  d[ names::size_of ] = static_cast< long >( sizeof( *this ) );
 }
 
 template < typename targetidentifierT >
 void
-rate_connection_delayed< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+rate_connection_delayed< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
+  d.update_value( names::weight, weight_ );
 }
 
 template < typename targetidentifierT >
@@ -180,6 +180,6 @@ rate_connection_delayed< targetidentifierT >::get_secondary_event()
   return std::make_unique< DelayedRateConnectionEvent >();
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef RATE_CONNECTION_DELAYED_H */

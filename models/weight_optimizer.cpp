@@ -26,9 +26,6 @@
 #include "exceptions.h"
 #include "nest_names.h"
 
-// sli
-#include "dictutils.h"
-
 namespace nest
 {
 WeightOptimizerCommonProperties::WeightOptimizerCommonProperties()
@@ -54,21 +51,21 @@ WeightOptimizerCommonProperties::WeightOptimizerCommonProperties( const WeightOp
 }
 
 void
-WeightOptimizerCommonProperties::get_status( DictionaryDatum& d ) const
+WeightOptimizerCommonProperties::get_status( Dictionary& d ) const
 {
-  def< std::string >( d, names::optimizer, get_name() );
-  def< long >( d, names::batch_size, batch_size_ );
-  def< double >( d, names::eta, eta_ );
-  def< double >( d, names::Wmin, Wmin_ );
-  def< double >( d, names::Wmax, Wmax_ );
-  def< bool >( d, names::optimize_each_step, optimize_each_step_ );
+  d[ names::optimizer ] = get_name();
+  d[ names::batch_size ] = static_cast< long >( batch_size_ );
+  d[ names::eta ] = eta_;
+  d[ names::Wmin ] = Wmin_;
+  d[ names::Wmax ] = Wmax_;
+  d[ names::optimize_each_step ] = optimize_each_step_;
 }
 
 void
-WeightOptimizerCommonProperties::set_status( const DictionaryDatum& d )
+WeightOptimizerCommonProperties::set_status( const Dictionary& d )
 {
   long new_batch_size = batch_size_;
-  updateValue< long >( d, names::batch_size, new_batch_size );
+  d.update_value( names::batch_size, new_batch_size );
   if ( new_batch_size <= 0 )
   {
     throw BadProperty( "Optimization batch_size > 0 required." );
@@ -76,7 +73,7 @@ WeightOptimizerCommonProperties::set_status( const DictionaryDatum& d )
   batch_size_ = new_batch_size;
 
   double eta_new = eta_;
-  updateValue< double >( d, names::eta, eta_new );
+  d.update_value( names::eta, eta_new );
   if ( eta_new < 0 )
   {
     throw BadProperty( "Learning rate eta ≥ 0 required." );
@@ -94,8 +91,8 @@ WeightOptimizerCommonProperties::set_status( const DictionaryDatum& d )
 
   double new_Wmin = Wmin_;
   double new_Wmax = Wmax_;
-  updateValue< double >( d, names::Wmin, new_Wmin );
-  updateValue< double >( d, names::Wmax, new_Wmax );
+  d.update_value( names::Wmin, new_Wmin );
+  d.update_value( names::Wmax, new_Wmax );
   if ( new_Wmin > new_Wmax )
   {
     throw BadProperty( "Minimal weight Wmin ≤ maximal weight Wmax required." );
@@ -103,11 +100,11 @@ WeightOptimizerCommonProperties::set_status( const DictionaryDatum& d )
   Wmin_ = new_Wmin;
   Wmax_ = new_Wmax;
 
-  updateValue< bool >( d, names::optimize_each_step, optimize_each_step_ );
+  d.update_value( names::optimize_each_step, optimize_each_step_ );
 }
 
 WeightOptimizer::WeightOptimizer()
-  : sum_gradients_( 0.0 )
+  : cumulative_gradient_( 0.0 )
   , optimization_step_( 1 )
   , eta_current_( 1e-4 )
   , n_optimize_( 0 )
@@ -115,12 +112,12 @@ WeightOptimizer::WeightOptimizer()
 }
 
 void
-WeightOptimizer::get_status( DictionaryDatum& d ) const
+WeightOptimizer::get_status( Dictionary& d ) const
 {
 }
 
 void
-WeightOptimizer::set_status( const DictionaryDatum& d )
+WeightOptimizer::set_status( const Dictionary& d )
 {
 }
 
@@ -134,7 +131,7 @@ WeightOptimizer::optimized_weight( const WeightOptimizerCommonProperties& cp,
   {
     eta_current_ = cp.eta_first_change_;
   }
-  sum_gradients_ += gradient;
+  cumulative_gradient_ += gradient;
 
   if ( optimization_step_ == 0 )
   {
@@ -144,7 +141,7 @@ WeightOptimizer::optimized_weight( const WeightOptimizerCommonProperties& cp,
   const size_t current_optimization_step = 1 + idx_current_update / cp.batch_size_;
   if ( optimization_step_ < current_optimization_step )
   {
-    sum_gradients_ /= cp.batch_size_;
+    cumulative_gradient_ /= cp.batch_size_;
     weight = std::max( cp.Wmin_, std::min( optimize_( cp, weight, current_optimization_step ), cp.Wmax_ ) );
     eta_current_ = cp.eta_;
     n_optimize_ += 1;
@@ -173,8 +170,8 @@ WeightOptimizerGradientDescent::WeightOptimizerGradientDescent()
 double
 WeightOptimizerGradientDescent::optimize_( const WeightOptimizerCommonProperties& cp, double weight, size_t )
 {
-  weight -= eta_current_ * sum_gradients_;
-  sum_gradients_ = 0.0;
+  weight -= eta_current_ * cumulative_gradient_;
+  cumulative_gradient_ = 0.0;
   return weight;
 }
 
@@ -200,23 +197,23 @@ WeightOptimizerCommonPropertiesAdam::get_optimizer() const
 }
 
 void
-WeightOptimizerCommonPropertiesAdam::get_status( DictionaryDatum& d ) const
+WeightOptimizerCommonPropertiesAdam::get_status( Dictionary& d ) const
 {
   WeightOptimizerCommonProperties::get_status( d );
 
-  def< double >( d, names::beta_1, beta_1_ );
-  def< double >( d, names::beta_2, beta_2_ );
-  def< double >( d, names::epsilon, epsilon_ );
+  d[ names::beta_1 ] = beta_1_;
+  d[ names::beta_2 ] = beta_2_;
+  d[ names::epsilon ] = epsilon_;
 }
 
 void
-WeightOptimizerCommonPropertiesAdam::set_status( const DictionaryDatum& d )
+WeightOptimizerCommonPropertiesAdam::set_status( const Dictionary& d )
 {
   WeightOptimizerCommonProperties::set_status( d );
 
-  updateValue< double >( d, names::beta_1, beta_1_ );
-  updateValue< double >( d, names::beta_2, beta_2_ );
-  updateValue< double >( d, names::epsilon, epsilon_ );
+  d.update_value( names::beta_1, beta_1_ );
+  d.update_value( names::beta_2, beta_2_ );
+  d.update_value( names::epsilon, epsilon_ );
 
   if ( beta_1_ < 0.0 or 1.0 <= beta_1_ )
   {
@@ -244,19 +241,19 @@ WeightOptimizerAdam::WeightOptimizerAdam()
 }
 
 void
-WeightOptimizerAdam::get_status( DictionaryDatum& d ) const
+WeightOptimizerAdam::get_status( Dictionary& d ) const
 {
   WeightOptimizer::get_status( d );
-  def< double >( d, names::m, m_ );
-  def< double >( d, names::v, v_ );
+  d[ names::m ] = m_;
+  d[ names::v ] = v_;
 }
 
 void
-WeightOptimizerAdam::set_status( const DictionaryDatum& d )
+WeightOptimizerAdam::set_status( const Dictionary& d )
 {
   WeightOptimizer::set_status( d );
-  updateValue< double >( d, names::m, m_ );
-  updateValue< double >( d, names::v, v_ );
+  d.update_value( names::m, m_ );
+  d.update_value( names::v, v_ );
 }
 
 
@@ -274,17 +271,17 @@ WeightOptimizerAdam::optimize_( const WeightOptimizerCommonProperties& cp,
 
     const double alpha = eta_current_ * std::sqrt( 1.0 - beta_2_power_ ) / ( 1.0 - beta_1_power_ );
 
-    m_ = acp.beta_1_ * m_ + ( 1.0 - acp.beta_1_ ) * sum_gradients_;
-    v_ = acp.beta_2_ * v_ + ( 1.0 - acp.beta_2_ ) * sum_gradients_ * sum_gradients_;
+    m_ = acp.beta_1_ * m_ + ( 1.0 - acp.beta_1_ ) * cumulative_gradient_;
+    v_ = acp.beta_2_ * v_ + ( 1.0 - acp.beta_2_ ) * cumulative_gradient_ * cumulative_gradient_;
 
     weight -= alpha * m_ / ( std::sqrt( v_ ) + acp.epsilon_ );
 
     // set gradients to zero for following iterations since more than
     // one cycle indicates past learning periods with vanishing gradients
-    sum_gradients_ = 0.0; // reset for following iterations
+    cumulative_gradient_ = 0.0;  // reset for following iterations
   }
 
   return weight;
 }
 
-} // namespace nest
+}  // namespace nest

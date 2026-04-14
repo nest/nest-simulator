@@ -60,16 +60,18 @@ synapses can only be connected to neuron models that are capable of
 archiving. So far, compatible models are ``eprop_iaf``, ``eprop_iaf_psc_delta``, ``eprop_iaf_psc_delta_adapt``,
 ``eprop_iaf_adapt``, and ``eprop_readout``.
 
-For more information on e-prop plasticity, see the documentation on the other e-prop models:
+For more information, see the following topics:
 
- * :doc:`eprop_iaf<../models/eprop_iaf/>`
- * :doc:`eprop_iaf_adapt<../models/eprop_iaf_adapt/>`
- * :doc:`eprop_readout<../models/eprop_readout/>`
- * :doc:`eprop_learning_signal_connection<../models/eprop_learning_signal_connection/>`
+* other e-prop plasticity models:
 
-For more information on the optimizers, see the documentation of the weight optimizer:
+      * :doc:`eprop_iaf<../models/eprop_iaf/>`
+      * :doc:`eprop_iaf_adapt<../models/eprop_iaf_adapt/>`
+      * :doc:`eprop_readout<../models/eprop_readout/>`
+      * :doc:`eprop_learning_signal_connection<../models/eprop_learning_signal_connection/>`
 
- * :doc:`weight_optimizer<../models/weight_optimizer/>`
+* :doc:`weight optimizer<../models/weight_optimizer/>`
+* triggering synaptic plasticity computations to reduce memory usage via the
+  :ref:`flush event mechanism<flush_event_mechanism>`
 
 Details on the event-based NEST implementation of e-prop can be found in [2]_.
 
@@ -182,10 +184,10 @@ public:
   ~EpropSynapseCommonProperties();
 
   //! Get parameter dictionary.
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
   //! Update values in parameter dictionary.
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   /**
    * Pointer to common properties object for weight optimizer.
@@ -242,6 +244,9 @@ public:
     | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::REQUIRES_EPROP_ARCHIVING
     | ConnectionModelProperties::SUPPORTS_HPC;
 
+  //! Whether this connection type supports flush events.
+  static constexpr bool supports_flush_event = true;
+
   //! Default constructor.
   eprop_synapse();
 
@@ -266,10 +271,10 @@ public:
   using ConnectionBase::get_target;
 
   //! Get parameter dictionary.
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
   //! Update values in parameter dictionary.
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   //! Send the spike event.
   bool send( Event& e, size_t thread, const EpropSynapseCommonProperties& cp );
@@ -317,6 +322,9 @@ private:
   //! The time step when the previous spike arrived.
   long t_spike_previous_ = 0;
 
+  //! Previous event was a flush event.
+  bool previous_was_flush_event_ = false;
+
   //! The time step when the spike arrived that triggered the previous e-prop update.
   long t_previous_trigger_spike_ = 0;
 
@@ -334,6 +342,15 @@ private:
 
   //! Value of spiking variable one time step before t_previous_spike_.
   double z_previous_buffer_ = 0.0;
+
+  //! Sum of gradients.
+  double gradient_ = 0.0;
+
+  //! Remaining computation steps.
+  long remaining_steps_until_cutoff_ = 0;
+
+  //! Decay steps for the eligibility trace.
+  long decay_steps_ = 0;
 
   /**
    *  Optimizer
@@ -359,12 +376,12 @@ Connector< eprop_synapse< TargetIdentifierPtrRport > >::~Connector();
 template <>
 Connector< eprop_synapse< TargetIdentifierIndex > >::~Connector();
 
-
 template < typename targetidentifierT >
 eprop_synapse< targetidentifierT >::eprop_synapse()
   : ConnectionBase()
   , weight_( 1.0 )
   , t_spike_previous_( 0 )
+  , previous_was_flush_event_( false )
   , t_previous_trigger_spike_( 0 )
   , optimizer_( nullptr )
 {
@@ -399,12 +416,16 @@ eprop_synapse< targetidentifierT >::operator=( const eprop_synapse& es )
 
   weight_ = es.weight_;
   t_spike_previous_ = es.t_spike_previous_;
+  previous_was_flush_event_ = es.previous_was_flush_event_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
   z_bar_ = es.z_bar_;
   e_bar_ = es.e_bar_;
   e_bar_reg_ = es.e_bar_reg_;
   epsilon_ = es.epsilon_;
   z_previous_buffer_ = es.z_previous_buffer_;
+  gradient_ = es.gradient_;
+  remaining_steps_until_cutoff_ = es.remaining_steps_until_cutoff_;
+  decay_steps_ = es.decay_steps_;
   optimizer_ = es.optimizer_;
 
   return *this;
@@ -415,11 +436,16 @@ eprop_synapse< targetidentifierT >::eprop_synapse( eprop_synapse&& es )
   : ConnectionBase( es )
   , weight_( es.weight_ )
   , t_spike_previous_( es.t_spike_previous_ )
+  , previous_was_flush_event_( es.previous_was_flush_event_ )
   , t_previous_trigger_spike_( es.t_previous_trigger_spike_ )
   , z_bar_( es.z_bar_ )
   , e_bar_( es.e_bar_ )
   , e_bar_reg_( es.e_bar_reg_ )
   , epsilon_( es.epsilon_ )
+  , z_previous_buffer_( es.z_previous_buffer_ )
+  , gradient_( es.gradient_ )
+  , remaining_steps_until_cutoff_( es.remaining_steps_until_cutoff_ )
+  , decay_steps_( es.decay_steps_ )
   , optimizer_( es.optimizer_ )
 {
   // Move operator, therefore we must null the optimizer pointer in the source of the move.
@@ -440,13 +466,16 @@ eprop_synapse< targetidentifierT >::operator=( eprop_synapse&& es )
 
   weight_ = es.weight_;
   t_spike_previous_ = es.t_spike_previous_;
+  previous_was_flush_event_ = es.previous_was_flush_event_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
   z_bar_ = es.z_bar_;
   e_bar_ = es.e_bar_;
   e_bar_reg_ = es.e_bar_reg_;
   epsilon_ = es.epsilon_;
   z_previous_buffer_ = es.z_previous_buffer_;
-
+  gradient_ = es.gradient_;
+  remaining_steps_until_cutoff_ = es.remaining_steps_until_cutoff_;
+  decay_steps_ = es.decay_steps_;
   optimizer_ = es.optimizer_;
 
   // Move assignment, therefore we must null the optimizer pointer in the source of the move.
@@ -492,61 +521,77 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
   assert( target );
 
   const long t_spike = e.get_stamp().get_steps();
+  const bool is_flush_event = e.is_flush_event();
 
   if ( t_spike_previous_ != 0 )
   {
-    target->compute_gradient(
-      t_spike, t_spike_previous_, z_previous_buffer_, z_bar_, e_bar_, e_bar_reg_, epsilon_, weight_, cp, optimizer_ );
+    target->compute_gradient( t_spike,
+      t_spike_previous_,
+      z_previous_buffer_,
+      z_bar_,
+      e_bar_,
+      e_bar_reg_,
+      epsilon_,
+      weight_,
+      cp,
+      optimizer_,
+      is_flush_event,
+      previous_was_flush_event_,
+      gradient_,
+      remaining_steps_until_cutoff_,
+      decay_steps_ );
   }
 
-  const long eprop_isi_trace_cutoff = target->get_eprop_isi_trace_cutoff();
-  target->write_update_to_history( t_spike_previous_, t_spike, eprop_isi_trace_cutoff );
+  target->erase_used_eprop_history( t_spike, t_spike_previous_ );
 
   t_spike_previous_ = t_spike;
+  previous_was_flush_event_ = is_flush_event;
 
-  e.set_receiver( *target );
-  e.set_weight( weight_ );
-  e.set_delay_steps( get_delay_steps() );
-  e.set_rport( get_rport() );
-  e();
-
+  if ( not is_flush_event )
+  {
+    e.set_receiver( *target );
+    e.set_weight( weight_ );
+    e.set_delay_steps( get_delay_steps() );
+    e.set_rport( get_rport() );
+    e();
+  }
   return true;
 }
 
 template < typename targetidentifierT >
 void
-eprop_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
+eprop_synapse< targetidentifierT >::get_status( Dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::weight ] = weight_;
+  d[ names::size_of ] = static_cast< long >( sizeof( *this ) );
 
-  DictionaryDatum optimizer_dict = new Dictionary();
+  Dictionary optimizer_dict;
 
   // The default_connection_ has no optimizer, therefore we need to protect it
   if ( optimizer_ )
   {
     optimizer_->get_status( optimizer_dict );
-    ( *d )[ names::optimizer ] = optimizer_dict;
+    d[ names::optimizer ] = optimizer_dict;
   }
 }
 
 template < typename targetidentifierT >
 void
-eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+eprop_synapse< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  if ( d->known( names::optimizer ) )
+  if ( d.known( names::optimizer ) )
   {
     // We must pass here if called by SetDefaults. In that case, the user will get and error
     // message because the parameters for the synapse-specific optimizer have not been accessed.
     if ( optimizer_ )
     {
-      optimizer_->set_status( getValue< DictionaryDatum >( d->lookup( names::optimizer ) ) );
+      optimizer_->set_status( d.get< Dictionary >( names::optimizer ) );
     }
   }
 
-  updateValue< double >( d, names::weight, weight_ );
+  d.update_value( names::weight, weight_ );
 
   const auto& gcm = dynamic_cast< const GenericConnectorModel< eprop_synapse< targetidentifierT > >& >( cm );
   const CommonPropertiesType& epcp = gcm.get_common_properties();
@@ -561,6 +606,6 @@ eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
   }
 }
 
-} // namespace nest
+}  // namespace nest
 
-#endif // EPROP_SYNAPSE_H
+#endif  // EPROP_SYNAPSE_H

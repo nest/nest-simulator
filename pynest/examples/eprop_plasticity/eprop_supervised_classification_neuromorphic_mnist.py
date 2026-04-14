@@ -77,6 +77,7 @@ References
 
 import os
 import zipfile
+from pathlib import Path
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -124,8 +125,8 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # stop criterion is reached. After training, the performance can be tested over a number of test iterations.
 
 group_size = 100  # number of instances over which to evaluate the learning performance, 100 for convergence
-n_iter_train = 200  # number of training iterations, 200 for convergence
-n_iter_test = 10  # number of iterations for final test
+n_iter_train = 10  # number of training iterations, 200 for convergence
+n_iter_test = 2  # number of iterations for final test
 do_early_stopping = False  # if True, stop training as soon as stop criterion fulfilled
 n_iter_validate_every = 10  # number of training iterations before validation
 n_iter_early_stop = 8  # number of iterations to average over to evaluate early stopping condition
@@ -169,7 +170,7 @@ params_setup = {
 
 nest.ResetKernel()
 nest.set(**params_setup)
-nest.set_verbosity("M_FATAL")
+nest.verbosity = nest.VerbosityLevel.FATAL
 
 # %% ###########################################################################################################
 # Create neurons
@@ -182,7 +183,7 @@ nest.set_verbosity("M_FATAL")
 # pixels. By omitting spike generators for pixels on this blocklist, we effectively reduce the total number of
 # input neurons and spike generators required, optimizing the network's resource usage.
 
-pixels_blocklist = np.loadtxt("./NMNIST_pixels_blocklist.txt")
+pixels_blocklist = np.loadtxt(Path(__file__).resolve().parent / "NMNIST_pixels_blocklist.txt")
 
 pixels_dict = {
     "n_x": 34,  # number of pixels in horizontal direction
@@ -216,6 +217,9 @@ params_nrn_rec = {
     "E_L": 0.0,
     "eprop_isi_trace_cutoff": 100,
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
+    "flush_event_send_interval": duration[
+        "sequence"
+    ],  # ms, inactivity period before flushing outgoing synapses to free memory
     "gamma": 0.5,  # height scaling of the pseudo-derivative
     "I_e": 0.0,
     "kappa": 0.99,  # low-pass filter of the eligibility trace
@@ -361,10 +365,10 @@ senders_in_rec, targets_in_rec = get_weight_recorder_senders_targets(weights_in_
 senders_rec_rec, targets_rec_rec = get_weight_recorder_senders_targets(weights_rec_rec, nrns_rec, nrns_rec)
 senders_rec_out, targets_rec_out = get_weight_recorder_senders_targets(weights_rec_out, nrns_rec, nrns_out)
 
-params_wr["senders"] = np.unique(np.concatenate([senders_in_rec, senders_rec_rec, senders_rec_out]))
-params_wr["targets"] = np.unique(np.concatenate([targets_in_rec, targets_rec_rec, targets_rec_out]))
-
-nest.SetStatus(wr, params_wr)
+wr.set(
+    senders=np.unique(np.concatenate([senders_in_rec, senders_rec_rec, senders_rec_out])),
+    targets=np.unique(np.concatenate([targets_in_rec, targets_rec_rec, targets_rec_out])),
+)
 
 params_common_syn_eprop = {
     "optimizer": {
@@ -473,7 +477,7 @@ def unzip(zip_file_path, extraction_path):
 
 def download_and_extract_nmnist_dataset(save_path="./"):
     nmnist_dataset = {
-        "url": "https://prod-dcd-datasets-cache-zipfiles.s3.eu-west-1.amazonaws.com/468j46mzdv-1.zip",
+        "url": "https://data.mendeley.com/public-api/zip/468j46mzdv/download/1",
         "directory": "468j46mzdv-1",
         "zip": "dataset.zip",
     }
@@ -488,9 +492,13 @@ def download_and_extract_nmnist_dataset(save_path="./"):
     if not (os.path.exists(path) and os.path.exists(train_path) and os.path.exists(test_path)):
         if not os.path.exists(downloaded_zip_path):
             print("\nDownloading the N-MNIST dataset.")
-            response = requests.get(nmnist_dataset["url"], timeout=10)
-            with open(downloaded_zip_path, "wb") as file:
-                file.write(response.content)
+            chunk_size = 1024 * 1024  # 1 MiB
+            with requests.get(nmnist_dataset["url"], stream=True, timeout=60) as r:
+                r.raise_for_status()
+                with open(downloaded_zip_path, "wb", buffering=chunk_size) as f:
+                    for chunk in r.iter_content(chunk_size=chunk_size):
+                        if chunk:
+                            f.write(chunk)
 
         unzip(downloaded_zip_path, save_path)
         unzip(f"{train_path}.zip", path)
@@ -715,9 +723,9 @@ class TrainingPipeline:
         params_gen_spk_in, params_gen_rate_target, params_gen_learning_window = get_params_task_input_output(
             self.n_iter_sim, loader
         )
-        nest.SetStatus(gen_spk_in, params_gen_spk_in)
-        nest.SetStatus(gen_rate_target, params_gen_rate_target)
-        nest.SetStatus(gen_learning_window, params_gen_learning_window)
+        gen_spk_in.set(params_gen_spk_in)
+        gen_rate_target.set(params_gen_rate_target)
+        gen_learning_window.set(params_gen_learning_window)
 
         self.simulate("total_offset")
         self.simulate("extension_sim")

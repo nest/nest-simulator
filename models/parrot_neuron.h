@@ -27,6 +27,7 @@
 #include "archiving_node.h"
 #include "connection.h"
 #include "event.h"
+#include "flush_event_mechanism.h"
 #include "nest_types.h"
 #include "ring_buffer.h"
 
@@ -63,6 +64,20 @@ and postsynaptic spike times for STDP protocols by connecting
 two parrot neurons spiking at desired times by, for example, a
 ``stdp_synapse`` onto port 1 on the postsynaptic parrot neuron.
 
+Parameters
+++++++++++
+
+The following parameters can be set in the status dictionary.
+
+============================= ==== ================== =================================
+Parameter                     Unit Default            Description
+============================= ==== ================== =================================
+``flush_event_send_interval`` ms   maximum value      Interval since previous event
+                                   representable by   after which a flush event is sent
+                                   ``double`` type in
+                                   C++
+============================= ==== ================== =================================
+
 Receives
 ++++++++
 
@@ -82,7 +97,7 @@ EndUserDocs */
 
 void register_parrot_neuron( const std::string& name );
 
-class parrot_neuron : public ArchivingNode
+class parrot_neuron : public ArchivingNode, public FlushEventMechanism
 {
 
 public:
@@ -105,15 +120,16 @@ public:
   void handle( SpikeEvent& ) override;
   size_t handles_test_event( SpikeEvent&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_buffers_() override;
   void
   pre_run_hook() override
   {
-  } // no variables
+    FlushEventMechanism::pre_run_hook();
+  }
 
   void update( Time const&, const long, const long ) override;
 
@@ -165,6 +181,6 @@ parrot_neuron::receives_signal() const
   return ALL;
 }
 
-} // namespace
+}  // namespace
 
-#endif // PARROT_NEURON_H
+#endif  // PARROT_NEURON_H

@@ -27,13 +27,6 @@
 // C++ includes:
 #include <numeric>
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
-
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "logging.h"
@@ -68,33 +61,33 @@ nest::music_event_out_proxy::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::music_event_out_proxy::Parameters_::get( DictionaryDatum& d ) const
+nest::music_event_out_proxy::Parameters_::get( Dictionary& d ) const
 {
-  ( *d )[ names::port_name ] = port_name_;
+  d[ names::port_name ] = port_name_;
 }
 
 void
-nest::music_event_out_proxy::Parameters_::set( const DictionaryDatum& d, State_& s )
+nest::music_event_out_proxy::Parameters_::set( const Dictionary& d, State_& s )
 {
   // TODO: This is not possible, as P_ does not know about get_name()
-  //  if(d->known(names::port_name) and s.published_)
+  //  if(d.known(names::port_name) and s.published_)
   //    throw MUSICPortAlreadyPublished(get_name(), P_.port_name_);
 
   if ( not s.published_ )
   {
-    updateValue< string >( d, names::port_name, port_name_ );
+    d.update_value( names::port_name, port_name_ );
   }
 }
 
 void
-nest::music_event_out_proxy::State_::get( DictionaryDatum& d ) const
+nest::music_event_out_proxy::State_::get( Dictionary& d ) const
 {
-  ( *d )[ names::published ] = published_;
-  ( *d )[ names::port_width ] = port_width_;
+  d[ names::published ] = published_;
+  d[ names::port_width ] = port_width_;
 }
 
 void
-nest::music_event_out_proxy::State_::set( const DictionaryDatum&, const Parameters_& )
+nest::music_event_out_proxy::State_::set( const Dictionary&, const Parameters_& )
 {
 }
 
@@ -177,34 +170,34 @@ nest::music_event_out_proxy::pre_run_hook()
     S_.published_ = true;
 
     std::string msg = String::compose( "Mapping MUSIC output port '%1' with width=%2.", P_.port_name_, S_.port_width_ );
-    LOG( M_INFO, "MusicEventHandler::publish_port()", msg.c_str() );
+    LOG( VerbosityLevel::INFO, "MusicEventHandler::publish_port()", msg.c_str() );
   }
 }
 
 void
-nest::music_event_out_proxy::get_status( DictionaryDatum& d ) const
+nest::music_event_out_proxy::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
 
-  ( *d )[ names::connection_count ] = V_.index_map_.size();
+  d[ names::connection_count ] = static_cast< long >( V_.index_map_.size() );
 
   // make a copy, since MUSIC uses int instead of long int
-  std::vector< long >* pInd_map_long = new std::vector< long >( V_.index_map_.size() );
+  std::vector< long > pInd_map_long( V_.index_map_.size() );
   std::copy< std::vector< MUSIC::GlobalIndex >::const_iterator, std::vector< long >::iterator >(
-    V_.index_map_.begin(), V_.index_map_.end(), pInd_map_long->begin() );
+    V_.index_map_.begin(), V_.index_map_.end(), pInd_map_long.begin() );
 
-  ( *d )[ names::index_map ] = IntVectorDatum( pInd_map_long );
+  d[ names::index_map ] = pInd_map_long;
 }
 
 void
-nest::music_event_out_proxy::set_status( const DictionaryDatum& d )
+nest::music_event_out_proxy::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d, S_ );     // throws if BadProperty
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
+  ptmp.set( d, S_ );      // throws if BadProperty
 
   State_ stmp = S_;
-  stmp.set( d, P_ ); // throws if BadProperty
+  stmp.set( d, P_ );  // throws if BadProperty
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
@@ -217,7 +210,7 @@ nest::music_event_out_proxy::handle( SpikeEvent& e )
   assert( e.get_multiplicity() > 0 );
 
   // propagate the spikes to MUSIC port
-  double time = e.get_stamp().get_ms() * 1e-3; // event time in seconds
+  double time = e.get_stamp().get_ms() * 1e-3;  // event time in seconds
   long receiver_port = e.get_rport();
 
 #ifdef _OPENMP

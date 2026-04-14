@@ -39,9 +39,6 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
 
 namespace nest
 {
@@ -73,20 +70,20 @@ RecordablesMap< pp_psc_delta >::create()
  * ---------------------------------------------------------------- */
 
 nest::pp_psc_delta::Parameters_::Parameters_()
-  : tau_m_( 10.0 )    // ms
-  , c_m_( 250.0 )     // pF
-  , dead_time_( 1.0 ) // ms
+  : tau_m_( 10.0 )     // ms
+  , c_m_( 250.0 )      // pF
+  , dead_time_( 1.0 )  // ms
   , dead_time_random_( 0 )
   , dead_time_shape_( 1 )
   , with_reset_( 1 )
-  , tau_sfa_( 34.0 ) // ms
-  , q_sfa_( 0.0 )    // mV, reasonable default is 7 mV [2]
+  , tau_sfa_( 34.0 )  // ms
+  , q_sfa_( 0.0 )     // mV, reasonable default is 7 mV [2]
   , multi_param_( 1 )
-  , c_1_( 0.0 )             // Hz / mV
-  , c_2_( 1.238 )           // Hz / mV
-  , c_3_( 0.25 )            // 1.0 / mV
-  , I_e_( 0.0 )             // pA
-  , t_ref_remaining_( 0.0 ) // ms
+  , c_1_( 0.0 )              // Hz / mV
+  , c_2_( 1.238 )            // Hz / mV
+  , c_3_( 0.25 )             // 1.0 / mV
+  , I_e_( 0.0 )              // pA
+  , t_ref_remaining_( 0.0 )  // ms
 {
   tau_sfa_.clear();
   q_sfa_.clear();
@@ -107,71 +104,68 @@ nest::pp_psc_delta::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::pp_psc_delta::Parameters_::get( DictionaryDatum& d ) const
+nest::pp_psc_delta::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::I_e, I_e_ );
-  def< double >( d, names::C_m, c_m_ );
-  def< double >( d, names::tau_m, tau_m_ );
-  def< double >( d, names::dead_time, dead_time_ );
-  def< bool >( d, names::dead_time_random, dead_time_random_ );
-  def< long >( d, names::dead_time_shape, dead_time_shape_ );
-  def< bool >( d, names::with_reset, with_reset_ );
+  d[ names::I_e ] = I_e_;
+  d[ names::C_m ] = c_m_;
+  d[ names::tau_m ] = tau_m_;
+  d[ names::dead_time ] = dead_time_;
+  d[ names::dead_time_random ] = dead_time_random_;
+  d[ names::dead_time_shape ] = dead_time_shape_;
+  d[ names::with_reset ] = with_reset_;
 
-  def< double >( d, names::c_1, c_1_ );
-  def< double >( d, names::c_2, c_2_ );
-  def< double >( d, names::c_3, c_3_ );
-  def< double >( d, names::t_ref_remaining, t_ref_remaining_ );
+  d[ names::c_1 ] = c_1_;
+  d[ names::c_2 ] = c_2_;
+  d[ names::c_3 ] = c_3_;
+  d[ names::t_ref_remaining ] = t_ref_remaining_;
 
   if ( multi_param_ )
   {
-    ArrayDatum tau_sfa_list_ad( tau_sfa_ );
-    def< ArrayDatum >( d, names::tau_sfa, tau_sfa_list_ad );
-
-    ArrayDatum q_sfa_list_ad( q_sfa_ );
-    def< ArrayDatum >( d, names::q_sfa, q_sfa_list_ad );
+    d[ names::tau_sfa ] = tau_sfa_;
+    d[ names::q_sfa ] = q_sfa_;
   }
   else
   {
     if ( tau_sfa_.size() == 0 )
     {
-      def< double >( d, names::tau_sfa, 0 );
-      def< double >( d, names::q_sfa, 0 );
+      d[ names::tau_sfa ] = 0;
+      d[ names::q_sfa ] = 0;
     }
     else
     {
-      def< double >( d, names::tau_sfa, tau_sfa_[ 0 ] );
-      def< double >( d, names::q_sfa, q_sfa_[ 0 ] );
+      d[ names::tau_sfa ] = tau_sfa_[ 0 ];
+      d[ names::q_sfa ] = q_sfa_[ 0 ];
     }
   }
 }
 
 void
-nest::pp_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::pp_psc_delta::Parameters_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::I_e, I_e_, node );
-  updateValueParam< double >( d, names::C_m, c_m_, node );
-  updateValueParam< double >( d, names::tau_m, tau_m_, node );
-  updateValueParam< double >( d, names::dead_time, dead_time_, node );
-  updateValueParam< bool >( d, names::dead_time_random, dead_time_random_, node );
-  updateValueParam< long >( d, names::dead_time_shape, dead_time_shape_, node );
-  updateValueParam< bool >( d, names::with_reset, with_reset_, node );
-  updateValueParam< double >( d, names::c_1, c_1_, node );
-  updateValueParam< double >( d, names::c_2, c_2_, node );
-  updateValueParam< double >( d, names::c_3, c_3_, node );
-  updateValueParam< double >( d, names::t_ref_remaining, t_ref_remaining_, node );
+  update_value_param( d, names::I_e, I_e_, node );
+  update_value_param( d, names::C_m, c_m_, node );
+  update_value_param( d, names::tau_m, tau_m_, node );
+  update_value_param( d, names::dead_time, dead_time_, node );
+  update_value_param( d, names::dead_time_random, dead_time_random_, node );
+  update_value_param( d, names::dead_time_shape, dead_time_shape_, node );
+  update_value_param( d, names::with_reset, with_reset_, node );
+  update_value_param( d, names::c_1, c_1_, node );
+  update_value_param( d, names::c_2, c_2_, node );
+  update_value_param( d, names::c_3, c_3_, node );
+  update_value_param( d, names::t_ref_remaining, t_ref_remaining_, node );
 
   try
   {
-    updateValue< std::vector< double > >( d, names::tau_sfa, tau_sfa_ );
-    updateValue< std::vector< double > >( d, names::q_sfa, q_sfa_ );
+    d.update_value( names::tau_sfa, tau_sfa_ );
+    d.update_value( names::q_sfa, q_sfa_ );
   }
   catch ( TypeMismatch& e )
   {
     multi_param_ = 0;
     double tau_sfa_temp_;
     double q_sfa_temp_;
-    updateValueParam< double >( d, names::tau_sfa, tau_sfa_temp_, node );
-    updateValueParam< double >( d, names::q_sfa, q_sfa_temp_, node );
+    update_value_param( d, names::tau_sfa, tau_sfa_temp_, node );
+    update_value_param( d, names::q_sfa, q_sfa_temp_, node );
     tau_sfa_.push_back( tau_sfa_temp_ );
     q_sfa_.push_back( q_sfa_temp_ );
   }
@@ -226,17 +220,17 @@ nest::pp_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-nest::pp_psc_delta::State_::get( DictionaryDatum& d, const Parameters_& ) const
+nest::pp_psc_delta::State_::get( Dictionary& d, const Parameters_& ) const
 {
-  def< double >( d, names::V_m, y3_ );  // Membrane potential
-  def< double >( d, names::E_sfa, q_ ); // Adaptive threshold potential
+  d[ names::V_m ] = y3_;   // Membrane potential
+  d[ names::E_sfa ] = q_;  // Adaptive threshold potential
 }
 
 void
-nest::pp_psc_delta::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
+nest::pp_psc_delta::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
-  updateValueParam< double >( d, names::V_m, y3_, node );
-  updateValueParam< double >( d, names::E_sfa, q_, node );
+  update_value_param( d, names::V_m, y3_, node );
+  update_value_param( d, names::E_sfa, q_, node );
   // vectors of the state should be initialized with new parameter set.
   initialized_ = false;
 }
@@ -285,9 +279,9 @@ nest::pp_psc_delta::init_state_()
 void
 nest::pp_psc_delta::init_buffers_()
 {
-  B_.spikes_.clear();   //!< includes resize
-  B_.currents_.clear(); //!< includes resize
-  B_.logger_.reset();   //!< includes resize
+  B_.spikes_.clear();    //!< includes resize
+  B_.currents_.clear();  //!< includes resize
+  B_.logger_.reset();    //!< includes resize
   ArchivingNode::clear_history();
 }
 
@@ -410,7 +404,7 @@ nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
           n_spikes = V_.poisson_dist_( V_.rng_, param );
         }
 
-        if ( n_spikes > 0 ) // Is there a spike? Then set the new dead time.
+        if ( n_spikes > 0 )  // Is there a spike? Then set the new dead time.
         {
           // Set dead time interval according to parameters
           if ( P_.dead_time_random_ )
@@ -446,10 +440,10 @@ nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
           {
             S_.y3_ = 0.0;
           }
-        } // S_.y3_ = P_.V_reset_;
-      }   // if (rate > 0.0)
+        }  // S_.y3_ = P_.V_reset_;
+      }  // if (rate > 0.0)
     }
-    else // Neuron is within dead time
+    else  // Neuron is within dead time
     {
       --S_.r_;
     }
@@ -493,4 +487,4 @@ nest::pp_psc_delta::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-} // namespace
+}  // namespace

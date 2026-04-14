@@ -18,7 +18,6 @@
 [![Virtual applicance](https://img.shields.io/badge/VM-v3.7-blue?logo=CodeSandbox)](https://nest-simulator.readthedocs.io/en/latest/installation/livemedia.html#live-media)
 
 [![YouTube Video Views](https://img.shields.io/youtube/views/K7KXmIv6ROY?style=social)](https://www.youtube.com/results?search_query=nest-simulator+neurons)
-[![Twitter Follow](https://img.shields.io/twitter/follow/nestsimulator?style=social)](https://twitter.com/nestsimulator)
 
 NEST is a simulator for spiking neural network models that focuses on the
 dynamics, size and structure of neural systems rather than on the exact
@@ -49,6 +48,25 @@ NEST is ideal for networks of spiking neurons of any size, for example:
 * NEST is an open source project and is licensed under the GNU General Public License v2 or later
 * NEST employs continuous integration workflows in order to maintain high code quality standards for correct and reproducible simulations
 
+
+## Installation
+
+### Quick Install
+
+```bash
+pip install nest-simulator
+```
+
+### macOS Requirements
+
+For macOS users, OpenMP support requires installing the OpenMP runtime library:
+
+```bash
+brew install libomp
+pip install nest-simulator
+```
+
+This is necessary for NEST's multithreading capabilities to work correctly on macOS.
 
 ## Documentation
 

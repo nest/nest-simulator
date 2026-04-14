@@ -23,8 +23,8 @@
 #ifndef WEIGHT_OPTIMIZER_H
 #define WEIGHT_OPTIMIZER_H
 
-// Includes from sli
-#include "dictdatum.h"
+// nestkernel
+#include "dictionary.h"
 
 namespace nest
 {
@@ -82,17 +82,18 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-====================== ==== ========================= ========= =================================
+====================== ==== ========================= ========= ============================================
 **Common optimizer parameters**
--------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------
 Parameter              Unit Math equivalent           Default   Description
-====================== ==== ========================= ========= =================================
+====================== ==== ========================= ========= ============================================
 ``batch_size``                                              1   Size of batch
 ``eta``                     :math:`\eta`                 1e-4   Learning rate
-``optimize_each_step``                                 ``True``
+``optimize_each_step``                                 ``True`` If ``True``, optimize each step, if ``False``
+                                                                once per spike
 ``Wmax``                pA  :math:`W_{ji}^\text{max}`   100.0   Maximal value for synaptic weight
 ``Wmin``                pA  :math:`W_{ji}^\text{min}`  -100.0   Minimal value for synaptic weight
-====================== ==== ========================= ========= =================================
+====================== ==== ========================= ========= =============================================
 
 ========= ==== =============== ================== ==============
 **Gradient descent parameters (default optimizer)**
@@ -175,10 +176,10 @@ public:
   WeightOptimizer& operator=( const WeightOptimizer& ) = delete;
 
   //! Get parameter dictionary.
-  virtual void get_status( DictionaryDatum& d ) const;
+  virtual void get_status( Dictionary& d ) const;
 
   //! Update parameters in parameter dictionary.
-  virtual void set_status( const DictionaryDatum& d );
+  virtual void set_status( const Dictionary& d );
 
   //! Clone constructor.
   virtual WeightOptimizerCommonProperties* clone() const = 0;
@@ -259,10 +260,10 @@ public:
   WeightOptimizer& operator=( const WeightOptimizer& ) = delete;
 
   //! Get parameter dictionary.
-  virtual void get_status( DictionaryDatum& d ) const;
+  virtual void get_status( Dictionary& d ) const;
 
   //! Update values in parameter dictionary.
-  virtual void set_status( const DictionaryDatum& d );
+  virtual void set_status( const Dictionary& d );
 
   //! Return optimized weight based on current weight.
   double optimized_weight( const WeightOptimizerCommonProperties& cp,
@@ -274,8 +275,8 @@ protected:
   //! Perform specific optimization.
   virtual double optimize_( const WeightOptimizerCommonProperties& cp, double weight, size_t current_opt_step ) = 0;
 
-  //! Sum of gradients accumulated in current batch.
-  double sum_gradients_;
+  //! Cumulative gradient over the current batch.
+  double cumulative_gradient_;
 
   //! Current optimization step, whereby optimization happens every batch_size_ steps.
   size_t optimization_step_;
@@ -349,8 +350,8 @@ public:
   //! Assignment operator.
   WeightOptimizerAdam& operator=( const WeightOptimizerAdam& ) = delete;
 
-  void get_status( DictionaryDatum& d ) const override;
-  void set_status( const DictionaryDatum& d ) override;
+  void get_status( Dictionary& d ) const override;
+  void set_status( const Dictionary& d ) override;
 
 private:
   double optimize_( const WeightOptimizerCommonProperties& cp, double weight, size_t current_opt_step ) override;
@@ -386,8 +387,8 @@ public:
   WeightOptimizerCommonProperties* clone() const override;
   WeightOptimizer* get_optimizer() const override;
 
-  void get_status( DictionaryDatum& d ) const override;
-  void set_status( const DictionaryDatum& d ) override;
+  void get_status( Dictionary& d ) const override;
+  void set_status( const Dictionary& d ) override;
 
   std::string
   get_name() const override
@@ -406,6 +407,6 @@ private:
   double epsilon_;
 };
 
-} // namespace nest
+}  // namespace nest
 
-#endif // WEIGHT_OPTIMIZER_H
+#endif  // WEIGHT_OPTIMIZER_H

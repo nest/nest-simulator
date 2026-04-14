@@ -44,16 +44,6 @@ Install from source in a mamba environment
     make install
     make installcheck
 
-For your convenience, a shell script setting all required environment variables is provided in
-``<nest_install_dir>/bin/nest_vars.sh``. Setting the environment variables in your active shell session requires
-sourcing the script:
-
-.. code-block:: sh
-
-   source <nest_install_dir>/bin/nest_vars.sh
-
-
-
 .. note::
 
    To build the developer or user documentation see :ref:`doc_workflow`

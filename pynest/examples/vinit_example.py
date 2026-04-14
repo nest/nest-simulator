@@ -52,8 +52,7 @@ import numpy
 # integrate-and-fire dynamics, conductance-based synapses, an additional
 # spike-frequency adaptation and relative refractory mechanisms as described
 # in [1]_. Incoming spike events induce a postsynaptic change of
-# conductance  modeled  by an  exponential  function. ``SetStatus`` allows to
-# assign the initial membrane voltage of the current loop run to the neuron.
+# conductance  modeled  by an  exponential  function.
 #
 # ``Create`` is used once more to instantiate a ``voltmeter`` as recording device
 # which is subsequently connected to the neuron with ``Connect``.

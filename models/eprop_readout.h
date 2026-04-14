@@ -166,7 +166,7 @@ Parameter                 Unit    Math equivalent       Default            Descr
 ``tau_m``                 ms      :math:`\tau_\text{m}`               10.0 Time constant of the membrane
 ``V_min``                 mV      :math:`v_\text{min}`  negative maximum   Absolute lower bound of the membrane
                                                         value              voltage
-                                                        representable by a
+                                                        representable by
                                                         ``double`` type in
                                                         C++
 ========================= ======= ===================== ================== =====================================
@@ -178,7 +178,7 @@ Parameter                   Unit    Math equivalent             Default         
 =========================== ======= =========================== ================ ===============================
 ``eprop_isi_trace_cutoff``  ms      :math:`{\Delta t}_\text{c}` maximum value    Cutoff for integration of
                                                                 representable    e-prop update between two
-                                                                by a ``long``    spikes
+                                                                by ``double``    spikes
                                                                 type in C++
 =========================== ======= =========================== ================ ===============================
 
@@ -290,8 +290,8 @@ public:
   size_t handles_test_event( DelayedRateConnectionEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_buffers_() override;
@@ -308,11 +308,15 @@ private:
     double&,
     double&,
     const CommonSynapseProperties&,
-    WeightOptimizer* ) override;
+    WeightOptimizer*,
+    const bool,
+    const bool,
+    double&,
+    long&,
+    long& ) override;
 
   long get_shift() const override;
   bool is_eprop_recurrent_node() const override;
-  long get_eprop_isi_trace_cutoff() const override;
 
   //! Map for storing a static set of recordables.
   friend class RecordablesMap< eprop_readout >;
@@ -338,17 +342,14 @@ private:
     //! Absolute lower bound of the membrane voltage relative to the leak membrane potential (mV).
     double V_min_;
 
-    //! Time interval from the previous spike until the cutoff of e-prop update integration between two spikes (ms).
-    double eprop_isi_trace_cutoff_;
-
     //! Default constructor.
     Parameters_();
 
     //! Get the parameters and their values.
-    void get( DictionaryDatum& ) const;
+    void get( Dictionary& ) const;
 
     //! Set the parameters and throw errors in case of invalid values.
-    double set( const DictionaryDatum&, Node* );
+    double set( const Dictionary&, Node* );
   };
 
   //! Structure of state variables.
@@ -379,10 +380,10 @@ private:
     State_();
 
     //! Get the state variables and their values.
-    void get( DictionaryDatum&, const Parameters_& ) const;
+    void get( Dictionary&, const Parameters_& ) const;
 
     //! Set the state variables.
-    void set( const DictionaryDatum&, const Parameters_&, double, Node* );
+    void set( const Dictionary&, const Parameters_&, double, Node* );
   };
 
   //! Structure of buffers.
@@ -412,9 +413,6 @@ private:
 
     //! Propagator matrix entry for evolving the incoming currents.
     double P_i_in_;
-
-    //! Time steps from the previous spike until the cutoff of e-prop update integration between two spikes.
-    long eprop_isi_trace_cutoff_steps_;
   };
 
   //! Minimal spike receptor type. Start with 1 to forbid port 0 and avoid accidental creation of connections with no
@@ -487,12 +485,6 @@ eprop_readout::is_eprop_recurrent_node() const
   return false;
 }
 
-inline long
-eprop_readout::get_eprop_isi_trace_cutoff() const
-{
-  return V_.eprop_isi_trace_cutoff_steps_;
-}
-
 inline size_t
 eprop_readout::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
@@ -548,22 +540,24 @@ eprop_readout::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type
 }
 
 inline void
-eprop_readout::get_status( DictionaryDatum& d ) const
+eprop_readout::get_status( Dictionary& d ) const
 {
+  EpropArchivingNodeReadout::get_status( d );
   P_.get( d );
   S_.get( d, P_ );
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 
-  DictionaryDatum receptor_dict_ = new Dictionary();
-  ( *receptor_dict_ )[ names::eprop_learning_window ] = LEARNING_WINDOW_SIG;
-  ( *receptor_dict_ )[ names::target_signal ] = TARGET_SIG;
+  Dictionary receptor_dict;
+  receptor_dict[ names::eprop_learning_window ] = static_cast< long >( LEARNING_WINDOW_SIG );
+  receptor_dict[ names::target_signal ] = static_cast< long >( TARGET_SIG );
 
-  ( *d )[ names::receptor_types ] = receptor_dict_;
+  d[ names::receptor_types ] = receptor_dict;
 }
 
 inline void
-eprop_readout::set_status( const DictionaryDatum& d )
+eprop_readout::set_status( const Dictionary& d )
 {
+  EpropArchivingNodeReadout::set_status( d );
   // temporary copies in case of errors
   Parameters_ ptmp = P_;
   State_ stmp = S_;
@@ -576,6 +570,6 @@ eprop_readout::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
-} // namespace nest
+}  // namespace nest
 
-#endif // EPROP_READOUT_H
+#endif  // EPROP_READOUT_H

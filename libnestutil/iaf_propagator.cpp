@@ -44,12 +44,12 @@ IAFPropagator::IAFPropagator( double tau_syn, double tau_m, double c_m )
   , tau_m_( tau_m )
   , c_m_( c_m )
   , h_min_regular_( NUMERICAL_STABILITY_FACTOR_ * tau_m_ * tau_m_ / std::abs( tau_m_ - tau_syn_ ) )
-  , beta_( tau_syn_ * tau_m_ / ( tau_m_ - tau_syn_ ) ) // == inf if tau_m == tau_syn, thus well-defined
+  , beta_( tau_syn_ * tau_m_ / ( tau_m_ - tau_syn_ ) )  // == inf if tau_m == tau_syn, thus well-defined
   , gamma_( beta_ / c_m_ )
   , inv_tau_syn_( 1 / tau_syn_ )
   , inv_tau_m_( 1 / tau_m_ )
   , inv_c_m_( 1 / c_m_ )
-  , inv_beta_( ( tau_m_ - tau_syn_ ) / ( tau_syn_ * tau_m_ ) ) // explicit in case tau_m == tau_syn
+  , inv_beta_( ( tau_m_ - tau_syn_ ) / ( tau_syn_ * tau_m_ ) )  // explicit in case tau_m == tau_syn
 {
 }
 

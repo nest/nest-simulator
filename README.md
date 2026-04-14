@@ -57,6 +57,11 @@ NEST is ideal for networks of spiking neurons of any size, for example:
 pip install nest-simulator
 ```
 
+More details and options for installing NEST with pip can be found here:
+
+https://nest-simulator.readthedocs.io/en/main/installation/pip_install.html
+
+
 ### macOS Requirements
 
 For macOS users, OpenMP support requires installing the OpenMP runtime library:

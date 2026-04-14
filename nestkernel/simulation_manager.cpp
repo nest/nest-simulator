@@ -891,8 +891,8 @@ nest::SimulationManager::update_()
   std::vector< std::exception_ptr > exceptions_raised( kernel::manager< VPManager >.get_num_threads() );
 
 #ifdef CYCLE_TIMERS
-  double start_current_communicate = kernel().event_delivery_manager.get_sw_communicate_spike_data().elapsed();
-  size_t start_local_spike_counter = kernel().event_delivery_manager.get_local_spike_counter();
+  double start_current_communicate = kernel< EventDeliveryManager >.get_sw_communicate_spike_data().elapsed();
+  size_t start_local_spike_counter = kernel< EventDeliveryManager >.get_local_spike_counter();
 #endif
 
 // parallel section begins
@@ -1161,11 +1161,11 @@ nest::SimulationManager::update_()
 #ifdef CYCLE_TIMERS
 
           const double end_current_communicate =
-            kernel().event_delivery_manager.get_sw_communicate_spike_data().elapsed();
+            kernel< EventDeliveryManager >.get_sw_communicate_spike_data().elapsed();
           const double communicate_time = end_current_communicate - start_current_communicate;
           start_current_communicate = end_current_communicate;
 
-          const size_t end_local_spike_counter = kernel().event_delivery_manager.get_local_spike_counter();
+          const size_t end_local_spike_counter = kernel< EventDeliveryManager >.get_local_spike_counter();
           const size_t local_spike_counter = end_local_spike_counter - start_local_spike_counter;
           start_local_spike_counter = end_local_spike_counter;
 

@@ -20,21 +20,20 @@
  *
  */
 
+// nest models
 #include "eprop_synapse.h"
 
+// C++
 #include <utility>
 
+// nestkernel
 #include "block_vector.h"
 #include "connection_manager.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
 
-// nestkernel
-
 namespace nest
 {
-class TargetIdentifierIndex;
-class TargetIdentifierPtrRport;
 
 void
 register_eprop_synapse( const std::string& name )
@@ -126,7 +125,6 @@ Connector< eprop_synapse< TargetIdentifierIndex > >::disable_connection( const s
   C_[ lcid ].disable();
 }
 
-
 template <>
 Connector< eprop_synapse< TargetIdentifierPtrRport > >::~Connector()
 {
@@ -149,6 +147,5 @@ Connector< eprop_synapse< TargetIdentifierIndex > >::~Connector()
   }
   C_.clear();
 }
-
 
 }  // namespace nest

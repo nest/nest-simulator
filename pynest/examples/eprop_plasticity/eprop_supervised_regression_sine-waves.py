@@ -190,6 +190,9 @@ params_nrn_rec = {
     "E_L": 0.0,
     "eprop_isi_trace_cutoff": 100,
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
+    "flush_event_send_interval": duration[
+        "sequence"
+    ],  # ms, inactivity period before flushing outgoing synapses to free memory
     "gamma": 10.0,  # height scaling of the pseudo-derivative
     "I_e": 0.0,
     "kappa": 0.97,  # low-pass filter of the eligibility trace
@@ -398,7 +401,7 @@ for input_spike_bool in input_spike_bools:
 
 ####################
 
-nest.SetStatus(gen_spk_in, params_gen_spk_in)
+gen_spk_in.set(params_gen_spk_in)
 
 # %% ###########################################################################################################
 # Create output
@@ -434,7 +437,7 @@ params_gen_rate_target = {
 
 ####################
 
-nest.SetStatus(gen_rate_target, params_gen_rate_target)
+gen_rate_target.set(params_gen_rate_target)
 
 # %% ###########################################################################################################
 # Create learning window
@@ -450,7 +453,7 @@ params_gen_learning_window = {
 
 ####################
 
-nest.SetStatus(gen_learning_window, params_gen_learning_window)
+gen_learning_window.set(params_gen_learning_window)
 
 # %% ###########################################################################################################
 # Force final update

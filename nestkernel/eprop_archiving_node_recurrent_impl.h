@@ -28,6 +28,43 @@
 namespace nest
 {
 
+template < bool hist_shift_required >
+inline void
+EpropArchivingNodeRecurrent< hist_shift_required >::get_status( Dictionary& d ) const
+{
+  d[ names::flush_event_send_interval ] = flush_event_send_interval_;
+
+  if constexpr ( not hist_shift_required )
+  {
+    d[ names::eprop_isi_trace_cutoff ] = eprop_isi_trace_cutoff_;
+  }
+}
+
+template < bool hist_shift_required >
+inline void
+EpropArchivingNodeRecurrent< hist_shift_required >::set_status( const Dictionary& d )
+{
+  FlushEventMechanism::set_status( d );
+
+  if constexpr ( not hist_shift_required )
+  {
+    d.update_value( names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
+
+    if ( eprop_isi_trace_cutoff_ < 0.0 )
+    {
+      throw BadProperty( "Computation cutoff of eprop trace eprop_isi_trace_cutoff ≥ 0 required." );
+    }
+  }
+  else
+  {
+    if ( flush_event_send_interval_ < kernel::manager< SimulationManager >.get_eprop_update_interval().get_ms() )
+    {
+      throw BadProperty(
+        "Interval since previous event after which a flush event is sent flush_event_send_interval ≥ "
+        "eprop_update_interval required." );
+    }
+  }
+}
 
 template < bool hist_shift_required >
 inline void
@@ -55,13 +92,6 @@ EpropArchivingNodeRecurrent< hist_shift_required >::model_dependent_history_shif
   {
     return -delay_rec_out_;
   }
-}
-
-template < bool hist_shift_required >
-bool
-EpropArchivingNodeRecurrent< hist_shift_required >::history_shift_required_() const
-{
-  return hist_shift_required;
 }
 
 template < bool hist_shift_required >
@@ -223,7 +253,6 @@ EpropArchivingNodeRecurrent< hist_shift_required >::write_learning_signal_to_his
     shift += delay_out_norm_;
   }
 
-
   auto it_hist = get_eprop_history( time_step - shift );
   const auto it_hist_end = get_eprop_history( time_step - shift + delay_out_rec_ );
 
@@ -296,7 +325,7 @@ EpropArchivingNodeRecurrent< hist_shift_required >::get_learning_signal_from_his
 {
   long shift = delay_rec_out_ + delay_out_rec_;
 
-  if ( hist_shift_required )
+  if constexpr ( hist_shift_required )
   {
     shift += delay_out_norm_;
   }
@@ -331,8 +360,6 @@ EpropArchivingNodeRecurrent< hist_shift_required >::erase_used_firing_rate_reg_h
   }
 }
 
-
 }
-
 
 #endif

@@ -33,6 +33,7 @@ namespace nest
 SpikeData::SpikeData()
   : lcid_( 0 )
   , marker_( SPIKE_DATA_ID_DEFAULT )
+  , flush_event_( FLUSH_EVENT_FALSE )
   , lag_( 0 )
   , tid_( 0 )
   , syn_id_( 0 )
@@ -42,24 +43,31 @@ SpikeData::SpikeData()
 SpikeData::SpikeData( const SpikeData& rhs )
   : lcid_( rhs.lcid_ )
   , marker_( rhs.marker_ )
+  , flush_event_( rhs.flush_event_ )
   , lag_( rhs.lag_ )
   , tid_( rhs.tid_ )
   , syn_id_( rhs.syn_id_ )
 {
 }
 
-SpikeData::SpikeData( const Target& target, const size_t lag )
+SpikeData::SpikeData( const Target& target, const size_t lag, const bool is_flush_event )
   : lcid_( target.get_lcid() )
   , marker_( SPIKE_DATA_ID_DEFAULT )
+  , flush_event_( FLUSH_EVENT_FALSE )
   , lag_( lag )
   , tid_( target.get_tid() )
   , syn_id_( target.get_syn_id() )
 {
+  if ( is_flush_event )
+  {
+    flush_event_ = FLUSH_EVENT_TRUE;
+  }
 }
 
 SpikeData::SpikeData( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag )
   : lcid_( lcid )
   , marker_( SPIKE_DATA_ID_DEFAULT )
+  , flush_event_( FLUSH_EVENT_FALSE )
   , lag_( lag )
   , tid_( tid )
   , syn_id_( syn_id )
@@ -71,6 +79,7 @@ SpikeData::operator=( const SpikeData& rhs )
 {
   lcid_ = rhs.lcid_;
   marker_ = rhs.marker_;
+  flush_event_ = rhs.flush_event_;
   lag_ = rhs.lag_;
   tid_ = rhs.tid_;
   syn_id_ = rhs.syn_id_;
@@ -178,6 +187,12 @@ SpikeData::is_invalid_marker() const
   return marker_ == SPIKE_DATA_ID_INVALID;
 }
 
+bool
+SpikeData::is_flush_event() const
+{
+  return flush_event_ == FLUSH_EVENT_TRUE;
+}
+
 
 // --- OffGridSpikeData ---
 
@@ -188,7 +203,7 @@ OffGridSpikeData::OffGridSpikeData()
 }
 
 OffGridSpikeData::OffGridSpikeData( const Target& target, const size_t lag, const double offset )
-  : SpikeData( target, lag )
+  : SpikeData( target, lag, false )
   , offset_( offset )
 {
 }
@@ -256,9 +271,9 @@ OffGridSpikeData::set( const size_t tid,
 }
 // --- SpikeDataWithRank ---
 
-SpikeDataWithRank::SpikeDataWithRank( const Target& target, const size_t lag )
+SpikeDataWithRank::SpikeDataWithRank( const Target& target, const size_t lag, const bool is_flush_event )
   : rank( target.get_rank() )
-  , spike_data( target, lag )
+  , spike_data( target, lag, is_flush_event )
 {
 }
 

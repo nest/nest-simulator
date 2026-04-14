@@ -30,6 +30,31 @@ namespace nest
 {
 
 template < bool hist_shift_required >
+inline void
+EpropArchivingNodeReadout< hist_shift_required >::get_status( Dictionary& d ) const
+{
+  if constexpr ( not hist_shift_required )
+  {
+    d[ names::eprop_isi_trace_cutoff ] = eprop_isi_trace_cutoff_;
+  }
+}
+
+template < bool hist_shift_required >
+inline void
+EpropArchivingNodeReadout< hist_shift_required >::set_status( const Dictionary& d )
+{
+  if constexpr ( not hist_shift_required )
+  {
+    d.update_value( names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
+
+    if ( eprop_isi_trace_cutoff_ < 0.0 )
+    {
+      throw BadProperty( "Computation cutoff of eprop trace eprop_isi_trace_cutoff ≥ 0 required." );
+    }
+  }
+}
+
+template < bool hist_shift_required >
 void
 EpropArchivingNodeReadout< hist_shift_required >::append_new_eprop_history_entry( long time_step )
 {
@@ -78,14 +103,6 @@ EpropArchivingNodeReadout< hist_shift_required >::model_dependent_history_shift_
     return -delay_rec_out_;
   }
 }
-
-template < bool hist_shift_required >
-bool
-EpropArchivingNodeReadout< hist_shift_required >::history_shift_required_() const
-{
-  return hist_shift_required;
-}
-
 
 }
 

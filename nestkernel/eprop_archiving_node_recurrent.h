@@ -233,6 +233,9 @@ public:
    */
   void reset_spike_count();
 
+  void get_status( Dictionary& d ) const override;
+  void set_status( const Dictionary& d ) override;
+
   //! Firing rate regularization.
   double firing_rate_reg_;
 
@@ -241,7 +244,6 @@ public:
 
 protected:
   long model_dependent_history_shift_() const override;
-  bool history_shift_required_() const override;
 
   //! Pointer to member function selected for computing the surrogate gradient.
   surrogate_gradient_function compute_surrogate_gradient_ =

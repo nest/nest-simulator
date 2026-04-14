@@ -323,6 +323,16 @@ public:
    */
   void set_stamp( Time const& );
 
+  /**
+   * Sets the flush event flag.
+   */
+  void set_flush_event_flag( bool is_flush_event );
+
+  /**
+   * Returns whether this spike is a flush event.
+   */
+  bool is_flush_event();
+
 protected:
   size_t sender_node_id_;        //!< node ID of sender or 0
   SpikeData sender_spike_data_;  //!< spike data of sender node, in some cases required to retrieve node ID
@@ -811,6 +821,18 @@ inline void
 Event::set_delay_steps( long d )
 {
   d_ = d;
+}
+
+inline void
+Event::set_flush_event_flag( bool is_flush_event )
+{
+  sender_spike_data_.set_flush_event_flag( is_flush_event );
+}
+
+inline bool
+Event::is_flush_event()
+{
+  return sender_spike_data_.is_flush_event();
 }
 
 inline long

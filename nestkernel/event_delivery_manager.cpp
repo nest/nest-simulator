@@ -677,6 +677,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
           const SpikeDataT& spike_data = recv_buffer[ rank * spike_buffer_size_per_rank + i * SPIKES_PER_BATCH + j ];
           se_batch[ j ].set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
           se_batch[ j ].set_offset( spike_data.get_offset() );
+          se_batch[ j ].set_flush_event_flag( spike_data.is_flush_event() );
           tid_batch[ j ] = spike_data.get_tid();
           syn_id_batch[ j ] = spike_data.get_syn_id();
           lcid_batch[ j ] = spike_data.get_lcid();
@@ -699,6 +700,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
           recv_buffer[ rank * spike_buffer_size_per_rank + num_batches * SPIKES_PER_BATCH + j ];
         se_batch[ j ].set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
         se_batch[ j ].set_offset( spike_data.get_offset() );
+        se_batch[ j ].set_flush_event_flag( spike_data.is_flush_event() );
         tid_batch[ j ] = spike_data.get_tid();
         syn_id_batch[ j ] = spike_data.get_syn_id();
         lcid_batch[ j ] = spike_data.get_lcid();
@@ -723,7 +725,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
 
           se_batch[ j ].set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
           se_batch[ j ].set_offset( spike_data.get_offset() );
-
+          se_batch[ j ].set_flush_event_flag( spike_data.is_flush_event() );
           syn_id_batch[ j ] = spike_data.get_syn_id();
           // for compressed spikes lcid holds the index in the
           // compressed_spike_data structure
@@ -761,6 +763,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
           recv_buffer[ rank * spike_buffer_size_per_rank + num_batches * SPIKES_PER_BATCH + j ];
         se_batch[ j ].set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
         se_batch[ j ].set_offset( spike_data.get_offset() );
+        se_batch[ j ].set_flush_event_flag( spike_data.is_flush_event() );
         syn_id_batch[ j ] = spike_data.get_syn_id();
         // for compressed spikes lcid holds the index in the
         // compressed_spike_data structure
@@ -1211,7 +1214,7 @@ EventDeliveryManager::send_remote( size_t tid, SpikeEvent& e, const long lag )
     // Unroll spike multiplicity as plastic synapses only handle individual spikes.
     for ( size_t i = 0; i < e.get_multiplicity(); ++i )
     {
-      emitted_spikes_register_[ tid ]->emplace_back( target, lag );
+      emitted_spikes_register_[ tid ]->emplace_back( target, lag, e.is_flush_event() );
     }
   }
 }

@@ -216,6 +216,11 @@ template < typename ConnectionT >
 void
 Connector< ConnectionT >::send_to_all( const size_t tid, const std::vector< ConnectorModel* >& cm, Event& e )
 {
+  if ( not ConnectionT::supports_flush_event and e.is_flush_event() )
+  {
+    return;
+  }
+
   auto const& cp = static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties();
 
   for ( size_t lcid = 0; lcid < C_.size(); ++lcid )
@@ -233,6 +238,11 @@ Connector< ConnectionT >::send( const size_t tid,
   const std::vector< ConnectorModel* >& cm,
   Event& e )
 {
+  if ( not ConnectionT::supports_flush_event and e.is_flush_event() )
+  {
+    return 0;
+  }
+
   typename ConnectionT::CommonPropertiesType const& cp =
     static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties();
 

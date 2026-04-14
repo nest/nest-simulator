@@ -20,20 +20,19 @@
  *
  */
 
+// nest models
 #include "eprop_synapse_bsshslm_2020.h"
 
+// C++
 #include <utility>
 
+// nestkernel
 #include "block_vector.h"
 #include "connection_manager.h"
 #include "nest_impl.h"
 
-// nestkernel
-
 namespace nest
 {
-class TargetIdentifierIndex;
-class TargetIdentifierPtrRport;
 
 void
 register_eprop_synapse_bsshslm_2020( const std::string& name )
@@ -129,7 +128,6 @@ Connector< eprop_synapse_bsshslm_2020< TargetIdentifierIndex > >::disable_connec
   C_[ lcid ].disable();
 }
 
-
 template <>
 Connector< eprop_synapse_bsshslm_2020< TargetIdentifierPtrRport > >::~Connector()
 {
@@ -149,6 +147,5 @@ Connector< eprop_synapse_bsshslm_2020< TargetIdentifierIndex > >::~Connector()
   }
   C_.clear();
 }
-
 
 }  // namespace nest

@@ -59,7 +59,7 @@ pip install nest-simulator
 
 More details and options for installing NEST with pip can be found here:
 
-https://nest-simulator.readthedocs.io/en/main/installation/pip_install.html
+https://nest-simulator.org/documentation/installation/pip_install.html
 
 
 ### macOS Requirements

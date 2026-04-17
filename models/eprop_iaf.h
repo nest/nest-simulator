@@ -322,9 +322,10 @@ References
        networks of spiking neurons. Nature Communications, 11:3625.
        https://doi.org/10.1038/s41467-020-17236-y
 
-.. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
-       Dahmen D, Bolten M, Van Albada SJ, Diesmann M. Event-based
-       implementation of eligibility propagation (in preparation)
+.. [2] Korcsak-Gorzo A, Espinoza Valverde JA, Stapmanns J, Plesser HE, Dahmen D,
+       Bolten M, van Albada SJ, Diesmann M (2025). Event-driven eligibility
+       propagation in large sparse networks: efficiency shaped by biological
+       realism. arXiv:2511.21674. https://doi.org/10.48550/arXiv.2511.21674
 
 .. start_surrogate-gradient-references
 
@@ -334,7 +335,7 @@ References
 
 .. [4] Shrestha SB, Orchard G (2018). SLAYER: Spike Layer Error Reassignment in
        Time. Advances in Neural Information Processing Systems, 31:1412-1421.
-       https://proceedings.neurips.cc/paper_files/paper/2018/hash/82.. rubric:: References
+       https://proceedings.neurips.cc/paper_files/paper/2018/hash/82
 
 .. [5] Zenke F, Ganguli S (2018). SuperSpike: Supervised Learning in Multilayer
        Spiking Neural Networks. Neural Computation, 30:1514–1541.
@@ -374,7 +375,7 @@ void register_eprop_iaf( const std::string& name );
  *
  * Class implementing a current-based leaky integrate-and-fire neuron model with delta-shaped postsynaptic currents for
  * e-prop plasticity according to Bellec et al. (2020) with additional biological features described in
- * Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al. (in preparation).
+ * Korcsak-Gorzo et al. (2025).
  */
 class eprop_iaf : public EpropArchivingNodeRecurrent< false >
 {

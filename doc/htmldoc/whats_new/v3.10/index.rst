@@ -19,8 +19,7 @@ of the more interesting developments that happened:
 pip install nest-simulator
 --------------------------
 
-Now with the removal of SLI, detailed below, you can ``pip install nest-simulator``.
-For details, see our :ref:`install guide <pip_install>`.
+You can now ``pip install nest-simulator``. For details, see our :ref:`install guide <pip_install>`.
 
 Removal of the SLI interpreter
 ------------------------------

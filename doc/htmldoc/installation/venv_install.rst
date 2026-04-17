@@ -3,14 +3,6 @@
 Install from source in a ``venv`` environment
 =============================================
 
-* Create and activate a ``venv`` environment:
-
-.. code-block:: bash
-
-    python -m venv venv
-    source venv/bin/activate
-
-
 * Install base packages on your system:
 
 .. code-block:: bash
@@ -39,7 +31,14 @@ Install from source in a ``venv`` environment
      libmusic-dev \
      music-bin
 
-* Install Python packages (see `requirements.txt <https://github.com/nest/nest-simulator/blob/master/requirements.txt>`_ for details):
+* Create and activate a ``venv`` environment:
+
+.. code-block:: bash
+
+    python -m venv venv
+    source venv/bin/activate
+
+* Install Python packages (see `requirements.txt <https://github.com/nest/nest-simulator/blob/main/requirements.txt>`_ for details):
 
 .. code-block:: bash
 

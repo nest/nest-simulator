@@ -144,8 +144,8 @@ template < typename DataType, typename Subclass >
 class DataSecondaryEvent : public SecondaryEvent
 {
 private:
-  static std::set< synindex > supported_syn_ids_;
-  static size_t coeff_length_;  // length of coeffarray
+  static inline std::set< synindex > supported_syn_ids_;
+  static inline size_t coeff_length_ = 0;  // length of coeffarray
 
   union CoeffarrayBegin
   {

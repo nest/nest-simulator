@@ -67,12 +67,6 @@ DataSecondaryEvent< DataType, Subclass >::get_coeffvalue( std::vector< unsigned 
   return elem;
 }
 
-template < typename DataType, typename Subclass >
-std::set< synindex > DataSecondaryEvent< DataType, Subclass >::supported_syn_ids_;
-
-template < typename DataType, typename Subclass >
-size_t DataSecondaryEvent< DataType, Subclass >::coeff_length_ = 0;
-
 /**
  * Event for slow inward current (SIC) connections between astrocytes and neurons.
  *

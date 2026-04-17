@@ -273,6 +273,13 @@ recent C++ compilers should do so.
 Model improvements
 ------------------
 
+- NEST now uses the ``std::expm1()`` function if available instead of a
+  "homegrown" algorithm based on GSL (should be on almost all systems).
+  This may lead to different results than with earlier versions of NEST,
+  especially when using precise-spiking neurons. The old code is still
+  available; undefine ``HAVE_EXPM1`` in ``<build_dir>/libnestutil/config.h``
+  to use it on systems where ``std::expm1()`` is available.
+
 
 Documentation additions
 -----------------------

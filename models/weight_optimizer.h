@@ -93,7 +93,7 @@ Parameter              Unit Math equivalent           Default   Description
                                                                 once per spike
 ``Wmax``                pA  :math:`W_{ji}^\text{max}`   100.0   Maximal value for synaptic weight
 ``Wmin``                pA  :math:`W_{ji}^\text{min}`  -100.0   Minimal value for synaptic weight
-====================== ==== ========================= ========= =============================================
+====================== ==== ========================= ========= ============================================
 
 ========= ==== =============== ================== ==============
 **Gradient descent parameters (default optimizer)**
@@ -321,6 +321,12 @@ class WeightOptimizerCommonPropertiesGradientDescent : public WeightOptimizerCom
   friend class WeightOptimizerGradientDescent;
 
 public:
+  //! Default constructor.
+  WeightOptimizerCommonPropertiesGradientDescent();
+
+  //! Copy constructor.
+  WeightOptimizerCommonPropertiesGradientDescent( const WeightOptimizerCommonPropertiesGradientDescent& ) = default;
+
   //! Assignment operator.
   WeightOptimizerCommonPropertiesGradientDescent& operator=(
     const WeightOptimizerCommonPropertiesGradientDescent& ) = delete;
@@ -380,6 +386,9 @@ class WeightOptimizerCommonPropertiesAdam : public WeightOptimizerCommonProperti
 public:
   //! Default constructor.
   WeightOptimizerCommonPropertiesAdam();
+
+  //! Copy constructor.
+  WeightOptimizerCommonPropertiesAdam( const WeightOptimizerCommonPropertiesAdam& ) = default;
 
   //! Assignment operator.
   WeightOptimizerCommonPropertiesAdam& operator=( const WeightOptimizerCommonPropertiesAdam& ) = delete;

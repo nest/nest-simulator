@@ -66,7 +66,7 @@ EpropArchivingNode< HistEntryT >::initialize_update_history()
 
   if ( it_hist == update_history_.end() or it_hist->t_ != t_first_entry )
   {
-    update_history_.insert( it_hist, HistEntryEpropUpdate( t_first_entry, 1 ) );
+    update_history_.emplace_back( t_first_entry, 1 );
   }
   else
   {
@@ -100,7 +100,7 @@ EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous
     }
     else
     {
-      update_history_.insert( it_hist_curr, HistEntryEpropUpdate( t_curr_update_shifted, 1 ) );
+      update_history_.emplace_back( t_curr_update_shifted, 1 );
     }
   }
 
@@ -187,7 +187,7 @@ EpropArchivingNode< HistEntryT >::erase_used_eprop_history()
     }
   }
   // erase no longer needed entries before the earliest current update
-  eprop_history_.erase( get_eprop_history( 0 ), get_eprop_history( update_history_.begin()->t_ ) );
+  eprop_history_.erase( eprop_history_.begin(), get_eprop_history( update_history_.begin()->t_ ) );
 }
 
 template < typename HistEntryT >

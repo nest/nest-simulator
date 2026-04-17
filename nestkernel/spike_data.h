@@ -88,6 +88,12 @@ enum enum_status_spike_data_id
   SPIKE_DATA_ID_INVALID
 };
 
+enum enum_flush_event
+{
+  FLUSH_EVENT_FALSE,
+  FLUSH_EVENT_TRUE
+};
+
 /**
  * Used to communicate spikes. These are the elements of the MPI
  * buffers.
@@ -101,6 +107,7 @@ protected:
 
   size_t lcid_ : NUM_BITS_LCID;                       //!< local connection index
   unsigned int marker_ : NUM_BITS_MARKER_SPIKE_DATA;  //!< status flag
+  unsigned int flush_event_ : NUM_BITS_FLUSH_EVENT;   //!< flush event flag
   unsigned int lag_ : NUM_BITS_LAG;                   //!< lag in this min-delay interval
   unsigned int tid_ : NUM_BITS_TID;                   //!< thread index
   synindex syn_id_ : NUM_BITS_SYN_ID;                 //!< synapse-type index
@@ -108,7 +115,7 @@ protected:
 public:
   SpikeData();
   SpikeData( const SpikeData& rhs );
-  SpikeData( const Target& target, const size_t lag );
+  SpikeData( const Target& target, const size_t lag, const bool is_flush_event );
   SpikeData( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag );
 
   SpikeData& operator=( const SpikeData& rhs );
@@ -187,14 +194,23 @@ public:
   bool is_invalid_marker() const;
 
   /**
+   * Returns whether this spike is a flush event.
+   */
+  bool is_flush_event() const;
+
+  /**
    * Returns offset.
    */
   double get_offset() const;
+
+  /**
+   * Sets the flush event flag.
+   */
+  void set_flush_event_flag( bool is_flush_event );
 };
 
 //! check legal size
 using success_spike_data_size = StaticAssert< sizeof( SpikeData ) == 8 >::success;
-
 
 template < class TargetT >
 inline void
@@ -209,6 +225,11 @@ SpikeData::set( const TargetT& target, const unsigned int lag )
   syn_id_ = target.get_syn_id();
 }
 
+inline void
+SpikeData::set_flush_event_flag( bool is_flush_event )
+{
+  flush_event_ = is_flush_event ? FLUSH_EVENT_TRUE : FLUSH_EVENT_FALSE;
+}
 
 class OffGridSpikeData : public SpikeData
 {
@@ -236,7 +257,6 @@ public:
 //! check legal size
 using success_offgrid_spike_data_size = StaticAssert< sizeof( OffGridSpikeData ) == 16 >::success;
 
-
 template < class TargetT >
 inline void
 OffGridSpikeData::set( const TargetT& target, const unsigned int lag )
@@ -259,7 +279,7 @@ OffGridSpikeData::get_offset() const
  */
 struct SpikeDataWithRank
 {
-  SpikeDataWithRank( const Target& target, const size_t lag );
+  SpikeDataWithRank( const Target& target, const size_t lag, const bool is_flush_event );
 
   const size_t rank;           //!< rank of target neuron
   const SpikeData spike_data;  //! data on spike transmitted

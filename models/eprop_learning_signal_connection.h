@@ -20,10 +20,10 @@
  *
  */
 
-
 #ifndef EPROP_LEARNING_SIGNAL_CONNECTION_H
 #define EPROP_LEARNING_SIGNAL_CONNECTION_H
 
+// C++
 #include <memory>
 #include <stddef.h>
 #include <string>

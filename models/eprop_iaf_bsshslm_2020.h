@@ -23,6 +23,7 @@
 #ifndef EPROP_IAF_BSSHSLM_2020_H
 #define EPROP_IAF_BSSHSLM_2020_H
 
+// C++
 #include <algorithm>
 #include <map>
 #include <math.h>
@@ -188,7 +189,7 @@ Parameter                   Unit    Math equivalent         Default          Des
 ``V_min``                   mV      :math:`v_\text{min}`    negative maximum Absolute lower bound of the
                                                             value            membrane voltage
                                                             representable by
-                                                            a ``double``
+                                                            ``double``
                                                             type in C++
 ``V_th``                    mV      :math:`v_\text{th}`                -55.0 Spike threshold voltage
 =========================== ======= ======================= ================ ===================================
@@ -198,6 +199,10 @@ Parameter                   Unit    Math equivalent         Default          Des
 ----------------------------------------------------------------------------------------------------------------
 Parameter                       Unit Math equivalent         Default            Description
 =============================== ==== ======================= ================== ================================
+``flush_event_send_interval``   ms                           maximum value      Interval since previous
+                                                             representable by   event after which a flush event
+                                                             ``double`` type in is sent
+                                                             in C++
 ``c_reg``                            :math:`c_\text{reg}`                 0.0   Coefficient of firing rate
                                                                                 regularization
 ``f_target``                    Hz   :math:`f^\text{target}`             10.0   Target firing rate of rate
@@ -566,6 +571,7 @@ eprop_iaf_bsshslm_2020::handles_test_event( DataLoggingRequest& dlr, size_t rece
 inline void
 eprop_iaf_bsshslm_2020::get_status( Dictionary& d ) const
 {
+  EpropArchivingNodeRecurrent::get_status( d );
   P_.get( d );
   S_.get( d, P_ );
   d[ names::recordables ] = recordablesMap_.get_list();
@@ -574,6 +580,7 @@ eprop_iaf_bsshslm_2020::get_status( Dictionary& d ) const
 inline void
 eprop_iaf_bsshslm_2020::set_status( const Dictionary& d )
 {
+  EpropArchivingNodeRecurrent::set_status( d );
   // temporary copies in case of errors
   Parameters_ ptmp = P_;
   State_ stmp = S_;

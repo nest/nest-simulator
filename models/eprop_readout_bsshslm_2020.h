@@ -23,6 +23,7 @@
 #ifndef EPROP_READOUT_BSSHSLM_2020_H
 #define EPROP_READOUT_BSSHSLM_2020_H
 
+// C++
 #include <algorithm>
 #include <map>
 #include <math.h>
@@ -181,7 +182,7 @@ Parameter                 Unit    Math equivalent       Default            Descr
 ``tau_m``                 ms      :math:`\tau_\text{m}`               10.0 Time constant of the membrane
 ``V_min``                 mV      :math:`v_\text{min}`  negative maximum   Absolute lower bound of the membrane
                                                         value              voltage
-                                                        representable by a
+                                                        representable by
                                                         ``double`` type in
                                                         C++
 ========================= ======= ===================== ================== =====================================
@@ -322,13 +323,13 @@ private:
   bool is_eprop_recurrent_node() const override;
 
   //! Compute the error signal based on the mean-squared error loss.
-  void compute_error_signal_mean_squared_error( const long lag );
+  void compute_error_signal_mean_squared_error();
 
   //! Compute the error signal based on the cross-entropy loss.
-  void compute_error_signal_cross_entropy( const long lag );
+  void compute_error_signal_cross_entropy();
 
   //! Compute the error signal based on a loss function.
-  void ( eprop_readout_bsshslm_2020::*compute_error_signal )( const long lag );
+  void ( eprop_readout_bsshslm_2020::*compute_error_signal )();
 
   //! Map for storing a static set of recordables.
   friend class RecordablesMap< eprop_readout_bsshslm_2020 >;
@@ -577,6 +578,7 @@ eprop_readout_bsshslm_2020::handles_test_event( DataLoggingRequest& dlr, size_t 
 inline void
 eprop_readout_bsshslm_2020::get_status( Dictionary& d ) const
 {
+  EpropArchivingNodeReadout::get_status( d );
   P_.get( d );
   S_.get( d, P_ );
   d[ names::recordables ] = recordablesMap_.get_list();
@@ -591,6 +593,7 @@ eprop_readout_bsshslm_2020::get_status( Dictionary& d ) const
 inline void
 eprop_readout_bsshslm_2020::set_status( const Dictionary& d )
 {
+  EpropArchivingNodeReadout::set_status( d );
   // temporary copies in case of errors
   Parameters_ ptmp = P_;
   State_ stmp = S_;

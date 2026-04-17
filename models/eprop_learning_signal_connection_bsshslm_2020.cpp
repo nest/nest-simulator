@@ -20,12 +20,11 @@
  *
  */
 
+// nest models
 #include "eprop_learning_signal_connection_bsshslm_2020.h"
 
-// Includes from nestkernel:
-#include "nest_impl.h"
-
 // nestkernel
+#include "nest_impl.h"
 
 void
 nest::register_eprop_learning_signal_connection_bsshslm_2020( const std::string& name )

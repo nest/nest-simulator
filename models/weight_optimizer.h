@@ -23,6 +23,7 @@
 #ifndef WEIGHT_OPTIMIZER_H
 #define WEIGHT_OPTIMIZER_H
 
+// C++
 #include <stddef.h>
 #include <string>
 
@@ -87,17 +88,18 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-====================== ==== ========================= ========= =================================
+====================== ==== ========================= ========= ============================================
 **Common optimizer parameters**
--------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------
 Parameter              Unit Math equivalent           Default   Description
-====================== ==== ========================= ========= =================================
+====================== ==== ========================= ========= ============================================
 ``batch_size``                                              1   Size of batch
 ``eta``                     :math:`\eta`                 1e-4   Learning rate
-``optimize_each_step``                                 ``True``
+``optimize_each_step``                                 ``True`` If ``True``, optimize each step, if ``False``
+                                                                once per spike
 ``Wmax``                pA  :math:`W_{ji}^\text{max}`   100.0   Maximal value for synaptic weight
 ``Wmin``                pA  :math:`W_{ji}^\text{min}`  -100.0   Minimal value for synaptic weight
-====================== ==== ========================= ========= =================================
+====================== ==== ========================= ========= =============================================
 
 ========= ==== =============== ================== ==============
 **Gradient descent parameters (default optimizer)**
@@ -279,8 +281,8 @@ protected:
   //! Perform specific optimization.
   virtual double optimize_( const WeightOptimizerCommonProperties& cp, double weight, size_t current_opt_step ) = 0;
 
-  //! Sum of gradients accumulated in current batch.
-  double sum_gradients_;
+  //! Cumulative gradient over the current batch.
+  double cumulative_gradient_;
 
   //! Current optimization step, whereby optimization happens every batch_size_ steps.
   size_t optimization_step_;

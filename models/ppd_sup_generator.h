@@ -23,7 +23,6 @@
 #ifndef ppd_sup_generator_H
 #define ppd_sup_generator_H
 
-#include <stddef.h>
 // C++ includes:
 #include <string>
 #include <vector>

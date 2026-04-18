@@ -25,7 +25,6 @@
 
 #include <assert.h>
 #include <math.h>
-#include <stddef.h>
 // C++ includes:
 #include <deque>
 #include <map>

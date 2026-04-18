@@ -27,7 +27,6 @@
 #include <cmath>
 #include <deque>
 #include <math.h>
-#include <stddef.h>
 #include <string>
 
 // C-header for math.h since copysign() is in C99 but not C++98

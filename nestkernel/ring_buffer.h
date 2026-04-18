@@ -23,7 +23,6 @@
 #ifndef RING_BUFFER_H
 #define RING_BUFFER_H
 
-#include <stddef.h>
 // C++ includes:
 #include <array>
 #include <list>

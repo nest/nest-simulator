@@ -24,7 +24,6 @@
 #define RECORDING_BACKEND_MEMORY_H
 
 #include <map>
-#include <stddef.h>
 #include <string>
 #include <vector>
 

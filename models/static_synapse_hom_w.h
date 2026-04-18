@@ -23,7 +23,6 @@
 #ifndef STATICSYNAPSE_HOM_W_H
 #define STATICSYNAPSE_HOM_W_H
 
-#include <stddef.h>
 #include <string>
 
 // Includes from nestkernel:

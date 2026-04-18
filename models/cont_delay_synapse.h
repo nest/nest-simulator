@@ -24,7 +24,6 @@
 #define CONT_DELAY_SYNAPSE_H
 
 
-#include <stddef.h>
 // C++ includes:
 #include <cmath>
 #include <string>

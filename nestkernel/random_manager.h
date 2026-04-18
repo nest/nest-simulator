@@ -23,7 +23,6 @@
 #ifndef RANDOM_MANAGER_H
 #define RANDOM_MANAGER_H
 
-#include <stddef.h>
 // C++ includes:
 #include <cstdint>
 #include <map>

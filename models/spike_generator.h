@@ -24,7 +24,6 @@
 #define SPIKE_GENERATOR_H
 
 
-#include <stddef.h>
 // C++ includes:
 #include <string>
 #include <vector>

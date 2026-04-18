@@ -23,7 +23,6 @@
 #ifndef PULSEPACKET_GENERATOR_H
 #define PULSEPACKET_GENERATOR_H
 
-#include <stddef.h>
 // C++ includes:
 #include <deque>
 #include <string>

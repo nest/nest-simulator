@@ -25,7 +25,6 @@
 
 
 #include <cmath>
-#include <stddef.h>
 #include <string>
 
 // Includes from nestkernel:

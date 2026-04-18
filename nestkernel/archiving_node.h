@@ -23,7 +23,6 @@
 #ifndef ARCHIVING_NODE_H
 #define ARCHIVING_NODE_H
 
-#include <stddef.h>
 // C++ includes:
 #include <deque>
 

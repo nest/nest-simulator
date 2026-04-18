@@ -23,7 +23,6 @@
 #ifndef INHOMOGENEOUS_POISSON_GENERATOR_H
 #define INHOMOGENEOUS_POISSON_GENERATOR_H
 
-#include <stddef.h>
 // C++ includes:
 #include <string>
 #include <vector>

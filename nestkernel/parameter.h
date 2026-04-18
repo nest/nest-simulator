@@ -26,7 +26,6 @@
 // C++ includes:
 #include <cmath>
 #include <memory>
-#include <stddef.h>
 #include <vector>
 
 // Includes from nestkernel:

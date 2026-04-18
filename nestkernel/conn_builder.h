@@ -30,7 +30,6 @@
  *
  */
 
-#include <stddef.h>
 // C++ includes:
 #include <exception>
 #include <map>

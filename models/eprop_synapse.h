@@ -25,7 +25,6 @@
 
 // C++
 #include <assert.h>
-#include <stddef.h>
 #include <string>
 
 // nestkernel

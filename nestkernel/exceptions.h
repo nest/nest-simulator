@@ -24,7 +24,6 @@
 #define EXCEPTIONS_H
 
 #include <exception>
-#include <stddef.h>
 // C++ includes:
 #include <sstream>
 #include <stdexcept>

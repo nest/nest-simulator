@@ -29,7 +29,6 @@
 #ifdef HAVE_MUSIC
 
 // C++ includes:
-#include <stddef.h>
 #include <string>
 #include <vector>
 

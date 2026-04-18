@@ -23,7 +23,6 @@
 #ifndef CONNECTOR_BASE_H
 #define CONNECTOR_BASE_H
 
-#include <stddef.h>
 // C++ includes:
 #include <deque>
 #include <fstream>

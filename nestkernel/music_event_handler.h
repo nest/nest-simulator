@@ -32,7 +32,6 @@
 #include <functional>
 #include <music.hh>
 #include <queue>
-#include <stddef.h>
 #include <string>
 #include <vector>
 

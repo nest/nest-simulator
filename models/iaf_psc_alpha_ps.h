@@ -24,7 +24,6 @@
 #define IAF_PSC_ALPHA_PS_H
 
 #include <math.h>
-#include <stddef.h>
 // C++ includes:
 #include <algorithm>
 #include <map>

@@ -24,7 +24,6 @@
 #define PROXYNODE_H
 
 #include <assert.h>
-#include <stddef.h>
 
 // Includes from nestkernel:
 #include "nest_time.h"

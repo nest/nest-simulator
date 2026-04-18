@@ -24,7 +24,6 @@
 #define IAF_PSC_EXP_PS_LOSSLESS_H
 
 #include <math.h>
-#include <stddef.h>
 // C++ includes:
 #include <algorithm>
 #include <map>

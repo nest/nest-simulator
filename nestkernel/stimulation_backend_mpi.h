@@ -28,7 +28,6 @@
 #include <mpi.h>
 #include <netinet/in.h>
 #include <set>
-#include <stddef.h>
 #include <string>
 #include <sys/socket.h>
 #include <tuple>

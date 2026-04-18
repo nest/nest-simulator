@@ -29,7 +29,6 @@
 #include <math.h>
 #include <memory>
 #include <numeric>
-#include <stddef.h>
 #include <string>
 #include <type_traits>
 #include <utility>

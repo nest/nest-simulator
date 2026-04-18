@@ -23,7 +23,6 @@
 #ifndef LAYER_H
 #define LAYER_H
 
-#include <stddef.h>
 // C++ includes:
 #include <bitset>
 #include <iosfwd>

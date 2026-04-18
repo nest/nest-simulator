@@ -24,7 +24,6 @@
 #define JONKE_SYNAPSE_H
 
 #include <assert.h>
-#include <stddef.h>
 // C++ includes:
 #include <cmath>
 #include <deque>

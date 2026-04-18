@@ -23,7 +23,6 @@
 #ifndef VOLUME_TRANSMITTER_H
 #define VOLUME_TRANSMITTER_H
 
-#include <stddef.h>
 #include <string>
 #include <vector>
 

@@ -23,7 +23,6 @@
 #include "slice_ring_buffer.h"
 
 #include <assert.h>
-#include <stddef.h>
 // C++ includes:
 #include <algorithm>
 #include <cmath>

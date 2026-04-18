@@ -24,7 +24,6 @@
 #define WEIGHT_OPTIMIZER_H
 
 // C++
-#include <stddef.h>
 #include <string>
 
 // nestkernel

@@ -23,7 +23,6 @@
 #ifndef SEND_BUFFER_POSITION_H
 #define SEND_BUFFER_POSITION_H
 
-#include <stddef.h>
 // C++ includes:
 #include <cassert>
 #include <limits>

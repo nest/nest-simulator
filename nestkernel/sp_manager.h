@@ -24,7 +24,6 @@
 #define SP_MANAGER_H
 
 #include <assert.h>
-#include <stddef.h>
 // C++ includes:
 #include <string>
 #include <vector>

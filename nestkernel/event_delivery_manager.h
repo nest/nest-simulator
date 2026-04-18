@@ -24,7 +24,6 @@
 #define EVENT_DELIVERY_MANAGER_H
 
 #include <assert.h>
-#include <stddef.h>
 // C++ includes:
 #include <vector>
 

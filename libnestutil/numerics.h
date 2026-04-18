@@ -23,7 +23,6 @@
 #ifndef NUMERICS_H
 #define NUMERICS_H
 
-#include <stddef.h>
 // C++ includes:
 #include <cassert>
 #include <cmath>

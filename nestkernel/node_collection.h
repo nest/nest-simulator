@@ -27,7 +27,6 @@
 #include <iosfwd>
 #include <iterator>
 #include <memory>
-#include <stddef.h>
 #include <stdexcept>  // out_of_range
 #include <string>
 #include <utility>

@@ -25,7 +25,6 @@
 #define RATE_CONNECTION_INSTANTANEOUS_H
 
 #include <memory>
-#include <stddef.h>
 #include <string>
 
 #include "common_synapse_properties.h"

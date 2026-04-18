@@ -24,17 +24,11 @@
 #define SPIN_DETECTOR_H
 
 
-#include <stddef.h>
-#include <string>
-
 // Includes from nestkernel:
 #include "event.h"
 #include "exceptions.h"
-#include "nest_names.h"
-#include "nest_time.h"
 #include "nest_timeconverter.h"
 #include "nest_types.h"
-#include "node.h"
 #include "recording_device.h"
 
 class Dictionary;
@@ -184,7 +178,7 @@ spin_detector::receives_signal() const
 }
 
 inline void
-nest::spin_detector::calibrate_time( const TimeConverter& tc )
+spin_detector::calibrate_time( const TimeConverter& tc )
 {
   t_last_in_spike_ = tc.from_old_tics( t_last_in_spike_.get_tics() );
 }

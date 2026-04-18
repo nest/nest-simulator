@@ -23,7 +23,6 @@
 #ifndef SOURCE_TABLE_H
 #define SOURCE_TABLE_H
 
-#include <stddef.h>
 // C++ includes:
 #include <cassert>
 #include <iostream>

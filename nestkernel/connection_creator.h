@@ -23,7 +23,6 @@
 #ifndef CONNECTION_CREATOR_H
 #define CONNECTION_CREATOR_H
 
-#include <stddef.h>
 // C++ includes:
 #include <iterator>
 #include <utility>

@@ -24,7 +24,6 @@
 #define STDP_PL_SYNAPSE_HOM_H
 
 #include <assert.h>
-#include <stddef.h>
 // C++ includes:
 #include <cmath>
 #include <deque>

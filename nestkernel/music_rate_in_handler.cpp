@@ -25,7 +25,6 @@
 #ifdef HAVE_MUSIC
 
 #include <algorithm>
-#include <stddef.h>
 
 #include "exceptions.h"
 #include "mpi.h"

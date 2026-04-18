@@ -25,7 +25,6 @@
 
 #include <assert.h>
 #include <cmath>
-#include <stddef.h>
 
 // Includes from libnestutil:
 #include "dictionary.h"

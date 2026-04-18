@@ -24,7 +24,6 @@
 #define QUANTAL_STP_SYNAPSE_H
 
 #include <cmath>
-#include <stddef.h>
 #include <string>
 
 // Includes from nestkernel:

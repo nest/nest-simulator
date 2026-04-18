@@ -31,7 +31,6 @@
 #include <mpi.h>
 #endif
 
-#include <stddef.h>
 // C++ includes:
 #include <cassert>
 #include <limits>

@@ -23,7 +23,6 @@
 #ifndef SPATIAL_H
 #define SPATIAL_H
 
-#include <stddef.h>
 // C++ includes:
 #include <string>
 #include <vector>

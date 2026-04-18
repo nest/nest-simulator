@@ -23,7 +23,6 @@
 #ifndef MODELRANGEMANAGER_H
 #define MODELRANGEMANAGER_H
 
-#include <stddef.h>
 // C++ includes:
 #include <vector>
 

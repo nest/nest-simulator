@@ -23,8 +23,6 @@
 #ifndef NODE_H
 #define NODE_H
 
-#include <assert.h>
-#include <stddef.h>
 // C++ includes:
 #include <bitset>
 #include <deque>

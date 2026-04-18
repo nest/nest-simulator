@@ -24,7 +24,6 @@
 #define WEIGHT_RECORDER_H
 
 #include <memory>
-#include <stddef.h>
 #include <string>
 
 // Includes from nestkernel:

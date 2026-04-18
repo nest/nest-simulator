@@ -24,7 +24,6 @@
 #define CORRELOSPINMATRIX_DETECTOR_H
 
 
-#include <stddef.h>
 // C++ includes:
 #include <deque>
 #include <string>

@@ -23,7 +23,6 @@
 #ifndef MULTIMETER_H
 #define MULTIMETER_H
 
-#include <stddef.h>
 // C++ includes:
 #include <string>
 #include <vector>

@@ -21,7 +21,6 @@
  */
 
 #include <assert.h>
-#include <stddef.h>
 // C++ includes:
 #include <algorithm>  // rotate
 #include <cmath>

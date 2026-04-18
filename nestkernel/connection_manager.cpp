@@ -31,7 +31,6 @@
 #include <map>
 #include <memory>
 #include <sstream>
-#include <stddef.h>
 #include <string>
 #include <utility>
 #include <vector>

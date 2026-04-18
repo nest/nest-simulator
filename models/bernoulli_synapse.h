@@ -25,7 +25,6 @@
 #define BERNOULLI_SYNAPSE_H
 
 #include <assert.h>
-#include <stddef.h>
 #include <string>
 
 // Includes from nestkernel:

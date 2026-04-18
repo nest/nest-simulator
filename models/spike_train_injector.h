@@ -23,7 +23,6 @@
 #ifndef SPIKE_TRAIN_INJECTOR_H
 #define SPIKE_TRAIN_INJECTOR_H
 
-#include <stddef.h>
 // C++ includes:
 #include <string>
 #include <vector>

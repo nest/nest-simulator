@@ -23,7 +23,6 @@
 #ifndef MIP_GENERATOR_H
 #define MIP_GENERATOR_H
 
-#include <stddef.h>
 #include <string>
 #include <vector>
 

@@ -23,7 +23,6 @@
 #ifndef SPARSE_NODE_ARRAY_H
 #define SPARSE_NODE_ARRAY_H
 
-#include <stddef.h>
 // C++ includes:
 #include <cassert>
 #include <map>

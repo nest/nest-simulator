@@ -27,7 +27,6 @@
 #include <assert.h>
 #include <map>
 #include <math.h>
-#include <stddef.h>
 #include <string>
 #include <typeinfo>
 #include <vector>

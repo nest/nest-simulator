@@ -26,7 +26,6 @@
 // C++
 #include <assert.h>
 #include <cmath>
-#include <stddef.h>
 #include <string>
 #include <vector>
 

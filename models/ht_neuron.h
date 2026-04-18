@@ -27,7 +27,6 @@
 #include <assert.h>
 #include <map>
 #include <math.h>
-#include <stddef.h>
 
 // Generated includes:
 #include "config.h"

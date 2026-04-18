@@ -23,7 +23,6 @@
 #ifndef PARROT_NEURON_PS_H
 #define PARROT_NEURON_PS_H
 
-#include <stddef.h>
 #include <string>
 
 // Includes from nestkernel:

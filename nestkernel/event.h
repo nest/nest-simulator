@@ -23,7 +23,6 @@
 #ifndef EVENT_H
 #define EVENT_H
 
-#include <stddef.h>
 // C++ includes:
 #include <algorithm>
 #include <cassert>

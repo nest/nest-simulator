@@ -23,7 +23,6 @@
 #ifndef SPIKE_RECORDER_H
 #define SPIKE_RECORDER_H
 
-#include <stddef.h>
 // C++ includes:
 #include <string>
 #include <vector>

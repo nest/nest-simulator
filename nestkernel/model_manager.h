@@ -24,7 +24,6 @@
 #define MODEL_MANAGER_H
 
 #include <assert.h>
-#include <stddef.h>
 // C++ includes:
 #include <memory>
 #include <string>

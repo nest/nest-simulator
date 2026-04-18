@@ -23,7 +23,6 @@
 #ifndef SPIKE_DILUTOR_H
 #define SPIKE_DILUTOR_H
 
-#include <stddef.h>
 #include <string>
 
 // Includes from nestkernel:

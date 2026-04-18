@@ -24,7 +24,6 @@
 #define SIMULATION_MANAGER_H
 
 #include <assert.h>
-#include <stddef.h>
 #include <sys/time.h>
 
 // Includes from libnestutil:

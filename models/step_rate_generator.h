@@ -25,7 +25,6 @@
 #define STEP_RATE_GENERATOR_H
 
 #include <math.h>
-#include <stddef.h>
 // C++ includes:
 #include <algorithm>
 #include <map>

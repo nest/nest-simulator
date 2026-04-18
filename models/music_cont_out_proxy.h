@@ -33,7 +33,6 @@
 #include <mpi.h>
 
 // C++ includes:
-#include <stddef.h>
 #include <string>
 #include <vector>
 

@@ -23,7 +23,6 @@
 #ifndef SPIKE_DATA_H
 #define SPIKE_DATA_H
 
-#include <stddef.h>
 // C++ includes
 #include <cassert>
 

@@ -24,7 +24,6 @@
 #define SIC_CONNECTION_H
 
 #include <memory>
-#include <stddef.h>
 #include <string>
 
 #include "common_synapse_properties.h"

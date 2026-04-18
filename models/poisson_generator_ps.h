@@ -23,7 +23,6 @@
 #ifndef POISSON_GENERATOR_PS_H
 #define POISSON_GENERATOR_PS_H
 
-#include <stddef.h>
 // C++ includes:
 #include <string>
 #include <utility>

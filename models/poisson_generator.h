@@ -23,7 +23,6 @@
 #ifndef POISSON_GENERATOR_H
 #define POISSON_GENERATOR_H
 
-#include <stddef.h>
 #include <string>
 #include <vector>
 

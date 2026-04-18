@@ -24,7 +24,6 @@
 #define IAF_PSC_ALPHA_MULTISYNAPSE_H
 
 #include <math.h>
-#include <stddef.h>
 // Generated includes:
 #include <map>
 #include <numeric>

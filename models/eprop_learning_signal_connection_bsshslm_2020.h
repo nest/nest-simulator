@@ -25,7 +25,6 @@
 
 // C++
 #include <memory>
-#include <stddef.h>
 #include <string>
 
 // nestkernel

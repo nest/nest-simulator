@@ -22,7 +22,6 @@
 
 #include <assert.h>
 #include <list>
-#include <stddef.h>
 #include <vector>
 
 #include "connection_manager.h"

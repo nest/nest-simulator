@@ -23,7 +23,6 @@
 #ifndef GAMMA_SUP_GENERATOR_H
 #define GAMMA_SUP_GENERATOR_H
 
-#include <stddef.h>
 // C++ includes:
 #include <string>
 #include <vector>

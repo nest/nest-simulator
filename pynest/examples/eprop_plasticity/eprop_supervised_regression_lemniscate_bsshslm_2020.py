@@ -663,8 +663,8 @@ def plot_weight_time_course(ax, events, nrns, label, ylabel):
     nrns_senders = nrns[sender_label]
     nrns_targets = nrns[target_label]
 
-    for sender in np.unique(events_wr["senders"]):
-        for target in np.unique(events_wr["targets"]):
+    for sender in np.unique(events["senders"]):
+        for target in np.unique(events["targets"]):
             if sender in nrns_senders and target in nrns_targets:
                 idc_syn = (events["senders"] == sender) & (events["targets"] == target)
                 idc_syn_pre = (weights_pre_train[label]["source"] == sender) & (

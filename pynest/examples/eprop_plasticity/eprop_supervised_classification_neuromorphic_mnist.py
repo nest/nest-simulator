@@ -64,9 +64,10 @@ References
 .. [2] Orchard, G., Jayawant, A., Cohen, G. K., & Thakor, N. (2015). Converting static image datasets to
        spiking neuromorphic datasets using saccades. Frontiers in neuroscience, 9, 159859.
 
-.. [3] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
-       Dahmen D, Bolten M, Van Albada SJ, Diesmann M. Event-based
-       implementation of eligibility propagation (in preparation)
+.. [3] Korcsak-Gorzo A, Espinoza Valverde JA, Stapmanns J, Plesser HE, Dahmen D,
+       Bolten M, van Albada SJ, Diesmann M (2025). Event-driven eligibility
+       propagation in large sparse networks: efficiency shaped by biological
+       realism. arXiv:2511.21674. https://doi.org/10.48550/arXiv.2511.21674
 
 """  # pylint: disable=line-too-long # noqa: E501
 
@@ -217,6 +218,9 @@ params_nrn_rec = {
     "E_L": 0.0,
     "eprop_isi_trace_cutoff": 100,
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
+    "flush_event_send_interval": duration[
+        "sequence"
+    ],  # ms, inactivity period before flushing outgoing synapses to free memory
     "gamma": 0.5,  # height scaling of the pseudo-derivative
     "I_e": 0.0,
     "kappa": 0.99,  # low-pass filter of the eligibility trace
@@ -720,9 +724,9 @@ class TrainingPipeline:
         params_gen_spk_in, params_gen_rate_target, params_gen_learning_window = get_params_task_input_output(
             self.n_iter_sim, loader
         )
-        nest.SetStatus(gen_spk_in, params_gen_spk_in)
-        nest.SetStatus(gen_rate_target, params_gen_rate_target)
-        nest.SetStatus(gen_learning_window, params_gen_learning_window)
+        gen_spk_in.set(params_gen_spk_in)
+        gen_rate_target.set(params_gen_rate_target)
+        gen_learning_window.set(params_gen_learning_window)
 
         self.simulate("total_offset")
         self.simulate("extension_sim")

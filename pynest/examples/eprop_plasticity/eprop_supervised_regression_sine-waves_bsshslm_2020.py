@@ -62,9 +62,10 @@ References
 
 .. [2] https://github.com/IGITUGraz/eligibility_propagation/blob/master/Figure_3_and_S7_e_prop_tutorials/tutorial_pattern_generation.py
 
-.. [3] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
-       Dahmen D, Bolten M, Van Albada SJ, Diesmann M. Event-based
-       implementation of eligibility propagation (in preparation)
+.. [3] Korcsak-Gorzo A, Espinoza Valverde JA, Stapmanns J, Plesser HE, Dahmen D,
+       Bolten M, van Albada SJ, Diesmann M (2025). Event-driven eligibility
+       propagation in large sparse networks: efficiency shaped by biological
+       realism. arXiv:2511.21674. https://doi.org/10.48550/arXiv.2511.21674
 
 """  # pylint: disable=line-too-long # noqa: E501
 
@@ -188,6 +189,9 @@ params_nrn_rec = {
     "c_reg": 300.0,  # coefficient of firing rate regularization
     "E_L": 0.0,
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
+    "flush_event_send_interval": duration[
+        "sequence"
+    ],  # ms, inactivity period before flushing outgoing synapses to free memory
     "gamma": 0.3,  # height scaling of the pseudo-derivative
     "I_e": 0.0,
     "regular_spike_arrival": False,
@@ -379,7 +383,7 @@ for input_spike_bool in input_spike_bools:
 
 ####################
 
-nest.SetStatus(gen_spk_in, params_gen_spk_in)
+gen_spk_in.set(params_gen_spk_in)
 
 # %% ###########################################################################################################
 # Create output
@@ -415,7 +419,7 @@ params_gen_rate_target = {
 
 ####################
 
-nest.SetStatus(gen_rate_target, params_gen_rate_target)
+gen_rate_target.set(params_gen_rate_target)
 
 # %% ###########################################################################################################
 # Force final update

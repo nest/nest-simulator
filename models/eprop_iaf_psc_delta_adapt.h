@@ -230,7 +230,7 @@ Parameter                   Unit    Math equivalent         Default          Des
 ``V_min``                   mV      :math:`v_\text{min}`    negative maximum Absolute lower bound of the
                                                             value            membrane voltage
                                                             representable
-                                                            by a ``double``
+                                                            by ``double``
                                                             type in C++
 ``V_th``                    mV      :math:`v_\text{th}`                -55.0 Spike threshold voltage
 ``V_reset``                 mV      :math:`v_\text{reset}`             -70.0 Reset voltage
@@ -249,11 +249,15 @@ Parameter                   Unit    Math equivalent         Default          Des
 ----------------------------------------------------------------------------------------------------------------
 Parameter                       Unit    Math equivalent             Default            Description
 =============================== ======= =========================== ================== =========================
+``flush_event_send_interval``   ms                                  maximum value      Interval since previous
+                                                                    representable by   event after which a flush
+                                                                    ``double`` type in event is sent
+                                                                    C++
 ``c_reg``                               :math:`c_\text{reg}`                     0.0   Coefficient of firing
                                                                                        rate regularization
 ``eprop_isi_trace_cutoff``      ms      :math:`{\Delta t}_\text{c}` maximum value      Cutoff for integration of
                                                                     representable      e-prop update between two
-                                                                    by a ``long``      spikes
+                                                                    by ``double``      spikes
                                                                     type in C++
 ``f_target``                    Hz      :math:`f^\text{target}`                 10.0   Target firing rate of
                                                                                        rate regularization
@@ -321,9 +325,10 @@ References
        networks of spiking neurons. Nature Communications, 11:3625.
        https://doi.org/10.1038/s41467-020-17236-y
 
-.. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
-       Dahmen D, Bolten M, Van Albada SJ, Diesmann M. Event-based
-       implementation of eligibility propagation (in preparation)
+.. [2] Korcsak-Gorzo A, Espinoza Valverde JA, Stapmanns J, Plesser HE, Dahmen D,
+       Bolten M, van Albada SJ, Diesmann M (2025). Event-driven eligibility
+       propagation in large sparse networks: efficiency shaped by biological
+       realism. arXiv:2511.21674. https://doi.org/10.48550/arXiv.2511.21674
 
 .. [3] Neftci EO, Mostafa H, Zenke F (2019). Surrogate Gradient Learning in
        Spiking Neural Networks. IEEE Signal Processing Magazine, 36(6), 51-63.
@@ -331,7 +336,7 @@ References
 
 .. [4] Shrestha SB, Orchard G (2018). SLAYER: Spike Layer Error Reassignment in
        Time. Advances in Neural Information Processing Systems, 31:1412-1421.
-       https://proceedings.neurips.cc/paper_files/paper/2018/hash/82.. rubric:: References
+       https://proceedings.neurips.cc/paper_files/paper/2018/hash/82
 
 .. [5] Zenke F, Ganguli S (2018). SuperSpike: Supervised Learning in Multilayer
        Spiking Neural Networks. Neural Computation, 30:1514–1541.
@@ -374,13 +379,12 @@ EndUserDocs */
 
 void register_eprop_iaf_psc_delta_adapt( const std::string& name );
 
-
 /**
  * @brief Class implementing an adaptive LIF neuron model for e-prop plasticity with additional biological features.
  *
  * Class implementing a current-based leaky integrate-and-fire neuron model with delta-shaped postsynaptic currents
  * and spike threshold adaptation for e-prop plasticity according to Bellec et al. (2020) with additional biological
- * features described in Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al. (in preparation).
+ * features described in Korcsak-Gorzo et al. (2025).
  */
 class eprop_iaf_psc_delta_adapt : public EpropArchivingNodeRecurrent< false >
 {
@@ -425,11 +429,15 @@ private:
     double&,
     double&,
     const CommonSynapseProperties&,
-    WeightOptimizer* ) override;
+    WeightOptimizer*,
+    const bool,
+    const bool,
+    double&,
+    long&,
+    long& ) override;
 
   long get_shift() const override;
   bool is_eprop_recurrent_node() const override;
-  long get_eprop_isi_trace_cutoff() const override;
 
   //! Map for storing a static set of recordables.
   friend class RecordablesMap< eprop_iaf_psc_delta_adapt >;
@@ -494,9 +502,6 @@ private:
 
     //! Low-pass filter of the firing rate for regularization.
     double kappa_reg_;
-
-    //! Time interval from the previous spike until the cutoff of e-prop update integration between two spikes (ms).
-    double eprop_isi_trace_cutoff_;
 
     //! Default constructor.
     Parameters_();
@@ -581,9 +586,6 @@ private:
 
     //! Total refractory steps.
     long RefractoryCounts_;
-
-    //! Time steps from the previous spike until the cutoff of e-prop update integration between two spikes.
-    long eprop_isi_trace_cutoff_steps_;
   };
 
   //! Get the current value of the membrane voltage.
@@ -651,12 +653,6 @@ eprop_iaf_psc_delta_adapt::is_eprop_recurrent_node() const
   return true;
 }
 
-inline long
-eprop_iaf_psc_delta_adapt::get_eprop_isi_trace_cutoff() const
-{
-  return V_.eprop_isi_trace_cutoff_steps_;
-}
-
 inline size_t
 eprop_iaf_psc_delta_adapt::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
@@ -712,6 +708,7 @@ eprop_iaf_psc_delta_adapt::handles_test_event( DataLoggingRequest& dlr, size_t r
 inline void
 eprop_iaf_psc_delta_adapt::get_status( Dictionary& d ) const
 {
+  EpropArchivingNodeRecurrent::get_status( d );
   P_.get( d );
   S_.get( d, P_ );
   d[ names::recordables ] = recordablesMap_.get_list();
@@ -720,6 +717,7 @@ eprop_iaf_psc_delta_adapt::get_status( Dictionary& d ) const
 inline void
 eprop_iaf_psc_delta_adapt::set_status( const Dictionary& d )
 {
+  EpropArchivingNodeRecurrent::set_status( d );
   // temporary copies in case of errors
   Parameters_ ptmp = P_;
   State_ stmp = S_;

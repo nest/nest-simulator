@@ -22,6 +22,8 @@
 
 #include "weight_optimizer.h"
 
+#include <algorithm>
+
 // nestkernel
 #include "exceptions.h"
 #include "nest_names.h"
@@ -104,7 +106,7 @@ WeightOptimizerCommonProperties::set_status( const Dictionary& d )
 }
 
 WeightOptimizer::WeightOptimizer()
-  : sum_gradients_( 0.0 )
+  : cumulative_gradient_( 0.0 )
   , optimization_step_( 1 )
   , eta_current_( 1e-4 )
   , n_optimize_( 0 )
@@ -112,12 +114,12 @@ WeightOptimizer::WeightOptimizer()
 }
 
 void
-WeightOptimizer::get_status( Dictionary& d ) const
+WeightOptimizer::get_status( Dictionary& ) const
 {
 }
 
 void
-WeightOptimizer::set_status( const Dictionary& d )
+WeightOptimizer::set_status( const Dictionary& )
 {
 }
 
@@ -131,7 +133,7 @@ WeightOptimizer::optimized_weight( const WeightOptimizerCommonProperties& cp,
   {
     eta_current_ = cp.eta_first_change_;
   }
-  sum_gradients_ += gradient;
+  cumulative_gradient_ += gradient;
 
   if ( optimization_step_ == 0 )
   {
@@ -141,13 +143,18 @@ WeightOptimizer::optimized_weight( const WeightOptimizerCommonProperties& cp,
   const size_t current_optimization_step = 1 + idx_current_update / cp.batch_size_;
   if ( optimization_step_ < current_optimization_step )
   {
-    sum_gradients_ /= cp.batch_size_;
-    weight = std::max( cp.Wmin_, std::min( optimize_( cp, weight, current_optimization_step ), cp.Wmax_ ) );
+    cumulative_gradient_ /= cp.batch_size_;
+    weight = std::clamp( optimize_( cp, weight, current_optimization_step ), cp.Wmin_, cp.Wmax_ );
     eta_current_ = cp.eta_;
     n_optimize_ += 1;
     optimization_step_ = current_optimization_step;
   }
   return weight;
+}
+
+WeightOptimizerCommonPropertiesGradientDescent::WeightOptimizerCommonPropertiesGradientDescent()
+  : WeightOptimizerCommonProperties()
+{
 }
 
 WeightOptimizerCommonProperties*
@@ -170,8 +177,8 @@ WeightOptimizerGradientDescent::WeightOptimizerGradientDescent()
 double
 WeightOptimizerGradientDescent::optimize_( const WeightOptimizerCommonProperties& cp, double weight, size_t )
 {
-  weight -= eta_current_ * sum_gradients_;
-  sum_gradients_ = 0.0;
+  weight -= eta_current_ * cumulative_gradient_;
+  cumulative_gradient_ = 0.0;
   return weight;
 }
 
@@ -271,14 +278,14 @@ WeightOptimizerAdam::optimize_( const WeightOptimizerCommonProperties& cp,
 
     const double alpha = eta_current_ * std::sqrt( 1.0 - beta_2_power_ ) / ( 1.0 - beta_1_power_ );
 
-    m_ = acp.beta_1_ * m_ + ( 1.0 - acp.beta_1_ ) * sum_gradients_;
-    v_ = acp.beta_2_ * v_ + ( 1.0 - acp.beta_2_ ) * sum_gradients_ * sum_gradients_;
+    m_ = acp.beta_1_ * m_ + ( 1.0 - acp.beta_1_ ) * cumulative_gradient_;
+    v_ = acp.beta_2_ * v_ + ( 1.0 - acp.beta_2_ ) * cumulative_gradient_ * cumulative_gradient_;
 
     weight -= alpha * m_ / ( std::sqrt( v_ ) + acp.epsilon_ );
 
     // set gradients to zero for following iterations since more than
     // one cycle indicates past learning periods with vanishing gradients
-    sum_gradients_ = 0.0;  // reset for following iterations
+    cumulative_gradient_ = 0.0;  // reset for following iterations
   }
 
   return weight;

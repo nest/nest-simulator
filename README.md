@@ -18,7 +18,6 @@
 [![Virtual applicance](https://img.shields.io/badge/VM-v3.7-blue?logo=CodeSandbox)](https://nest-simulator.readthedocs.io/en/latest/installation/livemedia.html#live-media)
 
 [![YouTube Video Views](https://img.shields.io/youtube/views/K7KXmIv6ROY?style=social)](https://www.youtube.com/results?search_query=nest-simulator+neurons)
-[![Twitter Follow](https://img.shields.io/twitter/follow/nestsimulator?style=social)](https://twitter.com/nestsimulator)
 
 NEST is a simulator for spiking neural network models that focuses on the
 dynamics, size and structure of neural systems rather than on the exact
@@ -57,6 +56,11 @@ NEST is ideal for networks of spiking neurons of any size, for example:
 ```bash
 pip install nest-simulator
 ```
+
+More details and options for installing NEST with pip can be found here:
+
+https://nest-simulator.org/documentation/installation/pip_install.html
+
 
 ### macOS Requirements
 

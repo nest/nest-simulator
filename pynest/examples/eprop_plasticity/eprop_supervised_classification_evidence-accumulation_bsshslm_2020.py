@@ -870,10 +870,11 @@ def plot_weight_time_course(ax, events, nrns, label, ylabel):
         for target in set(events_wr["targets"]):
             if sender in nrns_senders and target in nrns_targets:
                 idc_syn = (events["senders"] == sender) & (events["targets"] == target)
-                if np.any(idc_syn):
-                    idc_syn_pre = (weights_pre_train[label]["source"] == sender) & (
-                        weights_pre_train[label]["target"] == target
-                    )
+                idc_syn_pre = (weights_pre_train[label]["source"] == sender) & (
+                    weights_pre_train[label]["target"] == target
+                )
+
+                if np.any(idc_syn) and np.any(idc_syn_pre):
                     times = np.concatenate([[0.0], events["times"][idc_syn]])
 
                     weights = np.concatenate(

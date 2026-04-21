@@ -532,8 +532,8 @@ readout_signal = events_mm_out["readout_signal"]
 target_signal = events_mm_out["target_signal"]
 senders = events_mm_out["senders"]
 
-readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
-target_signal = np.array([target_signal[senders == i] for i in set(senders)])
+readout_signal = np.array([readout_signal[senders == i] for i in np.unique(senders)])
+target_signal = np.array([target_signal[senders == i] for i in np.unique(senders)])
 
 readout_signal = readout_signal.reshape((n_out, n_iter, group_size, steps["sequence"]))
 target_signal = target_signal.reshape((n_out, n_iter, group_size, steps["sequence"]))
@@ -589,7 +589,7 @@ fig.tight_layout()
 
 
 def plot_recordable(ax, events, recordable, ylabel, xlims):
-    for sender in set(events["senders"]):
+    for sender in np.unique(events["senders"]):
         idc_sender = events["senders"] == sender
         idc_times = (events["times"][idc_sender] > xlims[0]) & (events["times"][idc_sender] < xlims[1])
         ax.plot(events["times"][idc_sender][idc_times], events[recordable][idc_sender][idc_times], lw=0.5)
@@ -647,8 +647,8 @@ def plot_weight_time_course(ax, events, nrns, label, ylabel):
     nrns_senders = nrns[sender_label]
     nrns_targets = nrns[target_label]
 
-    for sender in set(events_wr["senders"]):
-        for target in set(events_wr["targets"]):
+    for sender in np.unique(events_wr["senders"]):
+        for target in np.unique(events_wr["targets"]):
             if sender in nrns_senders and target in nrns_targets:
                 idc_syn = (events["senders"] == sender) & (events["targets"] == target)
                 idc_syn_pre = (weights_pre_train[label]["source"] == sender) & (

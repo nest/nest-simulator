@@ -64,7 +64,9 @@ jobs:
     name: Upload wheels to pypi
     needs: [test_local_wheels, build_sdist]
     runs-on: ubuntu-latest
-    environment: testpypi
+    environment:
+       name: pypi
+       url: https://pypi.org/p/nest-simulator
     permissions:
       id-token: write
     # Only run on releases or manual workflow dispatch from non-fork branches
@@ -77,13 +79,11 @@ jobs:
           path: dist
           merge-multiple: true
 
-      - name: Publish to TestPyPI
+      - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           attestations: false
           verbose: true
-          # only for test pypi
-          repository-url: https://test.pypi.org/legacy/
 
   test_local_wheels:
     name: Test local wheels on ${{ matrix.os }}

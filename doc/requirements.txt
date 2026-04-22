@@ -26,7 +26,7 @@ sphinx-design
 sphinx-gallery
 sphinx-material
 sphinx-notfound-page >= 0.8.3
-sphinx_autobuild >= 2021.3.14
+sphinx_autobuild >= 2025.8.25
 sphinxcontrib-mermaid >= 0.9.2
 sphinxcontrib-plantuml >= 0.26
 statsmodels >= 0.13.5

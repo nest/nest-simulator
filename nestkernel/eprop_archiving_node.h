@@ -25,6 +25,7 @@
 
 // nestkernel
 #include "flush_event_mechanism.h"
+#include "forced_firing_mechanism.h"
 #include "histentry.h"
 #include "nest_time.h"
 #include "nest_types.h"
@@ -48,7 +49,7 @@ namespace nest
  * @tparam HistEntryT The type of history entry.
  */
 template < typename HistEntryT >
-class EpropArchivingNode : public Node, public FlushEventMechanism
+class EpropArchivingNode : public Node, public FlushEventMechanism, public ForcedFiringMechanism
 {
 public:
   /**

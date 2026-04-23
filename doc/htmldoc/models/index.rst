@@ -118,6 +118,8 @@ Learn more about . . .
 
       * :ref:`Model terminology <model_meaning>`
 
+      * :ref:`Model selector keyword definitions <model_keyword_glossary>`
+
 
 ----
 

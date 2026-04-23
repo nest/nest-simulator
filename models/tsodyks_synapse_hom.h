@@ -31,7 +31,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapse, short-term plasticity
+/* BeginUserDocs: synapse, chemical, functional, stp
 
 Short description
 +++++++++++++++++
@@ -164,7 +164,7 @@ public:
   void set_status( const Dictionary& d, ConnectorModel& cm );
 
   double tau_psc_;  //!< [ms] time constant of postsyn current
-  double tau_fac_;  //!< [ms] time constant for fascilitation
+  double tau_fac_;  //!< [ms] time constant for facilitation
   double tau_rec_;  //!< [ms] time constant for recovery
   double U_;        //!< asymptotic value of probability of release
 };

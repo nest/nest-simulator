@@ -33,7 +33,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapse, continuous delay
+/* BeginUserDocs: synapse, abstract, rate
 
 Short description
 +++++++++++++++++

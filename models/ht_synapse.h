@@ -29,7 +29,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapse, Hill-Tononi plasticity
+/* BeginUserDocs: synapse, chemical, functional, stp
 
 Short description
 +++++++++++++++++

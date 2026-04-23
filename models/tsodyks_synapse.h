@@ -32,7 +32,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapse, short-term plasticity
+/* BeginUserDocs: synapse, chemical, functional, stp
 
 Short description
 +++++++++++++++++
@@ -224,7 +224,7 @@ public:
 private:
   double weight_;
   double tau_psc_;      //!< [ms] time constant of postsyn current
-  double tau_fac_;      //!< [ms] time constant for fascilitation
+  double tau_fac_;      //!< [ms] time constant for facilitation
   double tau_rec_;      //!< [ms] time constant for recovery
   double U_;            //!< asymptotic value of probability of release
   double x_;            //!< amount of resources in recovered state

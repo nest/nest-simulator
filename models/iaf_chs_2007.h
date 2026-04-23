@@ -94,7 +94,7 @@ References
        spike trains by postsynaptic summation. Journal of Vision 7(14):20,1-11.
        DOI: https://doi.org/10.1167/7.14.20
 .. [2] Rotter S,  Diesmann M (1999). Exact simulation of time-invariant linear
-       systems with applications to neuronal modeling. Biologial Cybernetics
+       systems with applications to neuronal modeling. Biological Cybernetics
        81:381-402.
        DOI: https://doi.org/10.1007/s004220050570
 

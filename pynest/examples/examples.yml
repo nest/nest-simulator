@@ -1,0 +1,1117 @@
+# Registry of all PyNEST examples in pynest/examples/.
+#
+# This file is the single source of truth for example metadata.  It is read by:
+#   - check_examples_registry.py  : validates every .py file is registered (CI Check 1)
+#   - prerelease_check.py         : validates metadata before a release (CI Checks 2-4)
+#   - run-examples.yml            : selects and runs examples in downstream CI
+#   - convert-notebooks-on-prerelease.yml : converts selected examples to Jupyter notebooks in downstream CI
+#   - Sphinx listexamples directive: links model doc pages to relevant examples
+#   - Sphinx add_button_notebook: adds EBRAINS button to relevant examples
+#
+# ── Required fields ─────────────────────────────────────────────────────────────
+#
+# name: str
+#   Unique identifier for the example.  Used in CI output, the dashboard, and
+#   Sphinx cross-references.
+#
+# path: str
+#   Path to the entry-point script, relative to pynest/examples/.
+#   For multi-file examples, this is the main script (e.g. run_simulation.py).
+#   Used by check_examples_registry.py (orphaned-entry check), prerelease_check.py
+#   (git diff and path validation), run-examples.yml (execution), and
+#   convert-notebooks-on-prerelease.yml (jupytext conversion).
+#
+# type: python | snakemake | skip
+#   Controls how run-examples.yml handles the entry:
+#     python    — run via run_example.py
+#     snakemake — run via `snakemake` in the example directory
+#     skip      — excluded from CI runs; must have a non-empty 'notes' field
+#                 explaining why; entry appears in the dashboard skipped dropdown.
+#
+# convert_to_notebook: true | false
+#   If true, convert-notebooks-on-prerelease.yml converts the example to a
+#   Jupyter notebook for EBRAINS.  Requires 'models' to be non-empty
+#   (enforced by prerelease_check.py).
+#   Use false for examples that depend on MPI, special hardware, or large data.
+#   Used also in Sphinx extensions to filter for relevant examples.
+#
+# category: str
+#   Thematic group (e.g. neurons, networks, synapses, spatial).
+#   Used by the Sphinx listexamples directive to group examples on model pages.
+#
+# last_change: "no change" | "changes since version vMAJOR.MINOR" | "new since version vMAJOR.MINOR"
+#   Must be updated for every .py file that changes between releases.
+#   prerelease_check.py enforces this before dispatch fires.
+#   inject_version_cell.py (nest-simulator-examples) injects this text as the
+#   first cell of each converted notebook so readers know what changed.
+#
+# models: list[str]
+#   Used by the Sphinx listexamples directive to link model pages to examples.
+#   Required (non-empty) when convert_to_notebook: true.
+#   Note: do not list example-local CopyModel aliases — only the source model names.
+#
+# ── Optional fields ──────────────────────────────────────────────────────────────
+#
+# notes: str
+#   Free-text explanation.  Required for type: skip entries (shown in the CI
+#   dashboard skipped-examples dropdown).  May also appear on type: python entries
+#   to document known issues or caveats.
+#
+# helper_scripts: list[str]
+#   Additional .py files the example imports, relative to pynest/examples/.
+#   prerelease_check.py verifies all listed paths exist on disk (CI Check 4).
+#
+# data_files: list[{path: str, formats: list[str], description: str}]
+#   Data files bundled with the example (relative to pynest/examples/).
+#   prerelease_check.py verifies that each 'path' exists on disk (CI Check 4).
+#
+# post_script: str
+#   A script to run after the main example, relative to pynest/examples/.
+#   Used by run-examples.yml (e.g. to generate a GIF from simulation output).
+#
+examples:
+- name: aeif_cond_beta_multisynapse
+  path: aeif_cond_beta_multisynapse.py
+  type: python
+  convert_to_notebook: true
+  category: neurons
+  last_change: "no change"
+  models:
+  - aeif_cond_beta_multisynapse
+  - spike_generator
+  - voltmeter
+- name: artificial_synchrony
+  path: artificial_synchrony.py
+  type: python
+  convert_to_notebook: true
+  category: networks
+  last_change: "no change"
+  models:
+  - voltmeter
+- name: balancedneuron
+  path: balancedneuron.py
+  type: python
+  convert_to_notebook: true
+  category: networks
+  last_change: "no change"
+  models:
+  - iaf_psc_alpha
+  - poisson_generator
+  - spike_recorder
+  - voltmeter
+- name: brette_gerstner_fig_2c
+  path: brette_gerstner_fig_2c.py
+  type: python
+  convert_to_notebook: true
+  category: neurons
+  last_change: "no change"
+  models:
+  - aeif_cond_alpha
+  - dc_generator
+  - voltmeter
+- name: brette_gerstner_fig_3d
+  path: brette_gerstner_fig_3d.py
+  type: python
+  convert_to_notebook: true
+  category: neurons
+  last_change: "no change"
+  models:
+  - aeif_cond_exp
+  - dc_generator
+  - voltmeter
+- name: BrodyHopfield
+  path: BrodyHopfield.py
+  type: python
+  convert_to_notebook: true
+  category: networks
+  last_change: "no change"
+  models:
+  - ac_generator
+  - iaf_psc_alpha
+  - noise_generator
+  - spike_recorder
+- name: brunel_alpha_evolution_strategies
+  path: brunel_alpha_evolution_strategies.py
+  type: python
+  convert_to_notebook: true
+  category: networks
+  last_change: "no change"
+  models:
+  - iaf_psc_alpha
+  - poisson_generator
+  - spike_recorder
+  - static_synapse
+- name: brunel_alpha_nest
+  path: brunel_alpha_nest.py
+  type: python
+  convert_to_notebook: true
+  category: networks
+  last_change: "no change"
+  models:
+  - iaf_psc_alpha
+  - poisson_generator
+  - spike_recorder
+  - static_synapse
+- name: brunel_delta_nest
+  path: brunel_delta_nest.py
+  type: python
+  convert_to_notebook: true
+  category: networks
+  last_change: "no change"
+  models:
+  - iaf_psc_delta
+  - poisson_generator
+  - spike_recorder
+  - static_synapse
+- name: brunel_exp_multisynapse_nest
+  path: brunel_exp_multisynapse_nest.py
+  type: python
+  convert_to_notebook: true
+  category: networks
+  last_change: "no change"
+  models:
+  - iaf_psc_exp_multisynapse
+  - poisson_generator
+  - spike_recorder
+  - static_synapse
+- name: brunel_siegert_nest
+  path: brunel_siegert_nest.py
+  type: python
+  convert_to_notebook: true
+  category: networks
+  last_change: "no change"
+  models:
+  - multimeter
+  - siegert_neuron
+- name: CampbellSiegert
+  path: CampbellSiegert.py
+  type: python
+  convert_to_notebook: true
+  category: neurons
+  last_change: "no change"
+  models:
+  - iaf_psc_alpha
+  - poisson_generator
+  - spike_recorder
+  - voltmeter
+- name: clopath_synapse_small_network
+  path: clopath_synapse_small_network.py
+  type: python
+  notes: SIGABRT in poisson_generator::pre_run_hook with OpenMP+MPI build; possible
+    NEST bug
+  convert_to_notebook: true
+  category: synapses
+  last_change: "no change"
+  models:
+  - clopath_synapse
+  - parrot_neuron
+  - poisson_generator
+  - weight_recorder
+- name: clopath_synapse_spike_pairing
+  path: clopath_synapse_spike_pairing.py
+  type: python
+  convert_to_notebook: true
+  category: synapses
+  last_change: "no change"
+  models:
+  - aeif_psc_delta_clopath
+  - clopath_synapse
+  - parrot_neuron
+  - spike_generator
+  - weight_recorder
+- name: correlospinmatrix_detector_two_neuron
+  path: correlospinmatrix_detector_two_neuron.py
+  type: python
+  convert_to_notebook: true
+  category: devices
+  last_change: "no change"
+  models:
+  - correlospinmatrix_detector
+  - ginzburg_neuron
+  - mcculloch_pitts_neuron
+- name: cross_check_mip_corrdet
+  path: cross_check_mip_corrdet.py
+  type: python
+  convert_to_notebook: true
+  category: devices
+  last_change: "no change"
+  models:
+  - correlation_detector
+  - mip_generator
+  - parrot_neuron
+  - spike_recorder
+- name: csa_example
+  path: csa_example.py
+  type: skip
+  convert_to_notebook: true
+  category: connectivity
+  last_change: "no change"
+  notes: Requires CSA library and NEST compiled with -Dwith-libneurosim; upstream
+    build does not yet pass this flag
+  models:
+  - iaf_psc_alpha
+  - poisson_generator
+  - voltmeter
+- name: csa_spatial_example
+  path: csa_spatial_example.py
+  type: skip
+  convert_to_notebook: true
+  category: connectivity
+  last_change: "no change"
+  notes: Requires CSA library and NEST compiled with -Dwith-libneurosim; upstream
+    build does not yet pass this flag
+  models:
+  - iaf_psc_alpha
+- name: evaluate_quantal_stp_synapse
+  path: evaluate_quantal_stp_synapse.py
+  type: python
+  convert_to_notebook: true
+  category: synapses
+  last_change: "no change"
+  models:
+  - iaf_psc_exp
+  - voltmeter
+- name: evaluate_tsodyks2_synapse
+  path: evaluate_tsodyks2_synapse.py
+  type: python
+  convert_to_notebook: true
+  category: synapses
+  last_change: "no change"
+  models:
+  - iaf_psc_exp
+  - voltmeter
+- name: gap_junctions_inhibitory_network
+  path: gap_junctions_inhibitory_network.py
+  type: python
+  convert_to_notebook: true
+  category: networks
+  last_change: "no change"
+  models:
+  - hh_psc_alpha_gap
+  - poisson_generator
+  - spike_recorder
+- name: gap_junctions_two_neurons
+  path: gap_junctions_two_neurons.py
+  type: python
+  convert_to_notebook: true
+  category: neurons
+  last_change: "no change"
+  models:
+  - hh_psc_alpha_gap
+  - voltmeter
+- name: gif_cond_exp_multisynapse
+  path: gif_cond_exp_multisynapse.py
+  type: python
+  convert_to_notebook: true
+  category: neurons
+  last_change: "no change"
+  models:
+  - gif_cond_exp_multisynapse
+  - spike_generator
+- name: gif_pop_psc_exp
+  path: gif_pop_psc_exp.py
+  type: python
+  convert_to_notebook: true
+  category: neurons
+  last_change: "no change"
+  models:
+  - gif_pop_psc_exp
+  - gif_psc_exp
+  - multimeter
+  - spike_recorder
+  - step_current_generator
+- name: gif_population
+  path: gif_population.py
+  type: python
+  convert_to_notebook: true
+  category: neurons
+  last_change: "no change"
+  models:
+  - gif_psc_exp
+  - poisson_generator
+  - spike_recorder
+- name: glif_cond_neuron
+  path: glif_cond_neuron.py
+  type: python
+  convert_to_notebook: true
+  category: neurons
+  last_change: "no change"
+  models:
+  - glif_cond
+  - multimeter
+  - parrot_neuron
+  - poisson_generator
+  - spike_generator
+  - spike_recorder
+  - step_current_generator
+- name: glif_psc_double_alpha_neuron
+  path: glif_psc_double_alpha_neuron.py
+  type: python
+  convert_to_notebook: true
+  category: neurons
+  last_change: "no change"
+  models:
+  - glif_psc
+  - glif_psc_double_alpha
+  - multimeter
+  - spike_generator
+- name: glif_psc_neuron
+  path: glif_psc_neuron.py
+  type: python
+  convert_to_notebook: true
+  category: neurons
+  last_change: "no change"
+  models:
+  - glif_psc
+  - multimeter
+  - parrot_neuron
+  - poisson_generator
+  - spike_generator
+  - spike_recorder
+  - step_current_generator
+- name: hh_phaseplane
+  path: hh_phaseplane.py
+  type: python
+  convert_to_notebook: true
+  category: neurons
+  last_change: "no change"
+  models:
+  - hh_psc_alpha
+- name: hh_psc_alpha
+  path: hh_psc_alpha.py
+  type: python
+  convert_to_notebook: true
+  category: neurons
+  last_change: "no change"
+  models:
+  - hh_psc_alpha
+  - spike_recorder
+- name: hpc_benchmark
+  path: hpc_benchmark.py
+  type: python
+  convert_to_notebook: true
+  category: benchmark
+  last_change: "no change"
+  models:
+  - iaf_psc_alpha
+  - poisson_generator
+  - spike_recorder
+  - static_synapse_hpc
+- name: iaf_tum_2000_short_term_depression
+  path: iaf_tum_2000_short_term_depression.py
+  type: python
+  convert_to_notebook: true
+  category: synapses
+  last_change: "no change"
+  models:
+  - dc_generator
+  - iaf_tum_2000
+  - voltmeter
+- name: iaf_tum_2000_short_term_facilitation
+  path: iaf_tum_2000_short_term_facilitation.py
+  type: python
+  convert_to_notebook: true
+  category: synapses
+  last_change: "no change"
+  models:
+  - dc_generator
+  - iaf_tum_2000
+  - voltmeter
+- name: if_curve
+  path: if_curve.py
+  type: python
+  convert_to_notebook: true
+  category: neurons
+  last_change: "no change"
+  models:
+  - noise_generator
+  - spike_recorder
+- name: intrinsic_currents_spiking
+  path: intrinsic_currents_spiking.py
+  type: python
+  convert_to_notebook: true
+  category: neurons
+  last_change: "no change"
+  models:
+  - ht_neuron
+  - multimeter
+  - poisson_generator
+- name: intrinsic_currents_subthreshold
+  path: intrinsic_currents_subthreshold.py
+  type: python
+  convert_to_notebook: true
+  category: neurons
+  last_change: "no change"
+  models:
+  - dc_generator
+  - ht_neuron
+  - multimeter
+- name: lin_rate_ipn_network
+  path: lin_rate_ipn_network.py
+  type: python
+  convert_to_notebook: true
+  category: networks
+  last_change: "no change"
+  models:
+  - multimeter
+- name: mc_neuron
+  path: mc_neuron.py
+  type: python
+  convert_to_notebook: true
+  category: neurons
+  last_change: "no change"
+  models:
+  - dc_generator
+  - iaf_cond_alpha_mc
+  - multimeter
+  - spike_generator
+- name: multimeter_file
+  path: multimeter_file.py
+  type: python
+  convert_to_notebook: true
+  category: devices
+  last_change: "no change"
+  models:
+  - iaf_cond_alpha
+  - multimeter
+  - spike_generator
+- name: one_neuron
+  path: one_neuron.py
+  type: python
+  convert_to_notebook: true
+  category: neurons
+  last_change: "no change"
+  models:
+  - iaf_psc_alpha
+  - voltmeter
+- name: one_neuron_with_noise
+  path: one_neuron_with_noise.py
+  type: python
+  convert_to_notebook: true
+  category: neurons
+  last_change: "no change"
+  models:
+  - iaf_psc_alpha
+  - poisson_generator
+  - voltmeter
+- name: plot_weight_matrices
+  path: plot_weight_matrices.py
+  type: python
+  convert_to_notebook: true
+  category: visualization
+  last_change: "no change"
+  models:
+  - iaf_psc_alpha
+- name: precise_spiking
+  path: precise_spiking.py
+  type: python
+  convert_to_notebook: true
+  category: neurons
+  last_change: "no change"
+  models:
+  - dc_generator
+  - spike_recorder
+  - voltmeter
+- name: pulsepacket
+  path: pulsepacket.py
+  type: python
+  convert_to_notebook: true
+  category: networks
+  last_change: "no change"
+  models:
+  - iaf_psc_alpha
+  - pulsepacket_generator
+  - voltmeter
+- name: rate_neuron_dm
+  path: rate_neuron_dm.py
+  type: python
+  convert_to_notebook: true
+  category: neurons
+  last_change: "no change"
+  models:
+  - lin_rate_ipn
+  - multimeter
+- name: recording_demo
+  path: recording_demo.py
+  type: python
+  convert_to_notebook: true
+  category: devices
+  last_change: "no change"
+  models:
+  - iaf_psc_exp
+  - poisson_generator
+  - spike_recorder
+- name: repeated_stimulation
+  path: repeated_stimulation.py
+  type: python
+  convert_to_notebook: true
+  category: devices
+  last_change: "no change"
+  models:
+  - poisson_generator
+  - spike_recorder
+- name: sensitivity_to_perturbation
+  path: sensitivity_to_perturbation.py
+  type: python
+  convert_to_notebook: true
+  category: networks
+  last_change: "no change"
+  models:
+  - dc_generator
+  - poisson_generator
+  - spike_generator
+  - spike_recorder
+- name: sinusoidal_gamma_generator
+  path: sinusoidal_gamma_generator.py
+  type: python
+  convert_to_notebook: true
+  category: devices
+  last_change: "no change"
+  models:
+  - multimeter
+  - parrot_neuron
+  - sinusoidal_gamma_generator
+  - spike_recorder
+- name: sinusoidal_poisson_generator
+  path: sinusoidal_poisson_generator.py
+  type: python
+  convert_to_notebook: true
+  category: devices
+  last_change: "no change"
+  models:
+  - multimeter
+  - parrot_neuron
+  - sinusoidal_poisson_generator
+  - spike_recorder
+- name: store_restore_network
+  path: store_restore_network.py
+  type: python
+  convert_to_notebook: true
+  category: networks
+  last_change: "no change"
+  models:
+  - poisson_generator
+  - spike_recorder
+  - static_synapse
+  - stdp_synapse_hom
+- name: structural_plasticity
+  path: structural_plasticity.py
+  type: python
+  convert_to_notebook: true
+  category: synapses
+  last_change: "no change"
+  models:
+  - iaf_psc_alpha
+  - poisson_generator
+  - static_synapse
+- name: synapsecollection
+  path: synapsecollection.py
+  type: python
+  convert_to_notebook: true
+  category: synapses
+  last_change: "no change"
+  models:
+  - iaf_psc_alpha
+  - iaf_psc_delta
+- name: testiaf
+  path: testiaf.py
+  type: python
+  convert_to_notebook: true
+  category: neurons
+  last_change: "no change"
+  models:
+  - iaf_psc_alpha
+  - spike_recorder
+  - voltmeter
+- name: twoneurons
+  path: twoneurons.py
+  type: python
+  convert_to_notebook: true
+  category: neurons
+  last_change: "no change"
+  models:
+  - iaf_psc_alpha
+  - voltmeter
+- name: urbanczik_synapse_example
+  path: urbanczik_synapse_example.py
+  type: python
+  convert_to_notebook: true
+  category: synapses
+  last_change: "no change"
+  models:
+  - multimeter
+  - parrot_neuron
+  - poisson_generator
+  - spike_generator
+  - spike_recorder
+  - urbanczik_synapse
+  - weight_recorder
+- name: vinit_example
+  path: vinit_example.py
+  type: python
+  convert_to_notebook: true
+  category: neurons
+  last_change: "no change"
+  models:
+  - iaf_cond_exp_sfa_rr
+  - voltmeter
+- name: wang_decision_making
+  path: wang_decision_making.py
+  type: python
+  convert_to_notebook: true
+  category: networks
+  last_change: "no change"
+  models:
+  - inhomogeneous_poisson_generator
+  - poisson_generator
+  - spike_recorder
+- name: astrocyte_brunel_bernoulli
+  path: astrocytes/astrocyte_brunel_bernoulli.py
+  type: python
+  convert_to_notebook: true
+  category: astrocytes
+  last_change: "no change"
+  models:
+  - aeif_cond_alpha_astro
+  - astrocyte_lr_1994
+  - multimeter
+  - poisson_generator
+  - spike_recorder
+- name: astrocyte_brunel_fixed_indegree
+  path: astrocytes/astrocyte_brunel_fixed_indegree.py
+  type: python
+  convert_to_notebook: true
+  category: astrocytes
+  last_change: "no change"
+  models:
+  - aeif_cond_alpha_astro
+  - astrocyte_lr_1994
+  - multimeter
+  - poisson_generator
+  - spike_recorder
+- name: astrocyte_interaction
+  path: astrocytes/astrocyte_interaction.py
+  type: python
+  convert_to_notebook: true
+  category: astrocytes
+  last_change: "no change"
+  models:
+  - aeif_cond_alpha_astro
+  - astrocyte_lr_1994
+  - multimeter
+  - poisson_generator
+  - spike_recorder
+- name: astrocyte_single
+  path: astrocytes/astrocyte_single.py
+  type: python
+  convert_to_notebook: true
+  category: astrocytes
+  last_change: "no change"
+  models:
+  - aeif_cond_alpha_astro
+  - astrocyte_lr_1994
+  - multimeter
+  - poisson_generator
+  - spike_recorder
+- name: astrocyte_small_network
+  path: astrocytes/astrocyte_small_network.py
+  type: python
+  convert_to_notebook: true
+  category: astrocytes
+  last_change: "no change"
+  models:
+  - aeif_cond_alpha_astro
+  - astrocyte_lr_1994
+  - multimeter
+  - poisson_generator
+  - spike_recorder
+- name: brette_et_al_2007_benchmark
+  path: brette_et_al_2007/brette_et_al_2007_benchmark.py
+  type: python
+  convert_to_notebook: true
+  category: benchmark
+  last_change: "no change"
+  models:
+  - poisson_generator
+  - spike_recorder
+  - static_synapse
+- name: coba
+  path: brette_et_al_2007/coba.py
+  type: python
+  convert_to_notebook: true
+  category: benchmark
+  last_change: "no change"
+  models:
+  - iaf_cond_exp
+  - poisson_generator
+  - spike_recorder
+  - static_synapse
+- name: cuba
+  path: brette_et_al_2007/cuba.py
+  type: python
+  convert_to_notebook: true
+  category: benchmark
+  last_change: "no change"
+  models:
+  - iaf_psc_exp
+  - poisson_generator
+  - spike_recorder
+  - static_synapse
+- name: cuba_ps
+  path: brette_et_al_2007/cuba_ps.py
+  type: python
+  convert_to_notebook: true
+  category: benchmark
+  last_change: "no change"
+  models:
+  - iaf_psc_delta
+  - poisson_generator
+  - spike_recorder
+  - static_synapse
+- name: cuba_stdp
+  path: brette_et_al_2007/cuba_stdp.py
+  type: python
+  convert_to_notebook: true
+  category: benchmark
+  last_change: "no change"
+  models:
+  - iaf_psc_exp
+  - poisson_generator
+  - spike_recorder
+  - static_synapse
+  - stdp_synapse
+- name: hh_coba
+  path: brette_et_al_2007/hh_coba.py
+  type: python
+  convert_to_notebook: true
+  category: benchmark
+  last_change: "no change"
+  models:
+  - hh_cond_exp_traub
+  - poisson_generator
+  - spike_recorder
+  - static_synapse
+- name: receptors_and_current
+  path: compartmental_model/receptors_and_current.py
+  type: python
+  convert_to_notebook: true
+  category: compartmental
+  last_change: "no change"
+  models:
+  - cm_default
+  - dc_generator
+  - multimeter
+  - spike_generator
+- name: two_comps
+  path: compartmental_model/two_comps.py
+  type: python
+  convert_to_notebook: true
+  category: compartmental
+  last_change: "no change"
+  models:
+  - cm_default
+  - dc_generator
+  - multimeter
+  - spike_generator
+- name: eprop_supervised_classification_evidence_accumulation
+  path: eprop_plasticity/eprop_supervised_classification_evidence-accumulation_bsshslm_2020.py
+  type: python
+  convert_to_notebook: true
+  category: eprop
+  last_change: "no change"
+  models:
+  - eprop_iaf_adapt_bsshslm_2020
+  - eprop_iaf_bsshslm_2020
+  - eprop_readout
+  - eprop_readout_bsshslm_2020
+  - multimeter
+  - parrot_neuron
+  - spike_generator
+  - spike_recorder
+  - step_rate_generator
+  - weight_recorder
+- name: eprop_supervised_classification_neuromorphic_mnist
+  path: eprop_plasticity/eprop_supervised_classification_neuromorphic_mnist.py
+  type: python
+  convert_to_notebook: true
+  category: eprop_large_download
+  last_change: "no change"
+  data_files:
+  - path: eprop_plasticity/NMNIST_pixels_blocklist.txt
+    formats: [txt]
+    description: "Pixel blocklist for filtering the N-MNIST dataset"
+  models:
+  - eprop_iaf_adapt_bsshslm_2020
+  - eprop_iaf_bsshslm_2020
+  - eprop_readout
+  - eprop_readout_bsshslm_2020
+  - multimeter
+  - parrot_neuron
+  - spike_generator
+  - spike_recorder
+  - step_rate_generator
+  - weight_recorder
+- name: eprop_supervised_regression_handwriting
+  path: eprop_plasticity/eprop_supervised_regression_handwriting_bsshslm_2020.py
+  type: python
+  convert_to_notebook: true
+  category: eprop
+  last_change: "no change"
+  data_files:
+  - path: eprop_plasticity/chaos_handwriting.txt
+    formats: [txt]
+    description: "Target handwriting trajectory data for the regression task"
+  models:
+  - eprop_iaf_adapt_bsshslm_2020
+  - eprop_iaf_bsshslm_2020
+  - eprop_readout
+  - eprop_readout_bsshslm_2020
+  - multimeter
+  - parrot_neuron
+  - spike_generator
+  - spike_recorder
+  - step_rate_generator
+  - weight_recorder
+- name: eprop_supervised_regression_lemniscate
+  path: eprop_plasticity/eprop_supervised_regression_lemniscate_bsshslm_2020.py
+  type: python
+  convert_to_notebook: true
+  category: eprop
+  last_change: "no change"
+  models:
+  - eprop_iaf_adapt_bsshslm_2020
+  - eprop_iaf_bsshslm_2020
+  - eprop_readout
+  - eprop_readout_bsshslm_2020
+  - multimeter
+  - parrot_neuron
+  - spike_generator
+  - spike_recorder
+  - step_rate_generator
+  - weight_recorder
+- name: eprop_supervised_regression_sine_waves
+  path: eprop_plasticity/eprop_supervised_regression_sine-waves.py
+  type: python
+  convert_to_notebook: true
+  category: eprop
+  last_change: "no change"
+  models:
+  - eprop_iaf_adapt_bsshslm_2020
+  - eprop_iaf_bsshslm_2020
+  - eprop_readout
+  - eprop_readout_bsshslm_2020
+  - multimeter
+  - parrot_neuron
+  - spike_generator
+  - spike_recorder
+  - step_rate_generator
+  - weight_recorder
+- name: eprop_supervised_regression_sine_waves_bsshslm
+  path: eprop_plasticity/eprop_supervised_regression_sine-waves_bsshslm_2020.py
+  type: python
+  convert_to_notebook: true
+  category: eprop
+  last_change: "no change"
+  models:
+  - eprop_iaf_adapt_bsshslm_2020
+  - eprop_iaf_bsshslm_2020
+  - eprop_readout
+  - eprop_readout_bsshslm_2020
+  - multimeter
+  - parrot_neuron
+  - spike_generator
+  - spike_recorder
+  - step_rate_generator
+  - weight_recorder
+- name: spatial_conncomp
+  path: spatial/conncomp.py
+  type: python
+  convert_to_notebook: true
+  category: spatial
+  last_change: "no change"
+  models:
+  - iaf_psc_alpha
+- name: spatial_conncon_sources
+  path: spatial/conncon_sources.py
+  type: python
+  convert_to_notebook: true
+  category: spatial
+  last_change: "no change"
+  models:
+  - iaf_psc_alpha
+- name: spatial_conncon_targets
+  path: spatial/conncon_targets.py
+  type: python
+  convert_to_notebook: true
+  category: spatial
+  last_change: "no change"
+  models:
+  - iaf_psc_alpha
+- name: spatial_connex
+  path: spatial/connex.py
+  type: python
+  convert_to_notebook: true
+  category: spatial
+  last_change: "no change"
+  models:
+  - iaf_psc_alpha
+- name: spatial_connex_ew
+  path: spatial/connex_ew.py
+  type: python
+  convert_to_notebook: true
+  category: spatial
+  last_change: "no change"
+  models:
+  - iaf_psc_alpha
+- name: spatial_ctx_2n
+  path: spatial/ctx_2n.py
+  type: python
+  convert_to_notebook: true
+  category: spatial
+  last_change: "no change"
+  models:
+  - iaf_psc_alpha
+- name: spatial_gaussex
+  path: spatial/gaussex.py
+  type: python
+  convert_to_notebook: true
+  category: spatial
+  last_change: "no change"
+  models:
+  - iaf_psc_alpha
+- name: spatial_grid_iaf
+  path: spatial/grid_iaf.py
+  type: python
+  convert_to_notebook: true
+  category: spatial
+  last_change: "no change"
+  models:
+  - iaf_psc_alpha
+- name: spatial_grid_iaf_irr
+  path: spatial/grid_iaf_irr.py
+  type: python
+  convert_to_notebook: true
+  category: spatial
+  last_change: "no change"
+  models:
+  - iaf_psc_alpha
+- name: spatial_grid_iaf_oc
+  path: spatial/grid_iaf_oc.py
+  type: python
+  convert_to_notebook: true
+  category: spatial
+  last_change: "no change"
+  models:
+  - iaf_psc_alpha
+- name: spatial_nodes_source_target
+  path: spatial/nodes_source_target.py
+  type: python
+  convert_to_notebook: true
+  category: spatial
+  last_change: "no change"
+  models:
+  - iaf_psc_alpha
+- name: spatial_test_3d
+  path: spatial/test_3d.py
+  type: python
+  convert_to_notebook: true
+  category: spatial
+  last_change: "no change"
+  models:
+  - iaf_psc_alpha
+- name: spatial_test_3d_exp
+  path: spatial/test_3d_exp.py
+  type: python
+  convert_to_notebook: true
+  category: spatial
+  last_change: "no change"
+  models:
+  - iaf_psc_alpha
+- name: spatial_test_3d_gauss
+  path: spatial/test_3d_gauss.py
+  type: python
+  convert_to_notebook: true
+  category: spatial
+  last_change: "no change"
+  models:
+  - iaf_psc_alpha
+- name: EI_clustered_network
+  path: EI_clustered_network/run_simulation.py
+  type: python
+  convert_to_notebook: true
+  category: networks
+  last_change: "no change"
+  helper_scripts:
+  - EI_clustered_network/run_example.py
+  - EI_clustered_network/network.py
+  - EI_clustered_network/network_params.py
+  - EI_clustered_network/sim_params.py
+  - EI_clustered_network/stimulus_params.py
+  - EI_clustered_network/helper.py
+  models:
+  - iaf_psc_exp
+  - spike_recorder
+  - static_synapse
+  - step_current_generator
+- name: pong
+  path: pong/run_simulations.py
+  post_script: pong/generate_gif.py
+  type: python
+  convert_to_notebook: true
+  category: networks
+  last_change: "no change"
+  helper_scripts:
+  - pong/networks.py
+  - pong/pong.py
+  - pong/run_example.py
+  models:
+  - dc_generator
+  - iaf_psc_exp
+  - noise_generator
+  - parrot_neuron
+  - poisson_generator
+  - spike_generator
+  - spike_recorder
+  - volume_transmitter
+- name: sonata_network
+  path: sonata_example/sonata_network.py
+  type: python
+  convert_to_notebook: true
+  category: networks
+  last_change: "no change"
+  notes: Requires SONATA data files
+  data_files:
+  - path: sonata_example/300_pointneurons/
+    formats: [h5, csv, json]
+    description: "SONATA network definition, connectivity, and simulation configuration"
+  models:
+  - spike_recorder
+- name: sudoku
+  path: sudoku/sudoku_solver.py
+  post_script: sudoku/plot_progress.py
+  type: python
+  convert_to_notebook: true
+  category: networks
+  last_change: "no change"
+  helper_scripts:
+  - sudoku/helpers_sudoku.py
+  - sudoku/sudoku_net.py
+  - sudoku/run_example.py
+  models:
+  - iaf_psc_exp
+  - poisson_generator
+  - spike_recorder
+- name: music_cont_out_proxy
+  path: music_cont_out_proxy_example/nest_script.py
+  type: skip
+  convert_to_notebook: false
+  category: special
+  last_change: "no change"
+  notes: Requires MUSIC library and special MPI setup
+- name: music_cont_out_proxy_receiver
+  path: music_cont_out_proxy_example/receiver_script.py
+  type: skip
+  convert_to_notebook: false
+  category: special
+  last_change: "no change"
+  notes: Helper script for music_cont_out_proxy; not a standalone example

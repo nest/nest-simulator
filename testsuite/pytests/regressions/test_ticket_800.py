@@ -37,7 +37,9 @@ Author: Hans Ekkehard Plesser, 2014-12-13
 good_random_parameters = [
     ("uniform", {"min": 0.0, "max": 1.0}),
     ("normal", {"mean": 0.0, "std": 1.0}),
+    ("normal", {"mean": 0.0, "std": 0.0}),
     ("lognormal", {"mean": 0.0, "std": 1.0}),
+    ("lognormal", {"mean": 0.0, "std": 0.0}),
     ("exponential", {"beta": 1.0}),
 ]
 
@@ -52,11 +54,9 @@ good_parameters = good_random_parameters + good_distance_parameters
 bad_random_parameters = [
     ("uniform", {"min": 0.0, "max": 0.0}),
     ("normal", {"mean": 0.0, "sigma": 1.0}),  # bad param name
-    ("normal", {"mean": 0.0, "std": 0.0}),
     ("normal", {"mean": 0.0, "std": -1.0}),
-    ("lognormal", {"mu": 0.0, "std": 0.0}),
     ("lognormal", {"mu": 0.0, "std": -1.0}),
-    ("lognormal", {"mu": 0.0, "std": 1.0}),
+    ("exponential", {"beta": -1.0}),
 ]
 
 bad_distance_parameters = [

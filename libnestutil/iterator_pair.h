@@ -96,8 +96,17 @@ class IteratorPair : public boost::iterator_facade< IteratorPair< sort_iter_type
                        typename iterator_pair_types< sort_iter_type_, perm_iter_type_ >::difference_type >
 {
 public:
+  using ReferenceType = iterator_pair_types< sort_iter_type_, perm_iter_type_ >::ref_type;
+  using DifferenceType = iterator_pair_types< sort_iter_type_, perm_iter_type_ >::difference_type;
+
   IteratorPair() = default;
   IteratorPair( sort_iter_type_, perm_iter_type_ );
+
+  ReferenceType
+  operator[]( DifferenceType n ) const
+  {
+    return *( *this + n );
+  }
 
 private:
   friend class boost::iterator_core_access;

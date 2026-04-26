@@ -530,7 +530,7 @@ function( NEST_PROCESS_WITH_BOOST )
   # Find Boost
   set( HAVE_BOOST OFF PARENT_SCOPE )
   if ( with-boost )
-    if ( NOT ${with-boost} STREQUAL "ON" )
+    if ( NOT "${with-boost}" STREQUAL "ON" )
       # a path is set
       set( Boost_ROOT "${with-boost}" )
     endif ()

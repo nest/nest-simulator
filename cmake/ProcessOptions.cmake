@@ -542,12 +542,9 @@ function( NEST_PROCESS_WITH_BOOST )
     # Require Boost version >=1.70.0 due to change in package finding
     find_package( Boost 1.70 CONFIG )
     if ( Boost_FOUND )
-      # export found variables to parent scope
       set( HAVE_BOOST ON PARENT_SCOPE )
       set( BOOST_FOUND "${Boost_FOUND}" PARENT_SCOPE )
-      set( BOOST_INCLUDE_DIR "${Boost_INCLUDE_DIRS}" PARENT_SCOPE )
       set( BOOST_VERSION "${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}" PARENT_SCOPE )
-      # consumers use Boost::headers imported target; no global include_directories() needed
     endif ()
   endif ()
 endfunction()

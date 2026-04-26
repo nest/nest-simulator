@@ -42,14 +42,13 @@ endif()
 
 set_target_properties(nestutil PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
-target_link_libraries(nestutil ${GSL_LIBRARIES} ${SIONLIB_LIBS} OpenMP::OpenMP_CXX)
+target_link_libraries(nestutil ${GSL_LIBRARIES} ${SIONLIB_LIBS} OpenMP::OpenMP_CXX Boost::headers)
 
 target_include_directories(nestutil PRIVATE
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
     ${PROJECT_SOURCE_DIR}/nestkernel
     ${PROJECT_SOURCE_DIR}/thirdparty
-    ${Boost_INCLUDE_DIRS}
 )
 
 FILTER_HEADERS("${nestutil_sources}" install_headers)

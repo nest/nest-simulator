@@ -256,23 +256,21 @@ function( NEST_PROCESS_WITH_GSL )
   # Find GSL
   set( HAVE_GSL OFF PARENT_SCOPE )
   if ( with-gsl )
-    if ( NOT ${with-gsl} STREQUAL "ON" )
+    if ( NOT "${with-gsl}" STREQUAL "ON" )
       # if set, use this prefix
-      set( GSL_ROOT "${with-gsl}" )
+      set( GSL_ROOT_DIR "${with-gsl}" )
     endif ()
 
-    find_package( GSL 1.11 )
+    find_package( GSL 1.11 REQUIRED )
 
     if ( GSL_FOUND )
       set( HAVE_GSL ON PARENT_SCOPE )
 
-      # export found variables to parent scope
+      # export variables needed for nest-config generation
       set( GSL_VERSION "${GSL_VERSION}" PARENT_SCOPE )
       set( GSL_LIBRARIES "${GSL_LIBRARIES}" PARENT_SCOPE )
       set( GSL_INCLUDE_DIRS "${GSL_INCLUDE_DIRS}" PARENT_SCOPE )
-
-      include_directories( ${GSL_INCLUDE_DIRS} )
-      # is linked in libnestutil/CMakeLists.txt
+      # consumers use GSL::gsl imported target; no global include_directories() needed
     endif ()
   endif ()
 endfunction()

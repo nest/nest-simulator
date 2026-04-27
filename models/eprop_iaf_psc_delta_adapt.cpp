@@ -309,7 +309,7 @@ eprop_iaf_psc_delta_adapt::pre_run_hook()
   B_.logger_.init();  // ensures initialization in case multimeter connected after Simulate
 
   FlushEventMechanism::pre_run_hook();
-  ForcedFiringMechanism::pre_run_hook();
+  ForcedSpikingMechanism::pre_run_hook();
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
 

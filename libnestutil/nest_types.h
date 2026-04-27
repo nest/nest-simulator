@@ -29,6 +29,7 @@
 #include <cstddef>
 #include <limits>
 #include <stdint.h>
+#include <type_traits>
 
 // Generated includes:
 #include "config.h"
@@ -186,6 +187,21 @@ enum SignalType
   BINARY = 2,
   ALL = SPIKE | BINARY
 };
+
+/**
+ * Cast enum value to underlying integer type.
+ *
+ * @note Useful where we do arithmetic mixing different enum types.
+ * @note Once we switch to C++23, replace with @c std::to_underlying()
+ *
+ * Suggested by Claude Haiku 4.5.
+ */
+template < typename E >
+constexpr auto
+to_underlying( E e ) noexcept
+{
+  return static_cast< std::underlying_type_t< E > >( e );
+}
 }
 
 #endif /* #ifndef NEST_TYPES_H */

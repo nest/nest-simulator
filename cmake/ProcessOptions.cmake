@@ -356,17 +356,11 @@ function( NEST_PROCESS_WITH_OPENMP )
     find_package( OpenMP REQUIRED )
 
     if ( OpenMP_FOUND )
-      # export found variables to parent scope
       set( OpenMP_FOUND "${OpenMP_FOUND}" PARENT_SCOPE )
-      set( OpenMP_C_FLAGS "${OpenMP_C_FLAGS}" PARENT_SCOPE )
       set( OpenMP_CXX_FLAGS "${OpenMP_CXX_FLAGS}" PARENT_SCOPE )
       set( OpenMP_CXX_LIBRARIES "${OpenMP_CXX_LIBRARIES}" PARENT_SCOPE )
       set( OpenMP_CXX_INCLUDE_DIRS "${OpenMP_CXX_INCLUDE_DIRS}" PARENT_SCOPE )
-      include_directories( ${OpenMP_CXX_INCLUDE_DIRS} )
-
-      # set flags
-      set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" PARENT_SCOPE )
-      set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}" PARENT_SCOPE )
+      # consumers use OpenMP::OpenMP_CXX imported target
     else()
       printError( "CMake can not find OpenMP." )
     endif ()

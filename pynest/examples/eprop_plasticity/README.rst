@@ -8,7 +8,7 @@ performance of backpropagation through time (BPTT). A complete e-prop model comp
 readout neuron model, a synapse model, and a learning signal connection. Two such models are provided: the original
 formulation by Bellec et al. (2020) [1]_ and an extended variant with additional biological features [2]_. The e-prop models are related as follows:
 
-.. image:: eprop-model-relationships.png
+.. image:: eprop_model_relationships.png
 
 We provide tutorials to reproduce the supervised regression task for generating temporal patterns and the supervised
 classification task from the original TensorFlow implementation [3]_. In addition, we provide two tutorials on

@@ -23,8 +23,21 @@
 #ifndef IAF_BW_2001_EXACT
 #define IAF_BW_2001_EXACT
 
+#include <algorithm>
+#include <map>
+#include <math.h>
+#include <string>
+#include <vector>
+
 // Generated includes:
 #include "config.h"
+#include "dictionary.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "node.h"
+#include "recordables_map.h"
+#include "universal_data_logger.h"
 
 #ifdef HAVE_GSL
 
@@ -39,7 +52,7 @@
 #include "event.h"
 #include "nest_types.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -540,6 +553,7 @@ iaf_bw_2001_exact::set_status( const Dictionary& d )
   P_ = ptmp;
   S_ = stmp;
 };
+
 }  // namespace
 
 #endif  // HAVE_GSL

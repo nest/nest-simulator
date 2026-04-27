@@ -41,6 +41,7 @@
 
 namespace nest
 {
+class Node;
 
 /**
  * Encapsulate all calls to MUSIC.

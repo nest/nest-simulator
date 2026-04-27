@@ -27,10 +27,9 @@
 #include <iostream>
 
 // Includes from libnestutil:
+#include "dictionary.h"
 #include "logging_event.h"
-
-// Includes from thirdparty:
-#include "compose.hpp"
+#include "nest_names.h"
 
 
 nest::LoggingManager::LoggingManager()

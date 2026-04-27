@@ -24,16 +24,23 @@
 
 #ifdef HAVE_MUSIC
 
-// C++ includes:
-#include <numeric>
-
 // Includes from libnestutil:
 #include "compose.hpp"
-#include "logging.h"
-
-// Includes from nestkernel:
+#include "dictionary.h"
+#include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "logging.h"
+#include "logging_manager.h"
+#include "mpi.h"
+#include "music/array_data.hh"
+#include "music/port.hh"
+#include "music/setup.hh"
+#include "music_manager.h"
 #include "nest_impl.h"
+#include "nest_names.h"
+#include "secondary_event.h"
+#include "secondary_event_impl.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -139,9 +146,9 @@ nest::music_rate_out_proxy::pre_run_hook()
   // only publish the output port once,
   if ( not S_.published_ )
   {
-    MUSIC::Setup* s = kernel().music_manager.get_music_setup();
+    MUSIC::Setup* s = kernel::manager< MUSICManager >.get_music_setup();
 
-    if ( s == 0 )
+    if ( not s )
     {
       throw MUSICSimulationHasRun( "" );
     }

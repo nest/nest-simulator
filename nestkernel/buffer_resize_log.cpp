@@ -22,12 +22,13 @@
 
 #include "buffer_resize_log.h"
 
-// Includes from libnestutil
-#include "dict_util.h"
 
 // Includes from nestkernel:
+#include "dictionary.h"
 #include "kernel_manager.h"
 #include "nest_names.h"
+#include "nest_time.h"
+#include "simulation_manager.h"
 
 namespace nest
 {
@@ -50,7 +51,7 @@ BufferResizeLog::clear()
 void
 BufferResizeLog::add_entry( size_t global_max_spikes_sent, size_t new_buffer_size )
 {
-  time_steps_.emplace_back( kernel().simulation_manager.get_clock().get_steps() );
+  time_steps_.emplace_back( kernel::manager< SimulationManager >.get_clock().get_steps() );
   global_max_spikes_sent_.emplace_back( global_max_spikes_sent );
   new_buffer_size_.emplace_back( new_buffer_size );
 }

@@ -24,12 +24,24 @@
 #define TSODYKS_SYNAPSE_HOM_H
 
 
+#include <cmath>
+#include <string>
+
 // Includes from nestkernel:
 #include "common_properties_hom_w.h"
 #include "connection.h"
+#include "connector_model.h"
+#include "dictionary.h"
+#include "enum_bitfield.h"
+#include "event.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "nest_types.h"
 
 namespace nest
 {
+class Node;
 
 /* BeginUserDocs: synapse, short-term plasticity
 

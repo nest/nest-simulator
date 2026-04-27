@@ -22,14 +22,20 @@
 
 #include "iaf_bw_2001_exact.h"
 
+#include <assert.h>
+#include <cmath>
+#include <gsl/gsl_errno.h>
+
+#include "event_delivery_manager.h"
+#include "simulation_manager.h"
+
 #ifdef HAVE_GSL
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
-
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
@@ -46,10 +52,7 @@ register_iaf_bw_2001_exact( const std::string& name )
 {
   register_node_model< iaf_bw_2001_exact >( name );
 }
-/*
- * Override the create() method with one call to RecordablesMap::insert_()
- * for each quantity to be recorded.
- */
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< iaf_bw_2001_exact >::create()
@@ -498,7 +501,7 @@ nest::iaf_bw_2001_exact::update( Time const& origin, const long from, const long
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
       SpikeEvent se;
-      kernel().event_delivery_manager.send( *this, se, lag );
+      kernel::manager< EventDeliveryManager >.send( *this, se, lag );
     }
 
     // set new input current
@@ -509,8 +512,7 @@ nest::iaf_bw_2001_exact::update( Time const& origin, const long from, const long
   }
 }
 
-// Do not move this function as inline to h-file. It depends on
-// universal_data_logger_impl.h being included here.
+// Do not move this function as inline to h-file. It depends on universal_data_logger_impl.h being included here.
 void
 nest::iaf_bw_2001_exact::handle( DataLoggingRequest& e )
 {
@@ -523,7 +525,7 @@ nest::iaf_bw_2001_exact::handle( SpikeEvent& e )
   assert( e.get_delay_steps() > 0 );
   assert( e.get_rport() <= B_.spikes_.size() );
 
-  const double steps = e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() );
+  const double steps = e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() );
   const auto rport = e.get_rport();
 
   if ( rport < NMDA )
@@ -554,8 +556,8 @@ nest::iaf_bw_2001_exact::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
+    e.get_weight() * e.get_current() );
 }
 
 #endif  // HAVE_GSL

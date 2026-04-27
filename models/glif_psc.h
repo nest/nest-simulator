@@ -23,12 +23,28 @@
 #ifndef GLIF_PSC_H
 #define GLIF_PSC_H
 
+#include <algorithm>
+#include <assert.h>
+#include <map>
+#include <math.h>
+#include <string>
+#include <vector>
+
 #include "archiving_node.h"
 #include "connection.h"
+#include "dictionary.h"
 #include "event.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "nest_names.h"
+#include "nest_time.h"
 #include "nest_types.h"
+#include "node.h"
+#include "recordables_map.h"
 #include "ring_buffer.h"
+#include "simulation_manager.h"
 #include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 /* BeginUserDocs: neuron, integrate-and-fire, current-based, adaptation, hard thershold
 
@@ -459,6 +475,43 @@ glif_psc::set_status( const Dictionary& d )
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
   S_ = stmp;
+}
+
+inline size_t
+glif_psc::handles_test_event( SpikeEvent&, size_t receptor_type )
+{
+  if ( receptor_type <= 0 or receptor_type > P_.n_receptors_() )
+  {
+    throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
+  }
+
+  P_.has_connections_ = true;
+  return receptor_type;
+}
+
+inline void
+glif_psc::handle( DataLoggingRequest& e )
+{
+  B_.logger_.handle( e );  // the logger does this for us
+}
+
+inline void
+glif_psc::handle( SpikeEvent& e )
+{
+  assert( e.get_delay_steps() > 0 );
+
+  B_.spikes_[ e.get_rport() - 1 ].add_value(
+    e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
+    e.get_weight() * e.get_multiplicity() );
+}
+
+inline void
+glif_psc::handle( CurrentEvent& e )
+{
+  assert( e.get_delay_steps() > 0 );
+
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
+    e.get_weight() * e.get_current() );
 }
 
 }  // namespace nest

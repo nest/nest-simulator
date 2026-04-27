@@ -22,8 +22,15 @@
 
 #include "clopath_archiving_node.h"
 
+#include <math.h>
+#include <string>
+
 // Includes from nestkernel:
+#include "connection_manager.h"
+#include "dictionary.h"
+#include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_names.h"
 
 
 namespace nest
@@ -69,7 +76,7 @@ nest::ClopathArchivingNode::init_clopath_buffers()
 
   // initialize the ltp-history
   ltd_hist_current_ = 0;
-  ltd_hist_len_ = kernel().connection_manager.get_max_delay() + 1;
+  ltd_hist_len_ = kernel::manager< ConnectionManager >.get_max_delay() + 1;
   ltd_history_.resize( ltd_hist_len_, histentry_extended( 0.0, 0.0, 0 ) );
 }
 
@@ -135,7 +142,7 @@ nest::ClopathArchivingNode::get_LTD_value( double t )
     runner = ltd_history_.begin();
     while ( runner != ltd_history_.end() )
     {
-      if ( fabs( t - runner->t_ ) < kernel().connection_manager.get_stdp_eps() )
+      if ( fabs( t - runner->t_ ) < kernel::manager< ConnectionManager >.get_stdp_eps() )
       {
         return runner->dw_;
       }
@@ -250,4 +257,15 @@ nest::ClopathArchivingNode::write_LTP_history( const double t_ltp_ms, double u, 
   }
 }
 
+double
+ClopathArchivingNode::get_theta_minus() const
+{
+  return theta_minus_;
+}
+
+double
+ClopathArchivingNode::get_theta_plus() const
+{
+  return theta_plus_;
+}
 }  // of namespace nest

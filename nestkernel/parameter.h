@@ -25,18 +25,21 @@
 
 // C++ includes:
 #include <cmath>
+#include <memory>
+#include <vector>
 
 // Includes from nestkernel:
-#include "generic_factory.h"
-#include "nest_names.h"
 #include "node.h"
 #include "node_collection.h"
 #include "random_generators.h"
 
+class Dictionary;
 
 namespace nest
 {
 class Parameter;
+class Node;
+
 using ParameterPTR = std::shared_ptr< Parameter >;
 
 class AbstractLayer;
@@ -138,11 +141,7 @@ public:
    *
    * @param value parameter value
    */
-  explicit ConstantParameter( double value )
-    : value_( value )
-  {
-    returns_int_only_ = value_is_integer_( value_ );
-  }
+  explicit ConstantParameter( double value );
 
   /**
    * Creates a ConstantParameter with the value specified in a dictionary.
@@ -152,22 +151,14 @@ public:
    * The dictionary must include the following entry:
    * value - constant value of this parameter
    */
-  ConstantParameter( const Dictionary& d )
-  {
-    value_ = d.get< double >( "value" );
-    returns_int_only_ = value_is_integer_( value_ );
-  }
+  ConstantParameter( const Dictionary& d );
 
   ~ConstantParameter() override = default;
 
   /**
    * @returns the constant value of this parameter.
    */
-  double
-  value( RngPtr, Node* ) override
-  {
-    return value_;
-  }
+  double value( RngPtr, Node* ) override;
 
 private:
   double value_;
@@ -191,27 +182,9 @@ public:
    * min - minimum value
    * max - maximum value
    */
-  UniformParameter( const Dictionary& d )
-    : lower_( 0.0 )
-    , range_( 1.0 )
-  {
-    d.update_value( names::min, lower_ );
-    d.update_value( names::max, range_ );
-    if ( lower_ >= range_ )
-    {
-      throw BadProperty(
-        "nest::UniformParameter: "
-        "min < max required." );
-    }
+  UniformParameter( const Dictionary& d );
 
-    range_ -= lower_;
-  }
-
-  double
-  value( RngPtr rng, Node* ) override
-  {
-    return lower_ + rng->drand() * range_;
-  }
+  double value( RngPtr rng, Node* ) override;
 
 private:
   double lower_, range_;
@@ -233,22 +206,9 @@ public:
    * The dictionary can include the following entries:
    * max - maximum value
    */
-  UniformIntParameter( const Dictionary& d )
-    : Parameter( false, true )
-    , max_( 1 )
-  {
-    d.update_integer_value( names::max, max_ );
-    if ( max_ <= 0 )
-    {
-      throw BadProperty( "nest::UniformIntParameter: max > 0 required." );
-    }
-  }
+  UniformIntParameter( const Dictionary& d );
 
-  double
-  value( RngPtr rng, Node* ) override
-  {
-    return rng->ulrand( max_ );
-  }
+  double value( RngPtr rng, Node* ) override;
 
 private:
   long max_;
@@ -325,17 +285,9 @@ public:
    * The dictionary can include the following entries:
    * beta - the scale parameter
    */
-  ExponentialParameter( const Dictionary& d )
-    : beta_( 1.0 )
-  {
-    d.update_value( names::beta, beta_ );
-  }
+  ExponentialParameter( const Dictionary& d );
 
-  double
-  value( RngPtr rng, Node* ) override
-  {
-    return beta_ * ( -std::log( 1 - rng->drand() ) );
-  }
+  double value( RngPtr rng, Node* ) override;
 
 private:
   double beta_;
@@ -360,61 +312,15 @@ public:
    *                     from the presynaptic or postsynaptic node in a connection.
    *                     0: unspecified, 1: presynaptic, 2: postsynaptic.
    */
-  NodePosParameter( const Dictionary& d )
-    : Parameter( true )
-    , dimension_( 0 )
-    , synaptic_endpoint_( 0 )
-  {
-    bool dimension_specified = d.update_integer_value( names::dimension, dimension_ );
-    if ( not dimension_specified )
-    {
-      throw BadParameterValue( "Dimension must be specified when creating a node position parameter." );
-    }
-    if ( dimension_ < 0 )
-    {
-      throw BadParameterValue( "Node position parameter dimension cannot be negative." );
-    }
-    d.update_integer_value( names::synaptic_endpoint, synaptic_endpoint_ );
-    if ( synaptic_endpoint_ < 0 or 2 < synaptic_endpoint_ )
-    {
-      throw BadParameterValue( "Synaptic endpoint must either be unspecified (0), source (1) or target (2)." );
-    }
-  }
+  NodePosParameter( const Dictionary& d );
 
-  double
-  value( RngPtr, Node* node ) override
-  {
-    if ( synaptic_endpoint_ != 0 )
-    {
-      throw BadParameterValue( "Source or target position parameter can only be used when connecting." );
-    }
-    if ( not node )
-    {
-      throw KernelException( "Node position parameter can only be used when connecting spatially distributed nodes." );
-    }
-    return get_node_pos_( node );
-  }
+  double value( RngPtr, Node* node ) override;
 
-  double
-  value( RngPtr,
+  double value( RngPtr,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer&,
-    Node* ) override
-  {
-    switch ( synaptic_endpoint_ )
-    {
-    case 0:
-      throw BadParameterValue( "Node position parameter cannot be used when connecting." );
-    case 1:
-    {
-      return source_pos[ dimension_ ];
-    }
-    case 2:
-      return target_pos[ dimension_ ];
-    }
-    throw KernelException( "Wrong synaptic_endpoint_." );
-  }
+    Node* ) override;
 
 private:
   long dimension_;
@@ -430,22 +336,9 @@ private:
 class SpatialDistanceParameter : public Parameter
 {
 public:
-  SpatialDistanceParameter( const Dictionary& d )
-    : Parameter( true )
-    , dimension_( 0 )
-  {
-    d.update_integer_value( names::dimension, dimension_ );
-    if ( dimension_ < 0 )
-    {
-      throw BadParameterValue( "Spatial distance parameter dimension cannot be negative." );
-    }
-  }
+  SpatialDistanceParameter( const Dictionary& d );
 
-  double
-  value( RngPtr, Node* ) override
-  {
-    throw BadParameterValue( "Spatial distance parameter can only be used when connecting." );
-  }
+  double value( RngPtr, Node* ) override;
 
   double value( RngPtr rng,
     const std::vector< double >& source_pos,
@@ -469,39 +362,20 @@ public:
    *
    * Copies are made of the supplied Parameter objects.
    */
-  ProductParameter( const ParameterPTR m1, const ParameterPTR m2 )
-    : Parameter( m1->is_spatial() or m2->is_spatial(), m1->returns_int_only() and m2->returns_int_only() )
-    , parameter1_( m1 )
-    , parameter2_( m2 )
-  {
-  }
+  ProductParameter( const ParameterPTR m1, const ParameterPTR m2 );
 
-  ProductParameter( const ProductParameter& p )
-    : Parameter( p )
-    , parameter1_( p.parameter1_ )
-    , parameter2_( p.parameter2_ )
-  {
-  }
+  ProductParameter( const ProductParameter& p );
 
   /**
    * @returns the value of the product.
    */
-  double
-  value( RngPtr rng, Node* node ) override
-  {
-    return parameter1_->value( rng, node ) * parameter2_->value( rng, node );
-  }
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
-    Node* node ) override
-  {
-    return parameter1_->value( rng, source_pos, target_pos, layer, node )
-      * parameter2_->value( rng, source_pos, target_pos, layer, node );
-  }
+    Node* node ) override;
 
 protected:
   ParameterPTR const parameter1_;
@@ -519,39 +393,20 @@ public:
    *
    * Copies are made of the supplied Parameter objects.
    */
-  QuotientParameter( ParameterPTR m1, ParameterPTR m2 )
-    : Parameter( m1->is_spatial() or m2->is_spatial(), m1->returns_int_only() and m2->returns_int_only() )
-    , parameter1_( m1 )
-    , parameter2_( m2 )
-  {
-  }
+  QuotientParameter( ParameterPTR m1, ParameterPTR m2 );
 
-  QuotientParameter( const QuotientParameter& p )
-    : Parameter( p )
-    , parameter1_( p.parameter1_ )
-    , parameter2_( p.parameter2_ )
-  {
-  }
+  QuotientParameter( const QuotientParameter& p );
 
   /**
    * @returns the value of the product.
    */
-  double
-  value( RngPtr rng, Node* node ) override
-  {
-    return parameter1_->value( rng, node ) / parameter2_->value( rng, node );
-  }
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
-    Node* node ) override
-  {
-    return parameter1_->value( rng, source_pos, target_pos, layer, node )
-      / parameter2_->value( rng, source_pos, target_pos, layer, node );
-  }
+    Node* node ) override;
 
 protected:
   ParameterPTR const parameter1_;
@@ -569,39 +424,20 @@ public:
    *
    * Copies are made of the supplied Parameter objects.
    */
-  SumParameter( ParameterPTR m1, ParameterPTR m2 )
-    : Parameter( m1->is_spatial() or m2->is_spatial(), m1->returns_int_only() and m2->returns_int_only() )
-    , parameter1_( m1 )
-    , parameter2_( m2 )
-  {
-  }
+  SumParameter( ParameterPTR m1, ParameterPTR m2 );
 
-  SumParameter( const SumParameter& p )
-    : Parameter( p )
-    , parameter1_( p.parameter1_ )
-    , parameter2_( p.parameter2_ )
-  {
-  }
+  SumParameter( const SumParameter& p );
 
   /**
    * @returns the value of the sum.
    */
-  double
-  value( RngPtr rng, Node* node ) override
-  {
-    return parameter1_->value( rng, node ) + parameter2_->value( rng, node );
-  }
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
-    Node* node ) override
-  {
-    return parameter1_->value( rng, source_pos, target_pos, layer, node )
-      + parameter2_->value( rng, source_pos, target_pos, layer, node );
-  }
+    Node* node ) override;
 
 protected:
   ParameterPTR const parameter1_;
@@ -619,39 +455,20 @@ public:
    *
    * Copies are made of the supplied Parameter objects.
    */
-  DifferenceParameter( ParameterPTR m1, ParameterPTR m2 )
-    : Parameter( m1->is_spatial() or m2->is_spatial(), m1->returns_int_only() and m2->returns_int_only() )
-    , parameter1_( m1 )
-    , parameter2_( m2 )
-  {
-  }
+  DifferenceParameter( ParameterPTR m1, ParameterPTR m2 );
 
-  DifferenceParameter( const DifferenceParameter& p )
-    : Parameter( p )
-    , parameter1_( p.parameter1_ )
-    , parameter2_( p.parameter2_ )
-  {
-  }
+  DifferenceParameter( const DifferenceParameter& p );
 
   /**
    * @returns the value of the difference.
    */
-  double
-  value( RngPtr rng, Node* node ) override
-  {
-    return parameter1_->value( rng, node ) - parameter2_->value( rng, node );
-  }
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
-    Node* node ) override
-  {
-    return parameter1_->value( rng, source_pos, target_pos, layer, node )
-      - parameter2_->value( rng, source_pos, target_pos, layer, node );
-  }
+    Node* node ) override;
 
 protected:
   ParameterPTR const parameter1_;
@@ -677,75 +494,27 @@ public:
    *              1: >
    *
    */
-  ComparingParameter( ParameterPTR m1, ParameterPTR m2, const Dictionary& d )
-    : Parameter( m1->is_spatial() or m2->is_spatial(), true )
-    , parameter1_( m1 )
-    , parameter2_( m2 )
-    , comparator_( -1 )
-  {
-    if ( not d.update_integer_value( names::comparator, comparator_ ) )
-    {
-      throw BadParameter( "A comparator has to be specified." );
-    }
-    if ( comparator_ < 0 or 5 < comparator_ )
-    {
-      throw BadParameter( "Comparator specification has to be in the range 0-5." );
-    }
-  }
+  ComparingParameter( ParameterPTR m1, ParameterPTR m2, const Dictionary& d );
 
-  ComparingParameter( const ComparingParameter& p )
-    : Parameter( p )
-    , parameter1_( p.parameter1_ )
-    , parameter2_( p.parameter2_ )
-    , comparator_( p.comparator_ )
-  {
-  }
+  ComparingParameter( const ComparingParameter& p );
 
   /**
    * @returns the result of the comparison, bool given as a double.
    */
-  double
-  value( RngPtr rng, Node* node ) override
-  {
-    return compare_( parameter1_->value( rng, node ), parameter2_->value( rng, node ) );
-  }
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
-    Node* node ) override
-  {
-    return compare_( parameter1_->value( rng, source_pos, target_pos, layer, node ),
-      parameter2_->value( rng, source_pos, target_pos, layer, node ) );
-  }
+    Node* node ) override;
 
 protected:
   ParameterPTR const parameter1_;
   ParameterPTR const parameter2_;
 
 private:
-  bool
-  compare_( double value_a, double value_b ) const
-  {
-    switch ( comparator_ )
-    {
-    case 0:
-      return value_a < value_b;
-    case 1:
-      return value_a <= value_b;
-    case 2:
-      return value_a == value_b;
-    case 3:
-      return value_a != value_b;
-    case 4:
-      return value_a >= value_b;
-    case 5:
-      return value_a > value_b;
-    }
-    throw KernelException( "Wrong comparison operator." );
-  }
+  bool compare_( double value_a, double value_b ) const;
 
   int comparator_;
 };
@@ -761,55 +530,19 @@ public:
    * Construct the choice of two given parameters, based on a third.
    * Copies are made of the supplied Parameter objects.
    */
-  ConditionalParameter( ParameterPTR condition, ParameterPTR if_true, ParameterPTR if_false )
-    : Parameter( condition->is_spatial() or if_true->is_spatial() or if_false->is_spatial(),
-        if_true->returns_int_only() and if_false->returns_int_only() )
-    , condition_( condition )
-    , if_true_( if_true )
-    , if_false_( if_false )
-  {
-  }
+  ConditionalParameter( ParameterPTR condition, ParameterPTR if_true, ParameterPTR if_false );
 
-  ConditionalParameter( const ConditionalParameter& p )
-    : Parameter( p )
-    , condition_( p.condition_ )
-    , if_true_( p.if_true_ )
-    , if_false_( p.if_false_ )
-  {
-  }
+  ConditionalParameter( const ConditionalParameter& p );
 
   /**
    * @returns the value chosen by the comparison.
    */
-  double
-  value( RngPtr rng, Node* node ) override
-  {
-    if ( condition_->value( rng, node ) )
-    {
-      return if_true_->value( rng, node );
-    }
-    else
-    {
-      return if_false_->value( rng, node );
-    }
-  }
-
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng, Node* node ) override;
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
-    Node* node ) override
-  {
-    if ( condition_->value( rng, source_pos, target_pos, layer, node ) )
-    {
-      return if_true_->value( rng, source_pos, target_pos, layer, node );
-    }
-    else
-    {
-      return if_false_->value( rng, source_pos, target_pos, layer, node );
-    }
-  }
+    Node* node ) override;
 
 protected:
   ParameterPTR const condition_;
@@ -828,39 +561,20 @@ public:
    * Construct a min parameter. A copy is made of the supplied Parameter
    * object.
    */
-  MinParameter( ParameterPTR p, const double other_value )
-    : Parameter( p->is_spatial(), p->returns_int_only() and value_is_integer_( other_value ) )
-    , p_( p )
-    , other_value_( other_value )
-  {
-    assert( is_spatial_ == p->is_spatial() );
-  }
+  MinParameter( ParameterPTR p, const double other_value );
 
-  MinParameter( const MinParameter& p )
-    : Parameter( p )
-    , p_( p.p_ )
-    , other_value_( p.other_value_ )
-  {
-  }
+  MinParameter( const MinParameter& p );
 
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr rng, Node* node ) override
-  {
-    return std::min( p_->value( rng, node ), other_value_ );
-  }
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
-    Node* node ) override
-  {
-    return std::min( p_->value( rng, source_pos, target_pos, layer, node ), other_value_ );
-  }
+    Node* node ) override;
 
 protected:
   ParameterPTR const p_;
@@ -878,38 +592,20 @@ public:
    * Construct a max parameter. A copy is made of the supplied Parameter
    * object.
    */
-  MaxParameter( ParameterPTR p, const double other_value )
-    : Parameter( p->is_spatial(), p->returns_int_only() and value_is_integer_( other_value ) )
-    , p_( p )
-    , other_value_( other_value )
-  {
-  }
+  MaxParameter( ParameterPTR p, const double other_value );
 
-  MaxParameter( const MaxParameter& p )
-    : Parameter( p )
-    , p_( p.p_ )
-    , other_value_( p.other_value_ )
-  {
-  }
+  MaxParameter( const MaxParameter& p );
 
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr rng, Node* node ) override
-  {
-    return std::max( p_->value( rng, node ), other_value_ );
-  }
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
-    Node* node ) override
-  {
-    return std::max( p_->value( rng, source_pos, target_pos, layer, node ), other_value_ );
-  }
+    Node* node ) override;
 
 protected:
   ParameterPTR const p_;
@@ -929,14 +625,7 @@ public:
    */
   RedrawParameter( ParameterPTR p, const double min, const double max );
 
-  RedrawParameter( const RedrawParameter& p )
-    : Parameter( p )
-    , p_( p.p_ )
-    , min_( p.min_ )
-    , max_( p.max_ )
-    , max_redraws_( p.max_redraws_ )
-  {
-  }
+  RedrawParameter( const RedrawParameter& p );
 
   /**
    * @returns the value of the parameter.
@@ -966,36 +655,20 @@ public:
    * Construct the exponential of the given parameter. A copy is made of the
    * supplied Parameter object.
    */
-  ExpParameter( ParameterPTR p )
-    : Parameter( p->is_spatial() )
-    , p_( p )
-  {
-  }
+  ExpParameter( ParameterPTR p );
 
-  ExpParameter( const ExpParameter& p )
-    : Parameter( p )
-    , p_( p.p_ )
-  {
-  }
+  ExpParameter( const ExpParameter& p );
 
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr rng, Node* node ) override
-  {
-    return std::exp( p_->value( rng, node ) );
-  }
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
-    Node* node ) override
-  {
-    return std::exp( p_->value( rng, source_pos, target_pos, layer, node ) );
-  }
+    Node* node ) override;
 
 protected:
   ParameterPTR const p_;
@@ -1012,36 +685,20 @@ public:
    * Construct the sine of the given parameter. A copy is made of the
    * supplied Parameter object.
    */
-  SinParameter( ParameterPTR p )
-    : Parameter( p->is_spatial() )
-    , p_( p )
-  {
-  }
+  SinParameter( ParameterPTR p );
 
-  SinParameter( const SinParameter& p )
-    : Parameter( p )
-    , p_( p.p_ )
-  {
-  }
+  SinParameter( const SinParameter& p );
 
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr rng, Node* node ) override
-  {
-    return std::sin( p_->value( rng, node ) );
-  }
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
-    Node* node ) override
-  {
-    return std::sin( p_->value( rng, source_pos, target_pos, layer, node ) );
-  }
+    Node* node ) override;
 
 protected:
   ParameterPTR const p_;
@@ -1057,36 +714,20 @@ public:
    * Construct the exponential of the given parameter. A copy is made of the
    * supplied Parameter object.
    */
-  CosParameter( ParameterPTR p )
-    : Parameter( p->is_spatial() )
-    , p_( p )
-  {
-  }
+  CosParameter( ParameterPTR p );
 
-  CosParameter( const CosParameter& p )
-    : Parameter( p )
-    , p_( p.p_ )
-  {
-  }
+  CosParameter( const CosParameter& p );
 
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr rng, Node* node ) override
-  {
-    return std::cos( p_->value( rng, node ) );
-  }
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
-    Node* node ) override
-  {
-    return std::cos( p_->value( rng, source_pos, target_pos, layer, node ) );
-  }
+    Node* node ) override;
 
 protected:
   ParameterPTR const p_;
@@ -1103,38 +744,20 @@ public:
   /**
    * Construct the parameter. A copy is made of the supplied Parameter object.
    */
-  PowParameter( ParameterPTR p, const double exponent )
-    : Parameter( p->is_spatial(), p->returns_int_only() )
-    , p_( p )
-    , exponent_( exponent )
-  {
-  }
+  PowParameter( ParameterPTR p, const double exponent );
 
-  PowParameter( const PowParameter& p )
-    : Parameter( p )
-    , p_( p.p_ )
-    , exponent_( p.exponent_ )
-  {
-  }
+  PowParameter( const PowParameter& p );
 
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr rng, Node* node ) override
-  {
-    return std::pow( p_->value( rng, node ), exponent_ );
-  }
+  double value( RngPtr rng, Node* node ) override;
 
-  double
-  value( RngPtr rng,
+  double value( RngPtr rng,
     const std::vector< double >& source_pos,
     const std::vector< double >& target_pos,
     const AbstractLayer& layer,
-    Node* node ) override
-  {
-    return std::pow( p_->value( rng, source_pos, target_pos, layer, node ), exponent_ );
-  }
+    Node* node ) override;
 
 protected:
   ParameterPTR const p_;
@@ -1157,65 +780,25 @@ public:
    *
    * A copy is made of the supplied Parameter objects.
    */
-  DimensionParameter( ParameterPTR px, ParameterPTR py )
-    : Parameter( true )
-    , num_dimensions_( 2 )
-    , px_( px )
-    , py_( py )
-    , pz_( nullptr )
-  {
-  }
+  DimensionParameter( ParameterPTR px, ParameterPTR py );
 
-  DimensionParameter( ParameterPTR px, ParameterPTR py, ParameterPTR pz )
-    : Parameter( true )
-    , num_dimensions_( 3 )
-    , px_( px )
-    , py_( py )
-    , pz_( pz )
-  {
-  }
+  DimensionParameter( ParameterPTR px, ParameterPTR py, ParameterPTR pz );
 
-  DimensionParameter( const DimensionParameter& p )
-    : Parameter( p )
-    , num_dimensions_( p.num_dimensions_ )
-    , px_( p.px_ )
-    , py_( p.py_ )
-    , pz_( p.pz_ )
-  {
-  }
+  DimensionParameter( const DimensionParameter& p );
 
   /**
    * The DimensionParameter has no double value, so this method will always throw.
    */
-  double
-  value( RngPtr, Node* ) override
-  {
-    throw KernelException( "Cannot get value of DimensionParameter." );
-  }
+  double value( RngPtr, Node* ) override;
 
   /**
    * Generates a position with values for each dimension generated from their respective parameters.
    *
    * @returns The position, given as an array.
    */
-  std::vector< double >
-  get_values( RngPtr rng )
-  {
-    switch ( num_dimensions_ )
-    {
-    case 2:
-      return { px_->value( rng, nullptr ), py_->value( rng, nullptr ) };
-    case 3:
-      return { px_->value( rng, nullptr ), py_->value( rng, nullptr ), pz_->value( rng, nullptr ) };
-    }
-    throw KernelException( "Wrong number of dimensions in get_values!" );
-  }
+  std::vector< double > get_values( RngPtr rng );
 
-  int
-  get_num_dimensions() const
-  {
-    return num_dimensions_;
-  }
+  int get_num_dimensions() const;
 
 protected:
   int num_dimensions_;
@@ -1240,22 +823,12 @@ public:
    */
   ExpDistParameter( const Dictionary& d );
 
-  ExpDistParameter( const ExpDistParameter& p )
-    : Parameter( p )
-    , p_( p.p_ )
-    , inv_beta_( p.inv_beta_ )
-  {
-    assert( is_spatial_ == p.is_spatial() );
-  }
+  ExpDistParameter( const ExpDistParameter& p );
 
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr, Node* ) override
-  {
-    throw BadParameterValue( "Exponential distribution parameter can only be used when connecting." );
-  }
+  double value( RngPtr, Node* ) override;
 
   double value( RngPtr rng,
     const std::vector< double >& source_pos,
@@ -1284,22 +857,12 @@ public:
    */
   GaussianParameter( const Dictionary& d );
 
-  GaussianParameter( const GaussianParameter& p )
-    : Parameter( p )
-    , p_( p.p_ )
-    , mean_( p.mean_ )
-    , inv_two_std2_( p.inv_two_std2_ )
-  {
-  }
+  GaussianParameter( const GaussianParameter& p );
 
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr, Node* ) override
-  {
-    throw BadParameterValue( "Gaussian distribution parameter can only be used when connecting." );
-  }
+  double value( RngPtr, Node* ) override;
 
   double value( RngPtr rng,
     const std::vector< double >& source_pos,
@@ -1329,26 +892,12 @@ public:
    */
   Gaussian2DParameter( const Dictionary& d );
 
-  Gaussian2DParameter( const Gaussian2DParameter& p )
-    : Parameter( p )
-    , px_( p.px_ )
-    , py_( p.py_ )
-    , mean_x_( p.mean_x_ )
-    , mean_y_( p.mean_y_ )
-    , x_term_const_( p.x_term_const_ )
-    , y_term_const_( p.y_term_const_ )
-    , xy_term_const_( p.xy_term_const_ )
-  {
-  }
+  Gaussian2DParameter( const Gaussian2DParameter& p );
 
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr, Node* ) override
-  {
-    throw BadParameterValue( "Gaussian 2D parameter can only be used when connecting." );
-  }
+  double value( RngPtr, Node* ) override;
 
   double value( RngPtr rng,
     const std::vector< double >& source_pos,
@@ -1379,27 +928,12 @@ public:
   /**
    * Copy constructor.
    */
-  GaborParameter( const GaborParameter& p )
-    : Parameter( p )
-    , px_( p.px_ )
-    , py_( p.py_ )
-    , cos_( p.cos_ )
-    , sin_( p.sin_ )
-    , gamma_( p.gamma_ )
-    , inv_two_std2_( p.inv_two_std2_ )
-    , lambda_( p.lambda_ )
-    , psi_( p.psi_ )
-  {
-  }
+  GaborParameter( const GaborParameter& p );
 
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr, Node* ) override
-  {
-    throw BadParameterValue( "Gabor parameter can only be used when connecting." );
-  }
+  double value( RngPtr, Node* ) override;
 
   double value( RngPtr rng,
     const std::vector< double >& source_pos,
@@ -1434,23 +968,12 @@ public:
    */
   GammaParameter( const Dictionary& d );
 
-  GammaParameter( const GammaParameter& p )
-    : Parameter( p )
-    , p_( p.p_ )
-    , kappa_( p.kappa_ )
-    , inv_theta_( p.inv_theta_ )
-    , delta_( p.delta_ )
-  {
-  }
+  GammaParameter( const GammaParameter& p );
 
   /**
    * @returns the value of the parameter.
    */
-  double
-  value( RngPtr, Node* ) override
-  {
-    throw BadParameterValue( "Gamma distribution parameter can only be used when connecting." );
-  }
+  double value( RngPtr, Node* ) override;
 
   double value( RngPtr rng,
     const std::vector< double >& source_pos,
@@ -1464,37 +987,6 @@ protected:
   const double inv_theta_;
   const double delta_;
 };
-
-inline double
-Parameter::value( RngPtr rng,
-  const std::vector< double >&,
-  const std::vector< double >&,
-  const AbstractLayer&,
-  Node* node )
-{
-  return value( rng, node );
-}
-
-inline bool
-Parameter::is_spatial() const
-{
-  return is_spatial_;
-}
-
-inline bool
-Parameter::returns_int_only() const
-{
-  return returns_int_only_;
-}
-
-inline bool
-Parameter::value_is_integer_( const double value ) const
-{
-  // Here fmod calculates the remainder of the division operation x/y. By using y=1.0, the remainder is the
-  // fractional part of the value. If the fractional part is zero, the value is an integer.
-  return std::fmod( value, static_cast< double >( 1.0 ) ) == 0.0;
-}
-
 
 /**
  * Create the product of one parameter with another.

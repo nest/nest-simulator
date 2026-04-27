@@ -23,13 +23,20 @@
 #ifndef PARROT_NEURON_H
 #define PARROT_NEURON_H
 
+#include <string>
+
 // Includes from nestkernel:
 #include "archiving_node.h"
 #include "connection.h"
 #include "event.h"
+#include "exceptions.h"
 #include "flush_event_mechanism.h"
+#include "nest_time.h"
 #include "nest_types.h"
+#include "node.h"
 #include "ring_buffer.h"
+
+class Dictionary;
 
 namespace nest
 {

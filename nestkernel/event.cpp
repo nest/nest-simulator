@@ -23,9 +23,8 @@
 #include "event.h"
 
 // Includes from nestkernel:
+#include "connection_manager.h"
 #include "kernel_manager.h"
-#include "node.h"
-#include "secondary_event_impl.h"
 
 namespace nest
 {
@@ -55,112 +54,54 @@ Event::retrieve_sender_node_id_from_source_table() const
   }
   else
   {
-    const size_t node_id = kernel().connection_manager.get_source_node_id(
+    const size_t node_id = kernel::manager< ConnectionManager >.get_source_node_id(
       sender_spike_data_.get_tid(), sender_spike_data_.get_syn_id(), sender_spike_data_.get_lcid() );
     return node_id;
   }
 }
 
-size_t
-Event::get_receiver_node_id() const
+DataLoggingRequest::DataLoggingRequest( const Time& rec_int,
+  const Time& rec_offset,
+  const std::vector< std::string >& recs )
+  : Event()
+  , recording_interval_( rec_int )
+  , recording_offset_( rec_offset )
+  , record_from_( &recs )
 {
-  return receiver_->get_node_id();
 }
 
-void
-SpikeEvent::operator()()
+DataLoggingRequest::DataLoggingRequest( const Time& rec_int, const std::vector< std::string >& recs )
+  : Event()
+  , recording_interval_( rec_int )
+  , record_from_( &recs )
 {
-  receiver_->handle( *this );
 }
 
-void
-WeightRecorderEvent::operator()()
+DataLoggingRequest::DataLoggingRequest()
+  : Event()
+  , recording_interval_( Time::neg_inf() )
+  , recording_offset_( Time::ms( 0. ) )
+  , record_from_( nullptr )
 {
-  receiver_->handle( *this );
 }
 
-void
-DSSpikeEvent::operator()()
+WeightRecorderEvent::WeightRecorderEvent()
+  : receiver_node_id_( 0 )
 {
-  sender_->event_hook( *this );
 }
 
-void
-RateEvent::operator()()
+SpikeEvent::SpikeEvent()
+  : multiplicity_( 1 )
 {
-  receiver_->handle( *this );
 }
 
-void
-CurrentEvent::operator()()
+Event::~Event()
 {
-  receiver_->handle( *this );
 }
 
-void
-DSCurrentEvent::operator()()
+DataLoggingReply::DataLoggingReply( const DataLoggingReply::Container& info )
+  : info_( info )
 {
-  sender_->event_hook( *this );
 }
 
-void
-ConductanceEvent::operator()()
-{
-  receiver_->handle( *this );
-}
-
-void
-DoubleDataEvent::operator()()
-{
-  receiver_->handle( *this );
-}
-
-void
-DataLoggingRequest::operator()()
-{
-  receiver_->handle( *this );
-}
-
-void
-DataLoggingReply::operator()()
-{
-  receiver_->handle( *this );
-}
-
-void
-GapJunctionEvent::operator()()
-{
-  receiver_->handle( *this );
-}
-
-void
-InstantaneousRateConnectionEvent::operator()()
-{
-  receiver_->handle( *this );
-}
-
-void
-DelayedRateConnectionEvent::operator()()
-{
-  receiver_->handle( *this );
-}
-
-void
-DiffusionConnectionEvent::operator()()
-{
-  receiver_->handle( *this );
-}
-
-void
-LearningSignalConnectionEvent::operator()()
-{
-  receiver_->handle( *this );
-}
-
-void
-SICEvent::operator()()
-{
-  receiver_->handle( *this );
-}
-
-}  // namespace nest
+}  // std::stringspace nest

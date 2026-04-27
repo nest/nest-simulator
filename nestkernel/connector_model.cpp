@@ -22,6 +22,9 @@
 
 #include "connector_model.h"
 
+#include "kernel_manager.h"
+#include "model_manager.h"
+
 namespace nest
 {
 
@@ -37,6 +40,12 @@ ConnectorModel::ConnectorModel( const ConnectorModel& cm, const std::string name
   , default_delay_needs_check_( true )
   , properties_( cm.properties_ )
 {
+}
+
+size_t
+ConnectorModel::get_synapse_model_id( const std::string& name )
+{
+  return kernel::manager< ModelManager >.get_synapse_model_id( name );
 }
 
 }  // namespace nest

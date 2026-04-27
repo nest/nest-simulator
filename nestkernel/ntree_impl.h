@@ -23,15 +23,103 @@
 #ifndef NTREE_IMPL_H
 #define NTREE_IMPL_H
 
-#include <limits>
-
 #include "ntree.h"
+#include "position.h"
 
-// Includes from spatial:
-#include "mask.h"
+#include <bitset>
+#include <iterator>
+#include <utility>
+#include <vector>
 
 namespace nest
 {
+
+
+template < int D, class T, int max_capacity, int max_depth >
+Ntree< D, T, max_capacity, max_depth >::Ntree( const Position< D >& lower_left,
+  const Position< D >& extent,
+  std::bitset< D > periodic,
+  Ntree< D, T, max_capacity, max_depth >* parent,
+  int subquad )
+  : lower_left_( lower_left )
+  , extent_( extent )
+  , leaf_( true )
+  , parent_( parent )
+  , my_subquad_( subquad )
+  , my_depth_( parent ? parent->my_depth_ + 1 : 0 )
+  , periodic_( periodic )
+{
+}
+
+template < int D, class T, int max_capacity, int max_depth >
+Ntree< D, T, max_capacity, max_depth >::~Ntree()
+{
+  if ( leaf_ )
+  {
+    // if T is a vector class, we do not delete the pointees
+    return;
+  }
+
+  for ( size_t n = 0; n < static_cast< size_t >( N ); ++n )
+  {
+    delete children_[ n ];  // calls destructor in child, thus recursing
+  }
+}
+
+template < int D, class T, int max_capacity, int max_depth >
+Ntree< D, T, max_capacity, max_depth >::iterator::iterator( Ntree& q, size_t n )
+  : ntree_( &q )
+  , top_( &q )
+  , node_( n )
+{
+  assert( ntree_->leaf_ );
+
+  // First ancestor
+  while ( top_->parent_ )
+  {
+    top_ = top_->parent_;
+  }
+}
+
+template < int D, class T, int max_capacity, int max_depth >
+bool
+Ntree< D, T, max_capacity, max_depth >::is_leaf() const
+{
+  return leaf_;
+}
+
+
+template < int D, class T, int max_capacity, int max_depth >
+std::vector< std::pair< Position< D >, T > >
+Ntree< D, T, max_capacity, max_depth >::get_nodes()
+{
+  std::vector< std::pair< Position< D >, T > > result;
+  append_nodes_( result );
+  return result;
+}
+
+template < int D, class T, int max_capacity, int max_depth >
+std::vector< std::pair< Position< D >, T > >
+Ntree< D, T, max_capacity, max_depth >::get_nodes( const Mask< D >& mask, const Position< D >& anchor )
+{
+  std::vector< std::pair< Position< D >, T > > result;
+  append_nodes_( result, mask, anchor );
+  return result;
+}
+
+template < int D, class T, int max_capacity, int max_depth >
+typename Ntree< D, T, max_capacity, max_depth >::iterator
+Ntree< D, T, max_capacity, max_depth >::insert( const std::pair< Position< D >, T >& val )
+{
+  return insert( val.first, val.second );
+}
+
+template < int D, class T, int max_capacity, int max_depth >
+typename Ntree< D, T, max_capacity, max_depth >::iterator
+Ntree< D, T, max_capacity, max_depth >::insert( iterator, const std::pair< Position< D >, T >& val )
+{
+  return insert( val.first, val.second );
+}
 
 template < int D, class T, int max_capacity, int max_depth >
 Ntree< D, T, max_capacity, max_depth >::iterator::iterator( Ntree& q )
@@ -81,7 +169,6 @@ template < int D, class T, int max_capacity, int max_depth >
 void
 Ntree< D, T, max_capacity, max_depth >::iterator::next_leaf_()
 {
-
   // If we are on the last subntree, move up
   while ( ntree_ and ( ntree_ != top_ ) and ntree_->my_subquad_ == N - 1 )
   {
@@ -106,18 +193,6 @@ Ntree< D, T, max_capacity, max_depth >::iterator::next_leaf_()
   {
     ntree_ = ntree_->children_[ 0 ];
   }
-}
-
-// Proper mod which returns non-negative numbers
-static inline double
-mod( double x, double p )
-{
-  x = std::fmod( x, p );
-  if ( x < 0 )
-  {
-    x += p;
-  }
-  return x;
 }
 
 template < int D, class T, int max_capacity, int max_depth >
@@ -226,7 +301,6 @@ template < int D, class T, int max_capacity, int max_depth >
 void
 Ntree< D, T, max_capacity, max_depth >::masked_iterator::next_leaf_()
 {
-
   // There are two states: the initial state, and "all in". In the
   // all in state, we are in a subtree which is completely inside
   // the mask. The allin_top_ is the top of this subtree. When
@@ -333,7 +407,6 @@ template < int D, class T, int max_capacity, int max_depth >
 void
 Ntree< D, T, max_capacity, max_depth >::masked_iterator::first_leaf_inside_()
 {
-
   allin_top_ = ntree_;
 
   while ( not ntree_->is_leaf() )
@@ -528,5 +601,6 @@ Ntree< D, T, max_capacity, max_depth >::split_()
   leaf_ = false;
 }
 }
+
 
 #endif

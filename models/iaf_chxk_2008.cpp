@@ -22,17 +22,21 @@
 
 #include "iaf_chxk_2008.h"
 
-#ifdef HAVE_GSL
+#include <assert.h>
+#include <cmath>
+#include <gsl/gsl_errno.h>
 
-// C++ includes:
-#include <cstdio>
+#include "event_delivery_manager.h"
+#include "simulation_manager.h"
+
+#ifdef HAVE_GSL
 
 // Includes from libnestutil:
 #include "dict_util.h"
 #include "numerics.h"
-
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
@@ -52,10 +56,7 @@ register_iaf_chxk_2008( const std::string& name )
   register_node_model< iaf_chxk_2008 >( name );
 }
 
-/*
- * Override the create() method with one call to RecordablesMap::insert_()
- * for each quantity to be recorded.
- */
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< iaf_chxk_2008 >::create()
@@ -359,7 +360,6 @@ nest::iaf_chxk_2008::update( Time const& origin, const long from, const long to 
 {
   for ( long lag = from; lag < to; ++lag )
   {
-
     double t = 0.0;
 
     // remember membrane potential at beginning of step
@@ -424,7 +424,7 @@ nest::iaf_chxk_2008::update( Time const& origin, const long from, const long to 
 
       SpikeEvent se;
       se.set_offset( dt );
-      kernel().event_delivery_manager.send( *this, se, lag );
+      kernel::manager< EventDeliveryManager >.send( *this, se, lag );
     }
 
     // add incoming spikes
@@ -446,12 +446,12 @@ nest::iaf_chxk_2008::handle( SpikeEvent& e )
 
   if ( e.get_weight() > 0.0 )
   {
-    B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
   else
   {
-    B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() );
   }
 }
@@ -461,8 +461,8 @@ nest::iaf_chxk_2008::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
+    e.get_weight() * e.get_current() );
 }
 
 void

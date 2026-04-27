@@ -24,20 +24,28 @@
 
 #ifdef HAVE_MUSIC
 
+#include <assert.h>
+
+#include "exceptions.h"
+#include "music/permutation_index.hh"
+#include "music/port.hh"
+#include "music/setup.hh"
+#include "node.h"
+
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "logging.h"
-
 // Includes from nestkernel:
 #include "event.h"
 #include "kernel_manager.h"
-#include "nest_types.h"
+#include "logging_manager.h"
+#include "music_manager.h"
 
 namespace nest
 {
 MusicEventHandler::MusicEventHandler()
-  : music_port_( 0 )
-  , music_perm_ind_( 0 )
+  : music_port_( nullptr )
+  , music_perm_ind_( nullptr )
   , published_( false )
   , portname_( "" )
   , acceptable_latency_( 0.0 )
@@ -46,8 +54,8 @@ MusicEventHandler::MusicEventHandler()
 }
 
 MusicEventHandler::MusicEventHandler( std::string portname, double acceptable_latency, int max_buffered )
-  : music_port_( 0 )
-  , music_perm_ind_( 0 )
+  : music_port_( nullptr )
+  , music_perm_ind_( nullptr )
   , published_( false )
   , portname_( portname )
   , acceptable_latency_( acceptable_latency )
@@ -59,11 +67,11 @@ MusicEventHandler::~MusicEventHandler()
 {
   if ( published_ )
   {
-    if ( music_perm_ind_ != 0 )
+    if ( music_perm_ind_ != nullptr )
     {
       delete music_perm_ind_;
     }
-    if ( music_port_ != 0 )
+    if ( music_port_ != nullptr )
     {
       delete music_port_;
     }
@@ -76,10 +84,10 @@ MusicEventHandler::register_channel( size_t channel, nest::Node* mp )
   if ( static_cast< size_t >( channel ) >= channelmap_.size() )
   {
     // all entries not explicitly set will be 0
-    channelmap_.resize( channel + 1, 0 );
+    channelmap_.resize( channel + 1, nullptr );
     eventqueue_.resize( channel + 1 );
   }
-  if ( channelmap_[ channel ] != 0 )
+  if ( channelmap_[ channel ] != nullptr )
   {
     throw MUSICChannelAlreadyMapped( "MusicEventHandler", portname_, channel );
   }
@@ -93,7 +101,7 @@ MusicEventHandler::publish_port()
 {
   if ( not published_ )
   {
-    music_port_ = kernel().music_manager.get_music_setup()->publishEventInput( portname_ );
+    music_port_ = kernel::manager< MUSICManager >.get_music_setup()->publishEventInput( portname_ );
 
     // MUSIC wants seconds, NEST has miliseconds
     const double acceptable_latency_s = 0.001 * acceptable_latency_;
@@ -145,7 +153,7 @@ MusicEventHandler::publish_port()
 void
 MusicEventHandler::operator()( double t, MUSIC::GlobalIndex channel )
 {
-  assert( channelmap_[ channel ] != 0 );
+  assert( channelmap_[ channel ] != nullptr );
   eventqueue_[ channel ].push( t * 1e3 );  // MUSIC uses seconds as time unit
 }
 
@@ -154,7 +162,7 @@ MusicEventHandler::update( Time const& origin, const long from, const long to )
 {
   for ( size_t channel = 0; channel < channelmap_.size(); ++channel )
   {
-    if ( channelmap_[ channel ] != 0 )
+    if ( channelmap_[ channel ] != nullptr )
     {
       while ( not eventqueue_[ channel ].empty() )
       {

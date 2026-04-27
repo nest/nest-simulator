@@ -20,14 +20,79 @@
  *
  */
 
-// nestkernel
-#include "eprop_archiving_node.h"
-#include "eprop_archiving_node_impl.h"
+#ifndef EPROP_ARCHIVING_NODE_RECURRENT_IMPL_H
+#define EPROP_ARCHIVING_NODE_RECURRENT_IMPL_H
+
 #include "eprop_archiving_node_recurrent.h"
-#include "kernel_manager.h"
 
 namespace nest
 {
+
+template < bool hist_shift_required >
+inline void
+EpropArchivingNodeRecurrent< hist_shift_required >::get_status( Dictionary& d ) const
+{
+  d[ names::flush_event_send_interval ] = flush_event_send_interval_;
+
+  if constexpr ( not hist_shift_required )
+  {
+    d[ names::eprop_isi_trace_cutoff ] = eprop_isi_trace_cutoff_;
+  }
+}
+
+template < bool hist_shift_required >
+inline void
+EpropArchivingNodeRecurrent< hist_shift_required >::set_status( const Dictionary& d )
+{
+  FlushEventMechanism::set_status( d );
+
+  if constexpr ( not hist_shift_required )
+  {
+    d.update_value( names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
+
+    if ( eprop_isi_trace_cutoff_ < 0.0 )
+    {
+      throw BadProperty( "Computation cutoff of eprop trace eprop_isi_trace_cutoff ≥ 0 required." );
+    }
+  }
+  else
+  {
+    if ( flush_event_send_interval_ < kernel::manager< SimulationManager >.get_eprop_update_interval().get_ms() )
+    {
+      throw BadProperty(
+        "Interval since previous event after which a flush event is sent flush_event_send_interval ≥ "
+        "eprop_update_interval required." );
+    }
+  }
+}
+
+template < bool hist_shift_required >
+inline void
+EpropArchivingNodeRecurrent< hist_shift_required >::count_spike()
+{
+  ++n_spikes_;
+}
+
+template < bool hist_shift_required >
+inline void
+EpropArchivingNodeRecurrent< hist_shift_required >::reset_spike_count()
+{
+  n_spikes_ = 0;
+}
+
+template < bool hist_shift_required >
+long
+EpropArchivingNodeRecurrent< hist_shift_required >::model_dependent_history_shift_() const
+{
+  if constexpr ( hist_shift_required )
+  {
+    return get_shift();
+  }
+  else
+  {
+    return -delay_rec_out_;
+  }
+}
 
 template < bool hist_shift_required >
 std::map< std::string, typename EpropArchivingNodeRecurrent< hist_shift_required >::surrogate_gradient_function >
@@ -208,7 +273,7 @@ EpropArchivingNodeRecurrent< hist_shift_required >::write_firing_rate_reg_to_his
     return;
   }
 
-  const double update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
+  const double update_interval = kernel::manager< SimulationManager >.get_eprop_update_interval().get_steps();
   const double dt = Time::get_resolution().get_ms();
   const long shift = Time::get_resolution().get_steps();
 
@@ -295,4 +360,6 @@ EpropArchivingNodeRecurrent< hist_shift_required >::erase_used_firing_rate_reg_h
   }
 }
 
-}  // namespace nest
+}
+
+#endif

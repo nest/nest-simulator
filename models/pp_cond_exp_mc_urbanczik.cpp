@@ -23,21 +23,22 @@
 
 #include "pp_cond_exp_mc_urbanczik.h"
 
-#ifdef HAVE_GSL
+#include <gsl/gsl_errno.h>
 
-// C++ includes:
-#include <cstdio>
-#include <iostream>
+#include "archiving_node.h"
+#include "event_delivery_manager.h"
+#include "simulation_manager.h"
+
+#ifdef HAVE_GSL
 
 // Includes from libnestutil:
 #include "numerics.h"
-
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
 #include "nest_impl.h"
-#include "universal_data_logger_impl.h"
+#include "urbanczik_archiving_node_impl.h"
 
 
 std::vector< std::string > nest::pp_cond_exp_mc_urbanczik::comp_names_( NCOMP );
@@ -559,7 +560,6 @@ nest::pp_cond_exp_mc_urbanczik::update( Time const& origin, const long from, con
 {
   for ( long lag = from; lag < to; ++lag )
   {
-
     double t = 0.0;
 
     // numerical integration with adaptive step size control:
@@ -617,7 +617,6 @@ nest::pp_cond_exp_mc_urbanczik::update( Time const& origin, const long from, con
 
       if ( rate > 0.0 )
       {
-
         if ( P_.t_ref > 0.0 )
         {
           // Draw random number and compare to prob to have a spike
@@ -641,7 +640,7 @@ nest::pp_cond_exp_mc_urbanczik::update( Time const& origin, const long from, con
           // And send the spike event
           SpikeEvent se;
           se.set_multiplicity( n_spikes );
-          kernel().event_delivery_manager.send( *this, se, lag );
+          kernel::manager< EventDeliveryManager >.send( *this, se, lag );
 
           // Set spike time in order to make plasticity rules work
           for ( unsigned int i = 0; i < n_spikes; i++ )
@@ -678,7 +677,8 @@ nest::pp_cond_exp_mc_urbanczik::handle( SpikeEvent& e )
   assert( e.get_rport() < 2 * NCOMP );
 
   B_.spikes_[ e.get_rport() ].add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
+    e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
+    e.get_weight() * e.get_multiplicity() );
 }
 
 void
@@ -690,7 +690,8 @@ nest::pp_cond_exp_mc_urbanczik::handle( CurrentEvent& e )
 
   // add weighted current; HEP 2002-10-04
   B_.currents_[ e.get_rport() ].add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
+    e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
+    e.get_weight() * e.get_current() );
 }
 
 void

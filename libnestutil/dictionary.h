@@ -34,7 +34,6 @@
 #include <boost/type_index.hpp>
 
 #include "exceptions.h"
-
 #include "logging.h"
 
 namespace nest

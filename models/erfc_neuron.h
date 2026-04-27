@@ -23,11 +23,23 @@
 #ifndef ERFC_NEURON_H
 #define ERFC_NEURON_H
 
+#include <algorithm>
+#include <map>
+#include <math.h>
+#include <string>
+#include <vector>
+
 // Includes from models:
 #include "binary_neuron.h"
+#include "nest_time.h"
+#include "random_generators.h"
+#include "recordables_map.h"
+
+class Dictionary;
 
 namespace nest
 {
+class Node;
 
 /* BeginUserDocs: neuron, binary
 
@@ -164,9 +176,6 @@ gainfunction_erfc::operator()( RngPtr rng, double h )
 typedef binary_neuron< nest::gainfunction_erfc > erfc_neuron;
 void register_erfc_neuron( const std::string& name );
 
-
-template <>
-void RecordablesMap< erfc_neuron >::create();
 
 }  // namespace nest
 

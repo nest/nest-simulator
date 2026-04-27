@@ -23,9 +23,27 @@
 #ifndef VOGELS_SPREKELER_SYNAPSE_H
 #define VOGELS_SPREKELER_SYNAPSE_H
 
-// C-header for math.h since copysign() is in C99 but not C++98
-#include "connection.h"
+#include <assert.h>
+#include <cmath>
+#include <deque>
 #include <math.h>
+#include <string>
+
+// C-header for math.h since copysign() is in C99 but not C++98
+#include "common_synapse_properties.h"
+#include "connection.h"
+#include "connection_manager.h"
+#include "connector_model.h"
+#include "dictionary.h"
+#include "enum_bitfield.h"
+#include "event.h"
+#include "exceptions.h"
+#include "histentry.h"
+#include "kernel_manager.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "nest_types.h"
+#include "node.h"
 
 namespace nest
 {
@@ -240,7 +258,7 @@ vogels_sprekeler_synapse< targetidentifierT >::send( Event& e, size_t t, const C
     ++start;
     // get_history() should make sure that
     // start->t_ > t_lastspike - dendritic_delay, i.e. minus_dt < 0
-    assert( minus_dt < -1.0 * kernel().connection_manager.get_stdp_eps() );
+    assert( minus_dt < -1.0 * kernel::manager< ConnectionManager >.get_stdp_eps() );
     weight_ = facilitate_( weight_, Kplus_ * std::exp( minus_dt / tau_ ) );
   }
 

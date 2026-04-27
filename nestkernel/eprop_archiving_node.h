@@ -26,8 +26,6 @@
 // nestkernel
 #include "flush_event_mechanism.h"
 #include "histentry.h"
-#include "nest_time.h"
-#include "nest_types.h"
 #include "node.h"
 
 namespace nest
@@ -54,14 +52,24 @@ public:
   /**
    * Constructs a new EpropArchivingNode object.
    */
-  EpropArchivingNode();
+  EpropArchivingNode()
+    : eprop_indegree_( 0 )
+    , eprop_isi_trace_cutoff_( std::numeric_limits< double >::infinity() )
+  {
+  }
 
   /**
    * Constructs a new EpropArchivingNode object by copying another EpropArchivingNode object.
    *
    * @param n The other object to copy.
    */
-  EpropArchivingNode( const EpropArchivingNode& n );
+  EpropArchivingNode( const EpropArchivingNode& n )
+    : Node( n )
+    , FlushEventMechanism( n )
+    , eprop_indegree_( n.eprop_indegree_ )
+    , eprop_isi_trace_cutoff_( n.eprop_isi_trace_cutoff_ )
+  {
+  }
 
   void register_eprop_connection() override;
   void initialize_update_history() override;

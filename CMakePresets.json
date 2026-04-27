@@ -1,0 +1,142 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": { "major": 3, "minor": 19, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "description": "Common settings shared by all presets",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "with-python": "ON",
+        "cythonize-pynest": "ON",
+        "with-openmp": "ON",
+        "with-boost": "ON",
+        "with-ltdl": "ON",
+        "with-gsl": "ON",
+        "with-warning": "ON",
+        "with-modelset": "full",
+        "with-threaded-timers": "ON",
+        "target-bits-split": "standard"
+      }
+    },
+    {
+      "name": "default",
+      "displayName": "Default",
+      "description": "Standard build with optimizations (mirrors existing build/ configuration)",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/default/install",
+        "with-optimize": "ON",
+        "with-debug": "OFF",
+        "with-mpi": "OFF"
+      }
+    },
+    {
+      "name": "debug",
+      "displayName": "Debug",
+      "description": "Debug build with symbols, no optimization",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/debug/install",
+        "with-optimize": "OFF",
+        "with-debug": "ON"
+      }
+    },
+    {
+      "name": "release",
+      "displayName": "Release",
+      "description": "Optimized release build (-O3)",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/release/install",
+        "with-optimize": "-O3",
+        "with-debug": "OFF"
+      }
+    },
+    {
+      "name": "mpi",
+      "displayName": "MPI",
+      "description": "Build with MPI + OpenMP parallelization",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/mpi/install",
+        "with-optimize": "ON",
+        "with-debug": "OFF",
+        "with-mpi": "ON"
+      }
+    },
+    {
+      "name": "mpi-debug",
+      "displayName": "MPI Debug",
+      "description": "Debug build with MPI + OpenMP",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/mpi-debug/install",
+        "with-optimize": "OFF",
+        "with-debug": "ON",
+        "with-mpi": "ON"
+      }
+    },
+    {
+      "name": "minimal",
+      "displayName": "Minimal",
+      "description": "Minimal build: no Python, no MPI, no optional libraries",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/minimal/install",
+        "with-python": "OFF",
+        "with-mpi": "OFF",
+        "with-boost": "OFF",
+        "with-gsl": "OFF",
+        "with-readline": "OFF",
+        "with-ltdl": "OFF",
+        "with-optimize": "ON",
+        "with-debug": "OFF"
+      }
+    },
+    {
+      "name": "docs",
+      "displayName": "User Documentation",
+      "description": "Build with user documentation (requires Sphinx and Pandoc)",
+      "inherits": "default",
+      "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/docs/install",
+        "with-userdoc": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "default",
+      "displayName": "Default",
+      "configurePreset": "default"
+    },
+    {
+      "name": "debug",
+      "displayName": "Debug",
+      "configurePreset": "debug"
+    },
+    {
+      "name": "release",
+      "displayName": "Release",
+      "configurePreset": "release"
+    },
+    {
+      "name": "mpi",
+      "displayName": "MPI",
+      "configurePreset": "mpi"
+    },
+    {
+      "name": "mpi-debug",
+      "displayName": "MPI Debug",
+      "configurePreset": "mpi-debug"
+    },
+    {
+      "name": "minimal",
+      "displayName": "Minimal",
+      "configurePreset": "minimal"
+    }
+  ]
+}

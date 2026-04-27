@@ -378,7 +378,7 @@ function( NEST_PROCESS_WITH_MPI )
   # Find MPI
   set( HAVE_MPI OFF PARENT_SCOPE )
   if ( NOT "${with-mpi}" STREQUAL "OFF" )
-    if ( NOT ${with-mpi} STREQUAL "ON" )
+    if ( NOT "${with-mpi}" STREQUAL "ON" )
       # if set, use this prefix
       set( MPI_ROOT "${with-mpi}" )
     endif ()
@@ -386,20 +386,7 @@ function( NEST_PROCESS_WITH_MPI )
     if ( MPI_CXX_FOUND )
       set( HAVE_MPI ON PARENT_SCOPE )
 
-      set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS}   ${MPI_C_COMPILE_FLAGS}" PARENT_SCOPE )
-      set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${MPI_CXX_COMPILE_FLAGS}" PARENT_SCOPE )
-
-      set( CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${MPI_CXX_LINK_FLAGS}" PARENT_SCOPE )
-      include_directories( ${MPI_CXX_INCLUDE_PATH} )
-      # is linked in nestkernel/CMakeLists.txt
-
-      # export found variables to parent scope
-      set( MPI_C_FOUND "${MPI_C_FOUND}" PARENT_SCOPE )
-      set( MPI_C_COMPILER "${MPI_C_COMPILER}" PARENT_SCOPE )
-      set( MPI_C_COMPILE_FLAGS "${MPI_C_COMPILE_FLAGS}" PARENT_SCOPE )
-      set( MPI_C_INCLUDE_PATH "${MPI_C_INCLUDE_PATH}" PARENT_SCOPE )
-      set( MPI_C_LINK_FLAGS "${MPI_C_LINK_FLAGS}" PARENT_SCOPE )
-      set( MPI_C_LIBRARIES "${MPI_C_LIBRARIES}" PARENT_SCOPE )
+      # export variables needed for nest-config generation and ConfigureSummary
       set( MPI_CXX_FOUND "${MPI_CXX_FOUND}" PARENT_SCOPE )
       set( MPI_CXX_COMPILER "${MPI_CXX_COMPILER}" PARENT_SCOPE )
       set( MPI_CXX_COMPILE_FLAGS "${MPI_CXX_COMPILE_FLAGS}" PARENT_SCOPE )
@@ -410,6 +397,7 @@ function( NEST_PROCESS_WITH_MPI )
       set( MPIEXEC_NUMPROC_FLAG "${MPIEXEC_NUMPROC_FLAG}" PARENT_SCOPE )
       set( MPIEXEC_PREFLAGS "${MPIEXEC_PREFLAGS}" PARENT_SCOPE )
       set( MPIEXEC_POSTFLAGS "${MPIEXEC_POSTFLAGS}" PARENT_SCOPE )
+      # consumers use MPI::MPI_CXX imported target
     endif ()
   endif ()
 endfunction()

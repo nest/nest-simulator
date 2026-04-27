@@ -279,7 +279,7 @@ EpropArchivingNodeRecurrent< hist_shift_required >::get_status( Dictionary& d ) 
     d[ names::eprop_isi_trace_cutoff ] = eprop_isi_trace_cutoff_;
   }
 
-  ForcedFiringMechanism::get_status( d );
+  ForcedSpikingMechanism::get_status( d );
 }
 
 template < bool hist_shift_required >
@@ -287,7 +287,7 @@ inline void
 EpropArchivingNodeRecurrent< hist_shift_required >::set_status( const Dictionary& d )
 {
   FlushEventMechanism::set_status( d );
-  ForcedFiringMechanism::set_status( d );
+  ForcedSpikingMechanism::set_status( d );
 
   if constexpr ( not hist_shift_required )
   {

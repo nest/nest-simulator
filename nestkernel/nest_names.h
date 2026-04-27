@@ -213,9 +213,9 @@ const std::string file_extension( "file_extension" );
 const std::string filename( "filename" );
 const std::string filenames( "filenames" );
 const std::string flush_event_send_interval( "flush_event_send_interval" );
-const std::string forced_firing( "forced_firing" );
-const std::string forced_firing_offset( "forced_firing_offset" );
-const std::string forced_firing_rate( "forced_firing_rate" );
+const std::string forced_spiking( "forced_spiking" );
+const std::string forced_spiking_offset( "forced_spiking_offset" );
+const std::string forced_spiking_interval( "forced_spiking_interval" );
 const std::string frequency( "frequency" );
 const std::string frozen( "frozen" );
 

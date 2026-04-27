@@ -1,5 +1,5 @@
 /*
- *  forced_firing_mechanism.h
+ *  forced_spiking_mechanism.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef FORCED_FIRING_MECHANISM_H
-#define FORCED_FIRING_MECHANISM_H
+#ifndef FORCED_SPIKING_MECHANISM_H
+#define FORCED_SPIKING_MECHANISM_H
 
 // nestkernel
 #include "nest_time.h"
@@ -32,29 +32,29 @@
 namespace nest
 {
 /**
- * @brief Class implementing a forced firing mechanism for neuron models.
+ * @brief Class implementing a forced spiking mechanism for neuron models.
  *
- * This class implements a forced firing mechanism.
+ * This class implements a forced spiking mechanism.
  */
-class ForcedFiringMechanism
+class ForcedSpikingMechanism
 {
 public:
   /**
    * Default constructor.
    */
-  ForcedFiringMechanism();
+  ForcedSpikingMechanism();
 
   /**
    * Copy constructor.
    *
    * @param n The other object to copy.
    */
-  ForcedFiringMechanism( const ForcedFiringMechanism& n );
+  ForcedSpikingMechanism( const ForcedSpikingMechanism& n );
 
   /**
    * Virtual destructor.
    */
-  virtual ~ForcedFiringMechanism() = default;
+  virtual ~ForcedSpikingMechanism() = default;
 
   /**
    * Re-calculates dependent parameters.
@@ -62,9 +62,20 @@ public:
   void pre_run_hook();
 
   /**
-   * Checks if a forced firing is due at the current time.
+   * Checks if a forced spiking is due at the current time.
    */
-  bool emit_spike( bool );
+  inline bool
+  emit_spike( bool emit_dynamic_spike )
+  {
+    if ( not forced_spiking_ )
+    {
+      return emit_dynamic_spike;
+    }
+
+    const bool emit_forced_spike = steps_until_forced_spike_ % forced_spiking_interval_steps_ == 0;
+    ++steps_until_forced_spike_;
+    return emit_forced_spike;
+  }
 
   /**
    * Retrieves parameters and adds them to the status dictionary.
@@ -77,22 +88,22 @@ public:
   void set_status( const Dictionary& d );
 
 protected:
-  //! If True, the neuron runs in ignore-and-fire mode.
-  bool forced_firing_;
+  //! If True, the neuron is forced to spike in set intervals.
+  bool forced_spiking_;
 
-  //! Temporal offset of forced firing in ignore-and-fire mode (ms).
-  double forced_firing_offset_;
+  //! Temporal offset of forced spiking (ms).
+  double forced_spiking_offset_;
 
-  //! Rate of forced firing in ignore-and-fire mode (spikes/s).
-  double forced_firing_rate_;
+  //! Interval between two consecutive forced spikes (ms).
+  double forced_spiking_interval_;
+
+  //! Interval steps between two consecutive forced spikes.
+  long forced_spiking_interval_steps_;
 
   //! Remaining steps until the next forced spike.
   long steps_until_forced_spike_;
-
-  //! Steps between two consecutive forced spikes.
-  long forced_firing_interval_steps_;
 };
 
 }  // namespace nest
 
-#endif  // FORCED_FIRING_MECHANISM_H
+#endif  // FORCED_SPIKING_MECHANISM_H

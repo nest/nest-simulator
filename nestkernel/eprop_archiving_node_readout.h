@@ -91,7 +91,7 @@ EpropArchivingNodeReadout< hist_shift_required >::get_status( Dictionary& d ) co
     d[ names::eprop_isi_trace_cutoff ] = eprop_isi_trace_cutoff_;
   }
 
-  ForcedFiringMechanism::get_status( d );
+  ForcedSpikingMechanism::get_status( d );
 }
 
 template < bool hist_shift_required >
@@ -108,7 +108,7 @@ EpropArchivingNodeReadout< hist_shift_required >::set_status( const Dictionary& 
     }
   }
 
-  ForcedFiringMechanism::set_status( d );
+  ForcedSpikingMechanism::set_status( d );
 }
 
 template < bool hist_shift_required >

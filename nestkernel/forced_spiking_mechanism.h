@@ -72,9 +72,8 @@ public:
       return emit_dynamic_spike;
     }
 
-    const bool emit_forced_spike = steps_until_forced_spike_ % forced_spiking_interval_steps_ == 0;
     ++steps_until_forced_spike_;
-    return emit_forced_spike;
+    return steps_until_forced_spike_ % forced_spiking_interval_steps_ == 0;
   }
 
   /**

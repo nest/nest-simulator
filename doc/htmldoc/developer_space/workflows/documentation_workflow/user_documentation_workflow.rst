@@ -134,7 +134,7 @@ If you use pip, install ``pandoc`` from your platform's package manager (e.g. ap
    You will need to
 
    - check if you have Java installed. The minimum version needed is Java 8.
-     (e.g., to install the latest available version on Ubuntu: ``apt install jre-default``)
+     (e.g., to install the latest available version on Ubuntu: ``apt install default-jre``)
    - Download the `plantuml jar file <https://plantuml.com/download>`_ (Minimum version is 1-2023-10)
    - Move the jar file to ``/tmp/plantuml.jar``
 

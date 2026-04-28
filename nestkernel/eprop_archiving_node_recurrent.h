@@ -273,7 +273,7 @@ inline void
 EpropArchivingNodeRecurrent< hist_shift_required >::get_status( Dictionary& d ) const
 {
   d[ names::flush_event_send_interval ] = flush_event_send_interval_;
-  ForcedSpikingMechanism::get_status( d );
+  PacedSpikingMechanism::get_status( d );
 
   if constexpr ( not hist_shift_required )
   {
@@ -286,7 +286,7 @@ inline void
 EpropArchivingNodeRecurrent< hist_shift_required >::set_status( const Dictionary& d )
 {
   FlushEventMechanism::set_status( d );
-  ForcedSpikingMechanism::set_status( d );
+  PacedSpikingMechanism::set_status( d );
 
   if constexpr ( not hist_shift_required )
   {

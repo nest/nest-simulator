@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_forced_spiking_mechanism.py
+# test_paced_spiking_mechanism.py
 #
 # This file is part of NEST.
 #
@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Test forced spiking mechanism.
+Test paced spiking mechanism.
 """
 
 import nest
@@ -28,9 +28,9 @@ import numpy as np
 import pytest
 
 
-def test_forced_spiking_mechanism():
+def test_paced_spiking_mechanism():
     """
-    Test the forced spiking mechanism, which causes a neuron to spike at
+    Test the paced spiking mechanism, which causes a neuron to spike at
     defined intervals with a specified initial offset, ignoring spikes
     from its internal dynamics.
     """
@@ -46,9 +46,9 @@ def test_forced_spiking_mechanism():
     nest.resolution = 1.0  # ms
 
     nrn_params = dict(
-        forced_spiking=True,
-        forced_spiking_interval=interval,
-        forced_spiking_offset=offset,
+        paced_spiking=True,
+        paced_spiking_interval=interval,
+        paced_spiking_offset=offset,
     )
 
     sg = nest.Create("spike_generator", dict(spike_times=np.arange(1.0, duration_sim)))

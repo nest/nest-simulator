@@ -32,9 +32,10 @@
 #include <cstddef>
 #include <limits>
 
-#if defined( HAVE_STD_ISNAN )
-#include <cmath>
-#elif defined( HAVE_ISNAN )
+// Generated includes:
+#include "config.h"
+
+#if !defined( HAVE_STD_ISNAN ) && defined( HAVE_ISNAN )
 #include <math.h>
 #endif
 

@@ -1,5 +1,5 @@
 /*
- *  forced_spiking_mechanism.h
+ *  paced_spiking_mechanism.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef FORCED_SPIKING_MECHANISM_H
-#define FORCED_SPIKING_MECHANISM_H
+#ifndef PACED_SPIKING_MECHANISM_H
+#define PACED_SPIKING_MECHANISM_H
 
 // nestkernel
 #include "nest_time.h"
@@ -32,29 +32,29 @@
 namespace nest
 {
 /**
- * @brief Class implementing a forced spiking mechanism for neuron models.
+ * @brief Class implementing a paced spiking mechanism for neuron models.
  *
- * This class implements a forced spiking mechanism.
+ * This class implements a paced spiking mechanism.
  */
-class ForcedSpikingMechanism
+class PacedSpikingMechanism
 {
 public:
   /**
    * Default constructor.
    */
-  ForcedSpikingMechanism();
+  PacedSpikingMechanism();
 
   /**
    * Copy constructor.
    *
    * @param n The other object to copy.
    */
-  ForcedSpikingMechanism( const ForcedSpikingMechanism& n );
+  PacedSpikingMechanism( const PacedSpikingMechanism& n );
 
   /**
    * Virtual destructor.
    */
-  virtual ~ForcedSpikingMechanism() = default;
+  virtual ~PacedSpikingMechanism() = default;
 
   /**
    * Re-calculates dependent parameters.
@@ -62,18 +62,18 @@ public:
   void pre_run_hook();
 
   /**
-   * Checks if a forced spiking is due at the current time.
+   * Checks if a paced spiking is due at the current time.
    */
   inline bool
   emit_spike( bool emit_dynamic_spike )
   {
-    if ( not forced_spiking_ )
+    if ( not paced_spiking_ )
     {
       return emit_dynamic_spike;
     }
 
-    ++steps_until_forced_spike_;
-    return steps_until_forced_spike_ % forced_spiking_interval_steps_ == 0;
+    ++steps_until_paced_spike_;
+    return steps_until_paced_spike_ % paced_spiking_interval_steps_ == 0;
   }
 
   /**
@@ -88,21 +88,21 @@ public:
 
 protected:
   //! If True, the neuron is forced to spike in set intervals.
-  bool forced_spiking_;
+  bool paced_spiking_;
 
-  //! Temporal offset of forced spiking (ms).
-  double forced_spiking_offset_;
+  //! Temporal offset of paced spiking (ms).
+  double paced_spiking_offset_;
 
-  //! Interval between two consecutive forced spikes (ms).
-  double forced_spiking_interval_;
+  //! Interval between two consecutive paced spikes (ms).
+  double paced_spiking_interval_;
 
-  //! Interval steps between two consecutive forced spikes.
-  long forced_spiking_interval_steps_;
+  //! Interval steps between two consecutive paced spikes.
+  long paced_spiking_interval_steps_;
 
-  //! Remaining steps until the next forced spike.
-  long steps_until_forced_spike_;
+  //! Remaining steps until the next paced spike.
+  long steps_until_paced_spike_;
 };
 
 }  // namespace nest
 
-#endif  // FORCED_SPIKING_MECHANISM_H
+#endif  // PACED_SPIKING_MECHANISM_H

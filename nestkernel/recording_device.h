@@ -41,6 +41,14 @@ namespace nest
 
 /* BeginUserDocs: NOINDEX
 
+Short description
++++++++++++++++++
+
+Recording device
+
+Description
++++++++++++
+
 Recording time window
 +++++++++++++++++++++
 

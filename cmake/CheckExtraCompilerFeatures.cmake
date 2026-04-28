@@ -31,7 +31,7 @@ function( NEST_CHECK_EXITCODE_ABORT )
   set( ABORT_ERR "" )
   try_compile( COMPILE_VAR
       ${CMAKE_BINARY_DIR}
-      ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/assert_value.cpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/assert_value.cxx
       COMPILE_DEFINITIONS -UNDEBUG   # ensure assert() has effect here even if building with -DNDEBUG
       COPY_FILE "${CMAKE_BINARY_DIR}/assert_value"
       COPY_FILE_ERROR CP_ERR
@@ -60,7 +60,7 @@ function( NEST_CHECK_EXITCODE_SEGFAULT )
   set( SEG_ERR "" )
   try_compile( COMPILE_VAR
       ${CMAKE_BINARY_DIR}
-      ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/segfault_value.cpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/segfault_value.cxx
       COPY_FILE "${CMAKE_BINARY_DIR}/segfault_value"
       COPY_FILE_ERROR CP_ERR
       )

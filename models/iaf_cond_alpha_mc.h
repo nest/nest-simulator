@@ -350,7 +350,7 @@ public:
     };
 
     //! total size of state vector
-    static const size_t STATE_VEC_SIZE = STATE_VEC_COMPS * NCOMP;
+    static const size_t STATE_VEC_SIZE = static_cast< size_t >( STATE_VEC_COMPS ) * static_cast< size_t >( NCOMP );
 
     //! neuron state, must be C-array for GSL solver
     double y_[ STATE_VEC_SIZE ];

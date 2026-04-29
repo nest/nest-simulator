@@ -132,7 +132,7 @@ cdef object dictionary_to_pydict(Dictionary cdict):
         tmp[key] = any_to_pyobj(deref(it).second.item)
         if tmp[key] is None:
             # If we end up here, the value in the Dictionary is of a type that any_to_pyobj() cannot handle.
-            raise RuntimeError('Could not convert: ' + key + ' of type ' + string_to_pystr(debug_type(deref(it).second.item)))
+            raise RuntimeError('Could not convert: ' + key + ' of type ' + string_to_pystr(get_typename(deref(it).second.item)))
         inc(it)
     return tmp
 
@@ -197,7 +197,7 @@ cdef object any_to_pyobj(any_type operand):
     if holds_alternative[VerbosityLevel](operand):
         return get[VerbosityLevel](operand)
 
-    raise RuntimeError(f"Cannot convert value of type '{debug_type(operand)}' returned by NEST kernel to Python object.")
+    raise RuntimeError(f"Cannot convert value of type '{get_typename(operand)}' returned by NEST kernel to Python object.")
 
 
 cdef is_list_tuple_ndarray_of_float(v):

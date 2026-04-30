@@ -325,6 +325,7 @@ public:
 
     State_( const Parameters_& );  //!< Default initialization
     State_( const State_& );
+    State_& operator=( const State_& ) = default;
 
     void get( Dictionary& ) const;
     void set( const Dictionary&, const Parameters_&, Node* );

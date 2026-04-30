@@ -40,7 +40,7 @@ from .hl_api_helper import (
 )
 from .hl_api_types import to_json
 
-__all__ = ["GetStatus", "help", "SetStatus", "VerbosityLevel", "message"]
+__all__ = ["GetStatus", "help", "SetStatus", "VerbosityLevel", "message", "get_verbosity", "set_verbosity"]
 
 
 VerbosityLevel = nestkernel.VerbosityLevel
@@ -143,3 +143,19 @@ def message(
     lineno = lineno or frame.lineno
 
     nestkernel.llapi_message(severity, function, message, filename, lineno)
+
+
+@deprecated("", "Provided for backward compatibility only. Look up `nest.verbosity` instead.")
+def get_verbosity():
+    """Return numeric value for NEST verbosity"""
+
+    return int(nest.NestModule.ll_api.nestkernel.llapi_get_kernel_status()["verbosity"])
+
+
+@deprecated("", "Provided for backward compatibility only. Set `nest.verbosity = nest.VerbosityLevel.XYZ` instead.")
+def set_verbosity(level):
+    """Change verbosity level for NEST's messages."""
+
+    nest.NestModule.ll_api.nestkernel.llapi_set_kernel_status(
+        {"verbosity": getattr(nestkernel.VerbosityLevel, level.split("_")[1])}
+    )  # level must be of form "M_XYZ"

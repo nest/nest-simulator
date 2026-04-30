@@ -52,7 +52,7 @@ def test_ticket_85_can_create_plastic_connections(model):
 @pytest.mark.parametrize("model", PRECISE_MODELS)
 def test_ticket_85_archiving_node_exposes_tau_minus(model):
     """
-    Ensure ArchivingNode exposes tau_minus via GetStatus for precise models.
+    Ensure ArchivingNode exposes tau_minus via get() for precise models.
     """
 
     nest.ResetKernel()

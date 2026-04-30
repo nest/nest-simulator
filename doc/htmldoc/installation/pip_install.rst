@@ -46,6 +46,7 @@ Installation steps
 First set up your virtual environent (recommended):
 
 .. code-block:: bash
+
    python3 -m venv nest-env
    source nest-env/bin/activate
    pip install --upgrade pip

@@ -175,7 +175,7 @@ WeightOptimizerGradientDescent::WeightOptimizerGradientDescent()
 }
 
 double
-WeightOptimizerGradientDescent::optimize_( const WeightOptimizerCommonProperties& cp, double weight, size_t )
+WeightOptimizerGradientDescent::optimize_( const WeightOptimizerCommonProperties&, double weight, size_t )
 {
   weight -= eta_current_ * cumulative_gradient_;
   cumulative_gradient_ = 0.0;

@@ -119,19 +119,9 @@ function( NEST_PROCESS_WITH_DEFINES )
 endfunction()
 
 function( NEST_GET_COLOR_FLAGS )
-    set( NEST_C_COLOR_FLAGS "" PARENT_SCOPE )
     set( NEST_CXX_COLOR_FLAGS "" PARENT_SCOPE )
-
-    # add colored output from gcc
-    if ( CMAKE_C_COMPILER_ID STREQUAL "GNU" )
-      if ( NOT CMAKE_C_COMPILER_VERSION VERSION_LESS "4.9" )
-        set( NEST_C_COLOR_FLAGS "-fdiagnostics-color=auto" PARENT_SCOPE )
-      endif ()
-    endif ()
     if ( CMAKE_CXX_COMPILER_ID STREQUAL "GNU" )
-      if ( NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.9" )
         set( NEST_CXX_COLOR_FLAGS "-fdiagnostics-color=auto" PARENT_SCOPE )
-      endif ()
     endif ()
 endfunction()
 

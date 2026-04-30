@@ -175,7 +175,6 @@ nest_process_with_optimize()
 nest_process_with_debug()
 
 nest_get_color_flags()
-set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${NEST_C_COLOR_FLAGS}" )
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${NEST_CXX_COLOR_FLAGS}" )
 
 # check additionals

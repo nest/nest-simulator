@@ -792,6 +792,8 @@ nest::ConnectionManager::connect_sonata( const Dictionary& graph_specs, const lo
 
   kernel().connection_manager.sw_construction_connect.stop();
 #else
+  ( void ) graph_specs;
+  ( void ) hyberslab_size;
   throw KernelException( "Cannot use connect_sonata because NEST was compiled without HDF5 support" );
 #endif
 }

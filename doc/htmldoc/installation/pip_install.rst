@@ -36,6 +36,7 @@ This is necessary for NEST's multithreading capabilities to work correctly on ma
    You can get your path to libomp with:
 
    .. code-block:: bash
+   
       brew --prefix libomp
 
 

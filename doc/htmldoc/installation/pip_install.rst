@@ -54,6 +54,7 @@ First set up your virtual environent (recommended):
 You can either install the basic package of NEST:
 
 .. code-block:: bash
+
    pip install nest-simulator
 
 .. note::

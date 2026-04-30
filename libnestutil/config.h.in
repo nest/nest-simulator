@@ -69,29 +69,14 @@
 /* define if the compiler ignores cmath makros */
 #cmakedefine HAVE_CMATH_MAKROS_IGNORED 1
 
-/* "Define if expm1() is available" */
-#cmakedefine HAVE_EXPM1 1
-
 /* Is the GNU Science Library available (ver. >= 1.0)? */
 #cmakedefine HAVE_GSL 1
-
-/* "Define if isnan() is available" */
-#cmakedefine HAVE_ISNAN 1
-
-/* "Define if std::isnan() is available" */
-#cmakedefine HAVE_STD_ISNAN 1
 
 /* Havel libltdl, can load dynamic modules */
 #cmakedefine HAVE_LIBLTDL 1
 
 /* libneurosim support enabled? */
 #cmakedefine HAVE_LIBNEUROSIM 1
-
-/* Define to 1 if you have usable long long type. */
-#cmakedefine HAVE_LONG_LONG 1
-
-/* Define to 1 if you have uint64_t type. */
-#cmakedefine HAVE_UINT64_T 1
 
 /* MPI is available. */
 #cmakedefine HAVE_MPI 1
@@ -107,12 +92,6 @@
 
 /* define if M_PI is defined */
 #cmakedefine HAVE_M_PI 1
-
-/* "Define if NAN is available" */
-#cmakedefine HAVE_NAN 1
-
-/* "Define if std::nan(nullptr) is available" */
-#cmakedefine HAVE_STD_NAN 1
 
 /* define for STL vector capacity base unity */
 #cmakedefine HAVE_STL_VECTOR_CAPACITY_BASE_UNITY 1

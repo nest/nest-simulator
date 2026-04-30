@@ -119,40 +119,6 @@ function( NEST_CHECK_HAVE_STL_VECTOR_CAPACITY_BASE_UNITY )
   printInfo( "Check for STL vector capacity base unity. ${HAVE_STL_VECTOR_CAPACITY_BASE_UNITY}" )
 endfunction()
 
-####### Test if ::nan(...) is defined #######
-function( NEST_CHECK_HAVE_STD_NAN )
-  printInfo( "Check if ::nan is available from cmath." )
-  try_compile( COMPILE_RESULT
-      ${CMAKE_BINARY_DIR}
-      ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/std_nan.cxx
-      OUTPUT_VARIABLE OUTPUT
-      )
-  if ( COMPILE_RESULT )
-    set( HAVE_STD_NAN ON )
-  else ()
-    set( HAVE_STD_NAN OFF )
-  endif ()
-  set( HAVE_STD_NAN ${HAVE_STD_NAN} PARENT_SCOPE )
-  printInfo( "Check if ::nan is available from cmath. ${HAVE_STD_NAN}" )
-endfunction()
-
-####### Test if ::isnan(...) is defined #######
-function( NEST_CHECK_HAVE_STD_ISNAN )
-  printInfo( "Check if ::isnan is available from cmath." )
-  try_compile( COMPILE_RESULT
-      ${CMAKE_BINARY_DIR}
-      ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/std_isnan.cxx
-      OUTPUT_VARIABLE OUTPUT
-      )
-  if ( COMPILE_RESULT )
-    set( HAVE_STD_ISNAN ON )
-  else ()
-    set( HAVE_STD_ISNAN OFF )
-  endif ()
-  set( HAVE_STD_ISNAN ${HAVE_STD_ISNAN} PARENT_SCOPE )
-  printInfo( "Check if ::isnan is available from cmath. ${HAVE_STD_ISNAN}" )
-endfunction()
-
 ####### Test if Random123 generators work #######
 function( NEST_CHECK_RANDOM123 )
   printInfo( "Check if Random123 generators work." )

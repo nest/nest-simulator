@@ -183,8 +183,6 @@ nest_check_exitcode_abort()
 nest_check_exitcode_segfault()
 nest_check_have_cmath_makros_ignored()
 nest_check_have_stl_vector_capacity_base_unity()
-nest_check_have_std_nan()
-nest_check_have_std_isnan()
 nest_check_random123()
 
 include( NestVersionInfo )

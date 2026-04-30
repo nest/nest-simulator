@@ -19,45 +19,11 @@
 
 # Here we check for all required include headers, types, symbols and functions.
 
-include( CheckIncludeFiles )
-check_include_files( "inttypes.h" HAVE_INTTYPES_H LANGUAGE CXX )
-check_include_files( "mach-o/dyld.h" HAVE_MACH_O_DYLD_H LANGUAGE CXX )
-check_include_files( "mach/mach.h" HAVE_MACH_MACH_H LANGUAGE CXX )
-check_include_files( "memory.h" HAVE_MEMORY_H LANGUAGE CXX )
-check_include_files( "stdint.h" HAVE_STDINT_H LANGUAGE CXX )
-check_include_files( "sys/types.h" HAVE_SYS_TYPES_H LANGUAGE CXX )
-
-include( CheckIncludeFileCXX )
-check_include_file_cxx( "istream" HAVE_ISTREAM )
-check_include_file_cxx( "ostream" HAVE_OSTREAM )
-check_include_file_cxx( "sstream" HAVE_SSTREAM )
-
 # Check types exist
 include( CheckTypeSize )
 check_type_size( "long long" LONG_LONG_SIZE LANGUAGE CXX ) # also sets HAVE_LONG_LONG
 if ( LONG_LONG_SIZE GREATER 0 )
   set( HAVE_LONG_LONG ON )
-endif ()
-
-set( CMAKE_EXTRA_INCLUDE_FILES "sys/types.h" )
-check_type_size( u_int16_t U_INT16_T_SIZE LANGUAGE CXX )
-set( CMAKE_EXTRA_INCLUDE_FILES OFF )
-if ( U_INT16_T_SIZE GREATER 0 )
-  set( HAVE_U_INT16_T ON )
-endif ()
-
-set( CMAKE_EXTRA_INCLUDE_FILES "stdint.h" )
-check_type_size( uint16_t UINT16_T_SIZE LANGUAGE CXX )
-set( CMAKE_EXTRA_INCLUDE_FILES OFF )
-if ( UINT16_T_SIZE GREATER 0 )
-  set( HAVE_UINT16_T ON )
-endif ()
-
-set( CMAKE_EXTRA_INCLUDE_FILES "sys/types.h" )
-check_type_size( u_int64_t U_INT64_T_SIZE LANGUAGE CXX )
-set( CMAKE_EXTRA_INCLUDE_FILES OFF )
-if ( U_INT64_T_SIZE GREATER 0 )
-    set( HAVE_U_INT64_T ON )
 endif ()
 
 set( CMAKE_EXTRA_INCLUDE_FILES "stdint.h" )

@@ -99,57 +99,6 @@ function( NEST_CHECK_HAVE_CMATH_MAKROS_IGNORED )
   set( HAVE_CMATH_MAKROS_IGNORED ${HAVE_CMATH_MAKROS_IGNORED} PARENT_SCOPE)
 endfunction()
 
-####### HAVE_ALPHA_CXX_STD_BUG ########
-function( NEST_CHECK_HAVE_ALPHA_CXX_STD_BUG )
-  printInfo( "Check whether the compiler does NOT include <*.h> headers ISO conformant." )
-  try_compile( COMPILE_RESULT
-      ${CMAKE_BINARY_DIR}
-      ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/AlphaCXXBug.cxx
-      OUTPUT_VARIABLE OUTPUT
-      )
-  if ( COMPILE_RESULT )
-    set( HAVE_ALPHA_CXX_STD_BUG OFF )
-  else ()
-    set( HAVE_ALPHA_CXX_STD_BUG ON )
-  endif ()
-  set( HAVE_ALPHA_CXX_STD_BUG ${HAVE_ALPHA_CXX_STD_BUG} PARENT_SCOPE )
-  printInfo( "Check whether the compiler does NOT include <*.h> headers ISO conformant. ${HAVE_ALPHA_CXX_STD_BUG}" )
-endfunction()
-
-####### HAVE_SIGUSR_IGNORED ########
-function( NEST_CHECK_HAVE_SIGUSR_IGNORED )
-  printInfo( "Check whether the compiler respects symbolic signal names in signal.h." )
-  try_compile( COMPILE_RESULT
-      ${CMAKE_BINARY_DIR}
-      ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/SigUsrIgnored.cxx
-      OUTPUT_VARIABLE OUTPUT
-      )
-  if ( COMPILE_RESULT )
-    set( HAVE_SIGUSR_IGNORED OFF )
-  else ()
-    set( HAVE_SIGUSR_IGNORED ON )
-  endif ()
-  set( HAVE_SIGUSR_IGNORED ${HAVE_SIGUSR_IGNORED} PARENT_SCOPE )
-  printInfo( "Check whether the compiler respects symbolic signal names in signal.h. ${HAVE_SIGUSR_IGNORED}" )
-endfunction()
-
-####### HAVE_STATIC_TEMPLATE_DECLARATION_FAIL ########
-function( NEST_CHECK_HAVE_STATIC_TEMPLATE_DECLARATION_FAIL )
-  printInfo( "Check static template member declaration." )
-  try_compile( COMPILE_RESULT
-      ${CMAKE_BINARY_DIR}
-      ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/StaticTemplateDeclaration.cxx
-      OUTPUT_VARIABLE OUTPUT
-      )
-  if ( COMPILE_RESULT )
-    set( HAVE_STATIC_TEMPLATE_DECLARATION_FAIL OFF )
-  else ()
-    set( HAVE_STATIC_TEMPLATE_DECLARATION_FAIL ON )
-  endif ()
-  set( HAVE_STATIC_TEMPLATE_DECLARATION_FAIL ${HAVE_STATIC_TEMPLATE_DECLARATION_FAIL} PARENT_SCOPE )
-  printInfo( "Check static template member declaration. ${HAVE_STATIC_TEMPLATE_DECLARATION_FAIL}" )
-endfunction()
-
 ####### HAVE_STL_VECTOR_CAPACITY_BASE_UNITY ########
 function( NEST_CHECK_HAVE_STL_VECTOR_CAPACITY_BASE_UNITY )
   printInfo( "Check for STL vector capacity base unity." )
@@ -168,48 +117,6 @@ function( NEST_CHECK_HAVE_STL_VECTOR_CAPACITY_BASE_UNITY )
   endif ()
   set( HAVE_STL_VECTOR_CAPACITY_BASE_UNITY ${HAVE_STL_VECTOR_CAPACITY_BASE_UNITY} PARENT_SCOPE )
   printInfo( "Check for STL vector capacity base unity. ${HAVE_STL_VECTOR_CAPACITY_BASE_UNITY}" )
-endfunction()
-
-####### HAVE_STL_VECTOR_CAPACITY_DOUBLING ########
-function( NEST_CHECK_HAVE_STL_VECTOR_CAPACITY_DOUBLING )
-  printInfo( "Check for STL vector capacity doubling strategy." )
-  set( RUN_RESULT 0 )
-  set( RUN_RESULT__TRYRUN_OUTPUT "" )
-  try_run( RUN_RESULT COMPILE_RESULT
-      ${CMAKE_BINARY_DIR}
-      ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/VectorCapacityDoubling.cxx
-      COMPILE_OUTPUT_VARIABLE COMPILE_OUTPUT_VAR
-      RUN_OUTPUT_VARIABLE RUN_OUTPUT_VAR
-      )
-  if ( RUN_RESULT EQUAL 0 )
-    set( HAVE_STL_VECTOR_CAPACITY_DOUBLING ON )
-  else ()
-    set( HAVE_STL_VECTOR_CAPACITY_DOUBLING OFF )
-  endif ()
-  set( HAVE_STL_VECTOR_CAPACITY_DOUBLING ${HAVE_STL_VECTOR_CAPACITY_DOUBLING} PARENT_SCOPE )
-  printInfo( "Check for STL vector capacity doubling strategy. ${HAVE_STL_VECTOR_CAPACITY_DOUBLING}" )
-endfunction()
-
-function( NEST_CHECK_HAVE_XLC_ICE_ON_USING )
-  # Tests for a an internal compiler error observed in IBM xlC.
-  # If bug the ICE is detected, defines
-  # HAVE_XLC_ICE_ON_USING
-  #
-  # @author Hans E. Plesser
-
-  printInfo( "Check whether the compiler fails with ICE." )
-  try_compile( COMPILE_RESULT
-      ${CMAKE_BINARY_DIR}
-      ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/ICE.cxx
-      OUTPUT_VARIABLE OUTPUT
-      )
-  if ( COMPILE_RESULT )
-    set( HAVE_XLC_ICE_ON_USING OFF )
-  else ()
-    set( HAVE_XLC_ICE_ON_USING ON )
-  endif ()
-  set( HAVE_XLC_ICE_ON_USING ${HAVE_XLC_ICE_ON_USING} PARENT_SCOPE )
-  printInfo( "Check whether the compiler fails with ICE. ${HAVE_XLC_ICE_ON_USING}" )
 endfunction()
 
 ####### Test if ::nan(...) is defined #######

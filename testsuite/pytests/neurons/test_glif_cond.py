@@ -93,7 +93,7 @@ class GLIFCONDTestCase(unittest.TestCase):
 
         """
         p_value_lim = 0.1
-        d, p_value = scipy.stats.ks_2samp(spikes, reference_spikes)
+        d, p_value = scipy.stats.ks_2samp(spikes, reference_spikes, method="asymp")
         print(f"d={d}, p_value={p_value}")
         self.assertGreater(p_value, p_value_lim)
 

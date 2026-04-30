@@ -47,7 +47,7 @@ def test_ticket_386(model, recordables, has_compartments):
     neuron = nest.Create(model)
 
     if has_compartments:
-        nest.SetStatus(neuron, {"compartments": {"parent_idx": -1}})
+        neuron.set({"compartments": {"parent_idx": -1}})
 
     multimeter = nest.Create(
         "multimeter",

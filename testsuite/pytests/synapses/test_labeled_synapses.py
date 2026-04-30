@@ -245,7 +245,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
                     {"rule": "one_to_one", "make_symmetric": symm},
                     {"synapse_model": syn, "receptor_type": r_type},
                 )
-            # try set on SetStatus
+            # try set
             c = nest.GetConnections(a, a)
 
             with self.assertRaises(nest.NESTError):

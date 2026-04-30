@@ -63,6 +63,7 @@ You can either install the basic package of NEST:
    libraries are required. In Ubuntu/Debian, install them using:
 
    .. code-block:: bash
+   
       apt install libboost-dev
 
 

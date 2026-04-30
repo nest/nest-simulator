@@ -184,6 +184,7 @@ private:
 
     Parameters_();
     Parameters_( const Parameters_& ) = default;
+    Parameters_& operator=( const Parameters_& ) = default;
     void get( Dictionary& ) const;
     void set( const Dictionary& );
   } P_;

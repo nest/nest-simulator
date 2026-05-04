@@ -34,6 +34,8 @@ import numpy as np
 import numpy.testing as nptest
 import pytest
 
+pytestmark = pytest.mark.skipif_missing_gsl
+
 w_ex = 40.0
 w_in = 15.0
 

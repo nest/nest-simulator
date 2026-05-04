@@ -35,8 +35,9 @@ def reset():
 
 # Collect all models with E_L parameter.
 # Skip gif_cond_exp_multisynapse because it has numpy array parameter making check below difficult.
-models_with_EL = [model for model in nest.node_models if "E_L" in nest.GetDefaults(model)]
-models_with_EL.remove("gif_cond_exp_multisynapse")
+models_with_EL = [
+    model for model in nest.node_models if "E_L" in nest.GetDefaults(model) and model != "gif_cond_exp_multisynapse"
+]
 
 
 @pytest.mark.parametrize("model", models_with_EL)

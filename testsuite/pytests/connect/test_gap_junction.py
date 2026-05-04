@@ -27,6 +27,8 @@ Furthermore it is checked that the delay cannot be set for gap-junction connecti
 import nest
 import pytest
 
+pytestmark = pytest.mark.skipif_missing_gsl
+
 
 @pytest.fixture(autouse=True)
 def setup():

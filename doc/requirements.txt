@@ -1,5 +1,5 @@
 # Recommended requirements for building NEST user documentation
-Image >= 1.5.30
+Image >= 1.5.33
 PyYAML >= 4.2b1
 RestrictedPython>=6.2
 csvkit >= 1.1.1

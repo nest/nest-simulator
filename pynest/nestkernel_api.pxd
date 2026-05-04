@@ -71,8 +71,8 @@ cdef extern from "dictionary.h":
         dictionary_.const_iterator begin()
         dictionary_.const_iterator end()
         cbool known(const string&)
-    string debug_type(const any_type&)
-    string debug_dict_types(const Dictionary&)
+    string get_typename(const any_type&)
+    string get_dict_typenames(const Dictionary&)
     cppclass AnyVector:
         vector[any_type].const_iterator begin()
         vector[any_type].const_iterator end()

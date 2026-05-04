@@ -30,6 +30,8 @@ class StatusTestCase(unittest.TestCase):
     def test_kernel_attributes(self):
         """Test nest attribute access of kernel attributes"""
 
+        self.maxDiff = None
+
         nest.ResetKernel()
 
         # Remove entry containing numpy arrays from status dicts since they do not compare well

@@ -25,7 +25,7 @@ import numpy as np
 import pytest
 import scipy.stats
 
-pytestmark = pytest.mark_skipif_missing_gsl
+pytestmark = pytest.mark.skipif_missing_gsl
 
 # Check that NEST is installed with MPI support and mpi4py is available.
 # If mpi4py is missing, we get an ImportError

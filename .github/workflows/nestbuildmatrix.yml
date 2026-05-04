@@ -581,8 +581,8 @@ jobs:
         # available use flags (all default to "OFF"):
         # openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning, userdoc, music, readline
         use:
-          - "optimize, warning"
-          - "boost, optimize, warning"
+          - "python, optimize, warning"
+          - "python, boost, optimize, warning"
           - "openmp, python, gsl, ltdl, boost, optimize, warning"
           - "mpi, python, gsl, ltdl, boost, optimize, warning"
           - "openmp, mpi, python, gsl, ltdl, boost, hdf5, sionlib, libneurosim, optimize, warning, music, detailed-timers, threaded-timers, mpi-sync-timer"

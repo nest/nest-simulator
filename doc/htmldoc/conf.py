@@ -49,6 +49,7 @@ os.environ.setdefault("PYNEST_QUIET", "1")
 source_suffix = ".rst"
 master_doc = "index"
 extensions = [
+    "add_button_notebook",
     "sphinx_gallery.gen_gallery",
     "list_examples",
     "sphinx.ext.graphviz",
@@ -61,7 +62,6 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx_carousel.carousel",
     "sphinxcontrib.plantuml",
-    "add_button_notebook",
     "IPython.sphinxext.ipython_console_highlighting",
     "model_tag_setup",
     "nbsphinx",
@@ -93,7 +93,7 @@ sphinx_gallery_conf = {
     "gallery_dirs": "auto_examples",
     "plot_gallery": "False",
     "download_all_examples": False,
-    "copyfile_regex": r".*\.rst|.*\.png|.*\.svg|Snakefile|.*\.txt",
+    "copyfile_regex": r".*\.rst|.*\.png|.*\.svg|Snakefile",
 }
 
 # General information about the project.

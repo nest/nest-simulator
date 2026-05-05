@@ -20,6 +20,26 @@ For macOS users, OpenMP support requires installing the OpenMP runtime library:
 
 This is necessary for NEST's multithreading capabilities to work correctly on macOS.
 
+.. note::
+
+   If there is no pre-built NEST package available for your version of Python, pip
+   will attempt to build a suitable package for you. To do this, in addition to
+   installing a C++ compiler and the Boost libraries, you will need to set the
+   paths to libomp:
+
+   .. code-block:: bash
+
+      export CFLAGS="$CFLAGS -I/<YOUR-LIBOMP-PATH>/include"
+      export CXXFLAGS="$CXXFLAGS -I/<YOUR-LIBOMP-PATH>/include"
+      export LDFLAGS="$LDFLAGS -Wl,-rpath,/<YOUR-LIBOMP-PATH>/lib -L/<YOUR-HOMEBREW-PATH>/opt/libomp/lib -lomp"
+
+
+   You can get your path to libomp with:
+
+   .. code-block:: bash
+
+      brew --prefix libomp
+
 
 Installation steps
 ------------------
@@ -37,6 +57,18 @@ You can either install the basic package of NEST:
 .. code-block:: bash
 
    pip install nest-simulator
+
+.. note::
+
+   As with macOS, the same applies to Linux: if there is no pre-built NEST
+   package available for your version of Python, pip will attempt to build
+   a suitable package for you. To do this, a C++ compiler and the Boost
+   libraries are required. In Ubuntu/Debian, install them using:
+
+   .. code-block:: bash
+
+      apt install libboost-dev
+
 
 Or install NEST with one of the following options:
 

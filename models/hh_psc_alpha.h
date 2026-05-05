@@ -57,77 +57,155 @@ namespace nest
  */
 extern "C" int hh_psc_alpha_dynamics( double, const double*, double*, void* );
 
+// clang-format off
 /* BeginUserDocs: neuron, Hodgkin-Huxley, current-based, soft threshold
 
 Short description
 +++++++++++++++++
 
-Hodgkin-Huxley neuron model
+Hodgkin-Huxley neuron model with alpha-shaped synaptic currents
 
 Description
 +++++++++++
 
+``hh_psc_alpha`` is a Hodgkin-Huxley neuron model with
+
+* an emergent threshold from sodium channel dynamics,
+* a fixed refractory period,
+* intrinsic adaptation through sodium and potassium gating variables,
+* :math:`\alpha`-shaped synaptic input currents.
+
 ``hh_psc_alpha`` is an implementation of a spiking neuron using the Hodgkin-Huxley
-formalism.
+formalism [1]_, [2]_. It maintains the membrane potential :math:`V_\text{m}` as
+the main state variable, governed by the equation:
 
-1. Postsynaptic currents
-Incoming spike events induce a postsynaptic change of current modelled
-by an alpha function. The alpha function is normalized such that an event of
-weight 1.0 results in a peak current of 1 pA.
+.. math::
 
+   C_{\text{m}} \frac{dV_\text{m}}{dt} = -(I_\text{Na} + I_\text{K} + I_\text{L}) + I_{\text{syn}} + I_\text{e}
 
-2. Spike Detection
-Spike detection is done by a combined threshold-and-local-maximum search: if
-there is a local maximum above a certain threshold of the membrane potential,
-it is considered a spike.
+where the ionic currents are defined as:
 
-See also [1]_, [2]_, [3]_.
+.. math::
 
-For details on asynchronicity in spike and firing events with Hodgkin Huxley models
-see :ref:`here <hh_details>`.
+   I_\text{Na} &= g_\text{Na} m^3 h (V_\text{m} - E_\text{Na}) \\
+   I_\text{K}  &= g_\text{K} n^4 (V_\text{m} - E_\text{K}) \\
+   I_\text{L}  &= g_\text{L} (V_\text{m} - E_\text{L})
+
+The gating variables :math:`m`, :math:`h`, and :math:`n` evolve according to:
+
+.. math::
+
+   \frac{dm}{dt} &= \alpha_m(1-m) - \beta_m m \\
+   \frac{dh}{dt} &= \alpha_h(1-h) - \beta_h h \\
+   \frac{dn}{dt} &= \alpha_n(1-n) - \beta_n n
+
+with the rate constants given by:
+
+.. math::
+
+   \alpha_n(V) &= \frac{0.01(V+55)}{1-\exp(-(V+55)/10)} \\
+   \beta_n(V)  &= 0.125\exp(-(V+65)/80) \\
+   \alpha_m(V) &= \frac{0.1(V+40)}{1-\exp(-(V+40)/10)} \\
+   \beta_m(V)  &= 4\exp(-(V+65)/18) \\
+   \alpha_h(V) &= 0.07\exp(-(V+65)/20) \\
+   \beta_h(V)  &= \frac{1}{1+\exp(-(V+35)/10)}
+
+Synaptic input
+..............
+
+The synaptic input current has an excitatory and an inhibitory component
+
+.. math::
+
+   I_{\text{syn}}(t) = I_{\text{syn, ex}}(t) + I_{\text{syn, in}}(t)
+
+where each component is modeled as an alpha function:
+
+.. math::
+
+   I_{\text{syn, X}}(t) = \sum_{j} w_j \sum_k i_{\text{syn, X}}(t-t_j^k-d_j)
+
+The individual post-synaptic currents (PSCs) are given by
+
+.. math::
+
+   i_{\text{syn, X}}(t) = \frac{e}{\tau_{\text{syn, X}}} t e^{-\frac{t}{\tau_{\text{syn, X}}}} \Theta(t)
+
+where :math:`\Theta(x)` is the Heaviside step function. The PSCs are normalized to unit maximum, that is,
+
+.. math::
+
+   i_{\text{syn, X}}(t= \tau_{\text{syn, X}}) = 1 \text{ pA} \;.
+
+Spike detection
+...............
+
+In contrast to integrate-and-fire neurons, Hodgkin-Huxley neurons do not have an
+explicit threshold for spike emission. Instead, spikes emerge from the continuous
+dynamics when sodium channels open sufficiently to depolarize the membrane.
+
+The ``hh_psc_alpha`` model detects spikes using a combined threshold-and-local-maximum
+search: a spike is registered when the membrane potential crosses 0 mV from below
+and is at a local maximum (the previous membrane potential was higher). This is
+implemented as:
+
+.. math::
+
+   V_\text{m} \ge 0 \quad \text{and} \quad V_\text{m}(t-\Delta t) > V_\text{m}(t)
+
+The model includes a refractory period (2 ms by default) that suppresses additional
+spikes during the downstroke of the action potential.
+
+.. note::
+
+   For details on asynchronicity in spike and firing events with Hodgkin-Huxley
+   models see :ref:`hh_details`.
 
 Parameters
 ++++++++++
 
-The following parameters can be set in the status Dictionary.
+The following parameters can be set in the status dictionary.
 
-========  ======  ============================================================
-V_m       mV      Membrane potential
-E_L       mV      Leak reversal potential
-C_m       pF      Capacity of the membrane
-t_ref     ms      Duration of refractory period
-g_L       nS      Leak conductance
-tau_ex    ms      Rise time of the excitatory synaptic alpha function
-tau_in    ms      Rise time of the inhibitory synaptic alpha function
-E_Na      mV      Sodium reversal potential
-g_Na      nS      Sodium peak conductance
-E_K       mV      Potassium reversal potential
-g_K       nS      Potassium peak conductance
-Act_m     real    Activation variable m
-Inact_h   real    Inactivation variable h
-Act_n     real    Activation variable n
-I_e       pA      External input current
-========  ======  ============================================================
+================== ================== =============================== ===========================================================================
+**Parameter**      **Default**        **Math equivalent**             **Description**
+================== ================== =============================== ===========================================================================
+``E_L``            -54.402 mV         :math:`E_\text{L}`              Leak reversal potential (resting potential)
+``C_m``            100 pF             :math:`C_{\text{m}}`            Capacity of the membrane
+``g_L``            30 nS              :math:`g_\text{L}`              Leak conductance
+``t_ref``          2 ms               :math:`t_{\text{ref}}`          Duration of refractory period
+``g_Na``           12000 nS           :math:`g_\text{Na}`             Sodium peak conductance
+``E_Na``           50 mV              :math:`E_\text{Na}`             Sodium reversal potential
+``g_K``            3600 nS            :math:`g_\text{K}`              Potassium peak conductance
+``E_K``            -77 mV             :math:`E_\text{K}`              Potassium reversal potential
+``tau_syn_ex``     0.2 ms             :math:`\tau_{\text{syn, ex}}`   Rise time of the excitatory synaptic alpha function
+``tau_syn_in``     2.0 ms             :math:`\tau_{\text{syn, in}}`   Rise time of the inhibitory synaptic alpha function
+``I_e``            0 pA               :math:`I_\text{e}`              Constant input current
+================== ================== =============================== ===========================================================================
 
-Problems/Todo
-+++++++++++++
+The following state variables evolve during simulation and are available either as neuron properties or as recordables.
 
-- better spike detection
-- initial wavelet/spike at simulation onset
+==================== ================= ========================== =============================================
+**State variable**  **Initial value**  **Math equivalent**        **Description**
+==================== ================= ========================== =============================================
+``V_m``              -65 mV            :math:`V_\text{m}`          Membrane potential
+``Act_m``            ~0.05             :math:`m`                   Sodium activation variable
+``Inact_h``          ~0.6              :math:`h`                   Sodium inactivation variable
+``Act_n``            ~0.32             :math:`n`                   Potassium activation variable
+``I_syn_ex``         0 pA              :math:`I_{\text{syn, ex}}`  Excitatory synaptic input current
+``I_syn_in``         0 pA              :math:`I_{\text{syn, in}}`  Inhibitory synaptic input current
+==================== ================= ========================== =============================================
+
 
 References
 ++++++++++
 
-
-.. [1] Gerstner W, Kistler W (2002). Spiking neuron models: Single neurons,
-       populations, plasticity. New York: Cambridge University Press
-.. [2] Dayan P, Abbott LF (2001). Theoretical neuroscience: Computational and
-       mathematical modeling of neural systems. Cambridge, MA: MIT Press.
-       https://pure.mpg.de/pubman/faces/ViewItemOverviewPage.jsp?itemId=item_3006127>
-.. [3] Hodgkin AL and Huxley A F (1952). A quantitative description of
+.. [1] Hodgkin AL and Huxley A F (1952). A quantitative description of
        membrane current and its application to conduction and excitation in
        nerve. The Journal of Physiology 117.
        DOI: https://doi.org/10.1113/jphysiol.1952.sp004764
+.. [2] Gerstner W, Kistler W M (2002). Spiking neuron models: Single neurons,
+       populations, plasticity. New York: Cambridge University Press
+       DOI: https://doi.org/10.1017/CBO9780511815706
 
 Sends
 +++++
@@ -135,14 +213,15 @@ Sends
 SpikeEvent
 
 Receives
-++++++++
++++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
 See also
 ++++++++
 
-hh_cond_exp_traub
+hh_cond_exp_traub, hh_psc_alpha_gap, hh_psc_alpha_clopath
+
 
 Examples using this model
 +++++++++++++++++++++++++
@@ -150,6 +229,7 @@ Examples using this model
 .. listexamples:: hh_psc_alpha
 
 EndUserDocs */
+// clang-format on
 
 void register_hh_psc_alpha( const std::string& name );
 

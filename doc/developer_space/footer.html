@@ -1,0 +1,39 @@
+<!-- HTML footer for NEST developer documentation -->
+<!-- start footer part -->
+<!--BEGIN GENERATE_TREEVIEW-->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    $navpath
+    <li class="footer" style="float:left">$generatedby <a href="https://www.doxygen.org/index.html"><img class="footer" src="$relpath^doxygen.svg" width="104" height="31" alt="doxygen"/></a> $doxygenversion </li>
+  </ul>
+</div>
+<!--END GENERATE_TREEVIEW-->
+<script>
+(function () {
+  var bar = document.createElement('div');
+  bar.id = 'devdoc-branch-banner';
+  bar.innerHTML =
+    '&#9432; These docs are built from the <strong>main</strong> branch of nest-simulator'
+    + ' and reflect active development. &ensp;'
+    + 'Built: <strong>$projectnumber</strong> &bull; $datetime';
+  bar.style.cssText = [
+    'position:sticky',
+    'top:0',
+    'z-index:100',
+    'background:#4b210c',
+    'color:#ffffff',
+    'border-bottom:4px solid #ff6633',
+    'padding:8px 20px',
+    'text-align:center',
+    'font-size:1em',
+    'font-weight:500',
+    'line-height:1.5'
+  ].join(';');
+  /* Insert at the top of #doc-content (doxygen-awesome treeview layout).
+     Fall back to body for plain doxygen layout. */
+  var target = document.getElementById('doc-content') || document.body;
+  target.insertBefore(bar, target.firstChild);
+})();
+</script>
+</body>
+</html>

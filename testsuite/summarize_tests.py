@@ -103,6 +103,7 @@ if __name__ == "__main__":
     parser.add_argument("--have-mpi", action="store_true")
     parser.add_argument("--have-openmp", action="store_true")
     parser.add_argument("--have-music", action="store_true")
+    parser.add_argument("--have-boost", action="store_true")
     args = parser.parse_args()
 
     test_outdir = args.test_outdir
@@ -110,6 +111,7 @@ if __name__ == "__main__":
     have_mpi = args.have_mpi
     have_openmp = args.have_openmp
     have_music = args.have_music
+    have_boost = args.have_boost
 
     if not have_mpi:
         # keep only phases that do not contain mpi in their name
@@ -119,6 +121,9 @@ if __name__ == "__main__":
         del expected_num_tests["07 pynesttests mpi indirect"]
     if not have_music:
         del expected_num_tests["06 musictests"]
+    if not have_boost:
+        # We use Boost's unit test framework for cpptests
+        del expected_num_tests["08 cpptests"]
 
     results = {}
     totals = {"Tests": 0, "Skipped": 0, "Failures": 0, "Errors": 0, "Time": 0, "Failed tests": []}

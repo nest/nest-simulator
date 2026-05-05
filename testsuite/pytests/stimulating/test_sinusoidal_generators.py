@@ -28,8 +28,8 @@ import numpy as np
 import numpy.testing as nptest
 import pytest
 
-# List of sinusoidal generator models
-gen_models = ["sinusoidal_poisson_generator", "sinusoidal_gamma_generator"]
+# Set of sinusoidal generator models
+gen_models = {"sinusoidal_poisson_generator", "sinusoidal_gamma_generator"} & set(nest.node_models)
 
 
 @pytest.fixture(autouse=True)

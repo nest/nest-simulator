@@ -26,7 +26,7 @@ Regression test for Issue #410 (GitHub).
 import nest
 import pytest
 
-pytestmark = [pytest.mark.skipif_missing_gsl, pytest.mark.skipif_missing_threads]
+pytestmark = pytest.mark.skipif_missing_threads
 
 
 def simulator(num_threads):
@@ -44,7 +44,7 @@ def simulator(num_threads):
     stim2 = nest.Create("dc_generator", params={"amplitude": 1000.0})
     nrn1 = nest.Create("iaf_psc_alpha", params={"C_m": 100.0, "tau_m": 10.0})
     nrn2 = nest.Create("iaf_psc_alpha", params={"C_m": 100.0, "tau_m": 10.0, "tau_minus": 10.0})
-    dopa = nest.Create("iaf_cond_alpha", 100, {"V_reset": -70.0, "C_m": 80.0, "V_th": -60.0})
+    dopa = nest.Create("iaf_psc_alpha", 100, {"V_reset": -70.0, "C_m": 80.0, "V_th": -60.0})
     vt = nest.Create("volume_transmitter")
 
     nest.CopyModel(
@@ -76,7 +76,7 @@ def simulator(num_threads):
     return weight
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture()
 def reference_weight():
     """
     Fixture that simulates reference.

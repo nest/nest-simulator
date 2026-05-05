@@ -120,13 +120,16 @@ Documentation = "https://nest-simulator.readthedocs.io/en/stable/"
 "Bug Tracker" = "https://github.com/nest/nest-simulator/issues"
 Changelog = "https://nest-simulator.readthedocs.io/en/stable/whats_new/index.html"
 
+
+[tool.scikit-build.metadata.version]
+provider = "scikit_build_core.metadata.regex"
+input = "VERSION"
+regex = "^(?P<version>.*)\\s*$"
+result = "{version}"
+
 [tool.scikit-build]
 sdist.cmake = false
 build-dir = "build/{wheel_tag}"
-metadata.version.provider = "scikit_build_core.metadata.regex"
-metadata.version.input = "VERSION"
-metadata.version.regex = "(?P<value>.*)"
-# Conditional exclusions based on package type
 wheel.exclude = [
   ".git*",           # Always exclude git files
   ".github/",        # Always exclude CI configuration

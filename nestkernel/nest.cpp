@@ -189,7 +189,7 @@ get_nc_status( NodeCollectionPTR nc )
         catch ( const std::bad_variant_access& e )
         {
           throw std::runtime_error( String::compose(
-            "result[%1] contained type %2, expected vector<any_type>.", key, debug_type( p->second.item ) ) );
+            "result[%1] contained type %2, expected vector<any_type>.", key, get_typename( p->second.item ) ) );
         }
       }
       else
@@ -615,7 +615,7 @@ create_parameter( const any_type& value )
       else
       {
         throw BadProperty(
-          std::string( "Parameter must be parametertype, constant or dictionary, got " ) + debug_type( value ) );
+          std::string( "Parameter must be parametertype, constant or dictionary, got " ) + get_typename( value ) );
       }
     },
     value );

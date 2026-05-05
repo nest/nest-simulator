@@ -27,8 +27,6 @@
 #include <limits>
 #include <vector>
 
-#include <boost/any.hpp>
-
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "parameter.h"

@@ -10,11 +10,11 @@ Install from source in a mamba environment
    environments more quickly and can be used as a complete drop-in replacement for conda.
 
 * Create a mamba environment from the `environment.yml <https://github.com/nest/nest-simulator/blob/master/environment.yml>`_ file.
-  We recommend specifying a dedicated location (``-p <path/to/mamba/env>``) for your environment.
+  We recommend specifying a dedicated location (``-p <path/to/mamba/env>``) for your environment, for example, a new directory ``nest-mamba-env`` in your home directory or where you cloned the NEST repository.
 
 .. code-block:: sh
 
-    mamba env create -f nest-simulator/environment.yml --p <path/to/mamba/env>
+    mamba env create -f nest-simulator/environment.yml -p <path/to/mamba/env>
     mamba activate <path/to/mamba/env>
 
 * Create a build directory:
@@ -29,7 +29,7 @@ Install from source in a mamba environment
 
     cd build_dir
 
-* Configure NEST. Add the cmake option ``-CDMAKE_INSTALL_PREFIX:PATH=$CONDA_PREFIX`` to link nest to your active mamba environment.
+* Configure the NEST build using the following CMake command. We add the CMake option ``-CDMAKE_INSTALL_PREFIX:PATH=$CONDA_PREFIX`` to link NEST to the active mamba environment.
   You may need additional ``cmake`` options (see :ref:`cmake_options`).
 
 .. code-block:: sh

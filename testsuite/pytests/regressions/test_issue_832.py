@@ -105,7 +105,7 @@ def test_issue_832_gap_junction_marker_stability():
     nest.CopyModel("static_synapse", "static1")
     nest.CopyModel("static_synapse", "static2")
 
-    nest.SetStatus(neuron1, {"I_e": 200.0})
+    neuron1.set({"I_e": 200.0})
 
     voltmeter = nest.Create("voltmeter", params={"time_in_steps": True, "interval": nest.resolution})
 
@@ -140,7 +140,7 @@ def test_issue_832_gap_junction_marker_stability():
 
     nest.Simulate(20.0)
 
-    events = nest.GetStatus(voltmeter, "events")[0]
+    events = voltmeter.get("events")
     times = events["times"]
     voltages = events["V_m"]
 

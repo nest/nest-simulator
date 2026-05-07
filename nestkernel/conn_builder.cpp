@@ -799,11 +799,11 @@ nest::ThirdBernoulliWithPoolBuilder::ThirdBernoulliWithPoolBuilder( const NodeCo
   // PYTEST-NG: Consider cleaner scheme for handling size_t vs long
   long pool_size_tmp = static_cast< long >( pool_size_ );
   conn_spec.update_value( names::pool_size, pool_size_tmp );
-  if ( pool_size_tmp < 1 or third->size() < pool_size_tmp )
+  pool_size_ = static_cast< size_t >( pool_size_tmp );
+  if ( pool_size_ < 1 or third->size() < pool_size_ )
   {
     throw BadProperty( "Pool size 1 ≤ pool_size ≤ size of third-factor population required" );
   }
-  pool_size_ = static_cast< size_t >( pool_size_tmp );
 
   std::string pool_type;
   if ( conn_spec.update_value( names::pool_type, pool_type ) )
@@ -1409,17 +1409,23 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( NodeCollectionPTR sources,
   else
   {
     // Assume indegree is a scalar
-    const long value = conn_spec.get< long >( names::indegree );
-    indegree_ = ParameterPTR( new ConstantParameter( value ) );
+    const long indegree_long = conn_spec.get< long >( names::indegree );
+    indegree_ = ParameterPTR( new ConstantParameter( indegree_long ) );
+
+    if ( indegree_long < 0 )
+    {
+      throw BadProperty( "Indegree cannot be less than zero." );
+    }
 
     // verify that indegree is not larger than source population if multapses are disabled
     if ( not allow_multapses_ )
     {
-      if ( value > n_sources )
+      const size_t indegree_size = static_cast< size_t >( indegree_long );
+      if ( indegree_size > n_sources )
       {
         throw BadProperty( "Indegree cannot be larger than population size." );
       }
-      else if ( value == n_sources and not allow_autapses_ )
+      else if ( indegree_size == n_sources )
       {
         LOG( VerbosityLevel::WARNING,
           "FixedInDegreeBuilder::connect",
@@ -1428,18 +1434,13 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( NodeCollectionPTR sources,
         return;
       }
 
-      if ( value > 0.9 * n_sources )
+      if ( indegree_size > 0.9 * n_sources )
       {
         LOG( VerbosityLevel::WARNING,
           "FixedInDegreeBuilder::connect",
           "Multapses are prohibited and you request more than 90% connectivity. Expect long connecting times!" );
       }
     }  // if (not allow_multapses_ )
-
-    if ( value < 0 )
-    {
-      throw BadProperty( "Indegree cannot be less than zero." );
-    }
   }
 }
 

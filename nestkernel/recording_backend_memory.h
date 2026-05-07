@@ -28,8 +28,10 @@
 
 /* BeginUserDocs: NOINDEX
 
+Short description
++++++++++++++++++
+
 Recording backend `memory` - Store data in main memory
-------------------------------------------------------
 
 Description
 ~~~~~~~~~~~

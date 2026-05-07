@@ -115,8 +115,8 @@ For implementation details see the
     To avoid such unphysiological behavior, you should set a refractory time ``t_ref > 0``.
 
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 The following parameters can be set in the status Dictionary.
 
 ======== ======= =======================================

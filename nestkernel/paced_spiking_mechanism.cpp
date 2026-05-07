@@ -34,7 +34,7 @@ namespace nest
 
 PacedSpikingMechanism::PacedSpikingMechanism()
   : paced_spiking_( false )
-  , paced_spiking_offset_( 0.0 )
+  , paced_spiking_offset_( 100.0 )
   , paced_spiking_interval_( 100.0 )
 {
 }
@@ -73,9 +73,9 @@ PacedSpikingMechanism::set_status( const Dictionary& d )
   d.update_value( names::paced_spiking_offset, paced_spiking_offset_ );
   d.update_value( names::paced_spiking_interval, paced_spiking_interval_ );
 
-  if ( paced_spiking_offset_ < 0.0 )
+  if ( paced_spiking_offset_ <= 0.0 )
   {
-    throw BadProperty( "Temporal offset of paced spiking paced_spiking_offset ≥ 0 required." );
+    throw BadProperty( "Temporal offset of paced spiking paced_spiking_offset > 0 required." );
   }
 
   if ( paced_spiking_interval_ <= 0.0 )

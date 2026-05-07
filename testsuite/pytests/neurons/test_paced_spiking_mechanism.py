@@ -28,7 +28,14 @@ import numpy as np
 import pytest
 
 
-def test_paced_spiking_mechanism():
+@pytest.mark.parametrize(
+    "offset,interval",
+    [
+        (1.0, 10.0),
+        (11.0, 10.0),
+    ],
+)
+def test_paced_spiking_mechanism(offset, interval):
     """
     Test the paced spiking mechanism, which causes a neuron to spike at
     defined intervals with a specified initial offset, ignoring spikes
@@ -36,10 +43,9 @@ def test_paced_spiking_mechanism():
     """
 
     duration_sim = 50.0  # ms
-    interval = 10.0  # ms
-    offset = 5.0  # ms
 
-    spikes_target = np.arange(offset, duration_sim + offset, interval)
+    spikes_target = np.arange(offset, duration_sim + 1.0, interval)
+    spikes_target = spikes_target[spikes_target != 0.0]
 
     nest.verbosity = nest.VerbosityLevel.WARNING
     nest.ResetKernel()

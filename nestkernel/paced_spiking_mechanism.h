@@ -72,8 +72,14 @@ public:
       return emit_dynamic_spike;
     }
 
-    ++steps_until_paced_spike_;
-    return steps_until_paced_spike_ % paced_spiking_interval_steps_ == 0;
+    --steps_until_paced_spike_;
+    const bool emit_paced_spike = steps_until_paced_spike_ == 0;
+    if ( emit_paced_spike )
+    {
+      steps_until_paced_spike_ = paced_spiking_interval_steps_;
+    }
+
+    return emit_paced_spike;
   }
 
   /**

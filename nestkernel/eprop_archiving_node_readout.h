@@ -86,6 +86,8 @@ template < bool hist_shift_required >
 inline void
 EpropArchivingNodeReadout< hist_shift_required >::get_status( Dictionary& d ) const
 {
+  PacedSpikingMechanism::get_status( d );
+
   if constexpr ( not hist_shift_required )
   {
     d[ names::eprop_isi_trace_cutoff ] = eprop_isi_trace_cutoff_;
@@ -96,6 +98,8 @@ template < bool hist_shift_required >
 inline void
 EpropArchivingNodeReadout< hist_shift_required >::set_status( const Dictionary& d )
 {
+  PacedSpikingMechanism::set_status( d );
+
   if constexpr ( not hist_shift_required )
   {
     d.update_value( names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );

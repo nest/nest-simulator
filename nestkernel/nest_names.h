@@ -213,6 +213,9 @@ const std::string file_extension( "file_extension" );
 const std::string filename( "filename" );
 const std::string filenames( "filenames" );
 const std::string flush_event_send_interval( "flush_event_send_interval" );
+const std::string paced_spiking( "paced_spiking" );
+const std::string paced_spiking_offset( "paced_spiking_offset" );
+const std::string paced_spiking_interval( "paced_spiking_interval" );
 const std::string frequency( "frequency" );
 const std::string frozen( "frozen" );
 

@@ -258,6 +258,7 @@ eprop_iaf::pre_run_hook()
   B_.logger_.init();  // ensures initialization in case multimeter connected after Simulate
 
   FlushEventMechanism::pre_run_hook();
+  PacedSpikingMechanism::pre_run_hook();
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
 
@@ -294,7 +295,7 @@ eprop_iaf::update( Time const& origin, const long from, const long to )
 
     S_.surrogate_gradient_ = ( this->*compute_surrogate_gradient_ )( S_.r_, S_.v_m_, P_.V_th_, P_.beta_, P_.gamma_ );
 
-    if ( S_.v_m_ >= P_.V_th_ and S_.r_ == 0 )
+    if ( update_and_check_spike_emission( S_.v_m_ >= P_.V_th_ and S_.r_ == 0 ) )
     {
       SpikeEvent se;
       kernel().event_delivery_manager.send( *this, se, lag );

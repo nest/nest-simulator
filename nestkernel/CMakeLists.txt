@@ -21,6 +21,7 @@ set ( nestkernel_sources
       universal_data_logger.h universal_data_logger_impl.h
       recordables_map.h
       flush_event_mechanism.h flush_event_mechanism.cpp
+      paced_spiking_mechanism.h paced_spiking_mechanism.cpp
       archiving_node.h archiving_node.cpp
       buffer_resize_log.h buffer_resize_log.cpp
       clopath_archiving_node.h clopath_archiving_node.cpp

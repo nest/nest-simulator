@@ -35,6 +35,7 @@ template < typename HistEntryT >
 EpropArchivingNode< HistEntryT >::EpropArchivingNode()
   : Node()
   , FlushEventMechanism()
+  , PacedSpikingMechanism()
   , eprop_indegree_( 0 )
   , eprop_isi_trace_cutoff_( std::numeric_limits< double >::infinity() )
 {
@@ -44,6 +45,7 @@ template < typename HistEntryT >
 EpropArchivingNode< HistEntryT >::EpropArchivingNode( const EpropArchivingNode& n )
   : Node( n )
   , FlushEventMechanism( n )
+  , PacedSpikingMechanism( n )
   , eprop_indegree_( n.eprop_indegree_ )
   , eprop_isi_trace_cutoff_( n.eprop_isi_trace_cutoff_ )
 {

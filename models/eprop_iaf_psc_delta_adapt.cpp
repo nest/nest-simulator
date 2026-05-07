@@ -367,7 +367,7 @@ eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, const lo
     S_.surrogate_gradient_ =
       ( this->*compute_surrogate_gradient_ )( S_.r_, S_.v_m_, S_.v_th_adapt_, P_.beta_, P_.gamma_ );
 
-    if ( emit_spike( S_.v_m_ >= S_.v_th_adapt_ ) )
+    if ( update_and_check_spike_emission( S_.v_m_ >= S_.v_th_adapt_ ) )
     {
       S_.r_ = V_.RefractoryCounts_;
       S_.v_m_ = P_.V_reset_;

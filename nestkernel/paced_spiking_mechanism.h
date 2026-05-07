@@ -62,10 +62,10 @@ public:
   void pre_run_hook();
 
   /**
-   * Checks if a paced spiking is due at the current time.
+   * Updates paced spike scheduling and returns whether a spike should be emitted.
    */
   inline bool
-  emit_spike( bool emit_dynamic_spike )
+  update_and_check_spike_emission( bool emit_dynamic_spike )
   {
     if ( not paced_spiking_ )
     {

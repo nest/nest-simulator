@@ -90,7 +90,6 @@ def help(obj=None, return_text=False):
         (
             "GetStatus() is deprecated and will be removed in a future version of NEST.",
             "Instead of GetStatus(nrns|conns, args), use nrns|conns.get(args).",
-            "For json output, compatibility of results with NEST 3.9 is not ensured.",
         )
     ),
 )
@@ -100,24 +99,25 @@ def GetStatus(nodes_or_conns, keys=None, output=""):
 
     # Operations below ensure that output matches the NEST 3.9 output format
     if keys:
-        result = nodes_or_conns.get(keys, output=output)
+        result = nodes_or_conns.get(keys)
 
-        if output != "json":
-            if isinstance(keys, str):
-                if len(nodes_or_conns) == 1:
-                    result = (result,)
-            else:
-                if len(nodes_or_conns) == 1:
-                    result = (tuple(result.values()),)
-                else:
-                    result = tuple(zip(*result.values()))
-    else:
-        result = nodes_or_conns.get(output=output)
-        if output != "json":
+        if isinstance(keys, str):
             if len(nodes_or_conns) == 1:
                 result = (result,)
+        else:
+            if len(nodes_or_conns) == 1:
+                result = (tuple(result.values()),)
             else:
-                result = tuple({k: v[j] for k, v in result.items()} for j in range(len(nodes_or_conns)))
+                result = tuple(zip(*result.values()))
+    else:
+        result = nodes_or_conns.get(output=output)
+        if len(nodes_or_conns) == 1:
+            result = (result,)
+        else:
+            result = tuple({k: v[j] for k, v in result.items()} for j in range(len(nodes_or_conns)))
+
+    if output == "json":
+        result = to_json(result)
 
     return result
 

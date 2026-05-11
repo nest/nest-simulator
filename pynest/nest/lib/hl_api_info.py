@@ -102,20 +102,22 @@ def GetStatus(nodes_or_conns, keys=None, output=""):
     if keys:
         result = nodes_or_conns.get(keys, output=output)
 
-        if isinstance(keys, str):
-            if len(nodes_or_conns) == 1:
-                result = (result,)
-        else:
-            if len(nodes_or_conns) == 1:
-                result = (tuple(result.values()),)
+        if output != "json":
+            if isinstance(keys, str):
+                if len(nodes_or_conns) == 1:
+                    result = (result,)
             else:
-                result = tuple(zip(*result.values()))
+                if len(nodes_or_conns) == 1:
+                    result = (tuple(result.values()),)
+                else:
+                    result = tuple(zip(*result.values()))
     else:
         result = nodes_or_conns.get(output=output)
-        if len(nodes_or_conns) == 1:
-            result = (result,)
-        else:
-            result = tuple({k: v[j] for k, v in result.items()} for j in range(len(nodes_or_conns)))
+        if output != "json":
+            if len(nodes_or_conns) == 1:
+                result = (result,)
+            else:
+                result = tuple({k: v[j] for k, v in result.items()} for j in range(len(nodes_or_conns)))
 
     return result
 

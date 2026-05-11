@@ -40,7 +40,7 @@ import pytest
 try:
     version = nest.build_info["version"]
     mode = "perform_test"
-except:
+except AttributeError:
     mode = "generate_reference"
 
 

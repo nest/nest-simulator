@@ -110,7 +110,7 @@ def GetStatus(nodes_or_conns, keys=None, output=""):
             else:
                 result = tuple(zip(*result.values()))
     else:
-        result = nodes_or_conns.get(output=output)
+        result = nodes_or_conns.get()
         if len(nodes_or_conns) == 1:
             result = (result,)
         else:

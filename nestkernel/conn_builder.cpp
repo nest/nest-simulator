@@ -1410,12 +1410,12 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( NodeCollectionPTR sources,
   {
     // Assume indegree is a scalar
     const long indegree_long = conn_spec.get< long >( names::indegree );
-    indegree_ = ParameterPTR( new ConstantParameter( indegree_long ) );
-
     if ( indegree_long < 0 )
     {
       throw BadProperty( "Indegree cannot be less than zero." );
     }
+
+    indegree_ = ParameterPTR( new ConstantParameter( indegree_long ) );
 
     // verify that indegree is not larger than source population if multapses are disabled
     if ( not allow_multapses_ )

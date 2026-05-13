@@ -63,21 +63,22 @@ public:
    * Updates spike schedule and returns whether a spike should be emitted.
    */
   inline bool
-  update_and_check_spike_emission( bool emit_dynamic_spike )
+  spike_event_is_due( bool emit_dynamic_spike )
   {
-    if ( not ignore_and_spike_ )
+    if ( ignore_and_spike_ )
+    {
+      --steps_until_spike_;
+      const bool emit_forced_spike = steps_until_spike_ == 0;
+      if ( emit_forced_spike )
+      {
+        steps_until_spike_ = interval_steps_;
+      }
+      return emit_forced_spike;
+    }
+    else
     {
       return emit_dynamic_spike;
     }
-
-    --steps_until_spike_;
-    const bool emit_ignore_and_spike = steps_until_spike_ == 0;
-    if ( emit_ignore_and_spike )
-    {
-      steps_until_spike_ = interval_steps_;
-    }
-
-    return emit_ignore_and_spike;
   }
 
   /**

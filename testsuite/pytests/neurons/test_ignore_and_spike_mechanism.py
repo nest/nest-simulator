@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_paced_spiking_mechanism.py
+# test_ignore_and_spike_mechanism.py
 #
 # This file is part of NEST.
 #
@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Test paced spiking mechanism.
+Test ignore-and-spike mechanism.
 """
 
 import nest
@@ -35,9 +35,9 @@ import pytest
         (11.0, 10.0),
     ],
 )
-def test_paced_spiking_mechanism(offset, interval):
+def test_ignore_and_spike_mechanism(offset, interval):
     """
-    Test the paced spiking mechanism, which causes a neuron to spike at
+    Test the ignore-and-spike mechanism, which causes a neuron to spike at
     defined intervals with a specified initial offset, ignoring spikes
     from its internal dynamics.
     """
@@ -52,9 +52,9 @@ def test_paced_spiking_mechanism(offset, interval):
     nest.resolution = 1.0  # ms
 
     nrn_params = dict(
-        paced_spiking=True,
-        paced_spiking_interval=interval,
-        paced_spiking_offset=offset,
+        ignore_and_spike=True,
+        ignore_and_spike_interval=interval,
+        ignore_and_spike_offset=offset,
     )
 
     sg = nest.Create("spike_generator", dict(spike_times=np.arange(1.0, duration_sim)))

@@ -1,5 +1,5 @@
 /*
- *  paced_spiking_mechanism.h
+ *  ignore_and_spike_mechanism.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef PACED_SPIKING_MECHANISM_H
-#define PACED_SPIKING_MECHANISM_H
+#ifndef IGNORE_AND_SPIKE_MECHANISM_H
+#define IGNORE_AND_SPIKE_MECHANISM_H
 
 // nestkernel
 #include "nest_time.h"
@@ -32,29 +32,27 @@
 namespace nest
 {
 /**
- * @brief Class implementing a paced spiking mechanism for neuron models.
- *
- * This class implements a paced spiking mechanism.
+ * @brief Class implementing an ignore-and-fire mechanism for neuron models.
  */
-class PacedSpikingMechanism
+class IgnoreAndSpikeMechanism
 {
 public:
   /**
    * Default constructor.
    */
-  PacedSpikingMechanism();
+  IgnoreAndSpikeMechanism();
 
   /**
    * Copy constructor.
    *
    * @param n The other object to copy.
    */
-  PacedSpikingMechanism( const PacedSpikingMechanism& n );
+  IgnoreAndSpikeMechanism( const IgnoreAndSpikeMechanism& n );
 
   /**
    * Virtual destructor.
    */
-  virtual ~PacedSpikingMechanism() = default;
+  virtual ~IgnoreAndSpikeMechanism() = default;
 
   /**
    * Re-calculates dependent parameters.
@@ -62,24 +60,24 @@ public:
   void pre_run_hook();
 
   /**
-   * Updates paced spike scheduling and returns whether a spike should be emitted.
+   * Updates spike schedule and returns whether a spike should be emitted.
    */
   inline bool
   update_and_check_spike_emission( bool emit_dynamic_spike )
   {
-    if ( not paced_spiking_ )
+    if ( not ignore_and_spike_ )
     {
       return emit_dynamic_spike;
     }
 
-    --steps_until_paced_spike_;
-    const bool emit_paced_spike = steps_until_paced_spike_ == 0;
-    if ( emit_paced_spike )
+    --ignore_and_spike_steps_until_spike_;
+    const bool emit_ignore_and_spike = ignore_and_spike_steps_until_spike_ == 0;
+    if ( emit_ignore_and_spike )
     {
-      steps_until_paced_spike_ = paced_spiking_interval_steps_;
+      ignore_and_spike_steps_until_spike_ = ignore_and_spike_interval_steps_;
     }
 
-    return emit_paced_spike;
+    return emit_ignore_and_spike;
   }
 
   /**
@@ -92,23 +90,23 @@ public:
    */
   void set_status( const Dictionary& d );
 
-protected:
+private:
   //! If True, the neuron is forced to spike in set intervals.
-  bool paced_spiking_;
+  bool ignore_and_spike_;
 
-  //! Temporal offset of paced spiking (ms).
-  double paced_spiking_offset_;
+  //! Temporal offset of first spike (ms).
+  double ignore_and_spike_offset_;
 
-  //! Interval between two consecutive paced spikes (ms).
-  double paced_spiking_interval_;
+  //! Interval between two consecutive spikes (ms).
+  double ignore_and_spike_interval_;
 
-  //! Interval steps between two consecutive paced spikes.
-  long paced_spiking_interval_steps_;
+  //! Interval steps between two consecutive spikes.
+  long ignore_and_spike_interval_steps_;
 
-  //! Remaining steps until the next paced spike.
-  long steps_until_paced_spike_;
+  //! Remaining steps until the next spike.
+  long ignore_and_spike_steps_until_spike_;
 };
 
 }  // namespace nest
 
-#endif  // PACED_SPIKING_MECHANISM_H
+#endif  // IGNORE_AND_SPIKE_MECHANISM_H

@@ -86,7 +86,7 @@ template < bool hist_shift_required >
 inline void
 EpropArchivingNodeReadout< hist_shift_required >::get_status( Dictionary& d ) const
 {
-  PacedSpikingMechanism::get_status( d );
+  IgnoreAndSpikeMechanism::get_status( d );
 
   if constexpr ( not hist_shift_required )
   {
@@ -98,7 +98,7 @@ template < bool hist_shift_required >
 inline void
 EpropArchivingNodeReadout< hist_shift_required >::set_status( const Dictionary& d )
 {
-  PacedSpikingMechanism::set_status( d );
+  IgnoreAndSpikeMechanism::set_status( d );
 
   if constexpr ( not hist_shift_required )
   {

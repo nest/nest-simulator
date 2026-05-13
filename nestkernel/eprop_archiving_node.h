@@ -26,10 +26,10 @@
 // nestkernel
 #include "flush_event_mechanism.h"
 #include "histentry.h"
+#include "ignore_and_spike_mechanism.h"
 #include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
-#include "paced_spiking_mechanism.h"
 
 namespace nest
 {
@@ -49,7 +49,7 @@ namespace nest
  * @tparam HistEntryT The type of history entry.
  */
 template < typename HistEntryT >
-class EpropArchivingNode : public Node, public FlushEventMechanism, public PacedSpikingMechanism
+class EpropArchivingNode : public Node, public FlushEventMechanism, public IgnoreAndSpikeMechanism
 {
 public:
   /**

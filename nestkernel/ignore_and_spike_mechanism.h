@@ -70,11 +70,11 @@ public:
       return emit_dynamic_spike;
     }
 
-    --ignore_and_spike_steps_until_spike_;
-    const bool emit_ignore_and_spike = ignore_and_spike_steps_until_spike_ == 0;
+    --steps_until_spike_;
+    const bool emit_ignore_and_spike = steps_until_spike_ == 0;
     if ( emit_ignore_and_spike )
     {
-      ignore_and_spike_steps_until_spike_ = ignore_and_spike_interval_steps_;
+      steps_until_spike_ = interval_steps_;
     }
 
     return emit_ignore_and_spike;
@@ -95,16 +95,16 @@ private:
   bool ignore_and_spike_;
 
   //! Temporal offset of first spike (ms).
-  double ignore_and_spike_offset_;
+  double offset_;
 
   //! Interval between two consecutive spikes (ms).
-  double ignore_and_spike_interval_;
+  double interval_;
 
   //! Interval steps between two consecutive spikes.
-  long ignore_and_spike_interval_steps_;
+  long interval_steps_;
 
   //! Remaining steps until the next spike.
-  long ignore_and_spike_steps_until_spike_;
+  long steps_until_spike_;
 };
 
 }  // namespace nest

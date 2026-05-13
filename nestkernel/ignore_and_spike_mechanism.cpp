@@ -34,15 +34,15 @@ namespace nest
 
 IgnoreAndSpikeMechanism::IgnoreAndSpikeMechanism()
   : ignore_and_spike_( false )
-  , ignore_and_spike_offset_( 100.0 )
-  , ignore_and_spike_interval_( 100.0 )
+  , offset_( 100.0 )
+  , interval_( 100.0 )
 {
 }
 
 IgnoreAndSpikeMechanism::IgnoreAndSpikeMechanism( const IgnoreAndSpikeMechanism& n )
   : ignore_and_spike_( n.ignore_and_spike_ )
-  , ignore_and_spike_offset_( n.ignore_and_spike_offset_ )
-  , ignore_and_spike_interval_( n.ignore_and_spike_interval_ )
+  , offset_( n.offset_ )
+  , interval_( n.interval_ )
 {
 }
 
@@ -54,31 +54,31 @@ IgnoreAndSpikeMechanism::pre_run_hook()
     return;
   }
 
-  ignore_and_spike_interval_steps_ = Time( Time::ms( ignore_and_spike_interval_ ) ).get_steps();
-  ignore_and_spike_steps_until_spike_ = Time( Time::ms( ignore_and_spike_offset_ ) ).get_steps();
+  interval_steps_ = Time( Time::ms( interval_ ) ).get_steps();
+  steps_until_spike_ = Time( Time::ms( offset_ ) ).get_steps();
 }
 
 void
 IgnoreAndSpikeMechanism::get_status( Dictionary& d ) const
 {
   d[ names::ignore_and_spike ] = ignore_and_spike_;
-  d[ names::ignore_and_spike_offset ] = ignore_and_spike_offset_;
-  d[ names::ignore_and_spike_interval ] = ignore_and_spike_interval_;
+  d[ names::ignore_and_spike_offset ] = offset_;
+  d[ names::ignore_and_spike_interval ] = interval_;
 }
 
 void
 IgnoreAndSpikeMechanism::set_status( const Dictionary& d )
 {
   d.update_value( names::ignore_and_spike, ignore_and_spike_ );
-  d.update_value( names::ignore_and_spike_offset, ignore_and_spike_offset_ );
-  d.update_value( names::ignore_and_spike_interval, ignore_and_spike_interval_ );
+  d.update_value( names::ignore_and_spike_offset, offset_ );
+  d.update_value( names::ignore_and_spike_interval, interval_ );
 
-  if ( ignore_and_spike_offset_ <= 0.0 )
+  if ( offset_ <= 0.0 )
   {
     throw BadProperty( "Temporal offset of ignore-and-spike mechanism ignore_and_spike_offset > 0 required." );
   }
 
-  if ( ignore_and_spike_interval_ <= 0.0 )
+  if ( interval_ <= 0.0 )
   {
     throw BadProperty(
       "Interval between consecutive spikes in ignore-and-spike mechanism ignore_and_spike_interval > 0 required." );

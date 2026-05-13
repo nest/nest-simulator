@@ -562,7 +562,7 @@ pp_cond_exp_mc_urbanczik::handles_test_event( SpikeEvent&, size_t receptor_type 
 {
   if ( receptor_type < MIN_SPIKE_RECEPTOR or receptor_type >= SUP_SPIKE_RECEPTOR )
   {
-    if ( receptor_type < 0 or receptor_type >= SUP_CURR_RECEPTOR )
+    if ( receptor_type >= SUP_CURR_RECEPTOR )
     {
       throw UnknownReceptorType( receptor_type, get_name() );
     }

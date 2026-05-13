@@ -142,7 +142,7 @@ EpropArchivingNodeRecurrent< hist_shift_required >::compute_arctan_surrogate_gra
     return 0.0;
   }
 
-  return gamma / M_PI * ( 1.0 / ( 1.0 + std::pow( beta * M_PI * ( v_m - v_th ), 2 ) ) );
+  return gamma / ( 1.0 + std::pow( beta * ( v_m - v_th ), 2 ) );
 }
 
 template < bool hist_shift_required >

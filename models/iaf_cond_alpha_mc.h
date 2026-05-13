@@ -503,7 +503,7 @@ iaf_cond_alpha_mc::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type < MIN_CURR_RECEPTOR or receptor_type >= SUP_CURR_RECEPTOR )
   {
-    if ( receptor_type >= 0 and receptor_type < MIN_CURR_RECEPTOR )
+    if ( receptor_type < MIN_CURR_RECEPTOR )
     {
       throw IncompatibleReceptorType( receptor_type, get_name(), "CurrentEvent" );
     }

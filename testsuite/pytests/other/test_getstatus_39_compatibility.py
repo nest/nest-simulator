@@ -80,8 +80,6 @@ def convert_to_lists(obj):
     Convert to pure Python types to allow json serialization.
 
     Skip values that may change for good reason, currently only model_id.
-
-    Created based on suggestions by Claude Sonnet 4.6.
     """
 
     if isinstance(obj, np.ndarray):

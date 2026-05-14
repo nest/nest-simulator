@@ -36,7 +36,6 @@ repos:
           # note that these differ from arguments in .github/workflows/nestbuildmatrix.yml
           # IF YOU READ THIS: recheck for consistency with `find . -iname "*.sh" -o -iname "*.sh.in"`
           "build_support/check_forbidden_types.sh",
-          "build_support/format_all_c_c++_files.sh",
           "build_support/install_csa-libneurosim.sh",
           "build_support/install_music.sh",
           "build_support/install_sionlib.sh",

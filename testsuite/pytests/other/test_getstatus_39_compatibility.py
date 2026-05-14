@@ -95,8 +95,6 @@ def convert_to_lists(obj):
 def remove_keys(obj):
     """
     Skip values that may change for good reason, currently only model_id.
-
-    Created based on suggestions by Claude Sonnet 4.6.
     """
 
     skip_keys = ["model_id"]

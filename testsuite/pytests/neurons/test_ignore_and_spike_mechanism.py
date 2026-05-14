@@ -31,6 +31,7 @@ import pytest
 
 SIM_DURATION = 10.0
 RESOLUTION = 1.0
+NEURON_MODEL = "iaf_psc_delta"
 
 
 @pytest.fixture(autouse=True)
@@ -47,9 +48,10 @@ def reset_kernel():
         dict(ignore_and_spike=True, ignore_and_spike_offset=2.0, ignore_and_spike_interval=0.0),
     ],
 )
-def test_invalid_ignore_and_spike_parameters(params):
+@pytest.mark.parametrize("neuron_model", ["eprop_iaf", "iaf_psc_delta"])
+def test_invalid_ignore_and_spike_parameters(params, neuron_model):
     with pytest.raises(Exception):
-        nest.Create("eprop_iaf", params)
+        nest.Create(neuron_model, params)
 
 
 def expected_times(start_time, stop_time, interval):
@@ -61,12 +63,12 @@ def append_expected_events(events_expected, sender, times):
     events_expected["times"].extend(times)
 
 
-def simulate_and_update_expected(updated_nodes, events_expected, last_spike_times):
+def simulate_and_update_expected(updated_nodes, events_expected, last_spike_times, neuron_model):
     start_time = nest.biological_time
     stop_time = start_time + SIM_DURATION
     updated_ids = [node.global_id for node in updated_nodes]
 
-    for node in nest.GetNodes(dict(model="eprop_iaf")):
+    for node in nest.GetNodes(dict(model=neuron_model)):
         if node.global_id in updated_ids or node.global_id not in last_spike_times:
             first_spike = start_time + node.ignore_and_spike_offset
         else:
@@ -86,32 +88,33 @@ def sorted_events(events):
     return dict(senders=np.asarray(events["senders"])[order], times=np.asarray(events["times"])[order])
 
 
-def test_ignore_and_spike_generates_expected_spikes():
+@pytest.mark.parametrize("neuron_model", ["eprop_iaf", "iaf_psc_delta"])
+def test_ignore_and_spike_generates_expected_spikes(neuron_model):
     spike_recorder = nest.Create("spike_recorder")
     events_expected = dict(senders=[], times=[])
     last_spike_times = dict()
 
     nrn = nest.Create(
-        "eprop_iaf", dict(ignore_and_spike=True, ignore_and_spike_offset=1.0, ignore_and_spike_interval=2.0)
+        neuron_model, dict(ignore_and_spike=True, ignore_and_spike_offset=1.0, ignore_and_spike_interval=2.0)
     )
     nest.Connect(nrn, spike_recorder)
 
     nrn.set(ignore_and_spike_offset=2.0, ignore_and_spike_interval=3.0)
-    simulate_and_update_expected([nrn], events_expected, last_spike_times)
+    simulate_and_update_expected([nrn], events_expected, last_spike_times, neuron_model)
 
-    simulate_and_update_expected([], events_expected, last_spike_times)
+    simulate_and_update_expected([], events_expected, last_spike_times, neuron_model)
 
     nrn.set(ignore_and_spike_offset=2.0, ignore_and_spike_interval=4.0)
-    simulate_and_update_expected([nrn], events_expected, last_spike_times)
+    simulate_and_update_expected([nrn], events_expected, last_spike_times, neuron_model)
 
     nrn1 = nest.Create(
-        "eprop_iaf", dict(ignore_and_spike=True, ignore_and_spike_offset=2.0, ignore_and_spike_interval=3.0)
+        neuron_model, dict(ignore_and_spike=True, ignore_and_spike_offset=2.0, ignore_and_spike_interval=3.0)
     )
     nest.Connect(nrn1, spike_recorder)
-    simulate_and_update_expected([nrn1], events_expected, last_spike_times)
+    simulate_and_update_expected([nrn1], events_expected, last_spike_times, neuron_model)
 
     nrn1.set(ignore_and_spike_offset=4.0, ignore_and_spike_interval=20.0)
-    simulate_and_update_expected([nrn1], events_expected, last_spike_times)
+    simulate_and_update_expected([nrn1], events_expected, last_spike_times, neuron_model)
 
     events_simulated = sorted_events(spike_recorder.get("events"))
     events_expected = sorted_events(events_expected)

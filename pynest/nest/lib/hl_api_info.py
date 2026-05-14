@@ -97,13 +97,29 @@ def GetStatus(nodes_or_conns, keys=None, output=""):
     if len(nodes_or_conns) == 0:
         return "[]" if output == "json" else tuple()
 
+    # Operations below ensure that output matches the NEST 3.9 output format
     if keys:
-        result = nodes_or_conns.get(keys, output=output)
-    else:
-        result = nodes_or_conns.get(output=output)
+        result = nodes_or_conns.get(keys)
 
-    # ensure consistency with SLI-based NEST
-    return result if len(nodes_or_conns) > 1 else (result,)
+        if isinstance(keys, str):
+            if len(nodes_or_conns) == 1:
+                result = (result,)
+        else:
+            if len(nodes_or_conns) == 1:
+                result = (tuple(result.values()),)
+            else:
+                result = tuple(zip(*result.values()))
+    else:
+        result = nodes_or_conns.get()
+        if len(nodes_or_conns) == 1:
+            result = (result,)
+        else:
+            result = tuple({k: v[j] for k, v in result.items()} for j in range(len(nodes_or_conns)))
+
+    if output == "json":
+        result = to_json(result)
+
+    return result
 
 
 @deprecated(

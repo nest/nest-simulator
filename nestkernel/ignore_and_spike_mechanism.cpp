@@ -34,9 +34,11 @@ namespace nest
 
 IgnoreAndSpikeMechanism::IgnoreAndSpikeMechanism()
   : ignore_and_spike_( false )
-  , offset_( 100.0 )
+  , offset_( 1.0 )
   , interval_( 100.0 )
 {
+  initialize_offset();
+  initialize_interval();
 }
 
 IgnoreAndSpikeMechanism::IgnoreAndSpikeMechanism( const IgnoreAndSpikeMechanism& n )
@@ -44,18 +46,20 @@ IgnoreAndSpikeMechanism::IgnoreAndSpikeMechanism( const IgnoreAndSpikeMechanism&
   , offset_( n.offset_ )
   , interval_( n.interval_ )
 {
+  initialize_offset();
+  initialize_interval();
 }
 
 void
-IgnoreAndSpikeMechanism::pre_run_hook()
+IgnoreAndSpikeMechanism::initialize_offset()
 {
-  if ( not ignore_and_spike_ )
-  {
-    return;
-  }
-
-  interval_steps_ = Time( Time::ms( interval_ ) ).get_steps();
   steps_until_spike_ = Time( Time::ms( offset_ ) ).get_steps();
+}
+
+void
+IgnoreAndSpikeMechanism::initialize_interval()
+{
+  interval_steps_ = Time( Time::ms( interval_ ) ).get_steps();
 }
 
 void
@@ -70,8 +74,16 @@ void
 IgnoreAndSpikeMechanism::set_status( const Dictionary& d )
 {
   d.update_value( names::ignore_and_spike, ignore_and_spike_ );
-  d.update_value( names::ignore_and_spike_offset, offset_ );
-  d.update_value( names::ignore_and_spike_interval, interval_ );
+
+  if ( d.update_value( names::ignore_and_spike_offset, offset_ ) )
+  {
+    initialize_offset();
+  }
+
+  if ( d.update_value( names::ignore_and_spike_interval, interval_ ) )
+  {
+    initialize_interval();
+  }
 
   if ( offset_ <= 0.0 )
   {

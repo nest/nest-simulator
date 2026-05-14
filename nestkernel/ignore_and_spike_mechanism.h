@@ -55,11 +55,6 @@ public:
   virtual ~IgnoreAndSpikeMechanism() = default;
 
   /**
-   * Re-calculates dependent parameters.
-   */
-  void pre_run_hook();
-
-  /**
    * Updates spike schedule and returns whether a spike should be emitted.
    */
   inline bool
@@ -92,6 +87,16 @@ public:
   void set_status( const Dictionary& d );
 
 private:
+  /**
+   * Initialize variables dependent on offset.
+   */
+  void initialize_offset();
+
+  /**
+   * Initialize variables dependent on interval.
+   */
+  void initialize_interval();
+
   //! If True, the neuron is forced to spike in set intervals.
   bool ignore_and_spike_;
 

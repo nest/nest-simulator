@@ -132,10 +132,8 @@ SPManager::set_status( const DictionaryDatum& d )
   }
 
   // Configure synapses model updated during the simulation.
-  Token synmodel;
   DictionaryDatum syn_specs;
   DictionaryDatum syn_spec;
-  DictionaryDatum conn_spec = DictionaryDatum( new Dictionary() );
   NodeCollectionPTR sources( new NodeCollectionPrimitive() );
   NodeCollectionPTR targets( new NodeCollectionPrimitive() );
 
@@ -148,6 +146,7 @@ SPManager::set_status( const DictionaryDatum& d )
   updateValue< DictionaryDatum >( d, names::structural_plasticity_synapses, syn_specs );
   for ( Dictionary::const_iterator i = syn_specs->begin(); i != syn_specs->end(); ++i )
   {
+    DictionaryDatum conn_spec = DictionaryDatum( new Dictionary() );
     syn_spec = getValue< DictionaryDatum >( syn_specs, i->first );
     if ( syn_spec->known( names::allow_autapses ) )
     {
@@ -155,7 +154,12 @@ SPManager::set_status( const DictionaryDatum& d )
     }
     if ( syn_spec->known( names::allow_multapses ) )
     {
-      def< bool >( conn_spec, names::allow_multapses, getValue< bool >( syn_spec, names::allow_multapses ) );
+      const bool allow_multapses = getValue< bool >( syn_spec, names::allow_multapses );
+      if ( not allow_multapses )
+      {
+        throw NotImplemented( "Structural plasticity currently does not support allow_multapses=false." );
+      }
+      def< bool >( conn_spec, names::allow_multapses, allow_multapses );
     }
 
     // We use a ConnBuilder with dummy values to check the synapse parameters

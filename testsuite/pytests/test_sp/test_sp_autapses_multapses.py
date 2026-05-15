@@ -20,14 +20,13 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-from pprint import pprint
 
 import nest
 
 
 class TestStructuralPlasticityAutapses(unittest.TestCase):
     def test_autapses(self):
-        """Test if allow_autoapses can be set on structural plasticity synapses."""
+        """Test if allow_autapses can be set on structural plasticity synapses."""
 
         nest.ResetKernel()
         nest.CopyModel("static_synapse", "synapse_ex")
@@ -45,22 +44,22 @@ class TestStructuralPlasticityAutapses(unittest.TestCase):
         assert not nest.structural_plasticity_synapses["synapse_ex"]["allow_autapses"]
 
     def test_multapses(self):
-        """Test if allow_multapses can be set on structural plasticity synapses."""
+        """Test if allow_multapses=False is rejected for structural plasticity synapses."""
 
         nest.ResetKernel()
         nest.CopyModel("static_synapse", "synapse_ex")
         nest.SetDefaults("synapse_ex", {"weight": 1, "delay": 1.0})
-        nest.structural_plasticity_synapses = {
-            "synapse_ex": {
-                "synapse_model": "synapse_ex",
-                "post_synaptic_element": "Den_ex",
-                "pre_synaptic_element": "Axon_ex",
-                "allow_multapses": False,
-            },
-        }
+        with self.assertRaises(nest.kernel.NESTErrors.NotImplemented) as context:
+            nest.structural_plasticity_synapses = {
+                "synapse_ex": {
+                    "synapse_model": "synapse_ex",
+                    "post_synaptic_element": "Den_ex",
+                    "pre_synaptic_element": "Axon_ex",
+                    "allow_multapses": False,
+                },
+            }
 
-        assert nest.structural_plasticity_synapses["synapse_ex"]["allow_autapses"]  # the default
-        assert not nest.structural_plasticity_synapses["synapse_ex"]["allow_multapses"]
+        self.assertIn("allow_multapses=false", str(context.exception))
 
 
 def suite():

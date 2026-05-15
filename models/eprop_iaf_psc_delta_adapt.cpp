@@ -82,9 +82,9 @@ eprop_iaf_psc_delta_adapt::Parameters_::Parameters_()
   , adapt_tau_( 10.0 )
   , c_reg_( 0.0 )
   , f_target_( 0.01 )
-  , beta_( 1.0 )
-  , gamma_( 0.3 )
   , surrogate_gradient_function_( "piecewise_linear" )
+  , surrogate_gradient_height_( 0.3 )
+  , surrogate_gradient_width_( 1.0 )
   , kappa_( 0.97 )
   , kappa_reg_( 0.97 )
 {
@@ -133,9 +133,9 @@ eprop_iaf_psc_delta_adapt::Parameters_::get( Dictionary& d ) const
   d[ names::adapt_tau ] = adapt_tau_;
   d[ names::c_reg ] = c_reg_;
   d[ names::f_target ] = f_target_;
-  d[ names::beta ] = beta_;
-  d[ names::gamma ] = gamma_;
   d[ names::surrogate_gradient_function ] = surrogate_gradient_function_;
+  d[ names::surrogate_gradient_height ] = surrogate_gradient_height_;
+  d[ names::surrogate_gradient_width ] = surrogate_gradient_width_;
   d[ names::kappa ] = kappa_;
   d[ names::kappa_reg ] = kappa_reg_;
 }
@@ -166,16 +166,14 @@ eprop_iaf_psc_delta_adapt::Parameters_::set( const Dictionary& d, Node* node )
     f_target_ /= 1000.0;  // convert from spikes/s to spikes/ms
   }
 
-  update_value_param( d, names::beta, beta_, node );
-  update_value_param( d, names::gamma, gamma_, node );
-
   if ( update_value_param( d, names::surrogate_gradient_function, surrogate_gradient_function_, node ) )
   {
     eprop_iaf_psc_delta_adapt* nrn = dynamic_cast< eprop_iaf_psc_delta_adapt* >( node );
     assert( nrn );
     nrn->compute_surrogate_gradient_ = nrn->find_surrogate_gradient( surrogate_gradient_function_ );
   }
-
+  update_value_param( d, names::surrogate_gradient_width, surrogate_gradient_width_, node );
+  update_value_param( d, names::surrogate_gradient_height, surrogate_gradient_height_, node );
   update_value_param( d, names::kappa, kappa_, node );
   update_value_param( d, names::kappa_reg, kappa_reg_, node );
 
@@ -239,6 +237,15 @@ eprop_iaf_psc_delta_adapt::Parameters_::set( const Dictionary& d, Node* node )
     throw BadProperty( "Firing rate low-pass filter for regularization kappa_reg from range [0, 1] required." );
   }
 
+  if ( surrogate_gradient_height_ <= 0.0 )
+  {
+    throw BadProperty( "Surrogate gradient height surrogate_gradient_height > 0 required." );
+  }
+
+  if ( surrogate_gradient_width_ <= 0.0 )
+  {
+    throw BadProperty( "Surrogate gradient width surrogate_gradient_width > 0 required." );
+  }
   return delta_EL;
 }
 
@@ -363,8 +370,8 @@ eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, const lo
 
     S_.z_ = 0.0;
 
-    S_.surrogate_gradient_ =
-      ( this->*compute_surrogate_gradient_ )( S_.r_, S_.v_m_, S_.v_th_adapt_, P_.beta_, P_.gamma_ );
+    S_.surrogate_gradient_ = ( this->*compute_surrogate_gradient_ )(
+      S_.r_, S_.v_m_, S_.v_th_adapt_, P_.surrogate_gradient_height_, P_.surrogate_gradient_width_ );
 
     if ( S_.v_m_ >= S_.v_th_adapt_ )
     {

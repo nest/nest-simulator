@@ -75,10 +75,10 @@ eprop_iaf_adapt::Parameters_::Parameters_()
   , c_reg_( 0.0 )
   , E_L_( -70.0 )
   , f_target_( 0.01 )
-  , beta_( 1.0 )
-  , gamma_( 0.3 )
   , I_e_( 0.0 )
   , surrogate_gradient_function_( "piecewise_linear" )
+  , surrogate_gradient_height_( 0.3 )
+  , surrogate_gradient_width_( 1.0 )
   , t_ref_( 2.0 )
   , tau_m_( 10.0 )
   , V_min_( -std::numeric_limits< double >::max() )
@@ -124,10 +124,10 @@ eprop_iaf_adapt::Parameters_::get( Dictionary& d ) const
   d[ names::c_reg ] = c_reg_;
   d[ names::E_L ] = E_L_;
   d[ names::f_target ] = f_target_;
-  d[ names::beta ] = beta_;
-  d[ names::gamma ] = gamma_;
   d[ names::I_e ] = I_e_;
   d[ names::surrogate_gradient_function ] = surrogate_gradient_function_;
+  d[ names::surrogate_gradient_height ] = surrogate_gradient_height_;
+  d[ names::surrogate_gradient_width ] = surrogate_gradient_width_;
   d[ names::t_ref ] = t_ref_;
   d[ names::tau_m ] = tau_m_;
   d[ names::V_min ] = V_min_ + E_L_;
@@ -157,8 +157,6 @@ eprop_iaf_adapt::Parameters_::set( const Dictionary& d, Node* node )
     f_target_ /= 1000.0;  // convert from spikes/s to spikes/ms
   }
 
-  update_value_param( d, names::beta, beta_, node );
-  update_value_param( d, names::gamma, gamma_, node );
   update_value_param( d, names::I_e, I_e_, node );
 
   if ( update_value_param( d, names::surrogate_gradient_function, surrogate_gradient_function_, node ) )
@@ -167,6 +165,8 @@ eprop_iaf_adapt::Parameters_::set( const Dictionary& d, Node* node )
     assert( nrn );
     nrn->compute_surrogate_gradient_ = nrn->find_surrogate_gradient( surrogate_gradient_function_ );
   }
+  update_value_param( d, names::surrogate_gradient_width, surrogate_gradient_width_, node );
+  update_value_param( d, names::surrogate_gradient_height, surrogate_gradient_height_, node );
 
   update_value_param( d, names::t_ref, t_ref_, node );
   update_value_param( d, names::tau_m, tau_m_, node );
@@ -221,6 +221,16 @@ eprop_iaf_adapt::Parameters_::set( const Dictionary& d, Node* node )
   if ( kappa_reg_ < 0.0 or kappa_reg_ > 1.0 )
   {
     throw BadProperty( "Firing rate low-pass filter for regularization kappa_reg from range [0, 1] required." );
+  }
+
+  if ( surrogate_gradient_height_ <= 0.0 )
+  {
+    throw BadProperty( "Surrogate gradient height surrogate_gradient_height > 0 required." );
+  }
+
+  if ( surrogate_gradient_width_ <= 0.0 )
+  {
+    throw BadProperty( "Surrogate gradient width surrogate_gradient_width > 0 required." );
   }
   return delta_EL;
 }
@@ -330,8 +340,8 @@ eprop_iaf_adapt::update( Time const& origin, const long from, const long to )
 
     S_.z_ = 0.0;
 
-    S_.surrogate_gradient_ =
-      ( this->*compute_surrogate_gradient_ )( S_.r_, S_.v_m_, S_.v_th_adapt_, P_.beta_, P_.gamma_ );
+    S_.surrogate_gradient_ = ( this->*compute_surrogate_gradient_ )(
+      S_.r_, S_.v_m_, S_.v_th_adapt_, P_.surrogate_gradient_height_, P_.surrogate_gradient_width_ );
 
     if ( S_.v_m_ >= S_.v_th_adapt_ and S_.r_ == 0 )
     {

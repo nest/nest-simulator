@@ -943,6 +943,16 @@ nest::SPManager::enable_structural_plasticity( bool use_gaussian_kernel,
       "Structural plasticity can not be enabled if use_compressed_spikes "
       "has been set to false." );
   }
+  if ( use_gaussian_kernel and gaussian_kernel_sigma <= 0.0 )
+  {
+    throw BadProperty( "When use_gaussian_kernel is true, gaussian_kernel_sigma must be > 0." );
+  }
+
+  if ( max_distance <= 0.0 )
+  {
+    throw BadProperty( "max_distance must be > 0 or infinity." );
+  }
+
   structural_plasticity_use_gaussian_kernel_ = use_gaussian_kernel;
   structural_plasticity_gaussian_kernel_sigma_ = gaussian_kernel_sigma;
   structural_plasticity_enabled_ = true;

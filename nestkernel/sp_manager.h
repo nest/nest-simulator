@@ -274,12 +274,6 @@ private:
   double structural_plasticity_gaussian_kernel_sigma_;
 
   /**
-   * List of precomputed probabilities for neuron connections, indexed
-   * by neuron pair indices for efficient lookup.
-   */
-  std::vector< double > probability_list;
-
-  /**
    * Maximum allowed Euclidean distance between pre- and post-neurons.
    */
   double structural_plasticity_max_distance_;

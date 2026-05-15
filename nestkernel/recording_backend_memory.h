@@ -23,8 +23,14 @@
 #ifndef RECORDING_BACKEND_MEMORY_H
 #define RECORDING_BACKEND_MEMORY_H
 
+#include <map>
+#include <string>
+#include <vector>
+
 // Includes from nestkernel:
 #include "recording_backend.h"
+
+class Dictionary;
 
 /* BeginUserDocs: NOINDEX
 
@@ -93,6 +99,8 @@ EndUserDocs */
 
 namespace nest
 {
+class Event;
+class RecordingDevice;
 
 /**
  * Memory specialization of the RecordingBackend interface.

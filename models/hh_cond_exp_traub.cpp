@@ -23,20 +23,22 @@
 
 #include "hh_cond_exp_traub.h"
 
-#ifdef HAVE_GSL
+#include <assert.h>
+#include <cmath>
 
-// C++ includes:
-#include <cstdio>
+#include "event_delivery_manager.h"
+#include "simulation_manager.h"
+
+#ifdef HAVE_GSL
 
 // External includes:
 #include <gsl/gsl_errno.h>
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
-
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
@@ -52,8 +54,7 @@ register_hh_cond_exp_traub( const std::string& name )
   register_node_model< hh_cond_exp_traub >( name );
 }
 
-// Override the create() method with one call to RecordablesMap::insert_()
-// for each quantity to be recorded.
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< hh_cond_exp_traub >::create()
@@ -387,7 +388,6 @@ nest::hh_cond_exp_traub::update( Time const& origin, const long from, const long
 {
   for ( long lag = from; lag < to; ++lag )
   {
-
     double tt = 0.0;  // it's all relative!
     V_.U_old_ = S_.y_[ State_::V_M ];
 
@@ -425,7 +425,7 @@ nest::hh_cond_exp_traub::update( Time const& origin, const long from, const long
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
       SpikeEvent se;
-      kernel().event_delivery_manager.send( *this, se, lag );
+      kernel::manager< EventDeliveryManager >.send( *this, se, lag );
     }
 
     // set new input current
@@ -443,14 +443,14 @@ nest::hh_cond_exp_traub::handle( SpikeEvent& e )
 
   if ( e.get_weight() > 0.0 )
   {
-    B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
   else
   {
     // add with negative weight, ie positive value, since we are changing a
     // conductance
-    B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() );
   }
 }
@@ -464,7 +464,7 @@ nest::hh_cond_exp_traub::handle( CurrentEvent& e )
   const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ), w * c );
 }
 
 void

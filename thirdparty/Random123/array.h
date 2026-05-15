@@ -40,7 +40,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define CXXMETHODS_REQUIRING_STL
 #else
 
-#include <stddef.h>
 #include <algorithm>
 #include <stdexcept>
 #include <iterator>

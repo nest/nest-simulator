@@ -28,11 +28,12 @@
 
 // External includes:
 #include <neurosim/connection_generator.h>
-
 // C++ includes:
 #include <map>
 #include <vector>
 
+// Includes from libnestutil:
+#include "dictionary.h"
 // Includes from nestkernel:
 #include "conn_builder.h"
 

@@ -23,19 +23,18 @@
 #ifndef COMMON_SYNAPSE_PROPERTIES_H
 #define COMMON_SYNAPSE_PROPERTIES_H
 
-// Includes from nestkernel:
-#include "connector_model.h"
-#include "nest_types.h"
-#include "node.h"
+// Includes from libnestutil:
+#include "dictionary.h"
 
+class Dictionary;
 
 namespace nest
 {
 
 // forward declarations
 class weight_recorder;
-class ConnectorModel;
 class TimeConverter;
+class ConnectorModel;
 
 /**
  * Class containing the common properties for all connections of a certain type.
@@ -87,18 +86,6 @@ public:
 private:
   weight_recorder* weight_recorder_;
 };
-
-inline long
-CommonSynapseProperties::get_vt_node_id() const
-{
-  return -1;
-}
-
-inline weight_recorder*
-CommonSynapseProperties::get_weight_recorder() const
-{
-  return weight_recorder_;
-}
 
 }  // of namespace nest
 

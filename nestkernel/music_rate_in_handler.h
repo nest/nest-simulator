@@ -28,6 +28,20 @@
 
 #ifdef HAVE_MUSIC
 
+#include <string>
+#include <vector>
+
+#include "nest_time.h"
+
+namespace MUSIC
+{
+class ContInputPort;
+}  // namespace MUSIC
+namespace nest
+{
+class Node;
+}  // namespace nest
+
 // C++ includes:
 #include <music.hh>
 #include <queue>

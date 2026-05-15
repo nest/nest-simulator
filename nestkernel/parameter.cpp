@@ -20,14 +20,24 @@
  *
  */
 
+#include <algorithm>
+#include <assert.h>
 #include <cmath>
+#include <string>
 
+#include "compose.hpp"
+#include "dictionary.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "layer.h"
+#include "nest_names.h"
 #include "node.h"
 #include "node_collection.h"
-#include "spatial.h"
-#include "vp_manager_impl.h"
-
+#include "node_manager.h"
+#include "numerics.h"
 #include "parameter.h"
+#include "spatial.h"
+#include "vp_manager.h"
 
 
 namespace nest
@@ -91,14 +101,15 @@ NormalParameter::NormalParameter( const Dictionary& d )
   normal_distribution::param_type param( mean_, std_ );
   dist.param( param );
   assert( normal_dists_.size() == 0 );
-  normal_dists_.resize( kernel().vp_manager.get_num_threads(), dist );
+  normal_dists_.resize( kernel::manager< VPManager >.get_num_threads(), dist );
 }
 
 double
 NormalParameter::value( RngPtr rng, Node* node )
 {
-  const auto tid = node ? kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( node->get_node_id() ) )
-                        : kernel().vp_manager.get_thread_id();
+  const auto tid = node
+    ? kernel::manager< VPManager >.vp_to_thread( kernel::manager< VPManager >.node_id_to_vp( node->get_node_id() ) )
+    : kernel::manager< VPManager >.get_thread_id();
   return normal_dists_[ tid ]( rng );
 }
 
@@ -117,14 +128,15 @@ LognormalParameter::LognormalParameter( const Dictionary& d )
   const lognormal_distribution::param_type param( mean_, std_ );
   dist.param( param );
   assert( lognormal_dists_.size() == 0 );
-  lognormal_dists_.resize( kernel().vp_manager.get_num_threads(), dist );
+  lognormal_dists_.resize( kernel::manager< VPManager >.get_num_threads(), dist );
 }
 
 double
 LognormalParameter::value( RngPtr rng, Node* node )
 {
-  const auto tid = node ? kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( node->get_node_id() ) )
-                        : kernel().vp_manager.get_thread_id();
+  const auto tid = node
+    ? kernel::manager< VPManager >.vp_to_thread( kernel::manager< VPManager >.node_id_to_vp( node->get_node_id() ) )
+    : kernel::manager< VPManager >.get_thread_id();
   return lognormal_dists_[ tid ]( rng );
 }
 
@@ -136,7 +148,7 @@ NodePosParameter::get_node_pos_( Node* node ) const
   {
     throw KernelException( "NodePosParameter: not node" );
   }
-  NodeCollectionPTR nc = kernel().node_manager.node_id_to_node_collection( node );
+  NodeCollectionPTR nc = kernel::manager< NodeManager >.node_id_to_node_collection( node );
   if ( not nc.get() )
   {
     throw KernelException( "NodePosParameter: not nc" );
@@ -165,6 +177,17 @@ NodePosParameter::get_node_pos_( Node* node ) const
       "dimensions for the node." );
   }
   return pos[ dimension_ ];
+}
+
+SpatialDistanceParameter::SpatialDistanceParameter( const Dictionary& d )
+  : Parameter( true )
+  , dimension_( 0 )
+{
+  d.update_integer_value( names::dimension, dimension_ );
+  if ( dimension_ < 0 )
+  {
+    throw BadParameterValue( "Spatial distance parameter dimension cannot be negative." );
+  }
 }
 
 double
@@ -199,6 +222,20 @@ SpatialDistanceParameter::value( RngPtr,
   }
 }
 
+ProductParameter::ProductParameter( const ParameterPTR m1, const ParameterPTR m2 )
+  : Parameter( m1->is_spatial() or m2->is_spatial(), m1->returns_int_only() and m2->returns_int_only() )
+  , parameter1_( m1 )
+  , parameter2_( m2 )
+{
+}
+
+ProductParameter::ProductParameter( const ProductParameter& p )
+  : Parameter( p )
+  , parameter1_( p.parameter1_ )
+  , parameter2_( p.parameter2_ )
+{
+}
+
 RedrawParameter::RedrawParameter( const ParameterPTR p, const double min, const double max )
   : Parameter( p->is_spatial() )
   , p_( p )
@@ -214,6 +251,15 @@ RedrawParameter::RedrawParameter( const ParameterPTR p, const double min, const 
   {
     throw BadParameterValue( "max >= min required." );
   }
+}
+
+RedrawParameter::RedrawParameter( const RedrawParameter& p )
+  : Parameter( p )
+  , p_( p.p_ )
+  , min_( p.min_ )
+  , max_( p.max_ )
+  , max_redraws_( p.max_redraws_ )
+{
 }
 
 double
@@ -266,6 +312,14 @@ ExpDistParameter::ExpDistParameter( const Dictionary& d )
   }
 }
 
+ExpDistParameter::ExpDistParameter( const ExpDistParameter& p )
+  : Parameter( p )
+  , p_( p.p_ )
+  , inv_beta_( p.inv_beta_ )
+{
+  assert( is_spatial_ == p.is_spatial() );
+}
+
 double
 ExpDistParameter::value( RngPtr rng,
   const std::vector< double >& source_pos,
@@ -287,6 +341,14 @@ GaussianParameter::GaussianParameter( const Dictionary& d )
   {
     throw BadProperty( "std > 0 required for gaussian distribution parameter, got std=" + std::to_string( std ) );
   }
+}
+
+GaussianParameter::GaussianParameter( const GaussianParameter& p )
+  : Parameter( p )
+  , p_( p.p_ )
+  , mean_( p.mean_ )
+  , inv_two_std2_( p.inv_two_std2_ )
+{
 }
 
 double
@@ -337,6 +399,18 @@ Gaussian2DParameter::Gaussian2DParameter( const Dictionary& d )
   }
 }
 
+Gaussian2DParameter::Gaussian2DParameter( const Gaussian2DParameter& p )
+  : Parameter( p )
+  , px_( p.px_ )
+  , py_( p.py_ )
+  , mean_x_( p.mean_x_ )
+  , mean_y_( p.mean_y_ )
+  , x_term_const_( p.x_term_const_ )
+  , y_term_const_( p.y_term_const_ )
+  , xy_term_const_( p.xy_term_const_ )
+{
+}
+
 double
 Gaussian2DParameter::value( RngPtr rng,
   const std::vector< double >& source_pos,
@@ -371,6 +445,19 @@ GaborParameter::GaborParameter( const Dictionary& d )
   {
     throw BadProperty( String::compose( "gamma > 0 required for gabor function parameter, got gamma=%1", gamma ) );
   }
+}
+
+GaborParameter::GaborParameter( const GaborParameter& p )
+  : Parameter( p )
+  , px_( p.px_ )
+  , py_( p.py_ )
+  , cos_( p.cos_ )
+  , sin_( p.sin_ )
+  , gamma_( p.gamma_ )
+  , inv_two_std2_( p.inv_two_std2_ )
+  , lambda_( p.lambda_ )
+  , psi_( p.psi_ )
+{
 }
 
 double
@@ -410,6 +497,15 @@ GammaParameter::GammaParameter( const Dictionary& d )
   {
     throw BadProperty( "theta > 0 required for gamma distribution parameter, got theta=" + std::to_string( theta ) );
   }
+}
+
+GammaParameter::GammaParameter( const GammaParameter& p )
+  : Parameter( p )
+  , p_( p.p_ )
+  , kappa_( p.kappa_ )
+  , inv_theta_( p.inv_theta_ )
+  , delta_( p.delta_ )
+{
 }
 
 double
@@ -512,6 +608,646 @@ ParameterPTR
 dimension_parameter( const ParameterPTR x_parameter, const ParameterPTR y_parameter, const ParameterPTR z_parameter )
 {
   return ParameterPTR( new DimensionParameter( x_parameter, y_parameter, z_parameter ) );
+}
+
+double
+ConstantParameter::value( RngPtr, Node* )
+{
+  return value_;
+}
+
+UniformParameter::UniformParameter( const Dictionary& d )
+  : lower_( 0.0 )
+  , range_( 1.0 )
+{
+  d.update_value( names::min, lower_ );
+  d.update_value( names::max, range_ );
+  if ( lower_ >= range_ )
+  {
+    throw BadProperty(
+      "nest::UniformParameter: "
+      "min < max required." );
+  }
+
+  range_ -= lower_;
+}
+
+double
+UniformParameter::value( RngPtr rng, Node* )
+{
+  return lower_ + rng->drand() * range_;
+}
+UniformIntParameter::UniformIntParameter( const Dictionary& d )
+  : Parameter( false, true )
+  , max_( 1 )
+{
+  d.update_integer_value( names::max, max_ );
+  if ( max_ <= 0 )
+  {
+    throw BadProperty( "nest::UniformIntParameter: max > 0 required." );
+  }
+}
+
+double
+UniformIntParameter::value( RngPtr rng, Node* )
+{
+  return rng->ulrand( max_ );
+}
+
+ExponentialParameter::ExponentialParameter( const Dictionary& d )
+  : beta_( 1.0 )
+{
+  d.update_value( names::beta, beta_ );
+}
+
+double
+ExponentialParameter::value( RngPtr rng, Node* )
+{
+  return beta_ * ( -std::log( 1 - rng->drand() ) );
+}
+
+NodePosParameter::NodePosParameter( const Dictionary& d )
+  : Parameter( true )
+  , dimension_( 0 )
+  , synaptic_endpoint_( 0 )
+{
+  bool dimension_specified = d.update_integer_value( names::dimension, dimension_ );
+  if ( not dimension_specified )
+  {
+    throw BadParameterValue( "Dimension must be specified when creating a node position parameter." );
+  }
+  if ( dimension_ < 0 )
+  {
+    throw BadParameterValue( "Node position parameter dimension cannot be negative." );
+  }
+  d.update_integer_value( names::synaptic_endpoint, synaptic_endpoint_ );
+  if ( synaptic_endpoint_ < 0 or 2 < synaptic_endpoint_ )
+  {
+    throw BadParameterValue( "Synaptic endpoint must either be unspecified (0), source (1) or target (2)." );
+  }
+}
+
+double
+NodePosParameter::value( RngPtr, Node* node )
+{
+  if ( synaptic_endpoint_ != 0 )
+  {
+    throw BadParameterValue( "Source or target position parameter can only be used when connecting." );
+  }
+  if ( not node )
+  {
+    throw KernelException( "Node position parameter can only be used when connecting spatially distributed nodes." );
+  }
+  return get_node_pos_( node );
+}
+
+double
+NodePosParameter::value( RngPtr,
+  const std::vector< double >& source_pos,
+  const std::vector< double >& target_pos,
+  const AbstractLayer&,
+  Node* )
+{
+  switch ( synaptic_endpoint_ )
+  {
+  case 0:
+    throw BadParameterValue( "Node position parameter cannot be used when connecting." );
+  case 1:
+  {
+    return source_pos[ dimension_ ];
+  }
+  case 2:
+    return target_pos[ dimension_ ];
+  }
+  throw KernelException( "Wrong synaptic_endpoint_." );
+}
+
+double
+SpatialDistanceParameter::value( RngPtr, Node* )
+{
+  throw BadParameterValue( "Spatial distance parameter can only be used when connecting." );
+}
+
+double
+ProductParameter::value( RngPtr rng, Node* node )
+{
+  return parameter1_->value( rng, node ) * parameter2_->value( rng, node );
+}
+
+double
+ProductParameter::value( RngPtr rng,
+  const std::vector< double >& source_pos,
+  const std::vector< double >& target_pos,
+  const AbstractLayer& layer,
+  Node* node )
+{
+  return parameter1_->value( rng, source_pos, target_pos, layer, node )
+    * parameter2_->value( rng, source_pos, target_pos, layer, node );
+}
+
+QuotientParameter::QuotientParameter( ParameterPTR m1, ParameterPTR m2 )
+  : Parameter( m1->is_spatial() or m2->is_spatial(), m1->returns_int_only() and m2->returns_int_only() )
+  , parameter1_( m1 )
+  , parameter2_( m2 )
+{
+}
+
+QuotientParameter::QuotientParameter( const QuotientParameter& p )
+  : Parameter( p )
+  , parameter1_( p.parameter1_ )
+  , parameter2_( p.parameter2_ )
+{
+}
+
+double
+QuotientParameter::value( RngPtr rng, Node* node )
+{
+  return parameter1_->value( rng, node ) / parameter2_->value( rng, node );
+}
+
+double
+QuotientParameter::value( RngPtr rng,
+  const std::vector< double >& source_pos,
+  const std::vector< double >& target_pos,
+  const AbstractLayer& layer,
+  Node* node )
+{
+  return parameter1_->value( rng, source_pos, target_pos, layer, node )
+    / parameter2_->value( rng, source_pos, target_pos, layer, node );
+}
+
+SumParameter::SumParameter( ParameterPTR m1, ParameterPTR m2 )
+  : Parameter( m1->is_spatial() or m2->is_spatial(), m1->returns_int_only() and m2->returns_int_only() )
+  , parameter1_( m1 )
+  , parameter2_( m2 )
+{
+}
+
+SumParameter::SumParameter( const SumParameter& p )
+  : Parameter( p )
+  , parameter1_( p.parameter1_ )
+  , parameter2_( p.parameter2_ )
+{
+}
+
+double
+SumParameter::value( RngPtr rng, Node* node )
+{
+  return parameter1_->value( rng, node ) + parameter2_->value( rng, node );
+}
+
+double
+SumParameter::value( RngPtr rng,
+  const std::vector< double >& source_pos,
+  const std::vector< double >& target_pos,
+  const AbstractLayer& layer,
+  Node* node )
+{
+  return parameter1_->value( rng, source_pos, target_pos, layer, node )
+    + parameter2_->value( rng, source_pos, target_pos, layer, node );
+}
+
+DifferenceParameter::DifferenceParameter( ParameterPTR m1, ParameterPTR m2 )
+  : Parameter( m1->is_spatial() or m2->is_spatial(), m1->returns_int_only() and m2->returns_int_only() )
+  , parameter1_( m1 )
+  , parameter2_( m2 )
+{
+}
+
+DifferenceParameter::DifferenceParameter( const DifferenceParameter& p )
+  : Parameter( p )
+  , parameter1_( p.parameter1_ )
+  , parameter2_( p.parameter2_ )
+{
+}
+
+double
+DifferenceParameter::value( RngPtr rng, Node* node )
+{
+  return parameter1_->value( rng, node ) - parameter2_->value( rng, node );
+}
+
+double
+DifferenceParameter::value( RngPtr rng,
+  const std::vector< double >& source_pos,
+  const std::vector< double >& target_pos,
+  const AbstractLayer& layer,
+  Node* node )
+{
+  return parameter1_->value( rng, source_pos, target_pos, layer, node )
+    - parameter2_->value( rng, source_pos, target_pos, layer, node );
+}
+
+ComparingParameter::ComparingParameter( ParameterPTR m1, ParameterPTR m2, const Dictionary& d )
+  : Parameter( m1->is_spatial() or m2->is_spatial(), true )
+  , parameter1_( m1 )
+  , parameter2_( m2 )
+  , comparator_( -1 )
+{
+  if ( not d.update_integer_value( names::comparator, comparator_ ) )
+  {
+    throw BadParameter( "A comparator has to be specified." );
+  }
+  if ( comparator_ < 0 or 5 < comparator_ )
+  {
+    throw BadParameter( "Comparator specification has to be in the range 0-5." );
+  }
+}
+
+ComparingParameter::ComparingParameter( const ComparingParameter& p )
+  : Parameter( p )
+  , parameter1_( p.parameter1_ )
+  , parameter2_( p.parameter2_ )
+  , comparator_( p.comparator_ )
+{
+}
+
+double
+ComparingParameter::value( RngPtr rng, Node* node )
+{
+  return compare_( parameter1_->value( rng, node ), parameter2_->value( rng, node ) );
+}
+
+double
+ComparingParameter::value( RngPtr rng,
+  const std::vector< double >& source_pos,
+  const std::vector< double >& target_pos,
+  const AbstractLayer& layer,
+  Node* node )
+{
+  return compare_( parameter1_->value( rng, source_pos, target_pos, layer, node ),
+    parameter2_->value( rng, source_pos, target_pos, layer, node ) );
+}
+
+bool
+ComparingParameter::compare_( double value_a, double value_b ) const
+{
+  switch ( comparator_ )
+  {
+  case 0:
+    return value_a < value_b;
+  case 1:
+    return value_a <= value_b;
+  case 2:
+    return value_a == value_b;
+  case 3:
+    return value_a != value_b;
+  case 4:
+    return value_a >= value_b;
+  case 5:
+    return value_a > value_b;
+  }
+  throw KernelException( "Wrong comparison operator." );
+}
+
+ConditionalParameter::ConditionalParameter( ParameterPTR condition, ParameterPTR if_true, ParameterPTR if_false )
+  : Parameter( condition->is_spatial() or if_true->is_spatial() or if_false->is_spatial(),
+      if_true->returns_int_only() and if_false->returns_int_only() )
+  , condition_( condition )
+  , if_true_( if_true )
+  , if_false_( if_false )
+{
+}
+
+ConditionalParameter::ConditionalParameter( const ConditionalParameter& p )
+  : Parameter( p )
+  , condition_( p.condition_ )
+  , if_true_( p.if_true_ )
+  , if_false_( p.if_false_ )
+{
+}
+
+double
+ConditionalParameter::value( RngPtr rng, Node* node )
+{
+  if ( condition_->value( rng, node ) )
+  {
+    return if_true_->value( rng, node );
+  }
+  else
+  {
+    return if_false_->value( rng, node );
+  }
+}
+
+double
+ConditionalParameter::value( RngPtr rng,
+  const std::vector< double >& source_pos,
+  const std::vector< double >& target_pos,
+  const AbstractLayer& layer,
+  Node* node )
+{
+  if ( condition_->value( rng, source_pos, target_pos, layer, node ) )
+  {
+    return if_true_->value( rng, source_pos, target_pos, layer, node );
+  }
+  else
+  {
+    return if_false_->value( rng, source_pos, target_pos, layer, node );
+  }
+}
+
+MinParameter::MinParameter( ParameterPTR p, const double other_value )
+  : Parameter( p->is_spatial(), p->returns_int_only() and value_is_integer_( other_value ) )
+  , p_( p )
+  , other_value_( other_value )
+{
+  assert( is_spatial_ == p->is_spatial() );
+}
+
+MinParameter::MinParameter( const MinParameter& p )
+  : Parameter( p )
+  , p_( p.p_ )
+  , other_value_( p.other_value_ )
+{
+}
+
+double
+MinParameter::value( RngPtr rng, Node* node )
+{
+  return std::min( p_->value( rng, node ), other_value_ );
+}
+
+double
+MinParameter::value( RngPtr rng,
+  const std::vector< double >& source_pos,
+  const std::vector< double >& target_pos,
+  const AbstractLayer& layer,
+  Node* node )
+{
+  return std::min( p_->value( rng, source_pos, target_pos, layer, node ), other_value_ );
+}
+
+MaxParameter::MaxParameter( ParameterPTR p, const double other_value )
+  : Parameter( p->is_spatial(), p->returns_int_only() and value_is_integer_( other_value ) )
+  , p_( p )
+  , other_value_( other_value )
+{
+}
+
+MaxParameter::MaxParameter( const MaxParameter& p )
+  : Parameter( p )
+  , p_( p.p_ )
+  , other_value_( p.other_value_ )
+{
+}
+
+double
+MaxParameter::value( RngPtr rng, Node* node )
+{
+  return std::max( p_->value( rng, node ), other_value_ );
+}
+
+double
+MaxParameter::value( RngPtr rng,
+  const std::vector< double >& source_pos,
+  const std::vector< double >& target_pos,
+  const AbstractLayer& layer,
+  Node* node )
+{
+  return std::max( p_->value( rng, source_pos, target_pos, layer, node ), other_value_ );
+}
+
+ExpParameter::ExpParameter( ParameterPTR p )
+  : Parameter( p->is_spatial() )
+  , p_( p )
+{
+}
+
+ExpParameter::ExpParameter( const ExpParameter& p )
+  : Parameter( p )
+  , p_( p.p_ )
+{
+}
+
+double
+ExpParameter::value( RngPtr rng, Node* node )
+{
+  return std::exp( p_->value( rng, node ) );
+}
+
+double
+ExpParameter::value( RngPtr rng,
+  const std::vector< double >& source_pos,
+  const std::vector< double >& target_pos,
+  const AbstractLayer& layer,
+  Node* node )
+{
+  return std::exp( p_->value( rng, source_pos, target_pos, layer, node ) );
+}
+
+SinParameter::SinParameter( ParameterPTR p )
+  : Parameter( p->is_spatial() )
+  , p_( p )
+{
+}
+
+SinParameter::SinParameter( const SinParameter& p )
+  : Parameter( p )
+  , p_( p.p_ )
+{
+}
+
+double
+SinParameter::value( RngPtr rng, Node* node )
+{
+  return std::sin( p_->value( rng, node ) );
+}
+
+double
+SinParameter::value( RngPtr rng,
+  const std::vector< double >& source_pos,
+  const std::vector< double >& target_pos,
+  const AbstractLayer& layer,
+  Node* node )
+{
+  return std::sin( p_->value( rng, source_pos, target_pos, layer, node ) );
+}
+
+CosParameter::CosParameter( ParameterPTR p )
+  : Parameter( p->is_spatial() )
+  , p_( p )
+{
+}
+
+CosParameter::CosParameter( const CosParameter& p )
+  : Parameter( p )
+  , p_( p.p_ )
+{
+}
+
+double
+CosParameter::value( RngPtr rng, Node* node )
+{
+  return std::cos( p_->value( rng, node ) );
+}
+
+double
+CosParameter::value( RngPtr rng,
+  const std::vector< double >& source_pos,
+  const std::vector< double >& target_pos,
+  const AbstractLayer& layer,
+  Node* node )
+{
+  return std::cos( p_->value( rng, source_pos, target_pos, layer, node ) );
+}
+
+PowParameter::PowParameter( ParameterPTR p, const double exponent )
+  : Parameter( p->is_spatial(), p->returns_int_only() )
+  , p_( p )
+  , exponent_( exponent )
+{
+}
+
+PowParameter::PowParameter( const PowParameter& p )
+  : Parameter( p )
+  , p_( p.p_ )
+  , exponent_( p.exponent_ )
+{
+}
+
+double
+PowParameter::value( RngPtr rng, Node* node )
+{
+  return std::pow( p_->value( rng, node ), exponent_ );
+}
+
+double
+PowParameter::value( RngPtr rng,
+  const std::vector< double >& source_pos,
+  const std::vector< double >& target_pos,
+  const AbstractLayer& layer,
+  Node* node )
+{
+  return std::pow( p_->value( rng, source_pos, target_pos, layer, node ), exponent_ );
+}
+
+DimensionParameter::DimensionParameter( ParameterPTR px, ParameterPTR py )
+  : Parameter( true )
+  , num_dimensions_( 2 )
+  , px_( px )
+  , py_( py )
+  , pz_( nullptr )
+{
+}
+
+DimensionParameter::DimensionParameter( ParameterPTR px, ParameterPTR py, ParameterPTR pz )
+  : Parameter( true )
+  , num_dimensions_( 3 )
+  , px_( px )
+  , py_( py )
+  , pz_( pz )
+{
+}
+
+DimensionParameter::DimensionParameter( const DimensionParameter& p )
+  : Parameter( p )
+  , num_dimensions_( p.num_dimensions_ )
+  , px_( p.px_ )
+  , py_( p.py_ )
+  , pz_( p.pz_ )
+{
+}
+
+double
+DimensionParameter::value( RngPtr, Node* )
+{
+  throw KernelException( "Cannot get value of DimensionParameter." );
+}
+
+/**
+ * Generates a position with values for each dimension generated from their respective parameters.
+ *
+ * @returns The position, given as an array.
+ */
+std::vector< double >
+DimensionParameter::get_values( RngPtr rng )
+{
+  switch ( num_dimensions_ )
+  {
+  case 2:
+    return { px_->value( rng, nullptr ), py_->value( rng, nullptr ) };
+  case 3:
+    return { px_->value( rng, nullptr ), py_->value( rng, nullptr ), pz_->value( rng, nullptr ) };
+  }
+  throw KernelException( "Wrong number of dimensions in get_values!" );
+}
+
+int
+DimensionParameter::get_num_dimensions() const
+{
+  return num_dimensions_;
+}
+
+double
+ExpDistParameter::value( RngPtr, Node* )
+{
+  throw BadParameterValue( "Exponential distribution parameter can only be used when connecting." );
+}
+
+double
+GaussianParameter::value( RngPtr, Node* )
+{
+  throw BadParameterValue( "Gaussian distribution parameter can only be used when connecting." );
+}
+
+double
+Gaussian2DParameter::value( RngPtr, Node* )
+{
+  throw BadParameterValue( "Gaussian 2D parameter can only be used when connecting." );
+}
+
+double
+GaborParameter::value( RngPtr, Node* )
+{
+  throw BadParameterValue( "Gabor parameter can only be used when connecting." );
+}
+
+double
+GammaParameter::value( RngPtr, Node* )
+{
+  throw BadParameterValue( "Gamma distribution parameter can only be used when connecting." );
+}
+
+double
+Parameter::value( RngPtr rng,
+  const std::vector< double >&,
+  const std::vector< double >&,
+  const AbstractLayer&,
+  Node* node )
+{
+  return value( rng, node );
+}
+
+bool
+Parameter::is_spatial() const
+{
+  return is_spatial_;
+}
+
+bool
+Parameter::returns_int_only() const
+{
+  return returns_int_only_;
+}
+
+bool
+Parameter::value_is_integer_( const double value ) const
+{
+  // Here fmod calculates the remainder of the division operation x/y. By using y=1.0, the remainder is the
+  // fractional part of the value. If the fractional part is zero, the value is an integer.
+  return std::fmod( value, static_cast< double >( 1.0 ) ) == 0.0;
+}
+ConstantParameter::ConstantParameter( double value )
+  : value_( value )
+{
+  returns_int_only_ = value_is_integer_( value_ );
+}
+
+ConstantParameter::ConstantParameter( const Dictionary& d )
+{
+  value_ = d.get< double >( "value" );
+  returns_int_only_ = value_is_integer_( value_ );
 }
 
 }  // namespace nest

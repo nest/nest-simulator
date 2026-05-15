@@ -24,14 +24,24 @@
 
 #ifdef HAVE_MUSIC
 
+#include <algorithm>
+
+#include "exceptions.h"
+#include "mpi.h"
+#include "music/array_data.hh"
+#include "music/port.hh"
+#include "music/setup.hh"
+#include "node.h"
+#include "secondary_event.h"
+
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "logging.h"
-
 // Includes from nestkernel:
-#include "event.h"
+#include "connection_manager.h"
 #include "kernel_manager.h"
-#include "nest_types.h"
+#include "logging_manager.h"
+#include "music_manager.h"
 
 namespace nest
 {
@@ -80,10 +90,9 @@ MusicRateInHandler::register_channel( int channel, nest::Node* mp )
 void
 MusicRateInHandler::publish_port()
 {
-
   if ( not published_ )
   {
-    MUSIC::Setup* s = kernel().music_manager.get_music_setup();
+    MUSIC::Setup* s = kernel::manager< MUSICManager >.get_music_setup();
     if ( s == 0 )
     {
       throw MUSICSimulationHasRun( "" );
@@ -124,7 +133,7 @@ MusicRateInHandler::publish_port()
 void
 MusicRateInHandler::update( Time const&, const long, const long )
 {
-  const size_t buffer_size = kernel().connection_manager.get_min_delay();
+  const size_t buffer_size = kernel::manager< ConnectionManager >.get_min_delay();
   std::vector< double > new_rates( buffer_size, 0.0 );
 
   for ( size_t channel = 0; channel < channelmap_.size(); ++channel )

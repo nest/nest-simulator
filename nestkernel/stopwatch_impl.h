@@ -23,8 +23,11 @@
 #ifndef STOPWATCH_IMPL_H
 #define STOPWATCH_IMPL_H
 
-#include "kernel_manager.h"
 #include "stopwatch.h"
+
+#include "dictionary.h"
+#include "kernel_manager.h"
+#include "vp_manager.h"
 
 namespace nest
 {
@@ -39,9 +42,9 @@ Stopwatch< detailed_timer, threaded_timer >::start()
   {
     if constexpr ( use_timer_array )
     {
-      kernel().vp_manager.assert_thread_parallel();
-      walltime_timer_[ kernel().vp_manager.get_thread_id() ].start();
-      cputime_timer_[ kernel().vp_manager.get_thread_id() ].start();
+      kernel::manager< VPManager >.assert_thread_parallel();
+      walltime_timer_[ kernel::manager< VPManager >.get_thread_id() ].start();
+      cputime_timer_[ kernel::manager< VPManager >.get_thread_id() ].start();
     }
     else
     {
@@ -66,9 +69,9 @@ Stopwatch< detailed_timer, threaded_timer >::stop()
   {
     if constexpr ( use_timer_array )
     {
-      kernel().vp_manager.assert_thread_parallel();
-      walltime_timer_[ kernel().vp_manager.get_thread_id() ].stop();
-      cputime_timer_[ kernel().vp_manager.get_thread_id() ].stop();
+      kernel::manager< VPManager >.assert_thread_parallel();
+      walltime_timer_[ kernel::manager< VPManager >.get_thread_id() ].stop();
+      cputime_timer_[ kernel::manager< VPManager >.get_thread_id() ].stop();
     }
     else
     {
@@ -89,8 +92,8 @@ Stopwatch< detailed_timer, threaded_timer >::is_running_() const
   {
     if constexpr ( use_timer_array )
     {
-      kernel().vp_manager.assert_thread_parallel();
-      return walltime_timer_[ kernel().vp_manager.get_thread_id() ].is_running_();
+      kernel::manager< VPManager >.assert_thread_parallel();
+      return walltime_timer_[ kernel::manager< VPManager >.get_thread_id() ].is_running_();
     }
     else
     {
@@ -113,8 +116,8 @@ Stopwatch< detailed_timer, threaded_timer >::elapsed( timers::timeunit_t timeuni
   {
     if constexpr ( use_timer_array )
     {
-      kernel().vp_manager.assert_thread_parallel();
-      return walltime_timer_[ kernel().vp_manager.get_thread_id() ].elapsed( timeunit );
+      kernel::manager< VPManager >.assert_thread_parallel();
+      return walltime_timer_[ kernel::manager< VPManager >.get_thread_id() ].elapsed( timeunit );
     }
     else
     {
@@ -139,8 +142,8 @@ Stopwatch< detailed_timer, threaded_timer >::print( const std::string& msg,
   {
     if constexpr ( use_timer_array )
     {
-      kernel().vp_manager.assert_thread_parallel();
-      walltime_timer_[ kernel().vp_manager.get_thread_id() ].print( msg, timeunit, os );
+      kernel::manager< VPManager >.assert_thread_parallel();
+      walltime_timer_[ kernel::manager< VPManager >.get_thread_id() ].print( msg, timeunit, os );
     }
     else
     {
@@ -160,7 +163,7 @@ Stopwatch< detailed_timer, threaded_timer >::get_status( Dictionary& d,
 {
   if constexpr ( enable_timer )
   {
-    kernel().vp_manager.assert_single_threaded();
+    kernel::manager< VPManager >.assert_single_threaded();
     if constexpr ( use_timer_array )
     {
       std::vector< double > wall_times( walltime_timer_.size() );
@@ -191,10 +194,10 @@ Stopwatch< detailed_timer, threaded_timer >::reset()
 {
   if constexpr ( enable_timer )
   {
-    kernel().vp_manager.assert_single_threaded();
+    kernel::manager< VPManager >.assert_single_threaded();
     if constexpr ( use_timer_array )
     {
-      const size_t num_threads = kernel().vp_manager.get_num_threads();
+      const size_t num_threads = kernel::manager< VPManager >.get_num_threads();
       walltime_timer_.resize( num_threads );
       cputime_timer_.resize( num_threads );
       for ( size_t i = 0; i < num_threads; ++i )

@@ -22,18 +22,18 @@
 
 #include "inhomogeneous_poisson_generator.h"
 
-// C++ includes:
-#include <cmath>
-
-// Includes from libnestutil:
-#include "numerics.h"
+#include <assert.h>
+#include <sstream>
 
 // Includes from nestkernel:
+#include "dictionary.h"
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
-#include "universal_data_logger_impl.h"
+#include "nest_names.h"
+#include "simulation_manager.h"
 
 void
 nest::register_inhomogeneous_poisson_generator( const std::string& name )
@@ -78,7 +78,7 @@ nest::inhomogeneous_poisson_generator::Parameters_::assert_valid_rate_time_and_i
 {
   Time t_rate;
 
-  if ( t <= kernel().simulation_manager.get_time().get_ms() )
+  if ( t <= kernel::manager< SimulationManager >.get_time().get_ms() )
   {
     throw BadProperty( "Time points must lie strictly in the future." );
   }
@@ -265,7 +265,7 @@ nest::inhomogeneous_poisson_generator::update( Time const& origin, const long fr
     if ( B_.rate_ > 0 and StimulationDevice::is_active( Time::step( curr_time ) ) )
     {
       DSSpikeEvent se;
-      kernel().event_delivery_manager.send( *this, se, offs );
+      kernel::manager< EventDeliveryManager >.send( *this, se, offs );
     }
   }
 }

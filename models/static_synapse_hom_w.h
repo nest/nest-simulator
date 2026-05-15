@@ -23,12 +23,22 @@
 #ifndef STATICSYNAPSE_HOM_W_H
 #define STATICSYNAPSE_HOM_W_H
 
+#include <string>
+
 // Includes from nestkernel:
 #include "common_properties_hom_w.h"
 #include "connection.h"
+#include "connector_model.h"
+#include "dictionary.h"
+#include "enum_bitfield.h"
+#include "event.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_types.h"
 
 namespace nest
 {
+class Node;
 
 /* BeginUserDocs: synapse, static
 

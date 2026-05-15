@@ -20,8 +20,8 @@
  *
  */
 
+#include <cassert>
 #include <cstdlib>
-#include <iostream>
 #include <numeric>
 
 #include "nest_types.h"
@@ -33,6 +33,7 @@
 #define M_E_OK
 #undef __PURE_CNAME
 #include <cmath>
+
 #define __PURE_CNAME
 #else
 #include <cmath>
@@ -55,7 +56,6 @@
 #endif
 
 #if defined( HAVE_STD_NAN )
-#include <cmath>
 #elif defined( HAVE_NAN )
 #include <math.h>
 #endif
@@ -65,7 +65,6 @@
 //
 #ifdef HAVE_GSL
 
-#include <gsl/gsl_math.h>
 const double numerics::e = M_E;
 const double numerics::pi = M_PI;
 

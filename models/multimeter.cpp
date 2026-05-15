@@ -22,13 +22,15 @@
 
 #include "multimeter.h"
 
-// Includes from nestkernel:
-#include "event_delivery_manager_impl.h"
-#include "model_manager_impl.h"
-#include "nest_impl.h"
 
 // Includes from libnestutil:
 #include "dict_util.h"
+#include "event.h"
+#include "event_delivery_manager.h"
+#include "event_delivery_manager_impl.h"
+#include "genericmodel_impl.h"
+#include "nest_impl.h"
+#include "recording_backend.h"
 
 namespace nest
 {
@@ -189,7 +191,7 @@ multimeter::update( Time const& origin, const long from, const long )
   //
   // Note that not all nodes receiving the request will necessarily answer.
   DataLoggingRequest req;
-  kernel().event_delivery_manager.send( *this, req );
+  kernel::manager< EventDeliveryManager >.send( *this, req );
 }
 
 void

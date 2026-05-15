@@ -22,10 +22,11 @@
 
 #include "stdp_pl_synapse_hom.h"
 
+#include <utility>
+
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
-#include "connector_model.h"
-#include "event.h"
+#include "exceptions.h"
 #include "nest_impl.h"
 
 void

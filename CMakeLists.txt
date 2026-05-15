@@ -86,6 +86,8 @@ set( with-intel-compiler-flags OFF CACHE STRING "User defined flags for the Inte
 set( with-libraries OFF CACHE STRING "Link additional libraries [default=OFF]. Give full path. Separate multiple libraries by ';'." )
 set( with-includes OFF CACHE STRING "Add additional include paths [default=OFF]. Give full path without '-I'. Separate multiple include paths by ';'." )
 set( with-defines OFF CACHE STRING "Additional defines, e.g. '-DXYZ=1' [default=OFF]. Separate multiple defines by ';'." )
+set( with-lto OFF CACHE STRING "Control link-time optimization (LTO) [default=OFF]." )
+set( with-pgo OFF CACHE STRING "Control profile-guided optimization (PGO) [default=OFF]. Set to GENERATE to build with profiling instrumentation and set to USE to use the profiling results in the final optimized build." )
 
 # documentation build configuration
 set( with-userdoc OFF CACHE STRING "Build user documentation [default=OFF]")
@@ -164,6 +166,8 @@ nest_process_target_bits_split()
 nest_process_userdoc()
 nest_process_devdoc()
 nest_process_full_logging()
+nest_process_pgo()
+nest_process_lto()
 
 nest_process_models()
 

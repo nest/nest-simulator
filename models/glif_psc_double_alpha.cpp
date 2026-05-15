@@ -22,17 +22,21 @@
 
 #include "glif_psc_double_alpha.h"
 
-// C++ includes:
-#include <iostream>
-#include <limits>
+#include <assert.h>
+#include <cmath>
+#include <cstddef>
+#include <tuple>
 
 // Includes from libnestutil:
 #include "dict_util.h"
+#include "event_delivery_manager.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "iaf_propagator.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
-#include "universal_data_logger_impl.h"
+#include "numerics.h"
+#include "simulation_manager.h"
 
 using namespace nest;
 
@@ -46,8 +50,7 @@ register_glif_psc_double_alpha( const std::string& name )
   register_node_model< glif_psc_double_alpha >( name );
 }
 
-// Override the create() method with one call to RecordablesMap::insert_()
-// for each quantity to be recorded.
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< nest::glif_psc_double_alpha >::create()
@@ -515,12 +518,10 @@ nest::glif_psc_double_alpha::pre_run_hook()
 void
 nest::glif_psc_double_alpha::update( Time const& origin, const long from, const long to )
 {
-
   double v_old = S_.U_;
 
   for ( long lag = from; lag < to; ++lag )
   {
-
     if ( S_.refractory_steps_ == 0 )
     {
       // neuron not refractory, integrate voltage and currents
@@ -618,7 +619,7 @@ nest::glif_psc_double_alpha::update( Time const& origin, const long from, const 
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;
-        kernel().event_delivery_manager.send( *this, se, lag );
+        kernel::manager< EventDeliveryManager >.send( *this, se, lag );
       }
     }
     else
@@ -676,7 +677,8 @@ nest::glif_psc_double_alpha::handle( SpikeEvent& e )
   assert( e.get_delay_steps() > 0 );
 
   B_.spikes_[ e.get_rport() - 1 ].add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
+    e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
+    e.get_weight() * e.get_multiplicity() );
 }
 
 void
@@ -684,14 +686,6 @@ nest::glif_psc_double_alpha::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
-}
-
-// Do not move this function as inline to h-file. It depends on
-// universal_data_logger_impl.h being included here.
-void
-nest::glif_psc_double_alpha::handle( DataLoggingRequest& e )
-{
-  B_.logger_.handle( e );  // the logger does this for us
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
+    e.get_weight() * e.get_current() );
 }

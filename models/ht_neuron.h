@@ -23,26 +23,38 @@
 #ifndef HT_NEURON_H
 #define HT_NEURON_H
 
+#include <algorithm>
+#include <assert.h>
+#include <map>
+#include <math.h>
+
 // Generated includes:
 #include "config.h"
+#include "event.h"
+#include "exceptions.h"
+#include "nest_time.h"
+#include "nest_types.h"
+#include "node.h"
+#include "universal_data_logger.h"
+
+class Dictionary;
 
 #ifdef HAVE_GSL
-
-// C++ includes:
-#include <string>
-#include <vector>
 
 // C includes:
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_odeiv.h>
+// C++ includes:
+#include <string>
+#include <vector>
 
 // Includes from nestkernel:
 #include "archiving_node.h"
 #include "connection.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 
 namespace nest
@@ -561,6 +573,7 @@ ht_neuron::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
+
 }
 
 #endif  // HAVE_GSL

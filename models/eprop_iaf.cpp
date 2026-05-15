@@ -24,18 +24,26 @@
 #include "eprop_iaf.h"
 
 // C++
+#include <assert.h>
+#include <cmath>
 #include <limits>
 
 // libnestutil
 #include "dict_util.h"
-#include "numerics.h"
 
 // nestkernel
+#include "eprop_archiving_node_impl.h"
 #include "eprop_archiving_node_recurrent_impl.h"
+#include "eprop_synapse.h"
+#include "event_delivery_manager.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
-#include "universal_data_logger_impl.h"
+#include "secondary_event.h"
+#include "secondary_event_impl.h"
+#include "simulation_manager.h"
+#include "weight_optimizer.h"
 
 namespace nest
 {
@@ -297,7 +305,7 @@ eprop_iaf::update( Time const& origin, const long from, const long to )
     if ( S_.v_m_ >= P_.V_th_ and S_.r_ == 0 )
     {
       SpikeEvent se;
-      kernel().event_delivery_manager.send( *this, se, lag );
+      kernel::manager< EventDeliveryManager >.send( *this, se, lag );
 
       S_.z_ = 1.0;
       S_.v_m_ -= P_.V_th_ * S_.z_;
@@ -308,7 +316,7 @@ eprop_iaf::update( Time const& origin, const long from, const long to )
     {
       SpikeEvent se;
       se.set_flush_event_flag( true );
-      kernel().event_delivery_manager.send( *this, se, lag );
+      kernel::manager< EventDeliveryManager >.send( *this, se, lag );
       set_last_event_time( t );
     }
 
@@ -333,8 +341,8 @@ eprop_iaf::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  B_.spikes_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
+  B_.spikes_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
+    e.get_weight() * e.get_multiplicity() );
 }
 
 void
@@ -342,8 +350,8 @@ eprop_iaf::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
+    e.get_weight() * e.get_current() );
 }
 
 void

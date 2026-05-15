@@ -24,7 +24,7 @@
 #define MODELS_H
 
 // Includes from nestkernel:
-#include "nest.h"
+#include "nest_impl.h"
 
 namespace nest
 {

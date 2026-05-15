@@ -22,17 +22,20 @@
 
 #include "gif_psc_exp.h"
 
-// Includes from nestkernel:
-#include "exceptions.h"
-#include "kernel_manager.h"
-#include "nest_impl.h"
-#include "universal_data_logger_impl.h"
+#include <assert.h>
+#include <cmath>
 
-// Includes from libnestutil:
+// Includes from nestkernel:
 #include "compose.hpp"
 #include "dict_util.h"
+#include "event_delivery_manager.h"
+#include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "iaf_propagator.h"
+#include "kernel_manager.h"
+#include "nest_impl.h"
 #include "numerics.h"
+#include "simulation_manager.h"
 
 namespace nest
 {
@@ -48,8 +51,7 @@ register_gif_psc_exp( const std::string& name )
 
 RecordablesMap< gif_psc_exp > gif_psc_exp::recordablesMap_;
 
-// Override the create() method with one call to RecordablesMap::insert_()
-// for each quantity to be recorded.
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< gif_psc_exp >::create()
@@ -315,7 +317,6 @@ nest::gif_psc_exp::update( Time const& origin, const long from, const long to )
 {
   for ( long lag = from; lag < to; ++lag )
   {
-
     // exponential decaying stc and sfa elements
     S_.stc_ = 0.0;
     for ( size_t i = 0; i < S_.stc_elems_.size(); i++ )
@@ -340,7 +341,6 @@ nest::gif_psc_exp::update( Time const& origin, const long from, const long to )
 
     if ( S_.r_ref_ == 0 )  // neuron is not in refractory period
     {
-
       S_.V_ = V_.P30_ * ( S_.I_stim_ + P_.I_e_ - S_.stc_ ) + V_.P33_ * S_.V_ + V_.P31_ * P_.E_L_
         + S_.I_syn_ex_ * V_.P21ex_ + S_.I_syn_in_ * V_.P21in_;
 
@@ -352,7 +352,6 @@ nest::gif_psc_exp::update( Time const& origin, const long from, const long to )
         // hazard function is computed by 1 - exp(- lambda * dt)
         if ( V_.rng_->drand() < -numerics::expm1( -lambda * Time::get_resolution().get_ms() ) )
         {
-
           for ( size_t i = 0; i < S_.stc_elems_.size(); i++ )
           {
             S_.stc_elems_[ i ] += P_.q_stc_[ i ];
@@ -368,7 +367,7 @@ nest::gif_psc_exp::update( Time const& origin, const long from, const long to )
           // And send the spike event
           set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
           SpikeEvent se;
-          kernel().event_delivery_manager.send( *this, se, lag );
+          kernel::manager< EventDeliveryManager >.send( *this, se, lag );
         }
       }
     }
@@ -398,12 +397,12 @@ nest::gif_psc_exp::handle( SpikeEvent& e )
   //     is clumsy and should be improved.
   if ( e.get_weight() >= 0.0 )
   {
-    B_.spikes_ex_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.spikes_ex_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
   else
   {
-    B_.spikes_in_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.spikes_in_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
 }
@@ -417,7 +416,7 @@ nest::gif_psc_exp::handle( CurrentEvent& e )
   const double w = e.get_weight();
 
   // Add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ), w * c );
 }
 
 void

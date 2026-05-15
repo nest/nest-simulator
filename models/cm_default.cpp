@@ -22,8 +22,18 @@
 
 #include "cm_default.h"
 
-// Includes from nestkernel:
+#include <algorithm>
+#include <assert.h>
+#include <utility>
+
+#include "cm_compartmentcurrents.h"
+#include "dictionary.h"
+#include "event_delivery_manager.h"
+#include "genericmodel_impl.h"
+#include "kernel_manager.h"
 #include "nest_impl.h"
+#include "nest_names.h"
+#include "simulation_manager.h"
 
 namespace nest
 {
@@ -324,7 +334,7 @@ nest::cm_default::update( Time const& origin, const long from, const long to )
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
       SpikeEvent se;
-      kernel().event_delivery_manager.send( *this, se, lag );
+      kernel::manager< EventDeliveryManager >.send( *this, se, lag );
     }
 
     logger_.record_data( origin.get_steps() + lag );
@@ -343,7 +353,8 @@ nest::cm_default::handle( SpikeEvent& e )
   assert( e.get_rport() < syn_buffers_.size() );
 
   syn_buffers_[ e.get_rport() ].add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
+    e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
+    e.get_weight() * e.get_multiplicity() );
 }
 
 void
@@ -355,7 +366,8 @@ nest::cm_default::handle( CurrentEvent& e )
   const double w = e.get_weight();
 
   Compartment* compartment = c_tree_.get_compartment_opt( e.get_rport() );
-  compartment->currents.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+  compartment->currents.add_value(
+    e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ), w * c );
 }
 
 void

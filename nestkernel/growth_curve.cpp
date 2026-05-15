@@ -23,11 +23,15 @@
 #include "growth_curve.h"
 
 // C++ includes:
+#include <algorithm>
 #include <cmath>
 
 // Includes from nestkernel:
+#include "dictionary.h"
+#include "exceptions.h"
 #include "nest_names.h"
 #include "nest_time.h"
+#include "numerics.h"
 
 
 /* ----------------------------------------------------------------

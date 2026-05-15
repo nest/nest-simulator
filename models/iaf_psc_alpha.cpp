@@ -22,18 +22,24 @@
 
 #include "iaf_psc_alpha.h"
 
+#include <assert.h>
 // C++ includes:
+#include <array>
+#include <cmath>
 #include <limits>
+#include <tuple>
 
 // Includes from libnestutil:
 #include "dict_util.h"
+#include "event_delivery_manager.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "iaf_propagator.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
 #include "numerics.h"
 #include "ring_buffer_impl.h"
-#include "universal_data_logger_impl.h"
+#include "simulation_manager.h"
 
 
 nest::RecordablesMap< nest::iaf_psc_alpha > nest::iaf_psc_alpha::recordablesMap_;
@@ -47,10 +53,7 @@ register_iaf_psc_alpha( const std::string& name )
 }
 
 
-/*
- * Override the create() method with one call to RecordablesMap::insert_()
- * for each quantity to be recorded.
- */
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< iaf_psc_alpha >::create()
@@ -326,7 +329,7 @@ iaf_psc_alpha::update( Time const& origin, const long from, const long to )
     S_.dI_ex_ *= V_.P11_ex_;
 
     // get read access to the correct input-buffer slot
-    const size_t input_buffer_slot = kernel().event_delivery_manager.get_modulo( lag );
+    const size_t input_buffer_slot = kernel::manager< EventDeliveryManager >.get_modulo( lag );
     auto& input = B_.input_buffer_.get_values_all_channels( input_buffer_slot );
 
     // Apply spikes delivered in this step; spikes arriving at T+1 have
@@ -355,7 +358,7 @@ iaf_psc_alpha::update( Time const& origin, const long from, const long to )
 
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
       SpikeEvent se;
-      kernel().event_delivery_manager.send( *this, se, lag );
+      kernel::manager< EventDeliveryManager >.send( *this, se, lag );
     }
 
     // set new input current
@@ -374,8 +377,8 @@ iaf_psc_alpha::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  const size_t input_buffer_slot = kernel().event_delivery_manager.get_modulo(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
+  const size_t input_buffer_slot = kernel::manager< EventDeliveryManager >.get_modulo(
+    e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ) );
 
   const double s = e.get_weight() * e.get_multiplicity();
 
@@ -388,8 +391,8 @@ iaf_psc_alpha::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  const size_t input_buffer_slot = kernel().event_delivery_manager.get_modulo(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
+  const size_t input_buffer_slot = kernel::manager< EventDeliveryManager >.get_modulo(
+    e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ) );
 
   const double I = e.get_current();
   const double w = e.get_weight();

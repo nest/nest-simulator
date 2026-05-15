@@ -23,16 +23,25 @@
 #include "vp_manager.h"
 
 // C++ includes:
+#include <algorithm>
 #include <cstdlib>
+#include <string>
+#include <vector>
 
 // Includes from libnestutil:
 #include "logging.h"
-
 // Includes from nestkernel:
+#include "connection_manager.h"
+#include "dictionary.h"
+#include "exceptions.h"
 #include "kernel_manager.h"
+#include "logging_manager.h"
+#include "model_manager.h"
 #include "mpi_manager.h"
-#include "mpi_manager_impl.h"
-#include "vp_manager_impl.h"
+#include "nest_names.h"
+#include "node_manager.h"
+#include "simulation_manager.h"
+#include "sp_manager.h"
 
 
 nest::VPManager::VPManager()
@@ -107,11 +116,11 @@ nest::VPManager::set_status( const Dictionary& d )
   {
     if ( not n_threads_updated )
     {
-      n_threads = n_vps / kernel().mpi_manager.get_num_processes();
+      n_threads = n_vps / kernel::manager< MPIManager >.get_num_processes();
     }
 
-    const bool n_threads_conflict = n_vps / kernel().mpi_manager.get_num_processes() != n_threads;
-    const bool n_procs_conflict = n_vps % kernel().mpi_manager.get_num_processes() != 0;
+    const bool n_threads_conflict = n_vps / kernel::manager< MPIManager >.get_num_processes() != n_threads;
+    const bool n_procs_conflict = n_vps % kernel::manager< MPIManager >.get_num_processes() != 0;
     if ( n_threads_conflict or n_procs_conflict )
     {
       throw BadProperty(
@@ -128,23 +137,23 @@ nest::VPManager::set_status( const Dictionary& d )
   if ( n_threads_updated or n_vps_updated )
   {
     std::vector< std::string > errors;
-    if ( kernel().node_manager.size() > 0 )
+    if ( kernel::manager< NodeManager >.size() > 0 )
     {
       errors.push_back( "Nodes exist" );
     }
-    if ( kernel().connection_manager.get_user_set_delay_extrema() )
+    if ( kernel::manager< ConnectionManager >.get_user_set_delay_extrema() )
     {
       errors.push_back( "Delay extrema have been set" );
     }
-    if ( kernel().simulation_manager.has_been_simulated() )
+    if ( kernel::manager< SimulationManager >.has_been_simulated() )
     {
       errors.push_back( "Network has been simulated" );
     }
-    if ( kernel().model_manager.are_model_defaults_modified() )
+    if ( kernel::manager< ModelManager >.are_model_defaults_modified() )
     {
       errors.push_back( "Model defaults were modified" );
     }
-    if ( kernel().sp_manager.is_structural_plasticity_enabled() and n_threads > 1 )
+    if ( kernel::manager< SPManager >.is_structural_plasticity_enabled() and n_threads > 1 )
     {
       errors.push_back( "Structural plasticity enabled: multithreading cannot be enabled" );
     }
@@ -170,7 +179,7 @@ nest::VPManager::set_status( const Dictionary& d )
       LOG( VerbosityLevel::WARNING, "VPManager::set_status()", msg );
     }
 
-    kernel().change_number_of_threads( n_threads );
+    kernel::manager< KernelManager >.change_number_of_threads( n_threads );
   }
 }
 
@@ -184,10 +193,47 @@ nest::VPManager::get_status( Dictionary& d )
 void
 nest::VPManager::set_num_threads( size_t n_threads )
 {
-  assert( not( kernel().sp_manager.is_structural_plasticity_enabled() and n_threads > 1 ) );
+  assert( not( kernel::manager< SPManager >.is_structural_plasticity_enabled() and n_threads > 1 ) );
   n_threads_ = n_threads;
 
 #ifdef _OPENMP
   omp_set_num_threads( n_threads_ );
 #endif
+}
+
+size_t
+nest::VPManager::get_thread_id() const
+{
+#ifdef _OPENMP
+  return omp_get_thread_num();
+#else
+  return 0;
+#endif
+}
+
+size_t
+nest::VPManager::get_end_rank_per_thread( const size_t rank_start, const size_t num_assigned_ranks_per_thread ) const
+{
+  size_t rank_end = rank_start + num_assigned_ranks_per_thread;
+
+  // if we have more threads than ranks, or if ranks can not be
+  // distributed evenly on threads, we need to make sure, that all
+  // threads care only about existing ranks
+  if ( rank_end > kernel::manager< MPIManager >.get_num_processes() )
+  {
+    rank_end = std::max( rank_start, kernel::manager< MPIManager >.get_num_processes() );
+  }
+
+  return rank_end;
+}
+
+nest::AssignedRanks
+nest::VPManager::get_assigned_ranks( const size_t tid )
+{
+  AssignedRanks assigned_ranks;
+  assigned_ranks.begin = get_start_rank_per_thread( tid );
+  assigned_ranks.max_size = get_num_assigned_ranks_per_thread();
+  assigned_ranks.end = get_end_rank_per_thread( assigned_ranks.begin, assigned_ranks.max_size );
+  assigned_ranks.size = assigned_ranks.end - assigned_ranks.begin;
+  return assigned_ranks;
 }

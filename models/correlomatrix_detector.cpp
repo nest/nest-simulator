@@ -22,7 +22,9 @@
 
 #include "correlomatrix_detector.h"
 
+#include <assert.h>
 // C++ includes:
+#include <algorithm>
 #include <cmath>       // for less
 #include <functional>  // for bind2nd
 
@@ -30,11 +32,15 @@
 #include "compose.hpp"
 #include "dict_util.h"
 #include "logging.h"
-
 // Includes from nestkernel:
+#include "connection_manager.h"
+#include "dictionary.h"
+#include "event.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
+#include "logging_manager.h"
 #include "nest_impl.h"
+#include "nest_timeconverter.h"
 
 
 void
@@ -308,7 +314,7 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
 
     // throw away all spikes which are too old to
     // enter the correlation window
-    const long min_delay = kernel().connection_manager.get_min_delay();
+    const long min_delay = kernel::manager< ConnectionManager >.get_min_delay();
     while ( not otherSpikes.empty() and ( spike_i - otherSpikes.front().timestep_ ) >= tau_edge + min_delay )
     {
       otherSpikes.pop_front();

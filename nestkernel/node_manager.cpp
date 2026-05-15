@@ -24,23 +24,33 @@
 
 // C++ includes:
 #include <algorithm>
+#include <cmath>
 #include <iomanip>
+#include <memory>
 #include <set>
+#include <sstream>
+#include <string>
 
-// Includes from libnestutil:
-#include "compose.hpp"
 #include "logging.h"
-
 // Includes from nestkernel:
+#include "block_vector.h"
+#include "connection_manager.h"
+#include "event_delivery_manager.h"
+#include "exceptions.h"
 #include "kernel_manager.h"
+#include "logging_manager.h"
 #include "model.h"
-#include "model_manager_impl.h"
+#include "model_manager.h"
+#include "modelrange.h"
+#include "modelrange_manager.h"
+#include "mpi_manager.h"
+#include "nest_names.h"
 #include "node.h"
+#include "secondary_event.h"
 #include "secondary_event_impl.h"
+#include "simulation_manager.h"
 #include "stopwatch_impl.h"
 #include "vp_manager.h"
-#include "vp_manager_impl.h"
-
 
 namespace nest
 {
@@ -70,8 +80,8 @@ NodeManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
   // explicitly force construction of thread-local node data to ensure consistent state
   size_last_local_data_update_ = 0;
-  local_nodes_.resize( kernel().vp_manager.get_num_threads() );
-  num_thread_local_devices_.resize( kernel().vp_manager.get_num_threads(), 0 );
+  local_nodes_.resize( kernel::manager< VPManager >.get_num_threads() );
+  num_thread_local_devices_.resize( kernel::manager< VPManager >.get_num_threads(), 0 );
   update_thread_local_node_data();
 
   if ( not adjust_number_of_threads_or_rng_only )
@@ -111,7 +121,7 @@ NodeManager::add_node( size_t model_id, long n )
     throw BadProperty();
   }
 
-  Model* model = kernel().model_manager.get_node_model( model_id );
+  Model* model = kernel::manager< ModelManager >.get_node_model( model_id );
   assert( model );
   model->deprecation_warning( "Create" );
 
@@ -126,10 +136,10 @@ NodeManager::add_node( size_t model_id, long n )
     throw KernelException( "OutOfMemory" );
   }
 
-  kernel().modelrange_manager.add_range( model_id, min_node_id, max_node_id );
+  kernel::manager< ModelRangeManager >.add_range( model_id, min_node_id, max_node_id );
 
   // clear any exceptions from previous call
-  std::vector< std::exception_ptr >( kernel().vp_manager.get_num_threads() ).swap( exceptions_raised_ );
+  std::vector< std::exception_ptr >( kernel::manager< VPManager >.get_num_threads() ).swap( exceptions_raised_ );
 
   auto nc_ptr = NodeCollectionPTR( new NodeCollectionPrimitive( min_node_id, max_node_id, model_id ) );
   append_node_collection_( nc_ptr );
@@ -160,7 +170,7 @@ NodeManager::add_node( size_t model_id, long n )
   // successfully
   if ( model->is_off_grid() )
   {
-    kernel().event_delivery_manager.set_off_grid_communication( true );
+    kernel::manager< EventDeliveryManager >.set_off_grid_communication( true );
     LOG( VerbosityLevel::INFO,
       "NodeManager::add_node",
       "Neuron models emitting precisely timed spikes exist: "
@@ -171,12 +181,12 @@ NodeManager::add_node( size_t model_id, long n )
 
   // resize the target table for delivery of events to devices to make sure the first dimension
   // matches the number of local nodes and the second dimension matches number of synapse types
-  kernel().connection_manager.resize_target_table_devices_to_number_of_neurons();
+  kernel::manager< ConnectionManager >.resize_target_table_devices_to_number_of_neurons();
 
 #pragma omp parallel
   {
     // must be called in parallel context to properly configure per-thread data structures
-    kernel().connection_manager.resize_target_table_devices_to_number_of_synapse_types();
+    kernel::manager< ConnectionManager >.resize_target_table_devices_to_number_of_synapse_types();
   }
 
   sw_construction_create_.stop();
@@ -187,7 +197,7 @@ NodeManager::add_node( size_t model_id, long n )
 void
 NodeManager::add_neurons_( Model& model, size_t min_node_id, size_t max_node_id )
 {
-  const size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
+  const size_t num_vps = kernel::manager< VPManager >.get_num_virtual_processes();
   // Upper limit for number of neurons per thread; in practice, either
   // max_new_per_thread-1 or max_new_per_thread nodes will be created.
   const size_t max_new_per_thread =
@@ -195,7 +205,7 @@ NodeManager::add_neurons_( Model& model, size_t min_node_id, size_t max_node_id 
 
 #pragma omp parallel
   {
-    const size_t tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel::manager< VPManager >.get_thread_id();
 
     try
     {
@@ -203,8 +213,8 @@ NodeManager::add_neurons_( Model& model, size_t min_node_id, size_t max_node_id 
       // Need to find smallest node ID with:
       //   - node ID local to this vp
       //   - node_id >= min_node_id
-      const size_t vp = kernel().vp_manager.thread_to_vp( tid );
-      const size_t min_node_id_vp = kernel().vp_manager.node_id_to_vp( min_node_id );
+      const size_t vp = kernel::manager< VPManager >.thread_to_vp( tid );
+      const size_t min_node_id_vp = kernel::manager< VPManager >.node_id_to_vp( min_node_id );
 
       size_t node_id = min_node_id + ( num_vps + vp - min_node_id_vp ) % num_vps;
 
@@ -237,7 +247,7 @@ NodeManager::add_devices_( Model& model, size_t min_node_id, size_t max_node_id 
 
 #pragma omp parallel
   {
-    const size_t tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel::manager< VPManager >.get_thread_id();
     try
     {
       model.reserve_additional( tid, n_per_thread );
@@ -251,7 +261,7 @@ NodeManager::add_devices_( Model& model, size_t min_node_id, size_t max_node_id 
         node->set_node_id_( node_id );
         node->set_model_id( model.get_model_id() );
         node->set_thread( tid );
-        node->set_vp( kernel().vp_manager.thread_to_vp( tid ) );
+        node->set_vp( kernel::manager< VPManager >.thread_to_vp( tid ) );
         node->set_local_device_id( num_thread_local_devices_[ tid ] - 1 );
         node->set_initialized();
 
@@ -272,7 +282,7 @@ NodeManager::add_music_nodes_( Model& model, size_t min_node_id, size_t max_node
 {
 #pragma omp parallel
   {
-    const size_t tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel::manager< VPManager >.get_thread_id();
     try
     {
       if ( tid == 0 )
@@ -286,7 +296,7 @@ NodeManager::add_music_nodes_( Model& model, size_t min_node_id, size_t max_node
           node->set_node_id_( node_id );
           node->set_model_id( model.get_model_id() );
           node->set_thread( 0 );
-          node->set_vp( kernel().vp_manager.thread_to_vp( 0 ) );
+          node->set_vp( kernel::manager< VPManager >.thread_to_vp( 0 ) );
           node->set_local_device_id( num_thread_local_devices_[ tid ] - 1 );
           node->set_initialized();
 
@@ -337,11 +347,11 @@ NodeManager::clear_node_collection_container()
 NodeCollectionPTR
 NodeManager::get_nodes( const Dictionary& properties, const bool local_only )
 {
-  std::vector< std::vector< size_t > > nodes_on_thread( kernel().vp_manager.get_num_threads() );
+  std::vector< std::vector< size_t > > nodes_on_thread( kernel::manager< VPManager >.get_num_threads() );
 
 #pragma omp parallel
   {
-    const size_t tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel::manager< VPManager >.get_thread_id();
 
     for ( auto node : get_local_nodes( tid ) )
     {
@@ -378,7 +388,7 @@ NodeManager::get_nodes( const Dictionary& properties, const bool local_only )
   if ( not local_only )
   {
     std::vector< size_t > globalnodes;
-    kernel().mpi_manager.communicate( nodes, globalnodes );
+    kernel::manager< MPIManager >.communicate( nodes, globalnodes );
 
     for ( size_t i = 0; i < globalnodes.size(); ++i )
     {
@@ -399,42 +409,16 @@ NodeManager::get_nodes( const Dictionary& properties, const bool local_only )
   return nodecollection;
 }
 
-bool
-NodeManager::is_local_node( Node* n ) const
-{
-  return kernel().vp_manager.is_local_vp( n->get_vp() );
-}
-
-bool
-NodeManager::is_local_node_id( size_t node_id ) const
-{
-  const size_t vp = kernel().vp_manager.node_id_to_vp( node_id );
-  return kernel().vp_manager.is_local_vp( vp );
-}
-
-size_t
-NodeManager::get_max_num_local_nodes() const
-{
-  return static_cast< size_t >(
-    ceil( static_cast< double >( size() ) / kernel().vp_manager.get_num_virtual_processes() ) );
-}
-
-size_t
-NodeManager::get_num_thread_local_devices( size_t t ) const
-{
-  return num_thread_local_devices_[ t ];
-}
-
 Node*
 NodeManager::get_node_or_proxy( size_t node_id, size_t t )
 {
-  assert( t < kernel().vp_manager.get_num_threads() );
+  assert( t < kernel::manager< VPManager >.get_num_threads() );
   assert( node_id <= size() );
 
   Node* node = local_nodes_[ t ].get_node_by_node_id( node_id );
   if ( not node )
   {
-    return kernel().model_manager.get_proxy_node( t, node_id );
+    return kernel::manager< ModelManager >.get_proxy_node( t, node_id );
   }
 
   return node;
@@ -445,17 +429,17 @@ NodeManager::get_node_or_proxy( size_t node_id )
 {
   assert( 0 < node_id and node_id <= size() );
 
-  size_t vp = kernel().vp_manager.node_id_to_vp( node_id );
-  if ( not kernel().vp_manager.is_local_vp( vp ) )
+  size_t vp = kernel::manager< VPManager >.node_id_to_vp( node_id );
+  if ( not kernel::manager< VPManager >.is_local_vp( vp ) )
   {
-    return kernel().model_manager.get_proxy_node( 0, node_id );
+    return kernel::manager< ModelManager >.get_proxy_node( 0, node_id );
   }
 
-  size_t t = kernel().vp_manager.vp_to_thread( vp );
+  size_t t = kernel::manager< VPManager >.vp_to_thread( vp );
   Node* node = local_nodes_[ t ].get_node_by_node_id( node_id );
   if ( not node )
   {
-    return kernel().model_manager.get_proxy_node( t, node_id );
+    return kernel::manager< ModelManager >.get_proxy_node( t, node_id );
   }
 
   return node;
@@ -464,13 +448,13 @@ NodeManager::get_node_or_proxy( size_t node_id )
 Node*
 NodeManager::get_mpi_local_node_or_device_head( size_t node_id )
 {
-  size_t t = kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( node_id ) );
+  size_t t = kernel::manager< VPManager >.vp_to_thread( kernel::manager< VPManager >.node_id_to_vp( node_id ) );
 
   Node* node = local_nodes_[ t ].get_node_by_node_id( node_id );
 
   if ( not node )
   {
-    return kernel().model_manager.get_proxy_node( t, node_id );
+    return kernel::manager< ModelManager >.get_proxy_node( t, node_id );
   }
   if ( not node->has_proxies() )
   {
@@ -483,7 +467,7 @@ NodeManager::get_mpi_local_node_or_device_head( size_t node_id )
 std::vector< Node* >
 NodeManager::get_thread_siblings( size_t node_id ) const
 {
-  size_t num_threads = kernel().vp_manager.get_num_threads();
+  size_t num_threads = kernel::manager< VPManager >.get_num_threads();
   std::vector< Node* > siblings( num_threads );
   for ( size_t t = 0; t < num_threads; ++t )
   {
@@ -502,7 +486,7 @@ NodeManager::get_thread_siblings( size_t node_id ) const
 void
 NodeManager::update_thread_local_node_data()
 {
-  kernel().vp_manager.assert_single_threaded();
+  kernel::manager< VPManager >.assert_single_threaded();
 
   if ( thread_local_data_is_up_to_date() )
   {
@@ -511,9 +495,9 @@ NodeManager::update_thread_local_node_data()
 
   // We clear the existing wfr_nodes_vec_ and then rebuild it.
   wfr_nodes_vec_.clear();
-  wfr_nodes_vec_.resize( kernel().vp_manager.get_num_threads() );
+  wfr_nodes_vec_.resize( kernel::manager< VPManager >.get_num_threads() );
 
-  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( size_t tid = 0; tid < kernel::manager< VPManager >.get_num_threads(); ++tid )
   {
     wfr_nodes_vec_[ tid ].clear();
 
@@ -543,7 +527,7 @@ NodeManager::update_thread_local_node_data()
   // step, because gather_events() has to be done in an
   // openmp single section
   wfr_is_used_ = false;
-  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( size_t tid = 0; tid < kernel::manager< VPManager >.get_num_threads(); ++tid )
   {
     if ( wfr_nodes_vec_[ tid ].size() > 0 )
     {
@@ -557,7 +541,7 @@ NodeManager::destruct_nodes_()
 {
 #pragma omp parallel
   {
-    const size_t tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel::manager< VPManager >.get_thread_id();
     for ( auto node : local_nodes_[ tid ] )
     {
       delete node.get_node();
@@ -587,29 +571,20 @@ NodeManager::set_status_single_node_( Node& target, const Dictionary& d, bool cl
 }
 
 void
-NodeManager::prepare_node_( Node* n )
-{
-  // Frozen nodes are initialized and calibrated, so that they
-  // have ring buffers and can accept incoming spikes.
-  n->init();
-  n->pre_run_hook();
-}
-
-void
 NodeManager::prepare_nodes()
 {
-  assert( kernel().is_initialized() );
+  assert( kernel::manager< KernelManager >.is_initialized() );
 
   // We initialize the buffers of each node and calibrate it.
 
   size_t num_active_nodes = 0;      // counts nodes that will be updated
   size_t num_active_wfr_nodes = 0;  // counts nodes that use waveform relaxation
 
-  std::vector< std::exception_ptr > exceptions_raised( kernel().vp_manager.get_num_threads() );
+  std::vector< std::exception_ptr > exceptions_raised( kernel::manager< VPManager >.get_num_threads() );
 
 #pragma omp parallel reduction( + : num_active_nodes, num_active_wfr_nodes )
   {
-    size_t tid = kernel().vp_manager.get_thread_id();
+    size_t tid = kernel::manager< VPManager >.get_thread_id();
 
     // We prepare nodes in a parallel region. Therefore, we need to catch
     // exceptions here and then handle them after the parallel region.
@@ -663,7 +638,7 @@ NodeManager::post_run_cleanup()
 {
 #pragma omp parallel
   {
-    size_t t = kernel().vp_manager.get_thread_id();
+    size_t t = kernel::manager< VPManager >.get_thread_id();
     SparseNodeArray::const_iterator n;
     for ( n = local_nodes_[ t ].begin(); n != local_nodes_[ t ].end(); ++n )
     {
@@ -677,7 +652,7 @@ NodeManager::finalize_nodes()
 {
 #pragma omp parallel
   {
-    size_t tid = kernel().vp_manager.get_thread_id();
+    size_t tid = kernel::manager< VPManager >.get_thread_id();
     SparseNodeArray::const_iterator n;
     for ( n = local_nodes_[ tid ].begin(); n != local_nodes_[ tid ].end(); ++n )
     {
@@ -689,15 +664,15 @@ NodeManager::finalize_nodes()
 void
 NodeManager::check_wfr_use()
 {
-  wfr_is_used_ = kernel().mpi_manager.any_true( wfr_is_used_ );
+  wfr_is_used_ = kernel::manager< MPIManager >.any_true( wfr_is_used_ );
 
-  GapJunctionEvent::set_coeff_length(
-    kernel().connection_manager.get_min_delay() * ( kernel().simulation_manager.get_wfr_interpolation_order() + 1 ) );
-  InstantaneousRateConnectionEvent::set_coeff_length( kernel().connection_manager.get_min_delay() );
-  DelayedRateConnectionEvent::set_coeff_length( kernel().connection_manager.get_min_delay() );
-  DiffusionConnectionEvent::set_coeff_length( kernel().connection_manager.get_min_delay() );
-  LearningSignalConnectionEvent::set_coeff_length( kernel().connection_manager.get_min_delay() );
-  SICEvent::set_coeff_length( kernel().connection_manager.get_min_delay() );
+  GapJunctionEvent::set_coeff_length( kernel::manager< ConnectionManager >.get_min_delay()
+    * ( kernel::manager< SimulationManager >.get_wfr_interpolation_order() + 1 ) );
+  InstantaneousRateConnectionEvent::set_coeff_length( kernel::manager< ConnectionManager >.get_min_delay() );
+  DelayedRateConnectionEvent::set_coeff_length( kernel::manager< ConnectionManager >.get_min_delay() );
+  DiffusionConnectionEvent::set_coeff_length( kernel::manager< ConnectionManager >.get_min_delay() );
+  LearningSignalConnectionEvent::set_coeff_length( kernel::manager< ConnectionManager >.get_min_delay() );
+  SICEvent::set_coeff_length( kernel::manager< ConnectionManager >.get_min_delay() );
 }
 
 void
@@ -707,13 +682,13 @@ NodeManager::print( std::ostream& out ) const
   const double max_node_id_width = std::floor( std::log10( max_node_id ) );
   const double node_id_range_width = 6 + 2 * max_node_id_width;
 
-  for ( std::vector< modelrange >::const_iterator it = kernel().modelrange_manager.begin();
-    it != kernel().modelrange_manager.end();
+  for ( std::vector< modelrange >::const_iterator it = kernel::manager< ModelRangeManager >.begin();
+    it != kernel::manager< ModelRangeManager >.end();
     ++it )
   {
     const size_t first_node_id = it->get_first_node_id();
     const size_t last_node_id = it->get_last_node_id();
-    const Model* mod = kernel().model_manager.get_node_model( it->get_model_id() );
+    const Model* mod = kernel::manager< ModelManager >.get_node_model( it->get_model_id() );
 
     std::stringstream node_id_range_strs;
     node_id_range_strs << std::setw( max_node_id_width + 1 ) << first_node_id;
@@ -723,7 +698,7 @@ NodeManager::print( std::ostream& out ) const
     }
     out << std::setw( node_id_range_width ) << std::left << node_id_range_strs.str() << " " << mod->get_name();
 
-    if ( it + 1 != kernel().modelrange_manager.end() )
+    if ( it + 1 != kernel::manager< ModelRangeManager >.end() )
     {
       out << std::endl;
     }
@@ -733,7 +708,7 @@ NodeManager::print( std::ostream& out ) const
 void
 NodeManager::set_status( size_t node_id, const Dictionary& d )
 {
-  for ( size_t t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  for ( size_t t = 0; t < kernel::manager< VPManager >.get_num_threads(); ++t )
   {
     Node* node = local_nodes_[ t ].get_node_by_node_id( node_id );
     if ( node )
@@ -753,6 +728,12 @@ NodeManager::get_status( Dictionary& d )
 void
 NodeManager::set_status( const Dictionary& )
 {
+}
+
+void
+NodeManager::set_have_nodes_changed( const bool changed )
+{
+  have_nodes_changed_ = changed;
 }
 
 }  // namespace nest

@@ -22,7 +22,7 @@
 
 skip_if_without_music
 
-M_INFO setverbosity
+VerbosityLevel.INFO setverbosity
 
 << /local_num_threads 2 /overwrite_files true >> SetKernelStatus
 

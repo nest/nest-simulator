@@ -23,19 +23,20 @@
 
 #include "iaf_cond_beta.h"
 
-#ifdef HAVE_GSL
+#include <assert.h>
+#include <gsl/gsl_errno.h>
 
-// C++ includes:
-#include <cstdio>
-#include <iostream>
+#include "event_delivery_manager.h"
+#include "simulation_manager.h"
+
+#ifdef HAVE_GSL
 
 // Includes from libnestutil:
 #include "beta_normalization_factor.h"
 #include "dict_util.h"
-#include "numerics.h"
-
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
@@ -55,10 +56,7 @@ register_iaf_cond_beta( const std::string& name )
   register_node_model< iaf_cond_beta >( name );
 }
 
-/*
- * Override the create() method with one call to RecordablesMap::insert_()
- * for each quantity to be recorded.
- */
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< iaf_cond_beta >::create()
@@ -389,7 +387,6 @@ nest::iaf_cond_beta::update( Time const& origin, const long from, const long to 
 {
   for ( long lag = from; lag < to; ++lag )
   {
-
     double t = 0.0;
 
     // numerical integration with adaptive step size control:
@@ -437,7 +434,7 @@ nest::iaf_cond_beta::update( Time const& origin, const long from, const long to 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
         SpikeEvent se;
-        kernel().event_delivery_manager.send( *this, se, lag );
+        kernel::manager< EventDeliveryManager >.send( *this, se, lag );
       }
 
     // add incoming spikes
@@ -459,12 +456,12 @@ nest::iaf_cond_beta::handle( SpikeEvent& e )
 
   if ( e.get_weight() > 0.0 )
   {
-    B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
   else
   {
-    B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() );
   }  // ensure conductance is positive
 }
@@ -475,8 +472,8 @@ nest::iaf_cond_beta::handle( CurrentEvent& e )
   assert( e.get_delay_steps() > 0 );
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
+    e.get_weight() * e.get_current() );
 }
 
 void

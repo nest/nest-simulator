@@ -22,11 +22,14 @@
 
 #include "sparse_node_array.h"
 
+#include <algorithm>
+#include <cmath>
+
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "node.h"
-#include "vp_manager_impl.h"
+#include "vp_manager.h"
 
 
 nest::SparseNodeArray::NodeEntry::NodeEntry( Node& node, size_t node_id )
@@ -87,7 +90,7 @@ nest::SparseNodeArray::add_local_node( Node& node )
     left_side_has_proxies_ = node.has_proxies();
 
     // we now know which scale applies on which side of the split
-    const double proxy_scale = 1.0 / static_cast< double >( kernel().vp_manager.get_num_virtual_processes() );
+    const double proxy_scale = 1.0 / static_cast< double >( kernel::manager< VPManager >.get_num_virtual_processes() );
     if ( left_side_has_proxies_ )
     {
       left_scale_ = proxy_scale;

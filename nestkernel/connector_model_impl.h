@@ -19,23 +19,16 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 #ifndef CONNECTOR_MODEL_IMPL_H
 #define CONNECTOR_MODEL_IMPL_H
 
+#include "connection_impl.h"
+#include "connection_manager.h"
+#include "connector_base_impl.h"
 #include "connector_model.h"
-
-// Generated includes:
-#include "config.h"
-
-// Includes from libnestutil:
-#include "compose.hpp"
-#include "enum_bitfield.h"
-
-// Includes from nestkernel:
-#include "connector_base.h"
 #include "delay_checker.h"
 #include "kernel_manager.h"
+#include "model_manager.h"
 #include "nest_time.h"
 #include "nest_timeconverter.h"
 #include "secondary_event_impl.h"
@@ -59,6 +52,13 @@ namespace nest
 // {
 //   return cm.get_default_connection().get_syn_id_delay();
 // }
+
+template < typename ConnectionT >
+std::unique_ptr< SecondaryEvent >
+GenericConnectorModel< ConnectionT >::get_secondary_event()
+{
+  return default_connection_.get_secondary_event();
+}
 
 template < typename ConnectionT >
 ConnectorModel*
@@ -103,7 +103,7 @@ GenericConnectorModel< ConnectionT >::get_status( Dictionary& d ) const
 
   d[ names::receptor_type ] = static_cast< long >( receptor_type_ );
   d[ names::synapse_model ] = name_;
-  d[ names::synapse_modelid ] = static_cast< long >( kernel().model_manager.get_synapse_model_id( name_ ) );
+  d[ names::synapse_modelid ] = static_cast< long >( kernel::manager< ModelManager >.get_synapse_model_id( name_ ) );
   d[ names::requires_symmetric ] = has_property( ConnectionModelProperties::REQUIRES_SYMMETRIC );
   d[ names::has_delay ] = has_property( ConnectionModelProperties::HAS_DELAY );
 }
@@ -124,12 +124,12 @@ GenericConnectorModel< ConnectionT >::set_status( const Dictionary& d )
   // set_status calls on common properties and default connection may
   // modify min/max delay, we need to freeze the min/max_delay checking.
 
-  kernel().connection_manager.get_delay_checker().freeze_delay_update();
+  kernel::manager< ConnectionManager >.get_delay_checker().freeze_delay_update();
 
   cp_.set_status( d, *this );
   default_connection_.set_status( d, *this );
 
-  kernel().connection_manager.get_delay_checker().enable_delay_update();
+  kernel::manager< ConnectionManager >.get_delay_checker().enable_delay_update();
 
   // we've possibly just got a new default delay. So enforce checking next time
   // it is used
@@ -174,7 +174,7 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
       if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
       {
         const double d = default_connection_.get_delay();
-        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( d );
+        kernel::manager< ConnectionManager >.get_delay_checker().assert_valid_delay_ms( d );
       }
       // Let connections without delay contribute to the delay extrema with
       // wfr_comm_interval. For those connections the min_delay is important
@@ -184,8 +184,8 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
       // without delay is created.
       else
       {
-        const double wfr_comm_interval = kernel().simulation_manager.get_wfr_comm_interval();
-        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( wfr_comm_interval );
+        const double wfr_comm_interval = kernel::manager< SimulationManager >.get_wfr_comm_interval();
+        kernel::manager< ConnectionManager >.get_delay_checker().assert_valid_delay_ms( wfr_comm_interval );
       }
     }
     catch ( BadDelay& e )
@@ -194,8 +194,8 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
         String::compose( "Default delay of '%1' must be between min_delay %2 "
                          "and max_delay %3.",
           get_name(),
-          Time::delay_steps_to_ms( kernel().connection_manager.get_min_delay() ),
-          Time::delay_steps_to_ms( kernel().connection_manager.get_max_delay() ) ) );
+          Time::delay_steps_to_ms( kernel::manager< ConnectionManager >.get_min_delay() ),
+          Time::delay_steps_to_ms( kernel::manager< ConnectionManager >.get_max_delay() ) ) );
     }
     default_delay_needs_check_ = false;
   }
@@ -229,7 +229,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   {
     if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
     {
-      kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
+      kernel::manager< ConnectionManager >.get_delay_checker().assert_valid_delay_ms( delay );
     }
 
     if ( p.known( names::delay ) )
@@ -242,13 +242,13 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   else
   {
     // check delay
-    double delay = 0.0;
+    double delay_in = 0.0;
 
-    if ( p.update_value( names::delay, delay ) )
+    if ( p.update_value( names::delay, delay_in ) )
     {
       if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
       {
-        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
+        kernel::manager< ConnectionManager >.get_delay_checker().assert_valid_delay_ms( delay_in );
       }
     }
     else
@@ -320,5 +320,4 @@ GenericConnectorModel< ConnectionT >::add_connection_( Node& src,
 }
 
 }  // namespace nest
-
-#endif
+#endif  // CONNECTOR_MODEL_IMPL_H

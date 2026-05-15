@@ -23,11 +23,23 @@
 #ifndef MCCULLOCH_PITTS_NEURON_H
 #define MCCULLOCH_PITTS_NEURON_H
 
+#include <algorithm>
+#include <map>
+#include <math.h>
+#include <string>
+#include <vector>
+
 // Includes from models:
 #include "binary_neuron.h"
+#include "nest_time.h"
+#include "random_generators.h"
+#include "recordables_map.h"
+
+class Dictionary;
 
 namespace nest
 {
+class Node;
 
 /* BeginUserDocs: neuron, binary
 
@@ -154,9 +166,6 @@ gainfunction_mcculloch_pitts::operator()( RngPtr, double h )
 typedef binary_neuron< gainfunction_mcculloch_pitts > mcculloch_pitts_neuron;
 void register_mcculloch_pitts_neuron( const std::string& name );
 
-
-template <>
-void RecordablesMap< mcculloch_pitts_neuron >::create();
 
 }  // namespace nest
 

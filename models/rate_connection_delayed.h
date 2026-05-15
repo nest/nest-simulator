@@ -24,7 +24,17 @@
 #ifndef RATE_CONNECTION_DELAYED_H
 #define RATE_CONNECTION_DELAYED_H
 
+#include <memory>
+#include <string>
+
+#include "common_synapse_properties.h"
 #include "connection.h"
+#include "connector_model.h"
+#include "dictionary.h"
+#include "event.h"
+#include "nest_names.h"
+#include "node.h"
+#include "secondary_event.h"
 
 namespace nest
 {

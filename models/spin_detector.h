@@ -24,16 +24,15 @@
 #define SPIN_DETECTOR_H
 
 
-// C++ includes:
-#include <vector>
-
 // Includes from nestkernel:
-#include "device_node.h"
 #include "event.h"
 #include "exceptions.h"
+#include "nest_names.h"
 #include "nest_timeconverter.h"
 #include "nest_types.h"
 #include "recording_device.h"
+
+class Dictionary;
 
 namespace nest
 {
@@ -180,7 +179,7 @@ spin_detector::receives_signal() const
 }
 
 inline void
-nest::spin_detector::calibrate_time( const TimeConverter& tc )
+spin_detector::calibrate_time( const TimeConverter& tc )
 {
   t_last_in_spike_ = tc.from_old_tics( t_last_in_spike_.get_tics() );
 }

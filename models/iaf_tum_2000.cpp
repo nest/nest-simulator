@@ -22,19 +22,21 @@
 
 #include "iaf_tum_2000.h"
 
+#include <array>
+#include <assert.h>
+#include <cmath>
+
 // Includes from libnestutil:
 #include "dict_util.h"
 #include "iaf_propagator.h"
-#include "numerics.h"
-
 // Includes from nestkernel:
+#include "event_delivery_manager.h"
 #include "exceptions.h"
-#include "iaf_propagator.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
-#include "numerics.h"
 #include "ring_buffer_impl.h"
-#include "universal_data_logger_impl.h"
+#include "simulation_manager.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -44,15 +46,13 @@ nest::RecordablesMap< nest::iaf_tum_2000 > nest::iaf_tum_2000::recordablesMap_;
 
 namespace nest
 {
-
 void
 register_iaf_tum_2000( const std::string& name )
 {
   register_node_model< iaf_tum_2000 >( name );
 }
 
-// Override the create() method with one call to RecordablesMap::insert_()
-// for each quantity to be recorded.
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< iaf_tum_2000 >::create()
@@ -213,7 +213,6 @@ nest::iaf_tum_2000::State_::get( Dictionary& d, const Parameters_& p ) const
 void
 nest::iaf_tum_2000::State_::set( const Dictionary& d, const Parameters_& p, double delta_EL, Node* node )
 {
-
   double x = x_;
   double y = y_;
   d.update_value( names::x, x );
@@ -364,7 +363,7 @@ nest::iaf_tum_2000::update( const Time& origin, const long from, const long to )
     S_.i_syn_ex_ += ( 1. - V_.P11ex_ ) * S_.i_1_;
 
     // get read access to the correct input-buffer slot
-    const size_t input_buffer_slot = kernel().event_delivery_manager.get_modulo( lag );
+    const size_t input_buffer_slot = kernel::manager< EventDeliveryManager >.get_modulo( lag );
     auto& input = B_.input_buffer_.get_values_all_channels( input_buffer_slot );
 
     // the spikes arriving at T+1 have an immediate effect on the state of the
@@ -427,7 +426,7 @@ nest::iaf_tum_2000::update( const Time& origin, const long from, const long to )
       // send spike with datafield
       SpikeEvent se;
       se.set_offset( delta_y_tsp );
-      kernel().event_delivery_manager.send( *this, se, lag );
+      kernel::manager< EventDeliveryManager >.send( *this, se, lag );
     }
 
     // set new input current
@@ -447,8 +446,8 @@ nest::iaf_tum_2000::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  const size_t input_buffer_slot = kernel().event_delivery_manager.get_modulo(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
+  const size_t input_buffer_slot = kernel::manager< EventDeliveryManager >.get_modulo(
+    e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ) );
 
   // Multiply with datafield from SpikeEvent to apply depression/facilitation computed by presynaptic neuron
   double s = e.get_weight() * e.get_multiplicity();
@@ -470,8 +469,8 @@ nest::iaf_tum_2000::handle( CurrentEvent& e )
   const double c = e.get_current();
   const double w = e.get_weight();
 
-  const size_t input_buffer_slot = kernel().event_delivery_manager.get_modulo(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
+  const size_t input_buffer_slot = kernel::manager< EventDeliveryManager >.get_modulo(
+    e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ) );
 
   if ( 0 == e.get_rport() )
   {

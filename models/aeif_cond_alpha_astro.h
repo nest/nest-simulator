@@ -23,8 +23,25 @@
 #ifndef AEIF_COND_ALPHA_ASTRO_H
 #define AEIF_COND_ALPHA_ASTRO_H
 
+#include <algorithm>
+#include <map>
+#include <math.h>
+#include <string>
+#include <vector>
+
 // Generated includes:
 #include "config.h"
+#include "dictionary.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "node.h"
+#include "universal_data_logger.h"
+
+namespace nest
+{
+class SICEvent;
+}  // namespace nest
 
 #ifdef HAVE_GSL
 
@@ -40,7 +57,7 @@
 #include "nest_types.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {

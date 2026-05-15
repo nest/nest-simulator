@@ -22,20 +22,23 @@
 
 #include "aeif_psc_delta.h"
 
+#include <assert.h>
+#include <gsl/gsl_errno.h>
+
+#include "event_delivery_manager.h"
+#include "simulation_manager.h"
+
 #ifdef HAVE_GSL
 
 // C++ includes:
 #include <cmath>
-#include <cstdio>
-#include <iostream>
 #include <limits>
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
-
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
 #include "nest_names.h"
@@ -59,8 +62,7 @@ register_aeif_psc_delta( const std::string& name )
 /*
  * template specialization must be placed in namespace
  *
- * Override the create() method with one call to RecordablesMap::insert_()
- * for each quantity to be recorded.
+ * Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
  */
 template <>
 void
@@ -500,7 +502,7 @@ nest::aeif_psc_delta::update( const Time& origin, const long from, const long to
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;
-        kernel().event_delivery_manager.send( *this, se, lag );
+        kernel::manager< EventDeliveryManager >.send( *this, se, lag );
       }
     }
 
@@ -522,8 +524,8 @@ nest::aeif_psc_delta::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  B_.spikes_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
+  B_.spikes_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
+    e.get_weight() * e.get_multiplicity() );
 }
 
 void
@@ -535,7 +537,7 @@ nest::aeif_psc_delta::handle( CurrentEvent& e )
   const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ), w * c );
 }
 
 void

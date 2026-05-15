@@ -22,13 +22,17 @@
 
 #include "sigmoid_rate_gg_1998.h"
 
-// Includes from nestkernel
-#include "kernel_manager.h"
-#include "model_manager_impl.h"
+
+#include "dict_util.h"
+#include "dictionary.h"
+#include "genericmodel_impl.h"
 #include "nest_impl.h"
+#include "nest_names.h"
 
 namespace nest
 {
+class Node;
+
 void
 register_sigmoid_rate_gg_1998_ipn( const std::string& name )
 {
@@ -54,10 +58,7 @@ nonlinearities_sigmoid_rate_gg_1998::set( const Dictionary& d, Node* node )
   update_value_param( d, names::g, g_, node );
 }
 
-/*
- * Override the create() method with one call to RecordablesMap::insert_()
- * for each quantity to be recorded.
- */
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< nest::sigmoid_rate_gg_1998_ipn >::create()

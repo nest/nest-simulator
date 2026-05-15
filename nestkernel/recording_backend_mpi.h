@@ -23,13 +23,22 @@
 #ifndef RECORDING_BACKEND_MPI_H
 #define RECORDING_BACKEND_MPI_H
 
-#include "recording_backend.h"
 #include <arpa/inet.h>
+#include <array>
+#include <map>
 #include <mpi.h>
 #include <netinet/in.h>
 #include <set>
+#include <string>
 #include <sys/socket.h>
+#include <tuple>
 #include <unistd.h>
+#include <vector>
+
+#include "recording_backend.h"
+#include "recording_device.h"
+
+class Dictionary;
 
 /* BeginUserDocs: NOINDEX
 
@@ -89,6 +98,7 @@ EndUserDocs */
 
 namespace nest
 {
+class Event;
 
 /**
  * A recording backend for sending information with MPI.

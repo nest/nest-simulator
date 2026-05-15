@@ -25,15 +25,22 @@
 #ifdef HAVE_MUSIC
 
 // C++ includes:
-#include <numeric>
+#include <algorithm>
+#include <assert.h>
 
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "logging.h"
+#include "logging_manager.h"
 
 // Includes from nestkernel:
+#include "dictionary.h"
+#include "event.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "music_manager.h"
 #include "nest_impl.h"
+#include "nest_names.h"
 
 void
 nest::register_music_event_out_proxy( const std::string& name )
@@ -130,7 +137,7 @@ nest::music_event_out_proxy::pre_run_hook()
   // only publish the output port once,
   if ( not S_.published_ )
   {
-    MUSIC::Setup* s = kernel().music_manager.get_music_setup();
+    MUSIC::Setup* s = kernel::manager< MUSICManager >.get_music_setup();
     if ( s == 0 )
     {
       throw MUSICSimulationHasRun( get_name() );

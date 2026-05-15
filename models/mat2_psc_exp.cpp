@@ -22,15 +22,18 @@
 
 #include "mat2_psc_exp.h"
 
+#include <assert.h>
+#include <cmath>
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
-
 // Includes from nestkernel:
+#include "event_delivery_manager.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
+#include "simulation_manager.h"
 #include "universal_data_logger_impl.h"
 
 
@@ -48,10 +51,7 @@ register_mat2_psc_exp( const std::string& name )
   register_node_model< mat2_psc_exp >( name );
 }
 
-/*
- * Override the create() method with one call to RecordablesMap::insert_()
- * for each quantity to be recorded.
- */
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< mat2_psc_exp >::create()
@@ -310,7 +310,6 @@ nest::mat2_psc_exp::update( Time const& origin, const long from, const long to )
   // evolve from timestep 'from' to timestep 'to' with steps of h each
   for ( long lag = from; lag < to; ++lag )
   {
-
     // evolve membrane potential
     S_.V_m_ = S_.V_m_ * V_.P22_expm1_ + S_.V_m_ + S_.i_syn_ex_ * V_.P21ex_ + S_.i_syn_in_ * V_.P21in_
       + ( P_.I_e_ + S_.i_0_ ) * V_.P20_;
@@ -339,7 +338,7 @@ nest::mat2_psc_exp::update( Time const& origin, const long from, const long to )
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
         SpikeEvent se;
-        kernel().event_delivery_manager.send( *this, se, lag );
+        kernel::manager< EventDeliveryManager >.send( *this, se, lag );
       }
     }
     else
@@ -364,12 +363,12 @@ nest::mat2_psc_exp::handle( SpikeEvent& e )
 
   if ( e.get_weight() >= 0.0 )
   {
-    B_.spikes_ex_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.spikes_ex_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
   else
   {
-    B_.spikes_in_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.spikes_in_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
 }
@@ -383,7 +382,7 @@ nest::mat2_psc_exp::handle( CurrentEvent& e )
   const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ), w * c );
 }
 
 void

@@ -25,8 +25,13 @@
 
 // C++ includes:
 #include <fstream>
+#include <map>
+#include <string>
+#include <vector>
 
 #include "recording_backend.h"
+
+class Dictionary;
 
 /* BeginUserDocs: NOINDEX
 
@@ -135,6 +140,8 @@ EndUserDocs */
 
 namespace nest
 {
+class Event;
+class RecordingDevice;
 
 /**
  * ASCII specialization of the RecordingBackend interface.

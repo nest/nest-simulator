@@ -22,12 +22,8 @@
 
 #include "exceptions.h"
 
-// C++ includes:
-#include <sstream>
-
 // Generated includes:
 #include "config.h"
-
 // Includes from thirdparty:
 #include "compose.hpp"
 

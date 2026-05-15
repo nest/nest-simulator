@@ -23,17 +23,36 @@
 #ifndef EPROP_READOUT_BSSHSLM_2020_H
 #define EPROP_READOUT_BSSHSLM_2020_H
 
+// C++
+#include <algorithm>
+#include <map>
+#include <math.h>
+#include <string>
+#include <vector>
+
 // nestkernel
 #include "connection.h"
-#include "eprop_archiving_node_impl.h"
+#include "dictionary.h"
 #include "eprop_archiving_node_readout.h"
 #include "event.h"
-#include "nest_types.h"
+#include "exceptions.h"
+#include "histentry.h"
+#include "kernel_manager.h"
+#include "model_manager.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "node.h"
+#include "recordables_map.h"
 #include "ring_buffer.h"
+#include "secondary_event.h"
 #include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
+class CurrentEvent;
+class DataLoggingRequest;
+class SpikeEvent;
 
 /* BeginUserDocs: neuron, e-prop plasticity, current-based
 
@@ -427,7 +446,7 @@ private:
 
   //! Minimal spike receptor type. Start with 1 to forbid port 0 and avoid accidental creation of connections with no
   //! receptor type set.
-  static const size_t MIN_RATE_RECEPTOR = 1;
+  static constexpr size_t MIN_RATE_RECEPTOR = 1;
 
   //! Enumeration of spike receptor types.
   enum RateSynapseTypes
@@ -527,7 +546,7 @@ eprop_readout_bsshslm_2020::handles_test_event( CurrentEvent&, size_t receptor_t
 inline size_t
 eprop_readout_bsshslm_2020::handles_test_event( DelayedRateConnectionEvent& e, size_t receptor_type )
 {
-  size_t step_rate_model_id = kernel().model_manager.get_node_model_id( "step_rate_generator" );
+  size_t step_rate_model_id = kernel::manager< ModelManager >.get_node_model_id( "step_rate_generator" );
   size_t model_id = e.get_sender().get_model_id();
 
   if ( step_rate_model_id == model_id and receptor_type != TARGET_SIG )

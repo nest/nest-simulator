@@ -19,18 +19,15 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 #ifndef LAYER_IMPL_H
 #define LAYER_IMPL_H
 
+#include "connection_creator_impl.h"
+#include "free_layer_impl.h"
+#include "grid_layer_impl.h"
+#include "grid_mask_impl.h"
 #include "layer.h"
-
-// Includes from nestkernel:
-#include "node_collection.h"
-
-// Includes from spatial:
-#include "grid_layer.h"
-#include "grid_mask.h"
+#include "mask_impl.h"
 
 namespace nest
 {
@@ -305,7 +302,7 @@ Layer< D >::dump_connections( std::ostream& out,
   conn_filter[ names::target ] = NodeCollectionPTR( target_layer->get_node_collection() );
   conn_filter[ names::synapse_model ] = syn_model;
 
-  const auto& connectome = kernel().connection_manager.get_connections( conn_filter );
+  const auto& connectome = kernel::manager< ConnectionManager >.get_connections( conn_filter );
 
   // Get positions of remote nodes
   std::vector< std::pair< Position< D >, size_t > >* src_vec = get_global_positions_vector( node_collection );
@@ -329,7 +326,7 @@ Layer< D >::dump_connections( std::ostream& out,
       previous_source_node_id = source_node_id;
     }
 
-    const Dictionary& result_dict = kernel().connection_manager.get_synapse_status( source_node_id,
+    const Dictionary& result_dict = kernel::manager< ConnectionManager >.get_synapse_status( source_node_id,
       conn.get_target_node_id(),
       conn.get_target_thread(),
       conn.get_synapse_model_id(),
@@ -431,6 +428,161 @@ MaskedLayer< D >::check_mask_( Layer< D >& layer, bool allow_oversized )
       throw BadProperty( "Mask is incompatible with layer." );
     }
   }
+}
+
+template < int D >
+inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
+  const MaskPTR maskd,
+  bool allow_oversized,
+  NodeCollectionPTR node_collection )
+  : mask_( maskd )
+{
+  ntree_ = layer.get_global_positions_ntree( node_collection );
+
+  check_mask_( layer, allow_oversized );
+}
+
+template < int D >
+inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
+  const MaskPTR maskd,
+  bool allow_oversized,
+  Layer< D >& target,
+  NodeCollectionPTR node_collection )
+  : mask_( maskd )
+{
+  ntree_ = layer.get_global_positions_ntree(
+    target.get_periodic_mask(), target.get_lower_left(), target.get_extent(), node_collection );
+
+  check_mask_( target, allow_oversized );
+  mask_ = MaskPTR( new ConverseMask< D >( dynamic_cast< const Mask< D >& >( *mask_ ) ) );
+}
+
+template < int D >
+inline MaskedLayer< D >::~MaskedLayer()
+{
+}
+
+template < int D >
+inline typename Ntree< D, size_t >::masked_iterator
+MaskedLayer< D >::begin( const Position< D >& anchor )
+{
+  try
+  {
+    return ntree_->masked_begin( dynamic_cast< const Mask< D >& >( *mask_ ), anchor );
+  }
+  catch ( std::bad_cast& e )
+  {
+    throw BadProperty( "Mask is incompatible with layer." );
+  }
+}
+
+template < int D >
+inline typename Ntree< D, size_t >::masked_iterator
+MaskedLayer< D >::end()
+{
+  return ntree_->masked_end();
+}
+
+template < int D >
+inline Layer< D >::Layer()
+{
+  // Default center (0,0) and extent (1,1)
+  for ( int i = 0; i < D; ++i )
+  {
+    lower_left_[ i ] = -0.5;
+    extent_[ i ] = 1.0;
+  }
+}
+
+template < int D >
+inline Layer< D >::Layer( const Layer& other_layer )
+  : AbstractLayer( other_layer )
+  , lower_left_( other_layer.lower_left_ )
+  , extent_( other_layer.extent_ )
+  , periodic_( other_layer.periodic_ )
+{
+}
+
+template < int D >
+inline Layer< D >::~Layer()
+{
+  if ( cached_ntree_md_ == get_metadata() )
+  {
+    clear_ntree_cache_();
+  }
+
+  if ( cached_vector_md_ == get_metadata() )
+  {
+    clear_vector_cache_();
+  }
+}
+
+template < int D >
+inline Position< D >
+Layer< D >::compute_displacement( const Position< D >& from_pos, const size_t to_lid ) const
+{
+  return compute_displacement( from_pos, get_position( to_lid ) );
+}
+
+template < int D >
+inline std::vector< double >
+Layer< D >::compute_displacement( const std::vector< double >& from_pos, const size_t to_lid ) const
+{
+  return std::vector< double >( compute_displacement( Position< D >( from_pos ), to_lid ).get_vector() );
+}
+
+template < int D >
+inline double
+Layer< D >::compute_distance( const Position< D >& from_pos, const size_t lid ) const
+{
+  return compute_displacement( from_pos, lid ).length();
+}
+
+template < int D >
+inline double
+Layer< D >::compute_distance( const std::vector< double >& from_pos, const size_t lid ) const
+{
+  return compute_displacement( Position< D >( from_pos ), lid ).length();
+}
+
+template < int D >
+inline double
+Layer< D >::compute_distance( const std::vector< double >& from_pos, const std::vector< double >& to_pos ) const
+{
+  double squared_displacement = 0;
+  for ( unsigned int i = 0; i < D; ++i )
+  {
+    const double displacement = compute_displacement( from_pos, to_pos, i );
+    squared_displacement += displacement * displacement;
+  }
+  return std::sqrt( squared_displacement );
+}
+
+template < int D >
+inline std::vector< double >
+Layer< D >::get_position_vector( const size_t sind ) const
+{
+  return get_position( sind ).get_vector();
+}
+
+template < int D >
+inline void
+Layer< D >::clear_ntree_cache_() const
+{
+  cached_ntree_ = std::shared_ptr< Ntree< D, size_t > >();
+  cached_ntree_md_ = NodeCollectionMetadataPTR( nullptr );
+}
+
+template < int D >
+inline void
+Layer< D >::clear_vector_cache_() const
+{
+  if ( cached_vector_ )
+  {
+    delete cached_vector_;
+  }
+  cached_vector_ = 0;
+  cached_vector_md_ = NodeCollectionMetadataPTR( nullptr );
 }
 
 }  // namespace nest

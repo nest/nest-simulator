@@ -24,14 +24,22 @@
 #define MULTIMETER_H
 
 // C++ includes:
+#include <string>
 #include <vector>
 
 // Includes from nestkernel:
 #include "connection.h"
-#include "device_node.h"
+#include "dictionary.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
+#include "nest_names.h"
+#include "nest_time.h"
 #include "nest_timeconverter.h"
+#include "nest_types.h"
+#include "node.h"
+#include "node_manager.h"
 #include "recording_device.h"
 
 /* BeginUserDocs: device, recorder
@@ -132,6 +140,7 @@ EndUserDocs */
 
 namespace nest
 {
+class DataLoggingReply;
 
 void register_multimeter( const std::string& name );
 void register_voltmeter( const std::string& name );
@@ -245,7 +254,7 @@ nest::multimeter::get_status( Dictionary& d ) const
   // siblings on other threads
   if ( get_thread() == 0 )
   {
-    const std::vector< Node* > siblings = kernel().node_manager.get_thread_siblings( get_node_id() );
+    const std::vector< Node* > siblings = kernel::manager< NodeManager >.get_thread_siblings( get_node_id() );
     std::vector< Node* >::const_iterator s;
     for ( s = siblings.begin() + 1; s != siblings.end(); ++s )
     {

@@ -29,10 +29,12 @@
 
 // Includes from libnestutil:
 #include "compose.hpp"
-#include "logging.h"
-
-// Includes from nestkernel:
+#include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "logging.h"
+#include "logging_manager.h"
+#include "music_manager.h"
 #include "nest_impl.h"
 
 void
@@ -126,8 +128,8 @@ nest::music_message_in_proxy::pre_run_hook()
   // only publish the port once,
   if ( not S_.published_ )
   {
-    MUSIC::Setup* s = kernel().music_manager.get_music_setup();
-    if ( s == 0 )
+    MUSIC::Setup* s = kernel::manager< MUSICManager >.get_music_setup();
+    if ( not s )
     {
       throw MUSICSimulationHasRun( get_name() );
     }

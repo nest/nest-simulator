@@ -475,7 +475,6 @@ nest::iaf_bw_2001_exact::update( Time const& origin, const long from, const long
     {
       const size_t si = i - ( NMDA - 1 );  // index which starts at 0
 
-      assert( si >= 0 );
       assert( State_::s_NMDA_base + si * 2 <= S_.state_vec_size );
 
       S_.ode_state_[ State_::s_NMDA_base + si * 2 ] += B_.spikes_.at( i ).get_value( lag );

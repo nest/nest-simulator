@@ -63,12 +63,12 @@ BOOST_AUTO_TEST_CASE( test_gaussianKernel )
   // Test for negative sigma (will compute as if sigma were positive)
   sigma = -1.0;
   double result = sp_manager.gaussian_kernel( pos1, pos2, sigma );
-  expected = std::exp( -1.0 ); // Same as sigma=1 since squared value is used
+  expected = std::exp( -1.0 );  // Same as sigma=1 since squared value is used
   BOOST_REQUIRE_CLOSE( result, expected, 1e-6 );
 }
 
 BOOST_AUTO_TEST_SUITE_END()
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* TEST_DISTANCE_DEPENDENT_H */

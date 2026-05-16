@@ -377,7 +377,7 @@ double
 eprop_readout_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis,
   const long,
   const long t_previous_trigger_spike,
-  const double kappa,
+  const double /*kappa*/,
   const bool average_gradient )
 {
   auto eprop_hist_it = get_eprop_history( t_previous_trigger_spike );

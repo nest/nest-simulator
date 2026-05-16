@@ -20,7 +20,6 @@
  *
  */
 
-
 #ifndef EPROP_LEARNING_SIGNAL_CONNECTION_BSSHSLM_2020_H
 #define EPROP_LEARNING_SIGNAL_CONNECTION_BSSHSLM_2020_H
 
@@ -110,9 +109,10 @@ References
        networks of spiking neurons. Nature Communications, 11:3625.
        https://doi.org/10.1038/s41467-020-17236-y
 
-.. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
-       Dahmen D, Bolten M, Van Albada SJ, Diesmann M. Event-based
-       implementation of eligibility propagation (in preparation)
+.. [2] Korcsak-Gorzo A, Espinoza Valverde JA, Stapmanns J, Plesser HE, Dahmen D,
+       Bolten M, van Albada SJ, Diesmann M (2025). Event-driven eligibility
+       propagation in large sparse networks: efficiency shaped by biological
+       realism. arXiv:2511.21674. https://doi.org/10.48550/arXiv.2511.21674
 
 See also
 ++++++++
@@ -154,7 +154,7 @@ public:
   }
 
   //! Get the secondary learning signal event.
-  SecondaryEvent* get_secondary_event();
+  std::unique_ptr< SecondaryEvent > get_secondary_event();
 
   using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
@@ -185,10 +185,10 @@ public:
   }
 
   //! Get the model attributes and their values.
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
   //! Set the values of the model attributes.
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   //! Set the synaptic weight to the provided value.
   void
@@ -207,29 +207,29 @@ constexpr ConnectionModelProperties eprop_learning_signal_connection_bsshslm_202
 
 template < typename targetidentifierT >
 void
-eprop_learning_signal_connection_bsshslm_2020< targetidentifierT >::get_status( DictionaryDatum& d ) const
+eprop_learning_signal_connection_bsshslm_2020< targetidentifierT >::get_status( Dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::weight ] = weight_;
+  d[ names::size_of ] = static_cast< long >( sizeof( *this ) );
 }
 
 template < typename targetidentifierT >
 void
-eprop_learning_signal_connection_bsshslm_2020< targetidentifierT >::set_status( const DictionaryDatum& d,
+eprop_learning_signal_connection_bsshslm_2020< targetidentifierT >::set_status( const Dictionary& d,
   ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
+  d.update_value( names::weight, weight_ );
 }
 
 template < typename targetidentifierT >
-SecondaryEvent*
+std::unique_ptr< SecondaryEvent >
 eprop_learning_signal_connection_bsshslm_2020< targetidentifierT >::get_secondary_event()
 {
-  return new LearningSignalConnectionEvent();
+  return std::make_unique< LearningSignalConnectionEvent >();
 }
 
-} // namespace nest
+}  // namespace nest
 
-#endif // EPROP_LEARNING_SIGNAL_CONNECTION_BSSHSLM_2020_H
+#endif  // EPROP_LEARNING_SIGNAL_CONNECTION_BSSHSLM_2020_H

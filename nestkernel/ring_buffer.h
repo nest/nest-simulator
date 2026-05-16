@@ -176,7 +176,7 @@ RingBuffer::get_value( const long offs )
   // take modulo into account when indexing
   long idx = get_index_( offs );
   double val = buffer_[ idx ];
-  buffer_[ idx ] = 0.0; // clear buffer after reading
+  buffer_[ idx ] = 0.0;  // clear buffer after reading
   return val;
 }
 
@@ -272,7 +272,7 @@ MultRBuffer::get_value( const long offs )
   // take modulo into account when indexing
   long idx = get_index_( offs );
   double val = buffer_[ idx ];
-  buffer_[ idx ] = 0.0; // clear buffer after reading
+  buffer_[ idx ] = 0.0;  // clear buffer after reading
   return val;
 }
 
@@ -422,7 +422,7 @@ MultiChannelInputBuffer< num_channels >::size() const
   return buffer_.size();
 }
 
-} // namespace nest
+}  // namespace nest
 
 
 #endif /* #ifndef RING_BUFFER_H */

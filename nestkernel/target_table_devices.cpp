@@ -82,7 +82,7 @@ nest::TargetTableDevices::resize_to_number_of_neurons()
     target_to_devices_[ tid ].resize( kernel().node_manager.get_max_num_local_nodes() + 1 );
     target_from_devices_[ tid ].resize( kernel().node_manager.get_num_thread_local_devices( tid ) + 1 );
     sending_devices_node_ids_[ tid ].resize( kernel().node_manager.get_num_thread_local_devices( tid ) + 1 );
-  } // end omp parallel
+  }  // end omp parallel
 }
 
 void
@@ -158,8 +158,8 @@ nest::TargetTableDevices::get_connections_from_devices_( const size_t requested_
   std::deque< ConnectionID >& conns ) const
 {
   for ( std::vector< size_t >::const_iterator it = sending_devices_node_ids_[ tid ].begin();
-        it != sending_devices_node_ids_[ tid ].end();
-        ++it )
+    it != sending_devices_node_ids_[ tid ].end();
+    ++it )
   {
     const size_t source_node_id = *it;
     if ( source_node_id > 0 and ( requested_source_node_id == source_node_id or requested_source_node_id == 0 ) )

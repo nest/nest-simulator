@@ -51,17 +51,13 @@ def plot_network(nodes, filename, ext_conns=False, plot_modelnames=False):
         these are drawn to a node named 'ext'.
     plot_modelnames : bool, optional
         Description
-
-    Raises
-    ------
-    nest.kernel.NESTError
     """
 
-    if len(nodes) == 0:
-        nest.kernel.NESTError("nodes must at least contain one node")
-
     if not isinstance(nodes, nest.NodeCollection):
-        raise nest.kernel.NESTError("nodes must be a NodeCollection")
+        raise TypeError("nodes must be a 'NodeCollection'.")
+
+    if len(nodes) == 0:
+        raise ValueError("nodes must at least contain one node.")
 
     if ext_conns:
         raise NotImplementedError("ext_conns")
@@ -80,4 +76,4 @@ def plot_network(nodes, filename, ext_conns=False, plot_modelnames=False):
     elif filetype == "png":
         graph.write_png(filename)
     else:
-        raise nest.kernel.NESTError("Filename must end in '.png' or '.pdf'.")
+        raise ValueError("Filename must end in '.png' or '.pdf'.")

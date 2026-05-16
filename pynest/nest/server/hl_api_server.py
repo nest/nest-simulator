@@ -36,7 +36,6 @@ import RestrictedPython
 from flask import Flask, jsonify, request
 from flask.logging import default_handler
 from flask_cors import CORS
-from nest.lib.hl_api_exceptions import NESTError
 
 # This ensures that the logging information shows up in the console running the server,
 # even when Flask's event loop is running.
@@ -182,7 +181,7 @@ print(80 * "*")
 def index():
     return jsonify(
         {
-            "nest": nest.__version__,
+            "nest": nest.build_info["version"],
             "mpi": mpi_comm is not None,
         }
     )
@@ -261,7 +260,7 @@ def do_call(call_name, args=[], kwargs={}):
         log(call_name, f"local call, args={args}, kwargs={kwargs}")
         master_response = call(*args, **kwargs)
 
-    response = [master_response]
+    response = [nest.serialize_data(master_response)]
     if mpi_comm is not None:
         log(call_name, "waiting for response gather")
         response = mpi_comm.gather(response[0], root=0)
@@ -277,7 +276,7 @@ def route_exec():
     if EXEC_CALL_ENABLED:
         args, kwargs = get_arguments(request)
         response = do_call("exec", args, kwargs)
-        return jsonify(response)
+        return jsonify(nest.serialize_data(response))
     else:
         flask.abort(
             403,
@@ -307,7 +306,7 @@ def route_api_call(call):
     args, kwargs = get_arguments(request)
     log("route_api_call", f"call={call}, args={args}, kwargs={kwargs}")
     response = api_client(call, args, kwargs)
-    return jsonify(response)
+    return jsonify(nest.serialize_data(response))
 
 
 # ----------------------
@@ -437,7 +436,7 @@ def get_or_error(func):
         try:
             return func(call, *args, **kwargs)
 
-        except NESTError as err:
+        except nest.NESTError as err:
             error_class = err.errorname + " (NESTError)"
             detail = err.errormessage
             lineno = get_lineno(err, 1)

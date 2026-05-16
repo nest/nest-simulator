@@ -75,7 +75,7 @@
       <w>102</w>
       <h>24</h>
     </coordinates>
-    <panel_attributes>Create file 
+    <panel_attributes>Create file
 with port descriptions</panel_attributes>
     <additional_attributes/>
   </element>
@@ -164,7 +164,7 @@ with port descriptions</panel_attributes>
       <w>102</w>
       <h>24</h>
     </coordinates>
-    <panel_attributes>Read file with 
+    <panel_attributes>Read file with
 Ids of spike detector</panel_attributes>
     <additional_attributes/>
   </element>
@@ -638,7 +638,7 @@ of the devices</panel_attributes>
       <w>90</w>
       <h>24</h>
     </coordinates>
-    <panel_attributes>Send the number 
+    <panel_attributes>Send the number
 of spikes</panel_attributes>
     <additional_attributes/>
   </element>
@@ -650,7 +650,7 @@ of spikes</panel_attributes>
       <w>90</w>
       <h>24</h>
     </coordinates>
-    <panel_attributes>Send the times 
+    <panel_attributes>Send the times
 of spikes</panel_attributes>
     <additional_attributes/>
   </element>
@@ -662,7 +662,7 @@ of spikes</panel_attributes>
       <w>90</w>
       <h>24</h>
     </coordinates>
-    <panel_attributes>Send the times 
+    <panel_attributes>Send the times
 of spikes</panel_attributes>
     <additional_attributes/>
   </element>
@@ -1079,7 +1079,7 @@ Yes</panel_attributes>
       <w>102</w>
       <h>24</h>
     </coordinates>
-    <panel_attributes>Create file 
+    <panel_attributes>Create file
 with port descriptions</panel_attributes>
     <additional_attributes/>
   </element>
@@ -1157,7 +1157,7 @@ with port descriptions</panel_attributes>
       <w>102</w>
       <h>24</h>
     </coordinates>
-    <panel_attributes>Read file with 
+    <panel_attributes>Read file with
 Ids of spike detector</panel_attributes>
     <additional_attributes/>
   </element>
@@ -1258,7 +1258,7 @@ and Release buffer</panel_attributes>
       <w>102</w>
       <h>24</h>
     </coordinates>
-    <panel_attributes>Initialisation of 
+    <panel_attributes>Initialisation of
 internal communication</panel_attributes>
     <additional_attributes/>
   </element>
@@ -1281,7 +1281,7 @@ internal communication</panel_attributes>
       <w>102</w>
       <h>24</h>
     </coordinates>
-    <panel_attributes>Initialisation of 
+    <panel_attributes>Initialisation of
 internal communication</panel_attributes>
     <additional_attributes/>
   </element>

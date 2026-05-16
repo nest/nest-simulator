@@ -39,4 +39,4 @@ ConnectorModel::ConnectorModel( const ConnectorModel& cm, const std::string name
 {
 }
 
-} // namespace nest
+}  // namespace nest

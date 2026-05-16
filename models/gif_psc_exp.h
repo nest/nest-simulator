@@ -231,8 +231,8 @@ public:
   size_t handles_test_event( CurrentEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_buffers_() override;
@@ -288,10 +288,10 @@ private:
     /** External DC current. */
     double I_e_;
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    void get( Dictionary& ) const;              //!< Store current values in dictionary
+    void set( const Dictionary&, Node* node );  //!< Set values from dictionary
   };
 
   // ----------------------------------------------------------------
@@ -301,23 +301,23 @@ private:
    */
   struct State_
   {
-    double I_stim_; //!< Piecewise constant external current
-    double V_;      //!< Membrane potential
-    double sfa_;    //!< Change of the 'threshold' due to adaptation.
-    double stc_;    //!< Spike triggered current
+    double I_stim_;  //!< Piecewise constant external current
+    double V_;       //!< Membrane potential
+    double sfa_;     //!< Change of the 'threshold' due to adaptation.
+    double stc_;     //!< Spike triggered current
 
-    std::vector< double > sfa_elems_; //!< Vector of adaptation parameters
-    std::vector< double > stc_elems_; //!< Vector of spike triggered parameters
+    std::vector< double > sfa_elems_;  //!< Vector of adaptation parameters
+    std::vector< double > stc_elems_;  //!< Vector of spike triggered parameters
 
-    double I_syn_ex_; //!< Postsynaptic current for exc
-    double I_syn_in_; //!< Postsynaptic current for inh
+    double I_syn_ex_;  //!< Postsynaptic current for exc
+    double I_syn_in_;  //!< Postsynaptic current for inh
 
-    unsigned int r_ref_; //!< Absolute refractory counter (no membrane potential propagation)
+    unsigned int r_ref_;  //!< Absolute refractory counter (no membrane potential propagation)
 
-    State_(); //!< Default initialization
+    State_();  //!< Default initialization
 
-    void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, Node* );
+    void get( Dictionary&, const Parameters_& ) const;
+    void set( const Dictionary&, const Parameters_&, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -346,18 +346,18 @@ private:
    */
   struct Variables_
   {
-    double P30_;   // coefficient for solving membrane potential equation
-    double P33_;   // decay term of membrane potential
-    double P31_;   // coefficient for solving membrane potential equation
-    double P11ex_; // decay terms of excitatory synaptic currents
-    double P11in_; // decay terms of inhibitory synaptic currents
-    double P21ex_; // coefficient for solving membrane potential equation
-    double P21in_; // coefficient for solving membrane potential equation
+    double P30_;    // coefficient for solving membrane potential equation
+    double P33_;    // decay term of membrane potential
+    double P31_;    // coefficient for solving membrane potential equation
+    double P11ex_;  // decay terms of excitatory synaptic currents
+    double P11in_;  // decay terms of inhibitory synaptic currents
+    double P21ex_;  // coefficient for solving membrane potential equation
+    double P21in_;  // coefficient for solving membrane potential equation
 
-    std::vector< double > P_sfa_; // decay terms of spike-triggered current elements
-    std::vector< double > P_stc_; // decay terms of adaptive threshold elements
+    std::vector< double > P_sfa_;  // decay terms of spike-triggered current elements
+    std::vector< double > P_stc_;  // decay terms of adaptive threshold elements
 
-    RngPtr rng_; // random number generator of my own thread
+    RngPtr rng_;  // random number generator of my own thread
 
     unsigned int RefractoryCounts_;
   };
@@ -456,21 +456,21 @@ gif_psc_exp::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 }
 
 inline void
-gif_psc_exp::get_status( DictionaryDatum& d ) const
+gif_psc_exp::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
   ArchivingNode::get_status( d );
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
-gif_psc_exp::set_status( const DictionaryDatum& d )
+gif_psc_exp::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;     // temporary copy in case of errors
-  ptmp.set( d, this );       // throws if BadProperty
-  State_ stmp = S_;          // temporary copy in case of errors
-  stmp.set( d, ptmp, this ); // throws if BadProperty
+  Parameters_ ptmp = P_;      // temporary copy in case of errors
+  ptmp.set( d, this );        // throws if BadProperty
+  State_ stmp = S_;           // temporary copy in case of errors
+  stmp.set( d, ptmp, this );  // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -483,6 +483,6 @@ gif_psc_exp::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef GIF_PSC_EXP_H */

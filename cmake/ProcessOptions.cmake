@@ -45,10 +45,6 @@ function( NEST_PROCESS_WITH_DEBUG )
   endif ()
 endfunction()
 
-function( NEST_PROCESS_WITH_STD )
-  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=${with-cpp-std}" PARENT_SCOPE )
-endfunction()
-
 function( NEST_PROCESS_WITH_INTEL_COMPILER_FLAGS )
   if ( NOT with-intel-compiler-flags )
     set( with-intel-compiler-flags "-fp-model strict" )
@@ -143,18 +139,14 @@ function( NEST_PROCESS_STATIC_LIBRARIES )
   # build static or shared libraries
   if ( static-libraries )
 
-    if ( with-readline )
-      printError( "-Dstatic-libraries=ON requires -Dwith-readline=OFF" )
-    endif ()
-
     set( BUILD_SHARED_LIBS OFF PARENT_SCOPE )
     # set RPATH stuff
     set( CMAKE_SKIP_RPATH TRUE PARENT_SCOPE )
 
     if ( UNIX OR APPLE )
-      # On Linux .a is the static library suffix, on Mac OS X .lib can also
-      # be used, so we'll add both to the preference list.
-      set( CMAKE_FIND_LIBRARY_SUFFIXES ".a;.lib;.dylib;.so" PARENT_SCOPE )
+      # On Linux .a is the static library suffix, on macOS .lib can also
+      # be used, so we'll add both to the preference list. macOS also uses .tbd.
+      set( CMAKE_FIND_LIBRARY_SUFFIXES ".a;.lib;.dylib;.tbd;.so" PARENT_SCOPE )
     endif ()
 
     if ( Fugaku )
@@ -181,9 +173,8 @@ function( NEST_PROCESS_STATIC_LIBRARIES )
 
     # Note: "$ORIGIN" (on Linux) and "@loader_path" (on MacOS) are not CMake variables, but special keywords for the
     # Linux resp. the macOS dynamic loader. They refer to the path in which the object is located, e.g.
-    # ``${CMAKE_INSTALL_PREFIX}/bin`` for the nest and sli executables, ``${CMAKE_INSTALL_PREFIX}/lib/nest`` for all
-    # dynamic libraries except PyNEST (libnestkernel.so, etc.), and  something like
-    # ``${CMAKE_INSTALL_PREFIX}/lib/python3.x/site-packages/nest`` for ``pynestkernel.so``. The RPATH is relative to
+    # ``${CMAKE_INSTALL_PREFIX}/bin`` for helper scripts and  something like
+# ``${CMAKE_INSTALL_PREFIX}/lib/python3.x/site-packages/nest`` for ``nestkernel_api.so``. The RPATH is relative to
     # this origin, so the binary ``bin/nest`` can find the files in the relative location ``../lib/nest``, and
     # similarly for PyNEST and the other libraries. For simplicity, we set all the possibilities on all generated
     # objects.
@@ -217,7 +208,7 @@ function( NEST_PROCESS_STATIC_LIBRARIES )
 
     if ( UNIX OR APPLE )
       # reverse the search order for lib extensions
-      set( CMAKE_FIND_LIBRARY_SUFFIXES ".so;.dylib;.a;.lib" PARENT_SCOPE )
+      set( CMAKE_FIND_LIBRARY_SUFFIXES ".so;.dylib;.tbd;.a;.lib" PARENT_SCOPE )
     endif ()
   endif ()
 endfunction()
@@ -257,30 +248,6 @@ function( NEST_PROCESS_WITH_LIBLTDL )
 
       include_directories( ${LTDL_INCLUDE_DIRS} )
       # is linked in nestkernel/CMakeLists.txt
-    endif ()
-  endif ()
-endfunction()
-
-function( NEST_PROCESS_WITH_READLINE )
-  # Find readline
-  set( HAVE_READLINE OFF PARENT_SCOPE )
-  if ( with-readline )
-    if ( NOT ${with-readline} STREQUAL "ON" )
-      # a path is set
-      set( Readline_ROOT "${with-readline}" )
-    endif ()
-
-    find_package( Readline )
-    if ( READLINE_FOUND )
-      set( HAVE_READLINE ON PARENT_SCOPE )
-      # export found variables to parent scope
-      set( READLINE_FOUND "${READLINE_FOUND}" PARENT_SCOPE )
-      set( READLINE_LIBRARIES "${READLINE_LIBRARIES}" PARENT_SCOPE )
-      set( READLINE_INCLUDE_DIRS "${READLINE_INCLUDE_DIRS}" PARENT_SCOPE )
-      set( READLINE_VERSION "${READLINE_VERSION}" PARENT_SCOPE )
-
-      include_directories( ${READLINE_INCLUDE_DIRS} )
-      # is linked in sli/CMakeLists.txt
     endif ()
   endif ()
 endfunction()
@@ -396,6 +363,9 @@ function( NEST_PROCESS_WITH_OPENMP )
       set( OpenMP_C_FLAGS "${OpenMP_C_FLAGS}" PARENT_SCOPE )
       set( OpenMP_CXX_FLAGS "${OpenMP_CXX_FLAGS}" PARENT_SCOPE )
       set( OpenMP_CXX_LIBRARIES "${OpenMP_CXX_LIBRARIES}" PARENT_SCOPE )
+      set( OpenMP_CXX_INCLUDE_DIRS "${OpenMP_CXX_INCLUDE_DIRS}" PARENT_SCOPE )
+      include_directories( ${OpenMP_CXX_INCLUDE_DIRS} )
+
       # set flags
       set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" PARENT_SCOPE )
       set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}" PARENT_SCOPE )
@@ -457,6 +427,16 @@ function( NEST_PROCESS_WITH_DETAILED_TIMERS )
   if ( ${with-detailed-timers} STREQUAL "ON" )
     set( TIMER_DETAILED ON PARENT_SCOPE )
   endif ()
+endfunction()
+
+function(NEST_PROCESS_WITH_CYCLE_TIMERS)
+  set(CYCLE_TIMERS OFF PARENT_SCOPE)
+  if ("${with-detailed-timers}" STREQUAL "ON" AND "${with-cycle-timers}"   STREQUAL "ON")
+    set(CYCLE_TIMERS ON PARENT_SCOPE)
+  endif()
+  if ("${with-cycle-timers}" STREQUAL "ON" AND NOT "${with-detailed-timers}" STREQUAL "ON")
+    message(FATAL_ERROR "To enable cycle timers, you must also enable detailed timers")
+  endif()
 endfunction()
 
 function( NEST_PROCESS_WITH_THREADED_TIMERS )
@@ -667,7 +647,6 @@ function( NEST_PROCESS_USERDOC )
     message( STATUS "Configuring user documentation" )
     find_package( Sphinx REQUIRED)
     find_package( Pandoc REQUIRED)
-    set( BUILD_SLI_DOCS ON PARENT_SCOPE )
     set( BUILD_SPHINX_DOCS ON PARENT_SCOPE )
     set( BUILD_DOCS ON PARENT_SCOPE )
   endif ()

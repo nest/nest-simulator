@@ -16,7 +16,7 @@ called *send.py*.
 
 .. code-block:: python
 
-    #!/usr/bin/env python3
+    #!/usr/bin/env python
 
     import nest
     nest.overwrite_files = True
@@ -61,7 +61,7 @@ For the receiving process script, *receive.py* we do:
 .. code-block:: python
     :linenos:
 
-    #!/usr/bin/env python3
+    #!/usr/bin/env python
 
     import nest
     nest.overwrite_files = True
@@ -198,7 +198,7 @@ below:
 .. code-block:: python
     :linenos:
 
-    #!/usr/bin/python3
+    #!/usr/bin/env python
 
     import nest
 

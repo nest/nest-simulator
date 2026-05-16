@@ -67,7 +67,7 @@ Units of measure
  V_th
    Spike threshold in Millivolts (mV).
 
- V_reset 
+ V_reset
    Reset potential of the membrane in Millivolts (mV).
 
  V_min

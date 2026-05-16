@@ -36,5 +36,3 @@ devices generate their own stimulation signals based on their
 parametrization.  If a backend, such as :hxt_ref:`MPI` is selected, the
 values for producing the stimuli are received from the backend's input
 channel.
-
-

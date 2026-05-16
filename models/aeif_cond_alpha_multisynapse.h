@@ -107,7 +107,7 @@ For implementation details see the
 Parameters
 ++++++++++
 
-The following parameters can be set in the status dictionary.
+The following parameters can be set in the status Dictionary.
 
 ======== ======= =======================================
 **Dynamic state variables:**
@@ -227,8 +227,8 @@ public:
   size_t handles_test_event( CurrentEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_buffers_() override;
@@ -247,33 +247,33 @@ private:
    */
   struct Parameters_
   {
-    double V_peak_;  //!< Spike detection threshold in mV
-    double V_reset_; //!< Reset Potential in mV
-    double t_ref_;   //!< Refractory period in ms
+    double V_peak_;   //!< Spike detection threshold in mV
+    double V_reset_;  //!< Reset Potential in mV
+    double t_ref_;    //!< Refractory period in ms
 
-    double g_L;     //!< Leak Conductance in nS
-    double C_m;     //!< Membrane Capacitance in pF
-    double E_L;     //!< Leak reversal Potential (aka resting potential) in mV
-    double Delta_T; //!< Slope factor in mV
-    double tau_w;   //!< Adaptation time-constant in ms
-    double a;       //!< Subthreshold adaptation in nS
-    double b;       //!< Spike-triggered adaptation in pA
-    double V_th;    //!< Spike threshold in mV
+    double g_L;      //!< Leak Conductance in nS
+    double C_m;      //!< Membrane Capacitance in pF
+    double E_L;      //!< Leak reversal Potential (aka resting potential) in mV
+    double Delta_T;  //!< Slope factor in mV
+    double tau_w;    //!< Adaptation time-constant in ms
+    double a;        //!< Subthreshold adaptation in nS
+    double b;        //!< Spike-triggered adaptation in pA
+    double V_th;     //!< Spike threshold in mV
 
-    std::vector< double > tau_syn; //!< Synaptic time constants in ms
-    std::vector< double > E_rev;   //!< Reversal potentials in mV
+    std::vector< double > tau_syn;  //!< Synaptic time constants in ms
+    std::vector< double > E_rev;    //!< Reversal potentials in mV
 
-    double I_e; //!< Intrinsic current in pA
+    double I_e;  //!< Intrinsic current in pA
 
-    double gsl_error_tol; //!< error bound for GSL integrator
+    double gsl_error_tol;  //!< error bound for GSL integrator
 
     // boolean flag which indicates whether the neuron has connections
     bool has_connections_;
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    void get( Dictionary& ) const;              //!< Store current values in Dictionary
+    void set( const Dictionary&, Node* node );  //!< Set values from Dictionary
 
     //! Return the number of receptor ports
     inline size_t
@@ -302,24 +302,24 @@ private:
     enum StateVecElems
     {
       V_M = 0,
-      W,  // 1
-      DG, // 2
-      G,  // 3
+      W,   // 1
+      DG,  // 2
+      G,   // 3
       STATE_VECTOR_MIN_SIZE
     };
 
-    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 2; // V_M, W
-    static const size_t NUM_STATE_ELEMENTS_PER_RECEPTOR = 2; // DG, G
+    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 2;  // V_M, W
+    static const size_t NUM_STATE_ELEMENTS_PER_RECEPTOR = 2;  // DG, G
 
-    std::vector< double > y_; //!< neuron state
-    int r_;                   //!< number of refractory steps remaining
+    std::vector< double > y_;  //!< neuron state
+    int r_;                    //!< number of refractory steps remaining
 
-    State_( const Parameters_& ); //!< Default initialization
+    State_( const Parameters_& );  //!< Default initialization
 
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, Node* node );
+    void get( Dictionary& ) const;
+    void set( const Dictionary&, Node* node );
 
-  }; // State_
+  };  // State_
 
   // ----------------------------------------------------------------
 
@@ -339,17 +339,17 @@ private:
     RingBuffer currents_;
 
     /** GSL ODE stuff */
-    gsl_odeiv_step* s_;    //!< stepping function
-    gsl_odeiv_control* c_; //!< adaptive stepsize control function
-    gsl_odeiv_evolve* e_;  //!< evolution function
-    gsl_odeiv_system sys_; //!< struct describing system
+    gsl_odeiv_step* s_;     //!< stepping function
+    gsl_odeiv_control* c_;  //!< adaptive stepsize control function
+    gsl_odeiv_evolve* e_;   //!< evolution function
+    gsl_odeiv_system sys_;  //!< struct describing system
 
     // Since IntegrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
-    double step_;            //!< simulation step size in ms
-    double IntegrationStep_; //!< current integration time step,
-                             //!< updated by solver
+    double step_;             //!< simulation step size in ms
+    double IntegrationStep_;  //!< current integration time step,
+                              //!< updated by solver
 
     /**
      * Input current injected by CurrentEvent.
@@ -410,7 +410,7 @@ private:
   // Utility function that inserts the synaptic conductances to the
   // recordables map
 
-  Name get_g_receptor_name( size_t receptor );
+  std::string get_g_receptor_name( size_t receptor );
   void insert_conductance_recordables( size_t first = 0 );
 };
 
@@ -444,16 +444,16 @@ aeif_cond_alpha_multisynapse::handles_test_event( DataLoggingRequest& dlr, size_
 }
 
 inline void
-aeif_cond_alpha_multisynapse::get_status( DictionaryDatum& d ) const
+aeif_cond_alpha_multisynapse::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
   ArchivingNode::get_status( d );
 
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
-} // namespace
+}  // namespace
 
-#endif // HAVE_GSL
-#endif // AEIF_COND_ALPHA_MULTISYNAPSE_H //
+#endif  // HAVE_GSL
+#endif  // AEIF_COND_ALPHA_MULTISYNAPSE_H //

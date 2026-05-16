@@ -40,7 +40,7 @@ nest::RingBuffer::resize()
 void
 nest::RingBuffer::clear()
 {
-  resize(); // does nothing if size is fine
+  resize();  // does nothing if size is fine
   // clear all elements
   buffer_.assign( buffer_.size(), 0.0 );
 }
@@ -87,7 +87,7 @@ nest::ListRingBuffer::resize()
 void
 nest::ListRingBuffer::clear()
 {
-  resize(); // does nothing if size is fine
+  resize();  // does nothing if size is fine
   // clear all elements
   for ( unsigned int i = 0; i < buffer_.size(); i++ )
   {

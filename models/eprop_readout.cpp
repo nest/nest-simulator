@@ -36,9 +36,6 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-// sli
-#include "dictutils.h"
-
 namespace nest
 {
 
@@ -75,7 +72,6 @@ eprop_readout::Parameters_::Parameters_()
   , I_e_( 0.0 )
   , tau_m_( 10.0 )
   , V_min_( -std::numeric_limits< double >::max() )
-  , eprop_isi_trace_cutoff_( 1000.0 )
 {
 }
 
@@ -105,30 +101,28 @@ eprop_readout::Buffers_::Buffers_( const Buffers_&, eprop_readout& n )
  * ---------------------------------------------------------------- */
 
 void
-eprop_readout::Parameters_::get( DictionaryDatum& d ) const
+eprop_readout::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::C_m, C_m_ );
-  def< double >( d, names::E_L, E_L_ );
-  def< double >( d, names::I_e, I_e_ );
-  def< double >( d, names::tau_m, tau_m_ );
-  def< double >( d, names::V_min, V_min_ + E_L_ );
-  def< double >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
+  d[ names::C_m ] = C_m_;
+  d[ names::E_L ] = E_L_;
+  d[ names::I_e ] = I_e_;
+  d[ names::tau_m ] = tau_m_;
+  d[ names::V_min ] = V_min_ + E_L_;
 }
 
 double
-eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
+eprop_readout::Parameters_::set( const Dictionary& d, Node* node )
 {
   // if leak potential is changed, adjust all variables defined relative to it
   const double ELold = E_L_;
-  updateValueParam< double >( d, names::E_L, E_L_, node );
+  update_value_param( d, names::E_L, E_L_, node );
   const double delta_EL = E_L_ - ELold;
 
-  V_min_ -= updateValueParam< double >( d, names::V_min, V_min_, node ) ? E_L_ : delta_EL;
+  V_min_ -= update_value_param( d, names::V_min, V_min_, node ) ? E_L_ : delta_EL;
 
-  updateValueParam< double >( d, names::C_m, C_m_, node );
-  updateValueParam< double >( d, names::I_e, I_e_, node );
-  updateValueParam< double >( d, names::tau_m, tau_m_, node );
-  updateValueParam< double >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );
+  update_value_param( d, names::C_m, C_m_, node );
+  update_value_param( d, names::I_e, I_e_, node );
+  update_value_param( d, names::tau_m, tau_m_, node );
 
   if ( C_m_ <= 0 )
   {
@@ -139,28 +133,22 @@ eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Membrane time constant tau_m > 0 required." );
   }
-
-  if ( eprop_isi_trace_cutoff_ < 0.0 )
-  {
-    throw BadProperty( "Cutoff of integration of eprop trace between spikes eprop_isi_trace_cutoff ≥ 0 required." );
-  }
-
   return delta_EL;
 }
 
 void
-eprop_readout::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+eprop_readout::State_::get( Dictionary& d, const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, v_m_ + p.E_L_ );
-  def< double >( d, names::error_signal, error_signal_ );
-  def< double >( d, names::readout_signal, readout_signal_ );
-  def< double >( d, names::target_signal, target_signal_ );
+  d[ names::V_m ] = v_m_ + p.E_L_;
+  d[ names::error_signal ] = error_signal_;
+  d[ names::readout_signal ] = readout_signal_;
+  d[ names::target_signal ] = target_signal_;
 }
 
 void
-eprop_readout::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
+eprop_readout::State_::set( const Dictionary& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  v_m_ -= updateValueParam< double >( d, names::V_m, v_m_, node ) ? p.E_L_ : delta_EL;
+  v_m_ -= update_value_param( d, names::V_m, v_m_, node ) ? p.E_L_ : delta_EL;
 }
 
 /* ----------------------------------------------------------------
@@ -191,24 +179,21 @@ eprop_readout::eprop_readout( const eprop_readout& n )
 void
 eprop_readout::init_buffers_()
 {
-  B_.spikes_.clear();   // includes resize
-  B_.currents_.clear(); // includes resize
-  B_.logger_.reset();   // includes resize
+  B_.spikes_.clear();    // includes resize
+  B_.currents_.clear();  // includes resize
+  B_.logger_.reset();    // includes resize
 }
 
 void
 eprop_readout::pre_run_hook()
 {
-  B_.logger_.init(); // ensures initialization in case multimeter connected after Simulate
-
-  V_.eprop_isi_trace_cutoff_steps_ = Time( Time::ms( P_.eprop_isi_trace_cutoff_ ) ).get_steps();
+  B_.logger_.init();  // ensures initialization in case multimeter connected after Simulate
 
   const double dt = Time::get_resolution().get_ms();
 
   V_.P_v_m_ = std::exp( -dt / P_.tau_m_ );
   V_.P_i_in_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - V_.P_v_m_ );
 }
-
 
 /* ----------------------------------------------------------------
  * Update function
@@ -314,52 +299,71 @@ eprop_readout::compute_gradient( const long t_spike,
   double& epsilon,
   double& weight,
   const CommonSynapseProperties& cp,
-  WeightOptimizer* optimizer )
+  WeightOptimizer* optimizer,
+  const bool is_flush_event,
+  const bool previous_was_flush_event,
+  double& gradient,
+  long& remaining_steps_until_cutoff,
+  long& decay_steps )
 {
-  double z = 0.0;                // spiking variable
-  double z_current_buffer = 1.0; // buffer containing the spike that triggered the current integration
-  double L = 0.0;                // error signal
-  double grad = 0.0;             // gradient
+  const auto& ecp = static_cast< const EpropSynapseCommonProperties& >( cp );
+  const auto& opt_cp = *ecp.optimizer_cp_;
+  const bool optimize_each_step = opt_cp.optimize_each_step_;
 
-  const EpropSynapseCommonProperties& ecp = static_cast< const EpropSynapseCommonProperties& >( cp );
-  const auto optimize_each_step = ( *ecp.optimizer_cp_ ).optimize_each_step_;
+  const long isi_steps = t_spike - t_spike_previous;
+  remaining_steps_until_cutoff = previous_was_flush_event ? remaining_steps_until_cutoff : get_eprop_isi_trace_cutoff();
 
-  auto eprop_hist_it = get_eprop_history( t_spike_previous - 1 );
-
-  const long t_compute_until = std::min( t_spike_previous + V_.eprop_isi_trace_cutoff_steps_, t_spike );
-
-  for ( long t = t_spike_previous; t < t_compute_until; ++t, ++eprop_hist_it )
+  double z_current_buffer = 0.0;  // spike that triggered current computation
+  if ( not previous_was_flush_event )
   {
-    z = z_previous_buffer;
+    gradient = 0.0;  // gradient used for the weight update (to be calculated)
+    z_current_buffer = 1.0;
+  }
+
+  const long t_begin = t_spike_previous - 1;
+  auto eprop_hist_it = get_eprop_history( t_begin );
+  const long t_steps = std::min( remaining_steps_until_cutoff, isi_steps );
+  const long t_end = t_begin + t_steps;
+
+  for ( long t = t_begin; t < t_end; ++t, ++eprop_hist_it )
+  {
+    require_eprop_history_entry( eprop_hist_it, t );
+
+    const double z = z_previous_buffer;  // spiking variable
     z_previous_buffer = z_current_buffer;
     z_current_buffer = 0.0;
 
-    L = eprop_hist_it->error_signal_;
+    const double E = eprop_hist_it->error_signal_;  // error signal
 
     z_bar = V_.P_v_m_ * z_bar + z;
+    const double gradient_increment = E * z_bar;
 
     if ( optimize_each_step )
     {
-      grad = L * z_bar;
-      weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t, grad, weight );
+      gradient = gradient_increment;
+      weight = optimizer->optimized_weight( opt_cp, t + 1, gradient, weight );
     }
     else
     {
-      grad += L * z_bar;
+      gradient += gradient_increment;
     }
   }
 
-  if ( not optimize_each_step )
+  remaining_steps_until_cutoff -= t_steps;
+  const long remaining_steps_until_event = isi_steps - t_steps;
+
+  decay_steps += remaining_steps_until_event;
+
+  if ( not is_flush_event and decay_steps > 0 )
   {
-    weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t_compute_until, grad, weight );
+    z_bar *= std::pow( V_.P_v_m_, decay_steps );
+    decay_steps = 0;
   }
 
-  const long cutoff_to_spike_interval = t_spike - t_compute_until;
-
-  if ( cutoff_to_spike_interval > 0 )
+  if ( not is_flush_event and not optimize_each_step )
   {
-    z_bar *= std::pow( V_.P_v_m_, cutoff_to_spike_interval );
+    weight = optimizer->optimized_weight( opt_cp, t_end + remaining_steps_until_event, gradient, weight );
   }
 }
 
-} // namespace nest
+}  // namespace nest

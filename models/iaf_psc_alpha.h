@@ -235,8 +235,8 @@ public:
   size_t handles_test_event( CurrentEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_buffers_() override;
@@ -284,21 +284,21 @@ private:
     /** Time constant of inhibitory synaptic current in ms. */
     double tau_in_;
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const;  //!< Store current values in dictionary
 
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      */
-    double set( const DictionaryDatum&, Node* node );
+    double set( const Dictionary&, Node* node );
   };
 
   // ----------------------------------------------------------------
 
   struct State_
   {
-    double y0_; //!< Constant current
+    double y0_;  //!< Constant current
     double dI_ex_;
     double I_ex_;
     double dI_in_;
@@ -306,18 +306,18 @@ private:
     //! This is the membrane potential RELATIVE TO RESTING POTENTIAL.
     double y3_;
 
-    int r_; //!< Number of refractory steps remaining
+    int r_;  //!< Number of refractory steps remaining
 
-    State_(); //!< Default initialization
+    State_();  //!< Default initialization
 
-    void get( DictionaryDatum&, const Parameters_& ) const;
+    void get( Dictionary&, const Parameters_& ) const;
 
     /** Set values from dictionary.
      * @param dictionary to take data from
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const DictionaryDatum&, const Parameters_&, double, Node* node );
+    void set( const Dictionary&, const Parameters_&, double, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -453,22 +453,22 @@ iaf_psc_alpha::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type
 }
 
 inline void
-iaf_psc_alpha::get_status( DictionaryDatum& d ) const
+iaf_psc_alpha::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
   ArchivingNode::get_status( d );
 
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
-iaf_psc_alpha::set_status( const DictionaryDatum& d )
+iaf_psc_alpha::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;                       // temporary copy in case of errors
-  const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
-  State_ stmp = S_;                            // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
+  Parameters_ ptmp = P_;                        // temporary copy in case of errors
+  const double delta_EL = ptmp.set( d, this );  // throws if BadProperty
+  State_ stmp = S_;                             // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );          // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -481,6 +481,6 @@ iaf_psc_alpha::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef IAF_PSC_ALPHA_H */

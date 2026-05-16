@@ -31,9 +31,6 @@
 #include "device.h"
 #include "nest_types.h"
 
-// Includes from sli:
-#include "dictdatum.h"
-#include "dictutils.h"
 
 namespace nest
 {
@@ -110,6 +107,6 @@ PseudoRecordingDevice::is_active( Time const& T ) const
   return get_t_min_() < stamp and stamp <= get_t_max_();
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef PSEUDO_RECORDING_DEVICE_H */

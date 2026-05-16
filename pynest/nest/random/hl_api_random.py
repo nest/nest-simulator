@@ -53,7 +53,7 @@ def uniform(min=0.0, max=1.0):
     Parameter:
         Object yielding values drawn from the distribution.
     """
-    return CreateParameter("uniform", {"min": min, "max": max})
+    return CreateParameter("uniform", {"min": float(min), "max": float(max)})
 
 
 def uniform_int(max):
@@ -91,7 +91,7 @@ def normal(mean=0.0, std=1.0):
     Parameter:
         Object yielding values drawn from the distribution.
     """
-    return CreateParameter("normal", {"mean": mean, "std": std})
+    return CreateParameter("normal", {"mean": float(mean), "std": float(std)})
 
 
 def exponential(beta=1.0):
@@ -108,7 +108,7 @@ def exponential(beta=1.0):
     Parameter:
         Object yielding values drawn from the distribution.
     """
-    return CreateParameter("exponential", {"beta": beta})
+    return CreateParameter("exponential", {"beta": float(beta)})
 
 
 def lognormal(mean=0.0, std=1.0):
@@ -127,4 +127,4 @@ def lognormal(mean=0.0, std=1.0):
     Parameter:
         Object yielding values drawn from the distribution.
     """
-    return CreateParameter("lognormal", {"mean": mean, "std": std})
+    return CreateParameter("lognormal", {"mean": float(mean), "std": float(std)})

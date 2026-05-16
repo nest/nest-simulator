@@ -75,7 +75,7 @@ Setting up the project
    #. Under ``C/C++ Build > Environment``, prepend
       ``${MAMBA_ENV}/bin`` to ``PATH``
    #. Under ``C/C++ General > Paths and Symbols – [Tab] Includes``, add the
-      following two direcories
+      following two directories
 
       * ``${BUILD_DIR}/libnestutil`` (contains ``config.h``)
       * ``${mamba_env}/include`` (all headers from packages provided in Mamba environment)
@@ -96,10 +96,10 @@ Usage
 ~~~~~
 
 * Eclipse should now find all includes.
-* It should intepret switches such as ``HAVE_GSL`` and ``HAVE_MPI``
+* It should interpret switches such as ``HAVE_GSL`` and ``HAVE_MPI``
   correctly, i.e., shade the code for the option that is not given.
   If this does not seem to work, try to rebuild the C/C++ index by
-  opening C++ source file and chosing ``Project > C/C++ Index >
+  opening C++ source file and choosing ``Project > C/C++ Index >
   Rebuild``.
 * Clicking the hammer icon should compile and install NEST. Errors
   will be shown in the console and summarized in the warnings tab
@@ -123,9 +123,6 @@ Requirements and limitations
 * Assumes a suitable compiler (GCC/Clang/etc.) is installed.
 * Assumes CMake version 3.15 or newer is installed.
 * C++ debugging assumes GDB is installed if on Linux, and Xcode and LLDB is installed if on macOS.
-* Debugging C++ from VS Code is only possible with a SLI script. It is probably possible to launch
-  the Python debugger, then attach a C++ debugging instance to that process, but that is left
-  as an exercise for the reader.
 * Tested with VS Code 1.53.2.
 
 Preparations
@@ -151,7 +148,7 @@ Setting up the project
 
    a. *Cmake: Build Directory* to ``${workspaceFolder}/../build``
    #. *Cmake: Install Prefix* to ``${workspaceFolder}/../build/install``
-   #. *Cpp Standard* to ``c++17``
+   #. *Cpp Standard* to ``c++20``
 
 #. In the source directory, open ``.vscode/c_cpp_properties.json``, and add
 
@@ -227,25 +224,6 @@ documentation on Python debugging in VS Code, see the
    the hotkey ``F5``).
 #. A panel with output will open, and the program will run until it finishes, or encounters an error or a breakpoint.
 
-Running a SLI script with a debugger
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-The steps below give a rough guide to how you can run NEST with GDB in VS Code. For more detailed
-documentation on C++ debugging in VS Code, see the
-`VS Code C++ debugging documentation <https://code.visualstudio.com/docs/cpp/cpp-debug>`_.
-
-#. In the Side Bar, open the **Run** pane, or press ``Ctrl+Shift+D``.
-#. Add a debug config by either
-
-   * selecting **Add configuration...** from the dropdown menu, or
-   * clicking the ``Create a launch.json file`` link, if the ``launch.json`` doesn't exist
-#. Choose the template for ``C/C++ (gdb) launch`` (or ``C/C++ (lldb) launch`` if on macOS) and
-
-   * change the entry for ``program`` to ``"${workspaceFolder}/../build/install/bin/nest"``
-   * add ``"${file}"`` to the ``args`` list
-#. Open your SLI script and start debugging by selecting the debug configuration from the dropdown in the Run pane.
-#. A panel with output will open, and the program will run until it finishes, or encounters an error or a breakpoint.
-
 Xcode Workflow
 --------------
 
@@ -298,7 +276,7 @@ MacPorts
       sudo port install gsl +gcc48
       sudo port install cmake       # build tools
 
-3. NEST on Mac requires OpenMPI 1.6 from MacPorts to work properly, so we have to get this older version for MacPort. Download the portsfile `Portfile-openmpi-1.6.4.txt <http://www.nest-simulator.org/wp-content/uploads/2014/12/Portfile-openmpi-1.6.4.txt>`_ and save it under the name ``Portfile`` in an arbitraty directory.
+3. NEST on Mac requires OpenMPI 1.6 from MacPorts to work properly, so we have to get this older version for MacPort. Download the portsfile `Portfile-openmpi-1.6.4.txt <http://www.nest-simulator.org/wp-content/uploads/2014/12/Portfile-openmpi-1.6.4.txt>`_ and save it under the name ``Portfile`` in an arbitrary directory.
 4. In Terminal, move to the directory containing Portfile and run
 
    .. code-block:: sh
@@ -375,7 +353,6 @@ Also add the generated files:
   .. code-block::
 
     <somebase>/NEST/build/libnestutil/config.h
-    <somebase>/NEST/build/libnestutil/sliconfig.h
 
 3. On the left panel select the newly created project ``NEST-fork``, then select the created target.
 

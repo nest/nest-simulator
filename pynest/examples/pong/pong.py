@@ -36,6 +36,7 @@ References
 
 :Authors: T Wunderlich, Electronic Vision(s), J Gille
 """
+
 import numpy as np
 
 LEFT_SCORE = -1

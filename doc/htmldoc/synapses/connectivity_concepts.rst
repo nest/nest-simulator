@@ -123,7 +123,7 @@ Autapses and multapses
      :width: 450px
      :align: center
 
-Autapses are self-connections of a node and multapses are multiple connections betweeen the same pair of nodes.
+Autapses are self-connections of a node and multapses are multiple connections between the same pair of nodes.
 
 In the connection specification dictionary ``conn_spec``, the additional switches ``allow_autapses`` (default:
 ``True``) and ``allow_multapses`` (default: ``True``) can be set to allow or disallow autapses and multapses.
@@ -506,7 +506,7 @@ Third-factor Bernoulli with pool
 For each possible pair of nodes from a source ``NodeCollection`` (e.g., a neuron population ``S``)
 and a target ``NodeCollection`` (e.g., a neuron population ``T``), a connection is
 created according to the ``conn_spec`` parameter passed to
-``TripariteConnect``; any one-directional connection specification can
+``TripartiteConnect``; any one-directional connection specification can
 be used. The connections created between ``S`` and ``T`` are the
 *primary* connections.
 

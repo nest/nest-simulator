@@ -31,9 +31,6 @@
 #include "kernel_manager.h"
 #include "nest_extension_interface.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-
 // Includes from thirdparty:
 #include "compose.hpp"
 
@@ -53,7 +50,7 @@ ModuleManager::ModuleManager()
   const std::string module_dir = std::string( NEST_INSTALL_PREFIX ).c_str() + std::string( "/" NEST_INSTALL_LIBDIR );
   if ( lt_dladdsearchdir( module_dir.c_str() ) )
   {
-    LOG( M_ERROR,
+    LOG( VerbosityLevel::ERROR,
       "ModuleManager::ModuleManager",
       String::compose( "Could not add dynamic module search directory '%1'.", module_dir ) );
   }
@@ -61,7 +58,7 @@ ModuleManager::ModuleManager()
 
 ModuleManager::~ModuleManager()
 {
-  finalize( /* adjust_number_of_threads_or_rng_only */ false ); // closes dynamically loaded modules
+  finalize( /* adjust_number_of_threads_or_rng_only */ false );  // closes dynamically loaded modules
   lt_dlexit();
 }
 
@@ -96,18 +93,18 @@ ModuleManager::reinitialize_dynamic_modules()
 }
 
 void
-ModuleManager::get_status( DictionaryDatum& d )
+ModuleManager::get_status( Dictionary& d )
 {
-  ArrayDatum loaded;
+  std::vector< std::string > loaded;
   for ( const auto& [ name, module_info ] : modules_ )
   {
-    loaded.push_back( new LiteralDatum( name ) );
+    loaded.emplace_back( name );
   }
-  ( *d )[ names::modules ] = loaded;
+  d[ names::modules ] = loaded;
 }
 
 void
-ModuleManager::set_status( const DictionaryDatum& d )
+ModuleManager::set_status( const Dictionary& )
 {
 }
 
@@ -153,15 +150,17 @@ ModuleManager::install( const std::string& name )
 
   // see if we can find the "module" symbol in the module
   NESTExtensionInterface* extension = reinterpret_cast< NESTExtensionInterface* >( lt_dlsym( hModule, "module" ) );
-  char* errstr = ( char* ) lt_dlerror();
-  if ( errstr )
+  char* errcstr = ( char* ) lt_dlerror();
+  if ( errcstr )
   {
-    lt_dlclose( hModule ); // close module again
-    lt_dlerror();          // remove any error caused by lt_dlclose()
+    std::string errstr( errcstr );
+    lt_dlclose( hModule );  // close module again
+    lt_dlerror();           // remove any error caused by lt_dlclose()
     throw DynamicModuleManagementError(
-            "Module '" + name + "' could not be loaded.\n"
+            "Module '" + name + "' could not be loaded: could not find "
+            "module symbol in module.\n"
             "The dynamic loader returned the following error: '"
-            + std::string(errstr) + "'.");
+            + errstr + "'.");
   }
 
   // all is well and we can register module components
@@ -172,16 +171,16 @@ ModuleManager::install( const std::string& name )
   catch ( std::exception& e )
   {
     lt_dlclose( hModule );
-    lt_dlerror(); // remove any error caused by lt_dlclose()
-    throw;        // no arg re-throws entire exception, see Stroustrup 14.3.1
+    lt_dlerror();  // remove any error caused by lt_dlclose()
+    throw;         // no arg re-throws entire exception, see Stroustrup 14.3.1
   }
 
   // add the handle to list of loaded modules
   modules_[ name ] = ModuleMapEntry_( hModule, extension );
 
-  LOG( M_INFO, "Install", ( "loaded module " + name ).c_str() );
+  LOG( VerbosityLevel::INFO, "Install", ( "loaded module " + name ).c_str() );
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* HAVE_LIBLTDL */

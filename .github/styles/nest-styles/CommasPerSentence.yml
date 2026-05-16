@@ -4,4 +4,3 @@ extends: occurrence
 scope: sentence
 max: 3
 token: ','
-

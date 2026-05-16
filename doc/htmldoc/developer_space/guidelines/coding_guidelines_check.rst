@@ -35,7 +35,7 @@ To set up the Git hook scripts specified in ``.pre-commit-config.yaml``, run
 
 .. note::
 
-   If ``pre-commit`` identifies formatting issues in the commited code, the ``pre-commit`` Git hooks will reformat
+   If ``pre-commit`` identifies formatting issues in the committed code, the ``pre-commit`` Git hooks will reformat
    the code. If code is reformatted, it will show up in your unstaged changes. Stage them and recommit to
    successfully commit your code.
 

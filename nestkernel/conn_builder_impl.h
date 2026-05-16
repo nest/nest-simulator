@@ -46,6 +46,6 @@ BipartiteConnBuilder::single_disconnect_( size_t snode_id, Node& target, size_t 
   kernel().sp_manager.disconnect( snode_id, &target, target_thread, synapse_model_id_[ 0 ] );
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* CONN_BUILDER_IMPL_H */

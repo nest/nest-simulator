@@ -32,9 +32,6 @@
 #include "connector_model.h"
 #include "event.h"
 
-// Includes from sli:
-#include "dictdatum.h"
-#include "dictutils.h"
 
 namespace nest
 {
@@ -167,12 +164,12 @@ public:
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   /**
    * Send an event to the receiver of this connection.
@@ -300,7 +297,7 @@ stdp_nn_pre_centered_synapse< targetidentifierT >::send( Event& e, size_t t, con
   // depression due to the latest postsynaptic spike finish->t_
   // before the current pre-synaptic spike t_spike
   double nearest_neighbor_Kminus;
-  double value_to_throw_away; // discard Kminus and Kminus_triplet here
+  double value_to_throw_away;  // discard Kminus and Kminus_triplet here
   target->get_K_values( t_spike - dendritic_delay, value_to_throw_away, nearest_neighbor_Kminus, value_to_throw_away );
   weight_ = depress_( weight_, nearest_neighbor_Kminus );
 
@@ -337,33 +334,33 @@ stdp_nn_pre_centered_synapse< targetidentifierT >::stdp_nn_pre_centered_synapse(
 
 template < typename targetidentifierT >
 void
-stdp_nn_pre_centered_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
+stdp_nn_pre_centered_synapse< targetidentifierT >::get_status( Dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
-  def< double >( d, names::tau_plus, tau_plus_ );
-  def< double >( d, names::lambda, lambda_ );
-  def< double >( d, names::alpha, alpha_ );
-  def< double >( d, names::mu_plus, mu_plus_ );
-  def< double >( d, names::mu_minus, mu_minus_ );
-  def< double >( d, names::Wmax, Wmax_ );
-  def< double >( d, names::Kplus, Kplus_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::weight ] = weight_;
+  d[ names::tau_plus ] = tau_plus_;
+  d[ names::lambda ] = lambda_;
+  d[ names::alpha ] = alpha_;
+  d[ names::mu_plus ] = mu_plus_;
+  d[ names::mu_minus ] = mu_minus_;
+  d[ names::Wmax ] = Wmax_;
+  d[ names::Kplus ] = Kplus_;
+  d[ names::size_of ] = static_cast< long >( sizeof( *this ) );
 }
 
 template < typename targetidentifierT >
 void
-stdp_nn_pre_centered_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+stdp_nn_pre_centered_synapse< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
-  updateValue< double >( d, names::tau_plus, tau_plus_ );
-  updateValue< double >( d, names::lambda, lambda_ );
-  updateValue< double >( d, names::alpha, alpha_ );
-  updateValue< double >( d, names::mu_plus, mu_plus_ );
-  updateValue< double >( d, names::mu_minus, mu_minus_ );
-  updateValue< double >( d, names::Wmax, Wmax_ );
-  updateValue< double >( d, names::Kplus, Kplus_ );
+  d.update_value( names::weight, weight_ );
+  d.update_value( names::tau_plus, tau_plus_ );
+  d.update_value( names::lambda, lambda_ );
+  d.update_value( names::alpha, alpha_ );
+  d.update_value( names::mu_plus, mu_plus_ );
+  d.update_value( names::mu_minus, mu_minus_ );
+  d.update_value( names::Wmax, Wmax_ );
+  d.update_value( names::Kplus, Kplus_ );
 
   // check if weight_ and Wmax_ have the same sign
   if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) == ( ( Wmax_ >= 0 ) - ( Wmax_ < 0 ) ) ) )
@@ -377,6 +374,6 @@ stdp_nn_pre_centered_synapse< targetidentifierT >::set_status( const DictionaryD
   }
 }
 
-} // of namespace nest
+}  // of namespace nest
 
-#endif // of #ifndef STDP_NN_PRE_CENTERED_SYNAPSE_H
+#endif  // of #ifndef STDP_NN_PRE_CENTERED_SYNAPSE_H

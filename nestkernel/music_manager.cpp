@@ -32,8 +32,6 @@
 // Includes from nestkernel:
 #include "kernel_manager.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 namespace nest
 {
@@ -58,12 +56,12 @@ MUSICManager::finalize( const bool )
 }
 
 void
-MUSICManager::set_status( const DictionaryDatum& )
+MUSICManager::set_status( const Dictionary& )
 {
 }
 
 void
-MUSICManager::get_status( DictionaryDatum& )
+MUSICManager::get_status( Dictionary& )
 {
 }
 
@@ -81,7 +79,7 @@ MUSICManager::enter_runtime( double h_min_delay )
 {
   publish_music_in_ports_();
   std::string msg = String::compose( "Entering MUSIC runtime with tick = %1 ms", h_min_delay );
-  LOG( M_INFO, "MUSICManager::enter_runtime", msg );
+  LOG( VerbosityLevel::INFO, "MUSICManager::enter_runtime", msg );
 
   // MUSIC needs the step size in seconds
   // std::cout << "nest::MPIManager::enter_runtime\n";
@@ -128,7 +126,7 @@ MUSICManager::music_finalize()
 
 #ifdef HAVE_MUSIC
 
-MPI::Intracomm
+MPI_Comm
 MUSICManager::communicator()
 {
   return music_setup->communicator();
@@ -256,15 +254,15 @@ void
 MUSICManager::publish_music_in_ports_()
 {
   for ( std::map< std::string, MusicEventHandler >::iterator it = music_event_in_portmap_.begin();
-        it != music_event_in_portmap_.end();
-        ++it )
+    it != music_event_in_portmap_.end();
+    ++it )
   {
     it->second.publish_port();
   }
 
   for ( std::map< std::string, MusicRateInHandler >::iterator it = music_rate_in_portmap_.begin();
-        it != music_rate_in_portmap_.end();
-        ++it )
+    it != music_rate_in_portmap_.end();
+    ++it )
   {
     it->second.publish_port();
   }
@@ -274,15 +272,15 @@ void
 MUSICManager::update_music_event_handlers( Time const& origin, const long from, const long to )
 {
   for ( std::map< std::string, MusicEventHandler >::iterator it = music_event_in_portmap_.begin();
-        it != music_event_in_portmap_.end();
-        ++it )
+    it != music_event_in_portmap_.end();
+    ++it )
   {
     it->second.update( origin, from, to );
   }
 
   for ( std::map< std::string, MusicRateInHandler >::iterator it = music_rate_in_portmap_.begin();
-        it != music_rate_in_portmap_.end();
-        ++it )
+    it != music_rate_in_portmap_.end();
+    ++it )
   {
     it->second.update( origin, from, to );
   }
@@ -290,4 +288,4 @@ MUSICManager::update_music_event_handlers( Time const& origin, const long from, 
 
 #endif
 
-} // namespace nest
+}  // namespace nest

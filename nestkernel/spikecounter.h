@@ -46,7 +46,7 @@ class spikecounter
 public:
   spikecounter( double spike_time, double multiplicity );
 
-  double spike_time_; // point in time when spike occurred (in ms)
+  double spike_time_;  // point in time when spike occurred (in ms)
   double multiplicity_;
 };
 }

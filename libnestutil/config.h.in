@@ -135,9 +135,6 @@
 /* define for ostream */
 #cmakedefine HAVE_OSTREAM 1
 
-/* Use GNU libreadline */
-#cmakedefine HAVE_READLINE 1
-
 /* define if the compiler ignores symbolic signal names in signal.h */
 #cmakedefine HAVE_SIGUSR_IGNORED 1
 
@@ -181,6 +178,9 @@
 
 /* Whether to enable detailed NEST internal timers */
 #cmakedefine TIMER_DETAILED 1
+
+/* Whether to enable NEST internal cycle timers */
+#cmakedefine CYCLE_TIMERS 1
 
 /* Whether to use one NEST internal timer per thread */
 #cmakedefine THREADED_TIMERS 1

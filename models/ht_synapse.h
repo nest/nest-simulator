@@ -45,11 +45,16 @@ Synaptic dynamics are given by
 
 .. math::
 
-    P'(t) = ( 1 - P ) / \tau_P  \\
-    P(T+) = (1 - \delta_P) P(T-)    \text{ for T : time of a spike } \\
-    P(t=0) = 1
+    \frac{dP(t)}{dt} &= \frac{1}{\tau_\mathrm{P}} \left( 1 - P \right)  \\
+    P(t=0) &= 1 \\
 
-:math:`w(t) = w_{max} \cdot P(t)`   is the resulting synaptic weight
+Upon the arrival of a presynaptic spike at time :math:`t_\mathrm{sp}`, the value of :math:`P` is updated as follows:
+
+.. math::
+
+    P \leftarrow (1 - \delta_\mathrm{P}) P
+
+:math:`w(t) = w_\mathrm{max} \cdot P(t)` is the resulting synaptic weight.
 
 For implementation details see:
 `HillTononi_model <../model_details/HillTononiModels.ipynb>`_
@@ -70,7 +75,7 @@ The following parameters can be set in the status dictionary:
  tau_P    ms      Synaptic vesicle pool recovery time constant
  delta_P  real    Fractional change in vesicle pool on incoming spikes
                   (unitless)
- P        real    Current size of the vesicle pool [unitless, 0 <= P <= 1]
+ P        real    Current size of the vesicle pool (unitless, 0 <= P <= 1)
 ========  ======  =========================================================
 
 References
@@ -141,12 +146,12 @@ public:
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
-  virtual void get_status( DictionaryDatum& d ) const;
+  virtual void get_status( Dictionary& d ) const;
 
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  virtual void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  virtual void set_status( const Dictionary& d, ConnectorModel& cm );
 
   /**
    * Send an event to the receiver of this connection.
@@ -183,14 +188,14 @@ public:
   }
 
 private:
-  double weight_; //!< Synaptic weight
+  double weight_;  //!< Synaptic weight
 
-  double tau_P_;   //!< Time constant for recovery [ms]
-  double delta_P_; //!< Fractional decrease in pool size per spike
+  double tau_P_;    //!< Time constant for recovery [ms]
+  double delta_P_;  //!< Fractional decrease in pool size per spike
 
-  double p_; //!< Current pool size
+  double p_;  //!< Current pool size
 
-  double t_lastspike_; //!< Time point of last spike emitted
+  double t_lastspike_;  //!< Time point of last spike emitted
 };
 
 template < typename targetidentifierT >
@@ -238,26 +243,26 @@ ht_synapse< targetidentifierT >::ht_synapse()
 
 template < typename targetidentifierT >
 void
-ht_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
+ht_synapse< targetidentifierT >::get_status( Dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
-  def< double >( d, names::tau_P, tau_P_ );
-  def< double >( d, names::delta_P, delta_P_ );
-  def< double >( d, names::P, p_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::weight ] = weight_;
+  d[ names::tau_P ] = tau_P_;
+  d[ names::delta_P ] = delta_P_;
+  d[ names::P ] = p_;
+  d[ names::size_of ] = static_cast< long >( sizeof( *this ) );
 }
 
 template < typename targetidentifierT >
 void
-ht_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+ht_synapse< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
 
-  updateValue< double >( d, names::weight, weight_ );
-  updateValue< double >( d, names::tau_P, tau_P_ );
-  updateValue< double >( d, names::delta_P, delta_P_ );
-  updateValue< double >( d, names::P, p_ );
+  d.update_value( names::weight, weight_ );
+  d.update_value( names::tau_P, tau_P_ );
+  d.update_value( names::delta_P, delta_P_ );
+  d.update_value( names::P, p_ );
 
   if ( tau_P_ <= 0.0 )
   {
@@ -275,6 +280,6 @@ ht_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connector
   }
 }
 
-} // namespace
+}  // namespace
 
-#endif // HT_SYNAPSE_H
+#endif  // HT_SYNAPSE_H

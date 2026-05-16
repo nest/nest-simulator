@@ -59,12 +59,12 @@ $(document).ready(function(){
 	parent.toggleClass("fsd-active fsd-inactive");
 	parent.find("h3").toggleClass("fsd-h3-active fsd-h3-inactive");
 	parent.find("p").slideToggle();
-	
+
 //	$(".flexslider li span").toggleClass("fsd-active fsd-inactive");
 //	$(".flexslider li span h3").toggleClass("fsd-h3-active fsd-h3-inactive");
 //	$(".flexslider li span p").slideToggle();
     });
-    
+
     hljs.highlightAll();
 
 });
@@ -98,4 +98,3 @@ $(document).ready(function(){
 		}
 	};
 } )();
-

@@ -23,6 +23,13 @@
 	"libtool": {
 		"min": "2.4.6"
 	},
+	"libneurosim": {
+		"min": "1.2.0"
+	},
+	"csa": {
+		"min": "0.1.13",
+		"max": "0.1.13"
+	},
 	"readline": {
 		"min": "8.0"
 	},

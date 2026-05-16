@@ -52,22 +52,21 @@ private:
   double h_Na_;
 
   //! user-defined parameters sodium channel (maximal conductance, reversal potential)
-  double gbar_Na_; // uS
-  double e_Na_;    // mV
+  double gbar_Na_;  // uS
+  double e_Na_;     // mV
 
   //! temperature factor for reaction rates
   double q10_;
 
 public:
   Na( double v_comp );
-  explicit Na( double v_comp, const DictionaryDatum& channel_params );
+  explicit Na( double v_comp, const Dictionary& channel_params );
   ~Na() {};
 
   void init_statevars( double v_init );
   void pre_run_hook() {};
-
   //! make the state variables of this channel accessible
-  void append_recordables( std::map< Name, double* >* recordables, const long compartment_idx );
+  void append_recordables( std::map< std::string, double* >* recordables, const long compartment_idx );
 
   //! compute state variable time scale and asymptotic values
   std::pair< double, double > compute_statevar_m( double v_comp );
@@ -95,22 +94,21 @@ private:
   double n_K_ = 0.0;
 
   //! user-defined parameters potassium channel (maximal conductance, reversal potential)
-  double gbar_K_; // uS
-  double e_K_;    // mV
+  double gbar_K_;  // uS
+  double e_K_;     // mV
 
   //! temperature factor for reaction rates
   double q10_;
 
 public:
   K( double v_comp );
-  explicit K( double v_comp, const DictionaryDatum& channel_params );
+  explicit K( double v_comp, const Dictionary& channel_params );
   ~K() {};
 
   void init_statevars( double v_init );
   void pre_run_hook() {};
-
   //! make the state variables of this channel accessible
-  void append_recordables( std::map< Name, double* >* recordables, const long compartment_idx );
+  void append_recordables( std::map< std::string, double* >* recordables, const long compartment_idx );
 
   //! compute state variable time scale and asymptotic values
   std::pair< double, double > compute_statevar_n( double v_comp );
@@ -131,9 +129,9 @@ private:
   double g_d_AMPA_;
 
   //!  user defined parameters
-  double e_rev_; // mV
-  double tau_r_; // ms
-  double tau_d_; // ms
+  double e_rev_;  // mV
+  double tau_r_;  // ms
+  double tau_d_;  // ms
 
   //!  assigned variables
   double g_norm_;
@@ -147,7 +145,7 @@ private:
 
 public:
   explicit AMPA( const long syn_index );
-  AMPA( const long syn_index, const DictionaryDatum& receptor_params );
+  AMPA( const long syn_index, const Dictionary& receptor_params );
   ~AMPA() {};
 
   long
@@ -169,7 +167,7 @@ public:
   };
 
   //! make the state variables of this receptor accessible
-  void append_recordables( std::map< Name, double* >* recordables );
+  void append_recordables( std::map< std::string, double* >* recordables );
 
   //! associate the receptor with a spike buffer
   void
@@ -194,9 +192,9 @@ private:
   double g_d_GABA_;
 
   //! user defined parameters
-  double e_rev_; // mV
-  double tau_r_; // ms
-  double tau_d_; // ms
+  double e_rev_;  // mV
+  double tau_r_;  // ms
+  double tau_d_;  // ms
 
   //! assigned variables
   double g_norm_;
@@ -210,7 +208,7 @@ private:
 
 public:
   explicit GABA( const long syn_index );
-  GABA( const long syn_index, const DictionaryDatum& receptor_params );
+  GABA( const long syn_index, const Dictionary& receptor_params );
   ~GABA() {};
 
   long
@@ -232,7 +230,7 @@ public:
   };
 
   //! make the state variables of this receptor accessible
-  void append_recordables( std::map< Name, double* >* recordables );
+  void append_recordables( std::map< std::string, double* >* recordables );
 
   //! associate the receptor with a spike buffer
   void
@@ -257,9 +255,9 @@ private:
   double g_d_NMDA_;
 
   //! user defined parameters
-  double e_rev_; // mV
-  double tau_r_; // ms
-  double tau_d_; // ms
+  double e_rev_;  // mV
+  double tau_r_;  // ms
+  double tau_d_;  // ms
 
   //! assigned variables
   double g_norm_;
@@ -273,7 +271,7 @@ private:
 
 public:
   explicit NMDA( const long syn_index );
-  NMDA( const long syn_index, const DictionaryDatum& receptor_params );
+  NMDA( const long syn_index, const Dictionary& receptor_params );
   ~NMDA() {};
 
   long
@@ -295,7 +293,7 @@ public:
   };
 
   //! make the state variables of this receptor accessible
-  void append_recordables( std::map< Name, double* >* recordables );
+  void append_recordables( std::map< std::string, double* >* recordables );
 
   //! associate the receptor with a spike buffer
   void
@@ -332,11 +330,11 @@ private:
   double g_d_AN_NMDA_;
 
   //! user defined parameters
-  double e_rev_;      // mV
-  double tau_r_AMPA_; // ms
-  double tau_d_AMPA_; // ms
-  double tau_r_NMDA_; // ms
-  double tau_d_NMDA_; // ms
+  double e_rev_;       // mV
+  double tau_r_AMPA_;  // ms
+  double tau_d_AMPA_;  // ms
+  double tau_r_NMDA_;  // ms
+  double tau_d_NMDA_;  // ms
   double NMDA_ratio_;
 
   //! assigned variables
@@ -355,7 +353,7 @@ private:
 public:
   // constructor, destructor
   explicit AMPA_NMDA( const long syn_index );
-  AMPA_NMDA( const long syn_index, const DictionaryDatum& receptor_params );
+  AMPA_NMDA( const long syn_index, const Dictionary& receptor_params );
   ~AMPA_NMDA() {};
 
   long
@@ -378,7 +376,7 @@ public:
   };
 
   //! make the state variables of this receptor accessible
-  void append_recordables( std::map< Name, double* >* recordables );
+  void append_recordables( std::map< std::string, double* >* recordables );
 
   //! associate the receptor with a spike buffer
   void
@@ -416,7 +414,7 @@ private:
 
 public:
   CompartmentCurrents( double v_comp );
-  CompartmentCurrents( double v_comp, const DictionaryDatum& channel_params );
+  CompartmentCurrents( double v_comp, const Dictionary& channel_params );
   ~CompartmentCurrents() {};
 
   void
@@ -477,9 +475,9 @@ public:
     }
   };
   void
-  add_synapse( const std::string& type, const long syn_idx, const DictionaryDatum& receptor_params )
+  add_synapse( const std::string& type, const long syn_idx, const Dictionary& receptor_params )
   {
-    receptor_params->clear_access_flags();
+    receptor_params.init_access_flags();
 
     if ( type == "AMPA" )
     {
@@ -506,47 +504,47 @@ public:
       assert( false );
     }
 
-    ALL_ENTRIES_ACCESSED( *receptor_params, "receptor_params", "Unread dictionary entries: " );
+    receptor_params.all_entries_accessed( "receptor_params", "Unread dictionary entries: " );
   };
 
   void
-  add_receptor_info( ArrayDatum& ad, const long compartment_index )
+  add_receptor_info( std::vector< Dictionary >& info, const long compartment_index )
   {
     // receptor info for AMPA synapses
     for ( auto syn_it = AMPA_syns_.begin(); syn_it != AMPA_syns_.end(); ++syn_it )
     {
-      DictionaryDatum dd = DictionaryDatum( new Dictionary );
-      def< long >( dd, names::receptor_idx, syn_it->get_syn_idx() );
-      def< long >( dd, names::comp_idx, compartment_index );
-      def< std::string >( dd, names::receptor_type, "AMPA" );
-      ad.push_back( dd );
+      Dictionary dd;
+      dd[ names::receptor_idx ] = syn_it->get_syn_idx();
+      dd[ names::comp_idx ] = compartment_index;
+      dd[ names::receptor_type ] = std::string( "AMPA" );
+      info.push_back( dd );
     }
     // receptor info for GABA synapses
     for ( auto syn_it = GABA_syns_.begin(); syn_it != GABA_syns_.end(); ++syn_it )
     {
-      DictionaryDatum dd = DictionaryDatum( new Dictionary );
-      def< long >( dd, names::receptor_idx, syn_it->get_syn_idx() );
-      def< long >( dd, names::comp_idx, compartment_index );
-      def< std::string >( dd, names::receptor_type, "GABA" );
-      ad.push_back( dd );
+      Dictionary dd;
+      dd[ names::receptor_idx ] = syn_it->get_syn_idx();
+      dd[ names::comp_idx ] = compartment_index;
+      dd[ names::receptor_type ] = std::string( "GABA" );
+      info.push_back( dd );
     }
     // receptor info for NMDA synapses
     for ( auto syn_it = NMDA_syns_.begin(); syn_it != NMDA_syns_.end(); ++syn_it )
     {
-      DictionaryDatum dd = DictionaryDatum( new Dictionary );
-      def< long >( dd, names::receptor_idx, syn_it->get_syn_idx() );
-      def< long >( dd, names::comp_idx, compartment_index );
-      def< std::string >( dd, names::receptor_type, "NMDA" );
-      ad.push_back( dd );
+      Dictionary dd;
+      dd[ names::receptor_idx ] = syn_it->get_syn_idx();
+      dd[ names::comp_idx ] = compartment_index;
+      dd[ names::receptor_type ] = std::string( "NMDA" );
+      info.push_back( dd );
     }
     // receptor info for AMPA_NMDA synapses
     for ( auto syn_it = AMPA_NMDA_syns_.begin(); syn_it != AMPA_NMDA_syns_.end(); ++syn_it )
     {
-      DictionaryDatum dd = DictionaryDatum( new Dictionary );
-      def< long >( dd, names::receptor_idx, syn_it->get_syn_idx() );
-      def< long >( dd, names::comp_idx, compartment_index );
-      def< std::string >( dd, names::receptor_type, "AMPA_NMDA" );
-      ad.push_back( dd );
+      Dictionary dd;
+      dd[ names::receptor_idx ] = syn_it->get_syn_idx();
+      dd[ names::comp_idx ] = compartment_index;
+      dd[ names::receptor_type ] = std::string( "AMPA_NMDA" );
+      info.push_back( dd );
     }
   };
 
@@ -575,11 +573,11 @@ public:
     }
   }
 
-  std::map< Name, double* >
+  std::map< std::string, double* >
   get_recordables( const long compartment_idx )
   {
 
-    std::map< Name, double* > recordables;
+    std::map< std::string, double* > recordables;
 
     // recordables sodium channel
     Na_chan_.append_recordables( &recordables, compartment_idx );
@@ -666,6 +664,6 @@ public:
   };
 };
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef CM_COMPARTMENTCURRENTS_H */

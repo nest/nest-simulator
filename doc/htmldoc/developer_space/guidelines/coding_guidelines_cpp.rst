@@ -39,8 +39,7 @@ Debugging and quality control
 -----------------------------
 
 Use the ``assert`` macro intensively to check program invariants.
-Create expressive unit-tests using one of the supplied SLI and Python unit-testing
-infrastructure or the C++ testing framework based on Boost.
+Create expressive tests using `Pytest <https://pytest.org/>`_ or the C++ testing framework based on Boost.
 
 Compiler
 --------
@@ -69,9 +68,9 @@ We have found the following books to be useful.
 2. Meyers S (1997) Effective C++, 2nd Edition, Addison Wesley
 3. Meyers S (1996) More Effective C++, Addison Wesley
 4. Coplien J O (1992) Advanced C++ programming styles and idioms, Addison-Wesley
-5. Eckle B (1995) Thinking in C++, Prentice Hall
+5. Eckel B (1995) Thinking in C++, Prentice Hall
 6. Plauger P J, Stepanov A, Lee M, and Musser D R (1998) The Standard Template Library,
-   Comming June 1998, 1. Prentice Hall
+   Coming June 1998, 1. Prentice Hall
 7. Plauger P J (1995) The (draft) Standard C++ Library, Prentice Hall
 8. Musser D R and Saini A (1996) STL Tutorial and Reference Guide, Addison-Wesley
 9. Kernighan B and Ritchie D (1988) The C Programming Language, 2nd Edition, Prentice Hall
@@ -294,7 +293,7 @@ Further indentation and formatting
 **********************************
 
 Avoid committing indentation and formatting changes together with changes in
-logic. Always commit these changes separately._
+logic. Always commit these changes separately.
 
 As a general rule of thumb, always indent with two spaces. Do
 not use TAB character in any source file. Always use braces

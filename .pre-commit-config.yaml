@@ -1,10 +1,13 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v6.0.0
     hooks:
       - id: end-of-file-fixer
       - id: trailing-whitespace
       - id: check-yaml
+      - id: forbid-submodules
+      - id: mixed-line-ending
+      - id: fix-byte-order-marker
 
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.16.3
@@ -12,24 +15,43 @@ repos:
       - id: gitleaks
 
   - repo: https://github.com/pycqa/isort
-    rev: 5.12.0
+    rev: 8.0.1
     hooks:
       - id: isort
         args: ["--profile", "black", "--thirdparty", "nest"]
 
   - repo: https://github.com/psf/black
-    rev: 23.7.0
+    rev: 26.1.0
     hooks:
       - id: black
         language_version: python3
 
-  - repo: https://github.com/koalaman/shellcheck-precommit
-    rev: v0.9.0
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.11.0.1
     hooks:
       - id: shellcheck
+        # explicitly add input files that are not "*.sh"
+        args: [
+          #
+          # note that these differ from arguments in .github/workflows/nestbuildmatrix.yml
+          # IF YOU READ THIS: recheck for consistency with `find . -iname "*.sh" -o -iname "*.sh.in"`
+          "build_support/check_forbidden_types.sh",
+          "build_support/format_all_c_c++_files.sh",
+          "build_support/install_csa-libneurosim.sh",
+          "build_support/install_music.sh",
+          "build_support/install_sionlib.sh",
+          "build_support/version_info.sh",
+          "cmake/CheckFiles/check_return_val.sh",
+          "pynest/examples/list_examples.sh",
+          "pynest/examples/run_examples.sh",
+          "testsuite/do_tests.sh",
+          "testsuite/junit_xml.sh",
+        ]
 
   - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: v17.0.4
+    rev: v22.1.0
     hooks:
       - id: clang-format
         types_or: [c++]
+
+exclude: 'build/.*|thirdparty/.*'

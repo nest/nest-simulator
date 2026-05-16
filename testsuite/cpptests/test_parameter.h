@@ -24,7 +24,7 @@
 #define TEST_PARAMETER_H
 
 // C++ includes
-#include <type_traits> // std::is_floating_point
+#include <type_traits>  // std::is_floating_point
 
 #include <boost/version.hpp>
 
@@ -32,12 +32,13 @@
 #include <boost/test/unit_test.hpp>
 
 // Includes from nestkernel
-#include "nest_datums.h"
+#include "kernel_manager.h"
+#include "parameter.h"
 #include "random_generators.h"
 
 BOOST_AUTO_TEST_SUITE( test_parameter )
 
-#if BOOST_VERSION >= 105900 // test_redraw_value_impossible uses timeout, which is only available in Boost>=1.59.0
+#if BOOST_VERSION >= 105900  // test_redraw_value_impossible uses timeout, which is only available in Boost>=1.59.0
 
 /**
  * This test checks that an exception is thrown if the RedrawParameter exceeds the max number of redraws. In
@@ -46,12 +47,14 @@ BOOST_AUTO_TEST_SUITE( test_parameter )
  */
 BOOST_AUTO_TEST_CASE( test_redraw_value_impossible, *boost::unit_test::timeout( 2 ) )
 {
-  DictionaryDatum d = new Dictionary();
-  ( *d )[ nest::names::min ] = 0.0;
-  ( *d )[ nest::names::max ] = 1.0;
-  ParameterDatum uniform_pd = new nest::UniformParameter( d );
+  nest::KernelManager::create_kernel_manager();
+
+  Dictionary d;
+  d[ nest::names::min ] = 0.0;
+  d[ nest::names::max ] = 1.0;
+  nest::ParameterPTR uniform_pd( new nest::UniformParameter( d ) );
   // Requested region is outside of the parameter limits, so it cannot get an acceptable value.
-  ParameterDatum redraw_pd = redraw_parameter( uniform_pd, -1.0, -0.5 );
+  nest::ParameterPTR redraw_pd( nest::redraw_parameter( uniform_pd, -1.0, -0.5 ) );
 
   // We need to go via a factory to avoid compiler confusion. Two somewhat arbitrary sequences are used for seeding.
   nest::RngPtr rng = nest::RandomGeneratorFactory< std::mt19937_64 >().create( { 1234567890, 23423423 } );
@@ -66,12 +69,14 @@ BOOST_AUTO_TEST_CASE( test_redraw_value_impossible, *boost::unit_test::timeout( 
  */
 BOOST_AUTO_TEST_CASE( test_uniform_int_returns_integer )
 {
+  nest::KernelManager::create_kernel_manager();
+
   const int max = 100;
   const int num_iterations = 1000;
 
-  DictionaryDatum d = new Dictionary();
-  ( *d )[ nest::names::max ] = max;
-  ParameterDatum uniform_int_pd = new nest::UniformIntParameter( d );
+  Dictionary d;
+  d[ nest::names::max ] = max;
+  nest::ParameterPTR uniform_int_pd( new nest::UniformIntParameter( d ) );
 
   // We need to go via a factory to avoid compiler confusion
   nest::RandomGeneratorFactory< std::mt19937_64 > rf;
@@ -83,8 +88,8 @@ BOOST_AUTO_TEST_CASE( test_uniform_int_returns_integer )
     // Test makes no sense if the return value of the Parameter is not floating point.
     static_assert( std::is_floating_point< decltype( value ) >::value, "Return type not floating point" );
     BOOST_REQUIRE_EQUAL( value, static_cast< long >( value ) );
-    BOOST_REQUIRE_LT( value, max ); // Require value < max
-    BOOST_REQUIRE_GE( value, 0 );   // Require value >= 0
+    BOOST_REQUIRE_LT( value, max );  // Require value < max
+    BOOST_REQUIRE_GE( value, 0 );    // Require value >= 0
   }
 }
 

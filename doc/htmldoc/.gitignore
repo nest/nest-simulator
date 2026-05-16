@@ -6,3 +6,5 @@ auto_examples/
 static/examples
 # json data is produced at build time by Sphinx
 static/data/filter_model.json
+# generated file from sphinx gallery
+sg_execution_times.rst

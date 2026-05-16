@@ -64,4 +64,3 @@ a layer of neuron models, such as parrot neurons, in between.
 This is true for devices in general of course, but this connection
 pattern, where you want to record the MUSIC input from another
 simulation, is so common that it's worth warning about this.
-

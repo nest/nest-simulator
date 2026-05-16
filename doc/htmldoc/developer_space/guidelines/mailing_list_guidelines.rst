@@ -34,7 +34,7 @@ please follow the guidelines below:
 
 #. Keep topics separate.
 
-   It's better to write multiple emails each with it's own topic thread than
+   It's better to write multiple emails each with its own topic thread than
    to try to ask several diverse questions in one email. Some of your questions may get overlooked if
    there is just too much information to read through.
 

@@ -111,7 +111,7 @@ New interface for NEST Extension Modules
 
 The interface for NEST Extension Modules has been thoroughly revised. Key changes are
 
-* All extention modules must be derived from class ``nest::NESTExtensionInterface`` provided in ``nest_extension_interface.h``.
+* All extension modules must be derived from class ``nest::NESTExtensionInterface`` provided in ``nest_extension_interface.h``.
 
     * In your class, you must override the ``initialize()`` method with one that registers all components provided by your module.
     * The ``nest_extension_interface.h`` header provides a large set of NEST includes, so once including it you should no longer need to include other NEST headers in most cases.

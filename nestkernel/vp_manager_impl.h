@@ -128,6 +128,6 @@ VPManager::get_assigned_ranks( const size_t tid )
   return assigned_ranks;
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* VP_MANAGER_IMPL_H */

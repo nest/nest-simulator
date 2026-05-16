@@ -35,11 +35,6 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-
 namespace nest
 {
 void
@@ -54,7 +49,7 @@ template <>
 void
 RecordablesMap< ac_generator >::create()
 {
-  insert_( Name( names::I ), &ac_generator::get_I_ );
+  insert_( names::I, &ac_generator::get_I_ );
 }
 }
 
@@ -63,10 +58,10 @@ RecordablesMap< ac_generator >::create()
  * ---------------------------------------------------------------- */
 
 nest::ac_generator::Parameters_::Parameters_()
-  : amp_( 0.0 )     // pA
-  , offset_( 0.0 )  // pA
-  , freq_( 0.0 )    // Hz
-  , phi_deg_( 0.0 ) // degree
+  : amp_( 0.0 )      // pA
+  , offset_( 0.0 )   // pA
+  , freq_( 0.0 )     // Hz
+  , phi_deg_( 0.0 )  // degree
 {
 }
 
@@ -96,8 +91,8 @@ nest::ac_generator::Parameters_::operator=( const Parameters_& p )
 
 nest::ac_generator::State_::State_()
   : y_0_( 0.0 )
-  , y_1_( 0.0 ) // pA
-  , I_( 0.0 )   // pA
+  , y_1_( 0.0 )  // pA
+  , I_( 0.0 )    // pA
 {
 }
 
@@ -116,28 +111,28 @@ nest::ac_generator::Buffers_::Buffers_( const Buffers_&, ac_generator& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::ac_generator::Parameters_::get( DictionaryDatum& d ) const
+nest::ac_generator::Parameters_::get( Dictionary& d ) const
 {
-  ( *d )[ names::amplitude ] = amp_;
-  ( *d )[ names::offset ] = offset_;
-  ( *d )[ names::phase ] = phi_deg_;
-  ( *d )[ names::frequency ] = freq_;
+  d[ names::amplitude ] = amp_;
+  d[ names::offset ] = offset_;
+  d[ names::phase ] = phi_deg_;
+  d[ names::frequency ] = freq_;
 }
 
 void
-nest::ac_generator::State_::get( DictionaryDatum& d ) const
+nest::ac_generator::State_::get( Dictionary& d ) const
 {
-  ( *d )[ names::y_0 ] = y_0_;
-  ( *d )[ names::y_1 ] = y_1_;
+  d[ names::y_0 ] = y_0_;
+  d[ names::y_1 ] = y_1_;
 }
 
 void
-nest::ac_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::ac_generator::Parameters_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::amplitude, amp_, node );
-  updateValueParam< double >( d, names::offset, offset_, node );
-  updateValueParam< double >( d, names::frequency, freq_, node );
-  updateValueParam< double >( d, names::phase, phi_deg_, node );
+  update_value_param( d, names::amplitude, amp_, node );
+  update_value_param( d, names::offset, offset_, node );
+  update_value_param( d, names::frequency, freq_, node );
+  update_value_param( d, names::phase, phi_deg_, node );
 }
 
 
@@ -243,7 +238,7 @@ nest::ac_generator::handle( DataLoggingRequest& e )
 void
 nest::ac_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
 
   // For the input backend
   if ( not input_param.empty() )
@@ -253,11 +248,11 @@ nest::ac_generator::set_data_from_stimulation_backend( std::vector< double >& in
       throw BadParameterValue(
         "The size of the data for the ac_generator needs to be 4 [amplitude, offset, frequency, phase]." );
     }
-    DictionaryDatum d = DictionaryDatum( new Dictionary );
-    ( *d )[ names::amplitude ] = DoubleDatum( input_param[ 0 ] );
-    ( *d )[ names::offset ] = DoubleDatum( input_param[ 1 ] );
-    ( *d )[ names::frequency ] = DoubleDatum( input_param[ 2 ] );
-    ( *d )[ names::phase ] = DoubleDatum( input_param[ 3 ] );
+    Dictionary d;
+    d[ names::amplitude ] = input_param[ 0 ];
+    d[ names::offset ] = input_param[ 1 ];
+    d[ names::frequency ] = input_param[ 2 ];
+    d[ names::phase ] = input_param[ 3 ];
     ptmp.set( d, this );
   }
 

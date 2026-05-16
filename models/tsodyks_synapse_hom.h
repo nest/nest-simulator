@@ -156,17 +156,17 @@ public:
   /**
    * Get all properties and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
   /**
    * Set properties from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
-  double tau_psc_; //!< [ms] time constant of postsyn current
-  double tau_fac_; //!< [ms] time constant for fascilitation
-  double tau_rec_; //!< [ms] time constant for recovery
-  double U_;       //!< asymptotic value of probability of release
+  double tau_psc_;  //!< [ms] time constant of postsyn current
+  double tau_fac_;  //!< [ms] time constant for fascilitation
+  double tau_rec_;  //!< [ms] time constant for recovery
+  double U_;        //!< asymptotic value of probability of release
 };
 
 
@@ -214,12 +214,12 @@ public:
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   /**
    * Send an event to the receiver of this connection.
@@ -257,10 +257,10 @@ public:
   }
 
 private:
-  double x_;           //!< amount of resources in recovered state
-  double y_;           //!< amount of resources in active state
-  double u_;           //!< actual probability of release
-  double t_lastspike_; //!< time point of last spike emitted
+  double x_;            //!< amount of resources in recovered state
+  double y_;            //!< amount of resources in active state
+  double u_;            //!< actual probability of release
+  double t_lastspike_;  //!< time point of last spike emitted
 };
 
 template < typename targetidentifierT >
@@ -334,25 +334,25 @@ tsodyks_synapse_hom< targetidentifierT >::tsodyks_synapse_hom()
 
 template < typename targetidentifierT >
 void
-tsodyks_synapse_hom< targetidentifierT >::get_status( DictionaryDatum& d ) const
+tsodyks_synapse_hom< targetidentifierT >::get_status( Dictionary& d ) const
 {
   ConnectionBase::get_status( d );
 
-  def< double >( d, names::x, x_ );
-  def< double >( d, names::y, y_ );
-  def< double >( d, names::u, u_ );
+  d[ names::x ] = x_;
+  d[ names::y ] = y_;
+  d[ names::u ] = u_;
 }
 
 template < typename targetidentifierT >
 void
-tsodyks_synapse_hom< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+tsodyks_synapse_hom< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   // Handle parameters that may throw an exception first, so we can leave the
   // synapse untouched in case of invalid parameter values
   double x = x_;
   double y = y_;
-  updateValue< double >( d, names::x, x );
-  updateValue< double >( d, names::y, y );
+  d.update_value( names::x, x );
+  d.update_value( names::y, y );
 
   if ( x + y > 1.0 )
   {
@@ -364,9 +364,9 @@ tsodyks_synapse_hom< targetidentifierT >::set_status( const DictionaryDatum& d, 
 
   ConnectionBase::set_status( d, cm );
 
-  updateValue< double >( d, names::u, u_ );
+  d.update_value( names::u, u_ );
 }
 
-} // namespace
+}  // namespace
 
-#endif // TSODYKS_SYNAPSE_HOM_H
+#endif  // TSODYKS_SYNAPSE_HOM_H

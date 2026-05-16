@@ -206,13 +206,13 @@ public:
   void initialize() override;
   void finalize() override;
 
-  void enroll( const RecordingDevice& device, const DictionaryDatum& params ) override;
+  void enroll( const RecordingDevice& device, const Dictionary& params ) override;
 
   void disenroll( const RecordingDevice& device ) override;
 
   void set_value_names( const RecordingDevice& device,
-    const std::vector< Name >& double_value_names,
-    const std::vector< Name >& long_value_names ) override;
+    const std::vector< std::string >& double_value_names,
+    const std::vector< std::string >& long_value_names ) override;
 
   void prepare() override;
 
@@ -223,9 +223,9 @@ public:
     const std::vector< double >& double_values,
     const std::vector< long >& long_values ) override;
 
-  void set_status( const DictionaryDatum& ) override;
+  void set_status( const Dictionary& ) override;
 
-  void get_status( DictionaryDatum& ) const override;
+  void get_status( Dictionary& ) const override;
 
   void pre_run_hook() override;
 
@@ -233,9 +233,9 @@ public:
 
   void post_step_hook() override;
 
-  void check_device_status( const DictionaryDatum& ) const override;
-  void get_device_defaults( DictionaryDatum& ) const override;
-  void get_device_status( const RecordingDevice& device, DictionaryDatum& params_dictionary ) const override;
+  void check_device_status( const Dictionary& ) const override;
+  void get_device_defaults( Dictionary& ) const override;
+  void get_device_status( const RecordingDevice& device, Dictionary& params_dictionary ) const override;
 
 private:
   void open_files_();
@@ -339,30 +339,30 @@ private:
   file_map files_;
 
   std::string filename_;
-  MPI_Comm local_comm_; // single copy of local MPI communicator
-                        // for all threads using the sionlib
-                        // recording backend in parallel (for broadcasting
-                        // the results of MPIX..(..) in open_files_(..))
+  MPI_Comm local_comm_;  // single copy of local MPI communicator
+                         // for all threads using the sionlib
+                         // recording backend in parallel (for broadcasting
+                         // the results of MPIX..(..) in open_files_(..))
 
-  double t_start_; // simulation start time for storing
+  double t_start_;  // simulation start time for storing
 
   struct Parameters_
   {
-    std::string filename_; //!< the file name extension to use, without .
-    bool sion_collective_; //!< use SIONlib's collective mode.
-    long sion_chunksize_;  //!< the size of SIONlib's buffer.
-    int sion_n_files_;     //!< the number of SIONLIB container files used.
-    long buffer_size_;     //!< the size of the internal buffer.
+    std::string filename_;  //!< the file name extension to use, without .
+    bool sion_collective_;  //!< use SIONlib's collective mode.
+    long sion_chunksize_;   //!< the size of SIONlib's buffer.
+    int sion_n_files_;      //!< the number of SIONLIB container files used.
+    long buffer_size_;      //!< the size of the internal buffer.
 
     Parameters_();
 
-    void get( const RecordingBackendSIONlib&, DictionaryDatum& ) const;
-    void set( const RecordingBackendSIONlib&, const DictionaryDatum& );
+    void get( const RecordingBackendSIONlib&, Dictionary& ) const;
+    void set( const RecordingBackendSIONlib&, const Dictionary& );
   };
 
   Parameters_ P_;
 };
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef RECORDING_BACKEND_SIONLIB_H */

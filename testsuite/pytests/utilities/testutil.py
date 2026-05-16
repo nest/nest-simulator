@@ -19,15 +19,11 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import dataclasses
 import sys
 
-import numpy as np
+import nest
+import pandas as pd
 import pytest
-
-
-def parameter_fixture(name, default_factory=lambda: None):
-    return pytest.fixture(autouse=True, name=name)(lambda request: getattr(request, "param", default_factory()))
 
 
 def dict_is_subset_of(small, big):
@@ -47,69 +43,26 @@ def dict_is_subset_of(small, big):
     return big == big | small
 
 
-def isin_approx(A, B, tol=1e-06):
-    A = np.asarray(A)
-    B = np.asarray(B)
+def get_comparable_timesamples(resolution, actual, expected):
+    """
+    Return result of inner join on time stamps for actual and expected given resolution.
 
-    Bs = np.sort(B)  # skip if already sorted
-    idx = np.searchsorted(Bs, A)
+    `actual` and `expected` must be arrays with columns representing times (in ms) and values.
+    Times will be converted to steps given the resolution and the data will then be inner-
+    joined on the steps, i.e., rows with equal steps will be extracted.
 
-    linvalid_mask = idx == len(B)
-    idx[linvalid_mask] = len(B) - 1
-    lval = Bs[idx] - A
-    lval[linvalid_mask] *= -1
+    Returns two one-dimensional arrays containing the values at the joint points from
+    actual and expected, respectively.
+    """
 
-    rinvalid_mask = idx == 0
-    idx1 = idx - 1
-    idx1[rinvalid_mask] = 0
-    rval = A - Bs[idx1]
-    rval[rinvalid_mask] *= -1
-    return np.minimum(lval, rval) <= tol
+    tics = nest.tics_per_ms
 
+    actual = pd.DataFrame(actual, columns=["t", "val_a"])
+    expected = pd.DataFrame(expected, columns=["t", "val_e"])
 
-def get_comparable_timesamples(actual, expected):
-    simulated_points = isin_approx(actual[:, 0], expected[:, 0])
-    expected_points = isin_approx(expected[:, 0], actual[:, 0])
-    assert len(actual[simulated_points]) > 0, "The recorded data did not contain any relevant timesamples"
-    return actual[simulated_points], pytest.approx(expected[expected_points])
+    actual["tics"] = (actual.t * tics).round().astype(int)
+    expected["tics"] = (expected.t * tics).round().astype(int)
 
+    common = pd.merge(actual, expected, how="inner", on="tics")
 
-def create_dataclass_fixtures(cls, module_name=None):
-    for field, type_ in getattr(cls, "__annotations__", {}).items():
-        if isinstance(field, dataclasses.Field):
-            name = field.name
-            if field.default_factory is not dataclasses.MISSING:
-                default = field.default_factory
-            else:
-
-                def default(d=field.default):
-                    return d
-
-        else:
-            name = field
-            attr = getattr(cls, field)
-            # We may be receiving a mixture of literal default values, field defaults,
-            # and field default factories.
-            if isinstance(attr, dataclasses.Field):
-                if attr.default_factory is not dataclasses.MISSING:
-                    default = attr.default_factory
-                else:
-
-                    def default(d=attr.default):
-                        return d
-
-            else:
-
-                def default(d=attr):
-                    return d
-
-        setattr(
-            sys.modules[module_name or cls.__module__],
-            name,
-            parameter_fixture(name, default),
-        )
-
-
-def use_simulation(cls):
-    # If `mark` receives one argument that is a class, it decorates that arg.
-    return pytest.mark.simulation(cls, "")
+    return common.val_a.values, common.val_e.values

@@ -90,7 +90,7 @@ multiple node population HDF5 files.
 
 NEST assumes the following structure of the node HDF5 files:
 
-:: 
+::
 
     <nodes_file.h5>                     Filename
     ├─ nodes                            Group - required
@@ -147,7 +147,7 @@ circumvented by assigning a single node its own node type id.
 Below is an example of a node type CSV file with the required headers for neuron nodes:
 
 +--------------+---------------+--------------------+-----------------+
-| node_type_id | model_type    | model_template     | dynamics_params | 
+| node_type_id | model_type    | model_template     | dynamics_params |
 +==============+===============+====================+=================+
 | 1            | point_process | nest:iaf_psc_alpha | params_1.json   |
 +--------------+---------------+--------------------+-----------------+
@@ -155,7 +155,7 @@ Below is an example of a node type CSV file with the required headers for neuron
 +--------------+---------------+--------------------+-----------------+
 
 The only required CSV header for ``virtual`` nodes is ``model_type``. The ``spike_train_injector``\s spike-time arrays
-are expected to be provided in HDF5 datasets with the configuration details specified in the JSON configuration file. 
+are expected to be provided in HDF5 datasets with the configuration details specified in the JSON configuration file.
 
 
 .. _sec:sonata_edges:
@@ -168,7 +168,7 @@ CSV file that assigns properties to all edges with a given edge type id.
 
 NEST assumes the following structure of the edge HDF5 files:
 
-:: 
+::
 
     <edges_file.h5>                     Filename
     ├─ edges                            Group - required
@@ -213,7 +213,7 @@ NEST assumes the ``edge_id``\s are contiguous numeric keys starting from zero, t
 Below is an example of a edge type CSV file:
 
 +--------------+----------------+-------+-----------------+
-| edge_type_id | model_template | delay | dynamics_params | 
+| edge_type_id | model_template | delay | dynamics_params |
 +==============+================+=======+=================+
 | 1            | static_synapse | 2.0   | params_1.json   |
 +--------------+----------------+-------+-----------------+

@@ -242,8 +242,7 @@ Editing workflow - commands explained
 
 1. Make some changes. When you feel that you've made a complete, working set of
    related changes, move on to the next steps.
-2. Please ensure that you have followed the coding guidelines for
-   C++ and SLI coding guidelines.
+2. Please ensure that you have followed the coding guidelines for C++ and PyNEST.
 3. Test your changes by building the source code and running the tests.
    (Usually ``cmake``, ``make``, ``make install``, ``make installcheck``. Please see the
    :ref:`installation section <install_nest>` for details.)

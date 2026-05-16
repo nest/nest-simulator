@@ -108,6 +108,6 @@ regula_falsi( const CN& node, const double dt )
   throw NumericalInstability( "regula_falsi: Regula falsi method did not converge during set number of iterations" );
 }
 
-} // namespace nest
+}  // namespace nest
 
-#endif // REGULA_FALSI_H
+#endif  // REGULA_FALSI_H

@@ -155,12 +155,12 @@ public:
   {
   }
 
-  void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-  void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+  void get( Dictionary& ) const;              //!< Store current values in dictionary
+  void set( const Dictionary&, Node* node );  //!< Set values from dictionary
 
-  double input( double h );               // non-linearity on input
-  double mult_coupling_ex( double rate ); // factor of multiplicative coupling
-  double mult_coupling_in( double rate ); // factor of multiplicative coupling
+  double input( double h );                // non-linearity on input
+  double mult_coupling_ex( double rate );  // factor of multiplicative coupling
+  double mult_coupling_in( double rate );  // factor of multiplicative coupling
 };
 
 inline double
@@ -199,7 +199,7 @@ template <>
 void RecordablesMap< rate_transformer_lin >::create();
 
 
-} // namespace nest
+}  // namespace nest
 
 
 #endif /* #ifndef LIN_RATE_H */

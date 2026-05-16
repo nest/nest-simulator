@@ -7,7 +7,7 @@ The NEST Simulator is a scientific tool and as such it is never finished and con
 
 
 Visit the [contributing to NEST docs](https://nest-simulator.readthedocs.io/en/latest/developer_space/index.html) for details
-on 
+on
 
 * development workflow
 * reporing bugs and issues
@@ -15,4 +15,3 @@ on
 * code review policies
 
 and much more!
-

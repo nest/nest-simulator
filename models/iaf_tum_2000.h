@@ -180,8 +180,8 @@ public:
   size_t handles_test_event( CurrentEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
   bool
   is_off_grid() const override
@@ -248,14 +248,14 @@ private:
     double tau_rec_;
     double U_;
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const;  //!< Store current values in dictionary
 
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      */
-    double set( const DictionaryDatum&, Node* node );
+    double set( const Dictionary&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -266,28 +266,28 @@ private:
   struct State_
   {
     // state variables
-    double i_0_;      //!< Stepwise constant input current
-    double i_1_;      //!< Current input that is filtered through the excitatory synapse exponential kernel
-    double i_syn_ex_; //!< Postsynaptic current for excitatory inputs (includes contribution from current input on
-                      //!< receptor type 1)
-    double i_syn_in_; //!< Postsynaptic current for inhibitory inputs
-    double V_m_;      //!< Membrane potential
-    int r_ref_;       //!< Absolute refractory counter (no membrane potential propagation)
+    double i_0_;       //!< Stepwise constant input current
+    double i_1_;       //!< Current input that is filtered through the excitatory synapse exponential kernel
+    double i_syn_ex_;  //!< Postsynaptic current for excitatory inputs (includes contribution from current input on
+                       //!< receptor type 1)
+    double i_syn_in_;  //!< Postsynaptic current for inhibitory inputs
+    double V_m_;       //!< Membrane potential
+    int r_ref_;        //!< Absolute refractory counter (no membrane potential propagation)
 
     double x_;
     double y_;
     double u_;
 
-    State_(); //!< Default initialization
+    State_();  //!< Default initialization
 
-    void get( DictionaryDatum&, const Parameters_& ) const;
+    void get( Dictionary&, const Parameters_& ) const;
 
     /** Set values from dictionary.
      * @param dictionary to take data from
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const DictionaryDatum&, const Parameters_&, const double, Node* );
+    void set( const Dictionary&, const Parameters_&, const double, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -344,7 +344,7 @@ private:
 
     int RefractoryCounts_;
 
-    RngPtr rng_; //!< random number generator of my own thread
+    RngPtr rng_;  //!< random number generator of my own thread
   };
 
   // Access functions for UniversalDataLogger -------------------------------
@@ -442,22 +442,22 @@ iaf_tum_2000::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type 
 }
 
 inline void
-iaf_tum_2000::get_status( DictionaryDatum& d ) const
+iaf_tum_2000::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
   ArchivingNode::get_status( d );
 
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
-iaf_tum_2000::set_status( const DictionaryDatum& d )
+iaf_tum_2000::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;                       // temporary copy in case of errors
-  const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
-  State_ stmp = S_;                            // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
+  Parameters_ ptmp = P_;                        // temporary copy in case of errors
+  const double delta_EL = ptmp.set( d, this );  // throws if BadProperty
+  State_ stmp = S_;                             // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );          // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -470,6 +470,6 @@ iaf_tum_2000::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
-} // namespace
+}  // namespace
 
-#endif // IAF_TUM_2000_H
+#endif  // IAF_TUM_2000_H

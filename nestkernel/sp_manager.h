@@ -24,7 +24,7 @@
 #define SP_MANAGER_H
 
 // C++ includes:
-#include <random>
+#include <limits>
 #include <vector>
 
 // Includes from libnestutil:
@@ -36,10 +36,6 @@
 #include "nest_types.h"
 #include "node_collection.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "dict.h"
-#include "dictdatum.h"
 
 namespace nest
 {
@@ -64,14 +60,15 @@ public:
   void initialize( const bool ) override;
   void finalize( const bool ) override;
 
-  void get_status( DictionaryDatum& ) override;
+  void get_status( Dictionary& ) override;
+
   /**
    * Set status of synaptic plasticity variables: synaptic update interval,
    * synapses and synaptic elements.
    *
-   * @param d Dictionary containing the values to be set
+   * @param d dictionary containing the values to be set
    */
-  void set_status( const DictionaryDatum& ) override;
+  void set_status( const Dictionary& ) override;
 
   /**
    * Create a new Growth Curve object using the GrowthCurve Factory
@@ -79,7 +76,7 @@ public:
    * @param name which defines the type of NC to be created
    * @return a new Growth Curve object of the type indicated by name
    */
-  GrowthCurve* new_growth_curve( Name name );
+  GrowthCurve* new_growth_curve( std::string name );
 
   /**
    * Add a growth curve for MSP
@@ -104,8 +101,8 @@ public:
    */
   void disconnect( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
-    DictionaryDatum& conn_spec,
-    DictionaryDatum& syn_spec );
+    const Dictionary& conn_spec,
+    const std::vector< Dictionary >& syn_specs );
 
   /**
    * Disconnect two nodes.
@@ -221,7 +218,7 @@ public:
     std::vector< size_t >& post_ids,
     std::vector< size_t >& pre_ids_results,
     std::vector< size_t >& post_ids_results,
-    bool allow_autapse );
+    bool allow_autapses );
 
   /**
    * Gather global neuron positions and IDs from all nodes.
@@ -290,13 +287,13 @@ private:
    */
   std::vector< GenericGrowthCurveFactory* > growthcurve_factories_;
 
-  DictionaryDatum growthcurvedict_; //!< Dictionary for growth rules.
+  Dictionary growthcurvedict_;  //!< Dictionary for growth rules.
 };
 
 inline GrowthCurve*
-SPManager::new_growth_curve( Name name )
+SPManager::new_growth_curve( std::string name )
 {
-  const long nc_id = ( *growthcurvedict_ )[ name ];
+  const long nc_id = growthcurvedict_.get< long >( name );
   return growthcurve_factories_.at( nc_id )->create();
 }
 
@@ -311,11 +308,13 @@ SPManager::get_structural_plasticity_update_interval() const
 {
   return structural_plasticity_update_interval_;
 }
+
 inline double
 SPManager::get_structural_plasticity_gaussian_kernel_sigma() const
 {
   return structural_plasticity_gaussian_kernel_sigma_;
 }
-} // namespace nest
+
+}  // namespace nest
 
 #endif /* #ifndef SP_MANAGER_H */

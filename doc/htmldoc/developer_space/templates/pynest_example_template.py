@@ -124,6 +124,7 @@ References
 
 :Authors: D Adams, N Gaiman
 """
+
 # flake8: noqa
 import nest  # [[ begin code section with imports]]
 import scipy

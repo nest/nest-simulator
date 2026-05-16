@@ -33,8 +33,6 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -42,7 +40,7 @@
 
 nest::RecordablesMap< nest::amat2_psc_exp > nest::amat2_psc_exp::recordablesMap_;
 
-namespace nest // template specialization must be placed in namespace
+namespace nest  // template specialization must be placed in namespace
 {
 void
 register_amat2_psc_exp( const std::string& name )
@@ -72,22 +70,22 @@ RecordablesMap< amat2_psc_exp >::create()
  * ---------------------------------------------------------------- */
 
 nest::amat2_psc_exp::Parameters_::Parameters_()
-  : Tau_( 10.0 )     // in ms
-  , C_( 200.0 )      // in pF (R=50MOhm)
-  , tau_ref_( 2.0 )  // in ms
-  , E_L_( -70.0 )    // in mV
-  , I_e_( 0.0 )      // in pA
-  , tau_ex_( 1.0 )   // in ms
-  , tau_in_( 3.0 )   // in ms
-  , tau_1_( 10.0 )   // in ms
-  , tau_2_( 200.0 )  // in ms
-  , alpha_1_( 10.0 ) // in mV
-  , alpha_2_( 0.0 )  // in mV
-  , beta_( 0.0 )     // in mV
-  , tau_v_( 5.0 )    // in ms
-  , omega_( 5.0 )    // resting threshold relative to E_L_ in mV
-                     // state V_th_ is initialized with the
-                     // same value
+  : Tau_( 10.0 )      // in ms
+  , C_( 200.0 )       // in pF (R=50MOhm)
+  , tau_ref_( 2.0 )   // in ms
+  , E_L_( -70.0 )     // in mV
+  , I_e_( 0.0 )       // in pA
+  , tau_ex_( 1.0 )    // in ms
+  , tau_in_( 3.0 )    // in ms
+  , tau_1_( 10.0 )    // in ms
+  , tau_2_( 200.0 )   // in ms
+  , alpha_1_( 10.0 )  // in mV
+  , alpha_2_( 0.0 )   // in mV
+  , beta_( 0.0 )      // in mV
+  , tau_v_( 5.0 )     // in ms
+  , omega_( 5.0 )     // resting threshold relative to E_L_ in mV
+                      // state V_th_ is initialized with the
+                      // same value
 {
 }
 
@@ -96,8 +94,8 @@ nest::amat2_psc_exp::State_::State_()
   , I_syn_ex_( 0.0 )
   , I_syn_in_( 0.0 )
   , V_m_( 0.0 )
-  , V_th_1_( 0.0 ) // relative to omega_
-  , V_th_2_( 0.0 ) // relative to omega_
+  , V_th_1_( 0.0 )  // relative to omega_
+  , V_th_2_( 0.0 )  // relative to omega_
   , V_th_dv_( 0.0 )
   , V_th_v_( 0.0 )
   , r_( 0 )
@@ -109,47 +107,47 @@ nest::amat2_psc_exp::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::amat2_psc_exp::Parameters_::get( DictionaryDatum& d ) const
+nest::amat2_psc_exp::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::E_L, E_L_ ); // Resting potential
-  def< double >( d, names::I_e, I_e_ );
-  def< double >( d, names::C_m, C_ );
-  def< double >( d, names::tau_m, Tau_ );
-  def< double >( d, names::tau_syn_ex, tau_ex_ );
-  def< double >( d, names::tau_syn_in, tau_in_ );
-  def< double >( d, names::t_ref, tau_ref_ );
-  def< double >( d, names::tau_1, tau_1_ );
-  def< double >( d, names::tau_2, tau_2_ );
-  def< double >( d, names::alpha_1, alpha_1_ );
-  def< double >( d, names::alpha_2, alpha_2_ );
-  def< double >( d, names::beta, beta_ );
-  def< double >( d, names::tau_v, tau_v_ );
-  def< double >( d, names::omega, omega_ + E_L_ );
+  d[ names::E_L ] = E_L_;  // Resting potential
+  d[ names::I_e ] = I_e_;
+  d[ names::C_m ] = C_;
+  d[ names::tau_m ] = Tau_;
+  d[ names::tau_syn_ex ] = tau_ex_;
+  d[ names::tau_syn_in ] = tau_in_;
+  d[ names::t_ref ] = tau_ref_;
+  d[ names::tau_1 ] = tau_1_;
+  d[ names::tau_2 ] = tau_2_;
+  d[ names::alpha_1 ] = alpha_1_;
+  d[ names::alpha_2 ] = alpha_2_;
+  d[ names::beta ] = beta_;
+  d[ names::tau_v ] = tau_v_;
+  d[ names::omega ] = omega_ + E_L_;
 }
 
 double
-nest::amat2_psc_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::amat2_psc_exp::Parameters_::set( const Dictionary& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
   const double ELold = E_L_;
-  updateValueParam< double >( d, names::E_L, E_L_, node );
+  update_value_param( d, names::E_L, E_L_, node );
   const double delta_EL = E_L_ - ELold;
 
-  updateValueParam< double >( d, names::I_e, I_e_, node );
-  updateValueParam< double >( d, names::C_m, C_, node );
-  updateValueParam< double >( d, names::tau_m, Tau_, node );
-  updateValueParam< double >( d, names::tau_syn_ex, tau_ex_, node );
-  updateValueParam< double >( d, names::tau_syn_in, tau_in_, node );
-  updateValueParam< double >( d, names::t_ref, tau_ref_, node );
-  updateValueParam< double >( d, names::tau_1, tau_1_, node );
-  updateValueParam< double >( d, names::tau_2, tau_2_, node );
-  updateValueParam< double >( d, names::alpha_1, alpha_1_, node );
-  updateValueParam< double >( d, names::alpha_2, alpha_2_, node );
-  updateValueParam< double >( d, names::beta, beta_, node );
-  updateValueParam< double >( d, names::tau_v, tau_v_, node );
+  update_value_param( d, names::I_e, I_e_, node );
+  update_value_param( d, names::C_m, C_, node );
+  update_value_param( d, names::tau_m, Tau_, node );
+  update_value_param( d, names::tau_syn_ex, tau_ex_, node );
+  update_value_param( d, names::tau_syn_in, tau_in_, node );
+  update_value_param( d, names::t_ref, tau_ref_, node );
+  update_value_param( d, names::tau_1, tau_1_, node );
+  update_value_param( d, names::tau_2, tau_2_, node );
+  update_value_param( d, names::alpha_1, alpha_1_, node );
+  update_value_param( d, names::alpha_2, alpha_2_, node );
+  update_value_param( d, names::beta, beta_, node );
+  update_value_param( d, names::tau_v, tau_v_, node );
 
-  if ( updateValueParam< double >( d, names::omega, omega_, node ) )
+  if ( update_value_param( d, names::omega, omega_, node ) )
   {
     omega_ -= E_L_;
   }
@@ -172,7 +170,7 @@ nest::amat2_psc_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
       "See note in documentation." );
   }
 
-  if ( tau_v_ == tau_ex_ or tau_v_ == tau_in_ ) // tau_v_ == tau_m_  checked above
+  if ( tau_v_ == tau_ex_ or tau_v_ == tau_in_ )  // tau_v_ == tau_m_  checked above
   {
     throw BadProperty(
       "tau_v must differ from tau_syn_ex, tau_syn_in and tau_m. "
@@ -183,20 +181,20 @@ nest::amat2_psc_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-nest::amat2_psc_exp::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+nest::amat2_psc_exp::State_::get( Dictionary& d, const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, V_m_ + p.E_L_ ); // Membrane potential
+  d[ names::V_m ] = V_m_ + p.E_L_;  // Membrane potential
   // Adaptive threshold
-  def< double >( d, names::V_th, p.E_L_ + p.omega_ + V_th_1_ + V_th_2_ + V_th_v_ );
-  def< double >( d, names::V_th_alpha_1, V_th_1_ );
-  def< double >( d, names::V_th_alpha_2, V_th_2_ );
-  def< double >( d, names::V_th_v, V_th_v_ );
+  d[ names::V_th ] = p.E_L_ + p.omega_ + V_th_1_ + V_th_2_ + V_th_v_;
+  d[ names::V_th_alpha_1 ] = V_th_1_;
+  d[ names::V_th_alpha_2 ] = V_th_2_;
+  d[ names::V_th_v ] = V_th_v_;
 }
 
 void
-nest::amat2_psc_exp::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
+nest::amat2_psc_exp::State_::set( const Dictionary& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  if ( updateValueParam< double >( d, names::V_m, V_m_, node ) )
+  if ( update_value_param( d, names::V_m, V_m_, node ) )
   {
     V_m_ -= p.E_L_;
   }
@@ -205,9 +203,9 @@ nest::amat2_psc_exp::State_::set( const DictionaryDatum& d, const Parameters_& p
     V_m_ -= delta_EL;
   }
 
-  updateValueParam< double >( d, names::V_th_alpha_1, V_th_1_, node );
-  updateValueParam< double >( d, names::V_th_alpha_2, V_th_2_, node );
-  updateValueParam< double >( d, names::V_th_v, V_th_v_, node );
+  update_value_param( d, names::V_th_alpha_1, V_th_1_, node );
+  update_value_param( d, names::V_th_alpha_2, V_th_2_, node );
+  update_value_param( d, names::V_th_v, V_th_v_, node );
 }
 
 nest::amat2_psc_exp::Buffers_::Buffers_( amat2_psc_exp& n )
@@ -254,9 +252,9 @@ nest::amat2_psc_exp::init_buffers_()
 {
   ArchivingNode::clear_history();
 
-  B_.spikes_ex_.clear(); // includes resize
-  B_.spikes_in_.clear(); // includes resize
-  B_.currents_.clear();  // includes resize
+  B_.spikes_ex_.clear();  // includes resize
+  B_.spikes_in_.clear();  // includes resize
+  B_.currents_.clear();   // includes resize
 
   B_.logger_.reset();
 }
@@ -391,19 +389,19 @@ nest::amat2_psc_exp::update( Time const& origin, const long from, const long to 
     // exponential decaying PSCs (1,2)
     S_.I_syn_ex_ *= V_.P11_;
     S_.I_syn_in_ *= V_.P22_;
-    S_.I_syn_ex_ += B_.spikes_ex_.get_value( lag ); // the spikes arriving at T+1 have an
-    S_.I_syn_in_ += B_.spikes_in_.get_value( lag ); // the spikes arriving at T+1 have an
+    S_.I_syn_ex_ += B_.spikes_ex_.get_value( lag );  // the spikes arriving at T+1 have an
+    S_.I_syn_in_ += B_.spikes_in_.get_value( lag );  // the spikes arriving at T+1 have an
 
 
-    if ( S_.r_ == 0 ) // neuron is allowed to fire
+    if ( S_.r_ == 0 )  // neuron is allowed to fire
     {
-      if ( S_.V_m_ >= P_.omega_ + S_.V_th_2_ + S_.V_th_1_ + S_.V_th_v_ ) // threshold crossing
+      if ( S_.V_m_ >= P_.omega_ + S_.V_th_2_ + S_.V_th_1_ + S_.V_th_v_ )  // threshold crossing
       {
         S_.r_ = V_.RefractoryCountsTot_;
 
         // procedure for adaptive potential
-        S_.V_th_1_ += P_.alpha_1_; // short time
-        S_.V_th_2_ += P_.alpha_2_; // long time
+        S_.V_th_1_ += P_.alpha_1_;  // short time
+        S_.V_th_2_ += P_.alpha_2_;  // long time
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 

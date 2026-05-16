@@ -71,13 +71,11 @@ continuing.
 
    import nest
 
-   if not nest.ll_api.sli_func("statusdict/have_music ::"):
-       import sys
-
+   if not nest.build_info["have_music"]:
        print("NEST was not compiled with support for MUSIC, not running.")
-       sys.exit()
+       exit()
 
-   nest.set_verbosity("M_ERROR")
+   nest.verbosity = nest.VerbosityLevel.ERROR
 
 Next we create a ``spike_generator`` and set the spike times. We then create
 our neuron model (``iaf_psc_alpha``) and connect the neuron with the spike
@@ -125,13 +123,11 @@ script, but without the spike generator.
 
   import nest
 
-  if not nest.ll_api.sli_func("statusdict/have_music ::"):
-      import sys
-
+  if not nest.build_info["have_music"]:
       print("NEST was not compiled with support for MUSIC, not running.")
-      sys.exit()
+      exit()
 
-  nest.set_verbosity("M_ERROR")
+  nest.verbosity = nest.VerbosityLevel.ERROR
 
   meip = nest.Create('music_event_in_proxy')
   nest.SetStatus(meip, {'port_name': 'spikes_in', 'music_channel': 0})

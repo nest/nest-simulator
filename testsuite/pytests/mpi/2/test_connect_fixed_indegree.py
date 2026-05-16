@@ -1,1 +1,0 @@
-../../test_connect_fixed_indegree.py

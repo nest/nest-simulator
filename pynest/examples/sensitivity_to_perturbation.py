@@ -40,7 +40,6 @@ reset appropriately between the trials, we do the following steps:
 
 """
 
-
 ###############################################################################
 # Importing all necessary modules for simulation, analysis and plotting.
 

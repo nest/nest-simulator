@@ -36,7 +36,7 @@ like this:
     docker pull nest/nest-simulator:<TAG>
 
 ``<TAG>`` can be a version of NEST ``2.20.2`` or later. Alternatively, you can use ``dev`` for the
-development branch (master).
+development branch (main).
 
 .. _docker_compose:
 
@@ -50,7 +50,7 @@ Download it:
 
 .. code-block:: bash
 
-    wget https://raw.githubusercontent.com/nest/nest-docker/master/docker-compose.yml
+    wget https://raw.githubusercontent.com/nest/nest-docker/main/docker-compose.yml
 
 You can then run ``docker-compose up`` with one of the following options:
 
@@ -151,12 +151,12 @@ If you want to use the compose configuration for the ``dev`` NEST version, you c
 
 .. code-block:: bash
 
-    wget https://raw.githubusercontent.com/nest/nest-docker/master/docker-compose-dev.yml
+    wget https://raw.githubusercontent.com/nest/nest-docker/main/docker-compose-dev.yml
     docker-compose -f docker-compose-dev.yml up nest-notebook
 
 You can specify the container mode (nest-noteobook, nest-desktop, nest-server, or nest-jupyterlab)
 This will download the docker image with the pre-installed
-NEST master from https://hub.docker.com/r/nest/nest-simulator and start it.
+NEST main from https://hub.docker.com/r/nest/nest-simulator and start it.
 After booting, a URL is presented. Click on it or copy it to your browser.
 
 
@@ -179,7 +179,7 @@ In Powershell, '%cd%' might not work for the current directory. Then
 you should explicitly specify a folder with existing write permissions.
 
 In any case, this will download the docker image with the pre-installed
-NEST master from https://hub.docker.com/r/nest/nest-simulator and start it.
+NEST main from https://hub.docker.com/r/nest/nest-simulator and start it.
 After booting, a URL is presented. Click on it or copy it to your browser.
 Voilá! Jupyter notebook starts from the docker image.
 

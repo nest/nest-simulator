@@ -49,17 +49,18 @@ the same network using the stored weights.
 ###############################################################################
 # Import necessary modules.
 
-import nest
 import pickle
+import textwrap
+
+import matplotlib.pyplot as plt
+import nest
+import numpy as np
+import pandas as pd
+from matplotlib import gridspec
 
 ###############################################################################
 # These modules are only needed for illustrative plotting.
 
-import matplotlib.pyplot as plt
-from matplotlib import gridspec
-import numpy as np
-import pandas as pd
-import textwrap
 
 ###############################################################################
 # Implement network as class.
@@ -110,7 +111,7 @@ class EINetwork:
         self.i_neurons = nest.Create(self.neuron_model, n=self.nI, params=self.nrn_params)
         self.neurons = self.e_neurons + self.i_neurons
 
-        self.pg = nest.Create("poisson_generator", {"rate": self.poisson_rate})
+        self.pg = nest.Create("poisson_generator", params={"rate": self.poisson_rate})
         self.sr = nest.Create("spike_recorder")
 
         nest.Connect(
@@ -184,7 +185,7 @@ class EINetwork:
 
         ###############################################################################
         # Reconstruct instrumentation
-        self.pg = nest.Create("poisson_generator", {"rate": self.poisson_rate})
+        self.pg = nest.Create("poisson_generator", params={"rate": self.poisson_rate})
         self.sr = nest.Create("spike_recorder")
 
         ###############################################################################
@@ -235,8 +236,7 @@ class DemoPlot:
         self.comment.text(
             0,
             1,
-            textwrap.dedent(
-                """
+            textwrap.dedent("""
             Storing, loading and continuing a simulation of a balanced E-I network
             with STDP in excitatory synapses.
 
@@ -259,8 +259,7 @@ class DemoPlot:
             above but with different random seed yields different spike patterns (purple).
 
             Above: Distribution of excitatory synaptic weights at end of each sample
-            simulation. Green and red curves are identical and overlay to form brown curve."""
-            ),
+            simulation. Green and red curves are identical and overlay to form brown curve."""),
             transform=self.comment.transAxes,
             fontsize=8,
             verticalalignment="top",
@@ -312,7 +311,7 @@ if __name__ == "__main__":
 
     ###############################################################################
     # Ensure clean slate and make NEST less chatty
-    nest.set_verbosity("M_WARNING")
+    nest.verbosity = nest.VerbosityLevel.WARNING
     nest.ResetKernel()
 
     ###############################################################################

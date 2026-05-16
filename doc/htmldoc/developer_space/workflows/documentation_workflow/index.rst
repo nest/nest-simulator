@@ -10,4 +10,3 @@ Select the documentation workflow you would like to view:
 
     User-level documentation<user_documentation_workflow>
     Developer documentation<developer_documentation_workflow>
-

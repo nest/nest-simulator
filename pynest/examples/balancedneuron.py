@@ -52,11 +52,9 @@ import nest.voltage_trace
 from scipy.optimize import bisect
 
 ###############################################################################
-# Additionally, we set the verbosity using ``set_verbosity`` to
-# suppress info messages.
+# Additionally, we set the verbosity to suppress info messages.
 
-
-nest.set_verbosity("M_WARNING")
+nest.verbosity = nest.VerbosityLevel.WARNING
 nest.ResetKernel()
 
 ###############################################################################

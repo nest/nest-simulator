@@ -33,8 +33,6 @@
 #include "nest_types.h"
 #include "vp_manager.h"
 
-// Includes from sli:
-#include "dictdatum.h"
 
 namespace nest
 {
@@ -177,6 +175,6 @@ private:
   std::atomic< int > are_true_ { 0 };
 };
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* PER_THREAD_BOOL_INDICATOR_H */

@@ -87,7 +87,7 @@ private:
   std::vector< nest::Node* > channelmap_;
   //! Maps local index to global MUSIC index (channel)
   std::vector< MUSIC::GlobalIndex > indexmap_;
-  double acceptable_latency_; //!< The acceptable latency of the port in ms
+  double acceptable_latency_;  //!< The acceptable latency of the port in ms
   int max_buffered_;
 
   /**
@@ -99,7 +99,7 @@ private:
   std::vector< std::priority_queue< double, std::vector< double >, std::greater< double > > > eventqueue_;
 };
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifdef HAVE_MUSIC */
 

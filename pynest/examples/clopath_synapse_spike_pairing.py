@@ -111,18 +111,18 @@ for s_t_pre, s_t_post in zip(spike_times_pre, spike_times_post):
     nest.resolution = resolution
 
     # Create one neuron
-    nrn = nest.Create("aeif_psc_delta_clopath", 1, nrn_params)
+    nrn = nest.Create("aeif_psc_delta_clopath", params=nrn_params)
 
     # We need a parrot neuron since spike generators can only
     # be connected with static connections
-    prrt_nrn = nest.Create("parrot_neuron", 1)
+    prrt_nrn = nest.Create("parrot_neuron")
 
     # Create and connect spike generators
-    spike_gen_pre = nest.Create("spike_generator", {"spike_times": s_t_pre})
+    spike_gen_pre = nest.Create("spike_generator", params={"spike_times": s_t_pre})
 
     nest.Connect(spike_gen_pre, prrt_nrn, syn_spec={"delay": resolution})
 
-    spike_gen_post = nest.Create("spike_generator", {"spike_times": s_t_post})
+    spike_gen_post = nest.Create("spike_generator", params={"spike_times": s_t_post})
 
     nest.Connect(spike_gen_post, nrn, syn_spec={"delay": resolution, "weight": 80.0})
 

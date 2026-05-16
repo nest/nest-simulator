@@ -47,6 +47,6 @@ grow( std::vector< T >& v )
   }
 }
 
-} // namespace vector_util
+}  // namespace vector_util
 
-#endif // VECTOR_UTIL_H
+#endif  // VECTOR_UTIL_H

@@ -164,7 +164,7 @@ r = 1.0 / (t_ref * ms + tau_m * ms * tmpsum)
 
 nest.ResetKernel()
 
-nest.set_verbosity("M_WARNING")
+nest.verbosity = nest.VerbosityLevel.WARNING
 neurondict = {
     "V_th": V_th,
     "tau_m": tau_m,

@@ -23,15 +23,15 @@
 Functions for model handling
 """
 
-from ..ll_api import check_stack, spp, sps, sr
+from .. import nestkernel_api as nestkernel
 from .hl_api_helper import (
     deprecated,
     is_iterable,
-    is_literal,
+    is_iterable_not_str,
     model_deprecation_warning,
 )
 from .hl_api_simulation import GetKernelStatus
-from .hl_api_types import to_json
+from .hl_api_types import Parameter, to_json
 
 __all__ = [
     "ConnectionRules",
@@ -42,7 +42,6 @@ __all__ = [
 ]
 
 
-@check_stack
 @deprecated("nest.node_models or nest.synapse_models")
 def Models(mtype="all", sel=None):
     r"""Return a tuple of neuron, device, or synapse model names.
@@ -94,7 +93,6 @@ def Models(mtype="all", sel=None):
     return tuple(models)
 
 
-@check_stack
 @deprecated("nest.connection_rules")
 def ConnectionRules():
     """Return a tuple of all available connection rules, sorted by name.
@@ -109,12 +107,16 @@ def ConnectionRules():
     return tuple(sorted(GetKernelStatus("connection_rules")))
 
 
-@check_stack
 def SetDefaults(model, params, val=None):
     """Set defaults for the given model or recording backend.
 
-    New default values are used for all subsequently created instances
-    of the model.
+    New default values are used for all subsequently created instances of the model.
+
+    Note
+    ----
+    For each default to be set, only a single explicit value can be given. Neither
+    arrays to apply to multiple nodes nor random or spatially dependent parameters
+    are permitted.
 
     Parameters
     ----------
@@ -127,15 +129,28 @@ def SetDefaults(model, params, val=None):
 
     """
 
-    if val is not None:
-        if is_literal(params):
+    if val is None:
+        if not isinstance(params, dict):
+            raise TypeError("params must be dictionary unless val is given.")
+        if not params:
+            return  # empty dict, nothing to do, avoids corner cases below
+    else:
+        if isinstance(params, str):
             params = {params: val}
+        else:
+            raise TypeError("If val is given, params must be string giving the parameter name.")
 
-    sps(params)
-    sr("/{0} exch SetDefaults".format(model))
+    # Some models have parameters that are iterables in themselves, e.g., lists of spike times
+    # so we need to allow them.
+    defaults = nestkernel.llapi_get_defaults(model)
+    if any(
+        (is_iterable_not_str(v) and not is_iterable(defaults[k])) or isinstance(v, Parameter) for k, v in params.items()
+    ):
+        raise ValueError("SetDefaults() accepts only explicit, single parameter values.")
+
+    nestkernel.llapi_set_defaults(model, params)
 
 
-@check_stack
 def GetDefaults(model, keys=None, output=""):
     """Return defaults of the given model or recording backend.
 
@@ -169,18 +184,13 @@ def GetDefaults(model, keys=None, output=""):
 
     """
 
-    if keys is None:
-        cmd = "/{0} GetDefaults".format(model)
-    elif is_literal(keys):
-        cmd = "/{0} GetDefaults /{1} get".format(model, keys)
-    elif is_iterable(keys):
-        keys_str = " ".join("/{0}".format(x) for x in keys)
-        cmd = "/{0} GetDefaults  [ {1} ] {{ 1 index exch get }}".format(model, keys_str) + " Map exch pop"
-    else:
-        raise TypeError("keys should be either a string or an iterable")
+    result = nestkernel.llapi_get_defaults(model)
 
-    sr(cmd)
-    result = spp()
+    if keys is not None:
+        if is_iterable(keys) and not isinstance(keys, str):
+            result = [result[key] for key in keys]
+        else:
+            result = result[keys]
 
     if output == "json":
         result = to_json(result)
@@ -188,7 +198,6 @@ def GetDefaults(model, keys=None, output=""):
     return result
 
 
-@check_stack
 def CopyModel(existing, new, params=None):
     """Create a new model by copying an existing one.
 
@@ -206,8 +215,4 @@ def CopyModel(existing, new, params=None):
 
     model_deprecation_warning(existing)
 
-    if params is not None:
-        sps(params)
-        sr("/%s /%s 3 2 roll CopyModel" % (existing, new))
-    else:
-        sr("/%s /%s CopyModel" % (existing, new))
+    nestkernel.llapi_copy_model(existing, new, {} if params is None else params)

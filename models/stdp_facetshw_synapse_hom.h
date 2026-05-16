@@ -187,12 +187,12 @@ public:
   /**
    * Get all properties and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
   /**
    * Set properties from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   // overloaded for all supported event types
   void
@@ -221,9 +221,7 @@ private:
   // TODO: TP: size in memory could be reduced
   std::vector< long > lookuptable_0_;
   std::vector< long > lookuptable_1_;
-  std::vector< long > lookuptable_2_; // TODO: TP: to save memory one could
-                                      // introduce vector<bool> &
-                                      // BoolVectorDatum
+  std::vector< long > lookuptable_2_;
   std::vector< long > configbit_0_;
   std::vector< long > configbit_1_;
   std::vector< long > reset_pattern_;
@@ -271,12 +269,12 @@ public:
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   /**
    * Send an event to the receiver of this connection.
@@ -351,8 +349,8 @@ private:
   bool init_flag_;
   long synapse_id_;
   double next_readout_time_;
-  unsigned int discrete_weight_; // TODO: TP: only needed in send, move to common
-                                 // properties or "static"?
+  unsigned int discrete_weight_;  // TODO: TP: only needed in send, move to common
+                                  // properties or "static"?
   double t_lastspike_;
 };
 
@@ -536,6 +534,6 @@ stdp_facetshw_synapse_hom< targetidentifierT >::send( Event& e,
 
   return true;
 }
-} // of namespace nest
+}  // of namespace nest
 
-#endif // of #ifndef STDP_SYNAPSE_FACETSHW_HOM_H
+#endif  // of #ifndef STDP_SYNAPSE_FACETSHW_HOM_H

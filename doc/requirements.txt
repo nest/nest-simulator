@@ -10,7 +10,7 @@ flask>=2.3.2
 flask_cors>=3.0.10
 graphviz
 ipykernel >= 6.22.0
-ipython >= 8.11.0
+ipython >= 9.13.0
 jupyter >= 1.0.0
 matplotlib >= 3.7.1
 nbsphinx >= 0.9.1

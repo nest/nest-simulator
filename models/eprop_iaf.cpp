@@ -164,52 +164,52 @@ eprop_iaf::Parameters_::set( const Dictionary& d, Node* node )
 
   if ( C_m_ <= 0 )
   {
-    throw BadProperty( "Membrane capacitance C_m > 0 required." );
+    throw BadProperty( "C_m > 0 required." );
   }
 
   if ( c_reg_ < 0 )
   {
-    throw BadProperty( "Firing rate regularization coefficient c_reg ≥ 0 required." );
+    throw BadProperty( "c_reg ≥ 0 required." );
   }
 
   if ( f_target_ < 0 )
   {
-    throw BadProperty( "Firing rate regularization target rate f_target ≥ 0 required." );
+    throw BadProperty( "f_target ≥ 0 required." );
   }
 
   if ( tau_m_ <= 0 )
   {
-    throw BadProperty( "Membrane time constant tau_m > 0 required." );
+    throw BadProperty( "tau_m > 0 required." );
   }
 
   if ( t_ref_ < 0 )
   {
-    throw BadProperty( "Refractory time t_ref ≥ 0 required." );
+    throw BadProperty( "t_ref ≥ 0 required." );
   }
 
   if ( V_th_ < V_min_ )
   {
-    throw BadProperty( "Spike threshold voltage V_th ≥ minimal voltage V_min required." );
+    throw BadProperty( "V_th ≥ V_min required." );
   }
 
   if ( kappa_ < 0.0 or kappa_ > 1.0 )
   {
-    throw BadProperty( "Eligibility trace low-pass filter kappa from range [0, 1] required." );
+    throw BadProperty( "0 ≤ kappa ≤ 1 required." );
   }
 
   if ( kappa_reg_ < 0.0 or kappa_reg_ > 1.0 )
   {
-    throw BadProperty( "Firing rate low-pass filter for regularization kappa_reg from range [0, 1] required." );
+    throw BadProperty( "0 ≤ kappa_reg ≤ 1 required." );
   }
 
   if ( surrogate_gradient_height_ <= 0.0 )
   {
-    throw BadProperty( "Surrogate gradient height surrogate_gradient_height > 0 required." );
+    throw BadProperty( "surrogate_gradient_height > 0 required." );
   }
 
   if ( surrogate_gradient_width_ <= 0.0 )
   {
-    throw BadProperty( "Surrogate gradient width surrogate_gradient_width > 0 required." );
+    throw BadProperty( "surrogate_gradient_width > 0 required." );
   }
   return delta_EL;
 }

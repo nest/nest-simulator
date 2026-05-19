@@ -292,16 +292,14 @@ EpropArchivingNodeRecurrent< hist_shift_required >::set_status( const Dictionary
 
     if ( eprop_isi_trace_cutoff_ < 0.0 )
     {
-      throw BadProperty( "Computation cutoff of eprop trace eprop_isi_trace_cutoff ≥ 0 required." );
+      throw BadProperty( "eprop_isi_trace_cutoff ≥ 0 required." );
     }
   }
   else
   {
     if ( flush_event_send_interval_ < kernel().simulation_manager.get_eprop_update_interval().get_ms() )
     {
-      throw BadProperty(
-        "Interval since previous event after which a flush event is sent flush_event_send_interval ≥ "
-        "eprop_update_interval required." );
+      throw BadProperty( "flush_event_send_interval ≥ eprop_update_interval required." );
     }
   }
 }

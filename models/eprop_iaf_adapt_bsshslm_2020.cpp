@@ -170,52 +170,52 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::set( const Dictionary& d, Node* node 
 
   if ( adapt_beta_ < 0 )
   {
-    throw BadProperty( "Threshold adaptation prefactor adapt_beta ≥ 0 required." );
+    throw BadProperty( "adapt_beta ≥ 0 required." );
   }
 
   if ( adapt_tau_ <= 0 )
   {
-    throw BadProperty( "Threshold adaptation time constant adapt_tau > 0 required." );
+    throw BadProperty( "adapt_tau > 0 required." );
   }
 
   if ( C_m_ <= 0 )
   {
-    throw BadProperty( "Membrane capacitance C_m > 0 required." );
+    throw BadProperty( "C_m > 0 required." );
   }
 
   if ( c_reg_ < 0 )
   {
-    throw BadProperty( "Firing rate regularization coefficient c_reg ≥ 0 required." );
+    throw BadProperty( "c_reg ≥ 0 required." );
   }
 
   if ( f_target_ < 0 )
   {
-    throw BadProperty( "Firing rate regularization target rate f_target ≥ 0 required." );
+    throw BadProperty( "f_target ≥ 0 required." );
   }
 
   if ( tau_m_ <= 0 )
   {
-    throw BadProperty( "Membrane time constant tau_m > 0 required." );
+    throw BadProperty( "tau_m > 0 required." );
   }
 
   if ( t_ref_ < 0 )
   {
-    throw BadProperty( "Refractory time t_ref ≥ 0 required." );
+    throw BadProperty( "t_ref ≥ 0 required." );
   }
 
   if ( V_th_ < V_min_ )
   {
-    throw BadProperty( "Spike threshold voltage V_th ≥ minimal voltage V_min required." );
+    throw BadProperty( "V_th ≥ V_min required." );
   }
 
   if ( surrogate_gradient_height_ <= 0.0 )
   {
-    throw BadProperty( "Surrogate gradient height surrogate_gradient_height > 0 required." );
+    throw BadProperty( "surrogate_gradient_height > 0 required." );
   }
 
   if ( surrogate_gradient_width_ <= 0.0 )
   {
-    throw BadProperty( "Surrogate gradient width surrogate_gradient_width > 0 required." );
+    throw BadProperty( "surrogate_gradient_width > 0 required." );
   }
   return delta_EL;
 }

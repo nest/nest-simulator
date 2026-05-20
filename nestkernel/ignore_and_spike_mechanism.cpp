@@ -75,25 +75,33 @@ IgnoreAndSpikeMechanism::set_status( const Dictionary& d )
 {
   d.update_value( names::ignore_and_spike, ignore_and_spike_ );
 
-  if ( d.update_value( names::ignore_and_spike_offset, offset_ ) )
+  double offset_tmp = offset_;
+  double interval_tmp = interval_;
+
+  const bool updated_offset = d.update_value( names::ignore_and_spike_offset, offset_tmp );
+  const bool updated_interval = d.update_value( names::ignore_and_spike_interval, interval_tmp );
+
+  if ( offset_tmp <= 0.0 )
+  {
+    throw BadProperty( "ignore_and_spike_offset > 0 required." );
+  }
+
+  if ( interval_tmp <= 0.0 )
+  {
+    throw BadProperty( "ignore_and_spike_interval > 0 required." );
+  }
+
+  offset_ = offset_tmp;
+  interval_ = interval_tmp;
+
+  if ( updated_offset )
   {
     initialize_offset();
   }
 
-  if ( d.update_value( names::ignore_and_spike_interval, interval_ ) )
+  if ( updated_interval )
   {
     initialize_interval();
-  }
-
-  if ( offset_ <= 0.0 )
-  {
-    throw BadProperty( "Temporal offset of ignore-and-spike mechanism ignore_and_spike_offset > 0 required." );
-  }
-
-  if ( interval_ <= 0.0 )
-  {
-    throw BadProperty(
-      "Interval between consecutive spikes in ignore-and-spike mechanism ignore_and_spike_interval > 0 required." );
   }
 }
 

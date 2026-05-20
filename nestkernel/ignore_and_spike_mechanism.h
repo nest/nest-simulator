@@ -33,6 +33,8 @@ namespace nest
 {
 /**
  * @brief Class implementing an ignore-and-fire mechanism for neuron models.
+ *
+ * @note See model_details/ignore_and_spike_mechanism.rst for details.
  */
 class IgnoreAndSpikeMechanism
 {

@@ -59,6 +59,8 @@ public:
 
   /**
    * Sets the time the neuron last sent an event (spike or flush event).
+   *
+   * @param last_event_time The time of the last event (steps).
    */
   void
   set_last_event_time( const long last_event_time )
@@ -68,6 +70,8 @@ public:
 
   /**
    * Gets the last time the neuron sent an event (spike or flush event).
+   *
+   * @return The time of the last event (steps).
    */
   long
   get_last_event_time() const
@@ -82,6 +86,9 @@ public:
 
   /**
    * Checks if a flush event is due at the current time.
+   *
+   * @param current_time The current simulation time (steps).
+   * @return True if a flush event is due, false otherwise.
    */
   inline bool
   flush_event_is_due( const long current_time ) const
@@ -91,6 +98,8 @@ public:
 
   /**
    * Retrieves parameters and adds them to the status dictionary.
+   *
+   * @param d Dictionary to which parameters are added.
    */
   void get_status( Dictionary& d ) const;
 

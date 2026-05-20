@@ -122,6 +122,8 @@ public:
    * @brief Retrieves eprop history size.
    *
    * Retrieves the size of the eprop history buffer.
+   *
+   * @return The duration of the eprop history buffer (ms).
    */
   double get_eprop_history_duration() const;
 
@@ -130,6 +132,8 @@ public:
    *
    * Retrieves the time interval from the previous spike until the cutoff of
    * e-prop update computation between two spikes (ms).
+   *
+   * @return The eprop ISI trace cutoff (steps).
    */
   long
   get_eprop_isi_trace_cutoff() const
@@ -138,7 +142,11 @@ public:
   }
 
 protected:
-  //! Returns correct shift for history depending on whether it is a normal or a bsshslm_2020 model.
+  /**
+   * Returns the correct shift for history depending on whether it is a normal or a bsshslm_2020 model.
+   *
+   * @return The history shift (steps).
+   */
   virtual long model_dependent_history_shift_() const = 0;
 
   //! Number of incoming eprop synapses

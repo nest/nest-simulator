@@ -56,6 +56,9 @@ public:
 
   /**
    * Updates spike schedule and returns whether a spike should be emitted.
+   *
+   * @param emit_dynamic_spike Whether the neuron would emit a spike dynamically.
+   * @return True if a spike should be emitted, false otherwise.
    */
   inline bool
   spike_event_is_due( bool emit_dynamic_spike )
@@ -78,11 +81,15 @@ public:
 
   /**
    * Retrieves parameters and adds them to the status dictionary.
+   *
+   * @param d Dictionary to which parameters are added.
    */
   void get_status( Dictionary& d ) const;
 
   /**
    * Sets and validates parameters from the status dictionary.
+   *
+   * @param d Dictionary from which parameters are set.
    */
   void set_status( const Dictionary& d );
 

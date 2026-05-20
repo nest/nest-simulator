@@ -36,6 +36,8 @@ namespace nest
  *
  * This class implements a flush event mechanism for neuron models that
  * send flush events after prolonged periods without spike emission.
+ *
+ * @note See model_details/flush_event_mechanism.rst for details.
  */
 class FlushEventMechanism
 {

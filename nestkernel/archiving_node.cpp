@@ -32,7 +32,8 @@ namespace nest
 // member functions for ArchivingNode
 
 nest::ArchivingNode::ArchivingNode()
-  : IgnoreAndSpikeMechanism()
+  : StructuralPlasticityNode()
+  , IgnoreAndSpikeMechanism()
   , n_incoming_( 0 )
   , Kminus_( 0.0 )
   , Kminus_triplet_( 0.0 )

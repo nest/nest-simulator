@@ -75,7 +75,7 @@ FlushEventMechanism::set_status( const Dictionary& d, const bool check_eprop_con
     const double eprop_update_interval = kernel().simulation_manager.get_eprop_update_interval().get_ms();
     if ( flush_event_send_interval_tmp < eprop_update_interval )
     {
-      throw BadProperty( "flush_event_send_interval >= eprop_update_interval required." );
+      throw BadProperty( "flush_event_send_interval ≥ eprop_update_interval required." );
     }
   }
 

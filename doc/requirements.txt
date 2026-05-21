@@ -7,7 +7,7 @@ cython>=0.29.14
 docutils >= 0.19
 example >= 0.1.0
 flask>=2.3.2
-flask_cors>=3.0.10
+flask_cors>=6.0.2
 graphviz
 ipykernel >= 6.22.0
 ipython >= 8.11.0

@@ -18,7 +18,7 @@ numpy >= 1.22.0
 numpydoc >= 1.5.0
 pydot >= 1.4.2
 scipy >= 1.10.1
-seaborn >= 0.12.2
+seaborn >= 0.13.2
 sphinx >= 6.2.1, <8.2.0
 sphinx-carousel
 sphinx-copybutton >= 0.5.2

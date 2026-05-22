@@ -288,6 +288,7 @@ PyNEST examples
    running_notebooks
    ../auto_examples/sudoku/index
    ../auto_examples/pong/index
+   ../auto_examples/ignore_and_spike_mechanism
    ../auto_examples/spatial/index
    ../auto_examples/music_cont_out_proxy_example/index
    ../auto_examples/compartmental_model/index

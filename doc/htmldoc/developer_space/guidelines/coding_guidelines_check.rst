@@ -39,7 +39,10 @@ To set up the Git hook scripts specified in ``.pre-commit-config.yaml``, run
    the code. If code is reformatted, it will show up in your unstaged changes. Stage them and recommit to
    successfully commit your code.
 
-Besides the automatic git commit hook, files can be formatted manually using `pre-commit`: `pre-commit run --all-files` formats all files, and `pre-commit run --files file1.cpp file2.cpp` formats only the specified files.
+Besides the automatic git commit hook, files can be formatted manually using `pre-commit`:
+
+* ``pre-commit run --all-files`` formats all files and
+* ``pre-commit run --files file1.cpp file2.cpp`` formats only the specified files.
 
 Black
 ~~~~~

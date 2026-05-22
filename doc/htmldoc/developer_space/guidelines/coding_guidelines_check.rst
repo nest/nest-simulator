@@ -76,7 +76,7 @@ clang-format
 
 We use `clang-format <http://clang.llvm.org/docs/ClangFormat.html>`_ to format all C/C++ code. The configuration is defined in the `.clang-format <https://github.com/nest/nest-simulator/blob/master/.clang-format>`_ file corresponding to the version specified by ``CLANG_REQUIRE_VERSION`` in `nestbuildmatrix.yml <https://github.com/nest/nest-simulator/blob/master/.github/workflows/nestbuildmatrix.yml>`_.
 
-``clang-format`` is run automatically via ``pre-commit``. To use a different clang-format version, adjust the version in ``.pre-commit-config.yaml``.
+``clang-format`` is run automatically via ``pre-commit``.
 
 Local static analysis
 ---------------------

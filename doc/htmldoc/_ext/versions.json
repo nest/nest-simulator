@@ -56,5 +56,8 @@
 	},
 	"libncurses": {
 		"min": "6.2"
+	},
+	"plantuml": {
+		"min": "1-2023-10"
 	}
 }

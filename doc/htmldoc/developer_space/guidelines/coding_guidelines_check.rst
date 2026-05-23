@@ -39,6 +39,11 @@ To set up the Git hook scripts specified in ``.pre-commit-config.yaml``, run
    the code. If code is reformatted, it will show up in your unstaged changes. Stage them and recommit to
    successfully commit your code.
 
+Besides the automatic git commit hook, files can be formatted manually using `pre-commit`:
+
+* ``pre-commit run --all-files`` formats all files and
+* ``pre-commit run --files file1.cpp file2.cpp`` formats only the specified files.
+
 Black
 ~~~~~
 
@@ -69,25 +74,9 @@ Run ``isort`` manually with
 clang-format
 ~~~~~~~~~~~~
 
-We use `clang-format <http://clang.llvm.org/docs/ClangFormat.html>`_ to format C/C++ code.
-Our ``clang-format`` configuration is specified in the
-`.clang-format <https://github.com/nest/nest-simulator/blob/master/.clang-format>`_ file.
+We use `clang-format <http://clang.llvm.org/docs/ClangFormat.html>`_ to format all C/C++ code. The configuration is defined in the `.clang-format <https://github.com/nest/nest-simulator/blob/master/.clang-format>`_ file corresponding to the version specified by ``CLANG_REQUIRE_VERSION`` in `nestbuildmatrix.yml <https://github.com/nest/nest-simulator/blob/master/.github/workflows/nestbuildmatrix.yml>`_.
 
-``clang-format`` is run automatically with ``pre-commit``.
-
-We supply the
-`build_support/format_all_c_c++_files.sh <https://github.com/nest/nest-simulator/blob/master/build_support/format_all_c_c++_files.sh>`_
-shell script to run ``clang-format`` manually:
-
-.. code-block:: bash
-
-   ./build_support/format_all_c_c++_files.sh [start folder, defaults to '$PWD']
-
-.. note::
-
-   We use ``clang-format`` version 17.0.4 in our CI. If your ``clang-format`` executable is
-   not version 17, you need to specify an executable with version 17.0.4 explicitly with
-   the `--clang-format` option to ensure consistency with the NEST CI.
+``clang-format`` is run automatically via ``pre-commit``.
 
 Local static analysis
 ---------------------

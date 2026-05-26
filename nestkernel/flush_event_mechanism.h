@@ -35,25 +35,25 @@ namespace nest
  * @brief Class implementing a flush event mechanism for neuron models.
  *
  * This class implements a flush event mechanism for neuron models that
- * sends flush events after prolonged periods without spike emission.
+ * send flush events after prolonged periods without spike emission.
  */
 class FlushEventMechanism
 {
 public:
   /**
-   * Constructs a new FlushEventMechanism object.
+   * Default constructor.
    */
   FlushEventMechanism();
 
   /**
-   * Constructs a new FlushEventMechanism object by copying another.
+   * Copy constructor.
    *
    * @param n The other object to copy.
    */
   FlushEventMechanism( const FlushEventMechanism& n );
 
   /**
-   * Virtual destructor to enable proper cleanup in derived classes.
+   * Destructor.
    */
   virtual ~FlushEventMechanism() = default;
 
@@ -81,22 +81,21 @@ public:
   void pre_run_hook();
 
   /**
-   * Checks if an flush event is due at the current time.
+   * Checks if a flush event is due at the current time.
    */
-  bool
+  inline bool
   flush_event_is_due( const long current_time ) const
   {
     return last_event_time_ > 0 and ( current_time - last_event_time_ >= flush_event_send_interval_steps_ );
   }
 
   /**
-   * Retrieves flush event parameters and adds them to the status dictionary.
+   * Retrieves parameters and adds them to the status dictionary.
    */
   void get_status( Dictionary& d ) const;
 
   /**
-   * Sets flush event parameters from the status dictionary.
-   * Validates that flush_event_send_interval > 0.
+   * Sets and validates parameters from the status dictionary.
    */
   void set_status( const Dictionary& d );
 

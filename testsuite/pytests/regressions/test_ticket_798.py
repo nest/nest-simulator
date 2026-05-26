@@ -37,7 +37,7 @@ def test_quantal_stp_synapse_multithreaded():
         "quantal_stp_synapse", {"U": 0.2, "u": 0.2, "tau_fac": 500.0, "tau_rec": 200.0, "weight": 1.0, "n": 5}
     )
     neurons = nest.Create("iaf_psc_exp", 10001)
-    nest.SetStatus(neurons[0], {"I_e": 2000.0})
+    neurons[0].set({"I_e": 2000.0})
     nest.Connect(
         neurons[0], neurons[1:], conn_spec={"rule": "all_to_all"}, syn_spec={"synapse_model": "quantal_stp_synapse"}
     )

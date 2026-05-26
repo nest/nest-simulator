@@ -152,24 +152,24 @@ def test_eprop_regression():
     }
 
     params_nrn_rec = {
-        "beta": 1.0,
         "C_m": 1.0,
         "c_reg": 300.0,
         "E_L": 0.0,
         "f_target": 10.0,
         "flush_event_send_interval": duration["sequence"],
-        "gamma": 0.3,
         "I_e": 0.0,
         "regular_spike_arrival": False,
         "surrogate_gradient_function": "piecewise_linear",
+        "surrogate_gradient_height": 0.3,
+        "surrogate_gradient_width": 1.0,
         "t_ref": 0.0,
         "tau_m": 30.0,
         "V_m": 0.0,
         "V_th": 0.03,
     }
 
-    params_nrn_rec["gamma"] /= params_nrn_rec["V_th"]
-    params_nrn_rec["beta"] /= np.abs(params_nrn_rec["V_th"])
+    params_nrn_rec["surrogate_gradient_height"] /= params_nrn_rec["V_th"]
+    params_nrn_rec["surrogate_gradient_width"] *= np.abs(params_nrn_rec["V_th"])
 
     gen_spk_in = nest.Create("spike_generator", n_in)
     nrns_in = nest.Create("parrot_neuron", n_in)
@@ -501,27 +501,26 @@ def test_eprop_classification(batch_size, loss_nest_reference):
     }
 
     params_nrn_reg = {
-        "beta": 1.0,
         "C_m": 1.0,
         "c_reg": 300.0,
         "E_L": 0.0,
         "f_target": 10.0,
         "flush_event_send_interval": duration["sequence"],
-        "gamma": 0.3,
         "I_e": 0.0,
         "regular_spike_arrival": True,
         "surrogate_gradient_function": "piecewise_linear",
+        "surrogate_gradient_height": 0.3,
+        "surrogate_gradient_width": 1.0,
         "t_ref": 5.0,
         "tau_m": 20.0,
         "V_m": 0.0,
         "V_th": 0.6,
     }
 
-    params_nrn_reg["gamma"] /= params_nrn_reg["V_th"]
-    params_nrn_reg["beta"] /= np.abs(params_nrn_reg["V_th"])
+    params_nrn_reg["surrogate_gradient_height"] /= params_nrn_reg["V_th"]
+    params_nrn_reg["surrogate_gradient_width"] *= np.abs(params_nrn_reg["V_th"])
 
     params_nrn_ad = {
-        "beta": 1.0,
         "adapt_tau": 2000.0,
         "adaptation": 0.0,
         "C_m": 1.0,
@@ -529,18 +528,19 @@ def test_eprop_classification(batch_size, loss_nest_reference):
         "E_L": 0.0,
         "f_target": 10.0,
         "flush_event_send_interval": duration["sequence"],
-        "gamma": 0.3,
         "I_e": 0.0,
         "regular_spike_arrival": True,
         "surrogate_gradient_function": "piecewise_linear",
+        "surrogate_gradient_height": 0.3,
+        "surrogate_gradient_width": 1.0,
         "t_ref": 5.0,
         "tau_m": 20.0,
         "V_m": 0.0,
         "V_th": 0.6,
     }
 
-    params_nrn_ad["gamma"] /= params_nrn_ad["V_th"]
-    params_nrn_ad["beta"] /= np.abs(params_nrn_ad["V_th"])
+    params_nrn_ad["surrogate_gradient_height"] /= params_nrn_ad["V_th"]
+    params_nrn_ad["surrogate_gradient_width"] *= np.abs(params_nrn_ad["V_th"])
 
     params_nrn_ad["adapt_beta"] = 1.7 * (
         (1.0 - np.exp(-duration["step"] / params_nrn_ad["adapt_tau"]))

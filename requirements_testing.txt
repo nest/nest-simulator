@@ -13,17 +13,18 @@
 #
 #     pip install -r requirements_testing.txt
 
-pytest
-pytest-timeout
-pytest-xdist
-pytest-pylint
-pytest-mypy
-pytest-cov
+attrs
 data-science-types
-terminaltables
+junitparser >= 2
+mypy >= 0.8
+pre-commit
 pycodestyle
 pydocstyle
+pytest
+pytest-cov
+pytest-mypy
+pytest-pylint
+pytest-timeout
+pytest-xdist
 rstcheck
-mypy >= 0.8
-junitparser >= 2
-attrs
+terminaltables

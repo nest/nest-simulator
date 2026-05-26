@@ -35,7 +35,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neuron, e-prop plasticity, current-based
+/* BeginUserDocs: neuron, e-prop plasticity, current-based, Bellec
 
 Short description
 +++++++++++++++++

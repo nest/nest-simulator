@@ -30,7 +30,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapse, chemical, functional, stdp, 3-factor
+/* BeginUserDocs: synapse, chemical, functional, stdp, 3-factor, Vogels
 
 Short description
 +++++++++++++++++

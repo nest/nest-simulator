@@ -32,7 +32,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapse, chemical, functional, stp
+/* BeginUserDocs: synapse, chemical, functional, stp, Tsodyks
 
 Short description
 +++++++++++++++++

@@ -29,7 +29,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapse, abstract, learning
+/* BeginUserDocs: synapse, abstract, learning, Bellec
 
 Short description
 +++++++++++++++++

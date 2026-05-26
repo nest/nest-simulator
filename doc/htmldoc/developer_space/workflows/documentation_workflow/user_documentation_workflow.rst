@@ -184,8 +184,11 @@ If you want to edit Model docs, PyNEST API files, or PyNEST examples, you will n
 
    **Adding or renaming a PyNEST example?**
    Update ``pynest/examples/examples.yml`` to register it.
-   This file controls which examples are run in CI, converted to Jupyter notebooks,
-   and linked to model documentation pages.
+   This file is the single source of truth for example metadata: it controls
+   which examples are run in CI (``run_in_ci``), how they are run
+   (``runner``), which are converted to Jupyter notebooks for EBRAINS
+   (``convert_to_notebook``), and which model documentation pages link to
+   them (``models``).
    See the comments at the top of ``examples.yml`` for a description of every field.
 
    To verify your changes are consistent with the files on disk, run from the repo root:

@@ -44,14 +44,13 @@ Description
 +++++++++++
 
 ``stdp_facetshw_synapse`` is a connector to create synapses with spike-timing
-dependent plasticity (as defined in [1]_).
+dependent plasticity (as defined in :footcite:p:`Morrison2008`).
 This connector is a modified version of ``stdp_synapse``.
 It includes constraints of the hardware developed in the FACETS (BrainScaleS)
-project [2]_, [3]_, as for example, 4-bit weight resolution, sequential updates of groups
-of synapses and reduced symmetric nearest-neighbor spike pairing scheme. For
-details see [3]_.
-The modified spike pairing scheme requires the calculation of ``tau_minus_``
-within this synapse and not at the neuron site via ``Kplus_`` like in
+project :footcite:p:`Schemmel2006`, :footcite:p:`Pfeil2012`, as for example, 4-bit weight resolution, sequential updates
+of groups of synapses and reduced symmetric nearest-neighbor spike pairing scheme. For details see
+:footcite:p:`Pfeil2012`. The modified spike pairing scheme requires the calculation of ``tau_minus_`` within this
+synapse and not at the neuron site via ``Kplus_`` like in
 ``stdp_synapse_hom``.
 
 .. warning::
@@ -94,8 +93,8 @@ Parameters
  configbit_0            list of     Configuration bits for evaluation
                         integers    function. For details see code in
                                     function ``eval_function_`` and [4]_
-                                    (configbit[0]=e_cc, ..[1]_=e_ca,
-                                    ..[2]_=e_ac, ..[3]=e_aa).
+                                    (configbit[0]=e_cc, ..:footcite:p:`Morrison2008`=e_ca,
+                                    ..:footcite:p:`Schemmel2006`=e_ac, ..[3]=e_aa).
                                     Depending on these two sets of
                                     configuration bits weights are updated
                                     according LUTs (out of three: (1,0),
@@ -134,18 +133,8 @@ SpikeEvent
 References
 ++++++++++
 
-.. [1] Morrison A, Diesmann M, Gerstner W (2008). Phenomenological models of
-       synaptic plasticity based on spike-timing. Biological Cybernetics,
-       98:459-478. DOI: https://doi.org/10.1007/s00422-008-0233-1
-.. [2] Schemmel J, Gruebl A, Meier K, Mueller E (2006). Implementing synaptic
-       plasticity in a VLSI spiking neural network model. In Proceedings of the
-       2006 International Joint Conference on Neural Networks, pp.1--6,
-       IEEE Press. DOI: https://doi.org/10.1109/IJCNN.2006.246651
-.. [3] Pfeil T, Potjans TC, Schrader S, Potjans W, Schemmel J, Diesmann M,
-       Meier K (2012). Is a 4-bit synaptic weight resolution enough? -
-       constraints on enabling spike-timing dependent plasticity in
-       neuromorphic hardware. Frontiers in Neuroscience 6(90).
-       DOI: https://doi.org/10.3389/fnins.2012.00090
+.. footbibliography::
+
 .. [4] Friedmann, S. in preparation
 
 See also

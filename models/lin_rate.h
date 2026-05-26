@@ -67,7 +67,7 @@ Linear rate neurons can be created by typing
 noise or output noise, respectively. Linear rate transformers can be
 created by typing ``nest.Create("rate_transformer_lin")``.
 
-See also [1]_, [2]_.
+See also :footcite:p:`Hahne2017`, :footcite:p:`Hahne2015`.
 
 Parameters
 ++++++++++
@@ -96,16 +96,7 @@ transformers.
 References
 ++++++++++
 
-.. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M, Diesmann
-       M (2017). Integration of continuous-time dynamics in a spiking neural
-       network simulator. Frontiers in Neuroinformatics, 11:34.
-       DOI: https://doi.org/10.3389/fninf.2017.00034
-.. [2] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A, Diesmann M
-       (2015). A unified framework for spiking and gap-junction interactions
-       in distributed neuronal network simulations.
-       Frontiers Neuroinformatics, 9:22.
-       DOI: https://doi.org/10.3389/fninf.2015.00022
-
+.. footbibliography::
 
 Sends
 +++++

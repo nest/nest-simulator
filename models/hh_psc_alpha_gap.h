@@ -86,7 +86,7 @@ it is considered a spike.
 Gap Junctions are implemented by a gap current of the form
 :math:`g_{ij}( V_i - V_j)`.
 
-See also [1]_, [2]_, [3]_, [4]_.
+See also :footcite:p:`Gerstner2002`, :footcite:p:`Mancilla2007`, :footcite:p:`Hodgkin1952`, :footcite:p:`Hahne2015`.
 
 For details on asynchronicity in spike and firing events with Hodgkin Huxley models
 see :ref:`here <hh_details>`.
@@ -121,21 +121,7 @@ I_e          pA      External input current
 References
 ++++++++++
 
-.. [1] Gerstner W, Kistler W. Spiking neuron models: Single neurons,
-       populations, plasticity. Cambridge University Press
-.. [2] Mancilla JG, Lewis TG, Pinto DJ, Rinzel J, Connors BW (2007).
-       Synchronization of electrically coupled pairs of inhibitory
-       interneurons in neocortex, Journal of Neurosciece, 27:2058-2073
-       DOI: https://doi.org/10.1523/JNEUROSCI.2715-06.2007
-       (parameters taken from here)
-.. [3] Hodgkin AL and Huxley A F (1952). A quantitative description of
-       membrane current and its application to conduction and excitation in
-       nerve. The Journal of Physiology 117.
-       DOI: https://doi.org/10.1113/jphysiol.1952.sp004764
-.. [4] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A, Diesmann M
-       (2015). A unified framework for spiking and gap-junction interactions
-       in distributed neuronal netowrk simulations. Frontiers in
-       Neuroinformatics, 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
+.. footbibliography::
 
 Sends
 +++++

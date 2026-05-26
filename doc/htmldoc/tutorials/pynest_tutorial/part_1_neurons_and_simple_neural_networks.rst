@@ -48,12 +48,12 @@ PyNEST - an interface to the NEST Simulator
    defined in this high-level API, which control the simulation
    kernel.
 
-The NEural Simulation Tool (NEST: www.nest-initiative.org) [1]_
+The NEural Simulation Tool (NEST: www.nest-initiative.org) :footcite:p:`Gewaltig2007`
 is designed for the simulation of large heterogeneous networks of point
 neurons. It is open source software released under the GPL licence. The
-simulator comes with an interface to Python [2]_. :numref:`Python-Interface`
+simulator comes with an interface to Python :footcite:p:`Python2008`. :numref:`Python-Interface`
 illustrates the interaction between the user's simulation script
-(``mysimulation.py``) and the NEST Simulator. Eppler et al. [3]_
+(``mysimulation.py``) and the NEST Simulator. Eppler et al. :footcite:p:`Eppler2009`
 contains a technically detailed description of the implementation of this
 interface and parts of this text are based on this reference. The
 simulation kernel is written in C++ to obtain the highest possible performance
@@ -116,7 +116,7 @@ or return a :py:class:`.NodeCollection` (see `command overview`_). Thus, it is
 easy to apply functions to large sets of nodes with a single function
 call.
 
-After having imported NEST and Matplotlib [4]_,
+After having imported NEST and Matplotlib :footcite:p:`Hunter2007`,
 which we will use to display the results, we can start creating nodes.
 As a first example, we will create a neuron of type
 ``iaf_psc_alpha``. This neuron is an integrate-and-fire neuron with
@@ -560,14 +560,4 @@ Simulation control
 References
 ----------
 
-.. [1] Gewaltig MO. and Diesmann M. 2007. NEural Simulation
-   Tool. 2(4):1430.
-
-.. [2] Python Software Foundation. The Python programming language,
-   2008. http://www.python.org.
-
-.. [3] Eppler JM et al. 2009 PyNEST: A convenient interface to the NEST Simulator.
-   2:12. 10.3389/neuro.11.012.2008.
-
-.. [4] Hunter JD. 2007 Matplotlib: A 2d graphics environment.
-   9(3):90–95.
+.. footbibliography::

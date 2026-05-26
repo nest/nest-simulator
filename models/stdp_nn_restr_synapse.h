@@ -49,7 +49,7 @@ Description
 
 ``stdp_nn_restr_synapse`` is a connector to create synapses with spike time
 dependent plasticity with the restricted symmetric nearest-neighbour spike
-pairing scheme (fig. 7C in [1]_).
+pairing scheme (fig. 7C in :footcite:p:`Morrison2008`).
 
 When a presynaptic spike occurs, it is taken into account in the depression
 part of the STDP weight change rule with the nearest preceding postsynaptic
@@ -66,7 +66,7 @@ post/presynaptic one (for example, ``pre=={10 ms; 20 ms}`` and ``post=={20 ms}``
 result in a potentiation pair 20-to-10).
 
 The implementation relies on an additional variable - the postsynaptic
-eligibility trace [1]_ (implemented on the postsynaptic neuron side). It
+eligibility trace :footcite:p:`Morrison2008` (implemented on the postsynaptic neuron side). It
 decays exponentially with the time constant ``tau_minus`` and increases to 1 on
 a post-spike occurrence (instead of increasing by 1 as in ``stdp_synapse``).
 
@@ -100,9 +100,7 @@ References
 ++++++++++
 
 
-.. [1] Morrison A., Diesmann M., and Gerstner W. (2008) Phenomenological
-       models of synaptic plasticity based on spike timing,
-       Biol. Cybern. 98, 459--478
+.. footbibliography::
 
 See also
 ++++++++

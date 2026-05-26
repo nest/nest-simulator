@@ -69,9 +69,9 @@ Description
 +++++++++++
 
 ``astrocyte_lr_1994`` is a model of astrocytic calcium dynamics. The model was
-first proposed by Li & Rinzel (1994) [1]_ and it is based on earlier work of De
-Young & Kaiser (1992) [2]_. The input and output of the model are implemented
-according to Nadkarni & Jung (2003) [3]_.
+first proposed by Li & Rinzel (1994) :footcite:p:`Li1994` and it is based on earlier work of De
+Young & Kaiser (1992) :footcite:p:`DeYoung1992`. The input and output of the model are implemented
+according to Nadkarni & Jung (2003) :footcite:p:`Nadkarni2003`.
 
 The model has three dynamic state variables: the concentration of inositol
 1,4,5-trisphosphate in the astrocyte (:math:`\mathrm{[IP3]}`), the calcium
@@ -83,7 +83,7 @@ In this model, excitatory synaptic inputs to the astrocyte trigger IP3
 generation and change in calcium dynamics in the astrocyte. This might induce an
 astrocytic output in the form of a slow inward current (SIC), which is dependent
 on its calcium dynamics, to its target neurons. The input and output are based
-on the equations in [3]_ but with adaptations, as described in the following.
+on the equations in :footcite:p:`Nadkarni2003` but with adaptations, as described in the following.
 
 Spike input
 -----------
@@ -122,7 +122,7 @@ calcium:
 Here, :math:`\mathrm{[Ca^{2+}]}` is the cytosolic calcium concentration, and
 :math:`J_\mathrm{noise}` is the current input. :math:`J_\mathrm{channel}`,
 :math:`J_\mathrm{pump}`, :math:`J_\mathrm{leak}` are the calcium fluxes defined
-as in [3]_.
+as in :footcite:p:`Nadkarni2003`.
 
 Output
 ------
@@ -148,7 +148,7 @@ generated. This thresholding is modeled as a Heaviside function
 (:math:`\mathrm{H(\cdot)}`). In this implementation, the SIC threshold
 :math:`\mathrm{SIC_{th}}` as well as the scaling constant
 :math:`\mathrm{SIC_{scale}}` are treated as model parameters that can be set
-together with other parameters. Nadkarni & Jung (2003) [3]_ proposed values for
+together with other parameters. Nadkarni & Jung (2003) :footcite:p:`Nadkarni2003` proposed values for
 these parameters by fitting the equation for SIC to an experimental data set.
 
 The output is implemented as SICEvent sent from the astrocyte to its target
@@ -157,7 +157,7 @@ neurons through the ``sic_connection``.
 For the reference implementation of this model, see the
 `astrocyte_model_implementation <../model_details/astrocyte_model_implementation.ipynb>`_ notebook.
 
-See also [1]_, [2]_, [3]_.
+See also :footcite:p:`Li1994`, :footcite:p:`DeYoung1992`, :footcite:p:`Nadkarni2003`.
 
 Parameters
 ++++++++++
@@ -209,20 +209,7 @@ tau_IP3         ms        Time constant of the exponential decay of astrocytic
 References
 ++++++++++
 
-.. [1] Li, Y. X., & Rinzel, J. (1994). Equations for InsP3 receptor-mediated
-       [Ca2+]i oscillations derived from a detailed kinetic model: a
-       Hodgkin-Huxley like formalism. Journal of theoretical Biology, 166(4),
-       461-473. DOI: https://doi.org/10.1006/jtbi.1994.1041
-
-.. [2] De Young, G. W., & Keizer, J. (1992). A single-pool inositol
-       1,4,5-trisphosphate-receptor-based model for agonist-stimulated
-       oscillations in Ca2+ concentration. Proceedings of the National Academy
-       of Sciences, 89(20), 9895-9899. DOI:
-       https://doi.org/10.1073/pnas.89.20.9895
-
-.. [3] Nadkarni, S., & Jung, P. (2003). Spontaneous oscillations of dressed
-       neurons: a new mechanism for epilepsy?. Physical review letters, 91(26),
-       268101. DOI: https://doi.org/10.1103/PhysRevLett.91.268101
+.. footbibliography::
 
 Sends
 +++++

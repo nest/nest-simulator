@@ -45,7 +45,7 @@ Izhikevich neuron model
 Description
 ++++++++++++
 
-``izhikevich`` implements the simple spiking neuron model introduced by Izhikevich [1]_.
+``izhikevich`` implements the simple spiking neuron model introduced by Izhikevich :footcite:p:`Izhikevich2003a`.
 This model reproduces spiking and bursting behavior of known types of cortical neurons.
 
 Membrane potential evolution, spike emission, and refractoriness
@@ -75,7 +75,7 @@ At this point, the membrane potential and recovery variable are updated accordin
 
 In addition, each incoming spike increases :math:`V_{\text{m}}` by the synaptic weight associated with the spike.
 
-As published in [1]_, the numerics differs from the standard forward Euler technique in two ways:
+As published in :footcite:p:`Izhikevich2003a`, the numerics differs from the standard forward Euler technique in two ways:
 
  * the recovery variable :math:`U_{\text{m}}` is updated based on the new value of :math:`V_{\text{m}}`, rather than the previous one.
  * the membrane potential :math:`V_{\text{m}}` is updated with a time step half the size of that used for :math:`U_{\text{m}}`.
@@ -87,7 +87,7 @@ This model offers both forms of integration, they can be selected using the bool
 
 .. note::
 
-   For a detailed analysis of the numerical differences between these integration schemes and their impact on simulation results, see [2]_.
+   For a detailed analysis of the numerical differences between these integration schemes and their impact on simulation results, see :footcite:p:`Pauli2018`.
 
 Parameters
 ++++++++++
@@ -112,12 +112,7 @@ The following parameters can be set in the status dictionary.
 References
 ++++++++++
 
-.. [1] Izhikevich EM. (2003). Simple model of spiking neurons. IEEE Transactions
-       on Neural Networks, 14:1569-1572. DOI: https://doi.org/10.1109/TNN.2003.820440
-
-.. [2] Pauli R, Weidel P, Kunkel S, Morrison A (2018). Reproducing polychronization: A guide to maximizing
-       the reproducibility of spiking network models. Frontiers in Neuroinformatics, 12.
-       DOI: https://www.frontiersin.org/article/10.3389/fninf.2018.00046
+.. footbibliography::
 
 Sends
 +++++

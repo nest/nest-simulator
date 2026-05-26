@@ -51,7 +51,7 @@ Description
 neuron model with delta-shaped postsynaptic currents and threshold adaptation
 used for eligibility propagation (e-prop) plasticity.
 
-E-prop plasticity was originally introduced and implemented in TensorFlow in [1]_.
+E-prop plasticity was originally introduced and implemented in TensorFlow in :footcite:p:`Bellec2020`.
 
  .. note::
    The neuron dynamics of the ``eprop_iaf_psc_delta_adapt`` model (excluding
@@ -119,26 +119,26 @@ techniques such as e-prop. The non-existent derivative of the spiking
 variable with respect to the membrane voltage,
 :math:`\frac{\partial z^t_j}{ \partial v^t_j}`, can be effectively
 replaced with a variety of surrogate gradient functions, as detailed in
-various studies (see, e.g., [3]_). NEST currently provides four
+various studies (see, e.g., :footcite:p:`Neftci2019`). NEST currently provides four
 different surrogate gradient functions:
 
-1. A piecewise linear function used among others in [1]_:
+1. A piecewise linear function used among others in :footcite:p:`Bellec2020`:
 
 .. math::
   \psi_j^t = \frac{ \gamma }{ v_\text{th} } \text{max}
     \left( 0, 1-\beta \left| \frac{ v_j^t - v_\text{th} }{ v_\text{th} }\right| \right) \,. \\
 
-2. An exponential function used in [4]_:
+2. An exponential function used in :footcite:p:`Shrestha2018`:
 
 .. math::
   \psi_j^t = \gamma \exp \left( -\beta \left| v_j^t - v_\text{th} \right| \right) \,. \\
 
-3. The derivative of a fast sigmoid function used in [5]_:
+3. The derivative of a fast sigmoid function used in :footcite:p:`Zenke2018`:
 
 .. math::
   \psi_j^t = \gamma \left( 1 + \beta \left| v_j^t - v_\text{th} \right| \right)^2 \,. \\
 
-4. An arctan function used in [6]_:
+4. An arctan function used in :footcite:p:`Fang2021`:
 
 .. math::
   \psi_j^t = \frac{\gamma}{\pi} \frac{1}{ 1 + \left( \beta \pi \left( v_j^t - v_\text{th} \right) \right)^2 } \,. \\
@@ -201,7 +201,8 @@ the next spike:
   \bar{z}_i^{t+p} &= \bar{z}_i^t \alpha^p \,, \\
   \epsilon^{t+p} &= \epsilon^t \rho^p \,. \\
 
-For more information on the implementation details of the neuron model, see [7]_ and [8]_.
+For more information on the implementation details of the neuron model, see :footcite:p:`Rotter1999` and
+:footcite:p:`Diesmann2001`.
 
 For more information on e-prop plasticity, see the documentation on the other e-prop models:
 
@@ -210,7 +211,7 @@ For more information on e-prop plasticity, see the documentation on the other e-
  * :doc:`eprop_synapse<../models/eprop_synapse/>`
  * :doc:`eprop_learning_signal_connection<../models/eprop_learning_signal_connection/>`
 
-Details on the event-based NEST implementation of e-prop can be found in [2]_.
+Details on the event-based NEST implementation of e-prop can be found in :footcite:p:`KorcsakGorzo2025`.
 
 Parameters
 ++++++++++
@@ -315,47 +316,12 @@ This model can only be used in combination with the other e-prop models
 and the network architecture requires specific wiring, input, and output.
 The usage is demonstrated in several
 :doc:`supervised regression and classification tasks <../auto_examples/eprop_plasticity/index>`
-reproducing among others the original proof-of-concept tasks in [1]_.
+reproducing among others the original proof-of-concept tasks in :footcite:p:`Bellec2020`.
 
 References
 ++++++++++
 
-.. [1] Bellec G, Scherr F, Subramoney F, Hajek E, Salaj D, Legenstein R,
-       Maass W (2020). A solution to the learning dilemma for recurrent
-       networks of spiking neurons. Nature Communications, 11:3625.
-       https://doi.org/10.1038/s41467-020-17236-y
-
-.. [2] Korcsak-Gorzo A, Espinoza Valverde JA, Stapmanns J, Plesser HE, Dahmen D,
-       Bolten M, van Albada SJ, Diesmann M (2025). Event-driven eligibility
-       propagation in large sparse networks: efficiency shaped by biological
-       realism. arXiv:2511.21674. https://doi.org/10.48550/arXiv.2511.21674
-
-.. [3] Neftci EO, Mostafa H, Zenke F (2019). Surrogate Gradient Learning in
-       Spiking Neural Networks. IEEE Signal Processing Magazine, 36(6), 51-63.
-       https://doi.org/10.1109/MSP.2019.2931595
-
-.. [4] Shrestha SB, Orchard G (2018). SLAYER: Spike Layer Error Reassignment in
-       Time. Advances in Neural Information Processing Systems, 31:1412-1421.
-       https://proceedings.neurips.cc/paper_files/paper/2018/hash/82
-
-.. [5] Zenke F, Ganguli S (2018). SuperSpike: Supervised Learning in Multilayer
-       Spiking Neural Networks. Neural Computation, 30:1514–1541.
-       https://doi.org/10.1162/neco_a_01086
-
-.. [6] Fang W, Yu Z, Chen Y, Huang T, Masquelier T, Tian Y (2021). Deep residual
-       learning in spiking neural networks. Advances in Neural Information
-       Processing Systems, 34:21056–21069.
-       https://proceedings.neurips.cc/paper/2021/hash/afe434653a898da20044041262b3ac74-Abstract.html
-
-.. [7] Rotter S,  Diesmann M (1999). Exact simulation of time-invariant linear
-       systems with applications to neuronal modeling. Biological Cybernetics
-       81:381-402.
-       https://doi.org/10.1007/s004220050570
-
-.. [8] Diesmann M, Gewaltig MO, Rotter S, Aertsen A (2001). State space analysis
-       of synchronous spiking in cortical neural networks. Neurocomputing
-       38-40:565-571.
-       https://doi.org/10.1016/S0925-2312(01)00409-X
+.. footbibliography::
 
 Sends
 +++++

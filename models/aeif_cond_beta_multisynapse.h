@@ -116,8 +116,8 @@ For implementation details see the
 .. note::
 
     The default refractory period for ``aeif`` models is zero, consistent with the model definition in
-    Brette & Gerstner [1]_.  Thus, an ``aeif`` neuron with default parameters can fire multiple spikes in a single
-    time step, which can lead to exploding spike numbers and extreme slow-down of simulations.
+    Brette & Gerstner :footcite:p:`Brette2005`.  Thus, an ``aeif`` neuron with default parameters can fire multiple
+spikes in a single time step, which can lead to exploding spike numbers and extreme slow-down of simulations.
 
     To avoid such unphysiological behavior, you should set a refractory time ``t_ref > 0``.
 
@@ -183,10 +183,7 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 References
 ++++++++++
 
-.. [1] Brette R and Gerstner W (2005). Adaptive exponential
-       integrate-and-fire model as an effective description of neuronal
-       activity. Journal of Neurophysiology. 943637-3642
-       DOI: https://doi.org/10.1152/jn.00686.2005
+.. footbibliography::
 
 See also
 ++++++++

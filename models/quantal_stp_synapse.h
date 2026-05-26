@@ -41,13 +41,13 @@ Description
 
 This synapse model implements synaptic short-term depression and
 short-term facilitation according to the quantal release model
-described by Fuhrmann et al. [1]_ and Loebel et al. [2]_.
+described by Fuhrmann et al. :footcite:p:`Fuhrmann2002` and Loebel et al. :footcite:p:`Loebel2009`.
 
 Each presynaptic spike will stochastically activate a fraction of
 the available release sites.  This fraction is binomialy
 distributed and the release probability per site is governed by the
 Fuhrmann et al. (2002) model. The solution of the differential
-equations is taken from Maass and Markram 2002 [3]_.
+equations is taken from Maass and Markram 2002 :footcite:p:`Maass2002`.
 
 The connection weight is interpreted as the maximal weight that can
 be obtained if all n release sites are activated.
@@ -77,17 +77,7 @@ The following parameters can be set in the status dictionary:
 References
 ++++++++++
 
-.. [1] Fuhrmann G, Segev I, Markram H, Tsodyks MV (2002). Coding of
-       temporal information by activity-dependent synapses. Journal of
-       neurophysiology, 87(1):140-8.
-       DOI: https://doi.org/10.1152/jn.00258.2001
-.. [2] Loebel A, Silberberg G, Helbig D, Markram H, Tsodyks  MV, Richardson MJE
-       (2009). Multiquantal release underlies the distribution of synaptic
-       efficacies in the neocortex. Frontiers in Computational Neuroscience,
-       3, 27.  DOI: https://doi.org/10.3389/neuro.10.027.2009
-.. [3] Maass W, Markram H (2002). Synapses as dynamic memory buffers.
-       Neural Networks, 15(2):155-161.
-       DOI: https://doi.org/10.1016/S0893-6080(01)00144-7
+.. footbibliography::
 
 Transmits
 +++++++++

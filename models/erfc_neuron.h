@@ -57,13 +57,13 @@ Gaussian noise with mean 0 and standard deviation :math:`\sigma`.  The time
 constant :math:`\tau_m` is defined as the mean of the inter-update-interval
 that is drawn from an exponential distribution with this
 parameter. Using this neuron to reproduce simulations with
-asynchronous update (similar to [1]_ [2]_), the time constant needs to be
+asynchronous update (similar to :footcite:p:`Ginzburg1994` :footcite:p:`McCulloch1943`), the time constant needs to be
 chosen as :math:`\tau_m = dt \times N`, where :math:`dt` is the simulation
 time step and :math:`N` the number of neurons in the original simulation with asynchronous
 update. This ensures that a neuron is updated on average every :math:`\tau_m`
-ms. Since in the original papers [1]_ [2]_ neurons are coupled with zero
+ms. Since in the original papers :footcite:p:`Ginzburg1994` :footcite:p:`McCulloch1943` neurons are coupled with zero
 delay, this implementation follows that definition. It uses the update
-scheme described in [3]_ to maintain causality: The incoming events in
+scheme described in :footcite:p:`Morrison2007b` to maintain causality: The incoming events in
 time step `t_i` are taken into account at the beginning of the time step
 to calculate the gain function and to decide upon a transition.  In
 order to obtain delayed coupling with delay :math:`d`, the user has to specify
@@ -103,17 +103,7 @@ Parameters
 References
 ++++++++++
 
-.. [1] Ginzburg I, Sompolinsky H (1994). Theory of correlations in stochastic
-       neural networks. PRE 50(4) p. 3171.
-       DOI: https://doi.org/10.1103/PhysRevE.50.3171
-.. [2] McCulloch W, Pitts W (1943). A logical calculus of the ideas
-       immanent in nervous activity. Bulletin of Mathematical Biophysics,
-       5:115-133. DOI: https://doi.org/10.1007/BF02478259
-.. [3] Morrison A, Diesmann M (2007). Maintaining causality in discrete time
-       neuronal simulations. In: Lectures in Supercomputational Neuroscience,
-       p. 267. Peter beim Graben, Changsong Zhou, Marco Thiel, Juergen Kurths
-       (Eds.), Springer. DOI: https://doi.org/10.1007/978-3-540-73159-7_10
-
+.. footbibliography::
 
 Receives
 ++++++++

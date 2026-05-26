@@ -49,21 +49,21 @@ The gain function used here is :math:`g(h) = c_1 h + c_2 (1 +
 \tanh(c_3 (h-\theta)))/2` (output clipped to :math:`[0, 1]`). This permits
 affine-linear (:math:`c_1\neq0, c_2\neq0, c_3=0`) or sigmoidally shaped
 (:math:`c_1=0, c_2=1, c_3\neq0`) gain functions. The latter choice
-corresponds to the definition in [1]_, giving the name to this
+corresponds to the definition in :footcite:p:`Ginzburg1994`, giving the name to this
 neuron model.
 
 The choice :math:`c_1=0, c_2=1, c_3=\beta/2` corresponds to the Glauber
-dynamics [2]_, :math:`g(h) = 1 / (1 + \exp(-\beta (h-\theta)))`.
+dynamics :footcite:p:`Hertz1991`, :math:`g(h) = 1 / (1 + \exp(-\beta (h-\theta)))`.
 The time constant :math:`\tau_m` is defined as the mean
 inter-update-interval that is drawn from an exponential
 distribution with this parameter. Using this neuron to reproduce
-simulations with asynchronous update [1]_, the time constant needs
+simulations with asynchronous update :footcite:p:`Ginzburg1994`, the time constant needs
 to be chosen as :math:`\tau_m = dt \times N`, where :math:`dt` is the simulation time
 step and :math:`N` the number of neurons in the original simulation with
 asynchronous update. This ensures that a neuron is updated on
-average every :math:`\tau_m` ms. Since in the original paper [1]_ neurons
+average every :math:`\tau_m` ms. Since in the original paper :footcite:p:`Ginzburg1994` neurons
 are coupled with zero delay, this implementation follows this
-definition. It uses the update scheme described in [3]_ to
+definition. It uses the update scheme described in :footcite:p:`Morrison2007b` to
 maintain causality: The incoming events in time step :math:`t_i` are
 taken into account at the beginning of the time step to calculate
 the gain function and to decide upon a transition.  In order to
@@ -107,17 +107,7 @@ c_3    1/mV          Slope factor of sigmoidal gain
 References
 ++++++++++
 
-.. [1] Ginzburg I, Sompolinsky H (1994). Theory of correlations in stochastic
-       neural networks. PRE 50(4) p. 3171.
-       DOI: https://doi.org/10.1103/PhysRevE.50.3171
-.. [2] Hertz J, Krogh A, Palmer R (1991). Introduction to the theory of neural
-       computation. Addison-Wesley Publishing Conmpany.
-.. [3] Morrison A, Diesmann M (2007). Maintaining causality in discrete time
-       neuronal simulations. In: Lectures in Supercomputational Neuroscience,
-       p. 267. Peter beim Graben, Changsong Zhou, Marco Thiel, Juergen Kurths
-       (Eds.), Springer.
-       DOI: https://doi.org/10.1007/978-3-540-73159-7_10
-
+.. footbibliography::
 
 Receives
 ++++++++

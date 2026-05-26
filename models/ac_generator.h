@@ -72,7 +72,7 @@ phase
 Setting `start` and `stop` only windows the current as defined above. It
 does not shift the time axis.
 
-See also [1]_.
+See also :footcite:p:`Rotter1999`.
 
 Set parameters from a stimulation backend
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -90,9 +90,7 @@ The indexing is as follows:
 References
 ++++++++++
 
-.. [1] Rotter S and Diesmann M (1999). Exact digital simulation of time-
-       invariant linear systems with applications to neuronal modeling,
-       Biol. Cybern. 81, 381-402. DOI: https://doi.org/10.1007/s004220050570
+.. footbibliography::
 
 Sends
 +++++

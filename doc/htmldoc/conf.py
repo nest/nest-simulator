@@ -71,7 +71,11 @@ extensions = [
     "HoverXTooltip",
     "sphinx_copybutton",
     "notfound.extension",
+    "sphinxcontrib.bibtex",
 ]
+
+bibtex_bibfiles = ["refs.bib"]
+bibtex_default_style = "unsrt"
 
 autodoc_mock_imports = [
     "nest.nestkernel_api",  # compiled binary

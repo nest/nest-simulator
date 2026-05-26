@@ -51,7 +51,7 @@ with exponential shaped postsynaptic currents (PSCs). Thus, postsynaptic
 currents have an infinitely short rise time.
 
 The threshold is lifted when the neuron is fired and then decreases in a
-fixed time scale toward a fixed level [3]_.
+fixed time scale toward a fixed level :footcite:p:`Kobayashi2009`.
 
 The threshold crossing is followed by a total refractory period
 during which the neuron is not allowed to fire, even if the membrane
@@ -59,7 +59,7 @@ potential exceeds the threshold. The membrane potential is NOT reset,
 but continuously integrated.
 
 The linear subthreshold dynamics is integrated by the Exact
-Integration scheme [1]_. The neuron dynamics is solved on the time
+Integration scheme :footcite:p:`Rotter1999`. The neuron dynamics is solved on the time
 grid given by the computation step size. Incoming as well as emitted
 spikes are forced to that grid.
 
@@ -68,10 +68,10 @@ equation represents a piecewise constant external current.
 
 The general framework for the consistent formulation of systems with
 neuron like dynamics interacting by point events is described in
-[1]_. A flow chart can be found in [2]_.
+:footcite:p:`Rotter1999`. A flow chart can be found in :footcite:p:`Diesmann2001`.
 
 The current implementation requires tau_m != tau_syn_{ex,in} to avoid
-a degenerate case of the ODE describing the model [1]_. For very
+a degenerate case of the ODE describing the model :footcite:p:`Rotter1999`. For very
 similar values, numerics will be unstable.
 
 The following state variables can be read out with the multimeter device:
@@ -98,10 +98,10 @@ The following parameters can be set in the status dictionary:
  t_spike      ms      Point in time of last spike
  tau_1        ms      Short time constant of adaptive threshold
  tau_2        ms      Long time constant of adaptive threshold
- alpha_1      mV      Amplitude of short time threshold adaption [3]_
- alpha_2      mV      Amplitude of long time threshold adaption [3]_
+ alpha_1      mV      Amplitude of short time threshold adaption :footcite:p:`Kobayashi2009`
+ alpha_2      mV      Amplitude of long time threshold adaption :footcite:p:`Kobayashi2009`
  omega        mV      Resting spike threshold (absolute value, not
-                      relative to E_L as in [3]_)
+                      relative to E_L as in :footcite:p:`Kobayashi2009`)
 ============ =======  ========================================================
 
 The following state variables can be read out with the multimeter device:
@@ -114,24 +114,13 @@ The following state variables can be read out with the multimeter device:
 Remarks:
 
 tau_m != tau_syn_{ex,in} is required by the current implementation to avoid a
-degenerate case of the ODE describing the model [1]_. For very similar values,
+degenerate case of the ODE describing the model :footcite:p:`Rotter1999`. For very similar values,
 numerics will be unstable.
 
 References
 ++++++++++
 
-.. [1] Rotter S and Diesmann M (1999). Exact simulation of
-       time-invariant linear systems with applications to neuronal
-       modeling. Biologial Cybernetics 81:381-402.
-       DOI: https://doi.org/10.1007/s004220050570
-.. [2] Diesmann M, Gewaltig M-O, Rotter S, Aertsen A (2001). State
-       space analysis of synchronous spiking in cortical neural
-       networks. Neurocomputing 38-40:565-571.
-       DOI:https://doi.org/10.1016/S0925-2312(01)00409-X
-.. [3] Kobayashi R, Tsubo Y and Shinomoto S (2009). Made-to-order
-       spiking neuron model equipped with a multi-timescale adaptive
-       threshold. Frontiers in Computuational Neuroscience 3:9.
-       DOI: https://doi.org/10.3389/neuro.10.009.2009
+.. footbibliography::
 
 Sends
 +++++

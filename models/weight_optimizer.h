@@ -46,7 +46,7 @@ This method is an essential part of plasticity rules like e-prop plasticity.
 
 Currently two weight optimizers are implemented: gradient descent and the Adam optimizer.
 
-In gradient descent [1]_ the weights are optimized via:
+In gradient descent :footcite:p:`Huh2018` the weights are optimized via:
 
 .. math::
   W_t = W_{t-1} - \eta g_t \,, \\
@@ -54,7 +54,7 @@ In gradient descent [1]_ the weights are optimized via:
 where :math:`\eta` denotes the learning rate and :math:`g_t` the gradient of the current
 time step :math:`t`.
 
-In the Adam scheme [2]_ the weights are optimized via:
+In the Adam scheme :footcite:p:`Kingma2015` the weights are optimized via:
 
 .. math::
   m_0 &= 0, v_0 = 0, t = 1 \,, \\
@@ -63,9 +63,9 @@ In the Adam scheme [2]_ the weights are optimized via:
   \alpha_t &= \eta \frac{ \sqrt{ 1- \beta_2^t } }{ 1 - \beta_1^t } \,, \\
   W_t &= W_{t-1} - \alpha_t \frac{ m_t }{ \sqrt{v_t} + \hat{\epsilon} } \,. \\
 
-Note that the implementation follows the implementation in TensorFlow [3]_ for comparability.
-The TensorFlow implementation deviates from [1]_ in that it assumes
-:math:`\hat{\epsilon} = \epsilon \sqrt{ 1 - \beta_2^t }` to be constant, whereas [1]_
+Note that the implementation follows the implementation in TensorFlow :footcite:p:`KerasAdam` for comparability.
+The TensorFlow implementation deviates from :footcite:p:`Huh2018` in that it assumes
+:math:`\hat{\epsilon} = \epsilon \sqrt{ 1 - \beta_2^t }` to be constant, whereas :footcite:p:`Huh2018`
 assumes :math:`\epsilon = \hat{\epsilon} \sqrt{ 1 - \beta_2^t }` to be constant.
 
 When `optimize_each_step` is set to `True`, the weights are optimized at every
@@ -74,7 +74,7 @@ significant speed-up. For gradient descent, both settings yield the same
 results under exact arithmetic; however, small numerical differences may be
 observed due to floating point precision. For the Adam optimizer, only setting
 `optimize_each_step` to `True` precisely implements the algorithm as described
-in [2]_. The impact of this setting on learning performance may vary depending
+in :footcite:p:`Kingma2015`. The impact of this setting on learning performance may vary depending
 on the task.
 
 Parameters
@@ -129,15 +129,7 @@ State variable Unit Math equivalent Initial value Description
 References
 ++++++++++
 
-.. [1] Huh D, Sejnowski TJ (2018). Gradient descent for spiking neural networks.
-       Advances in Neural Information Processing Systems, 31:1433-1443.
-       https://proceedings.neurips.cc/paper_files/paper/2018/hash/185e65bc40581880c4f2c82958de8cfe-Abstract.html
-
-.. [2] Kingma DP, Ba JL (2015). Adam: A method for stochastic optimization.
-       Proceedings of 3rd International Conference for Learning Representations (ICLR).
-       https://doi.org/10.48550/arXiv.1412.6980
-
-.. [3] https://github.com/keras-team/keras/blob/v2.15.0/keras/optimizers/adam.py#L26-L220
+.. footbibliography::
 
 See also
 ++++++++

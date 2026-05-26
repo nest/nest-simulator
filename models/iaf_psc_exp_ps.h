@@ -62,7 +62,7 @@ crossing. This is the most exact implementation available.
 
 The canonical implementation handles neuronal dynamics in a locally
 event-based manner with in coarse time grid defined by the minimum
-delay in the network, see [1]_ [2]_. Incoming spikes are applied at the
+delay in the network, see :footcite:p:`Morrison2007a` :footcite:p:`Hanuschkin2010`. Incoming spikes are applied at the
 precise moment of their arrival, while the precise time of outgoing
 spikes is determined by regula falsi once a threshold crossing has
 been detected. Return from refractoriness occurs precisely at spike
@@ -72,9 +72,9 @@ This implementation is more complex than the plain iaf_psc_exp
 neuron, but achieves much higher precision. In particular, it does not
 suffer any binning of spike times to grid points. Depending on your
 application, the canonical application with regula falsi may provide
-superior overall performance given an accuracy goal; see [1]_ [2]_ for
+superior overall performance given an accuracy goal; see :footcite:p:`Morrison2007a` :footcite:p:`Hanuschkin2010` for
 details. Subthreshold dynamics are integrated using exact integration
-between events [3]_.
+between events :footcite:p:`Rotter1999`.
 
 Please note that this node is capable of sending precise spike times
 to target nodes (on-grid spike time and offset).
@@ -116,14 +116,7 @@ V_reset     mV     Reset value for the membrane potential
 References
 ++++++++++
 
-.. [1] Morrison A, Straube S, Plesser HE & Diesmann M (2007) Exact subthreshold
-       integration with continuous spike times in discrete time neural network
-       simulations. Neural Comput 19, 47-79
-.. [2] Hanuschkin A, Kunkel S, Helias M, Morrison A and Diesmann M (2010) A
-       general and efficient method for incorporating precise spike times in
-       globally timedriven simulations. Front Neuroinform 4:113
-.. [3] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
-       systems with applications to neuronal modeling. Biol Cybern 81:381-402
+.. footbibliography::
 
 Sends
 +++++

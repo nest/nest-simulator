@@ -41,19 +41,19 @@ Description
 +++++++++++
 
 ``stdp_triplet_synapse`` is a connection with spike time dependent
-plasticity accounting for spike triplet effects (as defined in [1]_).
+plasticity accounting for spike triplet effects (as defined in :footcite:p:`Pfister2006`).
 
 Notes:
 
-- Presynaptic traces ``r_1`` and ``r_2`` of [1]_ are stored in the connection as
+- Presynaptic traces ``r_1`` and ``r_2`` of :footcite:p:`Pfister2006` are stored in the connection as
   ``Kplus`` and ``Kplus_triplet`` and decay with time-constants ``tau_plus`` and
   ``tau_plus_triplet``, respectively.
-- Postsynaptic traces ``o_1`` and ``o_2`` of [1]_ are acquired from the postsynaptic
+- Postsynaptic traces ``o_1`` and ``o_2`` of :footcite:p:`Pfister2006` are acquired from the postsynaptic
   neuron states ``Kminus_`` and ``triplet_Kminus_`` which decay on time-constants
   ``tau_minus`` and ``tau_minus_triplet``, respectively. These two time-constants
   can be set as properties of the postsynaptic neuron.
-- This version implements the 'all-to-all' spike interaction of [1]_. The
-  'nearest-spike' interaction of [1]_ can currently not be implemented
+- This version implements the 'all-to-all' spike interaction of :footcite:p:`Pfister2006`. The
+  'nearest-spike' interaction of :footcite:p:`Pfister2006` can currently not be implemented
   without changing the postsynaptic archiving-node (clip the traces to a
   maximum of 1).
 
@@ -69,25 +69,25 @@ Parameters
 
 =================  ======  ===========================================
  tau_plus          real    Time constant of short presynaptic trace
-                           (tau_plus of [1]_)
+                           (tau_plus of :footcite:p:`Pfister2006`)
  tau_plus_triplet  real    Time constant of long presynaptic trace
-                           (tau_x of [1]_)
+                           (tau_x of :footcite:p:`Pfister2006`)
  Aplus             real    Weight of pair potentiation rule
-                           (A_plus_2 of [1]_)
+                           (A_plus_2 of :footcite:p:`Pfister2006`)
  Aplus_triplet     real    Weight of triplet potentiation rule
-                           (A_plus_3 of [1]_)
+                           (A_plus_3 of :footcite:p:`Pfister2006`)
  Aminus            real    Weight of pair depression rule
-                           (A_minus_2 of [1]_)
+                           (A_minus_2 of :footcite:p:`Pfister2006`)
  Aminus_triplet    real    Weight of triplet depression rule
-                           (A_minus_3 of [1]_)
+                           (A_minus_3 of :footcite:p:`Pfister2006`)
  Wmax              real    Maximum allowed weight
 =================  ======  ===========================================
 
 =============== ======  ===========================================
 **States**
 -------------------------------------------------------------------
- Kplus          real    Pre-synaptic trace (r_1 of [1]_)
- Kplus_triplet  real    Triplet pre-synaptic trace (r_2 of [1]_)
+ Kplus          real    Pre-synaptic trace (r_1 of :footcite:p:`Pfister2006`)
+ Kplus_triplet  real    Triplet pre-synaptic trace (r_2 of :footcite:p:`Pfister2006`)
 =============== ======  ===========================================
 
 Transmits
@@ -98,9 +98,7 @@ SpikeEvent
 References
 ++++++++++
 
-.. [1] Pfister JP, Gerstner W (2006). Triplets of spikes in a model
-       of spike timing-dependent plasticity.  The Journal of Neuroscience
-       26(38):9673-9682. DOI: https://doi.org/10.1523/JNEUROSCI.1425-06.2006
+.. footbibliography::
 
 See also
 ++++++++

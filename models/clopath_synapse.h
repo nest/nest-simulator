@@ -49,7 +49,7 @@ Description
 +++++++++++
 
 ``clopath_synapse`` is a connector to create Clopath synapses as defined
-in [1]_. In contrast to usual STDP, the change of the synaptic weight does
+in :footcite:p:`Clopath2010a`. In contrast to usual STDP, the change of the synaptic weight does
 not only depend on the pre- and postsynaptic spike timing but also on the
 postsynaptic membrane potential.
 
@@ -65,7 +65,7 @@ archiving. So far, compatible models are ``aeif_psc_delta_clopath`` and
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 
-See also [2]_, [3]_.
+See also :footcite:p:`Clopath2010b`, :footcite:p:`ClopathModelDB`.
 
 Parameters
 ++++++++++
@@ -88,14 +88,7 @@ SpikeEvent
 References
 ++++++++++
 
-.. [1] Clopath et al. (2010). Connectivity reflects coding:
-       a model of voltage-based STDP with homeostasis.
-       Nature Neuroscience 13:3, 344--352. DOI: https://doi.org/10.1038/nn.2479
-.. [2] Clopath and Gerstner (2010). Voltage and spike timing interact
-       in STDP – a unified model. Frontiers in Synaptic Neuroscience 2:25.
-       DOI: https://doi.org/10.3389/fnsyn.2010.00025
-.. [3] Voltage-based STDP synapse (Clopath et al. 2010) on ModelDB
-       https://modeldb.science/144566?tab=1
+.. footbibliography::
 
 See also
 ++++++++

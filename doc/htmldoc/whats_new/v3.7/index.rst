@@ -16,7 +16,7 @@ If you transition from an earlier version, please see our extensive
 E-prop plasticity in NEST
 -------------------------
 
-Another new NEST feature is eligibility propagation (e-prop) [1]_, a local and
+Another new NEST feature is eligibility propagation (e-prop) :footcite:p:`Bellec2020`, a local and
 online learning algorithm for recurrent spiking neural networks (RSNNs) that is
 biologically plausible and approaches the performance of backpropagation through
 time (BPTT). It relies on eligibility traces and neuron-specific learning
@@ -39,7 +39,7 @@ For further information, see:
 Connectivity concepts
 ---------------------
 
-The documentation on :ref:`connectivity_concepts` now serves as a living reference for the connection rules defined in the article "Connectivity concepts in neuronal network modeling" [2]_.
+The documentation on :ref:`connectivity_concepts` now serves as a living reference for the connection rules defined in the article "Connectivity concepts in neuronal network modeling" :footcite:p:`Senk2022b`.
 
 Tripartite connectivity in NEST
 -------------------------------
@@ -92,7 +92,7 @@ Neuron model with integrated short-term plasticity
 
 The new ``iaf_tum_2000`` neuron model incoroporates the ``tsodyks_synapse`` directly
 into the neuron model. In particular,
-``iaf_tum_2000`` implements short-term depression and short-term facilitation based on Tsodyks et al. [3]_.
+``iaf_tum_2000`` implements short-term depression and short-term facilitation based on Tsodyks et al. :footcite:p:`Tsodyks2000`.
 It is based on the ``iaf_psc_exp`` model.
 
 
@@ -133,13 +133,4 @@ recent C++ compilers should do so.
 References
 ----------
 
-.. [1] Bellec G, Scherr F, Subramoney F, Hajek E, Salaj D, Legenstein R,
-       Maass W (2020). A solution to the learning dilemma for recurrent
-       networks of spiking neurons. Nature Communications, 11:3625.
-       https://doi.org/10.1038/s41467-020-17236-y
-
-.. [2] Senk J, Kriener B, Djurfeldt M, Voges N, Jiang HJ, et al. (2022) Connectivity concepts in neuronal network modeling. PLOS Computational Biology 18(9): e1010086. https://doi.org/10.1371/journal.pcbi.1010086
-
-.. [3] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent
-       networks with frequency-dependent synapses. Journal of Neuroscience,
-       20 RC50. URL: http://infoscience.epfl.ch/record/183402
+.. footbibliography::

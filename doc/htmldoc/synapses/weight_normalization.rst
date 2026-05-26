@@ -6,7 +6,7 @@ Weight normalization
 Preliminaries
 -------------
 
-Suppose that the incoming synaptic weights of a neuron are given as :math:`\mathbf{w}=w_1, w_2, \ldots, w_n`. A plasticity rule might require that the vector norm :math:`|\mathbf{w}|` remains constant. For example, the L1-norm :math:`|\mathbf{w}|_1` is used in [1]_, [2]_:
+Suppose that the incoming synaptic weights of a neuron are given as :math:`\mathbf{w}=w_1, w_2, \ldots, w_n`. A plasticity rule might require that the vector norm :math:`|\mathbf{w}|` remains constant. For example, the L1-norm :math:`|\mathbf{w}|_1` is used in :footcite:p:`Lazar2009`, :footcite:p:`Klos2019`:
 
 .. math::
 
@@ -45,6 +45,4 @@ To summarize, the basic strategy is to divide the total simulated time into inte
 References
 ----------
 
-.. [1] Lazar, A. et al. (2009). SORN: a Self-organizing Recurrent Neural Network. Frontiers in Computational Neuroscience, 3. DOI: `10.3389/neuro.10.023.2009 <https://doi.org/10.3389/neuro.10.023.2009>`__
-
-.. [2] Klos, C. et al. Bridging structure and function: A model of sequence learning and prediction in primary visual cortex. PLoS Computational Biology, 14(6). DOI: `10.1371/journal.pcbi.1006187 <https://doi.org/10.1371/journal.pcbi.1006187>`__
+.. footbibliography::

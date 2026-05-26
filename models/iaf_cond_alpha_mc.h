@@ -111,7 +111,7 @@ the receptor types given in the ``receptor_types`` entry of the state Dictionary
 Note that in contrast to the single-compartment ``iaf_cond_alpha`` model, all
 synaptic weights must be positive numbers!
 
-See also [1]_, [2]_.
+See also :footcite:p:`Meffin2004`, :footcite:p:`Bernander1991`.
 
 Parameters
 ++++++++++
@@ -152,17 +152,7 @@ References
 ++++++++++
 
 
-.. [1] Meffin H, Burkitt AN, Grayden DB (2004). An analytical
-       model for the large, fluctuating synaptic conductance state typical of
-       neocortical neurons in vivo. Journal of Computational Neuroscience,
-       16:159-175.
-       DOI: https://doi.org/10.1023/B:JCNS.0000014108.03012.81
-.. [2] Bernander O, Douglas RJ, Martin KAC, Koch C (1991). Synaptic background
-       activity influences spatiotemporal integration in single pyramidal
-       cells.  Proceedings of the National Academy of Science USA,
-       88(24):11569-11573.
-       DOI: https://doi.org/10.1073/pnas.88.24.11569
-
+.. footbibliography::
 
 See also
 ++++++++

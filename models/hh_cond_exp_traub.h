@@ -67,21 +67,21 @@ Description
 
 ``hh_cond_exp_traub`` is an implementation of a modified Hodgkin-Huxley model.
 
-This model was specifically developed for a major review of simulators [1]_,
-based on a model of hippocampal pyramidal cells by Traub and Miles [2]_.
-The key differences between the current model and the model in [2]_ are:
+This model was specifically developed for a major review of simulators :footcite:p:`Brette2007`,
+based on a model of hippocampal pyramidal cells by Traub and Miles :footcite:p:`Traub1991`.
+The key differences between the current model and the model in :footcite:p:`Traub1991` are:
 
 - This model is a point neuron, not a compartmental model.
 - This model includes only ``I_Na`` and ``I_K``, with simpler ``I_K`` dynamics than
-  in [2]_, so it has only three instead of eight gating variables;
+  in :footcite:p:`Traub1991`, so it has only three instead of eight gating variables;
   in particular, all Ca dynamics have been removed.
 - Incoming spikes induce an instantaneous conductance change followed by
   exponential decay instead of activation over time.
 
 This model is primarily provided as reference implementation for hh_coba
 example of the Brette et al (2007) review. Default parameter values are chosen
-to match those used with NEST 1.9.10 when preparing data for [1]_. Code for all
-simulators covered is available from ModelDB [3]_.
+to match those used with NEST 1.9.10 when preparing data for :footcite:p:`Brette2007`. Code for all
+simulators covered is available from ModelDB :footcite:p:`TraubModelDB`.
 
 .. note::
 
@@ -90,8 +90,8 @@ simulators covered is available from ModelDB [3]_.
 
    To avoid multiple spikes from occurring during the falling flank of a
    spike, it is essential to choose a sufficiently long refractory period.
-   Traub and Miles used  :math:`t_{ref} = 3` ms ([2]_, p 118), while we used
-   :math:`t_{ref} = 2` ms in [2]_.
+   Traub and Miles used  :math:`t_{ref} = 3` ms (:footcite:p:`Traub1991`, p 118), while we used
+   :math:`t_{ref} = 2` ms in :footcite:p:`Traub1991`.
 
    For further details on asynchronicity in spike and firing events with Hodgkin Huxley models
    see :ref:`here <hh_details>`.
@@ -126,12 +126,7 @@ I_e          pA     External input current
 References
 ++++++++++
 
-.. [1] Brette R et al. (2007). Simulation of networks of spiking neurons: A
-       review of tools and strategies. Journal of Computational Neuroscience
-       23:349-98. DOI: https://doi.org/10.1007/s10827-007-0038-6
-.. [2] Traub RD and Miles R (1991). Neuronal networks of the hippocampus.
-       Cambridge University Press, Cambridge UK.
-.. [3] http://modeldb.yale.edu/83319
+.. footbibliography::
 
 Sends
 +++++

@@ -81,7 +81,7 @@ Spike detection is done by a combined threshold-and-local-maximum search: if
 there is a local maximum above a certain threshold of the membrane potential,
 it is considered a spike.
 
-See also [1]_, [2]_, [3]_.
+See also :footcite:p:`Gerstner2002`, :footcite:p:`Dayan2001`, :footcite:p:`Hodgkin1952`.
 
 For details on asynchronicity in spike and firing events with Hodgkin Huxley models
 see :ref:`here <hh_details>`.
@@ -119,15 +119,7 @@ References
 ++++++++++
 
 
-.. [1] Gerstner W, Kistler W (2002). Spiking neuron models: Single neurons,
-       populations, plasticity. New York: Cambridge University Press
-.. [2] Dayan P, Abbott LF (2001). Theoretical neuroscience: Computational and
-       mathematical modeling of neural systems. Cambridge, MA: MIT Press.
-       https://pure.mpg.de/pubman/faces/ViewItemOverviewPage.jsp?itemId=item_3006127>
-.. [3] Hodgkin AL and Huxley A F (1952). A quantitative description of
-       membrane current and its application to conduction and excitation in
-       nerve. The Journal of Physiology 117.
-       DOI: https://doi.org/10.1113/jphysiol.1952.sp004764
+.. footbibliography::
 
 Sends
 +++++

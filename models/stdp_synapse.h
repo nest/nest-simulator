@@ -47,7 +47,7 @@ Description
 +++++++++++
 
 ``stdp_synapse`` is a connector to create synapses with spike time
-dependent plasticity (as defined in [1]_). Here the weight dependence
+dependent plasticity (as defined in :footcite:p:`Guetig2003`). Here the weight dependence
 exponent can be set separately for potentiation and depression.
 
 .. warning::
@@ -57,7 +57,7 @@ exponent can be set separately for potentiation and depression.
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 
-See also [2]_, [3]_, [4]_.
+See also :footcite:p:`Rubin2001`, :footcite:p:`Song2000`, :footcite:p:`vanRossum2000`.
 
 Parameters
 ++++++++++
@@ -81,20 +81,7 @@ SpikeEvent
 References
 ++++++++++
 
-.. [1] Guetig et al. (2003). Learning input correlations through nonlinear
-       temporally asymmetric hebbian plasticity. Journal of Neuroscience,
-       23:3697-3714 DOI: https://doi.org/10.1523/JNEUROSCI.23-09-03697.2003
-.. [2] Rubin J, Lee D, Sompolinsky H (2001). Equilibrium
-       properties of temporally asymmetric Hebbian plasticity. Physical Review
-       Letters, 86:364-367. DOI: https://doi.org/10.1103/PhysRevLett.86.364
-.. [3] Song S, Miller KD, Abbott LF (2000). Competitive Hebbian learning
-       through spike-timing-dependent synaptic plasticity. Nature Neuroscience
-       3(9):919-926.
-       DOI: https://doi.org/10.1038/78829
-.. [4] van Rossum MCW, Bi G-Q, Turrigiano GG (2000). Stable Hebbian learning
-       from spike timing-dependent plasticity. Journal of Neuroscience,
-       20(23):8812-8821.
-       DOI: https://doi.org/10.1523/JNEUROSCI.20-23-08812.2000
+.. footbibliography::
 
 See also
 ++++++++

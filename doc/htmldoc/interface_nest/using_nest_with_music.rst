@@ -9,7 +9,7 @@ Introduction
 NEST supports the `MUSIC interface
 <https://github.com/INCF/MUSIC>`__, a standard by
 the INCF, which allows the transmission of data between applications at
-runtime [1]_. It can be used to couple NEST with other simulators, with
+runtime :footcite:p:`Djurfeldt2010`. It can be used to couple NEST with other simulators, with
 applications for stimulus generation and data analysis and visualization
 and with custom applications that also use the MUSIC interface.
 
@@ -25,10 +25,7 @@ You can find the installation instructions for MUSIC on their Github Page:
 Reference
 ~~~~~~~~~~~
 
-.. [1] Djurfeldt M, et al. 2010. Run-time interoperability between neuronal
- simulators based on the MUSIC framework. Neuroinformatics, 8.
- `doi:10.1007/s12021-010-9064-z*
- <https://link.springer.com/article/10.1007/s12021-010-9064-z>`_.
+.. footbibliography::
 
 Sending and receiving spike events
 ----------------------------------

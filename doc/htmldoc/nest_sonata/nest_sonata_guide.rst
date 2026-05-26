@@ -4,7 +4,7 @@ NEST SONATA guide
 =================
 
 NEST supports building and simulating networks of point neurons described by the
-`SONATA <https://github.com/AllenInstitute/sonata>`_ format [1]_.
+`SONATA <https://github.com/AllenInstitute/sonata>`_ format :footcite:p:`Dai2020`.
 This guide provides the details about how a SONATA network must be specified to be supported natively by NEST.
 
 .. _sec:sonata_configure:
@@ -293,12 +293,10 @@ expects to be included:
 More about SONATA
 -----------------
 
-For a full specification of the SONATA format, see [1]_ and the `SONATA GitHub page <https://github.com/AllenInstitute/sonata>`_.
+For a full specification of the SONATA format, see :footcite:p:`Dai2020` and the `SONATA GitHub page <https://github.com/AllenInstitute/sonata>`_.
 
 
 References
 ~~~~~~~~~~
 
-.. [1] Dai K, Hernando J, Billeh YN, Gratiy SL, Planas J, et al. (2020).
-       The SONATA data format for efficient description of large-scale network models.
-       PLOS Computational Biology 16(2): e1007696. https://doi.org/10.1371/journal.pcbi.1007696
+.. footbibliography::

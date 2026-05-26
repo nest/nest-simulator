@@ -21,12 +21,12 @@ Thus, the first forced spike occurs at :math:`t_0 + o`, and each following force
 
 Currently, the following models are endowed with this mechanism:
 
-- `eprop_iaf_adapt_bsshslm_2020.cpp`
-- `eprop_iaf_adapt.cpp`
-- `eprop_iaf_bsshslm_2020.cpp`
-- `eprop_iaf_psc_delta_adapt.cpp`
-- `eprop_iaf_psc_delta.cpp`
-- `eprop_iaf.cpp`
-- `iaf_psc_delta.cpp`
+- ``eprop_iaf_adapt_bsshslm_2020.cpp``
+- ``eprop_iaf_adapt.cpp``
+- ``eprop_iaf_bsshslm_2020.cpp``
+- ``eprop_iaf_psc_delta_adapt.cpp``
+- ``eprop_iaf_psc_delta.cpp``
+- ``eprop_iaf.cpp``
+- ``iaf_psc_delta.cpp``
 
-For developers: All `Node`s that inherit from `ArchivingNode` automatically inherit the `IgnoreAndSpike` class. To enable this functionality for a model that is not listed above, wrap the spike-emission condition in `spike_event_is_due()`.
+For developers: All Node`s that inherit from ``ArchivingNode`` automatically inherit the``IgnoreAndSpike`` class. To enable this functionality for a model that is not listed above, wrap the spike-emission condition in ``spike_event_is_due()``.

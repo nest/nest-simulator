@@ -1,6 +1,9 @@
 {
 	"python": {
-		"min": "3.10"
+		"min": "3.9",
+		"docs_build": "3.10",
+		"wheel_min": "3.9",
+		"wheel_max": "3.13"
 	},
 	"pip": {
 		"min": "20.3.3"

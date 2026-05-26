@@ -35,8 +35,13 @@
 
 /* BeginUserDocs: stimulation backend
 
+Short description
++++++++++++++++++
+
 Stimulation backend `mpi` - Receive stimulation parameters via MPI
-##################################################################
+
+Description
++++++++++++
 
 .. admonition:: Availability
 

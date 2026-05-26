@@ -30,8 +30,10 @@
 
 /* BeginUserDocs: NOINDEX
 
+Short description
++++++++++++++++++
+
 Recording backend `ascii` - Write data to plain text files
-----------------------------------------------------------
 
 Description
 ~~~~~~~~~~~

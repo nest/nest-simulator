@@ -43,7 +43,7 @@ Short description
 Izhikevich neuron model
 
 Description
-++++++++++++
++++++++++++
 
 ``izhikevich`` implements the simple spiking neuron model introduced by Izhikevich [1]_.
 This model reproduces spiking and bursting behavior of known types of cortical neurons.

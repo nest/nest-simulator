@@ -494,7 +494,7 @@ def get_parameters_hierarchical_addressing(nc, params):
     # or list of strings.
     if isinstance(params[0], str):
         value_list = nc.get(params[0])
-        if not isinstance(value_list, tuple):
+        if not isinstance(value_list, (tuple, list)):
             value_list = (value_list,)
     else:
         raise TypeError("First argument must be a string, specifying path into hierarchical dictionary")

@@ -30,6 +30,7 @@ import nest
 import pytest
 
 
+@pytest.mark.skipif_missing_gsl
 def test_nest_behaves_well_after_exception_during_update():
     # Pathological parameters to trigger numerical exception
     nrn = nest.Create("aeif_cond_alpha", params={"I_e": 10000000.0, "g_L": 0.01})

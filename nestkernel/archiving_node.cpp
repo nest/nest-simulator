@@ -224,7 +224,7 @@ nest::ArchivingNode::get_status( Dictionary& d ) const
   d[ names::tau_minus_triplet ] = tau_minus_triplet_;
   d[ names::post_trace ] = trace_;
 #ifdef DEBUG_ARCHIVER
-  d[ names::archiver_length ] = history_.size();
+  d[ names::archiver_length ] = static_cast< long >( history_.size() );
 #endif
 
   // add status dict items from the parent class

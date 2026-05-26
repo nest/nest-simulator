@@ -58,6 +58,7 @@ def test_connect_all():
     assert len(nest.GetConnections(third, post)) == n_primary
 
 
+@pytest.mark.skipif_missing_gsl
 def test_connect_astro():
     n_pre, n_post, n_third = 4, 2, 3
     pre = nest.Create("aeif_cond_alpha_astro", n_pre)

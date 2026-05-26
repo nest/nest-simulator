@@ -249,7 +249,6 @@ const std::string g_ps( "g_ps" );
 const std::string g_rr( "g_rr" );
 const std::string g_sfa( "g_sfa" );
 const std::string g_sp( "g_sp" );
-const std::string gamma( "gamma" );
 const std::string gamma_shape( "gamma_shape" );
 const std::string gaussian( "gaussian" );
 const std::string global_id( "global_id" );
@@ -518,6 +517,8 @@ const std::string structural_plasticity_synapses( "structural_plasticity_synapse
 const std::string structural_plasticity_update_interval( "structural_plasticity_update_interval" );
 const std::string surrogate_gradient( "surrogate_gradient" );
 const std::string surrogate_gradient_function( "surrogate_gradient_function" );
+const std::string surrogate_gradient_height( "surrogate_gradient_height" );
+const std::string surrogate_gradient_width( "surrogate_gradient_width" );
 const std::string synapse_id( "synapse_id" );
 const std::string synapse_label( "synapse_label" );
 const std::string synapse_model( "synapse_model" );

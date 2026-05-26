@@ -65,8 +65,7 @@ FlushEventMechanism::set_status( const Dictionary& d )
 
   if ( flush_event_send_interval_ <= 0.0 )
   {
-    throw BadProperty(
-      "Interval since previous event after which a flush event is sent flush_event_send_interval > 0 required." );
+    throw BadProperty( "flush_event_send_interval > 0 required." );
   }
 }
 

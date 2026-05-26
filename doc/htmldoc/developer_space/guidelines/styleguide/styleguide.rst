@@ -533,6 +533,21 @@ See `the Sphinx documentation on referencing Python objects
 information.
 
 
+Use version numbers from ``versions.json``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Use the ``:version:`` role to insert a package's minimum version so it
+stays in sync with the source of truth in ``doc/htmldoc/_ext/versions.json``::
+
+   NEST requires CMake :version:`cmake` or later.
+
+To reference a non-default level (e.g., ``max``)::
+
+   Tested up to CSA :version:`csa,max`.
+
+Available packages and levels are defined in ``doc/htmldoc/_ext/versions.json``.
+
+
 reStructuredText text formatting
 --------------------------------
 

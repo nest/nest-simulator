@@ -26,12 +26,12 @@ Pre-release validation for pynest/examples/examples.yml.
 Run this after check_examples_registry.py (which checks file/YAML sync).
 This script checks:
 
-  2. Changed files: any example file changed since PREVIOUS_TAG must have
-     its last_change field updated from "no change".
+  2. Changed files: any example file changed since the previous stable tag must
+     have its last_change field updated from "no change".
      New files must have last_change starting with "new since".
   3. Required fields: all YAML entries must have non-empty values for every
-     required field.  type:skip entries must have a non-empty notes field.
-     type:skip entries must not have convert_to_notebook: true.
+     required field.  Entries with run_in_ci: false must have a non-empty
+     notes field.  runner must be one of the allowed values.
   4. Paths: all helper_scripts and data_files paths must exist on disk.
 
 Check numbers correspond to the steps in trigger-examples-on-prerelease.yml.
@@ -45,18 +45,23 @@ Usage:
 """
 
 import argparse
+import logging
 import subprocess
 import sys
 from pathlib import Path
 
 import yaml
 
-REQUIRED_FIELDS = ["name", "path", "type", "category", "convert_to_notebook", "last_change"]
+logger = logging.getLogger(__name__)
+
+REQUIRED_FIELDS = ["name", "path", "runner", "run_in_ci", "category", "convert_to_notebook", "last_change"]
+
+RUNNER_VALUES = {"python", "snakemake"}
 
 NO_CHANGE = "no change"
 
 
-def get_repo_root():
+def get_repo_root() -> Path:
     result = subprocess.run(
         ["git", "rev-parse", "--show-toplevel"],
         capture_output=True,
@@ -66,9 +71,9 @@ def get_repo_root():
     return Path(result.stdout.strip())
 
 
-def run_git(args, repo_root):
+def run_git(git_args: list[str], repo_root: Path) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
-        ["git"] + args,
+        ["git"] + git_args,
         cwd=repo_root,
         capture_output=True,
         text=True,
@@ -76,23 +81,16 @@ def run_git(args, repo_root):
     )
 
 
-def get_changed_files(prev_tag, examples_dir, repo_root):
-    """
-    Return a list of paths relative to examples_dir that changed since prev_tag.
-    Only includes .py files.
-    """
+def get_changed_files(prev_tag: str, examples_dir: Path, repo_root: Path) -> list[str]:
+    """Return paths relative to examples_dir that changed since prev_tag (only .py files)."""
     rel_examples = examples_dir.relative_to(repo_root)
     result = run_git(["diff", "--name-only", f"{prev_tag}..HEAD", "--", str(rel_examples)], repo_root)
     prefix = str(rel_examples) + "/"
-    changed = []
-    for line in result.stdout.strip().splitlines():
-        line = line.strip()
-        if line and line.endswith(".py"):
-            changed.append(line.removeprefix(prefix))
-    return changed
+    stripped_lines = [line.strip() for line in result.stdout.splitlines()]
+    return [line.removeprefix(prefix) for line in stripped_lines if line.endswith(".py")]
 
 
-def exists_at_tag(rel_path, tag, examples_dir, repo_root):
+def exists_at_tag(rel_path: str, tag: str, examples_dir: Path, repo_root: Path) -> bool:
     """Return True if examples_dir/rel_path existed in the given tag."""
     rel_examples = examples_dir.relative_to(repo_root)
     result = subprocess.run(
@@ -104,14 +102,16 @@ def exists_at_tag(rel_path, tag, examples_dir, repo_root):
     return bool(result.stdout.strip())
 
 
-def load_yaml_entries(examples_dir):
+def load_yaml_entries(examples_dir: Path) -> list[dict]:
     yaml_file = examples_dir / "examples.yml"
-    with open(yaml_file) as f:
-        data = yaml.safe_load(f)
+    with yaml_file.open(encoding="utf-8") as yaml_fh:
+        data = yaml.safe_load(yaml_fh)
     return data["examples"]
 
 
-def main():
+def main() -> None:
+    logging.basicConfig(format="%(levelname)s: %(message)s", level=logging.WARNING)
+
     parser = argparse.ArgumentParser(description="Pre-release validation for examples.yml")
     parser.add_argument("--examples-dir", required=True, help="Path to pynest/examples/ directory")
     parser.add_argument("--previous-tag", required=True, help="Last stable release tag, e.g. vMAJOR.MINOR")
@@ -126,7 +126,7 @@ def main():
     print()
 
     entries = load_yaml_entries(examples_dir)
-    by_path = {e["path"]: e for e in entries}
+    by_path = {entry["path"]: entry for entry in entries}
     failures = []
 
     # ── Check 2: changed and new files ───────────────────────────────────────
@@ -135,8 +135,8 @@ def main():
 
     if changed_files:
         print(f"  {len(changed_files)} .py file(s) changed:")
-        for f in sorted(changed_files):
-            print(f"    {f}")
+        for changed_path in sorted(changed_files):
+            print(f"    {changed_path}")
     else:
         print(f"  No .py files changed since {prev_tag}.")
 
@@ -176,10 +176,11 @@ def main():
                 field_failures.append(f"  {name}: field '{field}' is missing or empty")
         if entry.get("convert_to_notebook") is True and not entry.get("models"):
             field_failures.append(f"  {name}: convert_to_notebook=true but 'models' is missing or empty")
-        if entry.get("type") == "skip" and not entry.get("notes"):
-            field_failures.append(f"  {name}: type=skip but 'notes' is missing or empty (shown in dashboard)")
-        if entry.get("type") == "skip" and entry.get("convert_to_notebook") is True:
-            field_failures.append(f"  {name}: type=skip and convert_to_notebook=true are contradictory")
+        runner = entry.get("runner")
+        if runner is not None and runner not in RUNNER_VALUES:
+            field_failures.append(f"  {name}: runner={runner!r} not in {sorted(RUNNER_VALUES)}")
+        if entry.get("run_in_ci") is False and not entry.get("notes"):
+            field_failures.append(f"  {name}: run_in_ci=false but 'notes' is missing or empty (shown in dashboard)")
 
     if field_failures:
         print(f"  {len(field_failures)} field issue(s) found.")

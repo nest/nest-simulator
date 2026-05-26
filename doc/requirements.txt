@@ -9,7 +9,7 @@ example >= 0.1.0
 flask>=2.3.2
 flask_cors>=3.0.10
 graphviz
-ipykernel >= 6.22.0
+ipykernel >= 7.2.0
 ipython >= 8.11.0
 jupyter >= 1.0.0
 matplotlib >= 3.7.1

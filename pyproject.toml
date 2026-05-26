@@ -290,7 +290,88 @@ test-requires = [
   "scipy",
 ]
 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+#   Testsuite tool configs
+#
+
+# isort
+# config see https://pycqa.github.io/isort/docs/configuration/config_files
+#
+[tool.isort]
+atomic = true
+known_third_party = "nest"
+line_length = 120
+multi_line_output = 3
+profile = "black"
+skip_gitignore = true
+
+# Black
+# config see https://black.readthedocs.io/en/stable/usage_and_configuration/the_basics.html#command-line-options
+#
+[tool.black]
+line-length = 120
+
+
+# Flake8
+# config see https://flake8.pycqa.org/en/latest/user/configuration.html#configuration-locations
+#
+[tool.flake8]
+# This is ignored
+# see discussions around https://github.com/PyCQA/flake8/issues/234
+
+
+# MyPy
+# config see https://mypy.readthedocs.io/en/stable/config_file.html
+#
+[tool.mypy]
+check_untyped_defs = true
+mypy_path = "src"
+exclude = [
+    ".git/",
+    ".snakemake/",
+    ".pytest_cache/",
+    "sync-test-env/",
+    "conda/",
+    "env/",
+]
+
+
+# Coverage.py
+# config see https://coverage.readthedocs.io/en/latest/config.html
+#
+[tool.coverage.run]
+branch = true
+
+[tool.coverage.report]
+# Regexes for lines to exclude from consideration
+exclude_also = [
+    # Don't complain about missing debug-only code:
+    "def __repr__",
+    "if self\\.debug",
+
+    # Don't complain if tests don't hit defensive assertion code:
+    "raise AssertionError",
+    "raise NotImplementedError",
+
+    # Don't complain if non-runnable code isn't run:
+    "if 0:",
+    "if __name__ == .__main__.:",
+
+    # Don't complain about abstract methods, they aren't run:
+    "@(abc\\.)?abstractmethod",
+    ]
+
+[tool.coverage.html]
+directory = "coverage_html"
+
+
+# PyTest
+# config see https://docs.pytest.org/en/7.1.x/reference/customize.html
+# config options see https://docs.pytest.org/en/7.1.x/reference/reference.html#ini-options-ref
+#
 [tool.pytest.ini_options]
+addopts = "-n 0 --doctest-modules --doctest-glob '*.rst' --mypy --pylint --pydocstyle --cov --cov-report term --cov-report xml:coverage.xml --cov-report html"
 markers = [
     "skipif_missing_gsl: skip test if NEST was built without GSL support",
     "skipif_missing_hdf5: skip test if NEST was built without HDF5 support",
@@ -299,10 +380,107 @@ markers = [
     "skipif_incompatible_mpi: skip test if NEST was built with OpenMPI < 5.0.7",
     "simulation: the simulation class to use. Always pass a 2nd dummy argument"
 ]
+required_plugins = [
+    "pytest-black",
+    "pytest-cov",
+    "pytest-flake8",
+    "pytest-mypy",
+    "pytest-pydocstyle",
+    "pytest-pylint",
+    "pytest-xdist",
+]
+norecursedirs = [
+    "conda",
+    "env",
+    ".git",
+    "__pycache__",
+    "studies",
+    "venv",
+]
+# config see https://docs.python.org/3/library/warnings.html#describing-warning-filters
+# format should be "action:message:category:module:line"
+#
+# src/bennch/utils.py::bennch.utils.deprecated
+#  /home/terhorst/sdvlp/bennch3/src/bennch/utils.py:393: UserWarning: Deprecation warning: foo: Use function bar() instead
+filterwarnings = [
+    "ignore:.*Use function bar.*instead:UserWarning:bennch.utils",
+]
 
-[tool.isort]
-profile = "black"
-known_third_party = "nest"
 
-[tool.black]
-line-length = 120
+# PyLint
+# config see https://pylint.pycqa.org/en/latest/user_guide/usage/run.html
+#
+# [tool.pylint.…] config is extensive and stored in another file. Search order
+# prefers .pylintrc, so look there.
+#
+# Also note that as suggested by pylint docs for joint usage with other tools
+# http://pylint.pycqa.org/en/latest/faq.html?highlight=pylintrc#i-am-using-another-popular-linter-alongside-pylint-which-messages-should-i-disable-to-avoid-duplicates
+[tool.pylint]
+max-line-length = 120
+load-plugins = [
+    "pylint_pydantic",
+]
+
+
+# PyCodeStyle
+# config see https://pycodestyle.pycqa.org/en/latest/intro.html
+#
+# Seemingly no pyproject.toml yet, see tox.ini for now.
+
+
+# PyDocStyle
+# config see https://www.pydocstyle.org/en/stable/usage.html#configuration-files
+#
+[tool.pydocstyle]
+convention = "numpy"
+add-ignore = "D300"
+
+
+# BumpMyVersion
+# config see https://callowayproject.github.io/bump-my-version/tutorials/semantic-versioning-example/
+#
+[tool.bumpversion]
+current_version = "0.1.1-dev.221"
+# parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)"
+
+parse = """(?x)
+    (?P<major>0|[1-9]\\d*)\\.
+    (?P<minor>0|[1-9]\\d*)\\.
+    (?P<patch>0|[1-9]\\d*)
+    (?:
+        -                             # dash separator for pre-release section
+        (?P<pre_l>[a-zA-Z-]+)\\.      # pre-release label
+        (?:0|[1-9]\\d*)               # pre-release version number
+    )?                                # pre-release section is optional
+"""
+
+# serialize = ["{major}.{minor}.{patch}"]
+serialize = [
+    "{major}.{minor}.{patch}-{pre_l}.{distance_to_latest_tag}",
+    "{major}.{minor}.{patch}",
+]
+
+search = "{current_version}"
+replace = "{new_version}"
+regex = false
+ignore_missing_version = true
+tag = true
+sign_tags = false
+tag_name = "v{new_version}"
+tag_message = "Bump version: {current_version} → {new_version}"
+allow_dirty = false
+commit = true
+commit_args = "--no-verify"  # this is required for the bump to not fail the commit
+message = "Bump version: {current_version} → {new_version}"
+
+[tool.bumpversion.parts.pre_l]
+values = ["dev", "rc", "final"]
+optional_value = "final"
+
+[[tool.bumpversion.files]]
+filename = "src/bennch/__init__.py"
+ignore_missing_version = false
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
+ignore_missing_version = false

@@ -1,30 +1,38 @@
+fail_fast: true
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
-      - id: end-of-file-fixer
-      - id: trailing-whitespace
       - id: check-yaml
+      - id: end-of-file-fixer
+      - id: fix-byte-order-marker
       - id: forbid-submodules
       - id: mixed-line-ending
-      - id: fix-byte-order-marker
+        args: [--fix=lf]
+      - id: trailing-whitespace
 
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.16.3
     hooks:
       - id: gitleaks
 
-  - repo: https://github.com/pycqa/isort
-    rev: 8.0.1
+  - repo: https://github.com/pre-commit/mirrors-clang-format
+    rev: v22.1.0
     hooks:
-      - id: isort
-        args: ["--profile", "black", "--thirdparty", "nest"]
+      - id: clang-format
+        types_or: [c++]
 
   - repo: https://github.com/psf/black
     rev: 26.1.0
     hooks:
       - id: black
         language_version: python3
+
+  - repo: https://github.com/pycqa/isort
+    rev: 8.0.1
+    hooks:
+      - id: isort
+        args: ["--profile", "black", "--thirdparty", "nest"]
 
   - repo: https://github.com/shellcheck-py/shellcheck-py
     rev: v0.11.0.1
@@ -47,10 +55,55 @@ repos:
           "testsuite/junit_xml.sh",
         ]
 
-  - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: v22.1.0
+  - repo: https://github.com/PyCQA/flake8
+    rev: 7.3.0
     hooks:
-      - id: clang-format
-        types_or: [c++]
+      - id: flake8
 
-exclude: 'build/.*|thirdparty/.*'
+  - repo: https://github.com/PyCQA/pydocstyle
+    rev: 6.3.0
+    hooks:
+      - id: pydocstyle
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.19.1
+    hooks:
+      - id: mypy
+        additional_dependencies: &TESTDEPS
+          - attrs
+          #- black
+          - csa
+          #- cython
+          - data-science-types
+          - h5py
+          #- isort
+          #- junitparser >= 2
+          #- jupyterlab
+          - matplotlib
+          - mpi4py
+          #- mypy >= 0.8
+          - notebook
+          - numpy
+          - pandas
+          #- pre-commit
+          #- pycodestyle
+          - pydocstyle
+          - pydot
+          #- pytest
+          #- pytest-cov
+          #- pytest-mypy
+          #- pytest-pylint
+          #- pytest-timeout
+          #- pytest-xdist
+          #- rstcheck
+          #- scipy
+          #- terminaltables
+        args: [--python-version=3.11]
+
+  - repo: https://github.com/PyCQA/pylint
+    rev: v4.0.5
+    hooks:
+      - id: pylint
+        additional_dependencies: *TESTDEPS
+
+exclude: 'build/.*|thirdparty/.*|venv/.*'

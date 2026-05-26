@@ -213,13 +213,15 @@ def skipif_missing_music(request, have_music):
 
 
 @pytest.fixture(scope="session")
-def subprocess_compatible_mpi():
+def subprocess_compatible_mpi() -> bool:
     """
     Until at least OpenMPI 4.1.6, the following fails due to a bug in OpenMPI,
     from 5.0.7 is definitely safe.
     """
     try:
-        res = subprocess.run(["mpirun", "-np", "1", "echo"])
+        # Note we want to return bool, so check=False is required to stop
+        # subprocess.run raising an exception.
+        res = subprocess.run(["mpirun", "-np", "1", "echo"], check=False)
         return 0 == res.returncode
     except FileNotFoundError:
         return False

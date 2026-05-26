@@ -153,7 +153,7 @@ def test_histogram_correlation(spikes_times, expected_covariance):
     nest.SetDefaults("correlomatrix_detector", {"delta_tau": 0.5, "tau_max": 2.0, "N_channels": 2})
 
     detector = prepare_correlomatrix_detector(spikes_times)
-    spikes_times_size = list(map(lambda x: len(x), spikes_times))
+    spikes_times_size = list(map(len, spikes_times))
 
     nptest.assert_array_equal(detector.n_events, spikes_times_size)
 

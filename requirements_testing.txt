@@ -12,7 +12,10 @@
 # can be installed by
 #
 #     pip install -r requirements_testing.txt
-
+#
+# As testing of Python code also requires the modules to be available,
+# we also need to install the pynest requirements
+-r requirements_pynest.txt
 attrs
 data-science-types
 junitparser >= 2

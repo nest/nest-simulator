@@ -123,7 +123,7 @@ class TestAeifCondAlphaMultisynapse:
 
         error = np.abs(summed_V_m - multisynapse_neuron_vm.events["V_m"])
 
-        if False:
+        if False:  # pylint: disable=using-constant-test
             # plot timeseries as a sanity check
             import matplotlib.pyplot as plt
 
@@ -249,7 +249,7 @@ class TestAeifCondAlphaMultisynapse:
 
             theo_g = alpha_function(np.array(t), W, tau, t0)
 
-            if False:
+            if False:  # pylint: disable=using-constant-test
                 # plot timeseries as a sanity check
                 import matplotlib.pyplot as plt
 

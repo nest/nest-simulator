@@ -43,6 +43,11 @@ try:
 except AttributeError:
     mode = "generate_reference"
 
+# This file contains a lot of copy-paste reference data, which is not ideal in
+# any case. However, in order to be able to have correct output formatting we
+# disable the line-too-long checks until a better solution is found.
+# pylint: disable=line-too-long
+
 
 @pytest.fixture
 def multimeters():

@@ -35,9 +35,9 @@ the API documentation (``ref_material/pynest_api/``)
 
 def find_all_variables(file_path):
     """
-    This function gets the names of all functions listed in ``__all__``
-    in each of the PyNEST API files, along with the Kernel Attributes
-    found in ``__init__.py`` of ``pynest/nest/``.
+    Get the names of all functions listed in ``__all__`` in each of the PyNEST
+    API files, along with the Kernel Attributes found in ``__init__.py`` of
+    ``pynest/nest/``.
     """
     all_variables = None
 
@@ -79,6 +79,7 @@ def process_directory(directory):
     api_exception_list = ["raster_plot", "visualization", "voltage_trace"]
     files = glob.glob(directory + "**/*.py", recursive=True)
 
+    api_name = None
     for file in files:
         # ignoring the low level api and connection_helpers and helper modules
         if "helper" in file or "ll_api" in file:
@@ -100,7 +101,7 @@ def process_directory(directory):
                 api_name = f"nest.{module_name}"
 
         all_variables = find_all_variables(file)
-        if all_variables:
+        if all_variables and api_name:
             api_dict[api_name] = all_variables
 
     return api_dict

@@ -1,6 +1,6 @@
 [build-system]
 requires = ["scikit-build-core",
-    "cython>=0.28.3",
+    "cython>=3.0.0",
     "setuptools>=61",
     "wheel"
     ]
@@ -42,7 +42,7 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "cython >= 0.28.3",
+  "cython >= 3.0.0",
   "numpy",
   "matplotlib"
 ]

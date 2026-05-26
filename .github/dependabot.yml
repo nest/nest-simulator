@@ -9,3 +9,6 @@ updates:
     directory: /doc
     schedule:
       interval: daily
+    # package version bound updates
+    # see https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference#versioning-strategy--
+    versioning-strategy: "widen"

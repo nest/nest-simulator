@@ -35,11 +35,9 @@
 #
 # convert_to_notebook: true | false
 #   If true, convert-notebooks-on-prerelease.yml converts the example to a
-#   Jupyter notebook for EBRAINS.  Requires 'models' to be non-empty
-#   (enforced by prerelease_check.py).  Independent of run_in_ci, but the
+#   Jupyter notebook for EBRAINS.  Independent of run_in_ci, but the
 #   convention is to set this false when run_in_ci is false — an untested
 #   notebook can rot silently and break for end users.
-#   Used also in Sphinx extensions to filter for relevant examples.
 #
 # category: str
 #   Thematic group (e.g. neurons, networks, synapses, spatial).
@@ -52,8 +50,8 @@
 #   first cell of each converted notebook so readers know what changed.
 #
 # models: list[str]
-#   Used by the Sphinx listexamples directive to link model pages to examples.
-#   Required (non-empty) when convert_to_notebook: true.
+#   NEST model names the example demonstrates.
+#   Planned use: Sphinx listexamples directive (see EXAMPLES_PIPELINE.md).
 #   Note: do not list example-local CopyModel aliases — only the source model names.
 #
 # ── Optional fields ──────────────────────────────────────────────────────────────

@@ -65,9 +65,14 @@ jobs:
 
       - name: Resolve previous stable release tag
         id: prev_tag
+        env:
+          # Pass the user-supplied input through env to avoid shell expression
+          # injection (the value is interpolated by GitHub before the shell parses).
+          INPUT_PREVIOUS_TAG: ${{ inputs.previous_tag }}
+          REF_NAME: ${{ github.ref_name }}
         run: |
           # Use manual input if provided (workflow_dispatch), otherwise auto-detect.
-          PREV="${{ inputs.previous_tag }}"
+          PREV="$INPUT_PREVIOUS_TAG"
           if [ -z "$PREV" ]; then
             PREV=$(git tag --sort=-v:refname | grep -E '^v[0-9]+\.[0-9]+$' | head -1)
           fi
@@ -78,7 +83,7 @@ jobs:
           fi
           echo "tag=$PREV" >> "$GITHUB_OUTPUT"
           echo "Previous stable release : $PREV"
-          echo "Current ref             : ${{ github.ref_name }}"
+          echo "Current ref             : $REF_NAME"
 
       - uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v5.6.0
         with:

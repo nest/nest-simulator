@@ -48,6 +48,7 @@ import argparse
 import fnmatch
 import logging
 import sys
+import textwrap
 from pathlib import Path
 
 import yaml
@@ -91,7 +92,9 @@ def should_ignore(name: str) -> bool:
 
 
 def is_snakemake_project(directory: Path) -> bool:
-    return (directory / "Snakefile").is_file() or (directory / ".snakemake").is_dir()
+    # Detect on Snakefile only; .snakemake/ is a local runtime artifact and is
+    # gitignored, so it cannot be a reliable signal across machines.
+    return (directory / "Snakefile").is_file()
 
 
 def get_entry_point_files(directory: Path) -> list[Path]:
@@ -162,6 +165,7 @@ def validate_yaml(data: dict) -> None:
     if not isinstance(data["examples"], list):
         logger.error("'examples' must be a list")
         sys.exit(1)
+    seen_paths: dict[str, str] = {}
     for idx, example in enumerate(data["examples"]):
         if not isinstance(example, dict):
             logger.error("Example %d must be a dictionary", idx)
@@ -172,6 +176,16 @@ def validate_yaml(data: dict) -> None:
         if "path" not in example:
             logger.error("Example '%s' missing 'path' field", example.get("name"))
             sys.exit(1)
+        path = example["path"]
+        if path in seen_paths:
+            logger.error(
+                "Duplicate path %r in examples.yml (entries %r and %r)",
+                path,
+                seen_paths[path],
+                example["name"],
+            )
+            sys.exit(1)
+        seen_paths[path] = example["name"]
 
 
 def compare_discovered_with_yaml(
@@ -215,29 +229,29 @@ def generate_suggested_yaml(missing: list[dict], since_version: str | None = Non
 
     last_change_value = f"new since version {since_version}" if since_version else "no change"
 
-    lines: list[str] = []
+    chunks: list[str] = []
     current_category: str | None = None
 
     for item in sorted(missing, key=lambda entry: (entry["category"], entry["name"])):
         if item["category"] != current_category:
             if current_category is not None:
-                lines.append("")
-            lines.append(f"  # {item['category'].capitalize()} examples")
+                chunks.append("")
+            chunks.append(f"  # {item['category'].capitalize()} examples")
             current_category = item["category"]
-        lines.extend(
-            [
-                f"  - name: {item['name']}",
-                f"    path: {item['path']}",
-                "    runner: python",
-                "    run_in_ci: true",
-                "    convert_to_notebook: true",
-                f"    category: {item['category']}",
-                f'    last_change: "{last_change_value}"',
-                "",
-            ]
-        )
+        entry = {
+            "name": item["name"],
+            "path": item["path"],
+            "runner": "python",
+            "run_in_ci": True,
+            "convert_to_notebook": True,
+            "category": item["category"],
+            "last_change": last_change_value,
+        }
+        # safe_dump handles quoting for any special characters in name/path/category.
+        rendered = yaml.safe_dump([entry], default_flow_style=False, sort_keys=False).rstrip()
+        chunks.append(textwrap.indent(rendered, "  "))
 
-    return "\n".join(lines)
+    return "\n".join(chunks) + "\n"
 
 
 def main() -> None:

@@ -98,8 +98,22 @@ def exists_at_tag(rel_path: str, tag: str, examples_dir: Path, repo_root: Path) 
         cwd=repo_root,
         capture_output=True,
         text=True,
+        check=True,
     )
     return bool(result.stdout.strip())
+
+
+def validate_tag(tag: str, repo_root: Path) -> None:
+    """Exit with a friendly error if tag does not resolve to a commit."""
+    result = subprocess.run(
+        ["git", "rev-parse", "--verify", f"{tag}^{{commit}}"],
+        cwd=repo_root,
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        logger.error("git tag %r not found. Fetch tags with: git fetch --tags --force", tag)
+        sys.exit(1)
 
 
 def load_yaml_entries(examples_dir: Path) -> list[dict]:
@@ -120,6 +134,7 @@ def main() -> None:
     examples_dir = Path(args.examples_dir).resolve()
     prev_tag = args.previous_tag
     repo_root = get_repo_root()
+    validate_tag(prev_tag, repo_root)
 
     print(f"Examples directory       : {examples_dir}")
     print(f"Previous stable release  : {prev_tag}")
@@ -174,8 +189,6 @@ def main() -> None:
             val = entry.get(field)
             if val is None or val == "":
                 field_failures.append(f"  {name}: field '{field}' is missing or empty")
-        if entry.get("convert_to_notebook") is True and not entry.get("models"):
-            field_failures.append(f"  {name}: convert_to_notebook=true but 'models' is missing or empty")
         runner = entry.get("runner")
         if runner is not None and runner not in RUNNER_VALUES:
             field_failures.append(f"  {name}: runner={runner!r} not in {sorted(RUNNER_VALUES)}")

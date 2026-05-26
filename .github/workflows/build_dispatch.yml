@@ -1,3 +1,5 @@
+name: Trigger nest-extension-module CI
+
 on: [push]
 
 permissions:
@@ -5,7 +7,7 @@ permissions:
 
 jobs:
   trigger_externals:
-    if: ${{ github.repository_owner == 'nest' && github.ref_name == 'master' }}
+    if: ${{ github.repository_owner == 'nest' && github.ref_name == 'main' }}
     name: "Trigger downstream repos"
     runs-on: ubuntu-latest
     steps:

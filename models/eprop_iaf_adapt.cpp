@@ -343,7 +343,7 @@ eprop_iaf_adapt::update( Time const& origin, const long from, const long to )
     S_.surrogate_gradient_ = ( this->*compute_surrogate_gradient_ )(
       S_.r_, S_.v_m_, S_.v_th_adapt_, P_.surrogate_gradient_height_, P_.surrogate_gradient_width_ );
 
-    if ( S_.v_m_ >= S_.v_th_adapt_ and S_.r_ == 0 )
+    if ( spike_event_is_due( S_.v_m_ >= S_.v_th_adapt_ and S_.r_ == 0 ) )
     {
       SpikeEvent se;
       kernel().event_delivery_manager.send( *this, se, lag );

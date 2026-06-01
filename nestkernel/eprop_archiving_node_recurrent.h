@@ -285,14 +285,14 @@ template < bool hist_shift_required >
 inline void
 EpropArchivingNodeRecurrent< hist_shift_required >::set_status( const Dictionary& d )
 {
-  FlushEventMechanism::set_status( d, hist_shift_required );
-  IgnoreAndSpikeMechanism::set_status( d );
+  FlushEventMechanism::set_status( d, this, hist_shift_required );
+  IgnoreAndSpikeMechanism::set_status( d, this );
 
   if constexpr ( not hist_shift_required )
   {
     double eprop_isi_trace_cutoff_tmp = eprop_isi_trace_cutoff_;
 
-    d.update_value( names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_tmp );
+    update_value_param( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_tmp, this );
 
     if ( eprop_isi_trace_cutoff_tmp < 0.0 )
     {

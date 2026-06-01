@@ -111,7 +111,7 @@ public:
    * @param d Dictionary with parameters.
    * @param check_eprop_constraint If true, validate that flush_event_send_interval >= eprop_update_interval.
    */
-  void set_status( const Dictionary& d, const bool check_eprop_constraint = false );
+  void set_status( const Dictionary& d, Node* node, const bool check_eprop_constraint = false );
 
 protected:
   //! Interval since previous event after which a flush event is sent (ms).

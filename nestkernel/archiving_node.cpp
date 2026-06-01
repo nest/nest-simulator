@@ -265,7 +265,7 @@ nest::ArchivingNode::set_status( const Dictionary& d )
     clear_history();
   }
 
-  IgnoreAndSpikeMechanism::set_status( d );
+  IgnoreAndSpikeMechanism::set_status( d, this );
 }
 
 void

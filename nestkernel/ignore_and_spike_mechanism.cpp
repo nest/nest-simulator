@@ -73,7 +73,7 @@ IgnoreAndSpikeMechanism::get_status( Dictionary& d ) const
 void
 IgnoreAndSpikeMechanism::set_status( const Dictionary& d, Node* node )
 {
-  update_value_param( d, names::ignore_and_spike, ignore_and_spike_, node );
+  d.update_value( names::ignore_and_spike, ignore_and_spike_ );
 
   double offset_tmp = offset_;
   double interval_tmp = interval_;

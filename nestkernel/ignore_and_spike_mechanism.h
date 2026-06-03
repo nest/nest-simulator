@@ -93,7 +93,7 @@ public:
    *
    * @param d Dictionary from which parameters are set.
    */
-  void set_status( const Dictionary& d );
+  void set_status( const Dictionary& d, Node* node );
 
 private:
   /**

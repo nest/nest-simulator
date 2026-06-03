@@ -71,15 +71,15 @@ IgnoreAndSpikeMechanism::get_status( Dictionary& d ) const
 }
 
 void
-IgnoreAndSpikeMechanism::set_status( const Dictionary& d )
+IgnoreAndSpikeMechanism::set_status( const Dictionary& d, Node* node )
 {
   d.update_value( names::ignore_and_spike, ignore_and_spike_ );
 
   double offset_tmp = offset_;
   double interval_tmp = interval_;
 
-  const bool updated_offset = d.update_value( names::ignore_and_spike_offset, offset_tmp );
-  const bool updated_interval = d.update_value( names::ignore_and_spike_interval, interval_tmp );
+  const bool updated_offset = update_value_param( d, names::ignore_and_spike_offset, offset_tmp, node );
+  const bool updated_interval = update_value_param( d, names::ignore_and_spike_interval, interval_tmp, node );
 
   if ( offset_tmp <= 0.0 )
   {

@@ -59,11 +59,11 @@ FlushEventMechanism::get_status( Dictionary& d ) const
 }
 
 void
-FlushEventMechanism::set_status( const Dictionary& d, const bool check_eprop_constraint )
+FlushEventMechanism::set_status( const Dictionary& d, Node* node, const bool check_eprop_constraint )
 {
   double flush_event_send_interval_tmp = flush_event_send_interval_;
 
-  d.update_value( names::flush_event_send_interval, flush_event_send_interval_tmp );
+  update_value_param( d, names::flush_event_send_interval, flush_event_send_interval_tmp, node );
 
   if ( flush_event_send_interval_tmp <= 0.0 )
   {

@@ -326,7 +326,7 @@ function( NEST_PROCESS_WITH_PYTHON )
 
       if ( cythonize-pynest )
         # Need updated Cython because of a change in the C api in Python 3.7
-        find_package( Cython 0.28.3 REQUIRED )
+        find_package( Cython 3.0.0 REQUIRED )
         if ( CYTHON_FOUND )
           # export found variables to parent scope
           set( CYTHON_FOUND "${CYTHON_FOUND}" PARENT_SCOPE )

@@ -33,7 +33,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapse, abstract, learning, Bellec
+/* BeginUserDocs: synapse, abstract, learning, Bellec, e-prop plasticity
 
 Short description
 +++++++++++++++++

@@ -1,6 +1,6 @@
 [build-system]
 requires = ["scikit-build-core",
-    "cython>=0.28.3",
+    "cython>=3.0.0",
     "setuptools>=61",
     "wheel"
     ]
@@ -42,7 +42,7 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "cython >= 0.28.3",
+  "cython >= 3.0.0",
   "numpy",
   "matplotlib"
 ]
@@ -144,7 +144,7 @@ with-openmp = "ON"
 
 [tool.cibuildwheel]
 build-frontend = "default"
-build = ["cp39-*", "cp310-*", "cp311-*", "cp312-*", "cp313-*"]
+build = ["cp39-*", "cp310-*", "cp311-*", "cp312-*", "cp313-*", "cp314-*"]
 skip = "*-win* *-manylinux_i686" # Skip
 test-skip = ""
 test-requires = [

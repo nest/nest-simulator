@@ -68,9 +68,10 @@ References
 
 .. [2] https://github.com/IGITUGraz/eligibility_propagation/blob/master/Figure_3_and_S7_e_prop_tutorials/tutorial_evidence_accumulation_with_alif.py
 
-.. [3] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
-       Dahmen D, Bolten M, Van Albada SJ, Diesmann M. Event-based
-       implementation of eligibility propagation (in preparation)
+.. [3] Korcsak-Gorzo A, Espinoza Valverde JA, Stapmanns J, Plesser HE, Dahmen D,
+       Bolten M, van Albada SJ, Diesmann M (2025). Event-driven eligibility
+       propagation in large sparse networks: efficiency shaped by biological
+       realism. arXiv:2511.21674. https://doi.org/10.48550/arXiv.2511.21674
 
 """  # pylint: disable=line-too-long # noqa: E501
 
@@ -212,15 +213,18 @@ params_nrn_out = {
 }
 
 params_nrn_reg = {
-    "beta": 1.0,  # width scaling of the pseudo-derivative
     "C_m": 1.0,
     "c_reg": 300.0,  # coefficient of firing rate regularization - 2*learning_window*(TF c_reg) for technical reasons
     "E_L": 0.0,
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
-    "gamma": 0.3,  # height scaling of the pseudo-derivative
+    "flush_event_send_interval": duration[
+        "sequence"
+    ],  # ms, inactivity period before flushing outgoing synapses to free memory
     "I_e": 0.0,
     "regular_spike_arrival": True,
     "surrogate_gradient_function": "piecewise_linear",  # surrogate gradient / pseudo-derivative function
+    "surrogate_gradient_height": 0.3,  # height scaling of the pseudo-derivative
+    "surrogate_gradient_width": 1.0,  # width scaling of the pseudo-derivative
     "t_ref": 5.0,  # ms, duration of refractory period
     "tau_m": 20.0,
     "V_m": 0.0,
@@ -228,29 +232,32 @@ params_nrn_reg = {
 }
 
 # factors from the original pseudo-derivative definition are incorporated into the parameters
-params_nrn_reg["gamma"] /= params_nrn_reg["V_th"]
-params_nrn_reg["beta"] /= np.abs(params_nrn_reg["V_th"])  # prefactor is inside abs in the original definition
+params_nrn_reg["surrogate_gradient_height"] /= params_nrn_reg["V_th"]
+params_nrn_reg["surrogate_gradient_width"] *= np.abs(
+    params_nrn_reg["V_th"]
+)  # prefactor is inside abs in the original definition
 
 params_nrn_ad = {
-    "beta": 1.0,
     "adapt_tau": 2000.0,  # ms, time constant of adaptive threshold
     "adaptation": 0.0,  # initial value of the spike threshold adaptation
     "C_m": 1.0,
     "c_reg": 300.0,
     "E_L": 0.0,
     "f_target": 10.0,
-    "gamma": 0.3,
+    "flush_event_send_interval": duration["sequence"],
     "I_e": 0.0,
     "regular_spike_arrival": True,
     "surrogate_gradient_function": "piecewise_linear",
+    "surrogate_gradient_height": 0.3,  # height scaling of the pseudo-derivative
+    "surrogate_gradient_width": 1.0,  # width scaling of the pseudo-derivative
     "t_ref": 5.0,
     "tau_m": 20.0,
     "V_m": 0.0,
     "V_th": 0.6,
 }
 
-params_nrn_ad["gamma"] /= params_nrn_ad["V_th"]
-params_nrn_ad["beta"] /= np.abs(params_nrn_ad["V_th"])
+params_nrn_ad["surrogate_gradient_height"] /= params_nrn_ad["V_th"]
+params_nrn_ad["surrogate_gradient_width"] *= np.abs(params_nrn_ad["V_th"])
 
 params_nrn_ad["adapt_beta"] = 1.7 * (
     (1.0 - np.exp(-duration["step"] / params_nrn_ad["adapt_tau"]))
@@ -612,8 +619,8 @@ class TrainingPipeline:
         cond2 = times <= self.n_iter_sim * batch_size * duration["sequence"] + duration["total_offset"]
         idc = cond1 & cond2
 
-        readout_signal = np.array([readout_signal[idc][senders[idc] == i] for i in set(senders)])
-        target_signal = np.array([target_signal[idc][senders[idc] == i] for i in set(senders)])
+        readout_signal = np.array([readout_signal[idc][senders[idc] == i] for i in np.unique(senders)])
+        target_signal = np.array([target_signal[idc][senders[idc] == i] for i in np.unique(senders)])
 
         readout_signal = readout_signal.reshape((n_out, 1, batch_size, steps["sequence"]))
         target_signal = target_signal.reshape((n_out, 1, batch_size, steps["sequence"]))
@@ -640,8 +647,8 @@ class TrainingPipeline:
         nest.SetDefaults("eprop_synapse_bsshslm_2020", params_common_syn_eprop)
 
         params_gen_spk_in, params_gen_rate_target = get_params_task_input_output(self.n_iter_sim)
-        nest.SetStatus(gen_spk_in, params_gen_spk_in)
-        nest.SetStatus(gen_rate_target, params_gen_rate_target)
+        gen_spk_in.set(params_gen_spk_in)
+        gen_rate_target.set(params_gen_rate_target)
 
         self.simulate("total_offset")
         self.simulate("extension_sim")
@@ -793,7 +800,7 @@ fig.tight_layout()
 
 
 def plot_recordable(ax, events, recordable, ylabel, xlims):
-    for sender in set(events["senders"]):
+    for sender in np.unique(events["senders"]):
         idc_sender = events["senders"] == sender
         idc_times = (events["times"][idc_sender] > xlims[0]) & (events["times"][idc_sender] < xlims[1])
         ax.plot(events["times"][idc_sender][idc_times], events[recordable][idc_sender][idc_times], lw=0.5)
@@ -861,14 +868,15 @@ def plot_weight_time_course(ax, events, nrns, label, ylabel):
     nrns_senders = nrns[sender_label]
     nrns_targets = nrns[target_label]
 
-    for sender in set(events_wr["senders"]):
-        for target in set(events_wr["targets"]):
+    for sender in np.unique(events["senders"]):
+        for target in np.unique(events["targets"]):
             if sender in nrns_senders and target in nrns_targets:
                 idc_syn = (events["senders"] == sender) & (events["targets"] == target)
-                if np.any(idc_syn):
-                    idc_syn_pre = (weights_pre_train[label]["source"] == sender) & (
-                        weights_pre_train[label]["target"] == target
-                    )
+                idc_syn_pre = (weights_pre_train[label]["source"] == sender) & (
+                    weights_pre_train[label]["target"] == target
+                )
+
+                if np.any(idc_syn) and np.any(idc_syn_pre):
                     times = np.concatenate([[0.0], events["times"][idc_syn]])
 
                     weights = np.concatenate(

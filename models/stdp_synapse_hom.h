@@ -347,7 +347,7 @@ stdp_synapse_hom< targetidentifierT >::get_status( Dictionary& d ) const
 
   // own properties, different for individual synapse
   d[ names::Kplus ] = Kplus_;
-  d[ names::size_of ] = sizeof( *this );
+  d[ names::size_of ] = static_cast< long >( sizeof( *this ) );
 }
 
 template < typename targetidentifierT >

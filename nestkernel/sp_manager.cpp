@@ -126,7 +126,6 @@ SPManager::set_status( const Dictionary& d )
   }
 
   Dictionary syn_specs;
-  Dictionary syn_spec;
   Dictionary conn_spec;
 
   NodeCollectionPTR sources( new NodeCollectionPrimitive() );

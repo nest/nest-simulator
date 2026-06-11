@@ -147,8 +147,8 @@ Node::get_status_base()
   dict[ names::local ] = kernel().node_manager.is_local_node( this );
   dict[ names::model ] = get_name();
   dict[ names::model_id ] = get_model_id();
-  dict[ names::global_id ] = get_node_id();
-  dict[ names::vp ] = get_vp();
+  dict[ names::global_id ] = static_cast< long >( get_node_id() );
+  dict[ names::vp ] = static_cast< long >( get_vp() );
   dict[ names::element_type ] = get_element_type();
 
   // add information available only for local nodes
@@ -156,8 +156,8 @@ Node::get_status_base()
   {
     dict[ names::frozen ] = is_frozen();
     dict[ names::node_uses_wfr ] = node_uses_wfr();
-    dict[ names::thread_local_id ] = get_thread_lid();
-    dict[ names::thread ] = get_thread();
+    dict[ names::thread_local_id ] = static_cast< long >( get_thread_lid() );
+    dict[ names::thread ] = static_cast< long >( get_thread() );
   }
 
   // now call the child class' hook
@@ -219,6 +219,12 @@ Node::register_eprop_connection()
   throw IllegalConnection( "The target node does not support eprop synapses." );
 }
 
+void
+Node::initialize_update_history()
+{
+  throw IllegalConnection( "The target node does not support eprop synapses." );
+}
+
 long
 Node::get_shift() const
 {
@@ -226,13 +232,19 @@ Node::get_shift() const
 }
 
 void
-Node::write_update_to_history( const long, const long, const long )
+Node::write_update_to_history( const long, const long, const bool, const bool )
 {
   throw IllegalConnection( "The target node is not an e-prop neuron." );
 }
 
-long
-Node::get_eprop_isi_trace_cutoff() const
+void
+Node::erase_used_eprop_history()
+{
+  throw IllegalConnection( "The target node is not an e-prop neuron." );
+}
+
+void
+Node::erase_used_eprop_history( const long, const long )
 {
   throw IllegalConnection( "The target node is not an e-prop neuron." );
 }
@@ -554,7 +566,12 @@ nest::Node::compute_gradient( const long,
   double&,
   double&,
   const CommonSynapseProperties&,
-  WeightOptimizer* )
+  WeightOptimizer*,
+  bool,
+  bool,
+  double&,
+  long&,
+  long& )
 {
   throw IllegalConnection( "The target node does not support compute_gradient()." );
 }

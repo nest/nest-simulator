@@ -54,16 +54,11 @@
 	"ipython": {
 		"min": "8.11.0"
 	},
-<<<<<<< HEAD
 	"sphinx": {
 		"min": "6.2.1",
 		"max": "8.2.0"
-=======
-	"libncurses": {
-		"min": "6.2"
-	},
+  },
 	"plantuml": {
 		"min": "1-2023-10"
->>>>>>> main
 	}
 }

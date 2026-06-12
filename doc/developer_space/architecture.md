@@ -2,91 +2,49 @@
 
 This page gives a high-level description of the NEST simulator architecture.
 
-## Subsystems
+NEST is a layered simulator for spiking neural networks. A thin Python frontend (PyNEST) sits on a Cython binding
+that calls a C++ simulation kernel; the kernel is organized around a single `KernelManager` singleton that owns around 14
+specialized *manager* subsystems (nodes, connections, events, simulation, MPI, threads, I/O, models, RNGs, etc.).
 
-### Kernel
+The actual neuron and synapse models live in `models/` as plug-in classes derived from a common `Node`/`Connection`
+hierarchy, and the kernel is built for hybrid MPI + OpenMP parallelism, where work is partitioned across MPI
+processes and OpenMP threads ("virtual processes"), with spikes exchanged between them as `Event` objects.
 
-The simulation kernel manages the lifecycle of nodes (neurons and devices),
-connections (synapses), and the simulation loop. It is implemented in
-`nestkernel/` and exposed directly to PyNEST through a compiled C Python
-extension module (no intermediate interpreter layer since NEST 3.10).
+**How the pieces fit:**
 
-Key classes:
-- `nest::KernelManager` — singleton that owns and coordinates all kernel
-  components
-- `nest::NodeManager` — creates and stores neuron and device instances
-- `nest::ConnectionManager` — stores and manages synaptic connections
-- `nest::SimulationManager` — drives the time-stepped simulation loop
+- **Frontend** — `pynest/nest/` exposes `Create`, `Connect`, `Simulate`, etc. via `hl_api_*` modules → `ll_api.py`
+  → the Cython layer (`nestkernel_api.pyx`/`.pxd`) → the C++ API in `nestkernel/nest.h`.
+- **Kernel core** — `KernelManager` (`kernel()`) initializes its managers in a fixed dependency order (Logging → MPI
+  → VP → Module → Random → Simulation → ModelRange → Connection → SP → EventDelivery → IO → Model → MUSIC → Node) and finalizes them in reverse.
+- **Network entities** — neurons are `Node` subclasses (`Node → StructuralPlasticityNode → ArchivingNode →` concrete
+  models like `iaf_psc_alpha`, `hh_psc_alpha`); synapses are `Connection` subclasses (e.g. `stdp_synapse`, `static_synapse`); both are instantiated from registered model prototypes.
+- **Runtime** — `SimulationManager` drives the update loop; `EventDeliveryManager` + `ConnectionManager` route spikes;
+  `IOManager` handles recording/stimulation backends (ASCII, memory, screen, SIONlib, MPI); `MUSICManager` enables live coupling to other simulators.
 
-### PyNEST
+## PlantUML diagram
 
-The Python interface (`pynest/`) wraps the C++ kernel via a compiled C
-extension module. High-level API functions are implemented in Python in
-`pynest/nest/lib/`. PyNEST calls into the kernel directly using the
-`nest::` C++ API.
+```plantuml
+@startuml
+title NEST Simulator — Architecture
 
-### Models
-
-Neuron and synapse models live in `models/`. Each model is a self-contained C++
-class registered with the `ModelManager`.
-
-## Data Flow
-
-```
-User (PyNEST) -> pynest C extension -> nestkernel C++ -> NodeManager / ConnectionManager
-                                                       -> SimulationManager (time loop)
-                                                            -> Node::update() per neuron
-```
-
-### Simplified subsystem component diagram
-
-\startuml
 skinparam componentStyle rectangle
-skinparam backgroundColor white
+skinparam shadowing false
 
-package "pynest/" {
-  [Python API\n(nest/lib/)] as pyapi
-  [C Extension Module] as cext
-}
+[PyNEST frontend\nCreate / Connect / Simulate] as Frontend
+[Cython + C++ API\nnestkernel_api.pyx → nest.h] as Binding
+[KernelManager\n(manager subsystems:\nNode, Connection, Simulation,\nEventDelivery, Model, MPI/VP, IO)] as Kernel
+[Network entities\nNodes (neurons) + Connections (synapses)] as Entities
+[Models\niaf_*, hh_*, stdp_*, …] as Models
+[I/O & coupling\nrecording / stimulation / MUSIC / MPI] as IO
 
-package "nestkernel/" {
-  [KernelManager] as km
-  [NodeManager] as nm
-  [ConnectionManager] as cm
-  [SimulationManager] as sm
-  [MPIManager] as mpi
-  [VPManager] as vp
-}
+Frontend --> Binding
+Binding --> Kernel
+Kernel --> Entities : owns & updates
+Models ..|> Entities : instantiated as
+Kernel --> IO
 
-package "models/" {
-  [Neuron models] as neurons
-  [Synapse models] as synapses
-}
-
-[User code] --> pyapi
-pyapi --> cext : Python/C API
-cext --> km : nest:: C++ calls
-
-km --> nm
-km --> cm
-km --> sm
-km --> mpi
-km --> vp
-
-nm --> neurons : instantiates
-cm --> synapses : instantiates
-
-sm -[hidden]-> mpi
-\enduml
-
-## Parallelism
-
-NEST supports both shared-memory (OpenMP threads) and distributed-memory (MPI)
-parallelism. Threads own disjoint subsets of local nodes. MPI processes each
-simulate a subset of the network and exchange spike data via MPI collectives at
-the end of each min-delay interval.
-
-See also: `nestkernel/vp_manager.h`, `nestkernel/mpi_manager.h`.
+@enduml
+```
 
 ## Further Reading
 

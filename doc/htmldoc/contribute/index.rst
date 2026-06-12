@@ -8,8 +8,8 @@ Here is all documentation pertaining to contributing to NEST.
 
 .. note::
 
-   For documentation relating to C++ source code, see the
-   link to GitHubpages
+   For documentation relating to C++ source code, see our
+   `developer space <https://nest.github.io/nest-simulator/index.html>`_
 
 
 .. _contribute:
@@ -54,18 +54,17 @@ Contribute code or docs to the NEST project
 
        * Adding neuron or synapses models to NEST: Check out :doc:`NESTML <nestml:index>`:
          a modeling language supporting neuron and synapse specification, based on the syntax of Python.
-       * Modifying or adding C++ code? see `GitHubpages link`
+       * Modifying or adding C++ code? see `our developer space <https://nest.github.io/nest-simulator/index.html>`_
        * For making changes to the PyNEST APIs, see our :ref:`pyapi_template`
        * Writing an extension module? See :doc:`extmod:index`
 
     .. grid-item-card:: Contribute documentation
 
-       * If you have a Python example network to contribute, please refer to our
+       * If you have a ***Python example network** to contribute, please refer to our
          :ref:`pyexample_template`
        * Review the :ref:`documentation style guide <doc_styleguide>`.
-       * If you do contribute neuron or synapse models to nest-simulator, then ensure the documentation for the model
-         meets our criteria. For an example, see the model docs in the
-         `header file <https://github.com/nest/nest-simulator/blob/main/models/iaf_psc_alpha.h>`_ for ``iaf_psc_alpha``.
+       * For **model** contributions, ensure the documentation meets our criteria. For an example, see the model docs in the
+         `header file section 'BeginUserDocs' <https://github.com/nest/nest-simulator/blob/main/models/iaf_psc_alpha.h>`_ for ``iaf_psc_alpha``.
        * Check that documentation renders properly: See the :ref:`build documentation steps <doc_workflow>`.
 
 
@@ -76,7 +75,7 @@ Contribute code or docs to the NEST project
 
          :download:`NEST Contributor Agreement <static/NEST_Contributor_Agreement.pdf>`
 
-       * Reviewers must be assigned to the pull-request and check the relevant changes. If you are requested to review a pull request, please
+       * Reviewers will be assigned to pull-requests. If you are requested to review a pull request, please
          see our :ref:`code_guidelines`.
 
        * Continuous integration is used to ensure that NEST runs as expected. All tests must pass before merging.

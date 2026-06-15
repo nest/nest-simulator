@@ -52,9 +52,9 @@ Contribute code or docs to the NEST project
 
     .. grid-item-card:: Contribute code, modules, models
 
-       * Adding neuron or synapses models to NEST: Check out :doc:`NESTML <nestml:index>`:
+       * Adding neuron or synapses models to NEST? Consider :doc:`NESTML <nestml:index>`:
          a modeling language supporting neuron and synapse specification, based on the syntax of Python.
-       * Modifying or adding C++ code? see `our developer space <https://nest.github.io/nest-simulator/index.html>`_
+       * Modifying or adding C++ code? See `our developer space <https://nest.github.io/nest-simulator/index.html>`_
        * For making changes to the PyNEST APIs, see our :ref:`pyapi_template`
        * Writing an extension module? See :doc:`extmod:index`
 

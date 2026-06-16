@@ -58,10 +58,55 @@ Description
 
 ``iaf_psc_alpha_ps`` is the "canonical" implementation of the leaky
 integrate-and-fire model neuron with alpha-shaped postsynaptic
-currents in the sense of [1]_. This is the most exact implementation
-available.
+currents in the sense of [1]_, that is, the most exact implementation
+available. It is a leaky integrate-and-fire neuron model with
 
-PSCs are normalized to an amplitude of 1pA.
+* a hard threshold,
+* a fixed refractory period,
+* no adaptation mechanisms,
+* :math:`\alpha`-shaped synaptic input currents,
+* precise spike times based on the regula falsi method [1]_ [3]_.
+
+Membrane potential evolution, spike emission, and refractoriness
+................................................................
+
+The membrane potential evolves according to
+
+.. math::
+
+   \frac{dV_\text{m}}{dt} = -\frac{V_{\text{m}} - E_\text{L}}{\tau_{\text{m}}} + \frac{I_{\text{syn}} +
+I_\text{e}}{C_{\text{m}}}
+
+where the synaptic input current :math:`I_{\text{syn}}(t)` is discussed below and :math:`I_\text{e}` is
+a constant input current set as a model parameter.
+
+A spike is emitted when the membrane potential crosses the threshold :math:`V_\text{th}` from below;
+the precise time of the crossing is determined by a regula falsi method (see below). Subsequently,
+
+.. math::
+
+   V_\text{m}(t) = V_{\text{reset}} \quad\text{for}\quad t^* \leq t < t^* + t_{\text{ref}} \;,
+
+that is, the membrane potential is clamped to :math:`V_{\text{reset}}` during the refractory period.
+
+Synaptic input
+..............
+
+The synaptic input current has an excitatory and an inhibitory component,
+:math:`I_{\text{syn}}(t) = I_{\text{syn, ex}}(t) + I_{\text{syn, in}}(t)`, where the individual
+post-synaptic currents (PSCs) are :math:`\alpha`-shaped,
+
+.. math::
+
+   i_{\text{syn, X}}(t) = \frac{e}{\tau_{\text{syn, X}}} t e^{-\frac{t}{\tau_{\text{syn, X}}}} \Theta(t) \;,
+
+with :math:`\Theta(x)` the Heaviside step function. The PSCs are normalized to unit maximum, that is,
+:math:`i_{\text{syn, X}}(t=\tau_{\text{syn, X}}) = 1`.
+
+Precise implementation
+......................
+
+PSCs are normalized to an amplitude of 1 pA.
 
 The precise implementation handles neuronal dynamics in a locally
 event-based manner with in coarse time grid defined by the minimum
@@ -104,19 +149,33 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-===========  ======  ==========================================================
- V_m         mV      Membrane potential
- E_L         mV      Resting membrane potential
- V_min       mV      Absolute lower value for the membrane potential
- C_m         pF      Capacity of the membrane
- tau_m       ms      Membrane time constant
- t_ref       ms      Duration of refractory period
- V_th        mV      Spike threshold
- V_reset     mV      Reset potential of the membrane
- tau_syn_ex  ms      Rise time of the excitatory synaptic function
- tau_syn_in  ms      Rise time of the inhibitory synaptic function
- I_e         pA      Constant external input current
-===========  ======  ==========================================================
+=============== ================== ===============================
+========================================================================
+**Parameter**   **Default**        **Math equivalent**             **Description**
+=============== ================== ===============================
+========================================================================
+``E_L``         -70 mV             :math:`E_\text{L}`              Resting membrane potential
+``C_m``         250 pF             :math:`C_{\text{m}}`            Capacity of the membrane
+``tau_m``       10 ms              :math:`\tau_{\text{m}}`         Membrane time constant
+``t_ref``       2 ms               :math:`t_{\text{ref}}`          Duration of refractory period
+``V_th``        -55 mV             :math:`V_{\text{th}}`           Spike threshold
+``V_reset``     -70 mV             :math:`V_{\text{reset}}`        Reset potential of the membrane
+``tau_syn_ex``  2 ms               :math:`\tau_{\text{syn, ex}}`   Rise time of the excitatory synaptic alpha function
+``tau_syn_in``  2 ms               :math:`\tau_{\text{syn, in}}`   Rise time of the inhibitory synaptic alpha function
+``I_e``         0 pA               :math:`I_\text{e}`              Constant input current
+``V_min``       :math:`-\infty` mV :math:`V_{\text{min}}`          Absolute lower value for the membrane potential
+=============== ================== ===============================
+========================================================================
+
+The following state variables evolve during simulation and are available either as neuron properties or as recordables.
+
+================== ================= ========================== =================================
+**State variable** **Initial value** **Math equivalent**        **Description**
+================== ================= ========================== =================================
+``V_m``            -70 mV            :math:`V_{\text{m}}`       Membrane potential
+``I_syn_ex``       0 pA              :math:`I_{\text{syn, ex}}` Excitatory synaptic input current
+``I_syn_in``       0 pA              :math:`I_{\text{syn, in}}` Inhibitory synaptic input current
+================== ================= ========================== =================================
 
 References
 ++++++++++

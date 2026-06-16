@@ -39,7 +39,7 @@ For further information, see:
 Connectivity concepts
 ---------------------
 
-The documentation on :ref:`connectivity_concepts` now serves as a living reference for the connection rules defined in the article "Connectivity concepts in neuronal network modeling" :footcite:p:`Senk2022b`.
+The documentation on :ref:`connectivity_concepts` now serves as a living reference for the connection rules defined in the article "Connectivity concepts in neuronal network modeling" :footcite:p:`Senk2022`.
 
 Tripartite connectivity in NEST
 -------------------------------

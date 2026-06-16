@@ -51,7 +51,7 @@ Connectivity concepts
     Basic connection rules commonly used in the computational neuroscience community. For more details, go to the section :ref:`conn_rules` or just click on one of the illustrations.
 
 This documentation not only describes how to define network connectivity in NEST, but also provides details on connectivity concepts.
-The article "Connectivity concepts in neuronal network modeling" :footcite:p:`Senk2022b` serves as a permanent reference for a number of connection rules and we suggest to cite it if rules defined there are used.
+The article "Connectivity concepts in neuronal network modeling" :footcite:p:`Senk2022` serves as a permanent reference for a number of connection rules and we suggest to cite it if rules defined there are used.
 This documentation instead represents a living reference for these rules, and deviations from and extensions to what is described in the article will be highlighted.
 
 The same article also introduces a graphical notation for neuronal network diagrams which is curated in the documentation of :doc:`NEST Desktop <desktop:user/usage-advanced/network-graph>`.
@@ -104,7 +104,7 @@ Connection rules
 Here we elaborate on the connectivity concepts with details on :ref:`autapse_multapse`, :ref:`deterministic_rules`, :ref:`probabilistic_rules`, and the :ref:`connection_generator` (a method to create connections via CSA, the Connection Set Algebra :footcite:p:`Djurfeldt2012`).
 Finally, we introduce the rule :ref:`tripartite_connectivity` for third-party connections in addition to primary connections between ``pre`` and ``post``.
 Each primary rule is described with an illustration, a NEST code example, and mathematical details.
-The mathematical details are extracted from the study on connectivity concepts :footcite:p:`Senk2022b` and contain a symbol which we recommend to use for describing this type of connectivity, the corresponding expression from CSA, and a formal definition with an algorithmic construction rule and the resulting connectivity distribution.
+The mathematical details are extracted from the study on connectivity concepts :footcite:p:`Senk2022` and contain a symbol which we recommend to use for describing this type of connectivity, the corresponding expression from CSA, and a formal definition with an algorithmic construction rule and the resulting connectivity distribution.
 
 .. dropdown:: Mathematical details: General notations and definitions
 

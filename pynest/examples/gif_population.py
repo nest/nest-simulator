@@ -32,19 +32,12 @@ elements (stc and sfa).
 
 Population dynamics are visualized by raster plot and as average firing rate.
 
-See [1]_ and [2]_ for details.
+See :footcite:p:`Schwalger2017` and :footcite:p:`Mensi2012` for details.
 
 References
 ~~~~~~~~~~
 
-.. [1] Schwalger T, Degert M, Gerstner W (2017). Towards a theory of cortical columns: From spiking
-       neurons to interacting neural populations of finite size. PLoS Comput Biol.
-       https://doi.org/10.1371/journal.pcbi.1005507
-
-.. [2] Mensi S, Naud R, Pozzorini C, Avermann M, Petersen CC and
-       Gerstner W (2012). Parameter extraction and classification of
-       three cortical neuron types reveals two distinct adaptation
-       mechanisms. Journal of Neurophysiology. 107(6), pp.1756-1775.
+.. footbibliography::
 """
 
 ###############################################################################
@@ -64,7 +57,7 @@ simtime = 2000.0
 
 ###############################################################################
 # Definition of neural parameters for the GIF model. These parameters are
-# extracted by fitting the model to experimental data [2]_.
+# extracted by fitting the model to experimental data :footcite:p:`Mensi2012`.
 
 
 neuron_params = {

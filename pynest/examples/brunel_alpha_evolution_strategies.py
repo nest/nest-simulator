@@ -49,21 +49,16 @@ where `alpha`, `beta` and `gamma` are weighting factors, and stars indicate
 target values.
 
 The network contains an excitatory and an inhibitory population on
-the basis of the network used in [1]_.
+the basis of the network used in :footcite:p:`Brunel2000`.
 
 The optimization algorithm (evolution strategies) is described in
-Wierstra et al. [2]_.
+Wierstra et al. :footcite:p:`Wierstra2014`.
 
 
 References
 ~~~~~~~~~~~~
 
-.. [1] Brunel N (2000). Dynamics of Sparsely Connected Networks of
-       Excitatory and Inhibitory Spiking Neurons. Journal of Computational
-       Neuroscience 8, 183-208.
-
-.. [2] Wierstra et al. (2014). Natural evolution strategies. Journal of
-       Machine Learning Research, 15(1), 949-980.
+.. footbibliography::
 
 See Also
 ~~~~~~~~~~

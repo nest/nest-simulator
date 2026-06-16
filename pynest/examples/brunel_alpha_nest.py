@@ -24,7 +24,7 @@ Random balanced network (alpha synapses) connected with NEST
 ------------------------------------------------------------
 
 This script simulates an excitatory and an inhibitory population on
-the basis of the network used in [1]_.
+the basis of the network used in :footcite:p:`Brunel2000`.
 
 In contrast to ``brunel-alpha-numpy.py``, this variant uses NEST's builtin
 connection routines to draw the random connections instead of NumPy.
@@ -38,10 +38,7 @@ network are recorded.
 References
 ~~~~~~~~~~
 
-.. [1] Brunel N (2000). Dynamics of sparsely connected networks of excitatory and
-       inhibitory spiking neurons. Journal of Computational Neuroscience 8,
-       183-208.
-
+.. footbibliography::
 """
 
 ###############################################################################

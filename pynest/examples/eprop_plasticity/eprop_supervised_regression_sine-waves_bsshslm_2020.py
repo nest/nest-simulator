@@ -29,9 +29,9 @@ Description
 ~~~~~~~~~~~
 
 This script demonstrates supervised learning of a regression task with a recurrent spiking neural network that
-is equipped with the eligibility propagation (e-prop) plasticity mechanism by Bellec et al. [1]_.
+is equipped with the eligibility propagation (e-prop) plasticity mechanism by Bellec et al. :footcite:p:`Bellec2020`.
 
-This type of learning is demonstrated at the proof-of-concept task in [1]_. We based this script on their
+This type of learning is demonstrated at the proof-of-concept task in :footcite:p:`Bellec2020`. We based this script on their
 TensorFlow script given in [2]_.
 
 In this task, the network learns to generate an arbitrary N-dimensional temporal pattern. Here, the
@@ -51,21 +51,14 @@ readout neuron. The readout neuron compares the network signal :math:`y` with th
 readout signal denoted as :math:`y_k` is compared with a corresponding target signal represented as
 :math:`y_k^*`. The network's training error is assessed by employing a mean-squared error loss.
 
-Details on the event-based NEST implementation of e-prop can be found in [3]_.
+Details on the event-based NEST implementation of e-prop can be found in :footcite:p:`KorcsakGorzo2025`.
 
 References
 ~~~~~~~~~~
 
-.. [1] Bellec G, Scherr F, Subramoney F, Hajek E, Salaj D, Legenstein R, Maass W (2020). A solution to the
-       learning dilemma for recurrent networks of spiking neurons. Nature Communications, 11:3625.
-       https://doi.org/10.1038/s41467-020-17236-y
+.. footbibliography::
 
 .. [2] https://github.com/IGITUGraz/eligibility_propagation/blob/master/Figure_3_and_S7_e_prop_tutorials/tutorial_pattern_generation.py
-
-.. [3] Korcsak-Gorzo A, Espinoza Valverde JA, Stapmanns J, Plesser HE, Dahmen D,
-       Bolten M, van Albada SJ, Diesmann M (2025). Event-driven eligibility
-       propagation in large sparse networks: efficiency shaped by biological
-       realism. arXiv:2511.21674. https://doi.org/10.48550/arXiv.2511.21674
 
 """  # pylint: disable=line-too-long # noqa: E501
 

@@ -25,19 +25,18 @@ Weight adaptation according to the Urbanczik-Senn plasticity
 
 This script demonstrates the learning in a compartmental neuron where the
 dendritic synapses adapt their weight according to the plasticity rule by
-Urbanczik and Senn [1]_. In this simple setup, a spike pattern of 200 poisson
+Urbanczik and Senn :footcite:p:`Urbanczik2014`. In this simple setup, a spike pattern of 200 poisson
 spike trains is repeatedly presented to a neuron that is composed of one
 somatic and one dendritic compartment. At the same time, the somatic
 conductances are activated to produce a time-varying matching potential.
 After the learning, this signal is then reproduced by the membrane
-potential of the neuron. This script produces Fig. 1B in [1]_ but uses standard
+potential of the neuron. This script produces Fig. 1B in :footcite:p:`Urbanczik2014` but uses standard
 units instead of the unitless quantities used in the paper.
 
 References
 ~~~~~~~~~~
 
-.. [1] R. Urbanczik, W. Senn (2014): Learning by the Dendritic Prediction of
-       Somatic Spiking. Neuron, 81, 521-528.
+.. footbibliography::
 """
 
 import nest

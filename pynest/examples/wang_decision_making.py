@@ -23,7 +23,7 @@
 Decision making in recurrent network with NMDA-dynamics
 ------------------------------------------------------------
 
-This script simulates the network modeled in [1]_.
+This script simulates the network modeled in :footcite:p:`Wang2002`.
 An excitatory and an inhibitory population receives input
 from an external population modeled as a Poisson process.
 Two different subsets of the excitatory population,
@@ -35,10 +35,7 @@ one of the sub-population is suppressed.
 
 References
 ~~~~~~~~~~
-.. [1] Wang X-J (2002). Probabilistic Decision Making by Slow Reverberation in
-       Cortical Circuits. Neuron, Volume 36, Issue 5, Pages 955-968.
-       https://doi.org/10.1016/S0896-6273(02)01092-9.
-
+.. footbibliography::
 """
 
 import matplotlib.pyplot as plt
@@ -60,7 +57,7 @@ def run_sim(coherence, seed=123):
     nest.ResetKernel()
     nest.set(resolution=dt, print_time=True, rng_seed=seed)
     ##################################################
-    # Set parameter values, taken from [1]_.
+    # Set parameter values, taken from :footcite:p:`Wang2002`.
 
     # conductances excitatory population
     # fmt: off

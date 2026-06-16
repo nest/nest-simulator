@@ -35,7 +35,7 @@ and both networks after every simulation step. this data is saved to three
 the output (e.g., using :doc:`generate_gif.py <generate_gif>`).
 
 The idea for this simulation as well as the core of the R-STDP and Pong
-implementation are from [1]_ and were created by Timo Wunderlich and Electronic
+implementation are from :footcite:p:`Wunderlich2019` and were created by Timo Wunderlich and Electronic
 Vision(s) (The original implementation can be found
 `here <https://github.com/electronicvisions/model-sw-pong>`_).
 The visualization and implementation of dopaminergic learning, as well as
@@ -48,9 +48,7 @@ See Also
 
 References
 ----------
-.. [1] Wunderlich T., et al (2019). Demonstrating advantages of
-       neuromorphic computation: a pilot study. Frontiers in neuroscience, 13,
-       260. https://doi.org/10.3389/fnins.2019.00260
+.. footbibliography::
 
 :Authors: J Gille, T Wunderlich, Electronic Vision(s)
 """

@@ -26,7 +26,7 @@ Population rate model of generalized integrate-and-fire neurons
 
 This script simulates a finite network of generalized integrate-and-fire
 (GIF) neurons directly on the mesoscopic population level using the effective
-stochastic population rate dynamics derived in the paper [1]_. The stochastic
+stochastic population rate dynamics derived in the paper :footcite:p:`Schwalger2017`. The stochastic
 population dynamics is implemented in the NEST model gif_pop_psc_exp. We
 demonstrate this model using the example of a Brunel network of two coupled
 populations, one excitatory and one inhibitory population.
@@ -38,10 +38,7 @@ NEST model ``gif_psc_exp``.
 References
 ~~~~~~~~~~
 
-.. [1] Schwalger T, Degert M, Gerstner W (2017). Towards a theory of cortical columns: From spiking
-       neurons to interacting neural populations of finite size. PLoS Comput Biol.
-       https://doi.org/10.1371/journal.pcbi.1005507
-
+.. footbibliography::
 """
 
 ###############################################################################

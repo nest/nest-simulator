@@ -29,9 +29,9 @@ Description
 ~~~~~~~~~~~
 
 This script demonstrates supervised learning of a classification task with the eligibility propagation (e-prop)
-plasticity mechanism by Bellec et al. [1]_.
+plasticity mechanism by Bellec et al. :footcite:p:`Bellec2020`.
 
-This type of learning is demonstrated at the proof-of-concept task in [1]_. We based this script on their
+This type of learning is demonstrated at the proof-of-concept task in :footcite:p:`Bellec2020`. We based this script on their
 TensorFlow script given in [2]_.
 
 The task, a so-called evidence accumulation task, is inspired by behavioral tasks, where a lab animal (e.g., a
@@ -57,21 +57,14 @@ a rate generator. Since the decision is at the end and all the cues are relevant
 cues in memory. Additional adaptive neurons in the network enable this memory. The network's training error is
 assessed by employing a cross-entropy error loss.
 
-Details on the event-based NEST implementation of e-prop can be found in [3]_.
+Details on the event-based NEST implementation of e-prop can be found in :footcite:p:`KorcsakGorzo2025`.
 
 References
 ~~~~~~~~~~
 
-.. [1] Bellec G, Scherr F, Subramoney F, Hajek E, Salaj D, Legenstein R, Maass W (2020). A solution to the
-       learning dilemma for recurrent networks of spiking neurons. Nature Communications, 11:3625.
-       https://doi.org/10.1038/s41467-020-17236-y
+.. footbibliography::
 
 .. [2] https://github.com/IGITUGraz/eligibility_propagation/blob/master/Figure_3_and_S7_e_prop_tutorials/tutorial_evidence_accumulation_with_alif.py
-
-.. [3] Korcsak-Gorzo A, Espinoza Valverde JA, Stapmanns J, Plesser HE, Dahmen D,
-       Bolten M, van Albada SJ, Diesmann M (2025). Event-driven eligibility
-       propagation in large sparse networks: efficiency shaped by biological
-       realism. arXiv:2511.21674. https://doi.org/10.48550/arXiv.2511.21674
 
 """  # pylint: disable=line-too-long # noqa: E501
 

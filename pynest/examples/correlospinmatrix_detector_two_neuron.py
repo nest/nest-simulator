@@ -24,14 +24,13 @@ Correlospinmatrix detector example
 ----------------------------------
 
 This scripts simulates two connected binary neurons, similar
-as in [1]_. It measures and plots the auto- and cross covariance functions
+as in :footcite:p:`Ginzburg1994`. It measures and plots the auto- and cross covariance functions
 of the individual neurons and between them, respectively.
 
 References
 ~~~~~~~~~~
 
-.. [1] Ginzburg and Sompolinsky (1994). Theory of correlations in stochastic neural networks. 50(4) p. 3175. Fig. 1.
-
+.. footbibliography::
 """
 
 import matplotlib.pyplot as plt

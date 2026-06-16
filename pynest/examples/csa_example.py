@@ -27,7 +27,7 @@ This example sets up a simple network in NEST using the Connection Set
 Algebra (CSA) instead of using the built-in connection routines.
 
 Using the CSA requires NEST to be compiled with support for
-libneurosim. For details, see [1]_.
+libneurosim. For details, see :footcite:p:`Djurfeldt2014`.
 
 See Also
 ~~~~~~~~
@@ -37,11 +37,7 @@ See Also
 References
 ~~~~~~~~~~
 
-.. [1] Djurfeldt M, Davison AP and Eppler JM (2014). Efficient generation of
-       connectivity in neuronal networks from simulator-independent
-       descriptions, Front. Neuroinform.
-       http://dx.doi.org/10.3389/fninf.2014.00043
-
+.. footbibliography::
 """
 
 ###############################################################################

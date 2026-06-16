@@ -28,7 +28,7 @@ This example illustrates a neuron receiving spiking input through
 several different receptors (AMPA, NMDA, GABA_A, GABA_B), provoking
 spike output. The model, ``ht_neuron``, also has intrinsic currents
 (``I_NaP``, ``I_KNa``, ``I_T``, and ``I_h``). It is a slightly simplified implementation of
-neuron model proposed in [1]_.
+neuron model proposed in :footcite:p:`Hill2005`.
 
 The neuron is bombarded with spike trains from four Poisson generators,
 which are connected to the AMPA, NMDA, GABA_A, and GABA_B receptors,
@@ -37,9 +37,7 @@ respectively.
 References
 ~~~~~~~~~~
 
-.. [1] Hill and Tononi (2005) Modeling sleep and wakefulness in the
-       thalamocortical system. J Neurophysiol 93:1671
-       https://doi.org/10.1152/jn.00915.2004
+.. footbibliography::
 
 See Also
 ~~~~~~~~

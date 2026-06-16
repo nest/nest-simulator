@@ -204,18 +204,18 @@ Parameter                       Unit    Math equivalent         Default         
                                                                                    regularization
 ``f_target``                    Hz      :math:`f^\text{target}`             10.0   Target firing rate of rate
                                                                                    regularization
-``beta``                                :math:`\beta`                        1.0   Width scaling of surrogate
-                                                                                   gradient / pseudo-derivative
-                                                                                   of membrane voltage
-``gamma``                               :math:`\gamma`                       0.3   Height scaling of surrogate
-                                                                                   gradient / pseudo-derivative
-                                                                                   of membrane voltage
 ``surrogate_gradient_function``         :math:`\psi`            "piecewise_linear" Surrogate gradient /
                                                                                    pseudo-derivative function
                                                                                    ["piecewise_linear",
                                                                                    "exponential",
                                                                                    "fast_sigmoid_derivative",
-                                                                                   "arctan"]
+                                                                                   "arctan_derivative"]
+``surrogate_gradient_height``           :math:`\gamma`                        0.3  Height scaling of surrogate
+                                                                                   gradient / pseudo-derivative
+                                                                                   of membrane voltage
+``surrogate_gradient_width``            :math:`1/\beta`                       1.0  Width scaling of surrogate
+                                                                                   gradient / pseudo-derivative
+                                                                                   of membrane voltage
 =============================== ======= ======================= ================== =============================
 
 Recordables
@@ -351,12 +351,6 @@ private:
     //! Target firing rate of rate regularization (spikes/s).
     double f_target_;
 
-    //! Width scaling of surrogate gradient / pseudo-derivative of membrane voltage.
-    double beta_;
-
-    //! Height scaling of surrogate gradient / pseudo-derivative of membrane voltage.
-    double gamma_;
-
     //! Constant external input current (pA).
     double I_e_;
 
@@ -364,8 +358,14 @@ private:
     bool regular_spike_arrival_;
 
     //! Surrogate gradient / pseudo-derivative function of the membrane voltage ["piecewise_linear", "exponential",
-    //! "fast_sigmoid_derivative", "arctan"]
+    //! "fast_sigmoid_derivative", "arctan_derivative"]
     std::string surrogate_gradient_function_;
+
+    //! Height scaling of surrogate gradient / pseudo-derivative of membrane voltage.
+    double surrogate_gradient_height_;
+
+    //! Width scaling of surrogate gradient / pseudo-derivative of membrane voltage.
+    double surrogate_gradient_width_;
 
     //! Duration of the refractory period (ms).
     double t_ref_;

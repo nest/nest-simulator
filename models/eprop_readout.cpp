@@ -126,12 +126,12 @@ eprop_readout::Parameters_::set( const Dictionary& d, Node* node )
 
   if ( C_m_ <= 0 )
   {
-    throw BadProperty( "Membrane capacitance C_m > 0 required." );
+    throw BadProperty( "C_m > 0 required." );
   }
 
   if ( tau_m_ <= 0 )
   {
-    throw BadProperty( "Membrane time constant tau_m > 0 required." );
+    throw BadProperty( "tau_m > 0 required." );
   }
   return delta_EL;
 }

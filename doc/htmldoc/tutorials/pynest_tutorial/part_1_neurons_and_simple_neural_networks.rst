@@ -36,17 +36,16 @@ PyNEST - an interface to the NEST Simulator
 
 .. _Python-Interface:
 
-.. figure:: ../../static/img/python_interface.png
+.. figure:: ../../static/img/python_interface_ng.svg
    :alt: Python Interface
-   :width: 600px
 
    Python Interface Figure.
 
-   The Python interpreter imports NEST as a module and dynamically
-   loads the NEST simulation kernel (``nestkernel_api.so``). A
-   simulation script of the user (``mysimulation.py``) uses functions
-   defined in this high-level API, which control the simulation
-   kernel.
+   The Python interpreter imports NEST as a package, which loads the Cython extension `nestkernel_api`, which is a
+   direct binding to the NEST C++ API. This C++ API provides the interface to the NEST kernel, using dedicated managers
+   for specific functions alongside classes that represent neuron, device, and synapse models. When a user runs a
+   simulation script (``my-simulation.py``), its calls to the PyNEST high-level API are forwarded through ``ll_api.py``
+   and the Cython layer directly to the C++ KernelManager, which controls the simulation.
 
 The NEural Simulation Tool (NEST: www.nest-initiative.org) :footcite:p:`Gewaltig2007`
 is designed for the simulation of large heterogeneous networks of point

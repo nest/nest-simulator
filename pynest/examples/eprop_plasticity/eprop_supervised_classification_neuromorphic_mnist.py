@@ -201,7 +201,6 @@ params_nrn_out = {
 }
 
 params_nrn_rec = {
-    "beta": 1.7,  # width scaling of the pseudo-derivative
     "C_m": 1.0,
     "c_reg": 2.0 / duration["sequence"],  # coefficient of firing rate regularization
     "E_L": 0.0,
@@ -210,11 +209,12 @@ params_nrn_rec = {
     "flush_event_send_interval": duration[
         "sequence"
     ],  # ms, inactivity period before flushing outgoing synapses to free memory
-    "gamma": 0.5,  # height scaling of the pseudo-derivative
     "I_e": 0.0,
     "kappa": 0.99,  # low-pass filter of the eligibility trace
     "kappa_reg": 0.99,  # low-pass filter of the firing rate for regularization
     "surrogate_gradient_function": "piecewise_linear",  # surrogate gradient / pseudo-derivative function
+    "surrogate_gradient_height": 0.5,  # height scaling of the pseudo-derivative
+    "surrogate_gradient_width": 1.0 / 1.7,  # width scaling of the pseudo-derivative
     "t_ref": 0.0,  # ms, duration of refractory period
     "tau_m": 30.0,
     "V_m": 0.0,

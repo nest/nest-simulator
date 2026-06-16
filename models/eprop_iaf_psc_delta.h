@@ -131,7 +131,7 @@ different surrogate gradient functions:
 .. math::
   \psi_j^t = \gamma \left( 1 + \beta \left| v_j^t - v_\text{th} \right| \right)^2 \,. \\
 
-4. An arctan function used in :footcite:p:`Fang2021`:
+4. The derivative of an arctan function used in :footcite:p:`Fang2021`:
 
 .. math::
   \psi_j^t = \frac{\gamma}{\pi} \frac{1}{ 1 + \left( \beta \pi \left( v_j^t - v_\text{th} \right) \right)^2 } \,. \\
@@ -254,21 +254,21 @@ Parameter                       Unit    Math equivalent             Default     
 ``kappa_reg``                           :math:`\kappa_\text{reg}`                 0.97 Low-pass filter of the
                                                                                        firing rate for
                                                                                        regularization
-``beta``                                :math:`\beta`                              1.0 Width scaling of
-                                                                                       surrogate gradient /
-                                                                                       pseudo-derivative of
-                                                                                       membrane voltage
-``gamma``                               :math:`\gamma`                             0.3 Height scaling of
-                                                                                       surrogate gradient /
-                                                                                       pseudo-derivative of
-                                                                                       membrane voltage
 ``surrogate_gradient_function``         :math:`\psi`                "piecewise_linear" Surrogate gradient /
                                                                                        pseudo-derivative
                                                                                        function
                                                                                        ["piecewise_linear",
                                                                                        "exponential",
                                                                                        "fast_sigmoid_derivative"
-                                                                                       , "arctan"]
+                                                                                       , "arctan_derivative"]
+``surrogate_gradient_height``           :math:`\gamma`                             0.3 Height scaling of
+                                                                                       surrogate gradient /
+                                                                                       pseudo-derivative of
+                                                                                       membrane voltage
+``surrogate_gradient_width``            :math:`1/\beta`                            1.0 Width scaling of
+                                                                                       surrogate gradient /
+                                                                                       pseudo-derivative of
+                                                                                       membrane voltage
 =============================== ======= =========================== ================== =========================
 
 Recordables
@@ -432,15 +432,15 @@ private:
     //! Target firing rate of rate regularization (spikes/s).
     double f_target_;
 
-    //! Width scaling of surrogate gradient / pseudo-derivative of membrane voltage.
-    double beta_;
+    //! Surrogate gradient / pseudo-derivative function of the membrane voltage ["piecewise_linear", "exponential",
+    //! "fast_sigmoid_derivative", "arctan_derivative"]
+    std::string surrogate_gradient_function_;
 
     //! Height scaling of surrogate gradient / pseudo-derivative of membrane voltage.
-    double gamma_;
+    double surrogate_gradient_height_;
 
-    //! Surrogate gradient / pseudo-derivative function of the membrane voltage ["piecewise_linear", "exponential",
-    //! "fast_sigmoid_derivative", "arctan"]
-    std::string surrogate_gradient_function_;
+    //! Width scaling of surrogate gradient / pseudo-derivative of membrane voltage.
+    double surrogate_gradient_width_;
 
     //! Low-pass filter of the eligibility trace.
     double kappa_;

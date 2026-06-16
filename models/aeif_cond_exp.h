@@ -115,8 +115,8 @@ spikes in a single time step, which can lead to exploding spike numbers and extr
     To avoid such unphysiological behavior, you should set a refractory time ``t_ref > 0``.
 
 
-Parameters:
-+++++++++++++
+Parameters
+++++++++++
 The following parameters can be set in the status Dictionary.
 
 ======== ======= =======================================

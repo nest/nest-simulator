@@ -57,6 +57,8 @@ namespace nest
  */
 extern "C" int hh_psc_alpha_dynamics( double, const double*, double*, void* );
 
+// Disable clang-formatting for documentation due to over-wide tables.
+// clang-format off
 /* BeginUserDocs: neuron, Hodgkin-Huxley, current-based, soft threshold
 
 Short description
@@ -134,24 +136,21 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-=============== =========== ===============================
-========================================================================
-**Parameter**   **Default** **Math equivalent**             **Description**
-=============== =========== ===============================
-========================================================================
-``E_L``         -54.402 mV  :math:`E_\text{L}`             Leak reversal potential
-``C_m``         100 pF      :math:`C_{\text{m}}`           Capacity of the membrane
-``t_ref``       2 ms        :math:`t_{\text{ref}}`         Duration of refractory period
-``g_L``         30 nS       :math:`g_\text{L}`             Leak conductance
-``E_Na``        50 mV       :math:`E_{\text{Na}}`          Sodium reversal potential
-``g_Na``        12000 nS    :math:`g_{\text{Na}}`          Sodium peak conductance
-``E_K``         -77 mV      :math:`E_{\text{K}}`           Potassium reversal potential
-``g_K``         3600 nS     :math:`g_{\text{K}}`           Potassium peak conductance
-``tau_syn_ex``  0.2 ms      :math:`\tau_{\text{syn, ex}}`  Rise time of the excitatory synaptic alpha function
-``tau_syn_in``  2.0 ms      :math:`\tau_{\text{syn, in}}`  Rise time of the inhibitory synaptic alpha function
-``I_e``         0 pA        :math:`I_\text{e}`             Constant input current
-=============== =========== ===============================
-========================================================================
+============== =========== ============================= ===================================================
+**Parameter**  **Default** **Math equivalent**           **Description**
+============== =========== ============================= ===================================================
+``E_L``        -54.402 mV  :math:`E_\text{L}`            Leak reversal potential
+``C_m``        100 pF      :math:`C_{\text{m}}`          Capacity of the membrane
+``t_ref``      2 ms        :math:`t_{\text{ref}}`        Duration of refractory period
+``g_L``        30 nS       :math:`g_\text{L}`            Leak conductance
+``E_Na``       50 mV       :math:`E_{\text{Na}}`         Sodium reversal potential
+``g_Na``       12000 nS    :math:`g_{\text{Na}}`         Sodium peak conductance
+``E_K``        -77 mV      :math:`E_{\text{K}}`          Potassium reversal potential
+``g_K``        3600 nS     :math:`g_{\text{K}}`          Potassium peak conductance
+``tau_syn_ex`` 0.2 ms      :math:`\tau_{\text{syn, ex}}` Rise time of the excitatory synaptic alpha function
+``tau_syn_in`` 2.0 ms      :math:`\tau_{\text{syn, in}}` Rise time of the inhibitory synaptic alpha function
+``I_e``        0 pA        :math:`I_\text{e}`            Constant input current
+============== =========== ============================= ===================================================
 
 The following state variables evolve during simulation and are available either as neuron properties or as recordables.
 
@@ -210,6 +209,7 @@ Examples using this model
 .. listexamples:: hh_psc_alpha
 
 EndUserDocs */
+// clang-format on
 
 void register_hh_psc_alpha( const std::string& name );
 

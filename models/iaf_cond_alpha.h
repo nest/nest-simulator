@@ -56,6 +56,8 @@ namespace nest
  */
 extern "C" int iaf_cond_alpha_dynamics( double, const double*, double*, void* );
 
+// Disable clang-formatting for documentation due to over-wide tables.
+// clang-format off
 /* BeginUserDocs: neuron, integrate-and-fire, conductance-based, hard threshold
 
 Short description
@@ -71,8 +73,7 @@ Description
 * a hard threshold,
 * a fixed refractory period,
 * no adaptation mechanisms,
-* :math:`\alpha`-shaped synaptic conductances, normalized such that an event of weight 1.0 results in a peak conductance
-of 1 nS.
+* :math:`\alpha`-shaped synaptic conductances, normalized such that an event of weight 1.0 results in a peak conductance of 1 nS.
 
 The model follows the conductance-based integrate-and-fire framework discussed in [1]_, [2]_, [3]_.
 
@@ -83,8 +84,7 @@ The membrane potential evolves according to
 
 .. math::
 
-   \frac{dV_\text{m}}{dt} = \frac{ -g_{\text{L}} (V_{\text{m}} - E_{\text{L}}) - I_{\text{syn}} + I_\text{e} }
-{C_{\text{m}}}
+   \frac{dV_\text{m}}{dt} = \frac{ -g_{\text{L}} (V_{\text{m}} - E_{\text{L}}) - I_{\text{syn}} + I_\text{e} } {C_{\text{m}}}
 
 where the synaptic input current :math:`I_{\text{syn}}(t)` is discussed below and :math:`I_\text{e}` is
 a constant input current set as a model parameter.
@@ -127,8 +127,7 @@ The individual synaptic conductances are given by
 
 .. math::
 
-   g_{\text{j, X}}(t) = \frac{e}{\tau_{\text{syn, X}}} \, w_{\text{j}} \, t \, e^{-\frac{t}{\tau_{\text{syn, X}}}}
-\Theta(t)
+   g_{\text{j, X}}(t) = \frac{e}{\tau_{\text{syn, X}}} \, w_{\text{j}} \, t \, e^{-\frac{t}{\tau_{\text{syn, X}}}} \Theta(t)
 
 where :math:`\Theta(x)` is the Heaviside step function. The conductances are normalized to unit
 peak, that is,
@@ -149,11 +148,9 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-=============== ================== ===============================
-========================================================================
+=============== ================== =============================== ========================================================================
 **Parameter**   **Default**        **Math equivalent**             **Description**
-=============== ================== ===============================
-========================================================================
+=============== ================== =============================== ========================================================================
 ``E_L``         -70 mV             :math:`E_\text{L}`              Leak reversal potential
 ``C_m``         250 pF             :math:`C_{\text{m}}`            Capacity of the membrane
 ``t_ref``       2 ms               :math:`t_{\text{ref}}`          Duration of refractory period
@@ -165,8 +162,7 @@ The following parameters can be set in the status dictionary.
 ``tau_syn_ex``  0.2 ms             :math:`\tau_{\text{syn, ex}}`   Rise time of the excitatory synaptic alpha function
 ``tau_syn_in``  2.0 ms             :math:`\tau_{\text{syn, in}}`   Rise time of the inhibitory synaptic alpha function
 ``I_e``         0 pA               :math:`I_\text{e}`              Constant input current
-=============== ================== ===============================
-========================================================================
+=============== ================== =============================== ========================================================================
 
 The following state variables evolve during simulation and are available either as neuron properties or as recordables.
 
@@ -217,6 +213,7 @@ Examples using this model
 .. listexamples:: iaf_cond_alpha
 
 EndUserDocs */
+// clang-format on
 
 void register_iaf_cond_alpha( const std::string& name );
 

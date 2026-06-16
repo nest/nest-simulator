@@ -42,6 +42,8 @@
 namespace nest
 {
 
+// Disable clang-formatting for documentation due to over-wide tables.
+// clang-format off
 /* BeginUserDocs: neuron, integrate-and-fire, current-based, precise, hard threshold
 
 Short description
@@ -74,8 +76,7 @@ The membrane potential evolves according to
 
 .. math::
 
-   \frac{dV_\text{m}}{dt} = -\frac{V_{\text{m}} - E_\text{L}}{\tau_{\text{m}}} + \frac{I_{\text{syn}} +
-I_\text{e}}{C_{\text{m}}}
+   \frac{dV_\text{m}}{dt} = -\frac{V_{\text{m}} - E_\text{L}}{\tau_{\text{m}}} + \frac{I_{\text{syn}} + I_\text{e}}{C_{\text{m}}}
 
 where the synaptic input current :math:`I_{\text{syn}}(t)` is discussed below and :math:`I_\text{e}` is
 a constant input current set as a model parameter.
@@ -149,11 +150,9 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-=============== ================== ===============================
-========================================================================
+=============== ================== =============================== ========================================================================
 **Parameter**   **Default**        **Math equivalent**             **Description**
-=============== ================== ===============================
-========================================================================
+=============== ================== =============================== ========================================================================
 ``E_L``         -70 mV             :math:`E_\text{L}`              Resting membrane potential
 ``C_m``         250 pF             :math:`C_{\text{m}}`            Capacity of the membrane
 ``tau_m``       10 ms              :math:`\tau_{\text{m}}`         Membrane time constant
@@ -164,8 +163,7 @@ The following parameters can be set in the status dictionary.
 ``tau_syn_in``  2 ms               :math:`\tau_{\text{syn, in}}`   Rise time of the inhibitory synaptic alpha function
 ``I_e``         0 pA               :math:`I_\text{e}`              Constant input current
 ``V_min``       :math:`-\infty` mV :math:`V_{\text{min}}`          Absolute lower value for the membrane potential
-=============== ================== ===============================
-========================================================================
+=============== ================== =============================== ========================================================================
 
 The following state variables evolve during simulation and are available either as neuron properties or as recordables.
 
@@ -211,6 +209,7 @@ Examples using this model
 .. listexamples:: iaf_psc_alpha_ps
 
 EndUserDocs */
+// clang-format on
 
 void register_iaf_psc_alpha_ps( const std::string& name );
 

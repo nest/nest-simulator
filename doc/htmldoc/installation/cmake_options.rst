@@ -174,23 +174,22 @@ External libraries
 +--------------------------------------------------------+------------------------------------------------------------------------------------------------+
 | ``-Dwith-libneurosim=[OFF|ON|</path/to/libneurosim>]`` | Build with `libneurosim <https://github.com/INCF/libneurosim>`_ [default=OFF]. Optionally      |
 |                                                        | give the directory where libneurosim is installed.                                             |
-|                                                        | libneurosim provides the Connection Generator Interface, a standardized C API that allows      |
+|                                                        | libneurosim provides the Connection Generator Interface, which allows                          |
 |                                                        | external libraries to generate network connections. See                                        |
 |                                                        | :ref:`connection_generator`.                                                                   |
 +--------------------------------------------------------+------------------------------------------------------------------------------------------------+
 | ``-Dwith-music=[OFF|ON|</path/to/music>]``             | Build with `MUSIC <https://github.com/INCF/MUSIC>`_ [default=OFF]. Optionally give the         |
 |                                                        | directory where MUSIC is installed.                                                            |
 |                                                        | MUSIC enables multi-simulator coupling, allowing NEST to exchange spikes, continuous data,     |
-|                                                        | and messages with other simulators at runtime. Adds 7 MUSIC proxy models                       |
-|                                                        | (music_event_in_proxy, music_event_out_proxy, music_cont_in_proxy, etc.).                      |
+|                                                        | and messages with other simulators at runtime.                                                 |
 |                                                        | Requires ``-Dwith-mpi=ON``.                                                                    |
 +--------------------------------------------------------+------------------------------------------------------------------------------------------------+
 | ``-Dwith-sionlib=[OFF|ON|</path/to/sionlib>]``         | Build with                                                                                     |
 |                                                        | `sionlib <https://www.fz-juelich.de/ias/jsc/EN/Expertise/Support/Software/SIONlib/_node.html>`_|
 |                                                        | [default=OFF]. Optionally give the directory where sionlib is installed.                       |
 |                                                        | SIONlib provides a high-performance binary recording backend for large-scale distributed       |
-|                                                        | simulations. Without it, NEST writes one ASCII file per recording device, which can become     |
-|                                                        | a bottleneck at scale. Requires ``-Dwith-mpi=ON``.                                             |
+|                                                        | simulations.                                                                                  |
+|                                                        | Requires ``-Dwith-mpi=ON``.                                                                    |
 +--------------------------------------------------------+------------------------------------------------------------------------------------------------+
 | ``-Dwith-boost=[OFF|ON|</path/to/boost>]``             | Build with Boost [default=ON]. To set a specific Boost installation, give the install path.    |
 |                                                        | Boost is used for high-performance sorting of connections (``boost::sort::spreadsort``), for   |
@@ -203,10 +202,11 @@ External libraries
 |                                                        | ``-Dstatic-libraries=ON``.                                                                     |
 +--------------------------------------------------------+------------------------------------------------------------------------------------------------+
 | ``-Dwith-gsl=[OFF|ON|</path/to/gsl>]``                 | Build with the GSL library [default=ON]. To set a specific library, give the install path.     |
-|                                                        | GSL is required for all conductance-based neuron models, including ``iaf_cond_*``,             |
-|                                                        | ``aeif_cond_*``, ``hh_*``, ``gif_cond_*``, and ``glif_cond`` variants, as well as the          |
-|                                                        | ``ht_neuron`` and ``siegert_neuron`` models. Without GSL, these 31 models will not be          |
-|                                                        | available and some random number generators will be disabled.                                  |
+|                                                        | GSL is required for neuron models that use the GSL ODE solver for adaptive-step numerical      |
+|                                                        | integration, including the conductance-based ``iaf_cond_*``, ``aeif_cond_*``, ``gif_cond_*``,  |
+|                                                        | ``glif_cond``, and Hodgkin-Huxley (``hh_*``) variants, as well as ``ht_neuron``,               |
+|                                                        | ``siegert_neuron``, and several ``aeif_psc_*`` and ``hh_psc_*`` models. Without GSL, these 31  |
+|                                                        | models will not be available.                                                                  |
 +--------------------------------------------------------+------------------------------------------------------------------------------------------------+
 | ``-Dwith-hdf5=[OFF|ON|</path/to/hdf5>]``               | Build with `HDF5 <https://hdfgroup.org/>`_ library [default=OFF]. To set a specific library,   |
 |                                                        | give the install path. HDF5 is required for SONATA support, see :ref:`nest_sonata`.            |

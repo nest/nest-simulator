@@ -79,6 +79,11 @@ NEST to your needs:
 |                                       | directory in the top-level of the source tree. A modelset is just a file     |
 |                                       | listing one model header files (without the .h filename extension) to scan   |
 |                                       | for models.                                                                  |
+|                                       | Available pre-defined modelsets include: ``full`` (all models, default),     |
+|                                       | ``binary`` (binary neuron models), ``rate`` (rate-based models),             |
+|                                       | ``precise`` (high-precision IAF models), ``iaf_minimal`` (minimal IAF set),  |
+|                                       | ``eprop`` (e-prop learning models), and ``empty`` (no built-in models).      |
+|                                       | Using a smaller modelset significantly reduces compilation time.             |
 |                                       | This option is mutually exclusive with -Dwith-models. [default=full].        |
 +---------------------------------------+------------------------------------------------------------------------------+
 | ``-Dwith-models=[<modellist>|OFF]``   | Specify the models to include as a semicolon-separated list of model header  |
@@ -134,10 +139,13 @@ Select parallelization scheme
 
 +---------------------------------------------+----------------------------------------------------------------+
 | ``-Dwith-mpi=[OFF|ON]``                     | Build with MPI parallelization [default=OFF].                  |
-|                                             |                                                                |
+|                                             | Enables distributed-memory parallel simulation across multiple |
+|                                             | processes. Required for ``-Dwith-music`` and                   |
+|                                             | ``-Dwith-sionlib``.                                            |
 +---------------------------------------------+----------------------------------------------------------------+
 | ``-Dwith-openmp=[OFF|ON|<OpenMP-Flag>]``    | Build with OpenMP multi-threading [default=ON]. Optionally set |
-|                                             | OMP compiler flags.                                            |
+|                                             | OMP compiler flags. Enables shared-memory multi-threading for  |
+|                                             | parallel neuron updates within a single process.               |
 +---------------------------------------------+----------------------------------------------------------------+
 
 See also the section on :ref:`building with MPI <compile-with-mpi>` below.
@@ -163,27 +171,48 @@ See also the :ref:`documentation workflow <doc_workflow>` for user-facing and te
 External libraries
 ~~~~~~~~~~~~~~~~~~
 
-+-------------------------------------------------------+------------------------------------------------------------------------------------------------+
-| ``-Dwith-libneurosim=[OFF|ON|</path/to/libneurosim>]``| Build with `libneurosim <https://github.com/INCF/libneurosim>`_ [default=OFF]. Optionally      |
-|                                                       | give the directory where libneurosim is installed.                                             |
-+-------------------------------------------------------+------------------------------------------------------------------------------------------------+
-| ``-Dwith-music=[OFF|ON|</path/to/music>]``            | Build with `MUSIC <https://github.com/INCF/MUSIC>`_ [default=OFF]. Optionally give the         |
-|                                                       | directory where MUSIC is installed.                                                            |
-+-------------------------------------------------------+------------------------------------------------------------------------------------------------+
-| ``-Dwith-sionlib=[OFF|ON|</path/to/sionlib>]``        | Build with                                                                                     |
-|                                                       | `sionlib <https://www.fz-juelich.de/ias/jsc/EN/Expertise/Support/Software/SIONlib/_node.html>`_|
-|                                                       | [default=OFF]. Optionally give the directory where sionlib is installed.                       |
-+-------------------------------------------------------+------------------------------------------------------------------------------------------------+
-| ``-Dwith-boost=[OFF|ON|</path/to/boost>]``            | Build with Boost [default=ON]. To set a specific Boost installation, give the install path.    |
-+-------------------------------------------------------+------------------------------------------------------------------------------------------------+
-| ``-Dwith-ltdl=[OFF|ON|</path/to/ltdl>]``              | Build with ltdl library [default=ON]. To set a specific ltdl, give the  install path. NEST uses|
-|                                                       | ltdl for dynamic loading of external user modules.                                             |
-+-------------------------------------------------------+------------------------------------------------------------------------------------------------+
-| ``-Dwith-gsl=[OFF|ON|</path/to/gsl>]``                | Build with the GSL library [default=ON]. To set a specific library, give the install path.     |
-+-------------------------------------------------------+------------------------------------------------------------------------------------------------+
-| ``-Dwith-hdf5=[OFF|ON|</path/to/hdf5>]``              | Build with `HDF5 <https://hdfgroup.org/>`_ library [default=OFF]. To set a specific library,   |
-|                                                       | give the install path. HDF5 is required for SONATA support, see :ref:`nest_sonata`.            |
-+-------------------------------------------------------+------------------------------------------------------------------------------------------------+
++--------------------------------------------------------+------------------------------------------------------------------------------------------------+
+| ``-Dwith-libneurosim=[OFF|ON|</path/to/libneurosim>]`` | Build with `libneurosim <https://github.com/INCF/libneurosim>`_ [default=OFF]. Optionally      |
+|                                                        | give the directory where libneurosim is installed.                                             |
+|                                                        | libneurosim provides the Connection Generator Interface, a standardized C API that allows      |
+|                                                        | external libraries to generate network connections. See                                        |
+|                                                        | :ref:`connection_generator`.                                                                   |
++--------------------------------------------------------+------------------------------------------------------------------------------------------------+
+| ``-Dwith-music=[OFF|ON|</path/to/music>]``             | Build with `MUSIC <https://github.com/INCF/MUSIC>`_ [default=OFF]. Optionally give the         |
+|                                                        | directory where MUSIC is installed.                                                            |
+|                                                        | MUSIC enables multi-simulator coupling, allowing NEST to exchange spikes, continuous data,     |
+|                                                        | and messages with other simulators at runtime. Adds 7 MUSIC proxy models                       |
+|                                                        | (music_event_in_proxy, music_event_out_proxy, music_cont_in_proxy, etc.).                      |
+|                                                        | Requires ``-Dwith-mpi=ON``.                                                                    |
++--------------------------------------------------------+------------------------------------------------------------------------------------------------+
+| ``-Dwith-sionlib=[OFF|ON|</path/to/sionlib>]``         | Build with                                                                                     |
+|                                                        | `sionlib <https://www.fz-juelich.de/ias/jsc/EN/Expertise/Support/Software/SIONlib/_node.html>`_|
+|                                                        | [default=OFF]. Optionally give the directory where sionlib is installed.                       |
+|                                                        | SIONlib provides a high-performance binary recording backend for large-scale distributed       |
+|                                                        | simulations. Without it, NEST writes one ASCII file per recording device, which can become     |
+|                                                        | a bottleneck at scale. Requires ``-Dwith-mpi=ON``.                                             |
++--------------------------------------------------------+------------------------------------------------------------------------------------------------+
+| ``-Dwith-boost=[OFF|ON|</path/to/boost>]``             | Build with Boost [default=ON]. To set a specific Boost installation, give the install path.    |
+|                                                        | Boost is used for high-performance sorting of connections (``boost::sort::spreadsort``), for   |
+|                                                        | type name introspection in error messages, and for special math functions in the               |
+|                                                        | ``iaf_bw_2001`` neuron model. Without Boost, sorting performance may be reduced and            |
+|                                                        | the ``iaf_bw_2001`` model will not be available.                                               |
++--------------------------------------------------------+------------------------------------------------------------------------------------------------+
+| ``-Dwith-ltdl=[OFF|ON|</path/to/ltdl>]``               | Build with ltdl library [default=ON]. To set a specific ltdl, give the  install path. NEST uses|
+|                                                        | ltdl for dynamic loading of external user modules. Does not work with                          |
+|                                                        | ``-Dstatic-libraries=ON``.                                                                     |
++--------------------------------------------------------+------------------------------------------------------------------------------------------------+
+| ``-Dwith-gsl=[OFF|ON|</path/to/gsl>]``                 | Build with the GSL library [default=ON]. To set a specific library, give the install path.     |
+|                                                        | GSL is required for all conductance-based neuron models, including ``iaf_cond_*``,             |
+|                                                        | ``aeif_cond_*``, ``hh_*``, ``gif_cond_*``, and ``glif_cond`` variants, as well as the          |
+|                                                        | ``ht_neuron`` and ``siegert_neuron`` models. Without GSL, these 31 models will not be          |
+|                                                        | available and some random number generators will be disabled.                                  |
++--------------------------------------------------------+------------------------------------------------------------------------------------------------+
+| ``-Dwith-hdf5=[OFF|ON|</path/to/hdf5>]``               | Build with `HDF5 <https://hdfgroup.org/>`_ library [default=OFF]. To set a specific library,   |
+|                                                        | give the install path. HDF5 is required for SONATA support, see :ref:`nest_sonata`.            |
+|                                                        | Note that the Python packages ``h5py`` and ``pandas`` are also required at runtime for         |
+|                                                        | SONATA functionality.                                                                          |
++--------------------------------------------------------+------------------------------------------------------------------------------------------------+
 
 NEST properties
 ~~~~~~~~~~~~~~~
@@ -197,7 +226,12 @@ NEST properties
 |                                               | Multi-threaded timers can affect the performance.              |
 +-----------------------------------------------+----------------------------------------------------------------+
 | ``-Dwith-detailed-timers=[OFF|ON]``           | Build with detailed internal time measurements [default=OFF].  |
-|                                               | Detailed timers can affect the performance.                    |
+|                                               | Detailed timers can affect the performance. Required to enable |
+|                                               | ``-Dwith-cycle-timers``.                                       |
++-----------------------------------------------+----------------------------------------------------------------+
+| ``-Dwith-cycle-timers=[OFF|ON]``              | Build with internal per-cycle time measurements                |
+|                                               | [default=OFF]. Requires ``-Dwith-detailed-timers=ON``.         |
+|                                               | Can affect the performance.                                    |
 +-----------------------------------------------+----------------------------------------------------------------+
 | ``-Dwith-mpi-sync-timer=[OFF|ON]``            | Build with mpi synchronization barrier and timer [default=OFF].|
 |                                               | Can affect the performance.                                    |

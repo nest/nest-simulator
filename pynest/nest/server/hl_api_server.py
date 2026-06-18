@@ -587,7 +587,7 @@ def combine(response: list) -> dict | list | None:
         return response[0]  # TODO consider alternative: _flatten(response)
 
     # return a single merged dictionary if there are many of them
-    elif all(type(v) is dict for v in response):
+    elif all(isinstance(v, dict) for v in response):
         return merge_dicts(response)
 
     log("combine()", f"ERROR: cannot combine response={response}")

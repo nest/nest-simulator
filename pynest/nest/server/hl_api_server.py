@@ -561,9 +561,6 @@ def combine(response: list) -> dict | list | None:
     based on the call that was issued and individual repsonse data:
       * if all responses are None, the combined response will also just
         be None
-      * the responses are known to be the same from the master and all
-        workers. In this case, the combined response is just the master
-        response
       * if the response list contains only a single actual response and
         None otherwise, the combined response will be that one actual
         response
@@ -575,7 +572,7 @@ def combine(response: list) -> dict | list | None:
     if not isinstance(response, list) or len(response) == 0:
         return response
 
-    # return first dictionary if the response contains only one element.
+    # return first dictionary if no MPI used or the response contains only one element
     elif mpi_comm is None or len(response) == 1:
         return response[0]
 
@@ -610,7 +607,7 @@ def merge_dicts(response: list[dict]) -> dict:
     Parameters
     ----------
     response: list
-        list of response
+        list of responses
 
     """
 

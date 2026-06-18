@@ -572,7 +572,7 @@ def combine(response: list) -> dict | list | None:
 
     """
 
-    if type(response) is not list or len(response) == 0:
+    if not isinstance(response, list) or len(response) == 0:
         return response
 
     # return first dictionary if the response contains only one element.

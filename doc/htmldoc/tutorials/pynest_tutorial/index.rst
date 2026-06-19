@@ -20,7 +20,7 @@ Simulator, from creating neurons and connections to developing spatially structu
    :maxdepth: 1
    :hidden:
 
-   part_1_neurons_and_simple_neural_networks
+   /auto_pynest_tutorial/part_1_neurons_and_simple_neural_networks
    part_2_populations_of_neurons
    part_3_connecting_networks_with_synapses
    part_4_spatially_structured_networks

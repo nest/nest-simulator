@@ -61,7 +61,7 @@ def calculate_RBN_weights(params):
     """Calculate synaptic weights for a random balanced network.
 
     The synaptic weights are calculated according to the method
-    described in Eqs. 7-10 :footcite:p:`Rostami2020`.
+    described in Eqs. 7-10 :footcite:p:`Rostami2024`.
 
     References
     ----------

@@ -1,7 +1,7 @@
 EI-clustered circuit model
 ==========================
 
-This is PyNEST implementation of the EI-clustered circuit model described by Rostami et al. :footcite:p:`Rostami2020`.
+This is PyNEST implementation of the EI-clustered circuit model described by Rostami et al. :footcite:p:`Rostami2024`.
 
 .. figure:: EI_clustered_network_schematic.png
    :alt: EI-clustered circuit model.
@@ -11,7 +11,7 @@ This is PyNEST implementation of the EI-clustered circuit model described by Ros
 Citing this code
 ----------------
 
-If you use this code, we ask you to cite the paper by Rostami et al. :footcite:p:`Rostami2020` and the NEST release on Zenodo.
+If you use this code, we ask you to cite the paper by Rostami et al. :footcite:p:`Rostami2024` and the NEST release on Zenodo.
 
 File structure
 --------------
@@ -43,7 +43,7 @@ Contributions to this PyNEST model implementation
 Acknowledgments
 ---------------
 
-Funding for the study by Rostami et al. :footcite:p:`Rostami2020`: This work was supported by the German Research Foundation (DFG),
+Funding for the study by Rostami et al. :footcite:p:`Rostami2024`: This work was supported by the German Research Foundation (DFG),
 in parts through the Collaborative Research Center ’Motor Control in Health and Disease’
 (DFG-SFB 1451, Project-ID 431549029) and under the Institutional Strategy of the University of Cologne within the
 German Excellence Initiative (DFG-ZUK 81/1) and in parts through the DFG graduate school

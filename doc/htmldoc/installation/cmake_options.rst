@@ -188,7 +188,7 @@ External libraries
 |                                                        | `sionlib <https://www.fz-juelich.de/ias/jsc/EN/Expertise/Support/Software/SIONlib/_node.html>`_|
 |                                                        | [default=OFF]. Optionally give the directory where sionlib is installed.                       |
 |                                                        | SIONlib provides a high-performance binary recording backend for large-scale distributed       |
-|                                                        | simulations.                                                                                  |
+|                                                        | simulations.                                                                                   |
 |                                                        | Requires ``-Dwith-mpi=ON``.                                                                    |
 +--------------------------------------------------------+------------------------------------------------------------------------------------------------+
 | ``-Dwith-boost=[OFF|ON|</path/to/boost>]``             | Build with Boost [default=ON]. To set a specific Boost installation, give the install path.    |
@@ -229,8 +229,9 @@ NEST properties
 |                                               | Detailed timers can affect the performance. Required to enable |
 |                                               | ``-Dwith-cycle-timers``.                                       |
 +-----------------------------------------------+----------------------------------------------------------------+
-| ``-Dwith-cycle-timers=[OFF|ON]``              | Build with internal per-cycle time measurements  and logging of per-cycle spike counts              |
-|                                               | [default=OFF]. Requires ``-Dwith-detailed-timers=ON``.         |
+| ``-Dwith-cycle-timers=[OFF|ON]``              | Build with internal per-cycle time measurements                |
+|                                               | and logging of per-cycle spike counts [default=OFF].           |
+|                                               | Requires ``-Dwith-detailed-timers=ON``.                        |
 |                                               | Can affect the performance.                                    |
 +-----------------------------------------------+----------------------------------------------------------------+
 | ``-Dwith-mpi-sync-timer=[OFF|ON]``            | Build with mpi synchronization barrier and timer [default=OFF].|

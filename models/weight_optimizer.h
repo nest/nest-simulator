@@ -63,7 +63,7 @@ In the Adam scheme :footcite:p:`Kingma2015` the weights are optimized via:
   \alpha_t &= \eta \frac{ \sqrt{ 1- \beta_2^t } }{ 1 - \beta_1^t } \,, \\
   W_t &= W_{t-1} - \alpha_t \frac{ m_t }{ \sqrt{v_t} + \hat{\epsilon} } \,. \\
 
-Note that the implementation follows the implementation in TensorFlow :footcite:p:`KerasAdam` for comparability.
+Note that the implementation follows the implementation in TensorFlow :footcite:p:`KerasTeam2024` for comparability.
 The TensorFlow implementation deviates from :footcite:p:`Huh2018` in that it assumes
 :math:`\hat{\epsilon} = \epsilon \sqrt{ 1 - \beta_2^t }` to be constant, whereas :footcite:p:`Huh2018`
 assumes :math:`\epsilon = \hat{\epsilon} \sqrt{ 1 - \beta_2^t }` to be constant.

@@ -310,7 +310,7 @@ stdp_triplet_synapse< targetidentifierT >::send( Event& e, size_t t, const Commo
   return true;
 }
 
-// Defaults come from reference [1]_ data fitting and table 3.
+// Defaults come from Pfister & Gerstner (2006) data fitting and table 3.
 template < typename targetidentifierT >
 stdp_triplet_synapse< targetidentifierT >::stdp_triplet_synapse()
   : ConnectionBase()

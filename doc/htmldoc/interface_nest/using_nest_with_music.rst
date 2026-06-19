@@ -22,8 +22,8 @@ data and string messages.
 You can find the installation instructions for MUSIC on their Github Page:
 `INCF/MUSIC <https://github.com/INCF/MUSIC/>`__
 
-Reference
-~~~~~~~~~~~
+References
+~~~~~~~~~~
 
 .. footbibliography::
 

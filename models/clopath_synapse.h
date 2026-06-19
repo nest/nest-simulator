@@ -65,7 +65,7 @@ archiving. So far, compatible models are ``aeif_psc_delta_clopath`` and
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 
-See also :footcite:p:`Clopath2010b`, :footcite:p:`ClopathModelDB`.
+See also :footcite:p:`Clopath2010b`, :footcite:p:`Clopath2010c`.
 
 Parameters
 ++++++++++

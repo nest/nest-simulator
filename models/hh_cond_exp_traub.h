@@ -81,7 +81,7 @@ The key differences between the current model and the model in :footcite:p:`Trau
 This model is primarily provided as reference implementation for hh_coba
 example of the Brette et al (2007) review. Default parameter values are chosen
 to match those used with NEST 1.9.10 when preparing data for :footcite:p:`Brette2007`. Code for all
-simulators covered is available from ModelDB :footcite:p:`TraubModelDB`.
+simulators covered is available from ModelDB :footcite:p:`Traub1991b`.
 
 .. note::
 

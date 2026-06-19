@@ -210,7 +210,7 @@ quantal_stp_synapse< targetidentifierT >::send( Event& e, size_t t, const Common
     const double u_decay = ( tau_fac_ < 1.0e-10 ) ? 0.0 : std::exp( -h / tau_fac_ );
 
     // Compute release probability
-    u_ = U_ + u_ * ( 1. - U_ ) * u_decay;  // Eq. 4 from [2]_
+    u_ = U_ + u_ * ( 1. - U_ ) * u_decay;  // Eq. 4 from Loebel et al. (2009)
 
     // Compute number of sites that recovered during the interval.
     for ( int depleted = n_ - a_; depleted > 0; --depleted )

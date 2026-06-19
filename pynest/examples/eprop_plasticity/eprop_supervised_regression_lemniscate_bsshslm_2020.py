@@ -32,7 +32,7 @@ This script demonstrates supervised learning of a regression task with a recurre
 is equipped with the eligibility propagation (e-prop) plasticity mechanism by Bellec et al. :footcite:p:`Bellec2020`.
 
 This type of learning is demonstrated at the proof-of-concept task in :footcite:p:`Bellec2020`. We based this script on their
-TensorFlow script given in [2]_ and changed the task as well as the parameters slightly.
+TensorFlow script given in the `original implementation <https://github.com/IGITUGraz/eligibility_propagation/blob/master/Figure_3_and_S7_e_prop_tutorials/tutorial_pattern_generation.py>`__ and changed the task as well as the parameters slightly.
 
 In this task, the network learns to generate an arbitrary N-dimensional temporal pattern. Here, the network
 learns to reproduce with its overall spiking activity a two-dimensional, roughly one-second-long target signal
@@ -60,8 +60,6 @@ References
 ~~~~~~~~~~
 
 .. footbibliography::
-
-.. [2] https://github.com/IGITUGraz/eligibility_propagation/blob/master/Figure_3_and_S7_e_prop_tutorials/tutorial_pattern_generation.py
 
 """  # pylint: disable=line-too-long # noqa: E501
 

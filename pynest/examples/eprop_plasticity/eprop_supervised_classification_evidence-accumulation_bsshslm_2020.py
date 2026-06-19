@@ -32,7 +32,7 @@ This script demonstrates supervised learning of a classification task with the e
 plasticity mechanism by Bellec et al. :footcite:p:`Bellec2020`.
 
 This type of learning is demonstrated at the proof-of-concept task in :footcite:p:`Bellec2020`. We based this script on their
-TensorFlow script given in [2]_.
+TensorFlow script given in the `original implementation <https://github.com/IGITUGraz/eligibility_propagation/blob/master/Figure_3_and_S7_e_prop_tutorials/tutorial_evidence_accumulation_with_alif.py>`__.
 
 The task, a so-called evidence accumulation task, is inspired by behavioral tasks, where a lab animal (e.g., a
 mouse) runs along a track, gets cues on the left and right, and has to decide at the end of the track between
@@ -63,8 +63,6 @@ References
 ~~~~~~~~~~
 
 .. footbibliography::
-
-.. [2] https://github.com/IGITUGraz/eligibility_propagation/blob/master/Figure_3_and_S7_e_prop_tutorials/tutorial_evidence_accumulation_with_alif.py
 
 """  # pylint: disable=line-too-long # noqa: E501
 

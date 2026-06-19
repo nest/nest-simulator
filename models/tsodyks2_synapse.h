@@ -233,8 +233,8 @@ tsodyks2_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSyn
     double u_decay = ( tau_fac_ == 0 ) ? 0.0 : std::exp( -h / tau_fac_ );  // tau_fac == 0 disables facilitation
 
     // now we compute spike number n+1
-    x_ = 1. + ( x_ - x_ * u_ - 1. ) * x_decay;  // Eq. 5 from reference [3]_
-    u_ = U_ + u_ * ( 1. - U_ ) * u_decay;       // Eq. 4 from [3]_
+    x_ = 1. + ( x_ - x_ * u_ - 1. ) * x_decay;  // Eq. 5 from Maass & Markram (2002)
+    u_ = U_ + u_ * ( 1. - U_ ) * u_decay;       // Eq. 4 from Maass & Markram (2002)
   }
 
   // We use the current values for the spike number n.

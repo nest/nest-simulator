@@ -237,7 +237,7 @@ private:
     /** Resting threshold in mV
         (relative to resting potential).
         The real resting threshold is (E_L_+omega_).
-        Called omega in [3]_. */
+        Called omega in Kobayashi et al. (2009). */
     double omega_;
 
     Parameters_();  //!< Sets default parameter values

@@ -3,7 +3,7 @@ pynest folder
 
 This directory contains the source code of PyNEST, the Python bindings
 to the NEST kernel. A detailed explanation of PyNEST can be found in
-Zaytsev and Morrison (2014) [1]_ and Eppler et al. (2009) [2]_.
+Zaytsev and Morrison (2014) :footcite:p:`Zaytsev2014` and Eppler et al. (2009) :footcite:p:`Eppler2009`.
 
 PyNEST will be compiled together with NEST by default. If you want to
 disable it, pass
@@ -36,10 +36,4 @@ that was loaded at compile time.
 References
 ----------
 
-.. [1] Zaytsev YV and Morrison A (2014) CyNEST: a maintainable
-       Cython-based interface for the NEST Simulator. Front.
-       Neuroinform. 8:23. http://dx.doi.org/10.3389/fninf.2014.00023
-
-.. [2] Eppler JM, Helias M, Muller E, Diesmann M and Gewaltig M-O PyNEST
-       (2009) A convenient interface to the NEST Simulator. Front.
-       Neuroinform. 2:12. http://dx.doi.org/10.3389/neuro.11.012.2008
+.. footbibliography::

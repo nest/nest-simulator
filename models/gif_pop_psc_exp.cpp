@@ -23,13 +23,13 @@
 /* Point process population model with exponential postsynaptic currents and
  * adaptation */
 
-/* [1]: Line numbers in comments refer to the algorithm pseudocode in
-        Figures 11 and 12 of the paper
-        Schwalger T, Deger M, Gerstner W (2017)
-        Towards a theory of cortical columns: From spiking neurons to
-        interacting neural populations of finite size.
-        PLoS Comput Biol 13(4): e1005507.
-        https://doi.org/10.1371/journal.pcbi.1005507 */
+/* Line numbers in comments refer to the algorithm pseudocode in
+   Figures 11 and 12 of Schwalger, Deger & Gerstner (2017),
+   "Towards a theory of cortical columns: From spiking neurons to
+   interacting neural populations of finite size",
+   PLoS Comput Biol 13(4): e1005507.
+   https://doi.org/10.1371/journal.pcbi.1005507
+   This work is referred to below as "Schwalger et al. (2017)". */
 
 #include "gif_pop_psc_exp.h"
 
@@ -330,30 +330,30 @@ nest::gif_pop_psc_exp::pre_run_hook()
     V_.theta_.clear();
     V_.theta_tld_.clear();
 
-    // Procedure InitPopulations, see Fig. 11 of [1]
+    // Procedure InitPopulations, see Fig. 11 of Schwalger et al. (2017)
     for ( int k = 0; k < P_.len_kernel_; ++k )
     {
-      V_.n_.push_back( 0 );       // line 3 of [1]
-      V_.m_.push_back( 0 );       // line 3 of [1]
-      V_.v_.push_back( 0 );       // line 3 of [1]
-      V_.u_.push_back( 0 );       // line 3 of [1]
-      V_.lambda_.push_back( 0 );  // line 3 of [1]
+      V_.n_.push_back( 0 );       // line 3 of Schwalger et al. (2017)
+      V_.m_.push_back( 0 );       // line 3 of Schwalger et al. (2017)
+      V_.v_.push_back( 0 );       // line 3 of Schwalger et al. (2017)
+      V_.u_.push_back( 0 );       // line 3 of Schwalger et al. (2017)
+      V_.lambda_.push_back( 0 );  // line 3 of Schwalger et al. (2017)
 
       const double theta_tmp = adaptation_kernel( P_.len_kernel_ - k );
-      V_.theta_.push_back( theta_tmp );  // line 4 of [1]
+      V_.theta_.push_back( theta_tmp );  // line 4 of Schwalger et al. (2017)
       V_.theta_tld_.push_back( P_.Delta_V_ * ( 1. - std::exp( -theta_tmp / P_.Delta_V_ ) )
-        / static_cast< double >( P_.N_ ) );  // line 5 of [1]
+        / static_cast< double >( P_.N_ ) );  // line 5 of Schwalger et al. (2017)
     }
 
-    V_.n_[ P_.len_kernel_ - 1 ] = static_cast< double >( P_.N_ );  // InitPopulations, line 7 of [1]
-    V_.m_[ P_.len_kernel_ - 1 ] = static_cast< double >( P_.N_ );  // InitPopulations, line 7 of [1]
+    V_.n_[ P_.len_kernel_ - 1 ] = static_cast< double >( P_.N_ );  // InitPopulations, line 7 of Schwalger et al. (2017)
+    V_.m_[ P_.len_kernel_ - 1 ] = static_cast< double >( P_.N_ );  // InitPopulations, line 7 of Schwalger et al. (2017)
 
-    // InitPopulations, line 8 of [1]
+    // InitPopulations, line 8 of Schwalger et al. (2017)
     V_.x_ = 0.;
     V_.z_ = 0.;
     V_.k0_ = 0;  // rotating index has to start at 0
 
-    // lines 9-10 of [1]: Variables y (and h) are initialized with other State
+    // lines 9-10 of Schwalger et al. (2017): Variables y (and h) are initialized with other State
     // variables.
 
     // initialize adaptation variables
@@ -363,7 +363,7 @@ nest::gif_pop_psc_exp::pre_run_hook()
 
     for ( size_t k = 0; k < P_.tau_sfa_.size(); ++k )
     {
-      // multiply by tau_sfa here because [1] defines J as product
+      // multiply by tau_sfa here because Schwalger et al. (2017) defines J as product
       // of J and tau_sfa.
       V_.Q30K_.push_back( P_.q_sfa_[ k ] * P_.tau_sfa_[ k ] * std::exp( -V_.h_ * P_.len_kernel_ / P_.tau_sfa_[ k ] ) );
       V_.Q30_.push_back( std::exp( -V_.h_ / P_.tau_sfa_[ k ] ) );
@@ -459,7 +459,7 @@ nest::gif_pop_psc_exp::adaptation_kernel( const int k )
 {
   // this function computes the value of the sum of exponentials adaptation
   // kernel at a time lag given by k time steps.
-  // See below Eq. (87) of [1]. There is no division by tau here because
+  // See below Eq. (87) of Schwalger et al. (2017). There is no division by tau here because
   // theta_tmp must be in units voltage just as q_sfa_.
   double theta_tmp = 0.;
   for ( size_t j = 0; j < P_.tau_sfa_.size(); ++j )
@@ -474,7 +474,7 @@ inline int
 nest::gif_pop_psc_exp::get_history_size()
 {
   // This function automatically determines a suitable history kernel size,
-  // see [1], Eq. (86) and Fig 11, Procedure GetHistoryLength.
+  // see Schwalger et al. (2017), Eq. (86) and Fig 11, Procedure GetHistoryLength.
   double tmax = 20000.;  // ms, maximum automatic kernel length
 
   int k = tmax / V_.h_;
@@ -496,29 +496,29 @@ nest::gif_pop_psc_exp::update( Time const& origin, const long from, const long t
 {
   for ( long lag = from; lag < to; ++lag )
   {
-    // main update routine, see Fig. 11 of [1]
+    // main update routine, see Fig. 11 of Schwalger et al. (2017)
     double h_tot_;
-    // this is the membrane and synapse update method of [1]
-    h_tot_ = ( P_.I_e_ + S_.y0_ ) * V_.P20_ + P_.E_L_;  // line 6 of [1]
+    // this is the membrane and synapse update method of Schwalger et al. (2017)
+    h_tot_ = ( P_.I_e_ + S_.y0_ ) * V_.P20_ + P_.E_L_;  // line 6 of Schwalger et al. (2017)
 
     // get the input spikes from the buffers
     // We are getting spike numbers weighted with synaptic weights here,
-    // but [1] uses A(t), which implies division by J, N and dt, which we do
+    // but Schwalger et al. (2017) uses A(t), which implies division by J, N and dt, which we do
     // not know here (e.g. J is stored externally to the model in NEST).
     // However, these rescalings are undone below,
     // so the quantities used here are equivalent.
     double JNA_ex = B_.ex_spikes_.get_value( lag ) / V_.h_;
     double JNA_in = B_.in_spikes_.get_value( lag ) / V_.h_;
 
-    // rescale inputs to voltage scale used in [1]
+    // rescale inputs to voltage scale used in Schwalger et al. (2017)
     JNA_ex *= P_.tau_syn_ex_ / P_.c_m_;
     JNA_in *= P_.tau_syn_in_ / P_.c_m_;
 
-    // translate synaptic currents into [1]'s definition
+    // translate synaptic currents into Schwalger et al. (2017)'s definition
     double JNy_ex = S_.I_syn_ex_ / P_.c_m_;
     double JNy_in = S_.I_syn_in_ / P_.c_m_;
 
-    // membrane update (line 10 of [1])
+    // membrane update (line 10 of Schwalger et al. (2017))
     const double h_ex_tmpvar = ( P_.tau_syn_ex_ * V_.P11_ex_ * ( JNy_ex - JNA_ex )
       - V_.P22_ * ( P_.tau_syn_ex_ * JNy_ex - P_.tau_m_ * JNA_ex ) );
     const double h_in_tmpvar = ( P_.tau_syn_in_ * V_.P11_in_ * ( JNy_in - JNA_in )
@@ -527,7 +527,7 @@ nest::gif_pop_psc_exp::update( Time const& origin, const long from, const long t
     const double h_in = P_.tau_m_ * ( JNA_in + h_in_tmpvar / ( P_.tau_syn_in_ - P_.tau_m_ ) );
     h_tot_ += h_ex + h_in;
 
-    // update EPSCs & IPSCs (line 11 of [1])
+    // update EPSCs & IPSCs (line 11 of Schwalger et al. (2017))
     JNy_ex = JNA_ex + ( JNy_ex - JNA_ex ) * V_.P11_ex_;
     JNy_in = JNA_in + ( JNy_in - JNA_in ) * V_.P11_in_;
 
@@ -538,39 +538,40 @@ nest::gif_pop_psc_exp::update( Time const& origin, const long from, const long t
     // Set new input current
     S_.y0_ = B_.currents_.get_value( lag );
 
-    // begin procedure update population, see Fig. 12 of [1]
-    double W_ = 0, X_ = 0, Y_ = 0, Z_ = 0;  // line 2 of [1]
+    // begin procedure update population, see Fig. 12 of Schwalger et al. (2017)
+    double W_ = 0, X_ = 0, Y_ = 0, Z_ = 0;  // line 2 of Schwalger et al. (2017)
     S_.theta_hat_ = P_.V_T_star_;           // line 2, initialize theta
 
-    S_.V_m_ = ( S_.V_m_ - P_.E_L_ ) * V_.P22_ + h_tot_;  // line 3 of [1]
+    S_.V_m_ = ( S_.V_m_ - P_.E_L_ ) * V_.P22_ + h_tot_;  // line 3 of Schwalger et al. (2017)
 
     // compute free adaptation state
-    for ( size_t j = 0; j < P_.tau_sfa_.size(); ++j )  // line 4 of [1]
+    for ( size_t j = 0; j < P_.tau_sfa_.size(); ++j )  // line 4 of Schwalger et al. (2017)
     {
       const double g_j_tmp = ( 1. - V_.Q30_[ j ] ) * V_.n_[ V_.k0_ ] / ( static_cast< double >( P_.N_ ) * V_.h_ );
-      V_.g_[ j ] = V_.g_[ j ] * V_.Q30_[ j ] + g_j_tmp;  // line 5 of [1]
-      S_.theta_hat_ += V_.Q30K_[ j ] * V_.g_[ j ];       // line 6 of [1]
+      V_.g_[ j ] = V_.g_[ j ] * V_.Q30_[ j ] + g_j_tmp;  // line 5 of Schwalger et al. (2017)
+      S_.theta_hat_ += V_.Q30K_[ j ] * V_.g_[ j ];       // line 6 of Schwalger et al. (2017)
     }
 
     // compute free escape rate
-    double lambda_tld = escrate( S_.V_m_ - S_.theta_hat_ );                                    // line 8 of [1]
-    const double P_free = 1 - std::exp( -0.0005 * ( V_.lambda_free_ + lambda_tld ) * V_.h_ );  // line 9 of [1]
-    V_.lambda_free_ = lambda_tld;                                                              // line 10
-    S_.theta_hat_ -= V_.n_[ 0 ] * V_.theta_tld_[ 0 ];                                          // line 11
+    double lambda_tld = escrate( S_.V_m_ - S_.theta_hat_ );  // line 8 of Schwalger et al. (2017)
+    const double P_free =
+      1 - std::exp( -0.0005 * ( V_.lambda_free_ + lambda_tld ) * V_.h_ );  // line 9 of Schwalger et al. (2017)
+    V_.lambda_free_ = lambda_tld;                                          // line 10
+    S_.theta_hat_ -= V_.n_[ 0 ] * V_.theta_tld_[ 0 ];                      // line 11
 
     for ( int k_marked = 0; k_marked < P_.len_kernel_; ++k_marked )
     {
-      X_ += V_.m_[ k_marked ];  // line 12 of [1]
+      X_ += V_.m_[ k_marked ];  // line 12 of Schwalger et al. (2017)
     }
 
     // use a local theta_hat to reserve S_.theta_hat_ for the free threshold,
     // which is a recordable
     double theta_hat_ = S_.theta_hat_;
 
-    // line 13 of [1]
+    // line 13 of Schwalger et al. (2017)
     for ( int k_marked = 0; k_marked < P_.len_kernel_ - V_.k_ref_; ++k_marked )
     {
-      int k = ( V_.k0_ + k_marked ) % P_.len_kernel_;            // line 14 of [1]
+      int k = ( V_.k0_ + k_marked ) % P_.len_kernel_;            // line 14 of Schwalger et al. (2017)
       const double theta = V_.theta_[ k_marked ] + theta_hat_;   // line 15
       theta_hat_ += V_.n_[ k ] * V_.theta_tld_[ k_marked ];      // line 16
       V_.u_[ k ] = ( V_.u_[ k ] - P_.E_L_ ) * V_.P22_ + h_tot_;  // line 17
@@ -578,22 +579,22 @@ nest::gif_pop_psc_exp::update( Time const& origin, const long from, const long t
       double P_lambda_ = 0.0005 * ( lambda_tld + V_.lambda_[ k ] ) * V_.h_;
       if ( P_lambda_ > 0.01 )
       {
-        P_lambda_ = 1. - std::exp( -P_lambda_ );  // line 20 of [1]
+        P_lambda_ = 1. - std::exp( -P_lambda_ );  // line 20 of Schwalger et al. (2017)
       }
-      V_.lambda_[ k ] = lambda_tld;  // line 21 of [1]
+      V_.lambda_[ k ] = lambda_tld;  // line 21 of Schwalger et al. (2017)
       Y_ += P_lambda_ * V_.v_[ k ];  // line 22
       Z_ += V_.v_[ k ];              // line 23
       W_ += P_lambda_ * V_.m_[ k ];  // line 24
 
       const double ompl = ( 1. - P_lambda_ );
       V_.v_[ k ] = ompl * ompl * V_.v_[ k ] + P_lambda_ * V_.m_[ k ];
-      V_.m_[ k ] = ompl * V_.m_[ k ];  // line 26 of [1]
-    }  // line 27 of [1]
+      V_.m_[ k ] = ompl * V_.m_[ k ];  // line 26 of Schwalger et al. (2017)
+    }  // line 27 of Schwalger et al. (2017)
 
     double P_Lambda_;
     if ( ( Z_ + V_.z_ ) > 0.0 )
     {
-      P_Lambda_ = ( Y_ + P_free * V_.z_ ) / ( Z_ + V_.z_ );  // line 28 of [1]
+      P_Lambda_ = ( Y_ + P_free * V_.z_ ) / ( Z_ + V_.z_ );  // line 28 of Schwalger et al. (2017)
     }
     else
     {
@@ -611,13 +612,13 @@ nest::gif_pop_psc_exp::update( Time const& origin, const long from, const long t
       S_.n_spikes_ = draw_poisson( S_.n_expect_ );
     }
 
-    // line 31 of [1]: update z
+    // line 31 of Schwalger et al. (2017): update z
     const double ompf = ( 1 - P_free );
     V_.z_ = ompf * ompf * V_.z_ + V_.x_ * P_free + V_.v_[ V_.k0_ ];
-    // line 32 of [1]: update x
+    // line 32 of Schwalger et al. (2017): update x
     V_.x_ = V_.x_ * ompf + V_.m_[ V_.k0_ ];
 
-    V_.n_[ V_.k0_ ] = S_.n_spikes_;  // line 33 of [1]
+    V_.n_[ V_.k0_ ] = S_.n_spikes_;  // line 33 of Schwalger et al. (2017)
     V_.m_[ V_.k0_ ] = S_.n_spikes_;  // line 33
     V_.v_[ V_.k0_ ] = 0;             // line 34
     V_.u_[ V_.k0_ ] = P_.V_reset_;   // line 35
@@ -625,10 +626,10 @@ nest::gif_pop_psc_exp::update( Time const& origin, const long from, const long t
 
     // end procedure update population
 
-    // back in Fig 11 of [1], main update procedure
+    // back in Fig 11 of Schwalger et al. (2017), main update procedure
 
     // shift rotating index
-    V_.k0_ = ( V_.k0_ + 1 ) % P_.len_kernel_;  // line 17 of [1]
+    V_.k0_ = ( V_.k0_ + 1 ) % P_.len_kernel_;  // line 17 of Schwalger et al. (2017)
 
     // end of main update routine, Fig. 11
 

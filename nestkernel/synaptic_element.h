@@ -61,13 +61,8 @@
  * synaptic element.
  *
  * References:
- *  [1] Butz, Markus, Florentin Wörgötter, and Arjen van Ooyen.
- *  "Activity-dependent structural plasticity." Brain research reviews 60.2
- *  (2009): 287-305.
- *
- *  [2] Butz, Markus, and Arjen van Ooyen. "A simple rule for dendritic spine
- *  and axonal bouton formation can account for cortical reorganization after
- *  focal retinal lesions." PLoS Comput Biol 9.10 (2013): e1003259.
+ *  Butz, Wörgötter & van Ooyen (2009)
+ *  Butz & van Ooyen (2013)
  *
  * FirstVersion: July 2013
  *

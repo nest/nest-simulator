@@ -92,9 +92,10 @@ Parameters
                         integers
  configbit_0            list of     Configuration bits for evaluation
                         integers    function. For details see code in
-                                    function ``eval_function_`` and [4]_
-                                    (configbit[0]=e_cc, ..:footcite:p:`Morrison2008`=e_ca,
-                                    ..:footcite:p:`Schemmel2006`=e_ac, ..[3]=e_aa).
+                                    function ``eval_function_`` and
+                                    :footcite:p:`Friedmann2013`
+                                    (configbit[0]=e_cc, :footcite:p:`Morrison2008` =e_ca,
+                                    :footcite:p:`Schemmel2006` =e_ac, :footcite:p:`Pfeil2012` =e_aa).
                                     Depending on these two sets of
                                     configuration bits weights are updated
                                     according LUTs (out of three: (1,0),
@@ -134,8 +135,6 @@ References
 ++++++++++
 
 .. footbibliography::
-
-.. [4] Friedmann, S. in preparation
 
 See also
 ++++++++

@@ -73,7 +73,7 @@ in :footcite:p:`Clopath2010a`. It is an extension of the ``aeif_psc_delta`` mode
 connecting to a Clopath synapse.
 
 Note that there are two points that are not mentioned in the paper but
-present in a MATLAB implementation by Claudia Clopath :footcite:p:`ClopathModelDB`. The first one is the
+present in a MATLAB implementation by Claudia Clopath :footcite:p:`Clopath2010c`. The first one is the
 clamping of the membrane potential to a fixed value after a spike occurred to
 mimic a real spike and not just the upswing. This is important since the finite
 duration of the spike influences the evolution of the convolved versions
@@ -84,7 +84,7 @@ used to compute the change of the synaptic weight.
 Note:
 Neither the clamping nor the delayed processing of u_bar_[plus/minus] are
 mentioned in :footcite:p:`Clopath2010a`. However, they are part of an reference implementation
-by Claudia Clopath et al. that can be found on ModelDB :footcite:p:`ClopathModelDB`. The clamping is
+by Claudia Clopath et al. that can be found on ModelDB :footcite:p:`Clopath2010c`. The clamping is
 important to mimic a spike which is otherwise not described by the aeif neuron
 model.
 
@@ -97,7 +97,7 @@ See also :footcite:p:`Clopath2010b`.
 
     The default refractory period for ``aeif`` models is zero, consistent with the model definition in
     Brette & Gerstner :footcite:p:`Brette2005`.  Thus, an ``aeif`` neuron with default parameters can fire multiple
-spikes in a single time step, which can lead to exploding spike numbers and extreme slow-down of simulations.
+    spikes in a single time step, which can lead to exploding spike numbers and extreme slow-down of simulations.
 
     To avoid such unphysiological behavior, you should set a refractory time ``t_ref > 0``.
 

@@ -229,7 +229,7 @@ NEST properties
 |                                               | Detailed timers can affect the performance. Required to enable |
 |                                               | ``-Dwith-cycle-timers``.                                       |
 +-----------------------------------------------+----------------------------------------------------------------+
-| ``-Dwith-cycle-timers=[OFF|ON]``              | Build with internal per-cycle time measurements                |
+| ``-Dwith-cycle-timers=[OFF|ON]``              | Build with internal per-cycle time measurements  and logging of per-cycle spike counts              |
 |                                               | [default=OFF]. Requires ``-Dwith-detailed-timers=ON``.         |
 |                                               | Can affect the performance.                                    |
 +-----------------------------------------------+----------------------------------------------------------------+

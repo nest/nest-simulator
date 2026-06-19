@@ -83,7 +83,7 @@ there is a local maximum above a certain threshold of the membrane potential,
 it is considered a spike.
 
 See also :footcite:p:`Gerstner2002`, :footcite:p:`Dayan2001`, :footcite:p:`Hodgkin1952`, :footcite:p:`Clopath2010a`,
-:footcite:p:`Clopath2010b`, :footcite:p:`Clopath2010c`.
+:footcite:p:`Clopath2010b`, :footcite:p:`Torben-Nielsen2010`.
 
 For details on asynchronicity in spike and firing events with Hodgkin Huxley models
 see :ref:`here <hh_details>`.

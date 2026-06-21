@@ -137,16 +137,18 @@ The following options help to optimize NEST for maximal performance and thus red
 Select parallelization scheme
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-+---------------------------------------------+----------------------------------------------------------------+
-| ``-Dwith-mpi=[OFF|ON|</path/to/mpi library>]``                     | Build with MPI parallelization [default=OFF].                  |
-|                                             | Optionallly give the directory where an MPI library is installed. Enables distributed-memory parallel simulation across multiple |
-|                                             | processes. Required for ``-Dwith-music`` and                   |
-|                                             | ``-Dwith-sionlib``.                                            |
-+---------------------------------------------+----------------------------------------------------------------+
-| ``-Dwith-openmp=[OFF|ON|</path/to/openmp library>]``    | Build with OpenMP multi-threading [default=ON]. Optionally give |
-|                                             | the directory where an OpenMP library is installed.  Enables shared-memory multi-threading for  |
-|                                             | parallel neuron updates within a single process.               |
-+---------------------------------------------+----------------------------------------------------------------+
++-----------------------------------------------------+-----------------------------------------------------------------+
+| ``-Dwith-mpi=[OFF|ON|</path/to/mpi library>]``      | Build with MPI parallelization [default=OFF].                   |
+|                                                     | Optionallly give the directory where an MPI library is          |
+|                                                     | installed. Enables distributed-memory parallel simulation       |
+|                                                     | across multiple rocesses. Required for ``-Dwith-music`` and     |
+|                                                     | ``-Dwith-sionlib``.                                             |
++-----------------------------------------------------+-----------------------------------------------------------------+
+| ``-Dwith-openmp=[OFF|ON|</path/to/openmp library>]``| Build with OpenMP multi-threading [default=ON]. Optionally give |
+|                                                     | the directory where an OpenMP library is installed. Enables or  |
+|                                                     | shared-memory multi-threading for parallel neuron updates       |
+|                                                     | within a single process.                                        |
++-----------------------------------------------------+-----------------------------------------------------------------+
 
 See also the section on :ref:`building with MPI <compile-with-mpi>` below.
 

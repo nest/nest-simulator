@@ -79,7 +79,7 @@ double
 dictionary_::cast_value_< double >( const any_type& value, const std::string& key ) const
 {
   return std::visit(
-    [ &key, debug_name = debug_type( value ) ]( auto&& arg ) -> double
+    [ &key, debug_name = get_typename( value ) ]( auto&& arg ) -> double
     {
       using T = std::decay_t< decltype( arg ) >;
       if constexpr ( std::is_arithmetic_v< T > )
@@ -121,7 +121,7 @@ dictionary_::cast_value_< std::vector< double > >( const any_type& value, const 
   catch ( const std::bad_variant_access& )
   {
     const std::string msg =
-      String::compose( "Failed to cast '%1' from %2 to type std::vector<double>", key, debug_type( value ) );
+      String::compose( "Failed to cast '%1' from %2 to type std::vector<double>", key, get_typename( value ) );
     throw nest::TypeMismatch( msg );
   }
 }
@@ -147,32 +147,32 @@ dictionary_::cast_value_< std::vector< std::string > >( const any_type& value, c
   catch ( const std::bad_variant_access& )
   {
     const std::string msg =
-      String::compose( "Failed to cast '%1' from %2 to type std::vector<string>", key, debug_type( value ) );
+      String::compose( "Failed to cast '%1' from %2 to type std::vector<string>", key, get_typename( value ) );
     throw nest::TypeMismatch( msg );
   }
 }
 
 std::string
-debug_type( const any_type& operand )
+get_typename( const any_type& operand )
 {
   return std::visit(
     []( auto&& arg ) -> std::string
     {
       using T = std::decay_t< decltype( arg ) >;
-      return boost::typeindex::type_id< T >().pretty_name();
+      return pretty_typename< T >();
     },
     operand );
 }
 
 std::string
-debug_dict_types( const Dictionary& dict )
+get_dict_typenames( const Dictionary& dict )
 {
   std::string s = "[Dictionary]\n";
 
   for ( auto& kv : dict )
   {
     s += kv.first + ": ";
-    s += debug_type( kv.second.item ) + "\n";
+    s += get_typename( kv.second.item ) + "\n";
   }
   return s;
 }
@@ -225,11 +225,11 @@ operator<<( std::ostream& os, const Dictionary& dict )
     } )->first.length();
 
   const auto max_type_length =
-    debug_type( std::max_element( dict.begin(),
-                  dict.end(),
-                  []( const dictionary_::value_type s1, const dictionary_::value_type s2 )
-                  { return debug_type( s1.second.item ).length() < debug_type( s2.second.item ).length(); } )
-                  ->second.item )
+    get_typename( std::max_element( dict.begin(),
+                    dict.end(),
+                    []( const dictionary_::value_type s1, const dictionary_::value_type s2 )
+                    { return get_typename( s1.second.item ).length() < get_typename( s2.second.item ).length(); } )
+                    ->second.item )
       .length();
 
   const std::string pre_padding = "    ";
@@ -237,7 +237,7 @@ operator<<( std::ostream& os, const Dictionary& dict )
   for ( const auto& [ key, val ] : dict )
   {
     const auto& item = val.item;
-    const auto& type = debug_type( item );
+    const auto& type = get_typename( item );
 
     const auto key_padding = max_key_length - key.length() + 2;
     const auto type_padding = max_type_length - type.length() + 2;

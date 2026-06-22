@@ -59,7 +59,7 @@ nest::ConnParameter::create( const any_type& value, const size_t nthreads )
     return new ArrayLongParameter( std::get< std::vector< long > >( value ), nthreads );
   }
 
-  throw BadProperty( std::string( "Cannot handle parameter type. Received " ) + debug_type( value ) );
+  throw BadProperty( std::string( "Cannot handle parameter type. Received " ) + get_typename( value ) );
 }
 
 

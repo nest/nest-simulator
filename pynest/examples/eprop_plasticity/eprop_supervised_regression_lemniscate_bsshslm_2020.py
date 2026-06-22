@@ -190,7 +190,6 @@ params_nrn_out = {
 tau_m_mean = 30.0  # ms, mean of membrane time constant distribution
 
 params_nrn_rec = {
-    "beta": 1.0,  # width scaling of the pseudo-derivative
     "adapt_tau": 2000.0,  # ms, time constant of adaptive threshold
     "C_m": 250.0,
     "c_reg": 150.0,  # coefficient of firing rate regularization
@@ -199,10 +198,11 @@ params_nrn_rec = {
     "flush_event_send_interval": duration[
         "sequence"
     ],  # ms, inactivity period before flushing outgoing synapses to free memory
-    "gamma": 0.3,  # height scaling of the pseudo-derivative
     "I_e": 0.0,
     "regular_spike_arrival": False,
     "surrogate_gradient_function": "piecewise_linear",  # surrogate gradient / pseudo-derivative function
+    "surrogate_gradient_height": 0.3,  # height scaling of the pseudo-derivative
+    "surrogate_gradient_width": 1.0,  # width scaling of the pseudo-derivative
     "t_ref": 0.0,  # ms, duration of refractory period
     "tau_m": nest.random.normal(mean=tau_m_mean, std=2.0),
     "V_m": 0.0,
@@ -210,8 +210,10 @@ params_nrn_rec = {
 }
 
 # factors from the original pseudo-derivative definition are incorporated into the parameters
-params_nrn_rec["gamma"] /= params_nrn_rec["V_th"]
-params_nrn_rec["beta"] /= np.abs(params_nrn_rec["V_th"])  # prefactor is inside abs in the original definition
+params_nrn_rec["surrogate_gradient_height"] /= params_nrn_rec["V_th"]
+params_nrn_rec["surrogate_gradient_width"] *= np.abs(
+    params_nrn_rec["V_th"]
+)  # prefactor is inside abs in the original definition
 
 params_nrn_rec["adapt_beta"] = (
     1.7 * (1.0 - np.exp(-1 / params_nrn_rec["adapt_tau"])) / (1.0 - np.exp(-1.0 / tau_m_mean))

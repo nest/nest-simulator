@@ -133,17 +133,17 @@ eprop_readout_bsshslm_2020::Parameters_::set( const Dictionary& d, Node* node )
 
   if ( C_m_ <= 0 )
   {
-    throw BadProperty( "Membrane capacitance C_m > 0 required." );
+    throw BadProperty( "C_m > 0 required." );
   }
 
   if ( loss_ != "mean_squared_error" and loss_ != "cross_entropy" )
   {
-    throw BadProperty( "Loss function loss from [\"mean_squared_error\", \"cross_entropy\"] required." );
+    throw BadProperty( "loss from [\"mean_squared_error\", \"cross_entropy\"] required." );
   }
 
   if ( tau_m_ <= 0 )
   {
-    throw BadProperty( "Membrane time constant tau_m > 0 required." );
+    throw BadProperty( "tau_m > 0 required." );
   }
 
   return delta_EL;
@@ -377,7 +377,7 @@ double
 eprop_readout_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis,
   const long,
   const long t_previous_trigger_spike,
-  const double kappa,
+  const double /*kappa*/,
   const bool average_gradient )
 {
   auto eprop_hist_it = get_eprop_history( t_previous_trigger_spike );

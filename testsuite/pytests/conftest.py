@@ -80,6 +80,10 @@ def pytest_configure(config):
     )
     config.addinivalue_line(
         "markers",
+        "skipif_missing_boost: mark tests requiring Boost support in NEST",
+    )
+    config.addinivalue_line(
+        "markers",
         "skipif_missing_music: mark tests requiring MUSIC",
     )
     config.addinivalue_line(
@@ -168,11 +172,6 @@ def have_hdf5():
     return nest.build_info["have_hdf5"]
 
 
-@pytest.fixture(scope="session")
-def have_music():
-    return nest.build_info["have_music"]
-
-
 @pytest.fixture(autouse=True)
 def skipif_missing_hdf5(request, have_hdf5):
     """
@@ -181,6 +180,26 @@ def skipif_missing_hdf5(request, have_hdf5):
     """
     if not have_hdf5 and request.node.get_closest_marker("skipif_missing_hdf5"):
         pytest.skip("skipped because missing HDF5 support.")
+
+
+@pytest.fixture(scope="session")
+def have_boost():
+    return nest.build_info["have_boost"]
+
+
+@pytest.fixture(autouse=True)
+def skipif_missing_boost(request, have_boost):
+    """
+    Globally applied fixture that skips tests marked to be skipped when GSL is
+    missing.
+    """
+    if not have_boost and request.node.get_closest_marker("skipif_missing_boost"):
+        pytest.skip("skipped because missing Boost support.")
+
+
+@pytest.fixture(scope="session")
+def have_music():
+    return nest.build_info["have_music"]
 
 
 @pytest.fixture(autouse=True)

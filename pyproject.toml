@@ -123,16 +123,18 @@ Changelog = "https://nest-simulator.readthedocs.io/en/stable/whats_new/index.htm
 [tool.scikit-build]
 sdist.cmake = false
 build-dir = "build/{wheel_tag}"
-metadata.version.provider = "scikit_build_core.metadata.regex"
-metadata.version.input = "VERSION"
-metadata.version.regex = "(?P<value>.*)"
-# Conditional exclusions based on package type
 wheel.exclude = [
   ".git*",           # Always exclude git files
   ".github/",        # Always exclude CI configuration
   "build_support/",  # Always exclude build tools
   "docs/",           # Exclude docs from package
 ]
+
+[tool.scikit-build.metadata.version]
+provider = "scikit_build_core.metadata.regex"
+input = "VERSION"
+regex = "^(?P<version>.*)\\s*$"
+result = "{version}"
 
 [tool.scikit-build.cmake.define]
 with-optimize = "-O2"

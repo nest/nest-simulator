@@ -73,4 +73,4 @@ exclude_link_local = true
 exclude_loopback = true
 
 # Exclude all mail addresses from checking
-exclude_mail = true
+include_mail = false

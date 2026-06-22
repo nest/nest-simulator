@@ -467,7 +467,7 @@ values = ["dev", "rc", "final"]
 optional_value = "final"
 
 [[tool.bumpversion.files]]
-filename = "src/bennch/__init__.py"
+filename = "VERSION"
 ignore_missing_version = false
 
 [[tool.bumpversion.files]]

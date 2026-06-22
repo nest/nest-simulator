@@ -315,7 +315,7 @@ jobs:
 
       - name: "Install dependencies"
         run: |
-          pip install mypy matplotlib numpy scipy data-science-types
+          pip install mypy matplotlib numpy "scipy!=1.18.0" data-science-types
 
       - name: "Run mypy..."
         run: |
@@ -890,7 +890,6 @@ jobs:
           python -m pip install --upgrade pip setuptools
           python -c "import setuptools; print('package location:', setuptools.__file__)"
           python -m pip install --force-reinstall --upgrade -r requirements_testing.txt
-          # scipy 'junitparser>=2' numpy pytest pytest-timeout pytest-xdist mpi4py h5py cython matplotlib terminaltables pandoc pandas
           test \! -e "=2"   # assert junitparser is correctly quoted and '>' is not interpreted as shell redirect
           python -c "import pytest; print('package location:', pytest.__file__)"
           pip list

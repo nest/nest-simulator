@@ -310,7 +310,7 @@ eprop_iaf_bsshslm_2020::update( Time const& origin, const long from, const long 
     S_.surrogate_gradient_ = ( this->*compute_surrogate_gradient_ )(
       S_.r_, S_.v_m_, P_.V_th_, P_.surrogate_gradient_height_, P_.surrogate_gradient_width_ );
 
-    if ( S_.v_m_ >= P_.V_th_ and S_.r_ == 0 )
+    if ( spike_event_is_due( S_.v_m_ >= P_.V_th_ and S_.r_ == 0 ) )
     {
       count_spike();
 

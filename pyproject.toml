@@ -1,6 +1,6 @@
 [build-system]
 requires = ["scikit-build-core",
-    "cython>=0.28.3",
+    "cython>=3.0.0",
     "setuptools>=61",
     "wheel"
     ]
@@ -42,7 +42,7 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "cython >= 0.28.3",
+  "cython >= 3.0.0",
   "numpy",
   "matplotlib"
 ]
@@ -63,7 +63,7 @@ test = [
   "black",
   "isort",
   "mypy",
-  "scipy",
+  "scipy != 1.18.0",
   "pandas"
 ]
 docs = [
@@ -287,7 +287,7 @@ test-requires = [
   "pytest",
   "pytest-cov",
   "pytest-xdist",
-  "scipy",
+  "scipy != 1.18.0",
 ]
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -405,7 +405,6 @@ norecursedirs = [
 filterwarnings = [
     "ignore:.*Use function bar.*instead:UserWarning:bennch.utils",
 ]
-
 
 # PyLint
 # config see https://pylint.pycqa.org/en/latest/user_guide/usage/run.html

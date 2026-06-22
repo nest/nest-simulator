@@ -65,7 +65,11 @@ def find_all_variables(file_path):
             if isinstance(target, ast.Name) and target.id == "__all__":
                 value = node.value
                 if isinstance(value, ast.List):
-                    all_variables = [elem.s for elem in value.elts if isinstance(elem, ast.Str)]
+                    all_variables = [
+                        elem.value
+                        for elem in value.elts
+                        if isinstance(elem, ast.Constant) and isinstance(elem.value, str)
+                    ]
                 break
 
     return all_variables

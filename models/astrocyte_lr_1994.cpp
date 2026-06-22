@@ -63,7 +63,7 @@ RecordablesMap< astrocyte_lr_1994 >::create()
 }
 
 extern "C" int
-astrocyte_lr_1994_dynamics( double time, const double y[], double f[], void* pnode )
+astrocyte_lr_1994_dynamics( double, const double y[], double f[], void* pnode )
 {
   // a shorthand
   typedef nest::astrocyte_lr_1994::State_ S;

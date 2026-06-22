@@ -166,7 +166,7 @@ Parameter                 Unit    Math equivalent       Default            Descr
 ``tau_m``                 ms      :math:`\tau_\text{m}`               10.0 Time constant of the membrane
 ``V_min``                 mV      :math:`v_\text{min}`  negative maximum   Absolute lower bound of the membrane
                                                         value              voltage
-                                                        representable by a
+                                                        representable by
                                                         ``double`` type in
                                                         C++
 ========================= ======= ===================== ================== =====================================
@@ -178,7 +178,7 @@ Parameter                   Unit    Math equivalent             Default         
 =========================== ======= =========================== ================ ===============================
 ``eprop_isi_trace_cutoff``  ms      :math:`{\Delta t}_\text{c}` maximum value    Cutoff for integration of
                                                                 representable    e-prop update between two
-                                                                by a ``long``    spikes
+                                                                by ``double``    spikes
                                                                 type in C++
 =========================== ======= =========================== ================ ===============================
 
@@ -222,9 +222,10 @@ References
        networks of spiking neurons. Nature Communications, 11:3625.
        https://doi.org/10.1038/s41467-020-17236-y
 
-.. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
-       Dahmen D, Bolten M, Van Albada SJ, Diesmann M. Event-based
-       implementation of eligibility propagation (in preparation)
+.. [2] Korcsak-Gorzo A, Espinoza Valverde JA, Stapmanns J, Plesser HE, Dahmen D,
+       Bolten M, van Albada SJ, Diesmann M (2025). Event-driven eligibility
+       propagation in large sparse networks: efficiency shaped by biological
+       realism. arXiv:2511.21674. https://doi.org/10.48550/arXiv.2511.21674
 
 Sends
 +++++
@@ -253,7 +254,7 @@ void register_eprop_readout( const std::string& name );
  *
  * Class implementing a current-based leaky integrate readout neuron model with delta-shaped postsynaptic currents for
  * e-prop plasticity according to Bellec et al. (2020) with additional biological features described in
- * Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al. (in preparation).
+ * Korcsak-Gorzo et al. (2025).
  */
 class eprop_readout : public EpropArchivingNodeReadout< false >
 {
@@ -308,11 +309,15 @@ private:
     double&,
     double&,
     const CommonSynapseProperties&,
-    WeightOptimizer* ) override;
+    WeightOptimizer*,
+    const bool,
+    const bool,
+    double&,
+    long&,
+    long& ) override;
 
   long get_shift() const override;
   bool is_eprop_recurrent_node() const override;
-  long get_eprop_isi_trace_cutoff() const override;
 
   //! Map for storing a static set of recordables.
   friend class RecordablesMap< eprop_readout >;
@@ -337,9 +342,6 @@ private:
 
     //! Absolute lower bound of the membrane voltage relative to the leak membrane potential (mV).
     double V_min_;
-
-    //! Time interval from the previous spike until the cutoff of e-prop update integration between two spikes (ms).
-    double eprop_isi_trace_cutoff_;
 
     //! Default constructor.
     Parameters_();
@@ -412,9 +414,6 @@ private:
 
     //! Propagator matrix entry for evolving the incoming currents.
     double P_i_in_;
-
-    //! Time steps from the previous spike until the cutoff of e-prop update integration between two spikes.
-    long eprop_isi_trace_cutoff_steps_;
   };
 
   //! Minimal spike receptor type. Start with 1 to forbid port 0 and avoid accidental creation of connections with no
@@ -487,12 +486,6 @@ eprop_readout::is_eprop_recurrent_node() const
   return false;
 }
 
-inline long
-eprop_readout::get_eprop_isi_trace_cutoff() const
-{
-  return V_.eprop_isi_trace_cutoff_steps_;
-}
-
 inline size_t
 eprop_readout::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
@@ -550,6 +543,7 @@ eprop_readout::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type
 inline void
 eprop_readout::get_status( Dictionary& d ) const
 {
+  EpropArchivingNodeReadout::get_status( d );
   P_.get( d );
   S_.get( d, P_ );
   d[ names::recordables ] = recordablesMap_.get_list();
@@ -564,6 +558,7 @@ eprop_readout::get_status( Dictionary& d ) const
 inline void
 eprop_readout::set_status( const Dictionary& d )
 {
+  EpropArchivingNodeReadout::set_status( d );
   // temporary copies in case of errors
   Parameters_ ptmp = P_;
   State_ stmp = S_;

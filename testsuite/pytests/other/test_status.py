@@ -35,10 +35,12 @@ class StatusTestCase(unittest.TestCase):
 
         nest.ResetKernel()
 
-        # Remove entry containing numpy arrays from status dicts since they do not compare well
-        # Also remove memory_size entry since it may change as a result of the GetKernelStatus() call
         gks_result = nest.GetKernelStatus()
         ks_result = nest.kernel_status
+
+        # Filter out keys that are difficult to test
+        # memory_size sometimes changes between the two calls above leading to spurious negatives
+        # spike_buffer_resize_log here contains empty numpy arrays, leading to "ambiguous truth value" issues
         for entry_to_delete in ["memory_size", "spike_buffer_resize_log"]:
             del gks_result[entry_to_delete]
             del ks_result[entry_to_delete]

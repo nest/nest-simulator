@@ -380,6 +380,11 @@ public:
   void
   send_to_all( const size_t tid, const std::vector< ConnectorModel* >& cm, Event& e ) override
   {
+    if ( not ConnectionT::supports_flush_event and e.is_flush_event() )
+    {
+      return;
+    }
+
     auto const& cp = static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties();
 
     for ( size_t lcid = 0; lcid < C_.size(); ++lcid )
@@ -393,6 +398,11 @@ public:
   size_t
   send( const size_t tid, const size_t lcid, const std::vector< ConnectorModel* >& cm, Event& e ) override
   {
+    if ( not ConnectionT::supports_flush_event and e.is_flush_event() )
+    {
+      return 0;
+    }
+
     typename ConnectionT::CommonPropertiesType const& cp =
       static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties();
 

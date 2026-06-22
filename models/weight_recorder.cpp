@@ -90,7 +90,7 @@ nest::weight_recorder::Parameters_::set( const Dictionary& d )
       }
       else
       {
-        throw TypeMismatch( "NodeCollection", debug_type( d.at( key ) ) );
+        throw TypeMismatch( "NodeCollection", get_typename( d.at( key ) ) );
       }
     }
   };

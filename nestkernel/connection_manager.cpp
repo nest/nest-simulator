@@ -776,7 +776,8 @@ nest::ConnectionManager::connect_arrays( const long* sources,
 }
 
 void
-nest::ConnectionManager::connect_sonata( const Dictionary& graph_specs, const long hyberslab_size )
+nest::ConnectionManager::connect_sonata( [[maybe_unused]] const Dictionary& graph_specs,
+  [[maybe_unused]] const long hyberslab_size )
 {
 #ifdef HAVE_HDF5
   kernel().connection_manager.sw_construction_connect.start();

@@ -37,6 +37,9 @@ import numpy as np
 import numpy.testing as nptest
 import pytest
 
+pytestmark = [pytest.mark.skipif_missing_boost, pytest.mark.skipif_missing_gsl]
+
+
 w_ex = 40.0
 w_in = 15.0
 
@@ -64,7 +67,6 @@ def spiketrain_response(t, tau, spiketrain, w):
     return response
 
 
-@pytest.mark.skipif(not nest.build_info["have_boost"], reason="Boost is not available")
 def test_iaf_bw_2001():
     """
     Creates 4 neurons.
@@ -163,7 +165,6 @@ def test_iaf_bw_2001():
     nptest.assert_array_almost_equal(gaba_soln, mm_bw1.events["s_GABA"])
 
 
-@pytest.mark.skipif(not nest.build_info["have_boost"], reason="Boost is not available")
 def test_approximation_I_NMDA_V_m():
     """
     Creates 3 neurons.
@@ -225,7 +226,6 @@ def test_approximation_I_NMDA_V_m():
     assert np.max(np.abs(mm_approx.events["V_m"] - mm_exact.events["V_m"])) < 0.25
 
 
-@pytest.mark.skipif(not nest.build_info["have_boost"], reason="Boost is not available")
 def test_illegal_connection_error():
     """
     Test that connecting with NMDA synapses from iaf_cond_exp throws error.

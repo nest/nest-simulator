@@ -60,16 +60,18 @@ synapses can only be connected to neuron models that are capable of
 archiving. So far, compatible models are ``eprop_iaf``, ``eprop_iaf_psc_delta``, ``eprop_iaf_psc_delta_adapt``,
 ``eprop_iaf_adapt``, and ``eprop_readout``.
 
-For more information on e-prop plasticity, see the documentation on the other e-prop models:
+For more information, see the following topics:
 
- * :doc:`eprop_iaf<../models/eprop_iaf/>`
- * :doc:`eprop_iaf_adapt<../models/eprop_iaf_adapt/>`
- * :doc:`eprop_readout<../models/eprop_readout/>`
- * :doc:`eprop_learning_signal_connection<../models/eprop_learning_signal_connection/>`
+* other e-prop plasticity models:
 
-For more information on the optimizers, see the documentation of the weight optimizer:
+      * :doc:`eprop_iaf<../models/eprop_iaf/>`
+      * :doc:`eprop_iaf_adapt<../models/eprop_iaf_adapt/>`
+      * :doc:`eprop_readout<../models/eprop_readout/>`
+      * :doc:`eprop_learning_signal_connection<../models/eprop_learning_signal_connection/>`
 
- * :doc:`weight_optimizer<../models/weight_optimizer/>`
+* :doc:`weight optimizer<../models/weight_optimizer/>`
+* triggering synaptic plasticity computations to reduce memory usage via the
+  :ref:`flush event mechanism<flush_event_mechanism>`
 
 Details on the event-based NEST implementation of e-prop can be found in [2]_.
 
@@ -137,9 +139,10 @@ References
        networks of spiking neurons. Nature Communications, 11:3625.
        https://doi.org/10.1038/s41467-020-17236-y
 
-.. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
-       Dahmen D, Bolten M, Van Albada SJ, Diesmann M. Event-based
-       implementation of eligibility propagation (in preparation)
+.. [2] Korcsak-Gorzo A, Espinoza Valverde JA, Stapmanns J, Plesser HE, Dahmen D,
+       Bolten M, van Albada SJ, Diesmann M (2025). Event-driven eligibility
+       propagation in large sparse networks: efficiency shaped by biological
+       realism. arXiv:2511.21674. https://doi.org/10.48550/arXiv.2511.21674
 
 See also
 ++++++++
@@ -155,8 +158,8 @@ EndUserDocs */
  * @brief Base class implementing common properties for e-prop synapses with additional biological features.
  *
  * Base class implementing common properties for the e-prop synapse model according to Bellec et al. (2020) with
- * additional biological features described in Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al.
- * (in preparation).
+ * additional biological features described in Korcsak-Gorzo et al. (2025).
+
  *
  * This class in particular manages a pointer to weight-optimizer common properties to support
  * exchanging the weight optimizer at runtime. Setting the weight-optimizer common properties
@@ -202,7 +205,7 @@ void register_eprop_synapse( const std::string& name );
  * @brief Class implementing a synapse model for e-prop plasticity with additional biological features.
  *
  * Class implementing a synapse model for e-prop plasticity according to Bellec et al. (2020) with
- * additional biological features described in Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al. (in preparation).
+ * additional biological features described in Korcsak-Gorzo et al. (2025).
  *
  * @note Each synapse has an optimizer_ object managed through a `WeightOptimizer*`, pointing to an object of
  * a specific weight optimizer type. This optimizer, drawing also on parameters in the `WeightOptimizerCommonProperties`
@@ -241,6 +244,9 @@ public:
   static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
     | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::REQUIRES_EPROP_ARCHIVING
     | ConnectionModelProperties::SUPPORTS_HPC;
+
+  //! Whether this connection type supports flush events.
+  static constexpr bool supports_flush_event = true;
 
   //! Default constructor.
   eprop_synapse();
@@ -317,6 +323,9 @@ private:
   //! The time step when the previous spike arrived.
   long t_spike_previous_ = 0;
 
+  //! Previous event was a flush event.
+  bool previous_was_flush_event_ = false;
+
   //! The time step when the spike arrived that triggered the previous e-prop update.
   long t_previous_trigger_spike_ = 0;
 
@@ -334,6 +343,15 @@ private:
 
   //! Value of spiking variable one time step before t_previous_spike_.
   double z_previous_buffer_ = 0.0;
+
+  //! Sum of gradients.
+  double gradient_ = 0.0;
+
+  //! Remaining computation steps.
+  long remaining_steps_until_cutoff_ = 0;
+
+  //! Decay steps for the eligibility trace.
+  long decay_steps_ = 0;
 
   /**
    *  Optimizer
@@ -359,12 +377,12 @@ Connector< eprop_synapse< TargetIdentifierPtrRport > >::~Connector();
 template <>
 Connector< eprop_synapse< TargetIdentifierIndex > >::~Connector();
 
-
 template < typename targetidentifierT >
 eprop_synapse< targetidentifierT >::eprop_synapse()
   : ConnectionBase()
   , weight_( 1.0 )
   , t_spike_previous_( 0 )
+  , previous_was_flush_event_( false )
   , t_previous_trigger_spike_( 0 )
   , optimizer_( nullptr )
 {
@@ -399,12 +417,16 @@ eprop_synapse< targetidentifierT >::operator=( const eprop_synapse& es )
 
   weight_ = es.weight_;
   t_spike_previous_ = es.t_spike_previous_;
+  previous_was_flush_event_ = es.previous_was_flush_event_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
   z_bar_ = es.z_bar_;
   e_bar_ = es.e_bar_;
   e_bar_reg_ = es.e_bar_reg_;
   epsilon_ = es.epsilon_;
   z_previous_buffer_ = es.z_previous_buffer_;
+  gradient_ = es.gradient_;
+  remaining_steps_until_cutoff_ = es.remaining_steps_until_cutoff_;
+  decay_steps_ = es.decay_steps_;
   optimizer_ = es.optimizer_;
 
   return *this;
@@ -415,11 +437,16 @@ eprop_synapse< targetidentifierT >::eprop_synapse( eprop_synapse&& es )
   : ConnectionBase( es )
   , weight_( es.weight_ )
   , t_spike_previous_( es.t_spike_previous_ )
+  , previous_was_flush_event_( es.previous_was_flush_event_ )
   , t_previous_trigger_spike_( es.t_previous_trigger_spike_ )
   , z_bar_( es.z_bar_ )
   , e_bar_( es.e_bar_ )
   , e_bar_reg_( es.e_bar_reg_ )
   , epsilon_( es.epsilon_ )
+  , z_previous_buffer_( es.z_previous_buffer_ )
+  , gradient_( es.gradient_ )
+  , remaining_steps_until_cutoff_( es.remaining_steps_until_cutoff_ )
+  , decay_steps_( es.decay_steps_ )
   , optimizer_( es.optimizer_ )
 {
   // Move operator, therefore we must null the optimizer pointer in the source of the move.
@@ -440,13 +467,16 @@ eprop_synapse< targetidentifierT >::operator=( eprop_synapse&& es )
 
   weight_ = es.weight_;
   t_spike_previous_ = es.t_spike_previous_;
+  previous_was_flush_event_ = es.previous_was_flush_event_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
   z_bar_ = es.z_bar_;
   e_bar_ = es.e_bar_;
   e_bar_reg_ = es.e_bar_reg_;
   epsilon_ = es.epsilon_;
   z_previous_buffer_ = es.z_previous_buffer_;
-
+  gradient_ = es.gradient_;
+  remaining_steps_until_cutoff_ = es.remaining_steps_until_cutoff_;
+  decay_steps_ = es.decay_steps_;
   optimizer_ = es.optimizer_;
 
   // Move assignment, therefore we must null the optimizer pointer in the source of the move.
@@ -492,24 +522,40 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
   assert( target );
 
   const long t_spike = e.get_stamp().get_steps();
+  const bool is_flush_event = e.is_flush_event();
 
   if ( t_spike_previous_ != 0 )
   {
-    target->compute_gradient(
-      t_spike, t_spike_previous_, z_previous_buffer_, z_bar_, e_bar_, e_bar_reg_, epsilon_, weight_, cp, optimizer_ );
+    target->compute_gradient( t_spike,
+      t_spike_previous_,
+      z_previous_buffer_,
+      z_bar_,
+      e_bar_,
+      e_bar_reg_,
+      epsilon_,
+      weight_,
+      cp,
+      optimizer_,
+      is_flush_event,
+      previous_was_flush_event_,
+      gradient_,
+      remaining_steps_until_cutoff_,
+      decay_steps_ );
   }
 
-  const long eprop_isi_trace_cutoff = target->get_eprop_isi_trace_cutoff();
-  target->write_update_to_history( t_spike_previous_, t_spike, eprop_isi_trace_cutoff );
+  target->erase_used_eprop_history( t_spike, t_spike_previous_ );
 
   t_spike_previous_ = t_spike;
+  previous_was_flush_event_ = is_flush_event;
 
-  e.set_receiver( *target );
-  e.set_weight( weight_ );
-  e.set_delay_steps( get_delay_steps() );
-  e.set_rport( get_rport() );
-  e();
-
+  if ( not is_flush_event )
+  {
+    e.set_receiver( *target );
+    e.set_weight( weight_ );
+    e.set_delay_steps( get_delay_steps() );
+    e.set_rport( get_rport() );
+    e();
+  }
   return true;
 }
 

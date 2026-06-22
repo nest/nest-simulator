@@ -31,11 +31,13 @@
 #include <variant>
 #include <vector>
 
-#include <boost/type_index.hpp>
-
+#include "config.h"
 #include "exceptions.h"
-
 #include "logging.h"
+
+#ifdef HAVE_BOOST
+#include <boost/type_index.hpp>
+#endif
 
 namespace nest
 {
@@ -342,18 +344,35 @@ public:
 };
 
 /**
+ * Return typename boost-prettified if available, otherwise as returned by typename().
+ *
+ * @note This function isolates the boost-dependency of pretty-printing the type.
+ * @ingroup nestdict
+ */
+template < typename T >
+std::string
+pretty_typename()
+{
+#ifdef HAVE_BOOST
+  return boost::typeindex::type_id< T >().pretty_name();
+#else
+  return typeid( T ).name();
+#endif
+}
+
+/**
  * @brief Return typename of @c operand.
  *
  * @ingroup nestdict
  */
-std::string debug_type( const any_type& operand );
+std::string get_typename( const any_type& operand );
 
 /**
  * @brief Return multi-line string displaying dictionary content.
  *
  * @ingroup nestdict
  */
-std::string debug_dict_types( const Dictionary& dict );
+std::string get_dict_typenames( const Dictionary& dict );
 
 /**
  * Represent value in dictionary entry with access information.
@@ -414,10 +433,8 @@ class dictionary_ : public std::map< std::string, DictEntry_ >
     }
     catch ( const std::bad_variant_access& )
     {
-      std::string msg = String::compose( "Failed to cast '%1' from %2 to type %3",
-        key,
-        debug_type( value ),
-        boost::typeindex::type_id< T >().pretty_name() );
+      std::string msg =
+        String::compose( "Failed to cast '%1' from %2 to type %3", key, get_typename( value ), pretty_typename< T >() );
       throw nest::TypeMismatch( msg );
     }
   }

@@ -100,13 +100,13 @@ ignore_and_fire::Parameters_::set( const Dictionary& d, Node* node )
 }
 
 void
-ignore_and_fire::State_::get( Dictionary& d, const Parameters_& p ) const
+ignore_and_fire::State_::get( Dictionary&, const Parameters_& ) const
 {
 }
 
 
 void
-ignore_and_fire::State_::set( const Dictionary& d, const Parameters_& p, Node* node )
+ignore_and_fire::State_::set( const Dictionary&, const Parameters_&, Node* )
 {
 }
 

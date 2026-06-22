@@ -63,16 +63,18 @@ synapses can only be connected to neuron models that are capable of
 archiving. So far, compatible models are ``eprop_iaf_bsshslm_2020``,
 ``eprop_iaf_adapt_bsshslm_2020``, and ``eprop_readout_bsshslm_2020``.
 
-For more information on e-prop plasticity, see the documentation on the other e-prop models:
+For more information, see the following topics:
 
- * :doc:`eprop_iaf_bsshslm_2020<../models/eprop_iaf_bsshslm_2020/>`
- * :doc:`eprop_iaf_adapt_bsshslm_2020<../models/eprop_iaf_adapt_bsshslm_2020/>`
- * :doc:`eprop_readout_bsshslm_2020<../models/eprop_readout_bsshslm_2020/>`
- * :doc:`eprop_learning_signal_connection_bsshslm_2020<../models/eprop_learning_signal_connection_bsshslm_2020/>`
+* other e-prop plasticity models:
 
-For more information on the optimizers, see the documentation of the weight optimizer:
+      * :doc:`eprop_iaf_bsshslm_2020<../models/eprop_iaf_bsshslm_2020/>`
+      * :doc:`eprop_iaf_adapt_bsshslm_2020<../models/eprop_iaf_adapt_bsshslm_2020/>`
+      * :doc:`eprop_readout_bsshslm_2020<../models/eprop_readout_bsshslm_2020/>`
+      * :doc:`eprop_learning_signal_connection_bsshslm_2020<../models/eprop_learning_signal_connection_bsshslm_2020/>`
 
- * :doc:`weight_optimizer<../models/weight_optimizer/>`
+* :doc:`weight optimizer<../models/weight_optimizer/>`
+* triggering synaptic plasticity computations to reduce memory usage via the
+  :ref:`flush event mechanism<flush_event_mechanism>`
 
 Details on the event-based NEST implementation of e-prop can be found in [2]_.
 
@@ -151,9 +153,10 @@ References
        networks of spiking neurons. Nature Communications, 11:3625.
        https://doi.org/10.1038/s41467-020-17236-y
 
-.. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
-       Dahmen D, Bolten M, Van Albada SJ, Diesmann M. Event-based
-       implementation of eligibility propagation (in preparation)
+.. [2] Korcsak-Gorzo A, Espinoza Valverde JA, Stapmanns J, Plesser HE, Dahmen D,
+       Bolten M, van Albada SJ, Diesmann M (2025). Event-driven eligibility
+       propagation in large sparse networks: efficiency shaped by biological
+       realism. arXiv:2511.21674. https://doi.org/10.48550/arXiv.2511.21674
 
 See also
 ++++++++
@@ -250,6 +253,9 @@ public:
   //! Type of the connection base.
   typedef Connection< targetidentifierT > ConnectionBase;
 
+  //! Whether this connection type supports flush events.
+  static constexpr bool supports_flush_event = true;
+
   /**
    * Properties of the connection model.
    *
@@ -331,8 +337,14 @@ private:
   //! Synaptic weight.
   double weight_;
 
+  //! Gradient used for the weight update.
+  double gradient_;
+
   //! The time step when the previous spike arrived.
   long t_spike_previous_;
+
+  //! Previous event was a flush event.
+  bool previous_was_flush_event_;
 
   //! The time step when the previous e-prop update was.
   long t_previous_update_;
@@ -379,12 +391,13 @@ Connector< eprop_synapse_bsshslm_2020< TargetIdentifierPtrRport > >::~Connector(
 template <>
 Connector< eprop_synapse_bsshslm_2020< TargetIdentifierIndex > >::~Connector();
 
-
 template < typename targetidentifierT >
 eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020()
   : ConnectionBase()
   , weight_( 1.0 )
+  , gradient_( 0.0 )
   , t_spike_previous_( 0 )
+  , previous_was_flush_event_( false )
   , t_previous_update_( 0 )
   , t_next_update_( 0 )
   , t_previous_trigger_spike_( 0 )
@@ -406,7 +419,9 @@ template < typename targetidentifierT >
 eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020( const eprop_synapse_bsshslm_2020& es )
   : ConnectionBase( es )
   , weight_( es.weight_ )
+  , gradient_( es.gradient_ )
   , t_spike_previous_( 0 )
+  , previous_was_flush_event_( false )
   , t_previous_update_( 0 )
   , t_next_update_( kernel().simulation_manager.get_eprop_update_interval().get_steps() )
   , t_previous_trigger_spike_( 0 )
@@ -430,7 +445,9 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::operator=( const eprop_synapse_
   ConnectionBase::operator=( es );
 
   weight_ = es.weight_;
+  gradient_ = es.gradient_;
   t_spike_previous_ = es.t_spike_previous_;
+  previous_was_flush_event_ = es.previous_was_flush_event_;
   t_previous_update_ = es.t_previous_update_;
   t_next_update_ = es.t_next_update_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
@@ -446,7 +463,9 @@ template < typename targetidentifierT >
 eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020( eprop_synapse_bsshslm_2020&& es )
   : ConnectionBase( es )
   , weight_( es.weight_ )
+  , gradient_( es.gradient_ )
   , t_spike_previous_( 0 )
+  , previous_was_flush_event_( false )
   , t_previous_update_( 0 )
   , t_next_update_( es.t_next_update_ )
   , t_previous_trigger_spike_( 0 )
@@ -471,7 +490,9 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::operator=( eprop_synapse_bsshsl
   ConnectionBase::operator=( es );
 
   weight_ = es.weight_;
+  gradient_ = es.gradient_;
   t_spike_previous_ = es.t_spike_previous_;
+  previous_was_flush_event_ = es.previous_was_flush_event_;
   t_previous_update_ = es.t_previous_update_;
   t_next_update_ = es.t_next_update_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
@@ -502,6 +523,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::check_connection( Node& s,
   ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
   t.register_eprop_connection();
+  t.initialize_update_history();
 
   optimizer_ = cp.optimizer_cp_->get_optimizer();
 }
@@ -524,6 +546,19 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::send( Event& e,
   assert( target );
 
   const long t_spike = e.get_stamp().get_steps();
+  const bool is_flush_event = e.is_flush_event();
+
+  if ( previous_was_flush_event_ )
+  {
+    if ( is_flush_event )
+    {
+      return false;
+    }
+
+    t_spike_previous_ = t_spike;
+    t_previous_trigger_spike_ = t_spike;
+  }
+
   const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
   const long shift = target->get_shift();
 
@@ -541,8 +576,13 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::send( Event& e,
 
   if ( t_spike_previous_ > 0 )
   {
-    const long t = t_spike >= t_next_update_ + shift ? t_next_update_ + shift : t_spike;
-    presyn_isis_.push_back( t - t_spike_previous_ );
+    const long presyn_isi =
+      std::min( t_spike, t_next_update_ + shift ) - std::min( t_spike_previous_, t_next_update_ + shift );
+
+    if ( presyn_isi > 0 )
+    {
+      presyn_isis_.push_back( presyn_isi );
+    }
   }
 
   if ( t_spike > t_next_update_ + shift )
@@ -550,26 +590,52 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::send( Event& e,
     const long idx_current_update = ( t_spike - shift ) / update_interval;
     const long t_current_update = idx_current_update * update_interval;
 
-    target->write_update_to_history( t_previous_update_, t_current_update );
+    target->write_update_to_history( t_previous_update_, t_current_update, is_flush_event, previous_was_flush_event_ );
 
-    const double gradient = target->compute_gradient(
-      presyn_isis_, t_previous_update_, t_previous_trigger_spike_, kappa_, cp.average_gradient_ );
+    if ( not presyn_isis_.empty() and t_spike_previous_ > 0 )
+    {
+      gradient_ += target->compute_gradient(
+        presyn_isis_, t_previous_update_, t_previous_trigger_spike_, kappa_, cp.average_gradient_ );
+    }
 
-    weight_ = optimizer_->optimized_weight( *cp.optimizer_cp_, idx_current_update, gradient, weight_ );
+    if ( not is_flush_event )
+    {
+      weight_ = optimizer_->optimized_weight( *cp.optimizer_cp_, idx_current_update, gradient_, weight_ );
+      gradient_ = 0.0;
+    }
 
     t_previous_update_ = t_current_update;
     t_next_update_ = t_current_update + update_interval;
 
     t_previous_trigger_spike_ = t_spike;
   }
+  else
+  {
+    if ( not is_flush_event and previous_was_flush_event_ )
+    {
+      const long idx_current_update = ( t_spike - shift ) / update_interval;
+      const long t_current_update = idx_current_update * update_interval;
 
-  t_spike_previous_ = t_spike;
+      target->write_update_to_history(
+        t_previous_update_, t_current_update, is_flush_event, previous_was_flush_event_ );
 
-  e.set_receiver( *target );
-  e.set_weight( weight_ );
-  e.set_delay_steps( get_delay_steps() );
-  e.set_rport( get_rport() );
-  e();
+      weight_ = optimizer_->optimized_weight( *cp.optimizer_cp_, idx_current_update, gradient_, weight_ );
+      gradient_ = 0.0;
+    }
+  }
+
+  if ( not is_flush_event )
+  {
+    t_spike_previous_ = t_spike;
+
+    e.set_receiver( *target );
+    e.set_weight( weight_ );
+    e.set_delay_steps( get_delay_steps() );
+    e.set_rport( get_rport() );
+    e();
+  }
+
+  previous_was_flush_event_ = is_flush_event;
 
   return true;
 }

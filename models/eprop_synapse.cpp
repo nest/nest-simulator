@@ -118,7 +118,6 @@ Connector< eprop_synapse< TargetIdentifierIndex > >::disable_connection( const s
   C_[ lcid ].disable();
 }
 
-
 template <>
 Connector< eprop_synapse< TargetIdentifierPtrRport > >::~Connector()
 {
@@ -141,6 +140,5 @@ Connector< eprop_synapse< TargetIdentifierIndex > >::~Connector()
   }
   C_.clear();
 }
-
 
 }  // namespace nest

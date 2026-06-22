@@ -7,19 +7,6 @@ name: "NEST CI"
 on: [push, pull_request]
 
 jobs:
-  link_checker:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Link Checker
-        uses: lycheeverse/lychee-action@v2.8.0
-        with:
-          args: --verbose --no-progress **/*.md **/*.html **/*.rst
-          fail: true
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
   clang-format:
     runs-on: "ubuntu-22.04"
     env:
@@ -253,7 +240,7 @@ jobs:
         run: |
           ./build_support/check_forbidden_types.sh
 
-  lychee_IGNORED:
+  link_checker:
     runs-on: "ubuntu-22.04"
     steps:
       - name: Harden Runner
@@ -267,18 +254,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: "Install dependencies"
-        run: |
-          wget --progress=dot:mega 'https://github.com/lycheeverse/lychee/releases/download/v0.8.2/lychee-v0.8.2-x86_64-unknown-linux-gnu.tar.gz'
-          echo '12c27c9b6d551aea9178080d27de75ed26125b130722153399259432f723e606  lychee-v0.8.2-x86_64-unknown-linux-gnu.tar.gz' | sha256sum -c
-          tar -xzf 'lychee-v0.8.2-x86_64-unknown-linux-gnu.tar.gz'
-
-      - name: "Run lychee..."
-        continue-on-error: true
-        run: "pwd; ls -l; ./lychee build_support/ doc/{*.txt,*.md,htmldoc} examples/ lib* models/ nest* pynest/ testsuite/ *.md"
-        # TODO: doc/auto_examples and doc/models need to be added here, but exists only after a `make html`
+      - name: Link Checker
+        uses: lycheeverse/lychee-action@v2.8.0
+        with:
+          args: build_support/ doc/{*.txt,*.md,htmldoc} examples/ lib* models/ nest* pynest/ testsuite/ *.md
+          fail: true
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
   pydocstyle:
     runs-on: "ubuntu-22.04"

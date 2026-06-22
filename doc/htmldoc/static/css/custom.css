@@ -388,12 +388,6 @@ width: 85%;
 	padding-left: 0;
 	padding-right: 0;
 }
-.scbs-carousel-control-next-icon{
-  background-image: url('../img/arrow_right.svg')
-}
-.scbs-carousel-control-prev-icon{
-  background-image: url('../img/arrow_left.svg')
-}
 .sd-tab-set > input:checked + label {
 
   border-color: var(--nest-orange) !important;

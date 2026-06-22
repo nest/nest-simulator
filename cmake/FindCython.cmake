@@ -47,10 +47,6 @@ if ( NOT CYTHON_EXECUTABLE STREQUAL "CYTHON_EXECUTABLE-NOTFOUND" )
       OUTPUT_STRIP_TRAILING_WHITESPACE
   )
   if ( RESULT EQUAL 0 )
-    if ( "${CYTHON_VAR_OUTPUT}" STREQUAL "" )
-      # In cython v0.29.3 the version string is written to stderr and not to stdout, as one would expect.
-      set( CYTHON_VAR_OUTPUT "${CYTHON_ERR_OUTPUT}" )
-    endif()
     string( REGEX REPLACE ".* ([0-9]+\\.[0-9]+(\\.[0-9]+)?).*" "\\1"
                           CYTHON_VERSION "${CYTHON_VAR_OUTPUT}" )
   else ()

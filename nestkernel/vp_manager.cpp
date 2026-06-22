@@ -177,8 +177,8 @@ nest::VPManager::set_status( const Dictionary& d )
 void
 nest::VPManager::get_status( Dictionary& d )
 {
-  d[ names::local_num_threads ] = get_num_threads();
-  d[ names::total_num_virtual_procs ] = get_num_virtual_processes();
+  d[ names::local_num_threads ] = static_cast< long >( get_num_threads() );
+  d[ names::total_num_virtual_procs ] = static_cast< long >( get_num_virtual_processes() );
 }
 
 void

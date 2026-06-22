@@ -72,81 +72,81 @@ public:
   surrogate_gradient_function find_surrogate_gradient( const std::string& surrogate_gradient_function_name );
 
   /**
-   * @brief Computes the surrogate gradient with a piecewise linear function around the spike time.
+   * @brief Computes a piecewise-linear function as the surrogate gradient.
    *
-   * The piecewise linear surrogate function is used, for example, in Bellec et al. (2020).
+   * This function returns a surrogate gradient of the hard threshold function around v_th. The piecewise-linear
+   * surrogate gradient is used, for example, in Bellec et al. (2020).
    *
-   * @param r The number of remaining refractory steps.
+   * @param r The number of remaining refractory steps. If r > 0, the returned surrogate gradient is zero.
    * @param v_m The membrane voltage.
-   * @param v_th The spike threshold voltage. For adaptive neurons, the adaptive spike threshold voltage.
-   * @param beta The width scaling of the surrogate gradient function.
-   * @param gamma The height scaling of the surrogate gradient function.
-   * @return The surrogate gradient of the membrane voltage.
+   * @param v_th The spike threshold voltage. For adaptive neurons, this is the adaptive spike threshold voltage.
+   * @param height The positive height scaling of the surrogate gradient. This is the maximum value at v_m = v_th.
+   * @param width The positive width scaling of the surrogate gradient. Larger width gives a wider gradient.
+   * @return The surrogate gradient with respect to the membrane voltage.
    */
   double compute_piecewise_linear_surrogate_gradient( const double r,
     const double v_m,
     const double v_th,
-    const double beta,
-    const double gamma );
+    const double height,
+    const double width );
 
   /**
-   * @brief Computes the surrogate gradient with an exponentially decaying function around the spike time.
+   * @brief Computes an exponential function as the surrogate gradient.
    *
-   * The exponential surrogate function is used, for example, in Shrestha and Orchard (2018).
+   * This function returns a surrogate gradient of the hard threshold function around v_th. The exponential surrogate
+   * gradient is used, for example, in Shrestha and Orchard (2018).
    *
-   * @param r The number of remaining refractory steps.
+   * @param r The number of remaining refractory steps. If r > 0, the returned surrogate gradient is zero.
    * @param v_m The membrane voltage.
-   * @param v_th The threshold membrane voltage. For adaptive neurons, this is the adaptive threshold.
-   * @param v_th The spike threshold voltage. For adaptive neurons, the adaptive spike threshold voltage.
-   * @param beta The width scaling of the surrogate gradient function.
-   * @param gamma The height scaling of the surrogate gradient function.
-   *
-   * @return The surrogate gradient of the membrane voltage.
+   * @param v_th The spike threshold voltage. For adaptive neurons, this is the adaptive spike threshold voltage.
+   * @param height The positive height scaling of the surrogate gradient. This is the maximum value at v_m = v_th.
+   * @param width The positive width scaling of the surrogate gradient. Larger width gives a wider gradient.
+   * @return The surrogate gradient with respect to the membrane voltage.
    */
   double compute_exponential_surrogate_gradient( const double r,
     const double v_m,
     const double v_th,
-    const double beta,
-    const double gamma );
+    const double height,
+    const double width );
 
   /**
-   * @brief Computes the surrogate gradient with a function reflecting the derivative of a fast sigmoid around the spike
-   * time.
+   * @brief Computes the derivative of a fast-sigmoid surrogate function as the surrogate gradient.
    *
-   * The derivative of fast sigmoid surrogate function is used, for example, in Zenke and Ganguli (2018).
+   * This function returns a surrogate gradient of the hard threshold function around v_th. The derivative of a
+   * fast-sigmoid function is used as surrogate gradient, for example, in Zenke and Ganguli (2018).
    *
-   * @param r The number of remaining refractory steps.
+   * @param r The number of remaining refractory steps. If r > 0, the returned surrogate gradient is zero.
    * @param v_m The membrane voltage.
-   * @param v_th The spike threshold voltage. For adaptive neurons, the adaptive spike threshold voltage.
-   * @param beta The width scaling of the surrogate gradient function.
-   * @param gamma The height scaling of the surrogate gradient function.
-   *
-   * @return The surrogate gradient of the membrane voltage.
+   * @param v_th The spike threshold voltage. For adaptive neurons, this is the adaptive spike threshold voltage.
+   * @param height The positive height scaling of the surrogate gradient. This is the maximum value at v_m = v_th.
+   * @param width The positive width scaling of the surrogate gradient. Larger width gives a wider gradient.
+   * @return The surrogate gradient with respect to the membrane voltage.
    */
   double compute_fast_sigmoid_derivative_surrogate_gradient( const double r,
     const double v_m,
     const double v_th,
-    const double beta,
-    const double gamma );
+    const double height,
+    const double width );
 
   /**
-   * @brief Computes the surrogate gradient with an inverse tangent function around the spike time.
+   * @brief Computes the derivative of an arctan surrogate function as the surrogate gradient.
    *
-   * The inverse tangent surrogate gradient function is used, for example, in Fang et al. (2021).
+   * This function returns a surrogate gradient of the hard threshold function around v_th. The derivative of an
+   * arctan surrogate function is used as surrogate gradient, for example, in Fang et al. (2021).
+   * This parametrization absorbs the pi factors from Fang et al. (2021) into the height and width parameters.
    *
-   * @param r The number of remaining refractory steps.
+   * @param r The number of remaining refractory steps. If r > 0, the returned surrogate gradient is zero.
    * @param v_m The membrane voltage.
-   * @param v_th The spike threshold voltage. For adaptive neurons, the adaptive spike threshold voltage.
-   * @param beta The width scaling of the surrogate gradient function.
-   * @param gamma The height scaling of the surrogate gradient function.
-   *
-   * @return The surrogate gradient of the membrane voltage.
+   * @param v_th The spike threshold voltage. For adaptive neurons, this is the adaptive spike threshold voltage.
+   * @param height The positive height scaling of the surrogate gradient. This is the maximum value at v_m = v_th.
+   * @param width The positive width scaling of the surrogate gradient. Larger width gives a wider gradient.
+   * @return The surrogate gradient with respect to the membrane voltage.
    */
-  double compute_arctan_surrogate_gradient( const double r,
+  double compute_arctan_derivative_surrogate_gradient( const double r,
     const double v_m,
     const double v_th,
-    const double beta,
-    const double gamma );
+    const double height,
+    const double width );
 
   /**
    * Creates an entry for the specified time step at the end of the eprop history.
@@ -236,6 +236,9 @@ public:
    */
   void reset_spike_count();
 
+  void get_status( Dictionary& d ) const override;
+  void set_status( const Dictionary& d ) override;
+
   //! Firing rate regularization.
   double firing_rate_reg_;
 
@@ -244,7 +247,6 @@ public:
 
 protected:
   long model_dependent_history_shift_() const override;
-  bool history_shift_required_() const override;
 
   //! Pointer to member function selected for computing the surrogate gradient.
   surrogate_gradient_function compute_surrogate_gradient_ =
@@ -265,6 +267,41 @@ private:
    */
   static std::map< std::string, surrogate_gradient_function > surrogate_gradient_funcs_;
 };
+
+template < bool hist_shift_required >
+inline void
+EpropArchivingNodeRecurrent< hist_shift_required >::get_status( Dictionary& d ) const
+{
+  FlushEventMechanism::get_status( d );
+  IgnoreAndSpikeMechanism::get_status( d );
+
+  if constexpr ( not hist_shift_required )
+  {
+    d[ names::eprop_isi_trace_cutoff ] = eprop_isi_trace_cutoff_;
+  }
+}
+
+template < bool hist_shift_required >
+inline void
+EpropArchivingNodeRecurrent< hist_shift_required >::set_status( const Dictionary& d )
+{
+  FlushEventMechanism::set_status( d, this, hist_shift_required );
+  IgnoreAndSpikeMechanism::set_status( d, this );
+
+  if constexpr ( not hist_shift_required )
+  {
+    double eprop_isi_trace_cutoff_tmp = eprop_isi_trace_cutoff_;
+
+    update_value_param( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_tmp, this );
+
+    if ( eprop_isi_trace_cutoff_tmp < 0.0 )
+    {
+      throw BadProperty( "eprop_isi_trace_cutoff ≥ 0 required." );
+    }
+
+    eprop_isi_trace_cutoff_ = eprop_isi_trace_cutoff_tmp;
+  }
+}
 
 template < bool hist_shift_required >
 inline void
@@ -293,14 +330,6 @@ EpropArchivingNodeRecurrent< hist_shift_required >::model_dependent_history_shif
     return -delay_rec_out_;
   }
 }
-
-template < bool hist_shift_required >
-bool
-EpropArchivingNodeRecurrent< hist_shift_required >::history_shift_required_() const
-{
-  return hist_shift_required;
-}
-
 
 }
 

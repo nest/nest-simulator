@@ -250,7 +250,7 @@ Dictionary
 GenericModel< ElementT >::get_status_()
 {
   Dictionary d = proto_.get_status_base();
-  d[ names::elementsize ] = sizeof( ElementT );
+  d[ names::elementsize ] = static_cast< long >( sizeof( ElementT ) );
   return d;
 }
 

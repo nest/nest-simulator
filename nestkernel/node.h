@@ -479,14 +479,21 @@ public:
   virtual void register_stdp_connection( double, double );
 
   /**
-   * @brief Registers an eprop synapse and initializes the update history.
+   * Registers an eprop connection.
+   *
+   * @throws IllegalConnection
+   */
+  virtual void register_eprop_connection();
+
+  /**
+   * @brief Initializes the update history.
    *
    * The time for the first entry of the update history is set to the neuron specific shift for `bsshslm_2020`
    * models and to the negative transmission delay from the recurrent to the output layer otherwise.
    *
    * @throws IllegalConnection
    */
-  virtual void register_eprop_connection();
+  virtual void initialize_update_history();
 
   /**
    * @brief Retrieves the temporal shift of the signal.
@@ -516,16 +523,27 @@ public:
    */
   virtual void write_update_to_history( const long t_previous_update,
     const long t_current_update,
-    const long eprop_isi_trace_cutoff = 0 );
+    const bool is_flush_event,
+    const bool previous_was_flush_event );
 
   /**
-   * Retrieves the maximum number of time steps integrated between two consecutive spikes.
+   * Erases used e-prop history for bsshslm_2020 models.
    *
-   * @return The cutoff value for the inter-spike interval eprop trace.
+   * Removes history entries for update intervals without spikes and entries older than required.
    *
    * @throws IllegalConnection
    */
-  virtual long get_eprop_isi_trace_cutoff() const;
+  virtual void erase_used_eprop_history();
+
+  /**
+   * Erases used e-prop history based on inter-spike interval.
+   *
+   * @param t_spike The time step of the current spike.
+   * @param t_spike_previous The time step of the previous spike.
+   *
+   * @throws IllegalConnection
+   */
+  virtual void erase_used_eprop_history( const long t_spike, const long t_spike_previous );
 
   /**
    * Checks if the node is part of the recurrent network and thus not a readout neuron.
@@ -824,8 +842,8 @@ public:
    * Compute gradient change for eprop synapses.
    *
    * This method is called from an eprop synapse on the eprop target neuron. It updates various parameters related to
-   * e-prop plasticity according to Bellec et al. (2020) with additional biological features described in Korcsak-Gorzo,
-   * Stapmanns, and Espinoza Valverde et al. (in preparation).
+   * e-prop plasticity according to Bellec et al. (2020) with additional biological features described in
+   * Korcsak-Gorzo et al. (2025).
    *
    * @param t_spike [in] Time of the current spike.
    * @param t_spike_previous [in] Time of the previous spike.
@@ -848,7 +866,12 @@ public:
     double& epsilon,
     double& weight,
     const CommonSynapseProperties& cp,
-    WeightOptimizer* optimizer );
+    WeightOptimizer* optimizer,
+    bool is_flush_event,
+    bool previous_was_flush_event,
+    double& sum_grad,
+    long& remaining_steps_until_cutoff,
+    long& decay_steps );
 
   /**
    * Compute gradient change for eprop synapses.

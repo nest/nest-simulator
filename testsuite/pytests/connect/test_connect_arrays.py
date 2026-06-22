@@ -23,6 +23,7 @@ import unittest
 
 import nest
 import numpy as np
+import pandas as pd
 
 nest.verbosity = nest.VerbosityLevel.WARNING
 
@@ -389,6 +390,18 @@ class TestConnectArrays(unittest.TestCase):
         src_alpha = {key: val for key, val in zip(src, alp)}
 
         self.assertEqual(src_alpha_ref, src_alpha)
+
+    def test_connect_arrays_pandas(self):
+        """
+        Confirm that data from pandas data frames can be passed.
+        """
+
+        n_nrn = 50
+        n = nest.Create("parrot_neuron", n=n_nrn)
+        df = pd.DataFrame.from_dict({"s": np.array(n), "t": np.array(n), "w": np.linspace(0, 10, num=n_nrn)})
+
+        # This failed with "ValueError: buffer source array is read-only" previously
+        nest.Connect(df.s.values, df.t.values, "one_to_one", {"weight": df.w.values})
 
 
 def suite():

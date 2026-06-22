@@ -152,23 +152,24 @@ def test_eprop_regression():
     }
 
     params_nrn_rec = {
-        "beta": 1.0,
         "C_m": 1.0,
         "c_reg": 300.0,
         "E_L": 0.0,
         "f_target": 10.0,
-        "gamma": 0.3,
+        "flush_event_send_interval": duration["sequence"],
         "I_e": 0.0,
         "regular_spike_arrival": False,
         "surrogate_gradient_function": "piecewise_linear",
+        "surrogate_gradient_height": 0.3,
+        "surrogate_gradient_width": 1.0,
         "t_ref": 0.0,
         "tau_m": 30.0,
         "V_m": 0.0,
         "V_th": 0.03,
     }
 
-    params_nrn_rec["gamma"] /= params_nrn_rec["V_th"]
-    params_nrn_rec["beta"] /= np.abs(params_nrn_rec["V_th"])
+    params_nrn_rec["surrogate_gradient_height"] /= params_nrn_rec["V_th"]
+    params_nrn_rec["surrogate_gradient_width"] *= np.abs(params_nrn_rec["V_th"])
 
     gen_spk_in = nest.Create("spike_generator", n_in)
     nrns_in = nest.Create("parrot_neuron", n_in)
@@ -342,8 +343,8 @@ def test_eprop_regression():
     target_signal = events_mm_out["target_signal"]
     senders = events_mm_out["senders"]
 
-    readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
-    target_signal = np.array([target_signal[senders == i] for i in set(senders)])
+    readout_signal = np.array([readout_signal[senders == i] for i in np.unique(senders)])
+    target_signal = np.array([target_signal[senders == i] for i in np.unique(senders)])
 
     readout_signal = readout_signal.reshape((n_out, n_iter, batch_size, steps["sequence"]))
     target_signal = target_signal.reshape((n_out, n_iter, batch_size, steps["sequence"]))
@@ -500,44 +501,46 @@ def test_eprop_classification(batch_size, loss_nest_reference):
     }
 
     params_nrn_reg = {
-        "beta": 1.0,
         "C_m": 1.0,
         "c_reg": 300.0,
         "E_L": 0.0,
         "f_target": 10.0,
-        "gamma": 0.3,
+        "flush_event_send_interval": duration["sequence"],
         "I_e": 0.0,
         "regular_spike_arrival": True,
         "surrogate_gradient_function": "piecewise_linear",
+        "surrogate_gradient_height": 0.3,
+        "surrogate_gradient_width": 1.0,
         "t_ref": 5.0,
         "tau_m": 20.0,
         "V_m": 0.0,
         "V_th": 0.6,
     }
 
-    params_nrn_reg["gamma"] /= params_nrn_reg["V_th"]
-    params_nrn_reg["beta"] /= np.abs(params_nrn_reg["V_th"])
+    params_nrn_reg["surrogate_gradient_height"] /= params_nrn_reg["V_th"]
+    params_nrn_reg["surrogate_gradient_width"] *= np.abs(params_nrn_reg["V_th"])
 
     params_nrn_ad = {
-        "beta": 1.0,
         "adapt_tau": 2000.0,
         "adaptation": 0.0,
         "C_m": 1.0,
         "c_reg": 300.0,
         "E_L": 0.0,
         "f_target": 10.0,
-        "gamma": 0.3,
+        "flush_event_send_interval": duration["sequence"],
         "I_e": 0.0,
         "regular_spike_arrival": True,
         "surrogate_gradient_function": "piecewise_linear",
+        "surrogate_gradient_height": 0.3,
+        "surrogate_gradient_width": 1.0,
         "t_ref": 5.0,
         "tau_m": 20.0,
         "V_m": 0.0,
         "V_th": 0.6,
     }
 
-    params_nrn_ad["gamma"] /= params_nrn_ad["V_th"]
-    params_nrn_ad["beta"] /= np.abs(params_nrn_ad["V_th"])
+    params_nrn_ad["surrogate_gradient_height"] /= params_nrn_ad["V_th"]
+    params_nrn_ad["surrogate_gradient_width"] *= np.abs(params_nrn_ad["V_th"])
 
     params_nrn_ad["adapt_beta"] = 1.7 * (
         (1.0 - np.exp(-duration["step"] / params_nrn_ad["adapt_tau"]))
@@ -782,8 +785,8 @@ def test_eprop_classification(batch_size, loss_nest_reference):
     target_signal = events_mm_out["target_signal"]
     senders = events_mm_out["senders"]
 
-    readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
-    target_signal = np.array([target_signal[senders == i] for i in set(senders)])
+    readout_signal = np.array([readout_signal[senders == i] for i in np.unique(senders)])
+    target_signal = np.array([target_signal[senders == i] for i in np.unique(senders)])
 
     readout_signal = readout_signal.reshape((n_out, n_iter, batch_size, steps["sequence"]))
     target_signal = target_signal.reshape((n_out, n_iter, batch_size, steps["sequence"]))
@@ -830,7 +833,7 @@ def test_unsupported_surrogate_gradient(source_model):
         ("eprop_iaf_bsshslm_2020", np.hstack([np.arange(x, y) for x, y in [[1, 3], [1, 61], [21, 61], [41, 48]]])),
         (
             "eprop_readout_bsshslm_2020",
-            np.hstack([np.arange(x, y) for x, y in [[1, 4], [2, 22], [21, 61], [21, 61], [41, 47]]]),
+            np.hstack([np.arange(x, y) for x, y in [[1, 4], [1, 21], [20, 60], [20, 60], [40, 46]]]),
         ),
     ],
 )
@@ -918,6 +921,6 @@ def test_eprop_history_cleaning(neuron_model, eprop_history_duration_reference):
     eprop_history_duration = events_mm_rec["eprop_history_duration"]
     senders = events_mm_rec["senders"]
 
-    eprop_history_duration = np.array([eprop_history_duration[senders == i] for i in set(senders)])[0]
+    eprop_history_duration = np.array([eprop_history_duration[senders == i] for i in np.unique(senders)])[0]
 
     assert np.allclose(eprop_history_duration, eprop_history_duration_reference, rtol=1e-8)

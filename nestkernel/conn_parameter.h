@@ -27,8 +27,6 @@
 #include <limits>
 #include <vector>
 
-#include <boost/any.hpp>
-
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "parameter.h"
@@ -114,7 +112,7 @@ public:
    * @param nthread number of threads
    * required to fix number pointers to the iterator (one for each thread)
    */
-  static ConnParameter* create( const boost::any&, const size_t );
+  static ConnParameter* create( const any_type&, const size_t );
 };
 
 

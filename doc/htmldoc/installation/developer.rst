@@ -29,15 +29,23 @@ Install NEST from source
 We have provided an `environment.yml <https://github.com/nest/nest-simulator/blob/master/environment.yml>`_
 file that contains all possible packages needed for NEST development.
 
-.. grid:: 2
+.. grid:: 3
+
+   .. grid-item-card:: Install NEST with venv
+        :link: venv
+        :link-type: ref
+
 
    .. grid-item-card:: Install NEST with mamba
+        :link: condaenv
+        :link-type: ref
 
-         See our instructions for installing NEST from source in a :ref:`mamba environment <condaenv>`
 
    .. grid-item-card:: Install NEST without environment
+        :link: noenv
+        :link-type: ref
 
-         If you want to install NEST without any environment, see the :ref:`instructions here <noenv>`.
+
 
 
 .. seealso::

@@ -412,7 +412,7 @@ class TestSTDPSynapse:
         plt.close(fig)
 
     @pytest.mark.parametrize("dend_delay", [RESOLUTION, 1.0])
-    @pytest.mark.parametrize("model", ["iaf_psc_exp", "iaf_cond_exp"])
+    @pytest.mark.parametrize("model", [model for model in ({"iaf_psc_exp", "iaf_cond_exp"} & set(nest.node_models))])
     @pytest.mark.parametrize("min_delay", (1.0, 0.4, RESOLUTION))
     @pytest.mark.parametrize("max_delay", (1.0, 3.0))
     @pytest.mark.parametrize("t_ref", (RESOLUTION, 0.5, 1.0, 1.1, 2.5))

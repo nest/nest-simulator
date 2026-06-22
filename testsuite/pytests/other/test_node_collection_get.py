@@ -50,8 +50,9 @@ def reset():
 def test_node_collection_get_neuron_params(neuron_param, expected_value):
     """Test ``get`` on neuron parameters."""
 
-    nodes = nest.Create("iaf_psc_alpha", 10)
-    nptest.assert_equal(nodes.get(neuron_param), expected_value)
+    n_neurons = 10
+    nodes = nest.Create("iaf_psc_alpha", n_neurons)
+    nodes.get(neuron_param) == [expected_value] * n_neurons
 
 
 def test_node_collection_get_node_ids():
@@ -69,16 +70,9 @@ def test_node_collection_get_multiple_params():
 
     g = nodes.get(["local", "thread", "vp"])
 
-    g_reference = {
-        "local": np.full((num_nodes), True),
-        "thread": np.zeros(num_nodes, dtype=int),
-        "vp": np.zeros(num_nodes, dtype=int),
-    }
+    g_reference = {"local": (True,) * num_nodes, "thread": (0,) * num_nodes, "vp": (0,) * num_nodes}
 
-    nptest.assert_equal(g["local"], True)
-    nptest.assert_equal(g["thread"], 0)
-    nptest.assert_equal(g["vp"], 0)
-    nptest.assert_equal(g, g_reference)
+    assert g == g_reference
 
 
 @pytest.mark.parametrize(
@@ -93,8 +87,9 @@ def test_node_collection_get_multiple_params():
 def test_node_collection_get_attribute(neuron_param, expected_value):
     """Test the ``__getattr__`` method."""
 
-    nodes = nest.Create("iaf_psc_alpha", 10)
-    nptest.assert_equal(getattr(nodes, neuron_param), expected_value)
+    n_neurons = 10
+    nodes = nest.Create("iaf_psc_alpha", n_neurons)
+    assert getattr(nodes, neuron_param) == (expected_value,) * n_neurons
 
 
 def test_node_collection_get_nonexistent_attribute_raises():
@@ -234,7 +229,7 @@ def test_different_sized_node_collections_get():
 
     # Multiple nodes, no parameter (gets all values)
     multi_full_dict = multi_sr.get()
-    nptest.assert_equal(multi_full_dict["start"], 0.0)
+    multi_full_dict["start"] == [0.0] * len(multi_sr)
 
     # Ensure that single and multiple gets have the same number of params
     single_num_params = len(single_full_dict.keys())

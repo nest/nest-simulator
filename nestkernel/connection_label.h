@@ -90,7 +90,7 @@ ConnectionLabel< ConnectionT >::get_status( Dictionary& d ) const
   // override names::size_of from ConnectionT,
   // as the size from ConnectionLabel< ConnectionT > is
   // one long larger
-  d[ names::size_of ] = sizeof( *this );
+  d[ names::size_of ] = static_cast< long >( sizeof( *this ) );
 }
 
 template < typename ConnectionT >

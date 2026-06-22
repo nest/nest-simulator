@@ -48,7 +48,7 @@ ConnectionManager::register_conn_builder( const std::string& name )
 
   const size_t idx = connbuilder_factories_.size();
   connbuilder_factories_.push_back( cb );
-  connruledict_[ name ] = idx;
+  connruledict_[ name ] = static_cast< long >( idx );
 }
 
 template < typename ThirdConnBuilder >
@@ -60,7 +60,7 @@ ConnectionManager::register_third_conn_builder( const std::string& name )
   assert( cb );
   const size_t idx = thirdconnbuilder_factories_.size();
   thirdconnbuilder_factories_.push_back( cb );
-  thirdconnruledict_[ name ] = idx;
+  thirdconnruledict_[ name ] = static_cast< long >( idx );
 }
 
 inline void

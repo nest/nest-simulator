@@ -10,10 +10,16 @@ If you transition from a NEST 2.x version, please see our extensive
 :ref:`transition guide from NEST 2.x to 3.0 <refguide_2_3>` and the
 :ref:`list of updates for previous releases in the 3.x series <whats_new>`.
 
-The release of 3.10 brought a lot of changes with XXX PRs
-including YYY bug fixes and ZZZ enhancements as detailed in the `release notes
+The release of 3.10 brought a lot of changes with over 70 PRs
+including many bug fixes and enhancements as detailed in the `release notes
 on GitHub <https://github.com/nest/nest-simulator/releases/>`_. Here are some
 of the more interesting developments that happened:
+
+
+pip install nest-simulator
+--------------------------
+
+You can now ``pip install nest-simulator``. For details, see our :ref:`install guide <pip_install>`.
 
 Removal of the SLI interpreter
 ------------------------------
@@ -35,9 +41,6 @@ This has been a huge change for us and we would be very interested in hearing ab
 
 What does this mean for you as a NEST user?
 ...........................................
-
-Fortunately, almost nothing, except that you can now `pip install nest-simulator` and that scripts might
-construct your networks slightly faster.
 
 Verbosity settings
 ++++++++++++++++++
@@ -100,7 +103,7 @@ in varied ways are now collected in the ``nest.build_info`` dictionary:
      'unknownerror': 10,
      'userabort': 15},
     'threads_model': 'openmp',
-    'version': '3.9.0-post0.dev0'}
+    'version': '3.10'}
 
 
 Message mechanism
@@ -164,7 +167,7 @@ What does this mean for you as a developer?
 The key changes from a developer perspective are that the entire SLI interpreter code has been
 removed, noticeably reducing compile times. We therefore no longer have the ``SLIModule`` concept.
 Also, ``Dictionary``, ``Datum``, and ``Token`` are a matter of the past. Instead, we now
-have class ``Dictionary`` based directly on ``std::map`` using ``boost::any`` to store entries of
+have class ``Dictionary`` based directly on ``std::map`` using ``any_type`` to store entries of
 arbitrary type. Instead of our own ``lockPTR``, we now use ``std::unique_ptr`` to manage objects with
 reference counting.
 
@@ -234,6 +237,33 @@ New NEST
      // ...
    }
 
+Integer types for Dictionary elements
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Python does not support unsigned integer types. Therefore, integers in ``Dictionary``s must be of type ``long``. Other integer types, e.g., ``int``
+or ``size_t`` are no longer supported. Therefore, values need to be cast to ``long`` upon assignment to a dictionary element, e.g.,
+
+.. code-block:: C++
+
+   d[ names::n_receptors ] = static_cast< long >( n_receptors() );
+
+Given that long can hold up to 2^63-1 ≈ 9e18, it is considered safe to do such a typecast without checking the value that is converted.
+
+When receiving integer values from the Python level through a ``Dictionary``, one needs to protect against negative values where only positive
+values are acceptable, e.g.:
+
+.. code-block:: C++
+
+   long mbstd = 0;
+   if ( dict.update_value( names::max_buffer_size_target_data, mbstd ) )
+   {
+     if ( mbstd < 0 )
+     {
+       throw BadProperty( "max_buffer_size_target_data ≥ 0 required." );
+     }
+     max_buffer_size_target_data_ = mbstd;
+   };
+
 
 NEST requires C++20
 -------------------
@@ -243,9 +273,16 @@ NEST needs to be built with a compiler that supports C++20. Most
 recent C++ compilers should do so.
 
 
-Model improvements
-------------------
+New PyNEST examples
+-------------------
 
+* :doc:`Examples based on Brette et al 2007 </auto_examples/brette_et_al_2007/index>`
 
-Documentation additions
------------------------
+  These examples provide a common framework for running the Brette et al. 2007
+  simulator review benchmarks. The benchmarks create sparsely coupled networks
+  of excitatory and inhibitory neurons which exhibit self-sustained activity
+  after an initial stimulus.
+
+* :doc:`Artificial synchrony example </auto_examples/artificial_synchrony>`
+
+  An example of Artificial synchrony using discrete-time simulations in two implementations (precise and grid-constrained).

@@ -240,7 +240,17 @@ nest::MPIManager::set_status( const Dictionary& dict )
 
   dict.update_value( names::growth_factor_buffer_spike_data, growth_factor_buffer_spike_data_ );
   dict.update_value( names::growth_factor_buffer_target_data, growth_factor_buffer_target_data_ );
-  dict.update_value( names::max_buffer_size_target_data, max_buffer_size_target_data_ );
+
+  long mbstd = 0;
+  if ( dict.update_value( names::max_buffer_size_target_data, mbstd ) )
+  {
+    if ( mbstd < 0 )
+    {
+      throw BadProperty( "max_buffer_size_target_data ≥ 0 required." );
+    }
+    max_buffer_size_target_data_ = mbstd;
+  }
+
   dict.update_value( names::shrink_factor_buffer_spike_data, shrink_factor_buffer_spike_data_ );
 }
 
@@ -250,11 +260,13 @@ nest::MPIManager::get_status( Dictionary& dict )
   dict[ names::num_processes ] = num_processes_;
   dict[ names::mpi_rank ] = rank_;
   dict[ names::adaptive_target_buffers ] = adaptive_target_buffers_;
-  dict[ names::buffer_size_target_data ] = buffer_size_target_data_;
-  dict[ names::buffer_size_spike_data ] = buffer_size_spike_data_;
-  dict[ names::send_buffer_size_secondary_events ] = get_send_buffer_size_secondary_events_in_int();
-  dict[ names::recv_buffer_size_secondary_events ] = get_recv_buffer_size_secondary_events_in_int();
-  dict[ names::max_buffer_size_target_data ] = max_buffer_size_target_data_;
+  dict[ names::buffer_size_target_data ] = static_cast< long >( buffer_size_target_data_ );
+  dict[ names::buffer_size_spike_data ] = static_cast< long >( buffer_size_spike_data_ );
+  dict[ names::send_buffer_size_secondary_events ] =
+    static_cast< long >( get_send_buffer_size_secondary_events_in_int() );
+  dict[ names::recv_buffer_size_secondary_events ] =
+    static_cast< long >( get_recv_buffer_size_secondary_events_in_int() );
+  dict[ names::max_buffer_size_target_data ] = static_cast< long >( max_buffer_size_target_data_ );
   dict[ names::growth_factor_buffer_spike_data ] = growth_factor_buffer_spike_data_;
   dict[ names::growth_factor_buffer_target_data ] = growth_factor_buffer_target_data_;
 }

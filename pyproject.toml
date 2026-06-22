@@ -321,8 +321,8 @@ line-length = 120
 # config see https://flake8.pycqa.org/en/latest/user/configuration.html#configuration-locations
 #
 [tool.flake8]
-# This is ignored
-# see discussions around https://github.com/PyCQA/flake8/issues/234
+# This is ignored by flake8, it only obeys the `.flake8` file.
+# See discussions around https://github.com/PyCQA/flake8/issues/234
 
 
 # MyPy

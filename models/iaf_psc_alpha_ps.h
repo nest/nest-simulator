@@ -85,7 +85,7 @@ the precise time of the crossing is determined by a regula falsi method (see bel
 
 .. math::
 
-   V_\text{m}(t) = V_{\text{reset}} \quad\text{for}\quad t^* \leq t < t^* + t_{\text{ref}} \;,
+   V_\text{m}(t) = V_{\text{reset}} \quad\text{for}\quad t^* \leq t \leq t^* + t_{\text{ref}} \;,
 
 that is, the membrane potential is clamped to :math:`V_{\text{reset}}` during the refractory period.
 

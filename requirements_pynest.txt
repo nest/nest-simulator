@@ -16,7 +16,7 @@
 cython>=3.0.0
 numpy
 pandas
-scipy
+scipy~=1.18.0
 matplotlib
 mpi4py
 h5py

@@ -123,9 +123,6 @@ Changelog = "https://nest-simulator.readthedocs.io/en/stable/whats_new/index.htm
 [tool.scikit-build]
 sdist.cmake = false
 build-dir = "build/{wheel_tag}"
-metadata.version.provider = "scikit_build_core.metadata.regex"
-metadata.version.input = "VERSION"
-metadata.version.regex = "(?P<value>.*)"
 # Conditional exclusions based on package type
 wheel.exclude = [
   ".git*",           # Always exclude git files
@@ -133,6 +130,12 @@ wheel.exclude = [
   "build_support/",  # Always exclude build tools
   "docs/",           # Exclude docs from package
 ]
+
+[tool.scikit-build.metadata.version]
+provider = "scikit_build_core.metadata.regex"
+input = "VERSION"
+regex = "^(?P<version>.*)\\s*$"
+result = "{version}"
 
 [tool.scikit-build.cmake.define]
 with-optimize = "-O2"
@@ -306,6 +309,7 @@ multi_line_output = 3
 profile = "black"
 skip_gitignore = true
 
+
 # Black
 # config see https://black.readthedocs.io/en/stable/usage_and_configuration/the_basics.html#command-line-options
 #
@@ -404,20 +408,6 @@ norecursedirs = [
 #  /home/terhorst/sdvlp/bennch3/src/bennch/utils.py:393: UserWarning: Deprecation warning: foo: Use function bar() instead
 filterwarnings = [
     "ignore:.*Use function bar.*instead:UserWarning:bennch.utils",
-]
-
-# PyLint
-# config see https://pylint.pycqa.org/en/latest/user_guide/usage/run.html
-#
-# [tool.pylint.…] config is extensive and stored in another file. Search order
-# prefers .pylintrc, so look there.
-#
-# Also note that as suggested by pylint docs for joint usage with other tools
-# http://pylint.pycqa.org/en/latest/faq.html?highlight=pylintrc#i-am-using-another-popular-linter-alongside-pylint-which-messages-should-i-disable-to-avoid-duplicates
-[tool.pylint]
-max-line-length = 120
-load-plugins = [
-    "pylint_pydantic",
 ]
 
 

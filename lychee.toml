@@ -4,9 +4,6 @@
 # Verbose program output
 verbose = false
 
-# Show progress
-progress = false
-
 
 ###
 ### Runtime

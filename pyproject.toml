@@ -403,12 +403,7 @@ norecursedirs = [
 ]
 # config see https://docs.python.org/3/library/warnings.html#describing-warning-filters
 # format should be "action:message:category:module:line"
-#
-# src/bennch/utils.py::bennch.utils.deprecated
-#  /home/terhorst/sdvlp/bennch3/src/bennch/utils.py:393: UserWarning: Deprecation warning: foo: Use function bar() instead
-filterwarnings = [
-    "ignore:.*Use function bar.*instead:UserWarning:bennch.utils",
-]
+filterwarnings = []
 
 
 # PyCodeStyle

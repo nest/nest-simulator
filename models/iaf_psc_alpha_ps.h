@@ -65,7 +65,6 @@ available. It is a leaky integrate-and-fire neuron model with
 
 * a hard threshold,
 * a fixed refractory period,
-* no adaptation mechanisms,
 * :math:`\alpha`-shaped synaptic input currents,
 * precise spike times based on the regula falsi method [1]_ [3]_.
 

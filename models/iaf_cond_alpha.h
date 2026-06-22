@@ -72,7 +72,6 @@ Description
 
 * a hard threshold,
 * a fixed refractory period,
-* no adaptation mechanisms,
 * :math:`\alpha`-shaped synaptic conductances, normalized such that an event of weight 1.0 results in a peak conductance of 1 nS.
 
 The model follows the conductance-based integrate-and-fire framework discussed in [1]_, [2]_, [3]_.

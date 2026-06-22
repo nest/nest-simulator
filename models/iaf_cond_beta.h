@@ -72,8 +72,7 @@ Description
 
 * a hard threshold,
 * a fixed refractory period,
-* no adaptation mechanisms,
-* beta-shaped (dual-exponential) synaptic conductances with separate rise and decay
+* beta-shaped synaptic conductances (a difference of two exponentials) with separate rise and decay
   times, normalized such that an event of weight 1.0 results in a peak conductance of 1 nS.
 
 The model follows the conductance-based integrate-and-fire framework discussed in
@@ -116,7 +115,7 @@ The synaptic input current has an excitatory and an inhibitory component
 
 where :math:`I_{\text{syn, X}}(t) = (V_{\text{m}}(t) - E_{\text{syn, X}}) \, g_{\text{X}}(t)` for
 :math:`\text{X} \in \{\text{ex}, \text{in}\}`. The synaptic conductances are beta-shaped
-(dual-exponential),
+(a difference of two exponentials),
 
 .. math::
 

@@ -119,14 +119,19 @@ local maximum of the membrane potential above a certain threshold, it is conside
 Synaptic input
 ..............
 
-Incoming spikes induce :math:`\alpha`-shaped post-synaptic currents
+The total synaptic input current :math:`I_{\text{syn}}` entering the voltage equation above has an
+excitatory and an inhibitory component,
+:math:`I_{\text{syn}}(t) = I_{\text{syn, ex}}(t) + I_{\text{syn, in}}(t)`, where each incoming spike
+evokes an :math:`\alpha`-shaped post-synaptic current
 
 .. math::
 
    i_{\text{syn, X}}(t) = \frac{e}{\tau_{\text{syn, X}}} t e^{-\frac{t}{\tau_{\text{syn, X}}}} \Theta(t) \;,
 
-where :math:`\Theta(x)` is the Heaviside step function. The currents are normalized such that
-an event of weight 1.0 evokes a peak current of 1 pA at :math:`t = \tau_{\text{syn, X}}`.
+for :math:`\text{X} \in \{\text{ex}, \text{in}\}`, with :math:`\Theta(x)` the Heaviside step function.
+Excitatory and inhibitory inputs are distinguished by the sign of the synaptic weight. The currents
+are normalized such that an event of weight 1.0 evokes a peak current of 1 pA at
+:math:`t = \tau_{\text{syn, X}}`.
 
 For details on asynchronicity in spike and firing events with Hodgkin Huxley models
 see :ref:`here <hh_details>`.
@@ -147,26 +152,26 @@ The following parameters can be set in the status dictionary.
 ``g_Na``       12000 nS    :math:`g_{\text{Na}}`         Sodium peak conductance
 ``E_K``        -77 mV      :math:`E_{\text{K}}`          Potassium reversal potential
 ``g_K``        3600 nS     :math:`g_{\text{K}}`          Potassium peak conductance
-``tau_syn_ex`` 0.2 ms      :math:`\tau_{\text{syn, ex}}` Rise time of the excitatory synaptic alpha function
-``tau_syn_in`` 2.0 ms      :math:`\tau_{\text{syn, in}}` Rise time of the inhibitory synaptic alpha function
+``tau_syn_ex`` 0.2 ms      :math:`\tau_{\text{syn, ex}}` Rise time of the excitatory input current
+``tau_syn_in`` 2.0 ms      :math:`\tau_{\text{syn, in}}` Rise time of the inhibitory input current
 ``I_e``        0 pA        :math:`I_\text{e}`            Constant input current
 ============== =========== ============================= ===================================================
 
 The following state variables evolve during simulation and are available either as neuron properties or as recordables.
 
-================== ================= ========================== =================================
-**State variable** **Initial value** **Math equivalent**        **Description**
-================== ================= ========================== =================================
-``V_m``            -65 mV            :math:`V_{\text{m}}`       Membrane potential
-``Act_m``          :math:`m_\infty`  :math:`m`                  Sodium activation variable
-``Inact_h``        :math:`h_\infty`  :math:`h`                  Sodium inactivation variable
-``Act_n``          :math:`n_\infty`  :math:`n`                  Potassium activation variable
-``I_syn_ex``       0 pA              :math:`I_{\text{syn, ex}}` Excitatory synaptic input current
-``I_syn_in``       0 pA              :math:`I_{\text{syn, in}}` Inhibitory synaptic input current
-================== ================= ========================== =================================
+================== =========================== ========================== =================================
+**State variable** **Initial value**           **Math equivalent**        **Description**
+================== =========================== ========================== =================================
+``V_m``            -65 mV                      :math:`V_{\text{m}}`       Membrane potential
+``Act_m``          :math:`m_\infty` [#steady]_ :math:`m`                  Sodium activation variable
+``Inact_h``        :math:`h_\infty` [#steady]_ :math:`h`                  Sodium inactivation variable
+``Act_n``          :math:`n_\infty` [#steady]_ :math:`n`                  Potassium activation variable
+``I_syn_ex``       0 pA                        :math:`I_{\text{syn, ex}}` Excitatory synaptic input current
+``I_syn_in``       0 pA                        :math:`I_{\text{syn, in}}` Inhibitory synaptic input current
+================== =========================== ========================== =================================
 
-The gating variables are initialized to their steady-state values :math:`x_\infty = \alpha_x / (\alpha_x + \beta_x)` at
-:math:`V_\text{m} = -65` mV.
+.. [#steady] The gating variables are initialized to their steady-state values
+   :math:`x_\infty = \alpha_x / (\alpha_x + \beta_x)` at :math:`V_\text{m} = -65` mV.
 
 Problems/Todo
 +++++++++++++

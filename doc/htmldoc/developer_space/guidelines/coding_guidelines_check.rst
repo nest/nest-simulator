@@ -15,6 +15,13 @@ file that contains all packages to do development in NEST, including the tools l
 
 See our :ref:`instructions on installing NEST from source <dev_install>`.
 
+You can also install testing tools only by installing only test-time dependencies.
+
+.. code-block:: bash
+
+   pip install -r requirements_testing.txt
+
+
 Tooling
 -------
 
@@ -39,7 +46,9 @@ To set up the Git hook scripts specified in ``.pre-commit-config.yaml``, run
    the code. If code is reformatted, it will show up in your unstaged changes. Stage them and recommit to
    successfully commit your code.
 
-Besides the automatic git commit hook, files can be formatted manually using `pre-commit`:
+The usual workflow would be to loop ``git add -u; git hook run pre-commit`` until you don't see changes anymore. Then review your finally to-be-commited changes with ``git diff --cached`` and when satisfied, do the commit ``git commit``.
+
+Besides the automatic git commit hook (which checks only the staged files), files can be checked and formatted manually using `pre-commit` directly:
 
 * ``pre-commit run --all-files`` formats all files and
 * ``pre-commit run --files file1.cpp file2.cpp`` formats only the specified files.

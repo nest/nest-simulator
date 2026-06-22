@@ -55,11 +55,15 @@ import yaml
 
 logger = logging.getLogger(__name__)
 
-# Entry point patterns for subdirectories
+# Generic entry-point filename conventions, used *only* to guess the main
+# script of a brand-new example directory when generating suggested YAML stubs.
+# Validation does not rely on this list: examples.yml is the source of truth for
+# which files are entry points (path), helpers (helper_scripts), and post-run
+# scripts (post_script).  Keep this list generic — do not add example-specific
+# filenames here.
 ENTRY_POINTS = [
     "run_simulation.py",
     "run_simulations.py",
-    "sudoku_solver.py",
     "main.py",
     "__main__.py",
 ]
@@ -97,31 +101,33 @@ def is_snakemake_project(directory: Path) -> bool:
     return (directory / "Snakefile").is_file()
 
 
-def get_entry_point_files(directory: Path) -> list[Path]:
-    """Find main entry point files in a directory.
+def guess_entry_point(py_files: list[Path]) -> Path | None:
+    """Best-effort guess of a directory's main script, for suggestion stubs only.
 
-    Priority:
-    1. Known entry point patterns (run_simulation.py, etc.)
-    2. Single .py file if only one exists
-    3. All .py files if ambiguous (all are registered as separate entries)
+    Used to give a newly discovered example directory a sensible name in the
+    suggested-YAML output.  It is *not* used for validation — examples.yml is
+    the source of truth for entry points.
+
+    Returns the guessed entry-point Path, or None when it is ambiguous (no
+    conventional filename and more than one .py file), in which case each file
+    is suggested under its own stem.
     """
-    if not directory.is_dir():
-        return []
-
-    py_files = [
-        path for path in directory.iterdir() if path.is_file() and path.suffix == ".py" and not should_ignore(path.name)
-    ]
-
     for pattern in ENTRY_POINTS:
-        matches = [path for path in py_files if path.name == pattern]
-        if matches:
-            return matches
-
-    return py_files
+        for path in py_files:
+            if path.name == pattern:
+                return path
+    if len(py_files) == 1:
+        return py_files[0]
+    return None
 
 
 def scan_examples_directory(examples_dir: Path) -> dict[tuple[str, str], list[str]]:
-    """Scan examples directory for Python files and subdirectories.
+    """Scan examples directory for every Python file on disk.
+
+    All .py files (top-level and inside subdirectories) are reported, including
+    helpers and post-run scripts.  Distinguishing entry points from helpers is
+    examples.yml's job; compare_discovered_with_yaml() filters out anything the
+    YAML already accounts for.
 
     Returns:
         Mapping of (category, name) -> list of relative paths
@@ -133,9 +139,15 @@ def scan_examples_directory(examples_dir: Path) -> dict[tuple[str, str], list[st
             key = ("other", item.stem)
             discovered.setdefault(key, []).append(str(item.relative_to(examples_dir)))
         elif item.is_dir() and not should_ignore(item.name) and not is_snakemake_project(item):
-            for entry_point in get_entry_point_files(item):
-                rel_path = str(entry_point.relative_to(examples_dir))
-                base_name = item.name if entry_point.name in ENTRY_POINTS else entry_point.stem
+            py_files = [
+                path
+                for path in item.iterdir()
+                if path.is_file() and path.suffix == ".py" and not should_ignore(path.name)
+            ]
+            entry_point = guess_entry_point(py_files)
+            for path in py_files:
+                rel_path = str(path.relative_to(examples_dir))
+                base_name = item.name if path == entry_point else path.stem
                 key = (item.name.lower(), base_name)
                 discovered.setdefault(key, []).append(rel_path)
 
@@ -195,20 +207,33 @@ def compare_discovered_with_yaml(
 ) -> tuple[list[dict], list[dict]]:
     """Compare discovered examples with YAML entries.
 
+    A .py file on disk is considered registered if examples.yml references it in
+    any role — as an entry-point ``path``, a ``helper_scripts`` entry, or a
+    ``post_script``.  This makes the missing-file check correct by construction
+    (no guessing which file is the entry point) and uniform across single- and
+    multi-file examples.
+
     Returns:
-        (missing, orphaned) where missing are files not in YAML and
-        orphaned are YAML entries whose files don't exist on disk.
+        (missing, orphaned) where missing are files not referenced by YAML and
+        orphaned are entry-point paths whose files don't exist on disk.
     """
-    yaml_entries = {example["path"]: example["name"] for example in yaml_data["examples"]}
+    referenced: set[str] = set()
+    for example in yaml_data["examples"]:
+        referenced.add(example["path"])
+        referenced.update(example.get("helper_scripts", []))
+        if example.get("post_script"):
+            referenced.add(example["post_script"])
 
     missing = [
         {"category": category, "name": name, "path": path}
         for (category, name), paths in discovered.items()
         for path in paths
-        if path not in yaml_entries
+        if path not in referenced
     ]
     orphaned = [
-        {"name": name, "path": path} for path, name in yaml_entries.items() if not (examples_dir / path).exists()
+        {"name": example["name"], "path": example["path"]}
+        for example in yaml_data["examples"]
+        if not (examples_dir / example["path"]).exists()
     ]
 
     return missing, orphaned

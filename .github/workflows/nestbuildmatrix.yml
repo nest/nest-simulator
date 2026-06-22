@@ -7,6 +7,19 @@ name: "NEST CI"
 on: [push, pull_request]
 
 jobs:
+  link_checker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Link Checker
+        uses: lycheeverse/lychee-action@v2.8.0
+        with:
+          args: --verbose --no-progress **/*.md **/*.html **/*.rst
+          fail: true
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
   clang-format:
     runs-on: "ubuntu-22.04"
     env:

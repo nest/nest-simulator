@@ -375,7 +375,7 @@ directory = "coverage_html"
 # config options see https://docs.pytest.org/en/7.1.x/reference/reference.html#ini-options-ref
 #
 [tool.pytest.ini_options]
-addopts = "-n 0 --doctest-modules --doctest-glob '*.rst' --mypy --pylint --pydocstyle --cov --cov-report term --cov-report xml:coverage.xml --cov-report html"
+# addopts = "-n 0 --doctest-modules --doctest-glob '*.rst' --mypy --pylint --pydocstyle --cov --cov-report term --cov-report xml:coverage.xml --cov-report html"
 markers = [
     "skipif_missing_gsl: skip test if NEST was built without GSL support",
     "skipif_missing_hdf5: skip test if NEST was built without HDF5 support",

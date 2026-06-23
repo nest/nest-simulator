@@ -36,7 +36,7 @@ the API documentation (``ref_material/pynest_api/``)
 def find_all_variables(file_path):
     """
     Get the names of all functions listed in ``__all__`` in each of the PyNEST
-    API files, along with the Kernel Attributes found in ``__init__.py`` of
+    API files, along with the kernel attributes found in ``__init__.py`` of
     ``pynest/nest/``.
     """
     all_variables = None

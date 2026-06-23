@@ -27,7 +27,7 @@ jobs:
             ${{ runner.os }}-pip-
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.22.0
+        uses: pypa/cibuildwheel@v4.1.0
         with:
           package-dir: .
           output-dir: wheelhouse

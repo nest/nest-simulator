@@ -158,7 +158,7 @@ if __name__ == "__main__":
     cols = ["Tests", "Skipped", "Failures", "Errors", "Time"]
 
     col_w = max(len(c) for c in cols) + 2
-    first_col_w = max(len(k) for k in results.keys())
+    first_col_w = max(len(k) for k in results.keys(), default=0)
 
     tline = "-" * (len(cols) * col_w + first_col_w)
 

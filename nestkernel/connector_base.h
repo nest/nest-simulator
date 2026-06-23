@@ -414,6 +414,7 @@ public:
       ConnectionT& conn = C_[ lcid + lcid_offset ];
 
       e.set_port( lcid + lcid_offset );
+      e.set_conn_label( conn.get_label() );
       if ( not conn.is_disabled() )
       {
         // Some synapses, e.g., bernoulli_synapse, may not send an event after all

@@ -239,7 +239,7 @@ s_nodes = nest.Create("iaf_psc_alpha", positions=positions)
 # .. _cirgauss:
 #
 # .. figure:: /static/img/sample1_circgauss.png
-#    :alt: Examples of connectivity for each of the connectivity dictionaries mentioned in the following Python code snippet.
+#    :alt: Examples of connectivity for each of the connectivity dictionaries in the following Python code snippet
 #
 #    Examples of connectivity for each of the connectivity dictionaries
 #    mentioned in the following Python code snippet.
@@ -247,7 +247,7 @@ s_nodes = nest.Create("iaf_psc_alpha", positions=positions)
 # .. _rectanchor:
 #
 # .. figure:: /static/img/sample2_rectanchor.png
-#    :alt: Examples of connectivity for each of the connectivity dictionaries mentioned in the following Python code snippet.
+#    :alt: Examples of connectivity for each of the connectivity dictionaries in the following Python code snippet.
 #
 #    Examples of connectivity for each of the connectivity dictionaries
 #    mentioned in the following Python code snippet.
@@ -255,7 +255,7 @@ s_nodes = nest.Create("iaf_psc_alpha", positions=positions)
 # .. _doughnutlinear:
 #
 # .. figure:: /static/img/sample3_doughnutlinear.png
-#    :alt: Examples of connectivity for each of the connectivity dictionaries mentioned in the following Python code snippet.
+#    :alt: Examples of connectivity for each of the connectivity dictionaries in the following Python code snippet.
 #
 #    Examples of connectivity for each of the connectivity dictionaries
 #    mentioned in the following Python code snippet.
@@ -263,7 +263,7 @@ s_nodes = nest.Create("iaf_psc_alpha", positions=positions)
 # .. _gaussweights:
 #
 # .. figure:: /static/img/sample4_gaussweights.png
-#    :alt: Examples of connectivity for each of the connectivity dictionaries mentioned in the following Python code snippet.
+#    :alt: Examples of connectivity for each of the connectivity dictionaries in the following Python code snippet.
 #
 #    Examples of connectivity for each of the connectivity dictionaries
 #    mentioned in the following Python code snippet.

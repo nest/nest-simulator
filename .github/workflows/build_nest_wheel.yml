@@ -16,7 +16,7 @@ jobs:
         # os: ${{ github.event_name == 'pull_request' && fromJSON('["ubuntu-24.04"]') || fromJSON('["macos-15-intel", "macos-15", "ubuntu-24.04"]') }}
         os: ["macos-15-intel", "macos-15", "ubuntu-24.04"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Cache pip packages
         uses: actions/cache@v5
@@ -42,7 +42,7 @@ jobs:
     name: Build source distribution
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Cache pip packages
         uses: actions/cache@v5

@@ -232,6 +232,11 @@ public:
   size_t get_rport() const;
 
   /**
+   * Return the connection label 
+   */
+ 
+
+  /**
    * Set the port number.
    *
    * Each event carries the number of the port over which the event
@@ -252,6 +257,12 @@ public:
    * @param p Receiver port number of the connection, or 0 if unused.
    */
   void set_rport( size_t p );
+
+   /**
+   * Set the connection label (conn_label).
+   */
+
+  void set_conn_label( size_t label );
 
   /**
    * Return the creation time offset of the Event.
@@ -370,7 +381,7 @@ protected:
    *
    * The label of the connection (if available).
   /*
-  size_t label_;
+  long label_;
 
   /**
    * Transmission delay.
@@ -1049,7 +1060,7 @@ Event::get_rport() const
   return rp_;
 }
 
-inline void
+inline long
 Event::get_conn_label() const
 {
   return label_;
@@ -1068,7 +1079,7 @@ Event::set_rport( size_t rp )
 }
 
 inline void 
-Event::set_conn_label(size_t label)
+Event::set_conn_label(long label)
 {
  label_=label;  
 }

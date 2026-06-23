@@ -1024,6 +1024,21 @@ iPhone 5 or iPod Touch 5th generation styles (you can include your own file if y
 
 }
 
+#options-for-configuring-nest table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+#options-for-configuring-nest table td:first-child,
+#options-for-configuring-nest table th:first-child {
+  width: 30%;
+}
+
+#options-for-configuring-nest table td:nth-child(2),
+#options-for-configuring-nest table th:nth-child(2) {
+  width: 70%;
+}
+
 @media only screen and (max-width: 76.1875em) {
  html [data-md-color-primary="orange"] .md-nav--primary .md-nav__title--site {
  	background-color: #fff;

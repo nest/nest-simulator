@@ -366,6 +366,13 @@ protected:
   size_t rp_;
 
   /**
+   * Connection Label (conn_label)
+   *
+   * The label of the connection (if available).
+  /*
+  size_t label_;
+
+  /**
    * Transmission delay.
    *
    * Number of simulations steps that pass before the event is
@@ -1043,6 +1050,12 @@ Event::get_rport() const
 }
 
 inline void
+Event::get_conn_label() const
+{
+  return label_;
+}
+
+inline void
 Event::set_port( size_t p )
 {
   p_ = p;
@@ -1052,6 +1065,12 @@ inline void
 Event::set_rport( size_t rp )
 {
   rp_ = rp;
+}
+
+inline void 
+Event::set_conn_label(size_t label)
+{
+ label_=label;  
 }
 }
 

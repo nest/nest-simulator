@@ -168,7 +168,7 @@ nest::weight_recorder::handle( WeightRecorderEvent& e )
       return;
     }
 
-    write( e,
+    write( e.get_conn_label(), e,
       { e.get_weight() },
       { static_cast< long >( e.get_receiver_node_id() ),
         static_cast< long >( e.get_rport() ),

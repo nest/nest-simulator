@@ -36,8 +36,7 @@
 # convert_to_notebook: true | false
 #   If true, convert-notebooks-on-prerelease.yml converts the example to a
 #   Jupyter notebook for EBRAINS.  Independent of run_in_ci, but the
-#   convention is to set this false when run_in_ci is false — an untested
-#   notebook can rot silently and break for end users.
+#   convention is to set this to false when run_in_ci is false.
 #
 # category: str
 #   Thematic group (e.g. neurons, networks, synapses, spatial).
@@ -71,7 +70,6 @@
 # post_script: str
 #   A script to run after the main example, relative to pynest/examples/.
 #   Used by run-examples.yml (e.g. to generate a GIF from simulation output).
-#
 examples:
 - name: aeif_cond_beta_multisynapse
   path: aeif_cond_beta_multisynapse.py

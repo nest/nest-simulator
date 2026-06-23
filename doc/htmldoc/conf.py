@@ -88,7 +88,7 @@ plantuml = "java -jar /tmp/plantuml.jar"
 plantuml_output_format = "svg_img"
 sphinx_gallery_conf = {
     # paths to the gallery source scripts (examples and the PyNEST tutorial)
-    "examples_dirs": ["../../pynest/examples", "tutorials/pynest_tutorial_notebooks"],
+    "examples_dirs": ["../../pynest/examples", "tutorials/pynest_tutorial"],
     # paths where the generated galleries are written (parallel to examples_dirs)
     "gallery_dirs": ["auto_examples", "auto_pynest_tutorial"],
     "plot_gallery": "False",

@@ -12,6 +12,3 @@ max-complexity = 10
 # disables some rules that conflict with Black‘s formatting.
 # see https://linuxbeast.com/blog/how-to-use-flake8-and-black-for-python-code-quality-and-style-consistency/
 ignore = E203, W503
-
-#per-file-ignores =
-#    src/bennch/plot/plot_page_fault.py:W505,E501

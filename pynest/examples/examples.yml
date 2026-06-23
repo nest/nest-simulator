@@ -57,9 +57,8 @@
 # ── Optional fields ──────────────────────────────────────────────────────────────
 #
 # notes: str
-#   Free-text explanation.  Required for entries with run_in_ci: false (shown in
-#   the CI dashboard skipped-examples dropdown).  May also appear on runnable
-#   entries to document known issues or caveats.
+#   Any additional important information. Required for entries with run_in_ci: false
+#   May also appear on runnable entries to document known issues or caveats.
 #
 # helper_scripts: list[str]
 #   Additional .py files the example imports, relative to pynest/examples/.
@@ -214,8 +213,6 @@ examples:
   path: clopath_synapse_small_network.py
   runner: python
   run_in_ci: true
-  notes: SIGABRT in poisson_generator::pre_run_hook with OpenMP+MPI build; possible
-    NEST bug
   convert_to_notebook: true
   category: synapses
   last_change: "no change"

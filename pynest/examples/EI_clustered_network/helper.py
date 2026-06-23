@@ -65,7 +65,12 @@ def calculate_RBN_weights(params):
 
     References
     ----------
+
+    Note that the preprint version of Rostami 2024 was used:
+    original doi:10.1101/2020.02.27.968339
+
     .. footbibliography::
+
 
     Parameters
     ----------

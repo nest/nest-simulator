@@ -103,6 +103,11 @@ SpikeEvent
 References
 ++++++++++
 
+Note that the preprint version (v1) for Mueller et al. 2020 was used:
+`Legenstein, Papadimitriou, Vempala and Maass. 2016. Assembly pointers for variable binding in networks of
+spiking neuron. ArXiv.`
+
+
 .. footbibliography::
 
 See also

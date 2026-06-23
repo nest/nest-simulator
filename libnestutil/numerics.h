@@ -32,10 +32,6 @@
 #include <cstddef>
 #include <limits>
 
-#if HAVE_EXPM1
-#include <math.h>
-#endif
-
 #if defined( HAVE_STD_ISNAN )
 #include <cmath>
 #elif defined( HAVE_ISNAN )
@@ -57,7 +53,7 @@ inline double
 expm1( double x )
 {
 #if HAVE_EXPM1
-  return ::expm1( x );  // use library implementation if available
+  return std::expm1( x );  // use library implementation if available
 #else
   // compute using Taylor series, see GSL
   // e^x-1 = x + x^2/2! + x^3/3! + ...

@@ -128,7 +128,7 @@ wheel.exclude = [
   ".git*",           # Always exclude git files
   ".github/",        # Always exclude CI configuration
   "build_support/",  # Always exclude build tools
-  "docs/",           # Exclude docs from package
+  "doc/",           # Exclude docs from package
 ]
 
 [tool.scikit-build.metadata.version]

@@ -1,0 +1,98 @@
+
+rule all:
+    """
+    Runs simulations and creates all figures for the ignore-and-fire usecase documentation.
+    """
+    input:
+        'figures/TwoPopulationNetworkPlastic_iaf_psc_alpha_spikes.png',
+        'figures/TwoPopulationNetworkPlastic_iaf_psc_alpha_weight_distributions.png',
+        'figures/TwoPopulationNetworkPlastic_iaf_psc_alpha_connectivity_presim.png',
+        'figures/TwoPopulationNetworkPlastic_iaf_psc_alpha_connectivity_postsim.png',
+        'figures/TwoPopulationNetworkPlastic_ignore_and_fire_spikes.png',
+        'figures/TwoPopulationNetworkPlastic_ignore_and_fire_weight_distributions.png',
+        'figures/TwoPopulationNetworkPlastic_ignore_and_fire_connectivity_presim.png',
+        'figures/TwoPopulationNetworkPlastic_ignore_and_fire_connectivity_postsim.png',
+        'figures/scaling.png'
+
+rule generate_reference_data_LIF:
+    """
+    Simulates network with LIF neurons, and stores spikes and synaptic weights.
+    """
+    input:
+        'model-ignore_and_fire.py',
+        'parameter_dicts-ignore_and_fire.py',
+        'generate_reference_data-ignore_and_fire.py'
+    output:
+        temp('.LIF_simulation_done')
+    run:
+        shell('python3 generate_reference_data-ignore_and_fire.py iaf_psc_alpha; touch {output}')
+
+rule generate_reference_data_IgAF:
+    """
+    Simulates network with ignore-and-fire neurons, and stores spikes and synaptic weights.
+    """
+    input:
+        'model-ignore_and_fire.py',
+        'parameter_dicts-ignore_and_fire.py',
+        'generate_reference_data-ignore_and_fire.py'
+    output:
+        temp('.IgAF_simulation_done')
+    run:
+        shell('python3 generate_reference_data-ignore_and_fire.py ignore_and_fire; touch {output}')
+
+rule generate_reference_figures_LIF:
+    """
+    Creates figures showing spiking activity, weight matrices and weight distributions
+    before and after simulations from data obtained by simulating the model
+    with LIF neurons.
+    """
+    input:
+        'model-ignore_and_fire.py',
+        'parameter_dicts-ignore_and_fire.py',
+        'generate_reference_figures-ignore_and_fire.py',
+        '.LIF_simulation_done'
+    output:
+        'figures/TwoPopulationNetworkPlastic_iaf_psc_alpha_spikes.png',
+        'figures/TwoPopulationNetworkPlastic_iaf_psc_alpha_weight_distributions.png',
+        'figures/TwoPopulationNetworkPlastic_iaf_psc_alpha_connectivity_presim.png',
+        'figures/TwoPopulationNetworkPlastic_iaf_psc_alpha_connectivity_postsim.png',
+    run:
+        shell('python3 generate_reference_figures-ignore_and_fire.py iaf_psc_alpha')
+
+rule generate_reference_figures_IgAF:
+    """
+    Creates figures showing spiking activity, weight matrices and weight distributions
+    before and after simulations from data obtained by simulating the model
+    with ignore_and_fire neurons.
+    """
+    input:
+        'model-ignore_and_fire.py',
+        'parameter_dicts-ignore_and_fire.py',
+        'generate_reference_figures-ignore_and_fire.py',
+        '.IgAF_simulation_done'
+    output:
+        'figures/TwoPopulationNetworkPlastic_ignore_and_fire_spikes.png',
+        'figures/TwoPopulationNetworkPlastic_ignore_and_fire_weight_distributions.png',
+        'figures/TwoPopulationNetworkPlastic_ignore_and_fire_connectivity_presim.png',
+        'figures/TwoPopulationNetworkPlastic_ignore_and_fire_connectivity_postsim.png',
+    run:
+        shell('python3 generate_reference_figures-ignore_and_fire.py ignore_and_fire')
+
+rule scaling_experiment:
+    """
+    Performs scaling experiments with LIF and ignore-and-fire neurons,
+    and creates figure showing the simulation times, average firing rates,
+    and synaptic weights for a range of network sizes.
+    """
+    input:
+        'model-ignore_and_fire.py',
+        'parameter_dicts-ignore_and_fire.py',
+        'scaling-ignore_and_fire.py'
+    output:
+        'figures/scaling.png'
+    run:
+        shell('python3 scaling-ignore_and_fire.py')
+rule clean:
+    run:
+        shell("rm figures/*")
+        shell("rm -rf data/*")

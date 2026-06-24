@@ -131,6 +131,7 @@ Next steps: Create your own network model
          ^^^
 
          * :ref:`parallel_computing`: How NEST handles thread parallel and distributed computing
+         * :ref:`simulation_limits`: Hard limits on nodes, synapse types, threads, ranks, and delays
 
 ----
 

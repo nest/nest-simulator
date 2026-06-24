@@ -18,6 +18,7 @@ For a detailed investigation, we recommend reading Kurth et al. 2022 [1]_.
     * :ref:`overview_hardware`
     * :ref:`mpi_process`
     * :ref:`slurm_script`
+    * :ref:`simulation_limits`: Maximum threads, MPI ranks, synapse types, and delay bounds
 
 .. _pinning_threads:
 

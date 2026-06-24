@@ -135,7 +135,8 @@ peak, that is,
 
    g_{\text{j, X}}(t= \tau_{\text{syn, X}}) = w_{\text{j}} \;,
 
-where :math:`w` is a weight (excitatory if :math:`w > 0` or inhibitory if :math:`w < 0`).
+where :math:`w_{\text{j}}` is the weight of the connection from neuron :math:`j` (excitatory if
+:math:`w_{\text{j}} > 0` or inhibitory if :math:`w_{\text{j}} < 0`).
 
 .. note::
 

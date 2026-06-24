@@ -121,17 +121,28 @@ Synaptic input
 
 The total synaptic input current :math:`I_{\text{syn}}` entering the voltage equation above has an
 excitatory and an inhibitory component,
-:math:`I_{\text{syn}}(t) = I_{\text{syn, ex}}(t) + I_{\text{syn, in}}(t)`, where each incoming spike
-evokes an :math:`\alpha`-shaped post-synaptic current
+
+.. math::
+
+   I_{\text{syn}}(t) = I_{\text{syn, ex}}(t) + I_{\text{syn, in}}(t) \;.
+
+Each incoming spike evokes an :math:`\alpha`-shaped post-synaptic current
 
 .. math::
 
    i_{\text{syn, X}}(t) = \frac{e}{\tau_{\text{syn, X}}} t e^{-\frac{t}{\tau_{\text{syn, X}}}} \Theta(t) \;,
 
-for :math:`\text{X} \in \{\text{ex}, \text{in}\}`, with :math:`\Theta(x)` the Heaviside step function.
-Excitatory and inhibitory inputs are distinguished by the sign of the synaptic weight. The currents
-are normalized such that an event of weight 1.0 evokes a peak current of 1 pA at
-:math:`t = \tau_{\text{syn, X}}`.
+for :math:`\text{X} \in \{\text{ex}, \text{in}\}`, with :math:`\Theta(x)` the Heaviside step function. The
+currents are normalized such that an event of weight 1.0 evokes a peak current of 1 pA at
+:math:`t = \tau_{\text{syn, X}}`. Each channel current is the sum of these single-spike responses over
+all presynaptic neurons :math:`j` and their spike times :math:`t_j^k`, weighted by the synaptic weights
+:math:`w_j`,
+
+.. math::
+
+   I_{\text{syn, X}}(t) = \sum_j w_j \sum_k i_{\text{syn, X}}(t - t_j^k) \;.
+
+Excitatory and inhibitory inputs are distinguished by the sign of the synaptic weight.
 
 For details on asynchronicity in spike and firing events with Hodgkin Huxley models
 see :ref:`here <hh_details>`.

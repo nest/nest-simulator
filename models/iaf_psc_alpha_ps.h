@@ -100,13 +100,11 @@ post-synaptic currents (PSCs) are :math:`\alpha`-shaped,
 
    i_{\text{syn, X}}(t) = \frac{e}{\tau_{\text{syn, X}}} t e^{-\frac{t}{\tau_{\text{syn, X}}}} \Theta(t) \;,
 
-with :math:`\Theta(x)` the Heaviside step function. The PSCs are normalized to unit maximum, that is,
-:math:`i_{\text{syn, X}}(t=\tau_{\text{syn, X}}) = 1`.
+with :math:`\Theta(x)` the Heaviside step function. The PSCs are normalized such that an event of
+weight 1.0 evokes a peak current of 1 pA at :math:`t = \tau_{\text{syn, X}}`.
 
 Precise implementation
 ......................
-
-PSCs are normalized to an amplitude of 1 pA.
 
 The precise implementation handles neuronal dynamics in a locally
 event-based manner with in coarse time grid defined by the minimum
@@ -117,9 +115,9 @@ of a threshold crossing [1]_ [3]_. Return from refractoriness occurs
 precisely at spike time plus refractory period.
 
 This implementation is more complex than the plain iaf_psc_alpha
-neuron, but achieves much higher precision. In particular, it does not
-suffer any binning of spike times to grid points. Depending on your
-application, the canonical application may provide superior overall
+neuron, but achieves much higher precision. In particular, spike times
+are not binned to the points of the simulation time grid. Depending on your
+application, the canonical implementation may provide superior overall
 performance given an accuracy goal; see [1]_ for details. Subthreshold
 dynamics are integrated using exact integration between events [2]_.
 
@@ -134,9 +132,10 @@ can only change at on-grid times.
 
 .. note::
 
-  If `tau_m` is very close to `tau_syn_ex` or `tau_syn_in`, the model
-  will numerically behave as if `tau_m` is equal to `tau_syn_ex` or
-  `tau_syn_in`, respectively, to avoid numerical instabilities.
+  If :math:`\tau_{\text{m}}` is very close to :math:`\tau_{\text{syn, ex}}` or
+  :math:`\tau_{\text{syn, in}}`, the model will numerically behave as if :math:`\tau_{\text{m}}`
+  is equal to :math:`\tau_{\text{syn, ex}}` or :math:`\tau_{\text{syn, in}}`, respectively,
+  to avoid numerical instabilities.
 
   For implementation details see the
   `IAF Integration Singularity notebook <../model_details/IAF_Integration_Singularity.ipynb>`_.

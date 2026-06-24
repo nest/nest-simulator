@@ -58,6 +58,7 @@ server = [
 test = [
   "pytest",
   "pytest-cov",
+  "pytest-timeout",
   "pytest-xdist",
   "flake8",
   "black",
@@ -159,6 +160,7 @@ test-requires = [
   "pandas",
   "pytest",
   "pytest-cov",
+  "pytest-timeout",
   "pytest-xdist",
 ]
 test-command = """
@@ -289,6 +291,7 @@ test-requires = [
   "pandas",
   "pytest",
   "pytest-cov",
+  "pytest-timeout",
   "pytest-xdist",
   "scipy != 1.18.0",
 ]
@@ -375,7 +378,6 @@ directory = "coverage_html"
 # config options see https://docs.pytest.org/en/7.1.x/reference/reference.html#ini-options-ref
 #
 [tool.pytest.ini_options]
-# addopts = "-n 0 --doctest-modules --doctest-glob '*.rst' --mypy --pylint --pydocstyle --cov --cov-report term --cov-report xml:coverage.xml --cov-report html"
 markers = [
     "skipif_missing_gsl: skip test if NEST was built without GSL support",
     "skipif_missing_hdf5: skip test if NEST was built without HDF5 support",
@@ -385,11 +387,8 @@ markers = [
     "simulation: the simulation class to use. Always pass a 2nd dummy argument"
 ]
 required_plugins = [
-    "pytest-black",
     "pytest-cov",
-    "pytest-mypy",
-    "pytest-pydocstyle",
-    "pytest-pylint",
+    "pytest-timeout",
     "pytest-xdist",
 ]
 norecursedirs = [

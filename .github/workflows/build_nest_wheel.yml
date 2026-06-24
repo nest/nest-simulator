@@ -72,7 +72,7 @@ jobs:
     # Only run on releases or manual workflow dispatch from non-fork branches
     if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.event.repository.fork == false) || (github.event_name == 'push' && github.event.repository.fork == false)
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           # unpacks all CIBW artifacts into dist/
           pattern: cibw-*
@@ -102,7 +102,7 @@ jobs:
             artifact-os: "macos-15"
     steps:
       - name: Download wheels
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           pattern: cibw-wheels-${{ matrix.artifact-os }}-*
           path: wheelhouse

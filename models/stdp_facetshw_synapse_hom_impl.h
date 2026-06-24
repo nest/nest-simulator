@@ -52,7 +52,7 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::STDPFACETSHWHomCommonPrope
   lookuptable_2_.resize( 16 );
 
   // intermediate Guetig (mu=0.4)
-  // with r=4 bits and n=36 SSPs, see [3]_
+  // with r=4 bits and n=36 SSPs, see Pfeil et al. (2012)
   lookuptable_0_.at( 0 ) = 2;
   lookuptable_0_.at( 1 ) = 3;
   lookuptable_0_.at( 2 ) = 4;
@@ -95,7 +95,7 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::STDPFACETSHWHomCommonPrope
   configbit_0_.resize( 4 );
   configbit_1_.resize( 4 );
 
-  // see [4]_
+  // see Friedmann (2013)
   configbit_0_.at( 0 ) = 0;
   configbit_0_.at( 1 ) = 0;
   configbit_0_.at( 2 ) = 1;

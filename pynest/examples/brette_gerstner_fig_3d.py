@@ -24,7 +24,7 @@ Testing the adapting exponential integrate and fire model in NEST (Brette and Ge
 ----------------------------------------------------------------------------------------------
 
 This example tests the adaptive integrate and fire model (AdEx) according to
-Brette and Gerstner [1]_ reproduces Figure 3D of the paper.
+Brette and Gerstner :footcite:p:`Brette2005` reproduces Figure 3D of the paper.
 
 Note that Brette and Gerstner give the value for `b` in `nA`.
 To be consistent with the other parameters in the equations, `b` must be
@@ -33,9 +33,7 @@ converted to `pA` (pico Ampere).
 References
 ~~~~~~~~~~
 
-.. [1] Brette R and Gerstner W (2005). Adaptive exponential integrate-and-fire model as an effective
-       description of neuronal activity J. Neurophysiology. https://doi.org/10.1152/jn.00686.2005
-
+.. footbibliography::
 """
 
 import matplotlib.pyplot as plt

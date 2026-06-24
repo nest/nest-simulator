@@ -73,12 +73,16 @@ is normalized such that an event of weight 1.0 results in a peak conductance of
 1 nS at :math:`t = \tau_{rise\_[ex|in]}`.
 
 .. note::
-   Per 2009-04-17, this class has been revised to our newest
-   insights into class design. Please use THIS CLASS as a reference
-   when designing your own models with nonlinear dynamics.
-   One weakness of this class is that it distinguishes between
-   inputs to the two synapses by the sign of the synaptic weight.
-   It would be better to use ``receptor_types``, cf ``iaf_cond_alpha_mc``.
+
+   The **sign of the synaptic weight** determines which synapse receives the input: a positive
+   weight routes the spike to the excitatory synapse (governed by ``E_ex``, ``tau_rise_ex``, and
+   ``tau_decay_ex``), while a negative weight routes it to the inhibitory synapse (governed by
+   ``E_in``, ``tau_rise_in``, and ``tau_decay_in``). Only the absolute value of the weight
+   determines the conductance amplitude. This convention mirrors the ``iaf_psc_*`` current-based
+   models to simplify migration between the two model families.
+
+   ``receptor_type`` is not used in this model; setting it to any value other than 0 raises an
+   ``UnknownReceptorType`` error.
 
 See also [1]_, [2]_, [3]_, [4]_, [5]_.
 

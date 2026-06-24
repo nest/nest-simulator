@@ -440,6 +440,33 @@ shows the setup and connection of such a model in more detail:
 
     nest.Connect(A, B, syn_spec={'receptor_type': 2})
 
+.. note::
+
+   For single-compartment conductance-based neuron models (``iaf_cond_exp``,
+   ``iaf_cond_alpha``, ``iaf_cond_beta``, ``iaf_cond_exp_sfa_rr``), ``receptor_type``
+   is **not** used to select the excitatory or inhibitory synapse. Instead, the **sign of
+   the connection weight** determines the target synapse: a positive weight connects to
+   the excitatory synapse (``E_ex``), while a negative weight connects to the inhibitory
+   synapse (``E_in``). Only the absolute value of the weight determines the conductance
+   amplitude. Attempting to set ``receptor_type`` to a value other than 0 for these models
+   raises an ``UnknownReceptorType`` error at runtime.
+
+   .. code-block:: python
+
+       n = nest.Create('iaf_cond_exp')
+       pg_e = nest.Create('poisson_generator', params={'rate': 80.0})
+       pg_i = nest.Create('poisson_generator', params={'rate': 80.0})
+
+       # Positive weight → excitatory synapse (E_ex, tau_syn_ex)
+       nest.Connect(pg_e, n, syn_spec={'weight': 1.0, 'delay': 1.0})
+
+       # Negative weight → inhibitory synapse (E_in, tau_syn_in)
+       nest.Connect(pg_i, n, syn_spec={'weight': -1.0, 'delay': 1.0})
+
+   This convention is shared by all ``iaf_cond_*`` models and mirrors the sign convention
+   used in the ``iaf_psc_*`` current-based models, making it straightforward to switch
+   between the two families.
+
 
 .. _synapse-types:
 

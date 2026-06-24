@@ -18,6 +18,7 @@
 -r requirements_pynest.txt
 attrs
 data-science-types
+flake8
 junitparser >= 2
 mypy >= 0.8
 pre-commit

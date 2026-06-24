@@ -71,33 +71,16 @@ repos:
       - id: mypy
         additional_dependencies: &TESTDEPS
           - attrs
-          #- black
           - csa
-          #- cython
           - data-science-types
           - h5py
-          #- isort
-          #- junitparser >= 2
-          #- jupyterlab
           - matplotlib
           - mpi4py
-          #- mypy >= 0.8
           - notebook
           - numpy
           - pandas
-          #- pre-commit
-          #- pycodestyle
           - pydocstyle
           - pydot
-          #- pytest
-          #- pytest-cov
-          #- pytest-mypy
-          #- pytest-pylint
-          #- pytest-timeout
-          #- pytest-xdist
-          #- rstcheck
-          #- scipy
-          #- terminaltables
         args: [--python-version=3.11]
 
   - repo: https://github.com/PyCQA/pylint
@@ -105,5 +88,7 @@ repos:
     hooks:
       - id: pylint
         additional_dependencies: *TESTDEPS
+
+   # possibly also add rstcheck here
 
 exclude: 'build/.*|thirdparty/.*|venv/.*'

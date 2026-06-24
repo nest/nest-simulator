@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v7
 
       - name: Cache pip packages
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml') }}
@@ -45,7 +45,7 @@ jobs:
       - uses: actions/checkout@v7
 
       - name: Cache pip packages
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml') }}
@@ -192,7 +192,7 @@ jobs:
           python-version: '3.12'
 
       - name: Cache pip packages
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-${{ matrix.name-suffix || 'default' }}-pip-test-${{ hashFiles('**/pyproject.toml') }}

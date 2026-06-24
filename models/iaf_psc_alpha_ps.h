@@ -125,7 +125,7 @@ References
        Integration with Continuous Spike Times in Discrete Time Neural Network
        Simulations. To appear in Neural Computation.
 .. [2] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
-       systems with applications to neuronal modeling. Biologial Cybernetics
+       systems with applications to neuronal modeling. Biological Cybernetics
        81:381-402.
 .. [3] Hanuschkin A, Kunkel S, Helias M, Morrison A & Diesmann M (2010)
        A general and efficient method for incorporating exact spike times in

@@ -133,7 +133,7 @@ References
        24(10):2345-2356
        DOI: https://doi.org/10.1523/JNEUROSCI.3349-03.2004
 .. [4] Rotter S,  Diesmann M (1999). Exact simulation of time-invariant linear
-       systems with applications to neuronal modeling. Biologial Cybernetics
+       systems with applications to neuronal modeling. Biological Cybernetics
        81:381-402.
        DOI: https://doi.org/10.1007/s004220050570
 .. [5] Roth A and van Rossum M (2010). Chapter 6: Modeling synapses.

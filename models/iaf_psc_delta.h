@@ -156,7 +156,7 @@ References
 
 .. [1] Rotter S,  Diesmann M (1999). Exact simulation of
        time-invariant linear systems with applications to neuronal
-       modeling. Biologial Cybernetics 81:381-402.
+       modeling. Biological Cybernetics 81:381-402.
        DOI: https://doi.org/10.1007/s004220050570
 .. [2] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001). State
        space analysis of synchronous spiking in cortical neural

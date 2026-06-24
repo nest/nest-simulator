@@ -31,7 +31,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapse, static
+/* BeginUserDocs: synapse, chemical, static, stochastic
 
 Short description
 +++++++++++++++++

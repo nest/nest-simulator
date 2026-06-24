@@ -113,8 +113,8 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # classification error is tested in regular intervals and the training stopped as soon as the error selected as
 # stop criterion is reached. After training, the performance can be tested over a number of test iterations.
 
-batch_size = 32  # batch size, 64 in reference [2], 32 in the README to reference [2]
-n_iter_train = 50  # number of training iterations, 2000 in reference [2]
+batch_size = 32  # batch size, 64 in the original TensorFlow code and 32 in its README
+n_iter_train = 50  # number of training iterations, 2000 in the original TensorFlow code
 n_iter_test = 4  # number of iterations for final test
 do_early_stopping = True  # if True, stop training as soon as stop criterion fulfilled
 n_iter_validate_every = 10  # number of training iterations before validation

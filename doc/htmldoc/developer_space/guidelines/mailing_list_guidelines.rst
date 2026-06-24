@@ -8,8 +8,7 @@ Guidelines for contributing to the mailing list
 To ensure community members provide accurate and quick responses to questions on the mailing list,
 please follow the guidelines below:
 
-#. Check the `Mailing List Archive <https://www.nest-initiative.org/mailinglist/hyperkitty/list/
-   users@nest-simulator.org/>`_ and `GitHub issues <https://github.com/nest/nest-simulator/issues>`_ to see if your
+#. Check the `Mailing List Archive <https://www.nest-simulator.org/mailinglist/hyperkitty/list/users@nest-simulator.org/>`_ and `GitHub issues <https://github.com/nest/nest-simulator/issues>`_ to see if your
    question has already been addressed.
 
    You can also look at our :ref:`troubleshooting page <troubleshooting>` for installation issues.
@@ -42,7 +41,7 @@ please follow the guidelines below:
 
    .. grid-item-card:: |mailicon| Access the mailing list
        :link-type: url
-       :link: https://www.nest-initiative.org/mailinglist/
+       :link: https://www.nest-simulator.org/mailinglist/
 
 
 ----

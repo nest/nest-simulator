@@ -25,7 +25,7 @@ Pulse packet example
 
 This script compares the average and individual membrane potential excursions
 in response to a single pulse packet with an analytically acquired voltage
-trace (see: Diesmann [1]_)
+trace (see: Diesmann :footcite:p:`Diesmann2002`)
 A pulse packet is a transient spike volley with a Gaussian rate profile.
 The user can specify the neural parameters, the parameters of the
 pulse-packet and the number of trials.
@@ -34,11 +34,7 @@ pulse-packet and the number of trials.
 References
 ~~~~~~~~~~
 
-.. [1] Diesmann M. 2002. Dissertation. Conditions for stable propagation of
-       synchronous spiking in cortical neural networks: Single neuron dynamics
-       and network properties.
-       http://d-nb.info/968772781/34.
-
+.. footbibliography::
 """
 
 ###############################################################################
@@ -88,7 +84,7 @@ Convolution_resolution = convolution_resolution * 1e-3  # convert to sec
 
 ###############################################################################
 # This function calculates the membrane potential excursion in response
-# to a single input spike (the equation is given for example in Diesmann [1]_,
+# to a single input spike (the equation is given for example in Diesmann :footcite:p:`Diesmann2002`,
 # eq.2.3).
 # It expects:
 #
@@ -135,7 +131,7 @@ def find_loc_pspmax(tau_s, tau_m):
 ###############################################################################
 # First, we construct a Gaussian kernel for a given standard derivation
 # (``sig``) and mean value (``mu``). In this case the standard derivation is
-# the width of the pulse packet (see [1]_).
+# the width of the pulse packet (see :footcite:p:`Diesmann2002`).
 
 sig = Sdev
 mu = 0.0
@@ -159,7 +155,7 @@ psp = make_psp(t_psp, Tau_s, Tau_m, Cm, Weight)
 
 ###############################################################################
 # Now, we want to normalize the PSP amplitude to one. We therefore have to
-# divide the PSP by its maximum ([1]_ sec 6.1). The function
+# divide the PSP by its maximum (:footcite:p:`Diesmann2002` sec 6.1). The function
 # ``find_loc_pspmax()`` returns the exact time point (``t_pspmax``) when we
 # expect the maximum to occur. The function ``make_psp()`` calculates the
 # corresponding PSP value, which is our PSP amplitude (``psp_amp``).
@@ -172,7 +168,7 @@ psp_norm = psp / psp_amp
 ###############################################################################
 # Now we have all ingredients to compute the membrane potential excursion
 # (`U`). This calculation implies a convolution of the Gaussian with the
-# normalized PSP (see [1]_, eq. 6.9). In order to avoid an offset in the
+# normalized PSP (see :footcite:p:`Diesmann2002`, eq. 6.9). In order to avoid an offset in the
 # convolution, we need to add a pad of zeros on the left side of the
 # normalized PSP. Later on we want to compare our analytical results with the
 # simulation outcome. Therefore we need a time vector (`t_U`) with the correct

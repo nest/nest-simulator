@@ -58,7 +58,7 @@ Description
 +++++++++++
 
 ``gif_cond_exp_multisynapse`` is the generalized integrate-and-fire neuron
-according to Mensi et al. (2012) [1]_ and Pozzorini et al. (2015) [2]_, with
+according to Mensi et al. (2012) :footcite:p:`Mensi2012` and Pozzorini et al. (2015) :footcite:p:`Pozzorini2015`, with
 postsynaptic conductances in the form of truncated exponentials.
 
 This model features both an adaptation current and a dynamic threshold for
@@ -189,15 +189,7 @@ The following parameters can be set in the status Dictionary.
 References
 ++++++++++
 
-.. [1] Mensi S, Naud R, Pozzorini C, Avermann M, Petersen CC, Gerstner W (2012)
-       Parameter extraction and classification of three cortical neuron types
-       reveals two distinct adaptation mechanisms. Journal of
-       Neurophysiology, 107(6):1756-1775.
-       DOI: https://doi.org/10.1152/jn.00408.2011
-.. [2] Pozzorini C, Mensi S, Hagens O, Naud R, Koch C, Gerstner W (2015).
-       Automated high-throughput characterization of single neurons by means of
-       simplified spiking models. PLoS Computational Biology, 11(6), e1004275.
-       DOI: https://doi.org/10.1371/journal.pcbi.1004275
+.. footbibliography::
 
 Sends
 +++++

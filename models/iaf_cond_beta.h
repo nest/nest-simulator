@@ -76,7 +76,8 @@ Description
   times, normalized such that an event of weight 1.0 results in a peak conductance of 1 nS.
 
 The model follows the conductance-based integrate-and-fire framework discussed in
-[1]_, [2]_, [3]_, [4]_, [5]_.
+:footcite:p:`Meffin2004`, :footcite:p:`Bernander1991`, :footcite:p:`Kuhn2004`, :footcite:p:`Rotter1999`,
+:footcite:p:`Roth2010`.
 
 Membrane potential evolution, spike emission, and refractoriness
 ................................................................
@@ -177,28 +178,7 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 References
 ++++++++++
 
-.. [1] Meffin H, Burkitt AN, Grayden DB (2004). An analytical
-       model for the large, fluctuating synaptic conductance state typical of
-       neocortical neurons in vivo. Journal of Computational Neuroscience,
-       16:159-175.
-       DOI: https://doi.org/10.1023/B:JCNS.0000014108.03012.81
-.. [2] Bernander O, Douglas RJ, Martin KAC, Koch C (1991). Synaptic background
-       activity influences spatiotemporal integration in single pyramidal
-       cells.  Proceedings of the National Academy of Science USA,
-       88(24):11569-11573.
-       DOI: https://doi.org/10.1073/pnas.88.24.11569
-.. [3] Kuhn A, Rotter S (2004) Neuronal integration of synaptic input in
-       the fluctuation- driven regime. Journal of Neuroscience,
-       24(10):2345-2356
-       DOI: https://doi.org/10.1523/JNEUROSCI.3349-03.2004
-.. [4] Rotter S,  Diesmann M (1999). Exact simulation of time-invariant linear
-       systems with applications to neuronal modeling. Biologial Cybernetics
-       81:381-402.
-       DOI: https://doi.org/10.1007/s004220050570
-.. [5] Roth A and van Rossum M (2010). Chapter 6: Modeling synapses.
-       in De Schutter, Computational Modeling Methods for Neuroscientists,
-       MIT Press.
-
+.. footbibliography::
 
 See also
 ++++++++

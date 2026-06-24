@@ -70,13 +70,14 @@ Description
 +++++++++++
 
 ``hh_psc_alpha`` is an implementation of a spiking neuron using the Hodgkin-Huxley
-formalism [3]_, with
+formalism :footcite:p:`Hodgkin1952`, with
 
 * membrane dynamics governed by sodium, potassium, and leak currents,
 * :math:`\alpha`-shaped synaptic input currents,
 * spike detection by a combined threshold-and-local-maximum search.
 
-The Hodgkin-Huxley formalism is also described in standard textbooks [1]_, [2]_.
+The Hodgkin-Huxley formalism is also described in standard textbooks
+:footcite:p:`Gerstner2002`, :footcite:p:`Dayan2001`.
 
 Membrane potential and channel dynamics
 .......................................
@@ -194,15 +195,7 @@ References
 ++++++++++
 
 
-.. [1] Gerstner W, Kistler W (2002). Spiking neuron models: Single neurons,
-       populations, plasticity. New York: Cambridge University Press
-.. [2] Dayan P, Abbott LF (2001). Theoretical neuroscience: Computational and
-       mathematical modeling of neural systems. Cambridge, MA: MIT Press.
-       https://pure.mpg.de/pubman/faces/ViewItemOverviewPage.jsp?itemId=item_3006127>
-.. [3] Hodgkin AL and Huxley A F (1952). A quantitative description of
-       membrane current and its application to conduction and excitation in
-       nerve. The Journal of Physiology 117.
-       DOI: https://doi.org/10.1113/jphysiol.1952.sp004764
+.. footbibliography::
 
 Sends
 +++++

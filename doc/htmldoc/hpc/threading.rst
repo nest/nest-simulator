@@ -11,7 +11,7 @@ In NEST, we recommend only having one thread per core.
 
 We can control the number and placement of threads with programs that implement standards such as `OpenMP <https://www.openmp.org/>`_.
 
-For a detailed investigation, we recommend reading Kurth et al. 2022 [1]_.
+For a detailed investigation, we recommend reading Kurth et al. 2022 :footcite:p:`Kurth2022`.
 
 .. seealso::
 
@@ -99,5 +99,4 @@ Table of OpenMP settings
 References
 ----------
 
-.. [1] Kurth AC. Senk J. Terhorst D. Finnerty J. and Diesmann M (2022). Sub-realtime simulation of a neuronal network of natural density.
-       Neuromorphic Computing and Engineering(2):021001. https://doi.org/10.1088/2634-4386/ac55fc
+.. footbibliography::

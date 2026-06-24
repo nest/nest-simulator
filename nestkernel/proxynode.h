@@ -40,8 +40,6 @@ Remarks:
 
 Parameters:
 
-References:
-
 Author: June 2005, Jochen Martin Eppler
 */
 

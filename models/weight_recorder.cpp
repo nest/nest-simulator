@@ -103,7 +103,7 @@ void
 nest::weight_recorder::pre_run_hook()
 {
   RecordingDevice::pre_run_hook(
-    { nest::names::weights }, { nest::names::targets, nest::names::receptors, nest::names::ports } );
+    { nest::names::weights }, { nest::names::label, nest::names::targets, nest::names::receptors, nest::names::ports } );
 }
 
 void
@@ -168,9 +168,10 @@ nest::weight_recorder::handle( WeightRecorderEvent& e )
       return;
     }
 
-    write( e.get_conn_label(), e,
+    write( e,
       { e.get_weight() },
-      { static_cast< long >( e.get_receiver_node_id() ),
+      { static_cast< long >( e.get_conn_label() ),
+        static_cast< long >( e.get_receiver_node_id() ),
         static_cast< long >( e.get_rport() ),
         static_cast< long >( e.get_port() ) } );
   }

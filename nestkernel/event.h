@@ -234,7 +234,8 @@ public:
   /**
    * Return the connection label 
    */
- 
+   
+  long get_conn_label() const;
 
   /**
    * Set the port number.
@@ -262,7 +263,7 @@ public:
    * Set the connection label (conn_label).
    */
 
-  void set_conn_label( size_t label );
+  void set_conn_label( long label );
 
   /**
    * Return the creation time offset of the Event.
@@ -375,12 +376,13 @@ protected:
    * @note An r-port number of 0 indicates that the port is not used.
    */
   size_t rp_;
+  
 
   /**
    * Connection Label (conn_label)
    *
    * The label of the connection (if available).
-  /*
+  */
   long label_;
 
   /**

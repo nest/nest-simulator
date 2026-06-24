@@ -109,7 +109,7 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # learning performance.
 
 group_size = 1  # number of instances over which to evaluate the learning performance
-n_iter = 200  # number of iterations, 2000 in reference [2]
+n_iter = 200  # number of iterations, 2000 in the original TensorFlow code
 
 steps = {
     "sequence": 1000,  # time steps of one full sequence

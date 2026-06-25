@@ -56,7 +56,7 @@ void install_module( const std::string& module_name );
 
 void reset_kernel();
 
-void enable_structural_plasticity();
+void enable_structural_plasticity( bool use_gaussian_kernel, double gaussian_kernel_sigma, double max_distance );
 void disable_structural_plasticity();
 
 void register_logger_client( const deliver_logging_event_ptr client_callback );

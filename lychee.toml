@@ -2,7 +2,7 @@
 ### Display
 ###
 # Verbose program output
-verbose = "warn"
+verbose = "debug"
 
 
 ###
@@ -11,9 +11,6 @@ verbose = "warn"
 # Number of threads to utilize.
 # Defaults to number of cores available to the system if omitted.
 #threads = 2
-
-# Maximum number of allowed redirects -- set to 0 because redirect itself typically means "found"!
-max_redirects = 0
 
 
 ###
@@ -24,6 +21,12 @@ user_agent = "curl/7.71.1"
 
 # Website timeout from connect to response finished
 timeout = 20
+
+# Maximum number of allowed redirects -- set to 0 because redirect itself typically means "found"!
+max_redirects = 0
+
+# Maximum number of retries per request -- default is 3 but this can cause random errors to occur during the check
+max_retries = 10
 
 # Comma-separated list of accepted status codes for valid links.
 # Omit to accept all response types.
@@ -39,12 +42,17 @@ insecure = false
 # Request method
 method = "get"
 
+# Rate-limit sensitive hosts
+max_concurrency = 3
+host_request_interval = "1s"
+
 
 ###
 ### Exclusions
 ###
 # Exclude URLs from checking (supports regex)
-exclude = [".git/.*"]
+# GNU is included here because it very frequently hits rate limits, even with very conservative internal/retry values and lychee's cache enabled
+exclude = [".git/.*", "http://www.gnu.org/licenses/", "https://www.gnu.org/licenses/", "http://www.gnu.org/licenses/gpl-2.0.html", "https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html"]
 
 # Exclude input paths from checking (supports glob).
 # The Sphinx/Jinja2 HTML templates contain unrendered `{{ pathto(...) }}`
@@ -56,8 +64,6 @@ exclude_path = ["doc/htmldoc/templates"]
 # If a file named `.lycheeignore` exists in the current working directory,
 # its contents will be excluded as well.
 #exclude_file = []
-
-include = []
 
 # Exclude all private IPs from checking
 # Equivalent to setting `exclude_private`, `exclude_link_local`, and `exclude_loopback` to true
@@ -74,7 +80,3 @@ exclude_loopback = true
 
 # Exclude all mail addresses from checking
 include_mail = false
-
-# Rate-limit sensitive hosts
-max_concurrency = 1
-host_request_interval = "1s"

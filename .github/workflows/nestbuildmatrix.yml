@@ -262,10 +262,18 @@ jobs:
           restore-keys: |
             lychee-cache-${{ runner.os }}-
 
+      - name: Link Checker File Check
+        run: |
+          find . -path "./.git" -prune -o -type f -exec sh -c 'file -b --mime-type "$0" | grep -q "^text/"' {} \; -print > lychee_files_list.txt    # find all ASCII type files
+          grep -q "\.md$" lychee_files_list.txt   # check that there is at least one markdown, etc. file in the list
+          grep -q "\.rst$" lychee_files_list.txt
+          grep -q "\.cpp$" lychee_files_list.txt
+          grep -q "\.h$" lychee_files_list.txt
+
       - name: Link Checker
         uses: lycheeverse/lychee-action@8646ba30535128ac92d33dfc9133794bfdd9b411 # v2.8.0
         with:
-          args: --cache --max-cache-age 1d .    # process all files and directories recursively, starting at the root
+          args: --cache --max-cache-age 1d --files-from lychee_files_list.txt
           fail: true
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

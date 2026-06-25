@@ -4,9 +4,7 @@ NEST coding style guidelines for C++
 ====================================
 
 In the code review process we want to enforce a consistent coding style to
-improve readability and maintainability. The article on `why code readability
-matters <http://blog.ashodnakashian.com/2011/03/code-readability/>`_ describes
-the benefits of readable code. To simplify the process we use
+improve readability and maintainability. To simplify the process we use
 different tools that check compliance with our coding style and developers can
 reduce the workload of the review process by checking compliance of their code
 on their own.
@@ -195,8 +193,7 @@ In general, use meaningful, non-abbreviated names or follow naming conventions
 from the neuroscience field, for example, the membrane potential is :hxt_ref:`V_m`. Use the
 ``lower_case_under_lined`` notation. Private member variables should end with an
 underscore (``name_``). If applicable, the general rule is use is to use the
-same notation for biophysical quantities as is used in `Dayan&Abbot, 2001
-<https://www.gatsby.ucl.ac.uk/~lmate/biblio/dayanabbott.pdf>`_.
+same notation for biophysical quantities as is used in :footcite:p:`Dayan2001`.
 
 Constants should be defined with ``enums`` and not with ``#define``, and use the
 ``UPPER_CASE_UNDER_LINED`` notation:
@@ -212,6 +209,8 @@ Constants should be defined with ``enums`` and not with ``#define``, and use the
      G_INH,
      STATE_VEC_SIZE
    };
+
+.. footbibliography::
 
 Built-in types
 **************

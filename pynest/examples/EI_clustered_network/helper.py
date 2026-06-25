@@ -61,15 +61,16 @@ def calculate_RBN_weights(params):
     """Calculate synaptic weights for a random balanced network.
 
     The synaptic weights are calculated according to the method
-    described in Eqs. 7-10 [1]_.
+    described in Eqs. 7-10 :footcite:p:`Rostami2024`.
 
     References
     ----------
-    .. [1] Rostami V, Rost T, Riehle A, van Albada SJ and Nawrot MP. 2020.
-        Excitatory and inhibitory motor cortical clusters account for balance,
-        variability, and task performance. bioRxiv 2020.02.27.968339.
-        DOI: `10.1101/2020.02.27.968339
-        <https://doi.org/10.1101/2020.02.27.968339>`__.
+
+    Note that the original citation for Rostami 2024 referred to the preprint on BioRxiv with a different doi:
+    10.1101/2020.02.27.968339
+
+    .. footbibliography::
+
 
     Parameters
     ----------

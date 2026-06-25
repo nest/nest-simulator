@@ -36,12 +36,18 @@ import json
 import nest
 import numpy as np
 import pytest
+from testutil import assert_approx_equal
 
 try:
     version = nest.build_info["version"]
     mode = "perform_test"
 except AttributeError:
     mode = "generate_reference"
+
+# This file contains a lot of copy-paste reference data, which is not ideal in
+# any case. However, in order to be able to have correct output formatting we
+# disable the line-too-long checks until a better solution is found.
+# pylint: disable=line-too-long
 
 
 @pytest.fixture
@@ -148,8 +154,13 @@ def test_gs(reference_file, multimeters, output, use_get, selection, keys):
             # Compare deserialized data to insulate from entry ordering and be able to filter keys
             res = json.loads(res)
             ref = json.loads(ref)
+
         # Do not compare keys with values that may change between versions, e.g., model_id
-        assert remove_keys(res) == remove_keys(ref)
+        res, ref = remove_keys(res), remove_keys(ref)
+
+        # Slight changes in numerics can lead to different results (see #3795), so we need approx(), but
+        # data structures are too complex for pytest.approx() to handle directly.
+        assert_approx_equal(res, ref, rel=1e-14)
     else:
         reference_file.write(f'    "{tag}": ')
         reference_file.write(repr(res))

@@ -107,6 +107,7 @@ nest::RecordingBackendASCII::pre_run_hook()
   // nothing to do
 }
 
+
 void
 nest::RecordingBackendASCII::post_run_hook()
 {
@@ -151,7 +152,6 @@ nest::RecordingBackendASCII::write( const RecordingDevice& device,
   {
     return;
   }
-
   device_data->second.write( event, double_values, long_values );
 }
 
@@ -169,6 +169,7 @@ nest::RecordingBackendASCII::compute_vp_node_id_string_( const RecordingDevice& 
 
   return vp_node_id_string.str();
 }
+
 
 void
 nest::RecordingBackendASCII::prepare()
@@ -229,7 +230,10 @@ nest::RecordingBackendASCII::DeviceData::DeviceData( std::string modelname, std:
   , modelname_( modelname )
   , vp_node_id_string_( vp_node_id_string )
   , file_extension_( "dat" )
+  , delimiter_( "\t" )
   , label_( "" )
+  , skip_header_comment_( false )
+  , combine_thread_write_( false )
 {
 }
 
@@ -244,7 +248,10 @@ nest::RecordingBackendASCII::DeviceData::set_value_names( const std::vector< std
 void
 nest::RecordingBackendASCII::DeviceData::flush_file()
 {
-  file_.flush();
+#pragma omp critical
+  {
+    file_.flush();
+  }
 }
 
 void
@@ -252,48 +259,117 @@ nest::RecordingBackendASCII::DeviceData::open_file()
 {
   std::string filename = compute_filename_();
 
-  std::ifstream test( filename.c_str() );
-  if ( test.good() and not kernel().io_manager.overwrite_files() )
+  if ( !combine_thread_write_ )
   {
-    std::string msg = String::compose(
-      "The file '%1' already exists and overwriting files is disabled. To overwrite files, set "
-      "the kernel property overwrite_files to true. To change the name or location of the file, "
-      "change the kernel properties data_path or data_prefix, or the device property label.",
-      filename );
-    LOG( VerbosityLevel::ERROR, "RecordingBackendASCII::enroll()", msg );
-    throw IOError();
+    std::ifstream test( filename.c_str() );
+    if ( test.good() and not kernel().io_manager.overwrite_files() )
+    {
+      std::string msg = String::compose(
+        "The file '%1' already exists and overwriting files is disabled. To overwrite files, set "
+        "the kernel property overwrite_files to true. To change the name or location of the file, "
+        "change the kernel properties data_path or data_prefix, or the device property label.",
+        filename );
+      LOG( VerbosityLevel::ERROR, "RecordingBackendASCII::enroll()", msg );
+      throw IOError();
+    }
+    test.close();
+
+    file_ = std::ofstream( filename.c_str() );
+
+    if ( not file_.good() )
+    {
+      std::string msg = String::compose( "I/O error while opening file '%1'.", filename );
+      LOG( VerbosityLevel::ERROR, "RecordingBackendASCII::prepare()", msg );
+      throw IOError();
+    }
+
+
+    if ( !skip_header_comment_ )
+    {
+      file_ << "# NEST version: " << NEST_VERSION << std::endl
+            << "# RecordingBackendASCII version: " << ASCII_REC_BACKEND_VERSION << std::endl;
+    }
+
+    const std::string timehead =
+      ( time_in_steps_ ) ? delimiter_ + "time_step" + delimiter_ + "time_offset" : delimiter_ + "time_ms";
+    file_ << std::fixed << std::setprecision( precision_ ) << "sender" << timehead;
+    for ( auto& val : double_value_names_ )
+    {
+      file_ << delimiter_ << val;
+    }
+    for ( auto& val : long_value_names_ )
+    {
+      file_ << delimiter_ << val;
+    }
+    file_ << std::endl;
   }
-  test.close();
-
-  file_ = std::ofstream( filename.c_str() );
-
-  if ( not file_.good() )
+  else
   {
-    std::string msg = String::compose( "I/O error while opening file '%1'.", filename );
-    LOG( VerbosityLevel::ERROR, "RecordingBackendASCII::prepare()", msg );
-    throw IOError();
-  }
+#pragma omp single
+    {
+      std::ifstream test( filename.c_str() );
+      if ( test.good() and not kernel().io_manager.overwrite_files() )
+      {
+        std::string msg = String::compose(
+          "The file '%1' already exists and overwriting files is disabled. To overwrite files, set "
+          "the kernel property overwrite_files to true. To change the name or location of the file, "
+          "change the kernel properties data_path or data_prefix, or the device property label.",
+          filename );
+        LOG( VerbosityLevel::ERROR, "RecordingBackendASCII::enroll()", msg );
+        throw IOError();
+      }
+      test.close();
 
-  file_ << "# NEST version: " << NEST_VERSION << std::endl
-        << "# RecordingBackendASCII version: " << ASCII_REC_BACKEND_VERSION << std::endl;
+      file_ = std::ofstream( filename.c_str() );
 
-  const std::string timehead = ( time_in_steps_ ) ? "\ttime_step\ttime_offset" : "\ttime_ms";
-  file_ << std::fixed << std::setprecision( precision_ ) << "sender" << timehead;
-  for ( auto& val : double_value_names_ )
-  {
-    file_ << "\t" << val;
+      if ( not file_.good() )
+      {
+        std::string msg = String::compose( "I/O error while opening file '%1'.", filename );
+        LOG( VerbosityLevel::ERROR, "RecordingBackendASCII::prepare()", msg );
+        throw IOError();
+      }
+      if ( !skip_header_comment_ )
+      {
+        file_ << "# NEST version: " << NEST_VERSION << std::endl
+              << "# RecordingBackendASCII version: " << ASCII_REC_BACKEND_VERSION << std::endl;
+      }
+
+      const std::string timehead =
+        ( time_in_steps_ ) ? delimiter_ + "time_step" + delimiter_ + "time_offset" : delimiter_ + "time_ms";
+      file_ << std::fixed << std::setprecision( precision_ ) << "sender" << timehead;
+      for ( auto& val : double_value_names_ )
+      {
+        file_ << delimiter_ << val;
+      }
+      for ( auto& val : long_value_names_ )
+      {
+        file_ << delimiter_ << val;
+      }
+      file_ << std::endl;
+
+      file_.flush();
+      file_.close();
+    }
+
+    file_ = std::ofstream( filename.c_str(), std::ios::app );
+
+    if ( not file_.good() )
+    {
+      std::string msg = String::compose( "I/O error while opening file '%1'.", filename );
+      LOG( VerbosityLevel::ERROR, "RecordingBackendASCII::prepare()", msg );
+      throw IOError();
+    }
+    file_ << std::fixed << std::setprecision( precision_ );
   }
-  for ( auto& val : long_value_names_ )
-  {
-    file_ << "\t" << val;
-  }
-  file_ << std::endl;
 }
 
 void
 nest::RecordingBackendASCII::DeviceData::close_file()
 {
-  file_.close();
+#pragma omp single
+  {
+    file_.close();
+  }
 }
 
 void
@@ -301,28 +377,59 @@ nest::RecordingBackendASCII::DeviceData::write( const Event& event,
   const std::vector< double >& double_values,
   const std::vector< long >& long_values )
 {
-  file_ << event.get_sender_node_id() << "\t";
-
-  if ( time_in_steps_ )
+  if ( !combine_thread_write_ )
   {
-    file_ << event.get_stamp().get_steps() << "\t" << event.get_offset();
+    file_ << event.get_sender_node_id() << delimiter_;
+
+    if ( time_in_steps_ )
+    {
+      file_ << event.get_stamp().get_steps() << delimiter_ << event.get_offset();
+    }
+    else
+    {
+      file_ << ( event.get_stamp().get_ms() - event.get_offset() );
+    }
+    for ( auto& val : double_values )
+    {
+      file_ << delimiter_ << val;
+    }
+    for ( auto& val : long_values )
+    {
+      file_ << delimiter_ << val;
+    }
+
+    file_ << "\n";
   }
   else
   {
-    file_ << ( event.get_stamp().get_ms() - event.get_offset() );
-  }
+#pragma omp critical
+    {
+      file_ << event.get_sender_node_id() << delimiter_;
 
-  for ( auto& val : double_values )
-  {
-    file_ << "\t" << val;
-  }
-  for ( auto& val : long_values )
-  {
-    file_ << "\t" << val;
-  }
+      if ( time_in_steps_ )
+      {
+        file_ << event.get_stamp().get_steps() << delimiter_ << event.get_offset();
+      }
+      else
+      {
+        file_ << ( event.get_stamp().get_ms() - event.get_offset() );
+      }
 
-  file_ << "\n";
+      for ( auto& val : double_values )
+      {
+        file_ << delimiter_ << val;
+      }
+      for ( auto& val : long_values )
+      {
+        file_ << delimiter_ << val;
+      }
+
+      file_ << "\n";
+      file_.flush();
+    }
+  }
 }
+
 
 void
 nest::RecordingBackendASCII::DeviceData::get_status( Dictionary& d ) const
@@ -330,6 +437,9 @@ nest::RecordingBackendASCII::DeviceData::get_status( Dictionary& d ) const
   d[ names::file_extension ] = file_extension_;
   d[ names::precision ] = precision_;
   d[ names::time_in_steps ] = time_in_steps_;
+  d[ names::delimiter ] = delimiter_;
+  d[ names::skip_header_comment ] = skip_header_comment_;
+  d[ names::combine_thread_write ] = combine_thread_write_;
 
   std::string filename = compute_filename_();
   d[ names::filenames ] = std::vector< std::string >( { filename } );
@@ -341,6 +451,9 @@ nest::RecordingBackendASCII::DeviceData::set_status( const Dictionary& d )
   d.update_value( names::file_extension, file_extension_ );
   d.update_value( names::precision, precision_ );
   d.update_value( names::label, label_ );
+  d.update_value( names::delimiter, delimiter_ );
+  d.update_value( names::skip_header_comment, skip_header_comment_ );
+  d.update_value( names::combine_thread_write, combine_thread_write_ );
 
   bool time_in_steps = false;
   if ( d.update_value( names::time_in_steps, time_in_steps )
@@ -358,6 +471,7 @@ nest::RecordingBackendASCII::DeviceData::set_status( const Dictionary& d )
 std::string
 nest::RecordingBackendASCII::DeviceData::compute_filename_() const
 {
+
   std::string data_path = kernel().io_manager.get_data_path();
   if ( not data_path.empty() and not( data_path[ data_path.size() - 1 ] == '/' ) )
   {
@@ -372,5 +486,7 @@ nest::RecordingBackendASCII::DeviceData::compute_filename_() const
 
   std::string data_prefix = kernel().io_manager.get_data_prefix();
 
-  return data_path + data_prefix + label + vp_node_id_string_ + "." + file_extension_;
+
+  return ( !combine_thread_write_ ) ? data_path + data_prefix + label + vp_node_id_string_ + "." + file_extension_
+                                    : data_path + data_prefix + label + "." + file_extension_;
 }

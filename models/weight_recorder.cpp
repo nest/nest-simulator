@@ -65,11 +65,13 @@ nest::weight_recorder::Parameters_::get( Dictionary& d ) const
 {
   d[ names::senders ] = senders_;
   d[ names::targets ] = targets_;
+  d[ names::include_label ] = include_label_;
 }
 
 void
 nest::weight_recorder::Parameters_::set( const Dictionary& d )
 {
+  d.update_value( names::include_label, include_label_ );
   auto update_nc = [ &d ]( NodeCollectionPTR& nc, const std::string& key )
   {
     if ( d.known( key ) )
@@ -102,8 +104,16 @@ nest::weight_recorder::Parameters_::set( const Dictionary& d )
 void
 nest::weight_recorder::pre_run_hook()
 {
-  RecordingDevice::pre_run_hook(
-    { nest::names::weights }, { nest::names::targets, nest::names::receptors, nest::names::ports } );
+  if ( !P_.include_label_ )
+  {
+    RecordingDevice::pre_run_hook(
+      { nest::names::weights }, { nest::names::targets, nest::names::receptors, nest::names::ports } );
+  }
+  else
+  {
+    RecordingDevice::pre_run_hook( { nest::names::weights },
+      { nest::names::label, nest::names::targets, nest::names::receptors, nest::names::ports } );
+  }
 }
 
 void
@@ -167,11 +177,22 @@ nest::weight_recorder::handle( WeightRecorderEvent& e )
     {
       return;
     }
-
-    write( e,
-      { e.get_weight() },
-      { static_cast< long >( e.get_receiver_node_id() ),
-        static_cast< long >( e.get_rport() ),
-        static_cast< long >( e.get_port() ) } );
+    if ( !P_.include_label_ )
+    {
+      write( e,
+        { e.get_weight() },
+        { static_cast< long >( e.get_receiver_node_id() ),
+          static_cast< long >( e.get_rport() ),
+          static_cast< long >( e.get_port() ) } );
+    }
+    else
+    {
+      write( e,
+        { e.get_weight() },
+        { static_cast< long >( e.get_conn_label() ),
+          static_cast< long >( e.get_receiver_node_id() ),
+          static_cast< long >( e.get_rport() ),
+          static_cast< long >( e.get_port() ) } );
+    }
   }
 }

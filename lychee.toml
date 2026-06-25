@@ -76,6 +76,5 @@ exclude_loopback = true
 include_mail = false
 
 # Rate-limit sensitive hosts
-[hosts."gnu.org"]
 concurrency = 1
-request_interval = "100ms" # zero disables rate limiting
+host_request_interval = "1s"

@@ -76,5 +76,6 @@ exclude_loopback = true
 include_mail = false
 
 # Rate-limit sensitive hosts
-max_concurrency_per_host = { "gnu.org" = 1 }
-delay_per_host = { "gnu.org" = "100ms" }
+[hosts."gnu.org"]
+concurrency = 1
+request_interval = "100ms" # zero disables rate limiting

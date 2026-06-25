@@ -654,22 +654,15 @@ nest::SPManager::global_shuffle( std::vector< size_t >& v, size_t n )
 {
   assert( n <= v.size() );
 
-  // shuffle res using the global random number generator
-  unsigned int N = v.size();
-  std::vector< size_t > v2;
-  size_t tmp;
-  unsigned int rnd;
-  std::vector< size_t >::iterator rndi;
-  for ( unsigned int i = 0; i < n; i++ )
+  // We select an element from [ith index, vector end-index(remaining range)]
+  for ( size_t next = 0, remaining = v.size(); next < n; ++next, --remaining )
   {
-    N = v.size();
-    rnd = get_rank_synced_rng()->ulrand( N );
-    tmp = v[ rnd ];
-    v2.push_back( tmp );
-    rndi = v.begin();
-    v.erase( rndi + rnd );
+    const size_t rnd = next + get_rank_synced_rng()->ulrand( remaining );  // Random index in range [next, remaining-1]
+    std::swap( v[ next ], v[ rnd ] );                                      // Swap selected element to the front
   }
-  v = v2;
+
+  // Resize the vector to keep only the first 'n' elements
+  v.resize( n );
 }
 
 

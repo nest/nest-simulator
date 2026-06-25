@@ -74,3 +74,7 @@ exclude_loopback = true
 
 # Exclude all mail addresses from checking
 include_mail = false
+
+# Rate-limit sensitive hosts
+max_concurrency_per_host = { "gnu.org" = 1 }
+delay_per_host = { "gnu.org" = "100ms" }

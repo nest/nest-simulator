@@ -43,8 +43,8 @@ insecure = false
 method = "get"
 
 # Rate-limit sensitive hosts
-max_concurrency = 3
-host_request_interval = "1s"
+max_concurrency = 10
+host_request_interval = "500ms"
 
 
 ###

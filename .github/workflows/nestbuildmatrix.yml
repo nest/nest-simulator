@@ -264,11 +264,13 @@ jobs:
 
       - name: Link Checker File Check
         run: |
-          find . -path "./.git" -prune -o -type f -exec sh -c 'file -b --mime-type "$0" | grep -q "^text/"' {} \; -print > lychee_files_list.txt    # find all ASCII type files
+          find . -path "./.git" -prune -o -path "./thirdparty" -prune -o -type f -exec sh -c 'file -b --mime-type "$0" | grep -q "^text/"' {} \; -print > lychee_files_list.txt    # find all ASCII type files
           grep -q "\.md$" lychee_files_list.txt   # check that there is at least one markdown, etc. file in the list
           grep -q "\.rst$" lychee_files_list.txt
           grep -q "\.cpp$" lychee_files_list.txt
           grep -q "\.h$" lychee_files_list.txt
+          echo "The following files will be link-checked by lychee:"
+          cat lychee_files_list.txt
 
       - name: Link Checker
         uses: lycheeverse/lychee-action@8646ba30535128ac92d33dfc9133794bfdd9b411 # v2.8.0

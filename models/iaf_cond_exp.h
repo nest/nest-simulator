@@ -73,7 +73,7 @@ Description
 * a hard threshold,
 * a fixed refractory period,
 * no adaptation mechanisms,
-* exponentially-shaped synaptic conductances according to [1]_, normalized such that an event of weight 1.0 results in a peak conductance of 1 nS.
+* exponentially-shaped synaptic conductances according to :footcite:p:`Meffin2004`, normalized such that an event of weight 1.0 results in a peak conductance of 1 nS.
 
 Membrane potential evolution, spike emission, and refractoriness
 ................................................................
@@ -177,11 +177,7 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 References
 ++++++++++
 
-.. [1] Meffin H, Burkitt AN, Grayden DB (2004). An analytical
-       model for the large, fluctuating synaptic conductance state typical of
-       neocortical neurons in vivo. Journal of Computational Neuroscience,
-       16:159-175.
-       DOI: https://doi.org/10.1023/B:JCNS.0000014108.03012.81
+.. footbibliography::
 
 See also
 ++++++++

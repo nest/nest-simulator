@@ -58,25 +58,25 @@ Description
 
 ``iaf_psc_alpha_ps`` is the "canonical" implementation of the leaky
 integrate-and-fire model neuron with alpha-shaped postsynaptic
-currents in the sense of [1]_. This is the most exact implementation
+currents in the sense of :footcite:p:`Morrison2007a`. This is the most exact implementation
 available.
 
 PSCs are normalized to an amplitude of 1pA.
 
 The precise implementation handles neuronal dynamics in a locally
 event-based manner with in coarse time grid defined by the minimum
-delay in the network, see [1]_. Incoming spikes are applied at the
+delay in the network, see :footcite:p:`Morrison2007a`. Incoming spikes are applied at the
 precise moment of their arrival, while the precise time of outgoing
 spikes is determined by a Regula Falsi method to approximate the timing
-of a threshold crossing [1]_ [3]_. Return from refractoriness occurs
+of a threshold crossing :footcite:p:`Morrison2007a` :footcite:p:`Hanuschkin2010`. Return from refractoriness occurs
 precisely at spike time plus refractory period.
 
 This implementation is more complex than the plain iaf_psc_alpha
 neuron, but achieves much higher precision. In particular, it does not
 suffer any binning of spike times to grid points. Depending on your
 application, the canonical application may provide superior overall
-performance given an accuracy goal; see [1]_ for details. Subthreshold
-dynamics are integrated using exact integration between events [2]_.
+performance given an accuracy goal; see :footcite:p:`Morrison2007a` for details. Subthreshold
+dynamics are integrated using exact integration between events :footcite:p:`Rotter1999`.
 
 This model transmits precise spike times to target nodes (on-grid spike
 time and offset). If this node is connected to a spike_recorder, the
@@ -121,15 +121,7 @@ The following parameters can be set in the status dictionary.
 References
 ++++++++++
 
-.. [1] Morrison A, Straube S, Plesser H E, & Diesmann M (2006) Exact Subthreshold
-       Integration with Continuous Spike Times in Discrete Time Neural Network
-       Simulations. To appear in Neural Computation.
-.. [2] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
-       systems with applications to neuronal modeling. Biologial Cybernetics
-       81:381-402.
-.. [3] Hanuschkin A, Kunkel S, Helias M, Morrison A & Diesmann M (2010)
-       A general and efficient method for incorporating exact spike times in
-       globally time-driven simulations Front Neuroinformatics, 4:113
+.. footbibliography::
 
 Sends
 +++++

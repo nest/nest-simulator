@@ -70,13 +70,13 @@ Description
 +++++++++++
 
 This model neuron implements a slightly modified version of the
-neuron model described in [1]_. The most important properties are:
+neuron model described in :footcite:p:`Hill2005`. The most important properties are:
 
 - Integrate-and-fire with adaptive threshold.
 - Repolarizing potassium current instead of hard reset.
 - AMPA, NMDA, GABA_A, and GABA_B conductance-based synapses with
   beta-function (difference of exponentials) time course.
-- Voltage-dependent NMDA with instantaneous or two-stage unblocking [1]_, [2]_.
+- Voltage-dependent NMDA with instantaneous or two-stage unblocking :footcite:p:`Hill2005`, :footcite:p:`Vargas2003`.
 - Intrinsic currents I_h, I_T, I_Na(p), and I_KNa.
 - Synaptic "minis" are not implemented.
 
@@ -89,7 +89,7 @@ For examples, see:
 - :doc:`../auto_examples/intrinsic_currents_spiking`
 - :doc:`../auto_examples/intrinsic_currents_subthreshold`
 
-For an example network model using ``ht_neuron`` (based on [1]_), see:
+For an example network model using ``ht_neuron`` (based on :footcite:p:`Hill2005`), see:
 
 - `Multiarea Hill-Tononi thalamocortical network model
   <https://github.com/ricardomurphy/Multiarea-Hill-Tononi-thalamocortical-network-model>`_
@@ -100,9 +100,9 @@ Parameters
 =============== ======= =========================================================
  V_m            mV      Membrane potential
  tau_m          ms      Membrane time constant applying to all currents except
-                        repolarizing K-current (see [1]_, p 1677)
+                        repolarizing K-current (see :footcite:p:`Hill2005`, p 1677)
  t_ref          ms      Refractory time and duration of post-spike repolarizing
-                        potassium current (t_spike in [1]_)
+                        potassium current (t_spike in :footcite:p:`Hill2005`)
  tau_spike      ms      Membrane time constant for post-spike repolarizing
                         potassium current
  voltage_clamp  boolean If true, clamp voltage to value at beginning of
@@ -163,13 +163,7 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 References
 ++++++++++
 
-.. [1] Hill S, Tononi G (2005). Modeling sleep and wakefulness in the
-       thalamocortical system. Journal of Neurophysiology. 93:1671-1698.
-       DOI: https://doi.org/10.1152/jn.00915.2004
-.. [2] Vargas-Caballero M, Robinson HPC (2003). A slow fraction of Mg2+
-       unblock of NMDA receptors limits their  contribution to spike generation
-       in cortical pyramidal neurons. Journal of Neurophysiology 89:2778-2783.
-       DOI: https://doi.org/10.1152/jn.01038.2002
+.. footbibliography::
 
 See also
 ++++++++

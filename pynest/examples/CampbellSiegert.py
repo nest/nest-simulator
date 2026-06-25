@@ -36,10 +36,7 @@ simulation using the ``iaf_psc_alpha`` model
 References
 ~~~~~~~~~~
 
- .. [1] Papoulis A (1991). Probability, Random Variables, and
-        Stochastic Processes, McGraw-Hill
- .. [2] Siegert AJ (1951). On the first passage time probability problem,
-        Phys Rev 81: 617-623
+ .. footbibliography::
 
 Authors
 ~~~~~~~
@@ -96,7 +93,7 @@ assert len(weights) == len(rates)
 
 ###############################################################################
 # In the following we analytically compute the firing rate of the neuron
-# based on Campbell's theorem [1]_ and Siegerts approximation [2]_.
+# based on Campbell's theorem :footcite:p:`Papoulis1991` and Siegerts approximation :footcite:p:`Siegert1951`.
 
 for rate, weight in zip(rates, weights):
     if weight > 0:

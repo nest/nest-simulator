@@ -52,7 +52,7 @@ Description
 
 This model simulates a population of spike-response model neurons with
 multi-timescale adaptation and exponential postsynaptic currents, as
-described by Schwalger et al. (2017) [1]_.
+described by Schwalger et al. (2017) :footcite:p:`Schwalger2017`.
 
 The single neuron model is defined by the hazard function
 
@@ -118,11 +118,7 @@ N                ---          use N gif_psc_exp neurons
 References
 ++++++++++
 
-.. [1] Schwalger T, Deger M, Gerstner W (2017). Towards a theory of cortical
-       columns: From spiking neurons to interacting neural populations of
-       finite size. PLoS Computational Biology.
-       https://doi.org/10.1371/journal.pcbi.1005507
-
+.. footbibliography::
 
 Sends
 +++++

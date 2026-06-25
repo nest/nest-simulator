@@ -76,5 +76,5 @@ exclude_loopback = true
 include_mail = false
 
 # Rate-limit sensitive hosts
-concurrency = 1
+max_concurrency = 1
 host_request_interval = "1s"

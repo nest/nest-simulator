@@ -193,7 +193,6 @@ public:
 
 private:
   const std::string compute_vp_node_id_string_( const RecordingDevice& device ) const;
-
   struct DeviceData
   {
     DeviceData() = delete;
@@ -212,12 +211,16 @@ private:
     std::string modelname_;                          //!< File name up to but not including the "."
     std::string vp_node_id_string_;                  //!< The vp and node ID component of the filename
     std::string file_extension_;                     //!< File name extension without leading "."
+    std::string delimiter_;                          //!< File format delimiter (default tab)
     std::string label_;                              //!< The label of the device.
     std::ofstream file_;                             //!< File stream to use for the device
+    bool skip_header_comment_;                       //!< Option to skip the initial header comment (default false)
     std::vector< std::string > double_value_names_;  //!< names for values of type double
     std::vector< std::string > long_value_names_;    //!< names for values of type long
+    bool combine_thread_write_;  //!< Option to combine thread write to single files (may have performance bottleneck)
+                                 //!< (default false)
 
-    std::string compute_filename_() const;  //!< Compose and return the filename
+    std::string compute_filename_( bool combine_thread_write ) const;  //!< Compose and return the filename
   };
 
   typedef std::vector< std::map< size_t, DeviceData > > data_map;

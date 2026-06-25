@@ -141,6 +141,7 @@ private:
   {
     NodeCollectionPTR senders_;
     NodeCollectionPTR targets_;
+    bool include_label_ = false;
 
     Parameters_();
     Parameters_( const Parameters_& ) = default;

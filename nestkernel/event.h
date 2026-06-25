@@ -232,9 +232,9 @@ public:
   size_t get_rport() const;
 
   /**
-   * Return the connection label 
+   * Return the connection label
    */
-   
+
   long get_conn_label() const;
 
   /**
@@ -259,7 +259,7 @@ public:
    */
   void set_rport( size_t p );
 
-   /**
+  /**
    * Set the connection label (conn_label).
    */
 
@@ -376,13 +376,13 @@ protected:
    * @note An r-port number of 0 indicates that the port is not used.
    */
   size_t rp_;
-  
+
 
   /**
    * Connection Label (conn_label)
    *
    * The label of the connection (if available).
-  */
+   */
   long label_;
 
   /**
@@ -1080,10 +1080,10 @@ Event::set_rport( size_t rp )
   rp_ = rp;
 }
 
-inline void 
-Event::set_conn_label(long label)
+inline void
+Event::set_conn_label( long label )
 {
- label_=label;  
+  label_ = label;
 }
 }
 

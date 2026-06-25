@@ -61,6 +61,10 @@ weight recorder accepts NodeCollections in the parameters ``senders`` and
 ``targets``. If set, they restrict the recording of data to only
 synapses that fulfill the given criteria.
 
+For labeled connection identification an optional boolean argument called
+``include_label`` which allows for exporting connection's label in addition
+to the rest output fields is available (default *false*).
+
 ::
 
    >>> wr = nest.Create("weight_recorder")

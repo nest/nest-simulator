@@ -133,6 +133,22 @@ time_in_steps
     point in ms, or just the simulation time in ms. This property
     cannot be set after Simulate has been called.
 
+delimiter
+  A string value that specified the delimiter of the produced ASCII file
+  (default *"\t"*).
+
+skip_header_comment
+  A boolean value that gives the user the option to skip the printing of
+  the header comment containing information about nest and backend versions
+  and etc. (default *false*).
+
+combine_thread_write
+  A boolean value that gives the user the option to write in a single file
+  from mutiple threads and processes. Please note the using this option in
+  large distributed systems may result in considerable simulation slowdowns.
+  (default *false*).
+
+
 EndUserDocs */
 
 namespace nest
@@ -220,7 +236,7 @@ private:
     bool combine_thread_write_;  //!< Option to combine thread write to single files (may have performance bottleneck)
                                  //!< (default false)
 
-    std::string compute_filename_( bool combine_thread_write ) const;  //!< Compose and return the filename
+    std::string compute_filename_() const;  //!< Compose and return the filename
   };
 
   typedef std::vector< std::map< size_t, DeviceData > > data_map;

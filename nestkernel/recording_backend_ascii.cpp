@@ -257,7 +257,7 @@ nest::RecordingBackendASCII::DeviceData::flush_file()
 void
 nest::RecordingBackendASCII::DeviceData::open_file()
 {
-  std::string filename = compute_filename_( combine_thread_write_ );
+  std::string filename = compute_filename_();
 
   if ( !combine_thread_write_ )
   {
@@ -425,7 +425,7 @@ nest::RecordingBackendASCII::DeviceData::write( const Event& event,
       }
 
       file_ << "\n";
-      // file_.flush(); //please check this code and reactivate the line if issues
+      file_.flush();
     }
   }
 }
@@ -441,7 +441,7 @@ nest::RecordingBackendASCII::DeviceData::get_status( Dictionary& d ) const
   d[ names::skip_header_comment ] = skip_header_comment_;
   d[ names::combine_thread_write ] = combine_thread_write_;
 
-  std::string filename = compute_filename_( combine_thread_write_ );
+  std::string filename = compute_filename_();
   d[ names::filenames ] = std::vector< std::string >( { filename } );
 }
 
@@ -469,7 +469,7 @@ nest::RecordingBackendASCII::DeviceData::set_status( const Dictionary& d )
 }
 
 std::string
-nest::RecordingBackendASCII::DeviceData::compute_filename_( bool combined_thread_write ) const
+nest::RecordingBackendASCII::DeviceData::compute_filename_() const
 {
 
   std::string data_path = kernel().io_manager.get_data_path();
@@ -487,6 +487,6 @@ nest::RecordingBackendASCII::DeviceData::compute_filename_( bool combined_thread
   std::string data_prefix = kernel().io_manager.get_data_prefix();
 
 
-  return ( !combined_thread_write ) ? data_path + data_prefix + label + vp_node_id_string_ + "." + file_extension_
+  return ( !combine_thread_write_ ) ? data_path + data_prefix + label + vp_node_id_string_ + "." + file_extension_
                                     : data_path + data_prefix + label + "." + file_extension_;
 }

@@ -12,8 +12,8 @@ verbose = "warn"
 # Defaults to number of cores available to the system if omitted.
 #threads = 2
 
-# Maximum number of allowed redirects
-max_redirects = 10
+# Maximum number of allowed redirects -- set to 0 because redirect itself typically means "found"!
+max_redirects = 0
 
 
 ###
@@ -27,7 +27,7 @@ timeout = 20
 
 # Comma-separated list of accepted status codes for valid links.
 # Omit to accept all response types.
-#accept = "text/html"
+accept = ["200..=299", "302"]    # "302 Found"
 
 # Proceed for server connections considered insecure (invalid TLS)
 insecure = false

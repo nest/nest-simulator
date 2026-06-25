@@ -37,6 +37,7 @@ further adjust settings for your system.
     python3-mpi4py \
     python3-pip \
     python3-pytest \
+    python3-pytest-cov \
     python3-pytest-timeout \
     python3-pytest-xdist \
     python3-pandas \

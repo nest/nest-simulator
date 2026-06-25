@@ -89,6 +89,4 @@ repos:
       - id: pylint
         additional_dependencies: *TESTDEPS
 
-   # possibly also add rstcheck here
-
 exclude: 'build/.*|thirdparty/.*|venv/.*'

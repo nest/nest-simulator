@@ -25,12 +25,7 @@ pre-commit
 pycodestyle
 pydocstyle
 pytest
-pytest-black
 pytest-cov
-pytest-flake8
-pytest-mypy
-pytest-pydocstyle
-pytest-pylint
 pytest-timeout
 pytest-xdist
 rstcheck

@@ -54,4 +54,4 @@ def test_params_raise_assertion(distribution):
     proc.join()
 
     # On Unix, a negative returncode means it was killed by signal -returncode
-    assert proc.exitcode < 0, f"Expected negative exit code"
+    assert proc.exitcode < 0, "Expected negative exit code"

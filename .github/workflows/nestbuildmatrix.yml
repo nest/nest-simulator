@@ -1,4 +1,4 @@
-#
+  #
 # detailed syntax defined in
 # https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions
 #
@@ -256,8 +256,9 @@ jobs:
 
       - name: Link Checker
         uses: lycheeverse/lychee-action@8646ba30535128ac92d33dfc9133794bfdd9b411 # v2.8.0
+        continue-on-error: true
         with:
-          args: build_support/ doc/{*.txt,*.md,htmldoc} examples/ lib* models/ nest* pynest/ testsuite/ *.md
+          args: .    # process all files and directories recursively, starting at the root
           fail: true
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
@@ -471,7 +472,7 @@ jobs:
   sphinx-rtd:
     # as close as possible to the Readthedocs setup (system install cmake, pip install -r doc/requirements.txt)
     runs-on: "ubuntu-22.04"
-    needs: [pydocstyle, rstcheck, vale]
+    needs: [link_checker, pydocstyle, rstcheck, vale]
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1

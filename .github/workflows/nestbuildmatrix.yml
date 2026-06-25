@@ -1,4 +1,4 @@
-#
+  #
 # detailed syntax defined in
 # https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions
 #
@@ -240,7 +240,7 @@ jobs:
         run: |
           ./build_support/check_forbidden_types.sh
 
-  lychee_IGNORED:
+  link_checker:
     runs-on: "ubuntu-22.04"
     steps:
       - name: Harden Runner
@@ -254,18 +254,31 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: "Install dependencies"
-        run: |
-          wget --progress=dot:mega 'https://github.com/lycheeverse/lychee/releases/download/v0.8.2/lychee-v0.8.2-x86_64-unknown-linux-gnu.tar.gz'
-          echo '12c27c9b6d551aea9178080d27de75ed26125b130722153399259432f723e606  lychee-v0.8.2-x86_64-unknown-linux-gnu.tar.gz' | sha256sum -c
-          tar -xzf 'lychee-v0.8.2-x86_64-unknown-linux-gnu.tar.gz'
+      - name: Restore Lychee Cache
+        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
+        with:
+          path: .lycheecache
+          key: lychee-cache-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            lychee-cache-${{ runner.os }}-
 
-      - name: "Run lychee..."
-        continue-on-error: true
-        run: "pwd; ls -l; ./lychee build_support/ doc/{*.txt,*.md,htmldoc} examples/ lib* models/ nest* pynest/ testsuite/ *.md"
-        # TODO: doc/auto_examples and doc/models need to be added here, but exists only after a `make html`
+      - name: Link Checker File Check
+        run: |
+          find . -path "./.git" -prune -o -path "./thirdparty" -prune -o -type f -exec sh -c 'file -b --mime-type "$0" | grep -q "^text/"' {} \; -print > lychee_files_list.txt    # find all ASCII type files
+          grep -q "\.md$" lychee_files_list.txt   # check that there is at least one markdown, etc. file in the list
+          grep -q "\.rst$" lychee_files_list.txt
+          grep -q "\.cpp$" lychee_files_list.txt
+          grep -q "\.h$" lychee_files_list.txt
+          echo "The following files will be link-checked by lychee:"
+          cat lychee_files_list.txt
+
+      - name: Link Checker
+        uses: lycheeverse/lychee-action@8646ba30535128ac92d33dfc9133794bfdd9b411 # v2.8.0
+        with:
+          args: --cache --max-cache-age 1d --files-from lychee_files_list.txt
+          fail: true
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
   pydocstyle:
     runs-on: "ubuntu-22.04"
@@ -476,7 +489,7 @@ jobs:
   sphinx-rtd:
     # as close as possible to the Readthedocs setup (system install cmake, pip install -r doc/requirements.txt)
     runs-on: "ubuntu-22.04"
-    needs: [pydocstyle, rstcheck, vale]
+    needs: [link_checker, pydocstyle, rstcheck, vale]
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4

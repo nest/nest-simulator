@@ -153,6 +153,15 @@ public:
     return false;
   }
 
+  /**
+   * @note Mark as local_receiver() so multimeter is properly identified as device.
+   */
+  bool
+  local_receiver() const override
+  {
+    return true;
+  }
+
   std::string
   get_element_type() const override
   {

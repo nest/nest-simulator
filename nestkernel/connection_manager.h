@@ -498,15 +498,6 @@ private:
   void remove_disabled_connections_( const size_t tid );
 
   /**
-   * Splits a TokenArray of node IDs to two vectors containing node IDs of neurons and
-   * node IDs of devices.
-   */
-  void split_to_neuron_device_vectors_( const size_t tid,
-    NodeCollectionPTR nodecollection,
-    std::vector< size_t >& neuron_node_ids,
-    std::vector< size_t >& device_node_ids ) const;
-
-  /**
    * Update delay extrema to current values.
    *
    * @note This entails MPI communication.

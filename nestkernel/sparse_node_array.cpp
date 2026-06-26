@@ -45,7 +45,7 @@ nest::SparseNodeArray::SparseNodeArray()
   , split_node_id_( 0 )
   , split_idx_( 0 )
   , have_split_( false )
-  , left_side_has_proxies_( false ) // meaningless initial value
+  , left_side_has_proxies_( false )  // meaningless initial value
 {
 }
 
@@ -107,7 +107,7 @@ nest::SparseNodeArray::add_local_node( Node& node )
     }
     else
     {
-      ++split_idx_; // index one beyond the node
+      ++split_idx_;  // index one beyond the node
     }
   }
 }
@@ -115,7 +115,7 @@ nest::SparseNodeArray::add_local_node( Node& node )
 void
 nest::SparseNodeArray::set_max_node_id( size_t node_id )
 {
-  assert( node_id > 0 ); // minimum node ID is 1
+  assert( node_id > 0 );  // minimum node ID is 1
   assert( node_id >= local_max_node_id_ );
   global_max_node_id_ = node_id;
   if ( not have_split_ )

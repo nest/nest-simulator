@@ -23,7 +23,7 @@ r"""
 Short-term depression example
 -----------------------------
 
-The :doc:`iaf_tum_2000 </models/iaf_tum_2000>` neuron [1]_ is a model with
+The :doc:`iaf_tum_2000 </models/iaf_tum_2000>` neuron :footcite:p:`Tsodyks2000` is a model with
 *short-term synaptic plasticity*. Short-term plasticity can either strengthen
 or weaken a synapse and acts on a timescale of milliseconds to seconds. This
 example illustrates *short-term depression*, which is caused by depletion of
@@ -34,10 +34,11 @@ pool can be replenished.
 
 In the ``iaf_tum_2000`` model, a fraction :math:`u` of the available synaptic
 resources :math:`x` is used by each presynaptic spike (see Eq. 3 and 4 or
-Eq. 2.1 and 2.2 in [1]_ or [2]_, respectively). A parameter :math:`U \in [0, 1]`
+Eq. 2.1 and 2.2 in :footcite:p:`Tsodyks2000` or :footcite:p:`Tsodyks1998`,
+respectively). A parameter :math:`U \in [0, 1]`
 determines the increase in :math:`u` with each spike.
 
-In this example, we reproduce Figure 1A in [2]_. We connect two
+In this example, we reproduce Figure 1A in :footcite:p:`Tsodyks1998`. We connect two
 ``iaf_tum_2000`` neurons. The presynaptic neuron is driven by DC input and
 we record the voltage trace of the postsynaptic neuron. Short-term depression
 is enabled by setting :math:`U` to a large value, which causes a fast saturation
@@ -50,19 +51,14 @@ For an example on *short-term facilitation*, see
 
     The :doc:`iaf_tum_2000 </models/iaf_tum_2000>` neuron model combined with
     :doc:`static_synapse </models/static_synapse>` provides a more efficient
-    implementation of the model studied in [1]_ and [2]_ than the combination
+    implementation of the model studied in :footcite:p:`Tsodyks2000` and :footcite:p:`Tsodyks1998` than the combination
     of :doc:`iaf_psc_exp </models/iaf_psc_exp>` with
     :doc:`tsodyks_synapse </models/tsodyks_synapse>`.
 
 References
 ~~~~~~~~~~
 
-.. [1] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent
-       networks with frequency-dependent synapses. The Journal of Neuroscience,
-       20,RC50:1-5. URL: https://infoscience.epfl.ch/record/183402
-
-.. [2] Tsodyks M, Pawelzik K, Markram H (1998). Neural networks with dynamic synapses. Neural
-       computation, https://doi.org/10.1162/089976698300017502
+.. footbibliography::
 
 See Also
 ~~~~~~~~
@@ -84,7 +80,7 @@ nest.resolution = 0.1  # simulation step size [ms]
 T_sim = 1200.0  # simulation time [ms]
 
 ###############################################################################
-# We set the neuronal membrane parameters according to [2]_.
+# We set the neuronal membrane parameters according to :footcite:p:`Tsodyks1998`.
 
 tau_m = 40.0  # membrane time constant [ms]
 R_m = 0.1  # membrane input resistance [GΩ]
@@ -111,9 +107,9 @@ dc_gen = nest.Create(
 )
 
 ###############################################################################
-# Next, we set the synaptic parameters according to [2]_. Note that if
+# Next, we set the synaptic parameters according to :footcite:p:`Tsodyks1998`. Note that if
 # :math:`\tau_\mathrm{fac} \to 0`, facilitation is not exhibited and :math:`u`
-# is identical to :math:`U` for each spike (Eq. 4 or Eq. 2.2 in [1]_ or [2]_,
+# is identical to :math:`U` for each spike (Eq. 4 or Eq. 2.2 in :footcite:p:`Tsodyks2000` or :footcite:p:`Tsodyks1998`,
 # respectively). With NEST's implementation, we can safely set
 # :math:`\tau_\mathrm{fac} = 0` to turn facilitation off.
 

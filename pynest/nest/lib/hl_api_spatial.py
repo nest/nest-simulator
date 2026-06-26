@@ -27,7 +27,7 @@ import os
 
 import numpy as np
 
-from ..ll_api import sli_func
+from .. import nestkernel_api as nestkernel
 from .hl_api_connections import GetConnections
 from .hl_api_helper import is_iterable, stringify_path
 from .hl_api_parallel_computing import NumProcesses, Rank
@@ -189,9 +189,9 @@ def CreateMask(masktype, specs, anchor=None):
             nest.Connect(l, l, conndict)
     """
     if anchor is None:
-        return sli_func("CreateMask", {masktype: specs})
+        return nestkernel.llapi_create_mask({masktype: specs})
     else:
-        return sli_func("CreateMask", {masktype: specs, "anchor": anchor})
+        return nestkernel.llapi_create_mask({masktype: specs, "anchor": anchor})
 
 
 def GetPosition(nodes):
@@ -245,7 +245,7 @@ def GetPosition(nodes):
     if not isinstance(nodes, NodeCollection):
         raise TypeError("nodes must be a NodeCollection with spatial extent")
 
-    return sli_func("GetPosition", nodes)
+    return nestkernel.llapi_get_position(nodes._datum)
 
 
 def Displacement(from_arg, to_arg):
@@ -311,7 +311,7 @@ def Displacement(from_arg, to_arg):
     if len(from_arg) > 1 and len(to_arg) > 1 and not len(from_arg) == len(to_arg):
         raise ValueError("to_arg and from_arg must have same size unless one have size 1.")
 
-    return sli_func("Displacement", from_arg, to_arg)
+    return nestkernel.llapi_displacement(from_arg, to_arg)
 
 
 def Distance(from_arg, to_arg):
@@ -378,7 +378,7 @@ def Distance(from_arg, to_arg):
     if len(from_arg) > 1 and len(to_arg) > 1 and not len(from_arg) == len(to_arg):
         raise ValueError("to_arg and from_arg must have same size unless one have size 1.")
 
-    return sli_func("Distance", from_arg, to_arg)
+    return nestkernel.llapi_spatial_distance(from_arg, to_arg)
 
 
 def FindNearestElement(layer, locations, find_all=False):
@@ -536,14 +536,7 @@ def DumpLayerNodes(layer, outname):
         raise TypeError("layer must be a NodeCollection")
 
     outname = stringify_path(outname)
-
-    sli_func(
-        """
-             (w) file exch DumpLayerNodes close
-             """,
-        layer,
-        _rank_specific_filename(outname),
-    )
+    nestkernel.llapi_dump_layer_nodes(layer._datum, _rank_specific_filename(outname))
 
 
 def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
@@ -611,20 +604,8 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
         raise TypeError("target_layer must be a NodeCollection")
 
     outname = stringify_path(outname)
-
-    sli_func(
-        """
-             /oname  Set
-             cvlit /synmod Set
-             /lyr_target Set
-             /lyr_source Set
-             oname (w) file lyr_source lyr_target synmod
-             DumpLayerConnections close
-             """,
-        source_layer,
-        target_layer,
-        synapse_model,
-        _rank_specific_filename(outname),
+    nestkernel.llapi_dump_layer_connections(
+        source_layer._datum, target_layer._datum, synapse_model, _rank_specific_filename(outname)
     )
 
 
@@ -1008,10 +989,7 @@ def SelectNodesByMask(layer, anchor, mask_obj):
 
     mask_datum = mask_obj._datum
 
-    node_id_list = sli_func("SelectNodesByMask", layer, anchor, mask_datum)
-
-    # When creating a NodeCollection, the input list of nodes IDs must be sorted.
-    return NodeCollection(sorted(node_id_list))
+    return nestkernel.llapi_select_nodes_by_mask(layer._datum, anchor, mask_datum)
 
 
 def _draw_extent(ax, xctr, yctr, xext, yext):

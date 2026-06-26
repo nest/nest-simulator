@@ -29,9 +29,9 @@ Description
 ~~~~~~~~~~~
 
 This script demonstrates supervised learning of a classification task with the eligibility propagation (e-prop)
-plasticity mechanism by Bellec et al. [1]_ with additional biological features described in [3]_.
+plasticity mechanism by Bellec et al. :footcite:p:`Bellec2020` with additional biological features described in :footcite:p:`KorcsakGorzo2025`.
 
-The primary objective of this task is to classify the N-MNIST dataset [2]_, an adaptation of the traditional
+The primary objective of this task is to classify the N-MNIST dataset :footcite:p:`Orchard2015`, an adaptation of the traditional
 MNIST dataset of handwritten digits specifically designed for neuromorphic computing. The N-MNIST dataset
 captures changes in pixel intensity through a dynamic vision sensor, converting static images into sequences of
 binary events, which we interpret as spike trains. This conversion closely emulates biological neural
@@ -52,22 +52,12 @@ which it receives from a rate generator representing the respective digit class.
 network classifiers that may employ softmax functions and cross-entropy loss for classification, this network
 model utilizes a mean-squared error loss to evaluate the training error and perform digit classification.
 
-Details on the event-based NEST implementation of e-prop can be found in [3]_.
+Details on the event-based NEST implementation of e-prop can be found in :footcite:p:`KorcsakGorzo2025`.
 
 References
 ~~~~~~~~~~
 
-.. [1] Bellec G, Scherr F, Subramoney F, Hajek E, Salaj D, Legenstein R, Maass W (2020). A solution to the
-       learning dilemma for recurrent networks of spiking neurons. Nature Communications, 11:3625.
-       https://doi.org/10.1038/s41467-020-17236-y
-
-.. [2] Orchard, G., Jayawant, A., Cohen, G. K., & Thakor, N. (2015). Converting static image datasets to
-       spiking neuromorphic datasets using saccades. Frontiers in neuroscience, 9, 159859.
-
-.. [3] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
-       Dahmen D, Bolten M, Van Albada SJ, Diesmann M. Event-based
-       implementation of eligibility propagation (in preparation)
-
+.. footbibliography::
 """  # pylint: disable=line-too-long # noqa: E501
 
 # %% ###########################################################################################################
@@ -77,6 +67,7 @@ References
 
 import os
 import zipfile
+from pathlib import Path
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -124,8 +115,8 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # stop criterion is reached. After training, the performance can be tested over a number of test iterations.
 
 group_size = 100  # number of instances over which to evaluate the learning performance, 100 for convergence
-n_iter_train = 200  # number of training iterations, 200 for convergence
-n_iter_test = 10  # number of iterations for final test
+n_iter_train = 10  # number of training iterations, 200 for convergence
+n_iter_test = 2  # number of iterations for final test
 do_early_stopping = False  # if True, stop training as soon as stop criterion fulfilled
 n_iter_validate_every = 10  # number of training iterations before validation
 n_iter_early_stop = 8  # number of iterations to average over to evaluate early stopping condition
@@ -169,7 +160,7 @@ params_setup = {
 
 nest.ResetKernel()
 nest.set(**params_setup)
-nest.set_verbosity("M_FATAL")
+nest.verbosity = nest.VerbosityLevel.FATAL
 
 # %% ###########################################################################################################
 # Create neurons
@@ -182,7 +173,7 @@ nest.set_verbosity("M_FATAL")
 # pixels. By omitting spike generators for pixels on this blocklist, we effectively reduce the total number of
 # input neurons and spike generators required, optimizing the network's resource usage.
 
-pixels_blocklist = np.loadtxt("./NMNIST_pixels_blocklist.txt")
+pixels_blocklist = np.loadtxt(Path(__file__).resolve().parent / "NMNIST_pixels_blocklist.txt")
 
 pixels_dict = {
     "n_x": 34,  # number of pixels in horizontal direction
@@ -210,17 +201,20 @@ params_nrn_out = {
 }
 
 params_nrn_rec = {
-    "beta": 1.7,  # width scaling of the pseudo-derivative
     "C_m": 1.0,
     "c_reg": 2.0 / duration["sequence"],  # coefficient of firing rate regularization
     "E_L": 0.0,
     "eprop_isi_trace_cutoff": 100,
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
-    "gamma": 0.5,  # height scaling of the pseudo-derivative
+    "flush_event_send_interval": duration[
+        "sequence"
+    ],  # ms, inactivity period before flushing outgoing synapses to free memory
     "I_e": 0.0,
     "kappa": 0.99,  # low-pass filter of the eligibility trace
     "kappa_reg": 0.99,  # low-pass filter of the firing rate for regularization
     "surrogate_gradient_function": "piecewise_linear",  # surrogate gradient / pseudo-derivative function
+    "surrogate_gradient_height": 0.5,  # height scaling of the pseudo-derivative
+    "surrogate_gradient_width": 1.0 / 1.7,  # width scaling of the pseudo-derivative
     "t_ref": 0.0,  # ms, duration of refractory period
     "tau_m": 30.0,
     "V_m": 0.0,
@@ -361,10 +355,10 @@ senders_in_rec, targets_in_rec = get_weight_recorder_senders_targets(weights_in_
 senders_rec_rec, targets_rec_rec = get_weight_recorder_senders_targets(weights_rec_rec, nrns_rec, nrns_rec)
 senders_rec_out, targets_rec_out = get_weight_recorder_senders_targets(weights_rec_out, nrns_rec, nrns_out)
 
-params_wr["senders"] = np.unique(np.concatenate([senders_in_rec, senders_rec_rec, senders_rec_out]))
-params_wr["targets"] = np.unique(np.concatenate([targets_in_rec, targets_rec_rec, targets_rec_out]))
-
-nest.SetStatus(wr, params_wr)
+wr.set(
+    senders=np.unique(np.concatenate([senders_in_rec, senders_rec_rec, senders_rec_out])),
+    targets=np.unique(np.concatenate([targets_in_rec, targets_rec_rec, targets_rec_out])),
+)
 
 params_common_syn_eprop = {
     "optimizer": {
@@ -473,7 +467,7 @@ def unzip(zip_file_path, extraction_path):
 
 def download_and_extract_nmnist_dataset(save_path="./"):
     nmnist_dataset = {
-        "url": "https://prod-dcd-datasets-cache-zipfiles.s3.eu-west-1.amazonaws.com/468j46mzdv-1.zip",
+        "url": "https://data.mendeley.com/public-api/zip/468j46mzdv/download/1",
         "directory": "468j46mzdv-1",
         "zip": "dataset.zip",
     }
@@ -488,9 +482,13 @@ def download_and_extract_nmnist_dataset(save_path="./"):
     if not (os.path.exists(path) and os.path.exists(train_path) and os.path.exists(test_path)):
         if not os.path.exists(downloaded_zip_path):
             print("\nDownloading the N-MNIST dataset.")
-            response = requests.get(nmnist_dataset["url"], timeout=10)
-            with open(downloaded_zip_path, "wb") as file:
-                file.write(response.content)
+            chunk_size = 1024 * 1024  # 1 MiB
+            with requests.get(nmnist_dataset["url"], stream=True, timeout=60) as r:
+                r.raise_for_status()
+                with open(downloaded_zip_path, "wb", buffering=chunk_size) as f:
+                    for chunk in r.iter_content(chunk_size=chunk_size):
+                        if chunk:
+                            f.write(chunk)
 
         unzip(downloaded_zip_path, save_path)
         unzip(f"{train_path}.zip", path)
@@ -685,8 +683,8 @@ class TrainingPipeline:
         cond2 = times <= self.n_iter_sim * group_size * duration["sequence"] + duration["total_offset"]
         idc = cond1 & cond2
 
-        readout_signal = np.array([readout_signal[idc][senders[idc] == i] for i in set(senders)])
-        target_signal = np.array([target_signal[idc][senders[idc] == i] for i in set(senders)])
+        readout_signal = np.array([readout_signal[idc][senders[idc] == i] for i in np.unique(senders)])
+        target_signal = np.array([target_signal[idc][senders[idc] == i] for i in np.unique(senders)])
 
         readout_signal = readout_signal.reshape((n_out, 1, group_size, steps["sequence"]))
         target_signal = target_signal.reshape((n_out, 1, group_size, steps["sequence"]))
@@ -715,9 +713,9 @@ class TrainingPipeline:
         params_gen_spk_in, params_gen_rate_target, params_gen_learning_window = get_params_task_input_output(
             self.n_iter_sim, loader
         )
-        nest.SetStatus(gen_spk_in, params_gen_spk_in)
-        nest.SetStatus(gen_rate_target, params_gen_rate_target)
-        nest.SetStatus(gen_learning_window, params_gen_learning_window)
+        gen_spk_in.set(params_gen_spk_in)
+        gen_rate_target.set(params_gen_rate_target)
+        gen_learning_window.set(params_gen_learning_window)
 
         self.simulate("total_offset")
         self.simulate("extension_sim")
@@ -868,7 +866,7 @@ fig.tight_layout()
 
 
 def plot_recordable(ax, events, recordable, ylabel, xlims):
-    for sender in set(events["senders"]):
+    for sender in np.unique(events["senders"]):
         idc_sender = events["senders"] == sender
         idc_times = (events["times"][idc_sender] > xlims[0]) & (events["times"][idc_sender] < xlims[1])
         ax.plot(events["times"][idc_sender][idc_times], events[recordable][idc_sender][idc_times], lw=0.5)
@@ -929,14 +927,15 @@ def plot_weight_time_course(ax, events, nrns, label, ylabel):
     nrns_senders = nrns[sender_label]
     nrns_targets = nrns[target_label]
 
-    for sender in set(events_wr["senders"]):
-        for target in set(events_wr["targets"]):
+    for sender in np.unique(events["senders"]):
+        for target in np.unique(events["targets"]):
             if sender in nrns_senders and target in nrns_targets:
                 idc_syn = (events["senders"] == sender) & (events["targets"] == target)
-                if np.any(idc_syn):
-                    idc_syn_pre = (weights_pre_train[label]["source"] == sender) & (
-                        weights_pre_train[label]["target"] == target
-                    )
+                idc_syn_pre = (weights_pre_train[label]["source"] == sender) & (
+                    weights_pre_train[label]["target"] == target
+                )
+
+                if np.any(idc_syn) and np.any(idc_syn_pre):
                     times = np.concatenate([[0.0], events["times"][idc_syn]])
 
                     weights = np.concatenate(

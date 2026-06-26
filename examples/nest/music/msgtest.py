@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # msgtest.py
@@ -22,7 +22,7 @@
 
 import nest
 
-if not nest.ll_api.sli_func("statusdict/have_music ::"):
+if not nest.build_info["have_music"]:
     import sys
 
     print("NEST was not compiled with support for MUSIC, not running.")

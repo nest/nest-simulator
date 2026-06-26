@@ -102,8 +102,8 @@ public:
   size_t send_test_event( Node&, size_t, synindex, bool ) override;
   size_t handles_test_event( SpikeEvent&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
   bool
   is_off_grid() const override
@@ -117,7 +117,7 @@ private:
   void
   pre_run_hook() override
   {
-  } // no variables
+  }  // no variables
 
   void update( Time const&, const long, const long ) override;
 
@@ -154,6 +154,6 @@ parrot_neuron_ps::handles_test_event( SpikeEvent&, size_t receptor_type )
   }
 }
 
-} // namespace
+}  // namespace
 
-#endif // PARROT_NEURON_PS_H
+#endif  // PARROT_NEURON_PS_H

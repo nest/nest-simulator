@@ -219,7 +219,7 @@ Stochastic
 
       Stochastic spiking models do not produce deterministic spike events: instead spike times are stochastic and described
       by a point process, with an underlying time dependent firing rate that is determined by the membrane potential of a neuron.
-      Elevated membrane potential with respect to the resting potential increaes the likelihood of output spikes.
+      Elevated membrane potential with respect to the resting potential increases the likelihood of output spikes.
 
       .. dropdown::  Stochastic
 
@@ -359,7 +359,7 @@ Adaptation mechanism
       :columns: 2
       :class: sd-d-flex-row sd-align-major-center
 
-      .. image:: /static/img/adaptive_threshold_ nn.svg
+      .. image:: /static/img/adaptive_threshold_nn.svg
 
   .. grid-item::
       :columns: 10
@@ -392,7 +392,7 @@ Adaptation mechanism
 
 
 
-Auxilliary neurons
+Auxiliary neurons
 ~~~~~~~~~~~~~~~~~~
 
 .. grid:: 1 2 2 2
@@ -406,11 +406,11 @@ Auxilliary neurons
    .. grid-item::
       :columns: 10
 
-      NEST provides a number of auxilliary neuron models that can be used for specific purposes such as repeating or
+      NEST provides a number of auxiliary neuron models that can be used for specific purposes such as repeating or
       ignoring particular incoming spike patterns. Use cases for such functionality include testing or benchmarking
       simulator performance, or the creation of shared spiking input patterns to neurons.
 
-      .. dropdown:: Auxillary neurons
+      .. dropdown:: Auxiliary neurons
 
         ignore-and-fire – Used for benchmarking
 

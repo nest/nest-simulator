@@ -40,10 +40,7 @@
 #include "nest_time.h"
 #include "nest_types.h"
 #include "secondary_event.h"
-#include "weight_optimizer.h"
 
-// Includes from sli:
-#include "dictdatum.h"
 
 /** @file node.h
  * Declarations for base class Node
@@ -54,7 +51,7 @@ namespace nest
 class Model;
 class ArchivingNode;
 class TimeConverter;
-
+class WeightOptimizer;
 
 /**
  * @defgroup user_interface Model developer interface.
@@ -83,23 +80,19 @@ class TimeConverter;
  * @ingroup user_interface
  */
 
-/** @BeginDocumentation
-
-   Name: Node - General properties of all nodes.
-
-   Parameters:
-   frozen     booltype    - Whether the node is updated during simulation
-   global_id  integertype - The node ID of the node (cf. local_id)
-   local      booltype    - Whether the node is available on the local process
-   model      literaltype - The model type the node was created from
-   state      integertype - The state of the node (see the help on elementstates
-                            for details)
-   thread     integertype - The id of the thread the node is assigned to (valid
-                            locally)
-   vp         integertype - The id of the virtual process the node is assigned
-                            to (valid globally)
-
-   SeeAlso: GetStatus, SetStatus, elementstates
+/**
+ * General properties of all nodes.
+ *
+ * Parameters:
+ * - frozen     (bool)   - Whether the node is updated during simulation
+ * - global_id  (int)    - The node ID of the node (cf. local_id)
+ * - local      (bool)   - Whether the node is available on the local process
+ * - model      (string) - The model type the node was created from
+ * - state      (int)    - The state of the node (see elementstates for details)
+ * - thread     (int)    - The id of the thread the node is assigned to (valid locally)
+ * - vp         (int)    - The id of the virtual process the node is assigned to (valid globally)
+ *
+ * @see GetStatus, SetStatus
  */
 
 class Node
@@ -110,7 +103,7 @@ class Node
   friend class Model;
   friend class SimulationManager;
 
-  Node& operator=( const Node& ); //!< not implemented
+  Node& operator=( const Node& );  //!< not implemented
 
 public:
   Node();
@@ -175,21 +168,20 @@ public:
    *
    * Returns name of node model (e.g. "iaf_psc_alpha") as string.
    * This name is identical to the name that is used to identify
-   * the model in the interpreter's model dictionary.
+   * the model in the NEST model registry.
    */
   std::string get_name() const;
 
   /**
    * Return the element type of the node.
-   *
-   * The returned Name is a free label describing the class of network
+   * The returned string is a free label describing the class of network
    * elements a node belongs to. Currently used values are "neuron",
    * "recorder", "stimulator", and "other", which are all defined as
-   * static Name objects in the names namespace.
+   * static string objects in the names namespace.
    * This function is overwritten with a corresponding value in the
    * derived classes
    */
-  virtual Name get_element_type() const;
+  virtual std::string get_element_type() const;
 
   /**
    * Return global Network ID.
@@ -284,33 +276,37 @@ public:
   }
 
   /**
-   * Bring the node from state $t$ to $t+n*dt$.
+   * Advance the state of the node in time through the given interval.
    *
-   * n->update(T, from, to) performs the update steps beginning
-   * at T+from .. T+to-1, ie, emitting events with time stamps
-   * T+from+1 .. T+to.
+   * This method advances the state of the node through the interval
+   * ``(origin+from, origin+to]``, which is at most ``min_delay`` long.
    *
-   * @param Time   network time at beginning of time slice.
-   * @param long initial step inside time slice
-   * @param long post-final step inside time slice
+   * - Precondition: State of the node corresponds to the time ``origin+from``.
+   * - Postcondition: State of the node corresponds to the time ``origin+to``.
+   *
+   * Each step between ``from`` and ``to`` corresponds to one simulation timestep (``nest.resolution``).
+   *
+   * If events are emitted, they have time stamps in the interval
+   * ``T+from+1 .. T+to``.
+   *
+   * @param origin network time at beginning of time slice
+   * @param from initial step inside time slice
+   * @param to post-final step inside time slice
    *
    */
   virtual void update( Time const&, const long, const long ) = 0;
 
   /**
-   * Bring the node from state $t$ to $t+n*dt$, sends SecondaryEvents
-   * (e.g. GapJunctionEvent) and resets state variables to values at $t$.
-   *
-   * n->wfr_update(T, from, to) performs the update steps beginning
-   * at T+from .. T+to-1.
+   * Advance the state of the node in time through the given interval (see
+   * Node::update() for more details).
    *
    * Does not emit spikes, does not log state variables.
    *
    * throws UnexpectedEvent if not reimplemented in derived class
    *
-   * @param Time   network time at beginning of time slice.
-   * @param long initial step inside time slice
-   * @param long post-final step inside time slice
+   * @param origin network time at beginning of time slice
+   * @param from initial step inside time slice
+   * @param to post-final step inside time slice
    *
    */
   virtual bool wfr_update( Time const&, const long, const long );
@@ -319,14 +315,13 @@ public:
    * @defgroup status_interface Configuration interface.
    *
    * Functions and infrastructure, responsible for the configuration
-   * of Nodes from the SLI Interpreter level.
+   * of Nodes via the PyNEST API.
    *
-   * Each node can be configured from the SLI level through a named
-   * parameter interface. In order to change parameters, the user
-   * can specify name value pairs for each parameter. These pairs
-   * are stored in a data structure which is called Dictionary.
-   * Likewise, the user can query the configuration of any node by
-   * requesting a dictionary with name value pairs.
+   * Each node can be configured through a named parameter interface.
+   * In order to change parameters, the user can specify name-value pairs
+   * for each parameter. These pairs are stored in a data structure which
+   * is called Dictionary. Likewise, the user can query the configuration
+   * of any node by requesting a dictionary with name-value pairs.
    *
    * The configuration interface consists of four functions which
    * implement storage and retrieval of named parameter sets.
@@ -339,7 +334,7 @@ public:
    * @param d Dictionary with named parameter settings.
    * @ingroup status_interface
    */
-  virtual void set_status( const DictionaryDatum& ) = 0;
+  virtual void set_status( const Dictionary& ) = 0;
 
   /**
    * Export properties of the node by setting
@@ -348,7 +343,7 @@ public:
    * @param d Dictionary.
    * @ingroup status_interface
    */
-  virtual void get_status( DictionaryDatum& ) const = 0;
+  virtual void get_status( Dictionary& ) const = 0;
 
 public:
   /**
@@ -484,14 +479,21 @@ public:
   virtual void register_stdp_connection( double, double );
 
   /**
-   * @brief Registers an eprop synapse and initializes the update history.
+   * Registers an eprop connection.
+   *
+   * @throws IllegalConnection
+   */
+  virtual void register_eprop_connection();
+
+  /**
+   * @brief Initializes the update history.
    *
    * The time for the first entry of the update history is set to the neuron specific shift for `bsshslm_2020`
    * models and to the negative transmission delay from the recurrent to the output layer otherwise.
    *
    * @throws IllegalConnection
    */
-  virtual void register_eprop_connection();
+  virtual void initialize_update_history();
 
   /**
    * @brief Retrieves the temporal shift of the signal.
@@ -521,16 +523,27 @@ public:
    */
   virtual void write_update_to_history( const long t_previous_update,
     const long t_current_update,
-    const long eprop_isi_trace_cutoff = 0 );
+    const bool is_flush_event,
+    const bool previous_was_flush_event );
 
   /**
-   * Retrieves the maximum number of time steps integrated between two consecutive spikes.
+   * Erases used e-prop history for bsshslm_2020 models.
    *
-   * @return The cutoff value for the inter-spike interval eprop trace.
+   * Removes history entries for update intervals without spikes and entries older than required.
    *
    * @throws IllegalConnection
    */
-  virtual long get_eprop_isi_trace_cutoff() const;
+  virtual void erase_used_eprop_history();
+
+  /**
+   * Erases used e-prop history based on inter-spike interval.
+   *
+   * @param t_spike The time step of the current spike.
+   * @param t_spike_previous The time step of the previous spike.
+   *
+   * @throws IllegalConnection
+   */
+  virtual void erase_used_eprop_history( const long t_spike, const long t_spike_previous );
 
   /**
    * Checks if the node is part of the recurrent network and thus not a readout neuron.
@@ -711,7 +724,7 @@ public:
    * @ingroup SP_functions
    */
   virtual double
-  get_synaptic_elements( Name ) const
+  get_synaptic_elements( std::string ) const
   {
     return 0.0;
   }
@@ -722,7 +735,7 @@ public:
    * @ingroup SP_functions
    */
   virtual int
-  get_synaptic_elements_vacant( Name ) const
+  get_synaptic_elements_vacant( std::string ) const
   {
     return 0;
   }
@@ -734,7 +747,7 @@ public:
    * @ingroup SP_functions
    */
   virtual int
-  get_synaptic_elements_connected( Name ) const
+  get_synaptic_elements_connected( std::string ) const
   {
     return 0;
   }
@@ -745,10 +758,10 @@ public:
    * Return an empty map if not overridden
    * @ingroup SP_functions
    */
-  virtual std::map< Name, double >
+  virtual std::map< std::string, double >
   get_synaptic_elements() const
   {
-    return std::map< Name, double >();
+    return std::map< std::string, double >();
   }
 
   /**
@@ -775,12 +788,11 @@ public:
    * Is used to update the number of connected
    * synaptic elements (SynapticElement::z_connected_) when a synapse
    * is formed or deleted.
-   *
-   * @param type Name, name of the synaptic element to connect
+   * @param type std::string, name of the synaptic element to connect
    * @param n int number of new connections of the given type
    * @ingroup SP_functions
    */
-  virtual void connect_synaptic_element( Name, int ) {};
+  virtual void connect_synaptic_element( std::string, int ) {};
 
   /**
    * return the Kminus value at t (in ms).
@@ -830,8 +842,8 @@ public:
    * Compute gradient change for eprop synapses.
    *
    * This method is called from an eprop synapse on the eprop target neuron. It updates various parameters related to
-   * e-prop plasticity according to Bellec et al. (2020) with additional biological features described in Korcsak-Gorzo,
-   * Stapmanns, and Espinoza Valverde et al. (in preparation).
+   * e-prop plasticity according to Bellec et al. (2020) with additional biological features described in
+   * Korcsak-Gorzo et al. (2025).
    *
    * @param t_spike [in] Time of the current spike.
    * @param t_spike_previous [in] Time of the previous spike.
@@ -854,7 +866,12 @@ public:
     double& epsilon,
     double& weight,
     const CommonSynapseProperties& cp,
-    WeightOptimizer* optimizer );
+    WeightOptimizer* optimizer,
+    bool is_flush_event,
+    bool previous_was_flush_event,
+    double& sum_grad,
+    long& remaining_steps_until_cutoff,
+    long& decay_steps );
 
   /**
    * Compute gradient change for eprop synapses.
@@ -965,10 +982,10 @@ public:
    *
    *  get_status_base() first gets a dictionary with the basic
    *  information of an element, using get_status_dict_(). It then
-   *  calls the custom function get_status(DictionaryDatum) with
+   *  calls the custom function get_status(dictionary) with
    *  the created status dictionary as argument.
    */
-  DictionaryDatum get_status_base();
+  Dictionary get_status_base();
 
   /**
    * Set status dictionary of a node.
@@ -976,7 +993,7 @@ public:
    * Forwards to set_status() of the derived class.
    * @internal
    */
-  void set_status_base( const DictionaryDatum& );
+  void set_status_base( const Dictionary& );
 
   /**
    * Returns true if node is model prototype.
@@ -1030,7 +1047,7 @@ public:
 
 
 private:
-  void set_node_id_( size_t ); //!< Set global node id
+  void set_node_id_( size_t );  //!< Set global node id
 
   /** Return a new dictionary datum .
    *
@@ -1039,7 +1056,7 @@ private:
    * permanent status dictionary which is then returned by
    * get_status_dict_().
    */
-  virtual DictionaryDatum get_status_dict_();
+  virtual Dictionary get_status_dict_();
 
 protected:
   /**
@@ -1101,11 +1118,11 @@ private:
    */
   int model_id_;
 
-  size_t thread_;      //!< thread node is assigned to
-  size_t vp_;          //!< virtual process node is assigned to
-  bool frozen_;        //!< node shall not be updated if true
-  bool initialized_;   //!< state and buffers have been initialized
-  bool node_uses_wfr_; //!< node uses waveform relaxation method
+  size_t thread_;       //!< thread node is assigned to
+  size_t vp_;           //!< virtual process node is assigned to
+  bool frozen_;         //!< node shall not be updated if true
+  bool initialized_;    //!< state and buffers have been initialized
+  bool node_uses_wfr_;  //!< node uses waveform relaxation method
 
   /**
    * Store index in NodeCollection.
@@ -1173,7 +1190,7 @@ Node::is_proxy() const
   return false;
 }
 
-inline Name
+inline std::string
 Node::get_element_type() const
 {
   return names::neuron;
@@ -1274,6 +1291,6 @@ Node::get_tmp_nc_index()
 }
 
 
-} // namespace
+}  // namespace
 
 #endif

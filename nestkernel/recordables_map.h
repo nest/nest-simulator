@@ -32,11 +32,6 @@
 // Includes from nestkernel:
 #include "nest_types.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "name.h"
-#include "namedatum.h"
-
 namespace nest
 {
 /**
@@ -56,14 +51,15 @@ namespace nest
  *       creation is deferred to the plain constructor of the host
  *       Node class, which is called only once to create the
  *       model prototype instance.
+ *       PYNEST-NG-FUTURE: is this still the case?
  *
  * @see multimeter, UniversalDataLogger
  * @ingroup Devices
  */
 template < typename HostNode >
-class RecordablesMap : public std::map< Name, double ( HostNode::* )() const >
+class RecordablesMap : public std::map< std::string, double ( HostNode::* )() const >
 {
-  typedef std::map< Name, double ( HostNode::* )() const > Base_;
+  typedef std::map< std::string, double ( HostNode::* )() const > Base_;
 
 public:
   virtual ~RecordablesMap()
@@ -83,20 +79,20 @@ public:
   void create();
 
   /**
-   * Obtain SLI list of all recordables, for use by get_status().
+   * Obtain list of all recordables, for use by get_status().
    *
    * @todo This fct should return the recordables_ entry, but since
    *       filling recordables_ leads to seg fault on exit, we just
    *       build the list every time, even though that beats the
    *       goal of being more efficient ...
    */
-  ArrayDatum
+  std::vector< std::string >
   get_list() const
   {
-    ArrayDatum recordables;
+    std::vector< std::string > recordables;
     for ( typename Base_::const_iterator it = this->begin(); it != this->end(); ++it )
     {
-      recordables.push_back( new LiteralDatum( it->first ) );
+      recordables.push_back( it->first );
     }
     return recordables;
 
@@ -107,23 +103,23 @@ public:
 private:
   //! Insertion functions to be used in create(), adds entry to map and list
   void
-  insert_( const Name& n, const DataAccessFct f )
+  insert_( const std::string& n, const DataAccessFct f )
   {
     Base_::insert( std::make_pair( n, f ) );
 
     // Line below leads to seg-fault if nest is quit right after start,
     // see comment on get_list()
-    // recordables_.push_back(LiteralDatum(n));
+    // recordables_.push_back(n);
   }
 
   /**
-   * SLI list of names of recordables
+   * List of names of recordables
    *
    * @todo Once the segfault-on-exit issue mentioned in the comment on
    * get_list() is resolved, the next code line should be activated again.
    *
    */
-  // ArrayDatum recordables_;
+  // std::vector< std::string > recordables_;
 };
 
 template < typename HostNode >
@@ -170,9 +166,9 @@ public:
  * @ingroup Devices
  */
 template < typename HostNode >
-class DynamicRecordablesMap : public std::map< Name, const DataAccessFunctor< HostNode > >
+class DynamicRecordablesMap : public std::map< std::string, const DataAccessFunctor< HostNode > >
 {
-  typedef std::map< Name, const DataAccessFunctor< HostNode > > Base_;
+  typedef std::map< std::string, const DataAccessFunctor< HostNode > > Base_;
 
 public:
   virtual ~DynamicRecordablesMap()
@@ -192,27 +188,27 @@ public:
   void create( HostNode& n );
 
   /**
-   * Obtain SLI list of all recordables, for use by get_status().
+   * Obtain list of all recordables, for use by get_status().
    *
    * @todo This fct should return the recordables_ entry, but since
    *       filling recordables_ leads to seg fault on exit, we just
    *       build the list every time, even though that beats the
    *       goal of being more efficient ...
    */
-  ArrayDatum
+  std::vector< std::string >
   get_list() const
   {
-    ArrayDatum recordables;
+    std::vector< std::string > recordables;
     for ( typename Base_::const_iterator it = this->begin(); it != this->end(); ++it )
     {
-      recordables.push_back( new LiteralDatum( it->first ) );
+      recordables.push_back( it->first );
     }
     return recordables;
   }
 
   //! Insertion functions to be used in create(), adds entry to map and list
   void
-  insert( const Name& n, const DataAccessFct& f )
+  insert( const std::string& n, const DataAccessFct& f )
   {
     Base_::insert( std::make_pair( n, f ) );
   }
@@ -220,11 +216,10 @@ public:
   //! Erase functions to be used when setting state, removes entry from map and
   //! list
   void
-  erase( const Name& n )
+  erase( const std::string& n )
   {
-    // .toString() required as work-around for #339, remove when #348 is solved.
-    typename DynamicRecordablesMap< HostNode >::iterator it = this->find( n.toString() );
-    // If the Name is not in the map, throw an error
+    typename DynamicRecordablesMap< HostNode >::iterator it = this->find( n );
+    // If the string is not in the map, throw an error
     if ( it == this->end() )
     {
       throw KeyError( n, "DynamicRecordablesMap", "erase" );

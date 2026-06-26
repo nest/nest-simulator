@@ -140,8 +140,8 @@ public:
   }
 
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_buffers_() override;
@@ -171,11 +171,11 @@ private:
     **/
     bool linear_summation_;
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const;  //!< Store current values in dictionary
 
-    void set( const DictionaryDatum&, Node* node );
+    void set( const Dictionary&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -185,18 +185,18 @@ private:
    */
   struct State_
   {
-    double rate_; //!< Rate
+    double rate_;  //!< Rate
 
-    State_(); //!< Default initialization
+    State_();  //!< Default initialization
 
-    void get( DictionaryDatum& ) const;
+    void get( Dictionary& ) const;
 
     /** Set values from dictionary.
      * @param dictionary to take data from
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const DictionaryDatum&, Node* node );
+    void set( const Dictionary&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -253,9 +253,9 @@ template < class TNonlinearities >
 inline bool
 rate_transformer_node< TNonlinearities >::wfr_update( Time const& origin, const long from, const long to )
 {
-  State_ old_state = S_; // save state before wfr update
+  State_ old_state = S_;  // save state before wfr update
   const bool wfr_tol_exceeded = update_( origin, from, to, true );
-  S_ = old_state; // restore old state
+  S_ = old_state;  // restore old state
 
   return not wfr_tol_exceeded;
 }
@@ -295,24 +295,24 @@ rate_transformer_node< TNonlinearities >::handles_test_event( DataLoggingRequest
 
 template < class TNonlinearities >
 inline void
-rate_transformer_node< TNonlinearities >::get_status( DictionaryDatum& d ) const
+rate_transformer_node< TNonlinearities >::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
   ArchivingNode::get_status( d );
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 
   nonlinearities_.get( d );
 }
 
 template < class TNonlinearities >
 inline void
-rate_transformer_node< TNonlinearities >::set_status( const DictionaryDatum& d )
+rate_transformer_node< TNonlinearities >::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d, this );   // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, this );   // throws if BadProperty
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
+  ptmp.set( d, this );    // throws if BadProperty
+  State_ stmp = S_;       // temporary copy in case of errors
+  stmp.set( d, this );    // throws if BadProperty
 
   // We now know that (stmp) is consistent. We do not
   // write it back to (S_) before we are also sure that
@@ -327,6 +327,6 @@ rate_transformer_node< TNonlinearities >::set_status( const DictionaryDatum& d )
   nonlinearities_.set( d, this );
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef RATE_TRANSFORMER_NODE_H */

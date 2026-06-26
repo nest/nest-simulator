@@ -72,12 +72,12 @@ of conductance modelled by an alpha function. The alpha function
 is normalized such that an event of weight 1.0 results in a peak conductance of 1 nS
 at :math:`t = \tau_{syn}`.
 
-See also [1]_, [2]_, [3]_.
+See also :footcite:p:`Meffin2004`, :footcite:p:`Bernander1991`, :footcite:p:`Kuhn2004`.
 
 Parameters
 ++++++++++
 
-The following parameters can be set in the status dictionary.
+The following parameters can be set in the status Dictionary.
 
 =========== ======= ===========================================================
  V_m        mV      Membrane potential
@@ -107,20 +107,7 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 References
 ++++++++++
 
-.. [1] Meffin H, Burkitt AN, Grayden DB (2004). An analytical
-       model for the large, fluctuating synaptic conductance state typical of
-       neocortical neurons in vivo. Journal of Computational Neuroscience,
-       16:159-175.
-       DOI: https://doi.org/10.1023/B:JCNS.0000014108.03012.81
-.. [2] Bernander O, Douglas RJ, Martin KAC, Koch C (1991). Synaptic background
-       activity influences spatiotemporal integration in single pyramidal
-       cells.  Proceedings of the National Academy of Science USA,
-       88(24):11569-11573.
-       DOI: https://doi.org/10.1073/pnas.88.24.11569
-.. [3] Kuhn A, Rotter S (2004) Neuronal integration of synaptic input in
-       the fluctuation- driven regime. Journal of Neuroscience,
-       24(10):2345-2356
-       DOI: https://doi.org/10.1523/JNEUROSCI.3349-03.2004
+.. footbibliography::
 
 See also
 ++++++++
@@ -165,8 +152,8 @@ public:
   void handle( CurrentEvent& ) override;
   void handle( DataLoggingRequest& ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_buffers_() override;
@@ -190,22 +177,22 @@ private:
   //! Model parameters
   struct Parameters_
   {
-    double V_th;     //!< Threshold Potential in mV
-    double V_reset;  //!< Reset Potential in mV
-    double t_ref;    //!< Refractory period in ms
-    double g_L;      //!< Leak Conductance in nS
-    double C_m;      //!< Membrane Capacitance in pF
-    double E_ex;     //!< Excitatory reversal Potential in mV
-    double E_in;     //!< Inhibitory reversal Potential in mV
-    double E_L;      //!< Leak reversal Potential (aka resting potential) in mV
-    double tau_synE; //!< Synaptic Time Constant Excitatory Synapse in ms
-    double tau_synI; //!< Synaptic Time Constant for Inhibitory Synapse in ms
-    double I_e;      //!< Constant Current in pA
+    double V_th;      //!< Threshold Potential in mV
+    double V_reset;   //!< Reset Potential in mV
+    double t_ref;     //!< Refractory period in ms
+    double g_L;       //!< Leak Conductance in nS
+    double C_m;       //!< Membrane Capacitance in pF
+    double E_ex;      //!< Excitatory reversal Potential in mV
+    double E_in;      //!< Inhibitory reversal Potential in mV
+    double E_L;       //!< Leak reversal Potential (aka resting potential) in mV
+    double tau_synE;  //!< Synaptic Time Constant Excitatory Synapse in ms
+    double tau_synI;  //!< Synaptic Time Constant for Inhibitory Synapse in ms
+    double I_e;       //!< Constant Current in pA
 
-    Parameters_(); //!< Set default parameter values
+    Parameters_();  //!< Set default parameter values
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    void get( Dictionary& ) const;              //!< Store current values in Dictionary
+    void set( const Dictionary&, Node* node );  //!< Set values from Dictionary
   };
 
   // State variables class --------------------------------------------
@@ -239,18 +226,18 @@ public:
     //!< number of refractory steps remaining
     int r;
 
-    State_( const Parameters_& ); //!< Default initialization
+    State_( const Parameters_& );  //!< Default initialization
     State_( const State_& );
 
     State_& operator=( const State_& );
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const;  //!< Store current values in Dictionary
 
     /**
-     * Set state from values in dictionary.
+     * Set state from values in Dictionary.
      * Requires Parameters_ as argument to, eg, check bounds.'
      */
-    void set( const DictionaryDatum&, const Parameters_&, Node* );
+    void set( const Dictionary&, const Parameters_&, Node* );
   };
 
 private:
@@ -264,8 +251,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( iaf_cond_alpha& );                  //!< Sets buffer pointers to 0
-    Buffers_( const Buffers_&, iaf_cond_alpha& ); //!< Sets buffer pointers to 0
+    Buffers_( iaf_cond_alpha& );                   //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, iaf_cond_alpha& );  //!< Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< iaf_cond_alpha > logger_;
@@ -276,16 +263,16 @@ private:
     RingBuffer currents_;
 
     /* GSL ODE stuff */
-    gsl_odeiv_step* s_;    //!< stepping function
-    gsl_odeiv_control* c_; //!< adaptive stepsize control function
-    gsl_odeiv_evolve* e_;  //!< evolution function
-    gsl_odeiv_system sys_; //!< struct describing system
+    gsl_odeiv_step* s_;     //!< stepping function
+    gsl_odeiv_control* c_;  //!< adaptive stepsize control function
+    gsl_odeiv_evolve* e_;   //!< evolution function
+    gsl_odeiv_system sys_;  //!< struct describing system
 
     // Since IntegrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
-    double step_;            //!< step size in ms
-    double IntegrationStep_; //!< current integration time step, updated by GSL
+    double step_;             //!< step size in ms
+    double IntegrationStep_;  //!< current integration time step, updated by GSL
 
     /**
      * Input current injected by CurrentEvent.
@@ -392,22 +379,22 @@ iaf_cond_alpha::handles_test_event( DataLoggingRequest& dlr, size_t receptor_typ
 }
 
 inline void
-iaf_cond_alpha::get_status( DictionaryDatum& d ) const
+iaf_cond_alpha::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
   ArchivingNode::get_status( d );
 
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
-iaf_cond_alpha::set_status( const DictionaryDatum& d )
+iaf_cond_alpha::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;     // temporary copy in case of errors
-  ptmp.set( d, this );       // throws if BadProperty
-  State_ stmp = S_;          // temporary copy in case of errors
-  stmp.set( d, ptmp, this ); // throws if BadProperty
+  Parameters_ ptmp = P_;      // temporary copy in case of errors
+  ptmp.set( d, this );        // throws if BadProperty
+  State_ stmp = S_;           // temporary copy in case of errors
+  stmp.set( d, ptmp, this );  // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -420,8 +407,8 @@ iaf_cond_alpha::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
-} // namespace
+}  // namespace
 
-#endif // IAF_COND_ALPHA_H
+#endif  // IAF_COND_ALPHA_H
 
-#endif // HAVE_GSL
+#endif  // HAVE_GSL

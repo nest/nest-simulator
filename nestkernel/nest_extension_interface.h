@@ -37,7 +37,6 @@
 #include "model_manager_impl.h"
 #include "nest.h"
 #include "nest_impl.h"
-#include "nestmodule.h"
 #include "sp_manager_impl.h"
 #include "target_identifier.h"
 
@@ -72,4 +71,4 @@ public:
 
 }
 
-#endif // #ifndef NEST_EXTENSION_INTERFACE_H
+#endif  // #ifndef NEST_EXTENSION_INTERFACE_H

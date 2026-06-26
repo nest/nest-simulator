@@ -90,7 +90,7 @@ ModelRangeManager::get_model_id( size_t node_id ) const
   assert( right >= 1 );
 
   // to ensure thread-safety, use local range_idx
-  long range_idx = right / 2; // start in center
+  long range_idx = right / 2;  // start in center
   while ( not modelranges_[ range_idx ].is_in_range( node_id ) )
   {
     if ( node_id > modelranges_[ range_idx ].get_last_node_id() )
@@ -104,7 +104,8 @@ ModelRangeManager::get_model_id( size_t node_id ) const
       range_idx -= ( range_idx - left ) / 2;
     }
     assert( left + 1 < right );
-    assert( range_idx < modelranges_.size() );
+    assert( range_idx >= 0 );
+    assert( static_cast< size_t >( range_idx ) < modelranges_.size() );
   }
   return modelranges_[ range_idx ].get_model_id();
 }
@@ -134,4 +135,4 @@ ModelRangeManager::get_contiguous_node_id_range( size_t node_id ) const
   throw UnknownNode( node_id );
 }
 
-} // namespace nest
+}  // namespace nest

@@ -37,8 +37,6 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -74,16 +72,16 @@ RecordablesMap< iaf_psc_alpha_ps >::create()
  * ---------------------------------------------------------------- */
 
 nest::iaf_psc_alpha_ps::Parameters_::Parameters_()
-  : tau_m_( 10.0 )                                       // ms
-  , tau_syn_ex_( 2.0 )                                   // ms
-  , tau_syn_in_( 2.0 )                                   // ms
-  , c_m_( 250.0 )                                        // pF
-  , t_ref_( 2.0 )                                        // ms
-  , E_L_( -70.0 )                                        // mV
-  , I_e_( 0.0 )                                          // pA
-  , U_th_( -55.0 - E_L_ )                                // mV, rel to E_L_
-  , U_min_( -std::numeric_limits< double >::infinity() ) // mV
-  , U_reset_( -70.0 - E_L_ )                             // mV, rel to E_L_
+  : tau_m_( 10.0 )                                        // ms
+  , tau_syn_ex_( 2.0 )                                    // ms
+  , tau_syn_in_( 2.0 )                                    // ms
+  , c_m_( 250.0 )                                         // pF
+  , t_ref_( 2.0 )                                         // ms
+  , E_L_( -70.0 )                                         // mV
+  , I_e_( 0.0 )                                           // pA
+  , U_th_( -55.0 - E_L_ )                                 // mV, rel to E_L_
+  , U_min_( -std::numeric_limits< double >::infinity() )  // mV
+  , U_reset_( -70.0 - E_L_ )                              // mV, rel to E_L_
 {
 }
 
@@ -105,37 +103,37 @@ nest::iaf_psc_alpha_ps::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_psc_alpha_ps::Parameters_::get( DictionaryDatum& d ) const
+nest::iaf_psc_alpha_ps::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::E_L, E_L_ );
-  def< double >( d, names::I_e, I_e_ );
-  def< double >( d, names::V_th, U_th_ + E_L_ );
-  def< double >( d, names::V_min, U_min_ + E_L_ );
-  def< double >( d, names::V_reset, U_reset_ + E_L_ );
-  def< double >( d, names::C_m, c_m_ );
-  def< double >( d, names::tau_m, tau_m_ );
-  def< double >( d, names::tau_syn_ex, tau_syn_ex_ );
-  def< double >( d, names::tau_syn_in, tau_syn_in_ );
-  def< double >( d, names::t_ref, t_ref_ );
+  d[ names::E_L ] = E_L_;
+  d[ names::I_e ] = I_e_;
+  d[ names::V_th ] = U_th_ + E_L_;
+  d[ names::V_min ] = U_min_ + E_L_;
+  d[ names::V_reset ] = U_reset_ + E_L_;
+  d[ names::C_m ] = c_m_;
+  d[ names::tau_m ] = tau_m_;
+  d[ names::tau_syn_ex ] = tau_syn_ex_;
+  d[ names::tau_syn_in ] = tau_syn_in_;
+  d[ names::t_ref ] = t_ref_;
 }
 
 double
-nest::iaf_psc_alpha_ps::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::iaf_psc_alpha_ps::Parameters_::set( const Dictionary& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
   const double ELold = E_L_;
-  updateValueParam< double >( d, names::E_L, E_L_, node );
+  update_value_param( d, names::E_L, E_L_, node );
   const double delta_EL = E_L_ - ELold;
 
-  updateValueParam< double >( d, names::tau_m, tau_m_, node );
-  updateValueParam< double >( d, names::tau_syn_ex, tau_syn_ex_, node );
-  updateValueParam< double >( d, names::tau_syn_in, tau_syn_in_, node );
-  updateValueParam< double >( d, names::C_m, c_m_, node );
-  updateValueParam< double >( d, names::t_ref, t_ref_, node );
-  updateValueParam< double >( d, names::I_e, I_e_, node );
+  update_value_param( d, names::tau_m, tau_m_, node );
+  update_value_param( d, names::tau_syn_ex, tau_syn_ex_, node );
+  update_value_param( d, names::tau_syn_in, tau_syn_in_, node );
+  update_value_param( d, names::C_m, c_m_, node );
+  update_value_param( d, names::t_ref, t_ref_, node );
+  update_value_param( d, names::I_e, I_e_, node );
 
-  if ( updateValueParam< double >( d, names::V_th, U_th_, node ) )
+  if ( update_value_param( d, names::V_th, U_th_, node ) )
   {
     U_th_ -= E_L_;
   }
@@ -144,7 +142,7 @@ nest::iaf_psc_alpha_ps::Parameters_::set( const DictionaryDatum& d, Node* node )
     U_th_ -= delta_EL;
   }
 
-  if ( updateValueParam< double >( d, names::V_min, U_min_, node ) )
+  if ( update_value_param( d, names::V_min, U_min_, node ) )
   {
     U_min_ -= E_L_;
   }
@@ -153,7 +151,7 @@ nest::iaf_psc_alpha_ps::Parameters_::set( const DictionaryDatum& d, Node* node )
     U_min_ -= delta_EL;
   }
 
-  if ( updateValueParam< double >( d, names::V_reset, U_reset_, node ) )
+  if ( update_value_param( d, names::V_reset, U_reset_, node ) )
   {
     U_reset_ -= E_L_;
   }
@@ -191,20 +189,20 @@ nest::iaf_psc_alpha_ps::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-nest::iaf_psc_alpha_ps::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+nest::iaf_psc_alpha_ps::State_::get( Dictionary& d, const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, V_m_ + p.E_L_ ); // Membrane potential
-  def< double >( d, names::I_syn_ex, I_ex_ );    // Excitatory synaptic current
-  def< double >( d, names::I_syn_in, I_in_ );    // Inhibitory synaptic current
-  def< double >( d, names::dI_syn_in, dI_in_ );  // Derivative inhib. current
-  def< double >( d, names::dI_syn_ex, dI_ex_ );  // Derivative exc. current
-  def< bool >( d, names::is_refractory, is_refractory_ );
+  d[ names::V_m ] = V_m_ + p.E_L_;  // Membrane potential
+  d[ names::I_syn_ex ] = I_ex_;     // Excitatory synaptic current
+  d[ names::I_syn_in ] = I_in_;     // Inhibitory synaptic current
+  d[ names::dI_syn_in ] = dI_in_;   // Derivative inhib. current
+  d[ names::dI_syn_ex ] = dI_ex_;   // Derivative exc. current
+  d[ names::is_refractory ] = is_refractory_;
 }
 
 void
-nest::iaf_psc_alpha_ps::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
+nest::iaf_psc_alpha_ps::State_::set( const Dictionary& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  if ( updateValueParam< double >( d, names::V_m, V_m_, node ) )
+  if ( update_value_param( d, names::V_m, V_m_, node ) )
   {
     V_m_ -= p.E_L_;
   }
@@ -255,7 +253,7 @@ nest::iaf_psc_alpha_ps::init_buffers_()
 {
   B_.events_.resize();
   B_.events_.clear();
-  B_.currents_.clear(); // includes resize
+  B_.currents_.clear();  // includes resize
   B_.logger_.reset();
 
   ArchivingNode::clear_history();
@@ -361,7 +359,7 @@ nest::iaf_psc_alpha_ps::update( Time const& origin, const long from, const long 
       {
         // If we use S_.V_m_ * std::exp( -V_.h_ms_ / P_.tau_m_ ) instead of
         // V_.expm1_tau_m_ * S_.V_m_ + S_.V_m_ here, the accuracy decreases,
-        // see test_iaf_ps_dc_t_accuracy.sli for details.
+        // see test_iaf_ps_dc_t_accuracy.py for details.
         S_.V_m_ = V_.P30_ * ( P_.I_e_ + S_.y_input_ ) + V_.P31_ex_ * S_.dI_ex_ + V_.P32_ex_ * S_.I_ex_
           + V_.P31_in_ * S_.dI_in_ + V_.P32_in_ * S_.I_in_ + V_.expm1_tau_m_ * S_.V_m_ + S_.V_m_;
 
@@ -393,7 +391,7 @@ nest::iaf_psc_alpha_ps::update( Time const& origin, const long from, const long 
 
       // Time within step is measured by offsets, which are h at the beginning
       // and 0 at the end of the step.
-      double last_offset = V_.h_ms_; // start of step
+      double last_offset = V_.h_ms_;  // start of step
 
       do
       {
@@ -415,17 +413,17 @@ nest::iaf_psc_alpha_ps::update( Time const& origin, const long from, const long 
         if ( end_of_refract )
         {
           S_.is_refractory_ = false;
-        } // return from refractoriness
+        }  // return from refractoriness
         else
         {
           if ( ev_weight >= 0.0 )
           {
-            S_.dI_ex_ += V_.psc_norm_ex_ * ev_weight; // exc. spike input
+            S_.dI_ex_ += V_.psc_norm_ex_ * ev_weight;  // exc. spike input
           }
           else
           {
             S_.dI_in_ += V_.psc_norm_in_ * ev_weight;
-          } // inh. spike input
+          }  // inh. spike input
         }
 
         // store state
@@ -440,7 +438,7 @@ nest::iaf_psc_alpha_ps::update( Time const& origin, const long from, const long 
 
       // no events remaining, plain update step across remainder
       // of interval
-      if ( last_offset > 0 ) // not at end of step, do remainder
+      if ( last_offset > 0 )  // not at end of step, do remainder
       {
         propagate_( last_offset );
         if ( S_.V_m_ >= P_.U_th_ )
@@ -448,7 +446,7 @@ nest::iaf_psc_alpha_ps::update( Time const& origin, const long from, const long 
           emit_spike_( origin, lag, V_.h_ms_ - last_offset, last_offset );
         }
       }
-    } // else
+    }  // else
 
     // Set new input current. The current change occurs at the
     // end of the interval and thus must come AFTER the threshold-
@@ -458,7 +456,7 @@ nest::iaf_psc_alpha_ps::update( Time const& origin, const long from, const long 
 
     // logging
     B_.logger_.record_data( origin.get_steps() + lag );
-  } // from lag = from ...
+  }  // from lag = from ...
 }
 
 
@@ -562,7 +560,7 @@ nest::iaf_psc_alpha_ps::emit_spike_( Time const& origin, const long lag, const d
 void
 nest::iaf_psc_alpha_ps::emit_instant_spike_( Time const& origin, const long lag, const double spike_offs )
 {
-  assert( S_.V_m_ >= P_.U_th_ ); // ensure we are superthreshold
+  assert( S_.V_m_ >= P_.U_th_ );  // ensure we are superthreshold
 
   // set stamp and offset for spike
   S_.last_spike_step_ = origin.get_steps() + lag + 1;

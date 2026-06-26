@@ -29,13 +29,13 @@ This script compares the two variants of the Tsodyks/Markram synapse in NEST.
 
 This synapse model implements synaptic short-term depression and short-term
 facilitation according to the quantal release model described by Fuhrmann et
-al. [1]_ and Loebel et al. [2]_.
+al. :footcite:p:`Fuhrmann2002` and Loebel et al. :footcite:p:`Loebel2009`.
 
 Each presynaptic spike will stochastically activate a fraction of the
 available release sites.  This fraction is binomially distributed and the
 release probability per site is governed by the Fuhrmann et al. (2002) model.
 The solution of the differential equations is taken from Maass and Markram
-2002 [3]_.
+2002 :footcite:p:`Maass2002`.
 
 The connection weight is interpreted as the maximal weight that can be
 obtained if all n release sites are activated.
@@ -57,17 +57,7 @@ The following parameters can be set in the status dictionary:
 References
 ~~~~~~~~~~
 
-.. [1] Fuhrmann G, Segev I, Markram H, and Tsodyks MV. (2002). Coding of
-       temporal information by activity-dependent synapses. Journal of
-       Neurophysiology, 8. https://doi.org/10.1152/jn.00258.2001
-.. [2] Loebel, A., Silberberg, G., Helbig, D., Markram, H., Tsodyks,
-       M. V, & Richardson, M. J. E. (2009). Multiquantal release underlies
-       the distribution of synaptic efficacies in the neocortex. Frontiers
-       in Computational Neuroscience, 3:27. doi:10.3389/neuro.10.027.
-.. [3] Maass W, and Markram H. (2002). Synapses as dynamic memory buffers.
-       Neural Networks, 15(2), 155-161.
-       http://dx.doi.org/10.1016/S0893-6080(01)00144-7
-
+.. footbibliography::
 """
 
 import matplotlib.pyplot as plt
@@ -121,7 +111,7 @@ qsyn_params["weight"] = 1.0 / n_sites
 # make NEST less verbose, and set some kernel attributes.
 
 nest.ResetKernel()
-nest.set_verbosity("M_ERROR")
+nest.verbosity = nest.VerbosityLevel.ERROR
 nest.resolution = resolution
 nest.rng_seed = seed
 

@@ -41,8 +41,6 @@
 #include "device_node.h"
 #include "nest_types.h"
 
-// Includes from sli:
-#include "arraydatum.h"
 
 namespace nest
 {
@@ -71,7 +69,7 @@ This model is only available if NEST was compiled with MUSIC.
 Parameters
 ++++++++++
 
-The following properties are available in the status dictionary:
+The following properties are available in the status Dictionary:
 
 =========== ======= ========================================================
  port_name  string  The name of the MUSIC input port to listen to (default:
@@ -114,8 +112,8 @@ public:
     return true;
   }
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( Dictionary& ) const;
+  void set_status( const Dictionary& );
 
 private:
   void init_buffers_();
@@ -132,41 +130,41 @@ private:
 
   struct Parameters_
   {
-    std::string port_name_; //!< the name of MUSIC port to connect to
+    std::string port_name_;  //!< the name of MUSIC port to connect to
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const;                 //!< Store current values in dictionary
-    void set( const DictionaryDatum&, State_&, Node* ); //!< Set values from dictionary
+    void get( Dictionary& ) const;                  //!< Store current values in Dictionary
+    void set( const Dictionary&, State_&, Node* );  //!< Set values from Dictionary
   };
 
   // ------------------------------------------------------------
 
   struct State_
   {
-    bool published_; //!< indicates whether this node has been published already
-                     //!< with MUSIC
-    int port_width_; //!< the width of the MUSIC port
+    bool published_;  //!< indicates whether this node has been published already
+                      //!< with MUSIC
+    int port_width_;  //!< the width of the MUSIC port
 
-    State_(); //!< Sets default state value
+    State_();  //!< Sets default state value
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    //! Set values from dictionary
-    void set( const DictionaryDatum&, const Parameters_& );
+    void get( Dictionary& ) const;  //!< Store current values in Dictionary
+    //! Set values from Dictionary
+    void set( const Dictionary&, const Parameters_& );
   };
 
   // ------------------------------------------------------------
 
   struct Buffers_
   {
-    std::vector< double > data_; //!< The buffer for incoming data
+    std::vector< double > data_;  //!< The buffer for incoming data
   };
 
   // ------------------------------------------------------------
 
   struct Variables_
   {
-    MUSIC::ContInputPort* MP_; //!< The MUSIC cont port for input of data
+    MUSIC::ContInputPort* MP_;  //!< The MUSIC cont port for input of data
   };
 
   // ------------------------------------------------------------
@@ -177,7 +175,7 @@ private:
   Variables_ V_;
 };
 
-} // namespace
+}  // namespace
 
 #endif
 

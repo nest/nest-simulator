@@ -1,0 +1,101 @@
+# -*- coding: utf-8 -*-
+#
+# hh_coba.py
+#
+# This file is part of NEST.
+#
+# Copyright (C) 2004 The NEST Initiative
+#
+# NEST is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# NEST is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
+"""
+Benchmark 3 of the simulator review (HH-COBA)
+-----------------------------------------------
+
+This script creates a sparsely coupled network of excitatory and inhibitory
+neurons which exhibits self-sustained activity after an initial stimulus.
+Connections within and across both populations are created at random. Both
+neuron populations receive Poissonian background input. The spike output of
+500 neurons from each population are recorded. Neurons are modeled as
+Hodgkin-Huxley neurons with conductance-based synapses (exponential functions).
+The model is based on the Vogels & Abbott network model :footcite:p:`Vogels2005`.
+
+This is Benchmark 3 of the FACETS simulator review (Brette et al., 2007) :footcite:p:`Brette2007`:
+- Neuron model: Hodgkin-Huxley (``hh_cond_exp_traub``)
+- Synapse model: conductance-based (COBA)
+- Synapse time course: exponential
+- Spike times: grid-constrained
+
+References
+~~~~~~~~~~
+
+.. footbibliography::
+"""
+
+import nest
+from brette_et_al_2007_benchmark import run_simulation
+
+###############################################################################
+# Set benchmark parameters
+
+params = {
+    "model": "hh_cond_exp_traub",  # neuron model
+    "model_params": {
+        "g_Na": 20000.0,  # sodium conductance [nS]
+        "g_K": 6000.0,  # K conductance [nS]
+        "g_L": 10.0,  # leak conductance [nS]
+        "C_m": 200.0,  # membrane capacitance [pF]
+        "E_Na": 50.0,  # reversal potential (Sodium) [mV]
+        "E_K": -90.0,  # reversal potential (Potassium) [mV]
+        "E_L": -60.0,  # resting potential [mV]
+        "E_ex": 0.0,  # excitatory reversal potential [mV]
+        "E_in": -80.0,  # inhibitory reversal potential [mV]
+        "tau_syn_ex": 5.0,  # excitatory synaptic time constant [ms]
+        "tau_syn_in": 10.0,  # inhibitory synaptic time constant [ms]
+    },
+    "delay": 0.1,  # synaptic delay [ms]
+    "E_synapse_params": {
+        "weight": 6.0,  # excitatory synaptic conductance [nS]
+    },
+    "I_synapse_params": {
+        "weight": -67.0,  # inhibitory synaptic conductance [nS]
+    },
+    "stimulus": "poisson_generator",
+    "stimulus_params": {
+        "rate": 300.0,  # rate of initial Poisson stimulus [spikes/s]
+        "start": 1.0,  # start of Poisson generator [ms]
+        "stop": 51.0,  # stop of Poisson generator [ms]
+        "origin": 0.0,  # origin of time [ms]
+    },
+    "recorder": "spike_recorder",
+    "recorder_params": {
+        "record_to": "ascii",
+        "label": "hh_coba",
+    },
+    "Nrec": 500,  # number of neurons per population to record from
+    "Nstim": 50,  # number of neurons to stimulate
+    "simtime": 1000.0,  # simulated time [ms]
+    "dt": 0.1,  # simulation step [ms]
+    "NE": 3200,  # number of excitatory neurons
+    "NI": 800,  # number of inhibitory neurons
+    "epsilon": 0.02,  # connection probability
+    "virtual_processes": 1,  # number of virtual processes to use
+}
+
+###############################################################################
+# Run the simulation
+
+if __name__ == "__main__":
+    nest.verbosity = nest.VerbosityLevel.WARNING
+    results = run_simulation(params)

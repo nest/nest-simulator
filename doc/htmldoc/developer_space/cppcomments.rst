@@ -13,7 +13,7 @@ There are two types of code comments for C++ files: doxygen style and C++ style 
 Generate HTML from doxygen comments
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To generate HTML output of the doxgyen comments,
+To generate HTML output of the doxygen comments,
 
 in the build directory,
 
@@ -43,7 +43,7 @@ Doxygen style
   /**
    * Short description
    *
-   * Further details, if necesary
+   * Further details, if necessary
    */
 
 .. note::

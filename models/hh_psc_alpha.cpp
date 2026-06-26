@@ -39,9 +39,6 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dictutils.h"
-
 
 nest::RecordablesMap< nest::hh_psc_alpha > nest::hh_psc_alpha::recordablesMap_;
 
@@ -109,9 +106,9 @@ hh_psc_alpha_dynamics( double, const double y[], double f[], void* pnode )
   f[ S::V_M ] = ( -( I_Na + I_K + I_L ) + node.B_.I_stim_ + node.P_.I_e + I_ex + I_in ) / node.P_.C_m;
 
   // channel dynamics
-  f[ S::HH_M ] = alpha_m * ( 1 - y[ S::HH_M ] ) - beta_m * y[ S::HH_M ]; // m-variable
-  f[ S::HH_H ] = alpha_h * ( 1 - y[ S::HH_H ] ) - beta_h * y[ S::HH_H ]; // h-variable
-  f[ S::HH_N ] = alpha_n * ( 1 - y[ S::HH_N ] ) - beta_n * y[ S::HH_N ]; // n-variable
+  f[ S::HH_M ] = alpha_m * ( 1 - y[ S::HH_M ] ) - beta_m * y[ S::HH_M ];  // m-variable
+  f[ S::HH_H ] = alpha_h * ( 1 - y[ S::HH_H ] ) - beta_h * y[ S::HH_H ];  // h-variable
+  f[ S::HH_N ] = alpha_n * ( 1 - y[ S::HH_N ] ) - beta_n * y[ S::HH_N ];  // n-variable
 
   // synapses: alpha functions
   f[ S::DI_EXC ] = -dI_ex / node.P_.tau_synE;
@@ -128,24 +125,24 @@ hh_psc_alpha_dynamics( double, const double y[], double f[], void* pnode )
  * ---------------------------------------------------------------- */
 
 nest::hh_psc_alpha::Parameters_::Parameters_()
-  : t_ref_( 2.0 )   // ms
-  , g_Na( 12000.0 ) // nS
-  , g_K( 3600.0 )   // nS
-  , g_L( 30.0 )     // nS
-  , C_m( 100.0 )    // pF
-  , E_Na( 50.0 )    // mV
-  , E_K( -77.0 )    // mV
-  , E_L( -54.402 )  // mV
-  , tau_synE( 0.2 ) // ms
-  , tau_synI( 2.0 ) // ms
-  , I_e( 0.0 )      // pA
+  : t_ref_( 2.0 )    // ms
+  , g_Na( 12000.0 )  // nS
+  , g_K( 3600.0 )    // nS
+  , g_L( 30.0 )      // nS
+  , C_m( 100.0 )     // pF
+  , E_Na( 50.0 )     // mV
+  , E_K( -77.0 )     // mV
+  , E_L( -54.402 )   // mV
+  , tau_synE( 0.2 )  // ms
+  , tau_synI( 2.0 )  // ms
+  , I_e( 0.0 )       // pA
 {
 }
 
 nest::hh_psc_alpha::State_::State_( const Parameters_& )
   : r_( 0 )
 {
-  y_[ 0 ] = -65; // p.E_L;
+  y_[ 0 ] = -65;  // p.E_L;
   for ( size_t i = 1; i < STATE_VEC_SIZE; ++i )
   {
     y_[ i ] = 0;
@@ -189,37 +186,37 @@ nest::hh_psc_alpha::State_::operator=( const State_& s )
  * ---------------------------------------------------------------- */
 
 void
-nest::hh_psc_alpha::Parameters_::get( DictionaryDatum& d ) const
+nest::hh_psc_alpha::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::t_ref, t_ref_ );
-  def< double >( d, names::g_Na, g_Na );
-  def< double >( d, names::g_K, g_K );
-  def< double >( d, names::g_L, g_L );
-  def< double >( d, names::E_Na, E_Na );
-  def< double >( d, names::E_K, E_K );
-  def< double >( d, names::E_L, E_L );
-  def< double >( d, names::C_m, C_m );
-  def< double >( d, names::tau_syn_ex, tau_synE );
-  def< double >( d, names::tau_syn_in, tau_synI );
-  def< double >( d, names::I_e, I_e );
+  d[ names::t_ref ] = t_ref_;
+  d[ names::g_Na ] = g_Na;
+  d[ names::g_K ] = g_K;
+  d[ names::g_L ] = g_L;
+  d[ names::E_Na ] = E_Na;
+  d[ names::E_K ] = E_K;
+  d[ names::E_L ] = E_L;
+  d[ names::C_m ] = C_m;
+  d[ names::tau_syn_ex ] = tau_synE;
+  d[ names::tau_syn_in ] = tau_synI;
+  d[ names::I_e ] = I_e;
 }
 
 void
-nest::hh_psc_alpha::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::hh_psc_alpha::Parameters_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::t_ref, t_ref_, node );
-  updateValueParam< double >( d, names::C_m, C_m, node );
-  updateValueParam< double >( d, names::g_Na, g_Na, node );
-  updateValueParam< double >( d, names::E_Na, E_Na, node );
-  updateValueParam< double >( d, names::g_K, g_K, node );
-  updateValueParam< double >( d, names::E_K, E_K, node );
-  updateValueParam< double >( d, names::g_L, g_L, node );
-  updateValueParam< double >( d, names::E_L, E_L, node );
+  update_value_param( d, names::t_ref, t_ref_, node );
+  update_value_param( d, names::C_m, C_m, node );
+  update_value_param( d, names::g_Na, g_Na, node );
+  update_value_param( d, names::E_Na, E_Na, node );
+  update_value_param( d, names::g_K, g_K, node );
+  update_value_param( d, names::E_K, E_K, node );
+  update_value_param( d, names::g_L, g_L, node );
+  update_value_param( d, names::E_L, E_L, node );
 
-  updateValueParam< double >( d, names::tau_syn_ex, tau_synE, node );
-  updateValueParam< double >( d, names::tau_syn_in, tau_synI, node );
+  update_value_param( d, names::tau_syn_ex, tau_synE, node );
+  update_value_param( d, names::tau_syn_in, tau_synI, node );
 
-  updateValueParam< double >( d, names::I_e, I_e, node );
+  update_value_param( d, names::I_e, I_e, node );
   if ( C_m <= 0 )
   {
     throw BadProperty( "Capacitance must be strictly positive." );
@@ -239,21 +236,21 @@ nest::hh_psc_alpha::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-nest::hh_psc_alpha::State_::get( DictionaryDatum& d ) const
+nest::hh_psc_alpha::State_::get( Dictionary& d ) const
 {
-  def< double >( d, names::V_m, y_[ V_M ] );
-  def< double >( d, names::Act_m, y_[ HH_M ] );
-  def< double >( d, names::Inact_h, y_[ HH_H ] );
-  def< double >( d, names::Act_n, y_[ HH_N ] );
+  d[ names::V_m ] = y_[ V_M ];
+  d[ names::Act_m ] = y_[ HH_M ];
+  d[ names::Inact_h ] = y_[ HH_H ];
+  d[ names::Act_n ] = y_[ HH_N ];
 }
 
 void
-nest::hh_psc_alpha::State_::set( const DictionaryDatum& d, Node* node )
+nest::hh_psc_alpha::State_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
-  updateValueParam< double >( d, names::Act_m, y_[ HH_M ], node );
-  updateValueParam< double >( d, names::Inact_h, y_[ HH_H ], node );
-  updateValueParam< double >( d, names::Act_n, y_[ HH_N ], node );
+  update_value_param( d, names::V_m, y_[ V_M ], node );
+  update_value_param( d, names::Act_m, y_[ HH_M ], node );
+  update_value_param( d, names::Inact_h, y_[ HH_H ], node );
+  update_value_param( d, names::Act_n, y_[ HH_N ], node );
   if ( y_[ HH_M ] < 0 or y_[ HH_H ] < 0 or y_[ HH_N ] < 0 )
   {
     throw BadProperty( "All (in)activation variables must be non-negative." );
@@ -325,9 +322,9 @@ nest::hh_psc_alpha::~hh_psc_alpha()
 void
 nest::hh_psc_alpha::init_buffers_()
 {
-  B_.spike_exc_.clear(); // includes resize
-  B_.spike_inh_.clear(); // includes resize
-  B_.currents_.clear();  // includes resize
+  B_.spike_exc_.clear();  // includes resize
+  B_.spike_inh_.clear();  // includes resize
+  B_.currents_.clear();   // includes resize
   ArchivingNode::clear_history();
 
   B_.logger_.reset();
@@ -413,11 +410,11 @@ nest::hh_psc_alpha::update( Time const& origin, const long from, const long to )
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
-        &B_.sys_,             // system of ODE
-        &t,                   // from t
-        B_.step_,             // to t <= step
-        &B_.IntegrationStep_, // integration step size
-        S_.y_ );              // neuronal state
+        &B_.sys_,              // system of ODE
+        &t,                    // from t
+        B_.step_,              // to t <= step
+        &B_.IntegrationStep_,  // integration step size
+        S_.y_ );               // neuronal state
       if ( status != GSL_SUCCESS )
       {
         throw GSLSolverFailure( get_name(), status );
@@ -433,7 +430,7 @@ nest::hh_psc_alpha::update( Time const& origin, const long from, const long to )
     {
       --S_.r_;
     }
-    else if ( S_.y_[ State_::V_M ] >= 0 and U_old > S_.y_[ State_::V_M ] ) // ( threshold and maximum )
+    else if ( S_.y_[ State_::V_M ] >= 0 and U_old > S_.y_[ State_::V_M ] )  // (threshold and maximum)
     {
       S_.r_ = V_.RefractoryCounts_;
 
@@ -485,4 +482,4 @@ nest::hh_psc_alpha::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-#endif // HAVE_GSL
+#endif  // HAVE_GSL

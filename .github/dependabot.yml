@@ -6,6 +6,17 @@ updates:
       interval: daily
 
   - package-ecosystem: pip
-    directory: /doc
+    # Scan the repo root so Dependabot follows the `-r` includes in
+    # requirements.txt (requirements_pynest.txt, requirements_testing.txt,
+    # doc/requirements.txt, requirements_nest_server.txt) as one set.
+    directory: /
     schedule:
       interval: daily
+    # Only raise a lower bound when the current requirement does not already
+    # allow the new release; otherwise leave it unchanged. Keeps NEST broadly
+    # compatible instead of churning the floors (see issue #3866).
+    # NB: "widen" is documented but NOT implemented for pip, so it is rejected
+    # by the config schema. Valid pip values: auto, increase,
+    # increase-if-necessary, lockfile-only.
+    # https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference#versioning-strategy--
+    versioning-strategy: increase-if-necessary

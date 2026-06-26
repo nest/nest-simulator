@@ -31,11 +31,6 @@
 // Includes from libnestutil:
 #include "dict_util.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-
 namespace nest
 {
 void
@@ -50,7 +45,7 @@ template <>
 void
 RecordablesMap< dc_generator >::create()
 {
-  insert_( Name( names::I ), &dc_generator::get_I_ );
+  insert_( names::I, &dc_generator::get_I_ );
 }
 }
 
@@ -59,7 +54,7 @@ RecordablesMap< dc_generator >::create()
  * ---------------------------------------------------------------- */
 
 nest::dc_generator::Parameters_::Parameters_()
-  : amp_( 0.0 ) // pA
+  : amp_( 0.0 )  // pA
 {
 }
 
@@ -82,7 +77,7 @@ nest::dc_generator::Parameters_::operator=( const Parameters_& p )
 }
 
 nest::dc_generator::State_::State_()
-  : I_( 0.0 ) // pA
+  : I_( 0.0 )  // pA
 {
 }
 
@@ -102,15 +97,15 @@ nest::dc_generator::Buffers_::Buffers_( const Buffers_&, dc_generator& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::dc_generator::Parameters_::get( DictionaryDatum& d ) const
+nest::dc_generator::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::amplitude, amp_ );
+  d[ names::amplitude ] = amp_;
 }
 
 void
-nest::dc_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::dc_generator::Parameters_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::amplitude, amp_, node );
+  update_value_param( d, names::amplitude, amp_, node );
 }
 
 
@@ -193,7 +188,7 @@ nest::dc_generator::handle( DataLoggingRequest& e )
 void
 nest::dc_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
 
   // For the input backend
   if ( not input_param.empty() )
@@ -202,8 +197,8 @@ nest::dc_generator::set_data_from_stimulation_backend( std::vector< double >& in
     {
       throw BadParameterValue( "The size of the data for the dc_generator needs to be 1 [amplitude]." );
     }
-    DictionaryDatum d = DictionaryDatum( new Dictionary );
-    ( *d )[ names::amplitude ] = DoubleDatum( input_param[ 0 ] );
+    Dictionary d;
+    d[ names::amplitude ] = input_param[ 0 ];
     ptmp.set( d, this );
   }
 

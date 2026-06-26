@@ -65,7 +65,7 @@ Nonlinear rate neurons can be created by typing
 ``nest.Create('sigmoid_rate_ipn')``. Nonlinear rate transformers can be
 created by typing ``nest.Create('rate_transformer_sigmoid')``.
 
-See also [1]_, [2]_.
+See also :footcite:p:`Hahne2017`, :footcite:p:`Hahne2015`.
 
 Parameters
 ++++++++++
@@ -98,14 +98,7 @@ then summed up (false). Default is true.
 References
 ++++++++++
 
-.. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M,
-       Diesmann M (2017). Integration of continuous-time dynamics in a
-       spiking neural network simulator. Frontiers in Neuroinformatics, 11:34.
-       DOI: https://doi.org/10.3389/fninf.2017.00034
-.. [2] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A, Diesmann M
-       (2015). A unified framework for spiking and gap-junction interactions
-       in distributed neuronal network simulations. Frontiers in
-       Neuroinformatics, 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
+.. footbibliography::
 
 Sends
 +++++
@@ -148,12 +141,12 @@ public:
   {
   }
 
-  void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-  void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+  void get( Dictionary& ) const;              //!< Store current values in dictionary
+  void set( const Dictionary&, Node* node );  //!< Set values from dictionary
 
-  double input( double h );               // non-linearity on input
-  double mult_coupling_ex( double rate ); // factor of multiplicative coupling
-  double mult_coupling_in( double rate ); // factor of multiplicative coupling
+  double input( double h );                // non-linearity on input
+  double mult_coupling_ex( double rate );  // factor of multiplicative coupling
+  double mult_coupling_in( double rate );  // factor of multiplicative coupling
 };
 
 inline double
@@ -186,7 +179,7 @@ void RecordablesMap< sigmoid_rate_ipn >::create();
 template <>
 void RecordablesMap< rate_transformer_sigmoid >::create();
 
-} // namespace nest
+}  // namespace nest
 
 
 #endif /* #ifndef SIGMOID_RATE_H */

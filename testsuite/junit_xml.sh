@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # junit_xml.sh
 #
 # This file is part of NEST.

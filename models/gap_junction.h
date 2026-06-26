@@ -49,7 +49,7 @@ connections with a single call to Connect via the make_symmetric flag.
 The value of the parameter ``delay`` is ignored for connections of
 type ``gap_junction``.
 
-See also [1]_, [2]_.
+See also :footcite:p:`Hahne2015`, :footcite:p:`Mancilla2007`.
 
 Sends
 +++++
@@ -59,15 +59,7 @@ GapJunctionEvent
 References
 ++++++++++
 
-.. [1] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A, Diesmann,
-       M (2015). A unified framework for spiking and gap-junction interactions
-       in distributed neuronal network simulations. Frontiers in
-       Neuroinformatics 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
-
-.. [2] Mancilla JG, Lewis,TJ, Pinto DJ, Rinzel J, Connors BW (2007).
-       Synchronization of electrically coupled pairs of inhibitory
-       interneurons in neocortex. Journal of Neuroscience 27:2058-2073.
-       DOI: https://doi.org/10.1523/JNEUROSCI.2715-06.2007
+.. footbibliography::
 
 See also
 ++++++++
@@ -105,7 +97,7 @@ public:
   {
   }
 
-  SecondaryEvent* get_secondary_event();
+  std::unique_ptr< SecondaryEvent > get_secondary_event();
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -141,9 +133,9 @@ public:
     return true;
   }
 
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   void
   set_weight( double w )
@@ -158,7 +150,7 @@ public:
   }
 
 private:
-  double weight_; //!< connection weight
+  double weight_;  //!< connection weight
 };
 
 template < typename targetidentifierT >
@@ -166,37 +158,37 @@ constexpr ConnectionModelProperties gap_junction< targetidentifierT >::propertie
 
 template < typename targetidentifierT >
 void
-gap_junction< targetidentifierT >::get_status( DictionaryDatum& d ) const
+gap_junction< targetidentifierT >::get_status( Dictionary& d ) const
 {
   // We have to include the delay here to prevent
   // errors due to internal calls of
   // this function in SLI/pyNEST
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::weight ] = weight_;
+  d[ names::size_of ] = static_cast< long >( sizeof( *this ) );
 }
 
 template < typename targetidentifierT >
-SecondaryEvent*
+std::unique_ptr< SecondaryEvent >
 gap_junction< targetidentifierT >::get_secondary_event()
 {
-  return new GapJunctionEvent();
+  return std::make_unique< GapJunctionEvent >();
 }
 
 template < typename targetidentifierT >
 void
-gap_junction< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+gap_junction< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   // If the delay is set, we throw a BadProperty
-  if ( d->known( names::delay ) )
+  if ( d.known( names::delay ) )
   {
     throw BadProperty( "gap_junction connection has no delay" );
   }
 
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
+  d.update_value( names::weight, weight_ );
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef GAP_JUNCTION_H */

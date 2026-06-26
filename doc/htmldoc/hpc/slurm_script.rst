@@ -29,7 +29,7 @@ In this example, we are using 1 node, which contains 2 sockets and 64 cores per 
 
 .. code-block:: sh
 
-   #!/bin/bash -l
+   #!/usr/bin/env bash -l
    #SBATCH --job-name=<job-name>
    #SBATCH --account=<account-name>
    #SBATCH --partition=<partition-type>
@@ -66,7 +66,7 @@ Let's break this script down line by line.
 
 ::
 
-  #!/bin/bash -l
+  #!/usr/bin/env bash -l
 
 You are submitting a shell script to Slurm. The "shebang" line must be the first line of shell script
 
@@ -118,7 +118,7 @@ trying to increase the speed of the simulation.
    How many nodes do you need for your simulations?
    This depends on how much memory is available for each node.
 
-   For example: The :doc:`microcircuit model <../auto_examples/Potjans_2014/index>` requires around 16 GB of memory and the `multi-area-model <https://github.com/INM-6/multi-area-model>`_ requires 1.4 TB.
+   For example: The :doc:`microcircuit model <pd14:index>` requires around 16 GB of memory and the `multi-area-model <https://github.com/INM-6/multi-area-model>`_ requires 1.4 TB.
    If a node has 128 GB of memory then one node is more than sufficient for the microcircuit model but the multi-area model
    will need 12 nodes to run.
 

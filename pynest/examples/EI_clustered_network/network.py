@@ -105,7 +105,7 @@ class ClusteredNetwork:
         """
 
         nest.ResetKernel()
-        nest.set_verbosity("M_WARNING")
+        nest.verbosity = nest.VerbosityLevel.WARNING
         nest.local_num_threads = self._params.get("n_vp", 4)
         nest.resolution = self._params.get("dt")
         self._params["randseed"] = self._params.get("randseed")

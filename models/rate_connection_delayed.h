@@ -45,7 +45,7 @@ between rate model neurons.
 To create instantaneous rate connections please use
 the synapse type ``rate_connection_instantaneous``.
 
-See also [1]_.
+See also :footcite:p:`Hahne2017`.
 
 Transmits
 +++++++++
@@ -55,10 +55,7 @@ DelayedRateConnectionEvent
 References
 ++++++++++
 
-.. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M,
-       Diesmann M (2017). Integration of continuous-time dynamics in a
-       spiking neural network simulator. Frontiers in Neuroinformatics, 11:34.
-       DOI: https://doi.org/10.3389/fninf.2017.00034
+.. footbibliography::
 
 See also
 ++++++++
@@ -99,7 +96,7 @@ public:
   {
   }
 
-  SecondaryEvent* get_secondary_event();
+  std::unique_ptr< SecondaryEvent > get_secondary_event();
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase.
@@ -139,9 +136,9 @@ public:
     return true;
   }
 
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   void
   set_weight( double w )
@@ -150,7 +147,7 @@ public:
   }
 
 private:
-  double weight_; //!< connection weight
+  double weight_;  //!< connection weight
 };
 
 template < typename targetidentifierT >
@@ -158,28 +155,28 @@ constexpr ConnectionModelProperties rate_connection_delayed< targetidentifierT >
 
 template < typename targetidentifierT >
 void
-rate_connection_delayed< targetidentifierT >::get_status( DictionaryDatum& d ) const
+rate_connection_delayed< targetidentifierT >::get_status( Dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::weight ] = weight_;
+  d[ names::size_of ] = static_cast< long >( sizeof( *this ) );
 }
 
 template < typename targetidentifierT >
 void
-rate_connection_delayed< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+rate_connection_delayed< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
+  d.update_value( names::weight, weight_ );
 }
 
 template < typename targetidentifierT >
-SecondaryEvent*
+std::unique_ptr< SecondaryEvent >
 rate_connection_delayed< targetidentifierT >::get_secondary_event()
 {
-  return new DelayedRateConnectionEvent();
+  return std::make_unique< DelayedRateConnectionEvent >();
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef RATE_CONNECTION_DELAYED_H */

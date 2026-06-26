@@ -39,7 +39,6 @@ relative to the ``origin``.
 
 """
 
-
 ###############################################################################
 # First, the modules needed for simulation and analysis are imported.
 

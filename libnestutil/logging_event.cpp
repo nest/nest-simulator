@@ -22,11 +22,14 @@
 
 #include "logging_event.h"
 
+#include "kernel_manager.h"
+
 // C++ includes:
 #include <cassert>
 #include <ctime>
+#include <iomanip>
 
-nest::LoggingEvent::LoggingEvent( const nest::severity_t s,
+nest::LoggingEvent::LoggingEvent( const VerbosityLevel s,
   const std::string& fctn,
   const std::string& msg,
   const std::string& file,
@@ -38,11 +41,16 @@ nest::LoggingEvent::LoggingEvent( const nest::severity_t s,
   , file_name( file )
   , line_number( line )
 {
-  assert( severity > M_ALL );
-  assert( severity < M_QUIET );
+  assert( severity > VerbosityLevel::ALL );
+  assert( severity < VerbosityLevel::QUIET );
   time( const_cast< time_t* >( &time_stamp ) );
 }
 
+nest::VerbosityLevel
+nest::LoggingEvent::nest_verbosity_level() const
+{
+  return kernel().logging_manager.verbosity();
+}
 namespace nest
 {
 
@@ -52,45 +60,50 @@ operator<<( std::ostream& out, const LoggingEvent& e )
   struct tm* ptm = localtime( &e.time_stamp );
   switch ( e.severity )
   {
-  case M_ALL:
+  case VerbosityLevel::ALL:
     out << "[ALL] ";
     break;
-  case M_DEBUG:
+  case VerbosityLevel::DEBUG:
     out << "[DEBUG] ";
     break;
-  case M_STATUS:
+  case VerbosityLevel::STATUS:
     out << "[STATUS] ";
     break;
-  case M_INFO:
+  case VerbosityLevel::INFO:
     out << "[INFO] ";
     break;
-  case M_PROGRESS:
+  case VerbosityLevel::PROGRESS:
     out << "[PROGRESS] ";
     break;
-  case M_DEPRECATED:
+  case VerbosityLevel::DEPRECATED:
     out << "[DEPRECATED] ";
     break;
-  case M_WARNING:
+  case VerbosityLevel::WARNING:
     out << "[WARNING] ";
     break;
-  case M_ERROR:
+  case VerbosityLevel::ERROR:
     out << "[ERROR] ";
     break;
-  case M_FATAL:
+  case VerbosityLevel::FATAL:
     out << "[FATAL] ";
     break;
-  case M_QUIET:
+  case VerbosityLevel::QUIET:
     out << "[QUIET] ";
     break;
   default:
-    out << "[" << e.severity << "] ";
+    out << "[Undefined (" << static_cast< int >( e.severity ) << ")] ";
     break;
   }
   // print time and day
-  out << "[" << ptm->tm_year + 1900 << "." << ptm->tm_mon + 1 << "." << ptm->tm_mday << " " << ptm->tm_hour << ":"
-      << ptm->tm_min << ":" << ptm->tm_sec << " ";
+  out << "[" << ptm->tm_year + 1900 << "-" << std::setfill( '0' ) << std::setw( 2 ) << ptm->tm_mon + 1 << "-"
+      << std::setw( 2 ) << ptm->tm_mday << " " << std::setw( 2 ) << ptm->tm_hour << ":" << std::setw( 2 ) << ptm->tm_min
+      << ":" << std::setw( 2 ) << ptm->tm_sec;
 
-  out << e.file_name << ":" << e.line_number << " @ " << e.function << "] : " << e.message;
+  if ( e.nest_verbosity_level() <= VerbosityLevel::DEBUG )
+  {
+    out << " " << e.file_name << ":" << e.line_number << " @ " << e.function;
+  }
+  out << "] " << e.message;
 
   return out;
 }

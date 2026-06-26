@@ -40,24 +40,20 @@ namespace nest
 class Source
 {
 private:
-  uint64_t node_id_ : NUM_BITS_NODE_ID; //!< node ID of source
-  bool processed_ : 1;                  //!< whether this target has already been moved
-                                        //!< to the MPI buffer
-  bool primary_ : 1;
+  size_t node_id_ : NUM_BITS_NODE_ID;  //!< node ID of source
+  bool processed_ : 1;                 //!< whether this target has already been moved
+                                       //!< to the MPI buffer
+  bool primary_ : 1;                   //!< source of primary connection
+  bool disabled_ : 1;                  //!< connection has been disabled
 
 public:
   Source();
-  explicit Source( const uint64_t node_id, const bool primary );
-
-  /**
-   * Sets node_id_ to the specified value.
-   */
-  void set_node_id( const uint64_t node_id );
+  explicit Source( const size_t node_id, const bool primary );
 
   /**
    * Returns this Source's node ID.
    */
-  uint64_t get_node_id() const;
+  size_t get_node_id() const;
 
   void set_processed( const bool processed );
   bool is_processed() const;
@@ -91,25 +87,20 @@ inline Source::Source()
   : node_id_( 0 )
   , processed_( false )
   , primary_( true )
+  , disabled_( false )
 {
 }
 
-inline Source::Source( const uint64_t node_id, const bool is_primary )
+inline Source::Source( const size_t node_id, const bool is_primary )
   : node_id_( node_id )
   , processed_( false )
   , primary_( is_primary )
+  , disabled_( false )
 {
   assert( node_id <= MAX_NODE_ID );
 }
 
-inline void
-Source::set_node_id( const uint64_t node_id )
-{
-  assert( node_id <= MAX_NODE_ID );
-  node_id_ = node_id;
-}
-
-inline uint64_t
+inline size_t
 Source::get_node_id() const
 {
   return node_id_;
@@ -142,13 +133,13 @@ Source::is_primary() const
 inline void
 Source::disable()
 {
-  node_id_ = DISABLED_NODE_ID;
+  disabled_ = true;
 }
 
 inline bool
 Source::is_disabled() const
 {
-  return node_id_ == DISABLED_NODE_ID;
+  return disabled_;
 }
 
 inline bool
@@ -169,6 +160,6 @@ operator==( const Source& lhs, const Source& rhs )
   return ( lhs.node_id_ == rhs.node_id_ );
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifndef SOURCE_H */

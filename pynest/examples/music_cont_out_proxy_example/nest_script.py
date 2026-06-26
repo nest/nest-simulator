@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # nest_script.py
@@ -29,6 +29,7 @@ the NEST instances are observed by the music_cont_out_proxy and their
 values are forwarded through MUSIC to the receiver.
 
 """
+
 import nest
 
 proxy = nest.Create("music_cont_out_proxy", 1)

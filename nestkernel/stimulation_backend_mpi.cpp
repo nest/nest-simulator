@@ -63,7 +63,7 @@ nest::StimulationBackendMPI::finalize()
 }
 
 void
-nest::StimulationBackendMPI::enroll( nest::StimulationDevice& device, const DictionaryDatum& params )
+nest::StimulationBackendMPI::enroll( nest::StimulationDevice& device, const Dictionary& params )
 {
   size_t tid = device.get_thread();
   size_t node_id = device.get_node_id();
@@ -81,7 +81,7 @@ nest::StimulationBackendMPI::enroll( nest::StimulationDevice& device, const Dict
   enrolled_ = true;
 
   // Try to read the mpi_address from the device status
-  updateValue< std::string >( params, names::mpi_address, mpi_address_ );
+  params.update_value( names::mpi_address, mpi_address_ );
 }
 
 
@@ -141,8 +141,8 @@ nest::StimulationBackendMPI::prepare()
       // Only the master thread uses the MPI functions of this new communicator.
       // This is because the management of threads here is using MPI_THREAD_FUNNELED (see mpi_manager.cpp:119).
       comm = new MPI_Comm;
-      auto vector_id_device = new std::vector< int >; // vector of ID device for the rank
-      int* vector_nb_device_th { new int[ kernel().vp_manager.get_num_threads() ] {} }; // number of device by thread
+      auto vector_id_device = new std::vector< int >;  // vector of ID device for the rank
+      int* vector_nb_device_th { new int[ kernel().vp_manager.get_num_threads() ] {} };  // number of device by thread
       std::fill_n( vector_nb_device_th, kernel().vp_manager.get_num_threads(), 0 );
       // add the id of the device if there is a connection with the device.
       if ( kernel().connection_manager.get_device_connected(
@@ -200,7 +200,7 @@ nest::StimulationBackendMPI::prepare()
     }
     std::ostringstream msg;
     msg << "Connect to " << it_comm.first.data() << "\n";
-    LOG( M_INFO, "MPI Input connect", msg.str() );
+    LOG( VerbosityLevel::INFO, "MPI Input connect", msg.str() );
   }
 }
 
@@ -357,10 +357,10 @@ nest::StimulationBackendMPI::receive_spike_train( const MPI_Comm& comm, std::vec
     // Receive the size of data
     MPI_Status status_mpi;
     // Receive the size of the data in total and for each devices
-    int* nb_size_data_per_id { new int[ size_list + 1 ] {} }; // delete in the function clean_memory_input_data
+    int* nb_size_data_per_id { new int[ size_list + 1 ] {} };  // delete in the function clean_memory_input_data
     MPI_Recv( nb_size_data_per_id, size_list + 1, MPI_INT, MPI_ANY_SOURCE, devices_id[ 0 ], comm, &status_mpi );
     // Receive the data
-    double* data { new double[ nb_size_data_per_id[ 0 ] ] {} }; // delete in the function clean_memory_input_data
+    double* data { new double[ nb_size_data_per_id[ 0 ] ] {} };  // delete in the function clean_memory_input_data
     MPI_Recv( data, nb_size_data_per_id[ 0 ], MPI_DOUBLE, status_mpi.MPI_SOURCE, devices_id[ 0 ], comm, &status_mpi );
     // return the size of the data by device and the data
     return std::make_pair( nb_size_data_per_id, data );
@@ -381,7 +381,7 @@ nest::StimulationBackendMPI::update_device( int* array_index,
     {
       // if there are some data
       size_t thread_id = kernel().vp_manager.get_thread_id();
-      int index_id_device = 0; // the index for the array of device in the data
+      int index_id_device = 0;  // the index for the array of device in the data
       // get the first id of the device for the current thread
       // if the thread_id == 0, the index_id_device equals 0
       if ( thread_id != 0 )

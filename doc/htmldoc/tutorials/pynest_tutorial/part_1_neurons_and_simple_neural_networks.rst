@@ -36,25 +36,23 @@ PyNEST - an interface to the NEST Simulator
 
 .. _Python-Interface:
 
-.. figure:: ../../static/img/python_interface.png
+.. figure:: ../../static/img/python_interface_ng.svg
    :alt: Python Interface
-   :width: 600px
 
    Python Interface Figure.
-   The Python interpreter imports NEST as a module and
-   dynamically loads the NEST Simulator kernel (``pynestkernel.so``).
-   A simulation script of
-   the user (``mysimulation.py``) uses functions defined in this high-level
-   API. These functions generate code in SLI (Simulation Language
-   Interpreter), the native language of the interpreter of NEST. This
-   interpreter, in turn, controls the NEST simulation kernel.
 
-The NEural Simulation Tool (NEST: www.nest-initiative.org) [1]_
+   The Python interpreter imports NEST as a package, which loads the Cython extension `nestkernel_api`, which is a
+   direct binding to the NEST C++ API. This C++ API provides the interface to the NEST kernel, using dedicated managers
+   for specific functions alongside classes that represent neuron, device, and synapse models. When a user runs a
+   simulation script (``my-simulation.py``), its calls to the PyNEST high-level API are forwarded through ``ll_api.py``
+   and the Cython layer directly to the C++ KernelManager, which controls the simulation.
+
+The NEural Simulation Tool (NEST: www.nest-initiative.org) :footcite:p:`Gewaltig2007`
 is designed for the simulation of large heterogeneous networks of point
 neurons. It is open source software released under the GPL licence. The
-simulator comes with an interface to Python [2]_. :numref:`Python-Interface`
+simulator comes with an interface to Python :footcite:p:`Python2008`. :numref:`Python-Interface`
 illustrates the interaction between the user's simulation script
-(``mysimulation.py``) and the NEST Simulator. Eppler et al. [3]_
+(``mysimulation.py``) and the NEST Simulator. Eppler et al. :footcite:p:`Eppler2009`
 contains a technically detailed description of the implementation of this
 interface and parts of this text are based on this reference. The
 simulation kernel is written in C++ to obtain the highest possible performance
@@ -94,11 +92,9 @@ prompted for.
 
 If you want to obtain more information about a particular command, you
 may use Python's standard help system, which will return the help text
-(docstring) explaining the use of this particular function. There is a
-help system within NEST as well. You can open the help pages in a
-browser using ``nest.helpdesk()`` and you can get the help page for a
-particular NEST object (like a synapse or neuron model) using
-``nest.help('object')``.
+(docstring) explaining the use of this particular function. You can get
+the help page for a particular NEST object (like a synapse or neuron model)
+using ``nest.help('object')``.
 
 Creating nodes
 --------------
@@ -119,7 +115,7 @@ or return a :py:class:`.NodeCollection` (see `command overview`_). Thus, it is
 easy to apply functions to large sets of nodes with a single function
 call.
 
-After having imported NEST and Matplotlib [4]_,
+After having imported NEST and Matplotlib :footcite:p:`Hunter2007`,
 which we will use to display the results, we can start creating nodes.
 As a first example, we will create a neuron of type
 ``iaf_psc_alpha``. This neuron is an integrate-and-fire neuron with
@@ -145,9 +141,9 @@ to see which properties a neuron has, you may ask it for its status.
 This will print out the corresponding dictionary in the Python console.
 Many of these properties are not relevant for the dynamics of the
 neuron. To find out what the interesting properties are, look at the
-documentation of the model through the helpdesk. If you already know
-which properties you are interested in, you can specify a key, or a list
-of keys, as an optional argument to :py:meth:`~.NodeCollection.get`:
+online documentation. If you already know which properties you are interested
+in, you can specify a key, or a list of keys, as an optional argument to
+:py:meth:`~.NodeCollection.get`:
 
 ::
 
@@ -563,14 +559,4 @@ Simulation control
 References
 ----------
 
-.. [1] Gewaltig MO. and Diesmann M. 2007. NEural Simulation
-   Tool. 2(4):1430.
-
-.. [2] Python Software Foundation. The Python programming language,
-   2008. http://www.python.org.
-
-.. [3] Eppler JM et al. 2009 PyNEST: A convenient interface to the NEST Simulator.
-   2:12. 10.3389/neuro.11.012.2008.
-
-.. [4] Hunter JD. 2007 Matplotlib: A 2d graphics environment.
-   9(3):90–95.
+.. footbibliography::

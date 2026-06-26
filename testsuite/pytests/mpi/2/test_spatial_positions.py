@@ -1,1 +1,0 @@
-../../test_spatial_positions.py

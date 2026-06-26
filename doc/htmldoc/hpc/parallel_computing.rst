@@ -48,7 +48,7 @@ Virtual processes
 We use the concept of local and remote threads, called *virtual processes*.
 A virtual process (VP) is a thread residing in one of NEST's :hxt_ref:`MPI` processes.
 For both thread and distributed parallelization, VPs simplify handling of
-neuron  and synapses distributions.
+neuron and synapses distributions.
 Virtual processes are distributed round-robin (i.e. each VP is allocated equal
 time slices, without any given a priority) onto the MPI processes and
 counted continuously over all processes.
@@ -74,7 +74,7 @@ in a scenario with two processes with two threads each.
  sg=spike_generator, iaf=iaf_psc_alpha, sr=spike_recorder. Numbers to
  the left and right indicate node IDs.
  The *proxy* object in the figure is a conceptual way of keeping the id of the
- real node free on remote processes).
+ real node free on remote processes.
 
 
 .. note::
@@ -208,7 +208,7 @@ Multiprocessing
 ---------------
 
 
-NEST internally parallelizes network construction [1]_ and maintains internal data structures in this process. For
+NEST internally parallelizes network construction :footcite:p:`Ippen2017` and maintains internal data structures in this process. For
 example, running several :py:func:`.Connect` calls simultaneously can interfere with the internal parallelization and will
 likely lead to unpredictable/wrong results.
 
@@ -375,5 +375,4 @@ independently of the details of parallelization.
 References
 ----------
 
-.. [1] Ippen T, Eppler JM, Plesser HE and Diesmann M (2017). Constructing neuronal network models in massively
-       parallel environments. Front. Neuroinform. 11:30. DOI: 10.3389/fninf.2017.00030
+.. footbibliography::

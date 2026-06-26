@@ -70,6 +70,6 @@ public:
   Time from_old_tics( tic_t t_old ) const;
 };
 
-} // of namespace nest
+}  // of namespace nest
 
 #endif

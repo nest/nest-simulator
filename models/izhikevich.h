@@ -43,9 +43,9 @@ Short description
 Izhikevich neuron model
 
 Description
-++++++++++++
++++++++++++
 
-``izhikevich`` implements the simple spiking neuron model introduced by Izhikevich [1]_.
+``izhikevich`` implements the simple spiking neuron model introduced by Izhikevich :footcite:p:`Izhikevich2003a`.
 This model reproduces spiking and bursting behavior of known types of cortical neurons.
 
 Membrane potential evolution, spike emission, and refractoriness
@@ -75,7 +75,7 @@ At this point, the membrane potential and recovery variable are updated accordin
 
 In addition, each incoming spike increases :math:`V_{\text{m}}` by the synaptic weight associated with the spike.
 
-As published in [1]_, the numerics differs from the standard forward Euler technique in two ways:
+As published in :footcite:p:`Izhikevich2003a`, the numerics differs from the standard forward Euler technique in two ways:
 
  * the recovery variable :math:`U_{\text{m}}` is updated based on the new value of :math:`V_{\text{m}}`, rather than the previous one.
  * the membrane potential :math:`V_{\text{m}}` is updated with a time step half the size of that used for :math:`U_{\text{m}}`.
@@ -87,7 +87,7 @@ This model offers both forms of integration, they can be selected using the bool
 
 .. note::
 
-   For a detailed analysis of the numerical differences between these integration schemes and their impact on simulation results, see [2]_.
+   For a detailed analysis of the numerical differences between these integration schemes and their impact on simulation results, see :footcite:p:`Pauli2018`.
 
 Parameters
 ++++++++++
@@ -112,12 +112,7 @@ The following parameters can be set in the status dictionary.
 References
 ++++++++++
 
-.. [1] Izhikevich EM. (2003). Simple model of spiking neurons. IEEE Transactions
-       on Neural Networks, 14:1569-1572. DOI: https://doi.org/10.1109/TNN.2003.820440
-
-.. [2] Pauli R, Weidel P, Kunkel S, Morrison A (2018). Reproducing polychronization: A guide to maximizing
-       the reproducibility of spiking network models. Frontiers in Neuroinformatics, 12.
-       DOI: https://www.frontiersin.org/article/10.3389/fninf.2018.00046
+.. footbibliography::
 
 Sends
 +++++
@@ -169,8 +164,8 @@ public:
 
   size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   friend class RecordablesMap< izhikevich >;
@@ -205,10 +200,10 @@ private:
     /** Use standard integration numerics **/
     bool consistent_integration_;
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    void get( Dictionary& ) const;              //!< Store current values in dictionary
+    void set( const Dictionary&, Node* node );  //!< Set values from dictionary
   };
 
   // ----------------------------------------------------------------
@@ -218,19 +213,19 @@ private:
    */
   struct State_
   {
-    double v_; // membrane potential
-    double u_; // membrane recovery variable
-    double I_; // input current
+    double v_;  // membrane potential
+    double u_;  // membrane recovery variable
+    double I_;  // input current
 
 
     /** Accumulate spikes arriving during refractory period, discounted for
         decay until end of refractory period.
     */
 
-    State_(); //!< Default initialization
+    State_();  //!< Default initialization
 
-    void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, Node* );
+    void get( Dictionary&, const Parameters_& ) const;
+    void set( const Dictionary&, const Parameters_&, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -328,21 +323,21 @@ izhikevich::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 }
 
 inline void
-izhikevich::get_status( DictionaryDatum& d ) const
+izhikevich::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
   ArchivingNode::get_status( d );
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
-izhikevich::set_status( const DictionaryDatum& d )
+izhikevich::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;     // temporary copy in case of errors
-  ptmp.set( d, this );       // throws if BadProperty
-  State_ stmp = S_;          // temporary copy in case of errors
-  stmp.set( d, ptmp, this ); // throws if BadProperty
+  Parameters_ ptmp = P_;      // temporary copy in case of errors
+  ptmp.set( d, this );        // throws if BadProperty
+  State_ stmp = S_;           // temporary copy in case of errors
+  stmp.set( d, ptmp, this );  // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -355,6 +350,6 @@ izhikevich::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifndef IZHIKEVICH_H */

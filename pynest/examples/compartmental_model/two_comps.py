@@ -156,8 +156,8 @@ nest.Connect(mm_act, cm_act)
 ###############################################################################
 # simulate the models
 nest.Simulate(160.0)
-res_pas = nest.GetStatus(mm_pas, "events")[0]
-res_act = nest.GetStatus(mm_act, "events")[0]
+res_pas = mm_pas.events
+res_act = mm_act.events
 
 plt.figure("voltage")
 ###############################################################################

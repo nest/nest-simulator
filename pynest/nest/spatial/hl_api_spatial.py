@@ -21,8 +21,8 @@
 
 import numpy as np
 
+from .. import nestkernel_api as nestkernel
 from ..lib.hl_api_types import CreateParameter, Parameter
-from ..ll_api import sli_func
 
 __all__ = [
     "grid",
@@ -235,13 +235,10 @@ class free:
 
     def _parameter_list_to_dimension(self, dim_parameters, num_dimensions):
         """Converts a list of Parameters to a dimension2d or dimension3d Parameter."""
-        if num_dimensions == 2:
-            dimfunc = "dimension2d"
-        elif num_dimensions == 3:
-            dimfunc = "dimension3d"
-        else:
-            raise ValueError("Number of dimensions must be 2 or 3.")
+        assert len(dim_parameters) == num_dimensions
+        if num_dimensions < 2 or num_dimensions > 3:
+            raise ValueError("Number of dimensions must be 2 or 3")
         # The dimension2d and dimension3d Parameter stores a Parameter for
         # each dimension. When creating positions for nodes, values from
         # each parameter are fetched for the position vector.
-        return sli_func(dimfunc, *dim_parameters)
+        return nestkernel.llapi_dimension_parameter([p._datum for p in dim_parameters])

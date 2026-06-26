@@ -73,7 +73,7 @@ Description
 * a hard threshold,
 * a fixed refractory period,
 * no adaptation mechanisms,
-* exponentially-shaped synaptic conductances according to [1]_, normalized such that an event of weight 1.0 results in a peak conductance of 1 nS.
+* exponentially-shaped synaptic conductances according to :footcite:p:`Meffin2004`, normalized such that an event of weight 1.0 results in a peak conductance of 1 nS.
 
 Membrane potential evolution, spike emission, and refractoriness
 ................................................................
@@ -177,11 +177,7 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 References
 ++++++++++
 
-.. [1] Meffin H, Burkitt AN, Grayden DB (2004). An analytical
-       model for the large, fluctuating synaptic conductance state typical of
-       neocortical neurons in vivo. Journal of Computational Neuroscience,
-       16:159-175.
-       DOI: https://doi.org/10.1023/B:JCNS.0000014108.03012.81
+.. footbibliography::
 
 See also
 ++++++++
@@ -224,8 +220,8 @@ public:
   size_t handles_test_event( CurrentEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_buffers_() override;
@@ -249,22 +245,22 @@ private:
   //! Model parameters
   struct Parameters_
   {
-    double V_th_;    //!< Threshold Potential in mV
-    double V_reset_; //!< Reset Potential in mV
-    double t_ref_;   //!< Refractory period in ms
-    double g_L;      //!< Leak Conductance in nS
-    double C_m;      //!< Membrane Capacitance in pF
-    double E_ex;     //!< Excitatory reversal Potential in mV
-    double E_in;     //!< Inhibitory reversal Potential in mV
-    double E_L;      //!< Leak reversal Potential (aka resting potential) in mV
-    double tau_synE; //!< Time constant for excitatory synaptic kernel in ms
-    double tau_synI; //!< Time constant for inhibitory synaptic kernel in ms
-    double I_e;      //!< Constant Current in pA
+    double V_th_;     //!< Threshold Potential in mV
+    double V_reset_;  //!< Reset Potential in mV
+    double t_ref_;    //!< Refractory period in ms
+    double g_L;       //!< Leak Conductance in nS
+    double C_m;       //!< Membrane Capacitance in pF
+    double E_ex;      //!< Excitatory reversal Potential in mV
+    double E_in;      //!< Inhibitory reversal Potential in mV
+    double E_L;       //!< Leak reversal Potential (aka resting potential) in mV
+    double tau_synE;  //!< Time constant for excitatory synaptic kernel in ms
+    double tau_synI;  //!< Time constant for inhibitory synaptic kernel in ms
+    double I_e;       //!< Constant Current in pA
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    void get( Dictionary& ) const;              //!< Store current values in Dictionary
+    void set( const Dictionary&, Node* node );  //!< Set values from Dictionary
   };
 
 public:
@@ -287,15 +283,15 @@ public:
 
     //! neuron state, must be C-array for GSL solver
     double y_[ STATE_VEC_SIZE ];
-    int r_; //!< number of refractory steps remaining
+    int r_;  //!< number of refractory steps remaining
 
-    State_( const Parameters_& ); //!< Default initialization
+    State_( const Parameters_& );  //!< Default initialization
     State_( const State_& );
 
     State_& operator=( const State_& );
 
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, Node* );
+    void get( Dictionary& ) const;
+    void set( const Dictionary&, const Parameters_&, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -306,8 +302,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( iaf_cond_exp& );                  //!< Sets buffer pointers to 0
-    Buffers_( const Buffers_&, iaf_cond_exp& ); //!< Sets buffer pointers to 0
+    Buffers_( iaf_cond_exp& );                   //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, iaf_cond_exp& );  //!< Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< iaf_cond_exp > logger_;
@@ -318,16 +314,16 @@ private:
     RingBuffer currents_;
 
     /** GSL ODE stuff */
-    gsl_odeiv_step* s_;    //!< stepping function
-    gsl_odeiv_control* c_; //!< adaptive stepsize control function
-    gsl_odeiv_evolve* e_;  //!< evolution function
-    gsl_odeiv_system sys_; //!< struct describing system
+    gsl_odeiv_step* s_;     //!< stepping function
+    gsl_odeiv_control* c_;  //!< adaptive stepsize control function
+    gsl_odeiv_evolve* e_;   //!< evolution function
+    gsl_odeiv_system sys_;  //!< struct describing system
 
     // Since IntegrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
-    double step_;            //!< step size in ms
-    double IntegrationStep_; //!< current integration time step, updated by GSL
+    double step_;             //!< step size in ms
+    double IntegrationStep_;  //!< current integration time step, updated by GSL
 
     /**
      * Input current injected by CurrentEvent.
@@ -411,22 +407,22 @@ iaf_cond_exp::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type 
 
 
 inline void
-iaf_cond_exp::get_status( DictionaryDatum& d ) const
+iaf_cond_exp::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
   ArchivingNode::get_status( d );
 
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
-iaf_cond_exp::set_status( const DictionaryDatum& d )
+iaf_cond_exp::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;     // temporary copy in case of errors
-  ptmp.set( d, this );       // throws if BadProperty
-  State_ stmp = S_;          // temporary copy in case of errors
-  stmp.set( d, ptmp, this ); // throws if BadProperty
+  Parameters_ ptmp = P_;      // temporary copy in case of errors
+  ptmp.set( d, this );        // throws if BadProperty
+  State_ stmp = S_;           // temporary copy in case of errors
+  stmp.set( d, ptmp, this );  // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -439,7 +435,7 @@ iaf_cond_exp::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
-} // namespace
+}  // namespace
 
-#endif // HAVE_GSL
-#endif // IAF_COND_EXP_H
+#endif  // HAVE_GSL
+#endif  // IAF_COND_EXP_H

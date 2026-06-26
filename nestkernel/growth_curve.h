@@ -36,8 +36,8 @@
 #include "exceptions.h"
 #include "nest_types.h"
 
-// Includes from sli:
-#include "dictdatum.h"
+// Includes from libnestutil:
+#include "dictionary.h"
 
 namespace nest
 {
@@ -52,27 +52,27 @@ public:
   virtual ~GrowthCurve()
   {
   }
-  virtual void get( DictionaryDatum& d ) const = 0;
-  virtual void set( const DictionaryDatum& d ) = 0;
+  virtual void get( Dictionary& d ) const = 0;
+  virtual void set( const Dictionary& d ) = 0;
   virtual double
   update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const = 0;
   virtual bool
-  is( Name n )
+  is( std::string n )
   {
     return n == name_;
   }
-  Name
+  std::string
   get_name()
   {
     return name_;
   }
 
 protected:
-  GrowthCurve( const Name name )
+  GrowthCurve( const std::string name )
     : name_( name )
   {
   }
-  const Name name_;
+  const std::string name_;
 };
 
 /** @BeginDocumentation
@@ -107,13 +107,8 @@ protected:
  *                          rate of 5 spks/s.
  *
  *  References:
- *   [1] Butz, Markus, Florentin Wörgötter, and Arjen van Ooyen.
- *   "Activity-dependent structural plasticity." Brain research reviews 60.2
- *   (2009): 287-305.
- *
- *   [2] Butz, Markus, and Arjen van Ooyen. "A simple rule for dendritic spine
- *   and axonal bouton formation can account for cortical reorganization after
- *   focal retinal lesions." PLoS Comput Biol 9.10 (2013): e1003259.
+ *   Butz, Wörgötter & van Ooyen (2009)
+ *   Butz & van Ooyen (2013)
  *
  *  FirstVersion: July 2013
  *
@@ -132,8 +127,9 @@ class GrowthCurveLinear : public GrowthCurve
 {
 public:
   GrowthCurveLinear();
-  void get( DictionaryDatum& d ) const override;
-  void set( const DictionaryDatum& d ) override;
+  void get( Dictionary& d ) const override;
+  void set( const Dictionary& d ) override;
+
   double
   update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const override;
 
@@ -190,13 +186,8 @@ private:
  *                          defined in the SynapticElement class. Can be negative.
  *
  *  References:
- *   [1] Butz, Markus, Florentin Wörgötter, and Arjen van Ooyen.
- *   "Activity-dependent structural plasticity." Brain research reviews 60.2
- *   (2009): 287-305.
- *
- *   [2] Butz, Markus, and Arjen van Ooyen. "A simple rule for dendritic spine
- *   and axonal bouton formation can account for cortical reorganization after
- *   focal retinal lesions." PLoS Comput Biol 9.10 (2013): e1003259.
+ *   Butz, Wörgötter & van Ooyen (2009)
+ *   Butz & van Ooyen (2013)
  *
  *  FirstVersion: July 2013
  *
@@ -221,8 +212,9 @@ class GrowthCurveGaussian : public GrowthCurve
 {
 public:
   GrowthCurveGaussian();
-  void get( DictionaryDatum& d ) const override;
-  void set( const DictionaryDatum& d ) override;
+  void get( Dictionary& d ) const override;
+  void set( const Dictionary& d ) override;
+
   double
   update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const override;
 
@@ -274,9 +266,7 @@ private:
  *                          Must be greater than 0
  *
  *  References:
- *   [1] Butz, Markus, Steenbuck, Ines D., and Arjen van Ooyen.
- *   "Homeostatic structural plasticity increases the efficiency of small-world
- *   networks." Frontiers in Synaptic Neuroscience 6 (2014): 7.
+ *   Butz, Steenbuck & van Ooyen (2014)
  *
  *  FirstVersion: September 2016
  *
@@ -298,8 +288,9 @@ class GrowthCurveSigmoid : public GrowthCurve
 {
 public:
   GrowthCurveSigmoid();
-  void get( DictionaryDatum& d ) const override;
-  void set( const DictionaryDatum& d ) override;
+  void get( Dictionary& d ) const override;
+  void set( const Dictionary& d ) override;
+
   double
   update( double t, double t_minus, double Ca_minus, double z, double tau_Ca, double growth_rate ) const override;
 
@@ -308,6 +299,6 @@ private:
   double psi_;
 };
 
-} // of namespace
+}  // of namespace
 
 #endif

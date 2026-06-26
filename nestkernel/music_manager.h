@@ -34,9 +34,6 @@
 #include "manager_interface.h"
 #include "nest_types.h"
 
-// Includes from sli:
-#include "dict.h"
-
 #ifdef HAVE_MUSIC
 #include "music_event_handler.h"
 #include "music_rate_in_handler.h"
@@ -53,8 +50,8 @@ class MUSICManager : public ManagerInterface
 public:
   void initialize( const bool ) override;
   void finalize( const bool ) override;
-  void set_status( const DictionaryDatum& ) override;
-  void get_status( DictionaryDatum& ) override;
+  void set_status( const Dictionary& ) override;
+  void get_status( Dictionary& ) override;
 
   MUSICManager();
 
@@ -75,10 +72,10 @@ public:
    */
   void advance_music_time();
 
-  void music_finalize(); // called from MPIManager::mpi_finalize
+  void music_finalize();  // called from MPIManager::mpi_finalize
 
 #ifdef HAVE_MUSIC
-  MPI::Intracomm communicator();
+  MPI_Comm communicator();
 
   MUSIC::Setup* get_music_setup();
   MUSIC::Runtime* get_music_runtime();
@@ -136,8 +133,8 @@ public:
     MusicPortData()
     {
     }
-    size_t n_input_proxies; // Counter for number of music_input proxies
-                            // connected to this port
+    size_t n_input_proxies;  // Counter for number of music_input proxies
+                             // connected to this port
     double acceptable_latency;
     int max_buffered;
   };
@@ -173,8 +170,8 @@ public:
 
 private:
 #ifdef HAVE_MUSIC
-  MUSIC::Setup* music_setup;     //!< pointer to a MUSIC setup object
-  MUSIC::Runtime* music_runtime; //!< pointer to a MUSIC runtime object
+  MUSIC::Setup* music_setup;      //!< pointer to a MUSIC setup object
+  MUSIC::Runtime* music_runtime;  //!< pointer to a MUSIC runtime object
 #endif
 };
 }

@@ -27,11 +27,6 @@
 // External includes:
 #include <music.hh>
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
-
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "logging.h"
@@ -68,31 +63,31 @@ nest::music_message_in_proxy::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::music_message_in_proxy::Parameters_::get( DictionaryDatum& d ) const
+nest::music_message_in_proxy::Parameters_::get( Dictionary& d ) const
 {
-  ( *d )[ names::port_name ] = port_name_;
-  ( *d )[ names::acceptable_latency ] = acceptable_latency_;
+  d[ names::port_name ] = port_name_;
+  d[ names::acceptable_latency ] = acceptable_latency_;
 }
 
 void
-nest::music_message_in_proxy::Parameters_::set( const DictionaryDatum& d, State_& s, Node* node )
+nest::music_message_in_proxy::Parameters_::set( const Dictionary& d, State_& s, Node* node )
 {
   if ( not s.published_ )
   {
-    updateValue< string >( d, names::port_name, port_name_ );
-    updateValueParam< double >( d, names::acceptable_latency, acceptable_latency_, node );
+    d.update_value( names::port_name, port_name_ );
+    update_value_param( d, names::acceptable_latency, acceptable_latency_, node );
   }
 }
 
 void
-nest::music_message_in_proxy::State_::get( DictionaryDatum& d ) const
+nest::music_message_in_proxy::State_::get( Dictionary& d ) const
 {
-  ( *d )[ names::published ] = published_;
-  ( *d )[ names::port_width ] = port_width_;
+  d[ names::published ] = published_;
+  d[ names::port_width ] = port_width_;
 }
 
 void
-nest::music_message_in_proxy::State_::set( const DictionaryDatum&, const Parameters_&, Node* )
+nest::music_message_in_proxy::State_::set( const Dictionary&, const Parameters_&, Node* )
 {
 }
 
@@ -163,7 +158,7 @@ nest::music_message_in_proxy::pre_run_hook()
       P_.port_name_,
       S_.port_width_,
       P_.acceptable_latency_ );
-    LOG( M_INFO, "music_message_in_proxy::pre_run_hook()", msg.c_str() );
+    LOG( VerbosityLevel::INFO, "music_message_in_proxy::pre_run_hook()", msg.c_str() );
   }
 }
 

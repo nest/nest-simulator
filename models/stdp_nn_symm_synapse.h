@@ -32,9 +32,6 @@
 #include "connector_model.h"
 #include "event.h"
 
-// Includes from sli:
-#include "dictdatum.h"
-#include "dictutils.h"
 
 namespace nest
 {
@@ -51,14 +48,14 @@ Description
 
 ``stdp_nn_symm_synapse`` is a connector to create synapses with spike time
 dependent plasticity with the symmetric nearest-neighbour spike pairing
-scheme [1]_.
+scheme :footcite:p:`Morrison2007c`.
 
 When a presynaptic spike occurs, it is taken into account in the depression
 part of the STDP weight change rule with the nearest preceding postsynaptic
 one, and when a postsynaptic spike occurs, it is accounted in the
 facilitation rule with the nearest preceding presynaptic one (instead of
 pairing with all spikes, like in ``stdp_synapse``). For a clear illustration of
-this scheme see fig. 7A in [2]_.
+this scheme see fig. 7A in :footcite:p:`Morrison2008`.
 
 The pairs exactly coinciding (so that ``presynaptic_spike == postsynaptic_spike
 + dendritic_delay``), leading to zero ``delta_t``, are discarded. In this case the
@@ -67,7 +64,7 @@ post/presynaptic one (for example, ``pre=={10 ms; 20 ms}`` and ``post=={20 ms}``
 result in a potentiation pair 20-to-10).
 
 The implementation involves two additional variables - presynaptic and
-postsynaptic traces [2]_. The presynaptic trace decays exponentially over
+postsynaptic traces :footcite:p:`Morrison2008`. The presynaptic trace decays exponentially over
 time with the time constant ``tau_plus`` and increases to 1 on a pre-spike
 occurrence. The postsynaptic trace (implemented on the postsynaptic neuron
 side) decays with the time constant ``tau_minus`` and increases to 1 on a
@@ -102,12 +99,7 @@ SpikeEvent
 References
 ++++++++++
 
-.. [1] Morrison A., Aertsen A., Diesmann M. (2007) Spike-timing dependent
-       plasticity in balanced random networks, Neural Comput. 19:1437--1467
-
-.. [2] Morrison A., Diesmann M., and Gerstner W. (2008) Phenomenological
-       models of synaptic plasticity based on spike timing,
-       Biol. Cybern. 98, 459--478
+.. footbibliography::
 
 See also
 ++++++++
@@ -164,12 +156,12 @@ public:
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   /**
    * Send an event to the receiver of this connection.
@@ -285,7 +277,7 @@ stdp_nn_symm_synapse< targetidentifierT >::send( Event& e, size_t t, const Commo
 
   // depression due to the new pre-synaptic spike
   double nearest_neighbor_Kminus;
-  double value_to_throw_away; // discard Kminus and Kminus_triplet here
+  double value_to_throw_away;  // discard Kminus and Kminus_triplet here
   target->get_K_values( t_spike - dendritic_delay, value_to_throw_away, nearest_neighbor_Kminus, value_to_throw_away );
   weight_ = depress_( weight_, nearest_neighbor_Kminus );
 
@@ -319,31 +311,31 @@ stdp_nn_symm_synapse< targetidentifierT >::stdp_nn_symm_synapse()
 
 template < typename targetidentifierT >
 void
-stdp_nn_symm_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
+stdp_nn_symm_synapse< targetidentifierT >::get_status( Dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
-  def< double >( d, names::tau_plus, tau_plus_ );
-  def< double >( d, names::lambda, lambda_ );
-  def< double >( d, names::alpha, alpha_ );
-  def< double >( d, names::mu_plus, mu_plus_ );
-  def< double >( d, names::mu_minus, mu_minus_ );
-  def< double >( d, names::Wmax, Wmax_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::weight ] = weight_;
+  d[ names::tau_plus ] = tau_plus_;
+  d[ names::lambda ] = lambda_;
+  d[ names::alpha ] = alpha_;
+  d[ names::mu_plus ] = mu_plus_;
+  d[ names::mu_minus ] = mu_minus_;
+  d[ names::Wmax ] = Wmax_;
+  d[ names::size_of ] = static_cast< long >( sizeof( *this ) );
 }
 
 template < typename targetidentifierT >
 void
-stdp_nn_symm_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+stdp_nn_symm_synapse< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
-  updateValue< double >( d, names::tau_plus, tau_plus_ );
-  updateValue< double >( d, names::lambda, lambda_ );
-  updateValue< double >( d, names::alpha, alpha_ );
-  updateValue< double >( d, names::mu_plus, mu_plus_ );
-  updateValue< double >( d, names::mu_minus, mu_minus_ );
-  updateValue< double >( d, names::Wmax, Wmax_ );
+  d.update_value( names::weight, weight_ );
+  d.update_value( names::tau_plus, tau_plus_ );
+  d.update_value( names::lambda, lambda_ );
+  d.update_value( names::alpha, alpha_ );
+  d.update_value( names::mu_plus, mu_plus_ );
+  d.update_value( names::mu_minus, mu_minus_ );
+  d.update_value( names::Wmax, Wmax_ );
 
   // check if weight_ and Wmax_ have the same sign
   if ( std::signbit( weight_ ) != std::signbit( Wmax_ ) )
@@ -352,6 +344,6 @@ stdp_nn_symm_synapse< targetidentifierT >::set_status( const DictionaryDatum& d,
   }
 }
 
-} // of namespace nest
+}  // of namespace nest
 
-#endif // of #ifndef STDP_NN_SYMM_SYNAPSE_H
+#endif  // of #ifndef STDP_NN_SYMM_SYNAPSE_H

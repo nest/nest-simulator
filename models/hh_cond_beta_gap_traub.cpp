@@ -26,7 +26,7 @@
 #ifdef HAVE_GSL
 
 // C++ includes:
-#include <cmath> // in case we need isnan() // fabs
+#include <cmath>  // in case we need isnan() // fabs
 #include <cstdio>
 #include <iostream>
 
@@ -44,9 +44,6 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
 
 nest::RecordablesMap< nest::hh_cond_beta_gap_traub > nest::hh_cond_beta_gap_traub::recordablesMap_;
 
@@ -143,9 +140,9 @@ hh_cond_beta_gap_traub_dynamics( double time, const double y[], double f[], void
   const double alpha_h = 0.128 * std::exp( ( 17. - V ) / 18. );
   const double beta_h = 4. / ( 1. + std::exp( ( 40. - V ) / 5. ) );
 
-  f[ S::HH_M ] = alpha_m - ( alpha_m + beta_m ) * y[ S::HH_M ]; // m-variable
-  f[ S::HH_H ] = alpha_h - ( alpha_h + beta_h ) * y[ S::HH_H ]; // h-variable
-  f[ S::HH_N ] = alpha_n - ( alpha_n + beta_n ) * y[ S::HH_N ]; // n-variable
+  f[ S::HH_M ] = alpha_m - ( alpha_m + beta_m ) * y[ S::HH_M ];  // m-variable
+  f[ S::HH_H ] = alpha_h - ( alpha_h + beta_h ) * y[ S::HH_H ];  // h-variable
+  f[ S::HH_N ] = alpha_n - ( alpha_n + beta_n ) * y[ S::HH_N ];  // n-variable
 
   // synapses: beta function
   // d^2g_exc/dt^2, dg_exc/dt
@@ -164,22 +161,22 @@ hh_cond_beta_gap_traub_dynamics( double time, const double y[], double f[], void
  * ---------------------------------------------------------------- */
 
 nest::hh_cond_beta_gap_traub::Parameters_::Parameters_()
-  : g_Na( 20000.0 )      // Sodium Conductance                      (nS)
-  , g_K( 6000.0 )        // Potassium Conductance                   (nS)
-  , g_L( 10.0 )          // Leak Conductance                        (nS)
-  , C_m( 200.0 )         // Membrane Capacitance                    (pF)
-  , E_Na( 50.0 )         // Sodium Reversal potential               (mV)
-  , E_K( -90.0 )         // Potassium Reversal potential            (mV)
-  , E_L( -60.0 )         // Leak Reversal potential                 (mV)
-  , V_T( -50.0 )         // adjusts firing threshold                (mV)
-  , E_ex( 0.0 )          // Excitatory reversal potential           (mV)
-  , E_in( -80.0 )        // Inhibitory reversal potential           (mV)
-  , tau_rise_ex( 0.5 )   // Excitatory Synaptic Rise Time Constant  (ms)
-  , tau_decay_ex( 5.0 )  // Excitatory Synaptic Decay Time Constant (ms)
-  , tau_rise_in( 0.5 )   // Inhibitory Synaptic Rise Time Constant  (ms)
-  , tau_decay_in( 10.0 ) // Inhibitory Synaptic Decay Time Constant (ms)
-  , t_ref_( 2.0 )        // Refractory time in ms                   (ms)
-  , I_e( 0.0 )           // Stimulus Current                        (pA)
+  : g_Na( 20000.0 )       // Sodium Conductance                      (nS)
+  , g_K( 6000.0 )         // Potassium Conductance                   (nS)
+  , g_L( 10.0 )           // Leak Conductance                        (nS)
+  , C_m( 200.0 )          // Membrane Capacitance                    (pF)
+  , E_Na( 50.0 )          // Sodium Reversal potential               (mV)
+  , E_K( -90.0 )          // Potassium Reversal potential            (mV)
+  , E_L( -60.0 )          // Leak Reversal potential                 (mV)
+  , V_T( -50.0 )          // adjusts firing threshold                (mV)
+  , E_ex( 0.0 )           // Excitatory reversal potential           (mV)
+  , E_in( -80.0 )         // Inhibitory reversal potential           (mV)
+  , tau_rise_ex( 0.5 )    // Excitatory Synaptic Rise Time Constant  (ms)
+  , tau_decay_ex( 5.0 )   // Excitatory Synaptic Decay Time Constant (ms)
+  , tau_rise_in( 0.5 )    // Inhibitory Synaptic Rise Time Constant  (ms)
+  , tau_decay_in( 10.0 )  // Inhibitory Synaptic Decay Time Constant (ms)
+  , t_ref_( 2.0 )         // Refractory time in ms                   (ms)
+  , I_e( 0.0 )            // Stimulus Current                        (pA)
 {
 }
 
@@ -230,45 +227,45 @@ nest::hh_cond_beta_gap_traub::State_::operator=( const State_& s )
  * ---------------------------------------------------------------- */
 
 void
-nest::hh_cond_beta_gap_traub::Parameters_::get( DictionaryDatum& d ) const
+nest::hh_cond_beta_gap_traub::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::g_Na, g_Na );
-  def< double >( d, names::g_K, g_K );
-  def< double >( d, names::g_L, g_L );
-  def< double >( d, names::C_m, C_m );
-  def< double >( d, names::E_Na, E_Na );
-  def< double >( d, names::E_K, E_K );
-  def< double >( d, names::E_L, E_L );
-  def< double >( d, names::V_T, V_T );
-  def< double >( d, names::E_ex, E_ex );
-  def< double >( d, names::E_in, E_in );
-  def< double >( d, names::tau_rise_ex, tau_rise_ex );
-  def< double >( d, names::tau_decay_ex, tau_decay_ex );
-  def< double >( d, names::tau_rise_in, tau_rise_in );
-  def< double >( d, names::tau_decay_in, tau_decay_in );
-  def< double >( d, names::t_ref, t_ref_ );
-  def< double >( d, names::I_e, I_e );
+  d[ names::g_Na ] = g_Na;
+  d[ names::g_K ] = g_K;
+  d[ names::g_L ] = g_L;
+  d[ names::C_m ] = C_m;
+  d[ names::E_Na ] = E_Na;
+  d[ names::E_K ] = E_K;
+  d[ names::E_L ] = E_L;
+  d[ names::V_T ] = V_T;
+  d[ names::E_ex ] = E_ex;
+  d[ names::E_in ] = E_in;
+  d[ names::tau_rise_ex ] = tau_rise_ex;
+  d[ names::tau_decay_ex ] = tau_decay_ex;
+  d[ names::tau_rise_in ] = tau_rise_in;
+  d[ names::tau_decay_in ] = tau_decay_in;
+  d[ names::t_ref ] = t_ref_;
+  d[ names::I_e ] = I_e;
 }
 
 void
-nest::hh_cond_beta_gap_traub::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::hh_cond_beta_gap_traub::Parameters_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::g_Na, g_Na, node );
-  updateValueParam< double >( d, names::g_K, g_K, node );
-  updateValueParam< double >( d, names::g_L, g_L, node );
-  updateValueParam< double >( d, names::C_m, C_m, node );
-  updateValueParam< double >( d, names::E_Na, E_Na, node );
-  updateValueParam< double >( d, names::E_K, E_K, node );
-  updateValueParam< double >( d, names::E_L, E_L, node );
-  updateValueParam< double >( d, names::V_T, V_T, node );
-  updateValueParam< double >( d, names::E_ex, E_ex, node );
-  updateValueParam< double >( d, names::E_in, E_in, node );
-  updateValueParam< double >( d, names::tau_rise_ex, tau_rise_ex, node );
-  updateValueParam< double >( d, names::tau_decay_ex, tau_decay_ex, node );
-  updateValueParam< double >( d, names::tau_rise_in, tau_rise_in, node );
-  updateValueParam< double >( d, names::tau_decay_in, tau_decay_in, node );
-  updateValueParam< double >( d, names::t_ref, t_ref_, node );
-  updateValueParam< double >( d, names::I_e, I_e, node );
+  update_value_param( d, names::g_Na, g_Na, node );
+  update_value_param( d, names::g_K, g_K, node );
+  update_value_param( d, names::g_L, g_L, node );
+  update_value_param( d, names::C_m, C_m, node );
+  update_value_param( d, names::E_Na, E_Na, node );
+  update_value_param( d, names::E_K, E_K, node );
+  update_value_param( d, names::E_L, E_L, node );
+  update_value_param( d, names::V_T, V_T, node );
+  update_value_param( d, names::E_ex, E_ex, node );
+  update_value_param( d, names::E_in, E_in, node );
+  update_value_param( d, names::tau_rise_ex, tau_rise_ex, node );
+  update_value_param( d, names::tau_decay_ex, tau_decay_ex, node );
+  update_value_param( d, names::tau_rise_in, tau_rise_in, node );
+  update_value_param( d, names::tau_decay_in, tau_decay_in, node );
+  update_value_param( d, names::t_ref, t_ref_, node );
+  update_value_param( d, names::I_e, I_e, node );
 
   if ( C_m <= 0 )
   {
@@ -292,21 +289,21 @@ nest::hh_cond_beta_gap_traub::Parameters_::set( const DictionaryDatum& d, Node* 
 }
 
 void
-nest::hh_cond_beta_gap_traub::State_::get( DictionaryDatum& d ) const
+nest::hh_cond_beta_gap_traub::State_::get( Dictionary& d ) const
 {
-  def< double >( d, names::V_m, y_[ V_M ] ); // Membrane potential
-  def< double >( d, names::Act_m, y_[ HH_M ] );
-  def< double >( d, names::Inact_h, y_[ HH_H ] );
-  def< double >( d, names::Act_n, y_[ HH_N ] );
+  d[ names::V_m ] = y_[ V_M ];  // Membrane potential
+  d[ names::Act_m ] = y_[ HH_M ];
+  d[ names::Inact_h ] = y_[ HH_H ];
+  d[ names::Act_n ] = y_[ HH_N ];
 }
 
 void
-nest::hh_cond_beta_gap_traub::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
+nest::hh_cond_beta_gap_traub::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
-  updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
-  updateValueParam< double >( d, names::Act_m, y_[ HH_M ], node );
-  updateValueParam< double >( d, names::Inact_h, y_[ HH_H ], node );
-  updateValueParam< double >( d, names::Act_n, y_[ HH_N ], node );
+  update_value_param( d, names::V_m, y_[ V_M ], node );
+  update_value_param( d, names::Act_m, y_[ HH_M ], node );
+  update_value_param( d, names::Inact_h, y_[ HH_H ], node );
+  update_value_param( d, names::Act_n, y_[ HH_N ], node );
   if ( y_[ HH_M ] < 0 or y_[ HH_H ] < 0 or y_[ HH_N ] < 0 )
   {
     throw BadProperty( "All (in)activation variables must be non-negative." );
@@ -380,9 +377,9 @@ nest::hh_cond_beta_gap_traub::~hh_cond_beta_gap_traub()
 void
 nest::hh_cond_beta_gap_traub::init_buffers_()
 {
-  B_.spike_exc_.clear(); // includes resize
-  B_.spike_inh_.clear(); // includes resize
-  B_.currents_.clear();  // includes resize
+  B_.spike_exc_.clear();  // includes resize
+  B_.spike_inh_.clear();  // includes resize
+  B_.currents_.clear();   // includes resize
 
   // allocate strucure for gap events here
   // function is called from Scheduler::prepare_nodes() before the
@@ -527,11 +524,11 @@ nest::hh_cond_beta_gap_traub::update_( Time const& origin,
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
-        &B_.sys_,             // system of ODE
-        &t,                   // from t
-        B_.step_,             // to t <= step
-        &B_.IntegrationStep_, // integration step size
-        S_.y_ );              // neuronal state
+        &B_.sys_,              // system of ODE
+        &t,                    // from t
+        B_.step_,              // to t <= step
+        &B_.IntegrationStep_,  // integration step size
+        S_.y_ );               // neuronal state
       if ( status != GSL_SUCCESS )
       {
         throw GSLSolverFailure( get_name(), status );
@@ -549,7 +546,7 @@ nest::hh_cond_beta_gap_traub::update_( Time const& origin,
       {
         --S_.r_;
       }
-      else if ( S_.y_[ State_::V_M ] >= P_.V_T + 30. and U_old > S_.y_[ State_::V_M ] ) // ( threshold and maximum )
+      else if ( S_.y_[ State_::V_M ] >= P_.V_T + 30. and U_old > S_.y_[ State_::V_M ] )  // ( threshold and maximum )
       {
         S_.r_ = V_.refractory_counts_;
 
@@ -565,7 +562,7 @@ nest::hh_cond_beta_gap_traub::update_( Time const& origin,
       // set new input current
       B_.I_stim_ = B_.currents_.get_value( lag );
     }
-    else // if(called_from_wfr_update)
+    else  // if(called_from_wfr_update)
     {
       S_.y_[ State_::DG_EXC ] += B_.spike_exc_.get_value_wfr_update( lag ) * V_.PSConInit_E;
       S_.y_[ State_::DG_INH ] += B_.spike_inh_.get_value_wfr_update( lag ) * V_.PSConInit_I;
@@ -605,7 +602,7 @@ nest::hh_cond_beta_gap_traub::update_( Time const& origin,
     }
 
 
-  } // end for-loop
+  }  // end for-loop
 
   // if not called_from_wfr_update perform constant extrapolation
   // and reset last_y_values
@@ -685,6 +682,6 @@ nest::hh_cond_beta_gap_traub::handle( GapJunctionEvent& e )
   }
 }
 
-} // namespace nest
+}  // namespace nest
 
-#endif // HAVE_GSL
+#endif  // HAVE_GSL

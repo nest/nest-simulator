@@ -94,7 +94,7 @@ beta_normalization_factor( const double tau_rise, const double tau_decay )
   }
 }
 
-} // of namespace nest
+}  // of namespace nest
 
 
 #endif /* BETA_NORMALIZATION_FACTOR_H */

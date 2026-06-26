@@ -41,7 +41,7 @@ Description
 +++++++++++
 
 ``vogels_sprekeler_synapse`` is a connector to create synapses with symmetric
-spike time dependent plasticity and constant depression (as defined in [1]_).
+spike time dependent plasticity and constant depression (as defined in :footcite:p:`Vogels2011`).
 The learning rule is symmetric, that is, the synapse is strengthened
 irrespective of the order of the pre- and postsynaptic spikes. Each
 pre-synaptic spike also causes a constant depression of the synaptic weight
@@ -62,7 +62,7 @@ Parameters
  Wmax   real    Maximum allowed weight
  eta    real    Learning rate
  alpha  real    Constant depression (= 2 * tau * target firing rate in
-                [1]_)
+                :footcite:p:`Vogels2011`)
 ======  ======  =========================================================
 
 Transmits
@@ -73,10 +73,7 @@ SpikeEvent
 References
 ++++++++++
 
-.. [1] Vogels et al. (2011). Inhibitory plasticity balances excitation and
-       inhibition in sensory pathways and memory networks. Science,
-       334(6062):1569-1573. DOI: https://doi.org/10.1126/science.1211095
-
+.. footbibliography::
 
 Examples using this model
 +++++++++++++++++++++++++
@@ -131,12 +128,12 @@ public:
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   /**
    * Send an event to the receiver of this connection.
@@ -284,29 +281,29 @@ vogels_sprekeler_synapse< targetidentifierT >::vogels_sprekeler_synapse()
 
 template < typename targetidentifierT >
 void
-vogels_sprekeler_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
+vogels_sprekeler_synapse< targetidentifierT >::get_status( Dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
-  def< double >( d, names::tau, tau_ );
-  def< double >( d, names::alpha, alpha_ );
-  def< double >( d, names::eta, eta_ );
-  def< double >( d, names::Wmax, Wmax_ );
-  def< double >( d, names::Kplus, Kplus_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::weight ] = weight_;
+  d[ names::tau ] = tau_;
+  d[ names::alpha ] = alpha_;
+  d[ names::eta ] = eta_;
+  d[ names::Wmax ] = Wmax_;
+  d[ names::Kplus ] = Kplus_;
+  d[ names::size_of ] = static_cast< long >( sizeof( *this ) );
 }
 
 template < typename targetidentifierT >
 void
-vogels_sprekeler_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+vogels_sprekeler_synapse< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
-  updateValue< double >( d, names::tau, tau_ );
-  updateValue< double >( d, names::alpha, alpha_ );
-  updateValue< double >( d, names::eta, eta_ );
-  updateValue< double >( d, names::Wmax, Wmax_ );
-  updateValue< double >( d, names::Kplus, Kplus_ );
+  d.update_value( names::weight, weight_ );
+  d.update_value( names::tau, tau_ );
+  d.update_value( names::alpha, alpha_ );
+  d.update_value( names::eta, eta_ );
+  d.update_value( names::Wmax, Wmax_ );
+  d.update_value( names::Kplus, Kplus_ );
 
   // if the weight_ is not 0, we check to ensure that weight_ and Wmax_ are of
   // the same sign
@@ -320,6 +317,6 @@ vogels_sprekeler_synapse< targetidentifierT >::set_status( const DictionaryDatum
     throw BadProperty( "State Kplus must be positive." );
   }
 }
-} // of namespace nest
+}  // of namespace nest
 
-#endif // of #ifndef VOGELS_SPREKELER_SYNAPSE_H
+#endif  // of #ifndef VOGELS_SPREKELER_SYNAPSE_H

@@ -26,8 +26,8 @@
 // C++ includes:
 #include <vector>
 
-// Includes from sli:
-#include "dictdatum.h"
+// Includes from libnestutil:
+#include "dictionary.h"
 
 namespace nest
 {
@@ -41,12 +41,12 @@ public:
   BufferResizeLog();
   void clear();
   void add_entry( size_t global_max_spikes_sent, size_t new_buffer_size );
-  void to_dict( DictionaryDatum& ) const;
+  void to_dict( Dictionary& ) const;
 
 private:
-  std::vector< long > time_steps_;             //!< Time of resize event in steps
-  std::vector< long > global_max_spikes_sent_; //!< Spike number that triggered resize
-  std::vector< long > new_buffer_size_;        //!< Buffer size after resize
+  std::vector< long > time_steps_;              //!< Time of resize event in steps
+  std::vector< long > global_max_spikes_sent_;  //!< Spike number that triggered resize
+  std::vector< long > new_buffer_size_;         //!< Buffer size after resize
 };
 
 }

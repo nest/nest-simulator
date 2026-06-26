@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -euo pipefail
 
 MUSIC_INSTALL_PATH="${1:-${HOME}/.cache/music.install}"

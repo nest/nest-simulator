@@ -26,8 +26,6 @@ set( TRIPLET_VENDOR fujitsu )
 # Set Fugaku for main CMakeList.txt
 #
 set( Fugaku ON CACHE BOOL "Enable Fugaku." FORCE )
-# no readline support on Fugaku
-set( with-readline OFF CACHE BOOL "Find a readline library [default=ON]. To set a specific readline, set install path." FORCE )
 set( with-ltdl OFF CACHE BOOL "Find a ltdl library [default=ON]. To set a specific ltdl, set install path." FORCE )
 # we obviously want to do mpi on Fugaku
 set( with-mpi ON CACHE BOOL "Request compilation with MPI; optionally give directory with MPI installation." FORCE )

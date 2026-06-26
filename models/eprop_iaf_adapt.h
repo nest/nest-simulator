@@ -51,7 +51,7 @@ Description
 neuron model with delta-shaped postsynaptic currents and threshold adaptation
 used for eligibility propagation (e-prop) plasticity.
 
-E-prop plasticity was originally introduced and implemented in TensorFlow in [1]_.
+E-prop plasticity was originally introduced and implemented in TensorFlow in :footcite:p:`Bellec2020`.
 
  .. note::
    The neuron dynamics of the ``eprop_iaf_adapt`` model (excluding
@@ -179,7 +179,7 @@ For more information on e-prop plasticity, see the documentation on the other e-
  * :doc:`eprop_synapse<../models/eprop_synapse/>`
  * :doc:`eprop_learning_signal_connection<../models/eprop_learning_signal_connection/>`
 
-Details on the event-based NEST implementation of e-prop can be found in [2]_.
+Details on the event-based NEST implementation of e-prop can be found in :footcite:p:`KorcsakGorzo2025`.
 
 Parameters
 ++++++++++
@@ -203,7 +203,7 @@ Parameter                   Unit    Math equivalent         Default          Des
 ``V_min``                   mV      :math:`v_\text{min}`    negative maximum Absolute lower bound of the
                                                             value            membrane voltage
                                                             representable by
-                                                            a ``double``
+                                                            ``double``
                                                             type in C++
 ``V_th``                    mV      :math:`v_\text{th}`                -55.0 Spike threshold voltage
 =========================== ======= ======================= ================ ===================================
@@ -213,11 +213,15 @@ Parameter                   Unit    Math equivalent         Default          Des
 ----------------------------------------------------------------------------------------------------------------
 Parameter                       Unit    Math equivalent             Default            Description
 =============================== ======= =========================== ================== =========================
+``flush_event_send_interval``   ms                                  maximum value      Interval since previous
+                                                                    representable by   event after which a flush
+                                                                    ``double`` type in event is sent
+                                                                    C++
 ``c_reg``                               :math:`c_\text{reg}`                     0.0   Coefficient of firing
                                                                                        rate regularization
 ``eprop_isi_trace_cutoff``      ms      :math:`{\Delta t}_\text{c}` maximum value      Cutoff for integration of
                                                                     representable      e-prop update between two
-                                                                    by a ``long``      spikes
+                                                                    by ``double``      spikes
                                                                     type in C++
 ``f_target``                    Hz      :math:`f^\text{target}`                 10.0   Target firing rate of
                                                                                        rate regularization
@@ -226,21 +230,21 @@ Parameter                       Unit    Math equivalent             Default     
 ``kappa_reg``                           :math:`\kappa_\text{reg}`               0.97   Low-pass filter of the
                                                                                        firing rate for
                                                                                        regularization
-``beta``                                :math:`\beta`                            1.0   Width scaling of
-                                                                                       surrogate gradient /
-                                                                                       pseudo-derivative of
-                                                                                       membrane voltage
-``gamma``                               :math:`\gamma`                           0.3   Height scaling of
-                                                                                       surrogate gradient /
-                                                                                       pseudo-derivative of
-                                                                                       membrane voltage
 ``surrogate_gradient_function``         :math:`\psi`                "piecewise_linear" Surrogate gradient /
                                                                                        pseudo-derivative
                                                                                        function
                                                                                        ["piecewise_linear",
                                                                                        "exponential",
                                                                                        "fast_sigmoid_derivative"
-                                                                                       , "arctan"]
+                                                                                       , "arctan_derivative"]
+``surrogate_gradient_height``           :math:`\gamma`                           0.3   Height scaling of
+                                                                                       surrogate gradient /
+                                                                                       pseudo-derivative of
+                                                                                       membrane voltage
+``surrogate_gradient_width``            :math:`1/\beta`                          1.0   Width scaling of
+                                                                                       surrogate gradient /
+                                                                                       pseudo-derivative of
+                                                                                       membrane voltage
 =============================== ======= =========================== ================== =========================
 
 Recordables
@@ -275,23 +279,12 @@ This model can only be used in combination with the other e-prop models
 and the network architecture requires specific wiring, input, and output.
 The usage is demonstrated in several
 :doc:`supervised regression and classification tasks <../auto_examples/eprop_plasticity/index>`
-reproducing among others the original proof-of-concept tasks in [1]_.
+reproducing among others the original proof-of-concept tasks in :footcite:p:`Bellec2020`.
 
 References
 ++++++++++
 
-.. [1] Bellec G, Scherr F, Subramoney F, Hajek E, Salaj D, Legenstein R,
-       Maass W (2020). A solution to the learning dilemma for recurrent
-       networks of spiking neurons. Nature Communications, 11:3625.
-       https://doi.org/10.1038/s41467-020-17236-y
-
-.. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
-       Dahmen D, Bolten M, Van Albada SJ, Diesmann M. Event-based
-       implementation of eligibility propagation (in preparation)
-
-.. include:: ../models/eprop_iaf.rst
-   :start-after: .. start_surrogate-gradient-references
-   :end-before: .. end_surrogate-gradient-references
+.. footbibliography::
 
 Sends
 +++++
@@ -320,7 +313,7 @@ void register_eprop_iaf_adapt( const std::string& name );
  *
  * Class implementing a current-based leaky integrate-and-fire neuron model with delta-shaped postsynaptic currents and
  * threshold adaptation for e-prop plasticity according to Bellec et al. (2020) with additional biological features
- * described in Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al. (in preparation).
+ * described in Korcsak-Gorzo et al. (2025).
  */
 class eprop_iaf_adapt : public EpropArchivingNodeRecurrent< false >
 {
@@ -347,8 +340,8 @@ public:
   size_t handles_test_event( LearningSignalConnectionEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_buffers_() override;
@@ -365,11 +358,15 @@ private:
     double&,
     double&,
     const CommonSynapseProperties&,
-    WeightOptimizer* ) override;
+    WeightOptimizer*,
+    const bool,
+    const bool,
+    double&,
+    long&,
+    long& ) override;
 
   long get_shift() const override;
   bool is_eprop_recurrent_node() const override;
-  long get_eprop_isi_trace_cutoff() const override;
 
   //! Map for storing a static set of recordables.
   friend class RecordablesMap< eprop_iaf_adapt >;
@@ -398,18 +395,18 @@ private:
     //! Target firing rate of rate regularization (spikes/s).
     double f_target_;
 
-    //! Width scaling of surrogate gradient / pseudo-derivative of membrane voltage.
-    double beta_;
-
-    //! Height scaling of surrogate gradient / pseudo-derivative of membrane voltage.
-    double gamma_;
-
     //! Constant external input current (pA).
     double I_e_;
 
     //! Surrogate gradient / pseudo-derivative function of the membrane voltage ["piecewise_linear", "exponential",
-    //! "fast_sigmoid_derivative", "arctan"]
+    //! "fast_sigmoid_derivative", "arctan_derivative"]
     std::string surrogate_gradient_function_;
+
+    //! Height scaling of surrogate gradient / pseudo-derivative of membrane voltage.
+    double surrogate_gradient_height_;
+
+    //! Width scaling of surrogate gradient / pseudo-derivative of membrane voltage.
+    double surrogate_gradient_width_;
 
     //! Duration of the refractory period (ms).
     double t_ref_;
@@ -429,17 +426,14 @@ private:
     //! Low-pass filter of the firing rate for regularization.
     double kappa_reg_;
 
-    //! Time interval from the previous spike until the cutoff of e-prop update integration between two spikes (ms).
-    double eprop_isi_trace_cutoff_;
-
     //! Default constructor.
     Parameters_();
 
     //! Get the parameters and their values.
-    void get( DictionaryDatum& ) const;
+    void get( Dictionary& ) const;
 
     //! Set the parameters and throw errors in case of invalid values.
-    double set( const DictionaryDatum&, Node* );
+    double set( const Dictionary&, Node* );
   };
 
   //! Structure of state variables.
@@ -455,7 +449,7 @@ private:
     double learning_signal_;
 
     //! Number of remaining refractory steps.
-    int r_;
+    long r_;
 
     //! Surrogate gradient / pseudo-derivative of the membrane voltage.
     double surrogate_gradient_;
@@ -476,10 +470,10 @@ private:
     State_();
 
     //! Get the state variables and their values.
-    void get( DictionaryDatum&, const Parameters_& ) const;
+    void get( Dictionary&, const Parameters_& ) const;
 
     //! Set the state variables.
-    void set( const DictionaryDatum&, const Parameters_&, double, Node* );
+    void set( const Dictionary&, const Parameters_&, double, Node* );
   };
 
   //! Structure of buffers.
@@ -514,10 +508,7 @@ private:
     double P_adapt_;
 
     //! Total refractory steps.
-    int RefractoryCounts_;
-
-    //! Time steps from the previous spike until the cutoff of e-prop update integration between two spikes.
-    long eprop_isi_trace_cutoff_steps_;
+    long RefractoryCounts_;
   };
 
   //! Get the current value of the membrane voltage.
@@ -585,12 +576,6 @@ eprop_iaf_adapt::is_eprop_recurrent_node() const
   return true;
 }
 
-inline long
-eprop_iaf_adapt::get_eprop_isi_trace_cutoff() const
-{
-  return V_.eprop_isi_trace_cutoff_steps_;
-}
-
 inline size_t
 eprop_iaf_adapt::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
@@ -644,16 +629,18 @@ eprop_iaf_adapt::handles_test_event( DataLoggingRequest& dlr, size_t receptor_ty
 }
 
 inline void
-eprop_iaf_adapt::get_status( DictionaryDatum& d ) const
+eprop_iaf_adapt::get_status( Dictionary& d ) const
 {
+  EpropArchivingNodeRecurrent::get_status( d );
   P_.get( d );
   S_.get( d, P_ );
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
-eprop_iaf_adapt::set_status( const DictionaryDatum& d )
+eprop_iaf_adapt::set_status( const Dictionary& d )
 {
+  EpropArchivingNodeRecurrent::set_status( d );
   // temporary copies in case of errors
   Parameters_ ptmp = P_;
   State_ stmp = S_;
@@ -666,6 +653,6 @@ eprop_iaf_adapt::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
-} // namespace nest
+}  // namespace nest
 
-#endif // EPROP_IAF_ADAPT_H
+#endif  // EPROP_IAF_ADAPT_H

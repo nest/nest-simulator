@@ -9,7 +9,7 @@ Introduction
 NEST supports the `MUSIC interface
 <https://github.com/INCF/MUSIC>`__, a standard by
 the INCF, which allows the transmission of data between applications at
-runtime [1]_. It can be used to couple NEST with other simulators, with
+runtime :footcite:p:`Djurfeldt2010`. It can be used to couple NEST with other simulators, with
 applications for stimulus generation and data analysis and visualization
 and with custom applications that also use the MUSIC interface.
 
@@ -22,13 +22,10 @@ data and string messages.
 You can find the installation instructions for MUSIC on their Github Page:
 `INCF/MUSIC <https://github.com/INCF/MUSIC/>`__
 
-Reference
-~~~~~~~~~~~
+References
+~~~~~~~~~~
 
-.. [1] Djurfeldt M, et al. 2010. Run-time interoperability between neuronal
- simulators based on the MUSIC framework. Neuroinformatics, 8.
- `doi:10.1007/s12021-010-9064-z*
- <https://link.springer.com/article/10.1007/s12021-010-9064-z>`_.
+.. footbibliography::
 
 Sending and receiving spike events
 ----------------------------------
@@ -71,13 +68,11 @@ continuing.
 
    import nest
 
-   if not nest.ll_api.sli_func("statusdict/have_music ::"):
-       import sys
-
+   if not nest.build_info["have_music"]:
        print("NEST was not compiled with support for MUSIC, not running.")
-       sys.exit()
+       exit()
 
-   nest.set_verbosity("M_ERROR")
+   nest.verbosity = nest.VerbosityLevel.ERROR
 
 Next we create a ``spike_generator`` and set the spike times. We then create
 our neuron model (``iaf_psc_alpha``) and connect the neuron with the spike
@@ -125,13 +120,11 @@ script, but without the spike generator.
 
   import nest
 
-  if not nest.ll_api.sli_func("statusdict/have_music ::"):
-      import sys
-
+  if not nest.build_info["have_music"]:
       print("NEST was not compiled with support for MUSIC, not running.")
-      sys.exit()
+      exit()
 
-  nest.set_verbosity("M_ERROR")
+  nest.verbosity = nest.VerbosityLevel.ERROR
 
   meip = nest.Create('music_event_in_proxy')
   nest.SetStatus(meip, {'port_name': 'spikes_in', 'music_channel': 0})

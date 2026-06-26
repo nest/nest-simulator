@@ -22,7 +22,7 @@
 -r requirements_testing.txt
 
 # To build NEST documentation
--r requirements_docs.txt
+-r doc/requirements.txt
 
 # To run NEST Server
 -r requirements_nest_server.txt

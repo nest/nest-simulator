@@ -78,19 +78,19 @@ protected:
    */
   std::tuple< double, double, double, double > evaluate_P32_( double h ) const;
 
-  double tau_syn_; //!< Time constant of synaptic current in ms
-  double tau_m_;   //!< Membrane time constant in ms
-  double c_m_;     //!< Membrane capacitance in pF
+  double tau_syn_;  //!< Time constant of synaptic current in ms
+  double tau_m_;    //!< Membrane time constant in ms
+  double c_m_;      //!< Membrane capacitance in pF
 
-  double h_min_regular_; //!< Smallest h for which regular P31 case applies
+  double h_min_regular_;  //!< Smallest h for which regular P31 case applies
 
-  double beta_;  //!< (tau_syn * tau_m) / (tau_m - tau_syn)
-  double gamma_; //!< beta_ / c_m
+  double beta_;   //!< (tau_syn * tau_m) / (tau_m - tau_syn)
+  double gamma_;  //!< beta_ / c_m
 
-  double inv_tau_syn_; //!< 1 / tau_syn
-  double inv_tau_m_;   //!< 1 / tau_m
-  double inv_c_m_;     //!< 1 / c_m
-  double inv_beta_;    //!< 1 / beta
+  double inv_tau_syn_;  //!< 1 / tau_syn
+  double inv_tau_m_;    //!< 1 / tau_m
+  double inv_c_m_;      //!< 1 / c_m
+  double inv_beta_;     //!< 1 / beta
 };
 
 

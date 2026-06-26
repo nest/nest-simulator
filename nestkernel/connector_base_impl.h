@@ -62,6 +62,6 @@ Connector< ConnectionT >::send_weight_event( const size_t tid,
   }
 }
 
-} // of namespace nest
+}  // of namespace nest
 
 #endif

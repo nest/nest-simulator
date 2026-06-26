@@ -39,32 +39,9 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-
-/* ----------------------------------------------------------------
- * Compartment name list
- * ---------------------------------------------------------------- */
-
-/* Harold Gutch reported some static destruction problems on OSX 10.4.
-   He pointed out that the problem is avoided by defining the comp_names_
-   vector with its final size. See also #348.
-*/
-std::vector< Name > nest::iaf_cond_alpha_mc::comp_names_( NCOMP );
-
-/* ----------------------------------------------------------------
- * Receptor dictionary
- * ---------------------------------------------------------------- */
-
-// leads to seg fault on exit, see #328
-// DictionaryDatum nest::iaf_cond_alpha_mc::receptor_dict_ = new Dictionary();
-
-/* ----------------------------------------------------------------
- * Recordables map
- * ---------------------------------------------------------------- */
-
+std::vector< std::string > nest::iaf_cond_alpha_mc::comp_names_( NCOMP );
 nest::RecordablesMap< nest::iaf_cond_alpha_mc > nest::iaf_cond_alpha_mc::recordablesMap_;
+
 
 namespace nest
 {
@@ -74,32 +51,22 @@ register_iaf_cond_alpha_mc( const std::string& name )
   register_node_model< iaf_cond_alpha_mc >( name );
 }
 
-// specialization must be place in namespace
-
+// specialization must be placed in namespace
 template <>
 void
 RecordablesMap< iaf_cond_alpha_mc >::create()
 {
-  insert_(
-    Name( "V_m.s" ), &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::V_M, iaf_cond_alpha_mc::SOMA > );
-  insert_(
-    Name( "g_ex.s" ), &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::G_EXC, iaf_cond_alpha_mc::SOMA > );
-  insert_(
-    Name( "g_in.s" ), &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::G_INH, iaf_cond_alpha_mc::SOMA > );
+  insert_( "V_m.s", &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::V_M, iaf_cond_alpha_mc::SOMA > );
+  insert_( "g_ex.s", &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::G_EXC, iaf_cond_alpha_mc::SOMA > );
+  insert_( "g_in.s", &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::G_INH, iaf_cond_alpha_mc::SOMA > );
 
-  insert_(
-    Name( "V_m.p" ), &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::V_M, iaf_cond_alpha_mc::PROX > );
-  insert_(
-    Name( "g_ex.p" ), &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::G_EXC, iaf_cond_alpha_mc::PROX > );
-  insert_(
-    Name( "g_in.p" ), &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::G_INH, iaf_cond_alpha_mc::PROX > );
+  insert_( "V_m.p", &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::V_M, iaf_cond_alpha_mc::PROX > );
+  insert_( "g_ex.p", &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::G_EXC, iaf_cond_alpha_mc::PROX > );
+  insert_( "g_in.p", &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::G_INH, iaf_cond_alpha_mc::PROX > );
 
-  insert_(
-    Name( "V_m.d" ), &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::V_M, iaf_cond_alpha_mc::DIST > );
-  insert_(
-    Name( "g_ex.d" ), &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::G_EXC, iaf_cond_alpha_mc::DIST > );
-  insert_(
-    Name( "g_in.d" ), &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::G_INH, iaf_cond_alpha_mc::DIST > );
+  insert_( "V_m.d", &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::V_M, iaf_cond_alpha_mc::DIST > );
+  insert_( "g_ex.d", &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::G_EXC, iaf_cond_alpha_mc::DIST > );
+  insert_( "g_in.d", &iaf_cond_alpha_mc::get_y_elem_< iaf_cond_alpha_mc::State_::G_INH, iaf_cond_alpha_mc::DIST > );
 
   insert_( names::t_ref_remaining, &iaf_cond_alpha_mc::get_r_ );
 }
@@ -186,43 +153,43 @@ nest::iaf_cond_alpha_mc_dynamics( double, const double y[], double f[], void* pn
  * ---------------------------------------------------------------- */
 
 nest::iaf_cond_alpha_mc::Parameters_::Parameters_()
-  : V_th( -55.0 )    // mV
-  , V_reset( -60.0 ) // mV
-  , t_ref( 2.0 )     // ms
+  : V_th( -55.0 )     // mV
+  , V_reset( -60.0 )  // mV
+  , t_ref( 2.0 )      // ms
 {
   // conductances between compartments
-  g_conn[ SOMA ] = 2.5; // nS, soma-proximal
-  g_conn[ PROX ] = 1.0; // nS, proximal-distal
+  g_conn[ SOMA ] = 2.5;  // nS, soma-proximal
+  g_conn[ PROX ] = 1.0;  // nS, proximal-distal
 
   // soma parameters
-  g_L[ SOMA ] = 10.0;     // nS
-  C_m[ SOMA ] = 150.0;    // pF
-  E_ex[ SOMA ] = 0.0;     // mV
-  E_in[ SOMA ] = -85.0;   // mV
-  E_L[ SOMA ] = -70.0;    // mV
-  tau_synE[ SOMA ] = 0.5; // ms
-  tau_synI[ SOMA ] = 2.0; // ms
-  I_e[ SOMA ] = 0.0;      // pA
+  g_L[ SOMA ] = 10.0;      // nS
+  C_m[ SOMA ] = 150.0;     // pF
+  E_ex[ SOMA ] = 0.0;      // mV
+  E_in[ SOMA ] = -85.0;    // mV
+  E_L[ SOMA ] = -70.0;     // mV
+  tau_synE[ SOMA ] = 0.5;  // ms
+  tau_synI[ SOMA ] = 2.0;  // ms
+  I_e[ SOMA ] = 0.0;       // pA
 
   // proximal parameters
-  g_L[ PROX ] = 5.0;      // nS
-  C_m[ PROX ] = 75.0;     // pF
-  E_ex[ PROX ] = 0.0;     // mV
-  E_in[ PROX ] = -85.0;   // mV
-  E_L[ PROX ] = -70.0;    // mV
-  tau_synE[ PROX ] = 0.5; // ms
-  tau_synI[ PROX ] = 2.0; // ms
-  I_e[ PROX ] = 0.0;      // pA
+  g_L[ PROX ] = 5.0;       // nS
+  C_m[ PROX ] = 75.0;      // pF
+  E_ex[ PROX ] = 0.0;      // mV
+  E_in[ PROX ] = -85.0;    // mV
+  E_L[ PROX ] = -70.0;     // mV
+  tau_synE[ PROX ] = 0.5;  // ms
+  tau_synI[ PROX ] = 2.0;  // ms
+  I_e[ PROX ] = 0.0;       // pA
 
   // distal parameters
-  g_L[ DIST ] = 10.0;     // nS
-  C_m[ DIST ] = 150.0;    // pF
-  E_ex[ DIST ] = 0.0;     // mV
-  E_in[ DIST ] = -85.0;   // mV
-  E_L[ DIST ] = -70.0;    // mV
-  tau_synE[ DIST ] = 0.5; // ms
-  tau_synI[ DIST ] = 2.0; // ms
-  I_e[ DIST ] = 0.0;      // pA
+  g_L[ DIST ] = 10.0;      // nS
+  C_m[ DIST ] = 150.0;     // pF
+  E_ex[ DIST ] = 0.0;      // mV
+  E_in[ DIST ] = -85.0;    // mV
+  E_L[ DIST ] = -70.0;     // mV
+  tau_synE[ DIST ] = 0.5;  // ms
+  tau_synI[ DIST ] = 2.0;  // ms
+  I_e[ DIST ] = 0.0;       // pA
 }
 
 nest::iaf_cond_alpha_mc::Parameters_::Parameters_( const Parameters_& p )
@@ -252,7 +219,7 @@ nest::iaf_cond_alpha_mc::Parameters_::Parameters_( const Parameters_& p )
 nest::iaf_cond_alpha_mc::Parameters_&
 nest::iaf_cond_alpha_mc::Parameters_::operator=( const Parameters_& p )
 {
-  assert( this != &p ); // would be bad logical error in program
+  assert( this != &p );  // would be bad logical error in program
 
   V_th = p.V_th;
   V_reset = p.V_reset;
@@ -340,59 +307,59 @@ nest::iaf_cond_alpha_mc::Buffers_::Buffers_( const Buffers_&, iaf_cond_alpha_mc&
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_cond_alpha_mc::Parameters_::get( DictionaryDatum& d ) const
+nest::iaf_cond_alpha_mc::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::V_th, V_th );
-  def< double >( d, names::V_reset, V_reset );
-  def< double >( d, names::t_ref, t_ref );
+  d[ names::V_th ] = V_th;
+  d[ names::V_reset ] = V_reset;
+  d[ names::t_ref ] = t_ref;
 
-  def< double >( d, names::g_sp, g_conn[ SOMA ] );
-  def< double >( d, names::g_pd, g_conn[ PROX ] );
+  d[ names::g_sp ] = g_conn[ SOMA ];
+  d[ names::g_pd ] = g_conn[ PROX ];
 
   // create subdictionaries for per-compartment parameters
   for ( size_t n = 0; n < NCOMP; ++n )
   {
-    DictionaryDatum dd = new Dictionary();
+    Dictionary dd;
 
-    def< double >( dd, names::g_L, g_L[ n ] );
-    def< double >( dd, names::E_L, E_L[ n ] );
-    def< double >( dd, names::E_ex, E_ex[ n ] );
-    def< double >( dd, names::E_in, E_in[ n ] );
-    def< double >( dd, names::C_m, C_m[ n ] );
-    def< double >( dd, names::tau_syn_ex, tau_synE[ n ] );
-    def< double >( dd, names::tau_syn_in, tau_synI[ n ] );
-    def< double >( dd, names::I_e, I_e[ n ] );
+    dd[ names::g_L ] = g_L[ n ];
+    dd[ names::E_L ] = E_L[ n ];
+    dd[ names::E_ex ] = E_ex[ n ];
+    dd[ names::E_in ] = E_in[ n ];
+    dd[ names::C_m ] = C_m[ n ];
+    dd[ names::tau_syn_ex ] = tau_synE[ n ];
+    dd[ names::tau_syn_in ] = tau_synI[ n ];
+    dd[ names::I_e ] = I_e[ n ];
 
-    ( *d )[ comp_names_[ n ] ] = dd;
+    d[ comp_names_[ n ] ] = dd;
   }
 }
 
 void
-nest::iaf_cond_alpha_mc::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::iaf_cond_alpha_mc::Parameters_::set( const Dictionary& d, Node* node )
 {
   // allow setting the membrane potential
-  updateValueParam< double >( d, names::V_th, V_th, node );
-  updateValueParam< double >( d, names::V_reset, V_reset, node );
-  updateValueParam< double >( d, names::t_ref, t_ref, node );
+  update_value_param( d, names::V_th, V_th, node );
+  update_value_param( d, names::V_reset, V_reset, node );
+  update_value_param( d, names::t_ref, t_ref, node );
 
-  updateValueParam< double >( d, Name( names::g_sp ), g_conn[ SOMA ], node );
-  updateValueParam< double >( d, Name( names::g_pd ), g_conn[ PROX ], node );
+  update_value_param( d, names::g_sp, g_conn[ SOMA ], node );
+  update_value_param( d, names::g_pd, g_conn[ PROX ], node );
 
   // extract from sub-dictionaries
   for ( size_t n = 0; n < NCOMP; ++n )
   {
-    if ( d->known( comp_names_[ n ] ) )
+    if ( d.known( comp_names_[ n ] ) )
     {
-      DictionaryDatum dd = getValue< DictionaryDatum >( d, comp_names_[ n ] );
+      auto dd = d.get< Dictionary >( comp_names_[ n ] );
 
-      updateValueParam< double >( dd, names::E_L, E_L[ n ], node );
-      updateValueParam< double >( dd, names::E_ex, E_ex[ n ], node );
-      updateValueParam< double >( dd, names::E_in, E_in[ n ], node );
-      updateValueParam< double >( dd, names::C_m, C_m[ n ], node );
-      updateValueParam< double >( dd, names::g_L, g_L[ n ], node );
-      updateValueParam< double >( dd, names::tau_syn_ex, tau_synE[ n ], node );
-      updateValueParam< double >( dd, names::tau_syn_in, tau_synI[ n ], node );
-      updateValueParam< double >( dd, names::I_e, I_e[ n ], node );
+      update_value_param( dd, names::E_L, E_L[ n ], node );
+      update_value_param( dd, names::E_ex, E_ex[ n ], node );
+      update_value_param( dd, names::E_in, E_in[ n ], node );
+      update_value_param( dd, names::C_m, C_m[ n ], node );
+      update_value_param( dd, names::g_L, g_L[ n ], node );
+      update_value_param( dd, names::tau_syn_ex, tau_synE[ n ], node );
+      update_value_param( dd, names::tau_syn_in, tau_synI[ n ], node );
+      update_value_param( dd, names::I_e, I_e[ n ], node );
     }
   }
   if ( V_reset >= V_th )
@@ -409,39 +376,39 @@ nest::iaf_cond_alpha_mc::Parameters_::set( const DictionaryDatum& d, Node* node 
   {
     if ( C_m[ n ] <= 0 )
     {
-      throw BadProperty( "Capacitance (" + comp_names_[ n ].toString() + ") must be strictly positive." );
+      throw BadProperty( "Capacitance (" + comp_names_[ n ] + ") must be strictly positive." );
     }
     if ( tau_synE[ n ] <= 0 or tau_synI[ n ] <= 0 )
     {
-      throw BadProperty( "All time constants (" + comp_names_[ n ].toString() + ") must be strictly positive." );
+      throw BadProperty( "All time constants (" + comp_names_[ n ] + ") must be strictly positive." );
     }
   }
 }
 
 void
-nest::iaf_cond_alpha_mc::State_::get( DictionaryDatum& d ) const
+nest::iaf_cond_alpha_mc::State_::get( Dictionary& d ) const
 {
   // we assume here that State_::get() always is called after
   // Parameters_::get(), so that the per-compartment dictionaries exist
   for ( size_t n = 0; n < NCOMP; ++n )
   {
-    assert( d->known( comp_names_[ n ] ) );
-    DictionaryDatum dd = getValue< DictionaryDatum >( d, comp_names_[ n ] );
+    assert( d.known( comp_names_[ n ] ) );
+    auto dd = d.get< Dictionary >( comp_names_[ n ] );
 
-    def< double >( dd, names::V_m, y_[ idx( n, V_M ) ] ); // Membrane potential
+    dd[ names::V_m ] = y_[ idx( n, V_M ) ];  // Membrane potential
   }
 }
 
 void
-nest::iaf_cond_alpha_mc::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
+nest::iaf_cond_alpha_mc::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
   // extract from sub-dictionaries
   for ( size_t n = 0; n < NCOMP; ++n )
   {
-    if ( d->known( comp_names_[ n ] ) )
+    if ( d.known( comp_names_[ n ] ) )
     {
-      DictionaryDatum dd = getValue< DictionaryDatum >( d, comp_names_[ n ] );
-      updateValueParam< double >( dd, names::V_m, y_[ idx( n, V_M ) ], node );
+      auto dd = d.get< Dictionary >( comp_names_[ n ] );
+      update_value_param( dd, names::V_m, y_[ idx( n, V_M ) ], node );
     }
   }
 }
@@ -461,9 +428,9 @@ nest::iaf_cond_alpha_mc::iaf_cond_alpha_mc()
 
   // set up table of compartment names
   // comp_names_.resize(NCOMP); --- Fixed size, see comment on definition
-  comp_names_[ SOMA ] = Name( "soma" );
-  comp_names_[ PROX ] = Name( "proximal" );
-  comp_names_[ DIST ] = Name( "distal" );
+  comp_names_[ SOMA ] = "soma";
+  comp_names_[ PROX ] = "proximal";
+  comp_names_[ DIST ] = "distal";
 }
 
 nest::iaf_cond_alpha_mc::iaf_cond_alpha_mc( const iaf_cond_alpha_mc& n )
@@ -603,11 +570,11 @@ nest::iaf_cond_alpha_mc::update( Time const& origin, const long from, const long
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
-        &B_.sys_,             // system of ODE
-        &t,                   // from t
-        B_.step_,             // to t <= step
-        &B_.IntegrationStep_, // integration step size
-        S_.y_ );              // neuronal state
+        &B_.sys_,              // system of ODE
+        &t,                    // from t
+        B_.step_,              // to t <= step
+        &B_.IntegrationStep_,  // integration step size
+        S_.y_ );               // neuronal state
       if ( status != GSL_SUCCESS )
       {
         throw GSLSolverFailure( get_name(), status );
@@ -628,12 +595,12 @@ nest::iaf_cond_alpha_mc::update( Time const& origin, const long from, const long
     // refractoriness and spiking
     // exploit here that plain offset enum value V_M indexes soma V_M
     if ( S_.r_ )
-    { // neuron is absolute refractory
+    {  // neuron is absolute refractory
       --S_.r_;
       S_.y_[ State_::V_M ] = P_.V_reset;
     }
     else if ( S_.y_[ State_::V_M ] >= P_.V_th )
-    { // neuron fires spike
+    {  // neuron fires spike
       S_.r_ = V_.RefractoryCounts_;
       S_.y_[ State_::V_M ] = P_.V_reset;
 
@@ -682,4 +649,4 @@ nest::iaf_cond_alpha_mc::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-#endif // HAVE_GSL
+#endif  // HAVE_GSL

@@ -98,15 +98,15 @@ For implementation details see the
 .. note::
 
     The default refractory period for ``aeif`` models is zero, consistent with the model definition in
-    Brette & Gerstner [1]_.  Thus, an ``aeif`` neuron with default parameters can fire multiple spikes in a single
-    time step, which can lead to exploding spike numbers and extreme slow-down of simulations.
+    Brette & Gerstner :footcite:p:`Brette2005`.  Thus, an ``aeif`` neuron with default parameters can fire multiple
+    spikes in a single time step, which can lead to exploding spike numbers and extreme slow-down of simulations.
 
     To avoid such unphysiological behavior, you should set a refractory time ``t_ref > 0``.
 
 Parameters
 ++++++++++
 
-The following parameters can be set in the status dictionary.
+The following parameters can be set in the status Dictionary.
 
 ======== ======= =======================================
 **Dynamic state variables:**
@@ -169,10 +169,7 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 References
 ++++++++++
 
-.. [1] Brette R and Gerstner W (2005). Adaptive Exponential
-       Integrate-and-Fire Model as an Effective Description of Neuronal
-       Activity. J Neurophysiol 94:3637-3642.
-       DOI: https://doi.org/10.1152/jn.00686.2005
+.. footbibliography::
 
 See also
 ++++++++
@@ -214,8 +211,8 @@ public:
   size_t handles_test_event( CurrentEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_buffers_() override;
@@ -239,28 +236,28 @@ private:
   //! Independent parameters
   struct Parameters_
   {
-    double V_peak_;  //!< Spike detection threshold in mV
-    double V_reset_; //!< Reset Potential in mV
-    double t_ref_;   //!< Refractory period in ms
+    double V_peak_;   //!< Spike detection threshold in mV
+    double V_reset_;  //!< Reset Potential in mV
+    double t_ref_;    //!< Refractory period in ms
 
-    double g_L;        //!< Leak Conductance in nS
-    double C_m;        //!< Membrane Capacitance in pF
-    double E_L;        //!< Leak reversal Potential (aka resting potential) in mV
-    double Delta_T;    //!< Slope factor in mV
-    double tau_w;      //!< Adaptation time-constant in ms
-    double a;          //!< Subthreshold adaptation in nS
-    double b;          //!< Spike-triggered adaptation in pA
-    double V_th;       //!< Spike threshold in mV
-    double tau_syn_ex; //!< Excitatory synaptic kernel decay time in ms
-    double tau_syn_in; //!< Inhibitory synaptic kernel decay time in ms
-    double I_e;        //!< Intrinsic current in pA
+    double g_L;         //!< Leak Conductance in nS
+    double C_m;         //!< Membrane Capacitance in pF
+    double E_L;         //!< Leak reversal Potential (aka resting potential) in mV
+    double Delta_T;     //!< Slope factor in mV
+    double tau_w;       //!< Adaptation time-constant in ms
+    double a;           //!< Subthreshold adaptation in nS
+    double b;           //!< Spike-triggered adaptation in pA
+    double V_th;        //!< Spike threshold in mV
+    double tau_syn_ex;  //!< Excitatory synaptic kernel decay time in ms
+    double tau_syn_in;  //!< Inhibitory synaptic kernel decay time in ms
+    double I_e;         //!< Intrinsic current in pA
 
-    double gsl_error_tol; //!< Error bound for GSL integrator
+    double gsl_error_tol;  //!< Error bound for GSL integrator
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    void get( Dictionary& ) const;              //!< Store current values in Dictionary
+    void set( const Dictionary&, Node* node );  //!< Set values from Dictionary
   };
 
 public:
@@ -281,23 +278,23 @@ public:
     enum StateVecElems
     {
       V_M = 0,
-      I_EXC, // 1
-      I_INH, // 2
-      W,     // 3
+      I_EXC,  // 1
+      I_INH,  // 2
+      W,      // 3
       STATE_VEC_SIZE
     };
 
     //! neuron state, must be C-array for GSL solver
     double y_[ STATE_VEC_SIZE ];
-    unsigned int r_; //!< number of refractory steps remaining
+    unsigned int r_;  //!< number of refractory steps remaining
 
-    State_( const Parameters_& ); //!< Default initialization
+    State_( const Parameters_& );  //!< Default initialization
     State_( const State_& );
 
     State_& operator=( const State_& );
 
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, Node* );
+    void get( Dictionary& ) const;
+    void set( const Dictionary&, const Parameters_&, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -307,8 +304,8 @@ public:
    */
   struct Buffers_
   {
-    Buffers_( aeif_psc_exp& );                  //!< Sets buffer pointers to 0
-    Buffers_( const Buffers_&, aeif_psc_exp& ); //!< Sets buffer pointers to 0
+    Buffers_( aeif_psc_exp& );                   //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, aeif_psc_exp& );  //!< Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< aeif_psc_exp > logger_;
@@ -319,16 +316,16 @@ public:
     RingBuffer currents_;
 
     /** GSL ODE stuff */
-    gsl_odeiv_step* s_;    //!< stepping function
-    gsl_odeiv_control* c_; //!< adaptive stepsize control function
-    gsl_odeiv_evolve* e_;  //!< evolution function
-    gsl_odeiv_system sys_; //!< struct describing the GSL system
+    gsl_odeiv_step* s_;     //!< stepping function
+    gsl_odeiv_control* c_;  //!< adaptive stepsize control function
+    gsl_odeiv_evolve* e_;   //!< evolution function
+    gsl_odeiv_system sys_;  //!< struct describing the GSL system
 
     // Since IntegrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
-    double step_;            //!< step size in ms
-    double IntegrationStep_; //!< current integration time step, updated by GSL
+    double step_;             //!< step size in ms
+    double IntegrationStep_;  //!< current integration time step, updated by GSL
 
     /**
      * Input current injected by CurrentEvent.
@@ -417,22 +414,22 @@ aeif_psc_exp::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type 
 }
 
 inline void
-aeif_psc_exp::get_status( DictionaryDatum& d ) const
+aeif_psc_exp::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
   ArchivingNode::get_status( d );
 
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
-aeif_psc_exp::set_status( const DictionaryDatum& d )
+aeif_psc_exp::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;     // temporary copy in case of errors
-  ptmp.set( d, this );       // throws if BadProperty
-  State_ stmp = S_;          // temporary copy in case of errors
-  stmp.set( d, ptmp, this ); // throws if BadProperty
+  Parameters_ ptmp = P_;      // temporary copy in case of errors
+  ptmp.set( d, this );        // throws if BadProperty
+  State_ stmp = S_;           // temporary copy in case of errors
+  stmp.set( d, ptmp, this );  // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -445,7 +442,7 @@ aeif_psc_exp::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
-} // namespace
+}  // namespace
 
-#endif // HAVE_GSL
-#endif // AEIF_PSC_EXP_H
+#endif  // HAVE_GSL
+#endif  // AEIF_PSC_EXP_H

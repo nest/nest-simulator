@@ -40,10 +40,6 @@
 #include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-
 
 namespace nest
 {
@@ -67,10 +63,10 @@ public:
   //! buffer for currents
   RingBuffer currents;
   //! electrical parameters
-  double ca; // compartment capacitance [uF]
-  double gc; // coupling conductance with parent (meaningless if root) [uS]
-  double gl; // leak conductance of compartment [uS]
-  double el; // leak current reversal potential [mV]
+  double ca;  // compartment capacitance [uF]
+  double gc;  // coupling conductance with parent (meaningless if root) [uS]
+  double gl;  // leak conductance of compartment [uS]
+  double el;  // leak current reversal potential [mV]
 
   //! voltage variable
   double v_comp;
@@ -92,12 +88,12 @@ public:
   CompartmentCurrents compartment_currents;
 
   Compartment( const long compartment_index, const long parent_index );
-  Compartment( const long compartment_index, const long parent_index, const DictionaryDatum& compartment_params );
+  Compartment( const long compartment_index, const long parent_index, const Dictionary& compartment_params );
   ~Compartment() {};
 
   // initialization
   void pre_run_hook();
-  std::map< Name, double* > get_recordables();
+  std::map< std::string, double* > get_recordables();
 
   //! matrix construction
   void construct_matrix_element( const long lag );
@@ -106,7 +102,7 @@ public:
   inline void gather_input( const std::pair< double, double >& in );
   inline std::pair< double, double > io();
   inline double calc_v( const double v_in );
-}; // Compartment
+};  // Compartment
 
 
 /*
@@ -175,7 +171,7 @@ public:
 
   //! add a compartment to the tree structure
   void add_compartment( const long parent_index );
-  void add_compartment( const long parent_index, const DictionaryDatum& compartment_params );
+  void add_compartment( const long parent_index, const Dictionary& compartment_params );
   void add_compartment( Compartment* compartment, const long parent_index );
 
   //! initialize the tree for simulation
@@ -189,7 +185,7 @@ public:
   void set_syn_buffers( std::vector< RingBuffer >& syn_buffers );
 
   //! make all state variables accessible for recording
-  std::map< Name, double* > get_recordables();
+  std::map< std::string, double* > get_recordables();
 
   //! get a compartment pointer from the tree
   Compartment* get_compartment( const long compartment_index ) const;
@@ -219,8 +215,8 @@ public:
 
   //! print function
   void print_tree() const;
-}; // CompTree
+};  // CompTree
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef CM_TREE_H */

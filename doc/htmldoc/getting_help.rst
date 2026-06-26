@@ -3,8 +3,6 @@
 Get help on the command line interface
 ======================================
 
-* The :py:func:`.helpdesk` command will launch the documentation pages on your browser.
-
 * To access the High-level Python API reference material you can use the commands:
 
 .. code-block::

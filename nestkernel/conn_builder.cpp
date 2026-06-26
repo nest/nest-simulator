@@ -2388,8 +2388,6 @@ nest::ClusteredApproxTotalNumberBuilder::connect_()
 
     try
     {
-
-      // get global rng that is tested for synchronization for all threads
       RngPtr rng = get_vp_specific_rng( tid );
       binomial_distribution bino_dist;
 

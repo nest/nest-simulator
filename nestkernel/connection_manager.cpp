@@ -1080,10 +1080,10 @@ nest::ConnectionManager::get_num_connections( const synindex syn_id ) const
   return num_connections;
 }
 
-std::deque< nest::ConnectionID >
+std::vector< std::deque< nest::ConnectionID > >
 nest::ConnectionManager::get_connections( const Dictionary& params )
 {
-  std::deque< ConnectionID > connectome;
+  std::vector< std::deque< ConnectionID > > connectome;
   NodeCollectionPTR source_a = NodeCollectionPTR( nullptr );
   NodeCollectionPTR target_a = NodeCollectionPTR( nullptr );
 
@@ -1156,20 +1156,8 @@ nest::ConnectionManager::get_connections( const Dictionary& params )
   return connectome;
 }
 
-// Helper method which removes ConnectionIDs from input deque and
-// appends them to output deque.
-static inline std::deque< nest::ConnectionID >&
-extend_connectome( std::deque< nest::ConnectionID >& out, std::deque< nest::ConnectionID >& in )
-{
-  out.insert( out.end(), std::make_move_iterator( in.begin() ), std::make_move_iterator( in.end() ) );
-
-  in.clear();  // src elements are now moved-from but still present; clear empties it
-
-  return out;
-}
-
 void
-nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome,
+nest::ConnectionManager::get_connections( std::vector< std::deque< ConnectionID > >& connectome,
   NodeCollectionPTR source,
   NodeCollectionPTR target,
   synindex syn_id,
@@ -1206,9 +1194,9 @@ nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome
 
     if ( conns_in_thread.size() > 0 )
     {
-#pragma omp critical( get_connections )
+#pragma omp critical
       {
-        extend_connectome( connectome, conns_in_thread );
+        connectome.push_back( std::move( conns_in_thread ) );
       }
     }
   }
@@ -1272,19 +1260,19 @@ nest::ConnectionManager::get_connections_to_targets_( const size_t tid,
 
     // Getting connections from devices. Since target only contains neuron-like nodes,
     //  we do not need to consider connections to devices.
-    for ( const auto& t_node : *target )
+    for ( const auto& t : *target )
     {
-      target_table_devices_.get_connections_from_devices_(
-        0, t_node.node_id, tid, syn_id, synapse_label, conns_in_thread );
+      target_table_devices_.get_connections_from_devices_( 0, t.node_id, tid, syn_id, synapse_label, conns_in_thread );
     }
   }
   else if ( target->all_connect_as_devices() )
   {
-    // Getting connections to devices. When we get here, we want only connections to devices.
-    for ( const auto& t_device : *target )
+    // Getting connections to devices. When we get here, logically we want only connections to devices.
+    // But to pick up device-to-device connections, we need to look also from the "from_device" perspective
+    // and therefore need to call the general get_connections() here.
+    for ( const auto& t : *target )
     {
-      target_table_devices_.get_connections_to_devices_(
-        0, t_device.node_id, tid, syn_id, synapse_label, conns_in_thread );
+      target_table_devices_.get_connections( 0, t.node_id, tid, syn_id, synapse_label, conns_in_thread );
     }
   }
   else
@@ -1362,7 +1350,6 @@ nest::ConnectionManager::get_connections_from_sources_( const size_t tid,
   }
   else if ( source->all_connect_as_neurons() )
   {
-
     if ( not target_filtering )
     {
       // Add all connections to devices

@@ -249,16 +249,16 @@ endif ()
 if ( NOT CMAKE_BUILD_TYPE OR "${CMAKE_BUILD_TYPE}" STREQUAL "None" )
   set( ALL_CFLAGS "${CMAKE_C_FLAGS}" )
   set( ALL_CXXFLAGS "${CMAKE_CXX_FLAGS}" )
-elseif ( ${CMAKE_BUILD_TYPE} STREQUAL "Debug" )
+elseif ( "${CMAKE_BUILD_TYPE}" STREQUAL "Debug" )
   set( ALL_CFLAGS "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_DEBUG}" )
   set( ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}" )
-elseif ( ${CMAKE_BUILD_TYPE} STREQUAL "Release" )
+elseif ( "${CMAKE_BUILD_TYPE}" STREQUAL "Release" )
   set( ALL_CFLAGS "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_RELEASE}" )
   set( ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}" )
-elseif ( ${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo" )
+elseif ( "${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo" )
   set( ALL_CFLAGS "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_RELWITHDEBINFO}" )
   set( ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELWITHDEBINFO}" )
-elseif ( ${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel" )
+elseif ( "${CMAKE_BUILD_TYPE}" STREQUAL "MinSizeRel" )
   set( ALL_CFLAGS "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_MINSIZEREL}" )
   set( ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_MINSIZEREL}" )
 else ()
@@ -284,8 +284,7 @@ set( MODULE_LINK_LIBS
   "${MUSIC_LIBRARIES}"
   "${MPI_CXX_LIBRARIES}"
   "${OpenMP_CXX_LIBRARIES}"
-  "${SIONLIB_LIBRARIES}"
-  "${BOOST_LIBRARIES}" )
+  "${SIONLIB_LIBRARIES}" )
 
 if ( with-libraries )
   set( MODULE_LINK_LIBS "${MODULE_LINK_LIBS};${with-libraries}" )
@@ -299,6 +298,9 @@ set( ALL_LIBS
 
 
 # all includes
+if ( HAVE_BOOST )
+  get_target_property( _boost_inc Boost::headers INTERFACE_INCLUDE_DIRECTORIES )
+endif ()
 set( ALL_INCLUDES_tmp
   "${CMAKE_INSTALL_FULL_INCLUDEDIR}/nest"
   "${LTDL_INCLUDE_DIRS}"
@@ -307,7 +309,7 @@ set( ALL_INCLUDES_tmp
   "${MUSIC_INCLUDE_DIRS}"
   "${OpenMP_CXX_INCLUDE_DIRS}"
   "${MPI_CXX_INCLUDE_PATH}"
-  "${BOOST_INCLUDE_DIR}" )
+  "${_boost_inc}" )
 set( ALL_INCLUDES "" )
 foreach ( INC ${ALL_INCLUDES_tmp} ${with-includes} )
   if ( INC AND NOT INC STREQUAL "" )

@@ -273,6 +273,12 @@ function( NEST_PROCESS_WITH_GSL )
       # consumers use GSL::gsl imported target; no global include_directories() needed
     endif ()
   endif ()
+
+  # Provide a dummy GSL::gsl if GSL is disabled. Needed to avoid problems
+  # where GSL::gsl is used unconditionally.
+  if ( NOT TARGET GSL::gsl )
+    add_library( GSL::gsl INTERFACE IMPORTED )
+  endif ()
 endfunction()
 
 function( NEST_PROCESS_WITH_PYTHON )
@@ -544,6 +550,12 @@ function( NEST_PROCESS_WITH_BOOST )
       set( BOOST_FOUND "${Boost_FOUND}" PARENT_SCOPE )
       set( BOOST_VERSION "${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}" PARENT_SCOPE )
     endif ()
+  endif ()
+
+  # Provide a dummy Boost::headers if Boost is disabled or not found.
+  # Needed to avoid problems where Boost::headers is used unconditionally.
+  if ( NOT TARGET Boost::headers )
+    add_library( Boost::headers INTERFACE IMPORTED )
   endif ()
 endfunction()
 

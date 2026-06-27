@@ -25,11 +25,11 @@ Artificial synchrony in discrete-time simulations
 
 Artificial synchrony can be introduced by discrete-time simulation
 of neuronal networks, because they typically constrain spike times to a
-grid determined by the computational step size. Hansel et al. (1998) [1]_
+grid determined by the computational step size. Hansel et al. (1998) :footcite:p:`Hansel1998`
 used a small all-to-all connected network of spiking neurons to demonstrate
 that this artificial synchrony can be reduced by a finer resolution or by
 interpolating for the correct spike times. In a further step, Morrison et
-al. (2007) [2]_ showed that by interpolating the exact spike times and
+al. (2007) :footcite:p:`Morrison2007a` showed that by interpolating the exact spike times and
 distributing them, not only the artificial synchrony is avoided
 but even machine precision can be obtained for small time steps.
 
@@ -37,14 +37,14 @@ Here, we simulate the 'Hansel' network of 128 all-to-all connected
 excitatory integrate-and-fire neurons with alpha-shaped postsynaptic
 currents (PSC) in two implementations:
 
-1. Precise implementation by Morrison et al. (2007) [2]_
+1. Precise implementation by Morrison et al. (2007) :footcite:p:`Morrison2007a`
 2. Grid-constrained implementation
 
 The synchrony of the network can be calculated from the membrane
-potentials of each neuron following Hansel et al. (1998) [1]_. By
+potentials of each neuron following Hansel et al. (1998) :footcite:p:`Hansel1998`. By
 varying the coupling weights and estimating the corresponding
-synchrony of the network, the results of Hansel et al. (1998) [1]_,
-Morrison et al. (2007) [2]_, and Diesmann et al. (2008) [3]_ can be
+synchrony of the network, the results of Hansel et al. (1998) :footcite:p:`Hansel1998`,
+Morrison et al. (2007) :footcite:p:`Morrison2007a`, and Diesmann et al. (2008) :footcite:p:`Diesmann2008` can be
 reproduced.
 
 The synchrony measure Σ is defined as:
@@ -58,21 +58,7 @@ where:
 References
 ~~~~~~~~~~
 
-.. [1] Hansel D, Mato G, Meunier C, Neltner L. 1998. On numerical
-       simulations of integrate-and-fire neural networks. Neural Computation.
-       10(2):467-483.
-       https://doi.org/10.1162/089976698300017845
-
-.. [2] Morrison A, Straube S, Plesser HE, Diesmann M. 2007. Exact subthreshold
-       integration with continuous spike times in discrete-time neural network
-       simulations. Neural Computation. 19(1):47-79.
-       https://doi.org/10.1162/neco.2007.19.1.47
-
-.. [3] Diesmann M, Hanuschkin A, Helias M, Kunkel S, Morrison A. 2008. The
-       performance of solvers for integrate-and-fire models with exact spike
-       timing. Frontiers in Neuroinformatics. Conference Abstract:
-       Neuroinformatics 2008.
-
+.. footbibliography::
 """
 
 ###############################################################################

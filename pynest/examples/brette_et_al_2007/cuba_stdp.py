@@ -24,14 +24,14 @@ Benchmark 5 of the simulator review (CUBA-STDP)
 ------------------------------------------------
 
 The fifth simulator review benchmark is implemented as a variation of the
-Brunel Network [1]_. This script creates a sparsely coupled network of excitatory
+Brunel Network :footcite:p:`Brunel2000`. This script creates a sparsely coupled network of excitatory
 and inhibitory neurons. Connections within and across both populations are
 created at random. Both neuron populations receive Poisson background
 input. The spike output of 500 neurons are recorded. Neurons are modeled as
 leaky integrate-and-fire neurons with current-injecting synapses (exponential
 functions). Excitatory-excitatory synapses implement multiplicative STDP.
 
-This is Benchmark 5 of the FACETS simulator review (Brette et al., 2007) [2]_:
+This is Benchmark 5 of the FACETS simulator review (Brette et al., 2007) :footcite:p:`Brette2007`:
 - Neuron model: integrate-and-fire (``iaf_psc_exp``)
 - Synapse model: STDP-current (excitatory-excitatory), static-current (others)
 - Synapse time course: exponential
@@ -43,16 +43,7 @@ networks with heterogeneous synaptic dynamics.
 References
 ~~~~~~~~~~
 
-.. [1] Brunel N. 2000. Dynamics of sparsely connected networks of excitatory
-       and inhibitory spiking neurons. Journal of Computational Neuroscience.
-       8:183-208.
-       https://doi.org/10.1023/A:1008925309027
-
-.. [2] Brette R, Rudolph M, Carnevale T, Hines M, Beeman D, Bower JM, et al.
-       2007. Simulation of networks of spiking neurons: a review of tools and
-       strategies. Journal of Computational Neuroscience. 23(3):349-398.
-       https://doi.org/10.1007/s10827-007-0038-6
-
+.. footbibliography::
 """
 
 import nest

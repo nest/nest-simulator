@@ -57,7 +57,7 @@ Description
 +++++++++++
 
 ``iaf_chxk_2008`` is an implementation of a spiking neuron using IAF dynamics with
-conductance-based synapses [1]_. A spike is emitted when the membrane potential
+conductance-based synapses :footcite:p:`Casti2008`. A spike is emitted when the membrane potential
 is crossed from below. After a spike, an afterhyperpolarizing (AHP) conductance
 is activated which repolarizes the neuron over time. Membrane potential is not
 reset explicitly and the model also has no explicit refractory time.
@@ -67,7 +67,7 @@ follow alpha-function time courses as in the ``iaf_cond_alpha`` model.
 
 .. note::
    In accordance with the original Fortran implementation of the model used
-   in [1]_, the activation time point for the AHP following a spike is
+   in :footcite:p:`Casti2008`, the activation time point for the AHP following a spike is
    determined by linear interpolation within the time step during which the
    threshold was crossed.
 
@@ -76,7 +76,7 @@ follow alpha-function time courses as in the ``iaf_cond_alpha`` model.
    input.
 
 .. note::
-   In the original Fortran implementation underlying [1]_, all previous AHP
+   In the original Fortran implementation underlying :footcite:p:`Casti2008`, all previous AHP
    activation was discarded when a new spike occurred, leading to reduced AHP
    currents in particular during periods of high spiking activity. Set
    ``ahp_bug`` to ``true`` to obtain this behavior in the model.
@@ -107,9 +107,7 @@ The following parameters can be set in the status Dictionary.
 References
 ++++++++++
 
-.. [1] Casti A, Hayot F, Xiao Y, Kaplan E (2008) A simple model of retina-LGN
-       transmission. Journal of Computational Neuroscience 24:235-252.
-       DOI: https://doi.org/10.1007/s10827-007-0053-7
+.. footbibliography::
 
 Sends
 +++++

@@ -25,11 +25,12 @@ A tripartite interaction between two neurons and one astrocyte
 
 This script simulates a tripartite interaction between two neurons and one
 astrocyte. This interaction is part of the astrocyte biology described in
-[1]_ that involves the neuron-astrocyte glutamate signaling and the astrocytic
+:footcite:p:`Bazargani2016` that involves the neuron-astrocyte glutamate signaling and the astrocytic
 calcium dynamics.
 
 ``astrocyte_lr_1994`` is used to model the astrocyte, which implements the
-dynamics in the astrocyte based on the articles [2]_, [3]_, and [4]_.
+dynamics in the astrocyte based on the articles :footcite:p:`Li1994`,
+:footcite:p:`DeYoung1992`, and :footcite:p:`Nadkarni2003`.
 ``tsodyks_synapse`` is used to create connections from the presynaptic neuron
 to the postsynaptic neuron, and from the presynaptic neuron to the astrocyte.
 ``sic_connection`` is used to create a connection from the astrocyte to the
@@ -48,25 +49,7 @@ See Also
 References
 ~~~~~~~~~~
 
-.. [1] Bazargani, N., & Attwell, D. (2016). Astrocyte calcium signaling: the
-       third wave. Nature neuroscience, 19(2), 182-189. DOI:
-       https://doi.org/10.1038/nn.4201
-
-.. [2] Li, Y. X., & Rinzel, J. (1994). Equations for InsP3 receptor-mediated
-       [Ca2+]i oscillations derived from a detailed kinetic model: a
-       Hodgkin-Huxley like formalism. Journal of theoretical Biology, 166(4),
-       461-473. DOI: https://doi.org/10.1006/jtbi.1994.1041
-
-.. [3] De Young, G. W., & Keizer, J. (1992). A single-pool inositol
-       1,4,5-trisphosphate-receptor-based model for agonist-stimulated
-       oscillations in Ca2+ concentration. Proceedings of the National Academy
-       of Sciences, 89(20), 9895-9899. DOI:
-       https://doi.org/10.1073/pnas.89.20.9895
-
-.. [4] Nadkarni, S., & Jung, P. (2003). Spontaneous oscillations of dressed
-       neurons: a new mechanism for epilepsy?. Physical review letters, 91(26),
-       268101. DOI: https://doi.org/10.1103/PhysRevLett.91.268101
-
+.. footbibliography::
 """
 
 ###############################################################################

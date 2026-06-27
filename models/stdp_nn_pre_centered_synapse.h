@@ -49,7 +49,7 @@ Description
 
 ``stdp_nn_pre_centered_synapse`` is a connector to create synapses with spike
 time dependent plasticity with the ``presynaptic``-centered nearest-neighbour
-spike pairing scheme, as described in [1]_.
+spike pairing scheme, as described in :footcite:p:`Izhikevich2003b`.
 
 Each presynaptic spike is taken into account in the STDP weight change rule
 with the nearest preceding postsynaptic one and the nearest succeeding
@@ -58,7 +58,7 @@ So, when a presynaptic spike occurs, it is accounted in the depression rule
 with the nearest preceding postsynaptic one; and when a postsynaptic spike
 occurs, it is accounted in the facilitation rule with all preceding
 presynaptic spikes that were not earlier than the previous postsynaptic
-spike. For a clear illustration of this scheme see fig. 7B in [2]_.
+spike. For a clear illustration of this scheme see fig. 7B in :footcite:p:`Morrison2008`.
 
 The pairs exactly coinciding (so that ``presynaptic_spike == postsynaptic_spike
 + dendritic_delay``), leading to zero ``delta_t``, are discarded. In this case the
@@ -67,7 +67,7 @@ post/presynaptic one (for example, ``pre=={10 ms; 20 ms}`` and ``post=={20 ms}``
 result in a potentiation pair 20-to-10).
 
 The implementation involves two additional variables - presynaptic and
-postsynaptic traces [2]_. The presynaptic trace decays exponentially over
+postsynaptic traces :footcite:p:`Morrison2008`. The presynaptic trace decays exponentially over
 time with the time constant ``tau_plus``, increases by 1 on a pre-spike
 occurrence, and is reset to 0 on a post-spike occurrence. The postsynaptic
 trace (implemented on the postsynaptic neuron side) decays with the time
@@ -102,12 +102,7 @@ SpikeEvent
 References
 ++++++++++
 
-.. [1] Izhikevich E. M., Desai N. S. (2003) Relating STDP to BCM,
-       Neural Comput. 15, 1511--1523
-
-.. [2] Morrison A., Diesmann M., and Gerstner W. (2008) Phenomenological
-       models of synaptic plasticity based on spike timing,
-       Biol. Cybern. 98, 459--478
+.. footbibliography::
 
 See also
 ++++++++

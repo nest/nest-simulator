@@ -70,7 +70,7 @@ Description
 ``iaf_cond_exp_sfa_rr`` is an implementation of a spiking neuron using
 integrate-and-fire dynamics with conductance-based synapses, with additional
 spike-frequency adaptation and relative refractory mechanisms as described in
-[2]_, page 166.
+:footcite:p:`Dayan2001`, page 166.
 
 Incoming spike events induce a postsynaptic change of conductance modelled by
 an exponential function. The exponential function is normalized such that an
@@ -80,7 +80,7 @@ Outgoing spike events induce a change of the adaptation and relative refractory
 conductances by ``q_sfa`` and ``q_rr``, respectively. Otherwise these conductances
 decay exponentially with time constants ``tau_sfa`` and ``tau_rr``, respectively.
 
-See also [1]_.
+See also :footcite:p:`Meffin2004`.
 
 Parameters
 ++++++++++
@@ -128,15 +128,7 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 References
 ++++++++++
 
-.. [1] Meffin H, Burkitt AN, Grayden DB (2004). An analytical
-       model for the large, fluctuating synaptic conductance state typical of
-       neocortical neurons in vivo. Journal of Computational Neuroscience,
-       16:159-175.
-       DOI: https://doi.org/10.1023/B:JCNS.0000014108.03012.81
-.. [2] Dayan P, Abbott LF (2001). Theoretical neuroscience: Computational and
-       mathematical modeling of neural systems. Cambridge, MA: MIT Press.
-       https://pure.mpg.de/pubman/faces/ViewItemOverviewPage.jsp?itemId=item_3006127
-
+.. footbibliography::
 
 See also
 ++++++++

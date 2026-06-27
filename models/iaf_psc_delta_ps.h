@@ -63,8 +63,8 @@ refractory period, dampened according to the interval between
 arrival and end of refractoriness.
 
 The linear subthreshold dynamics is integrated by the Exact
-Integration scheme [1]_. The neuron dynamics are solved exactly in
-time. Incoming and outgoing spike times are handled precisely [3]_.
+Integration scheme :footcite:p:`Rotter1999`. The neuron dynamics are solved exactly in
+time. Incoming and outgoing spike times are handled precisely :footcite:p:`Morrison2007a`.
 
 An additional state variable and the corresponding differential
 equation represents a piecewise constant external current.
@@ -75,13 +75,13 @@ incoming spikes, will occur precisely at the time of spike arrival,
 since incoming spikes are modeled as instantaneous potential
 jumps. Times of spikes caused by current input are determined
 exactly by solving the membrane potential equation. Note that, in
-contrast to the neuron models discussed in [3]_ [4]_, this model has so
+contrast to the neuron models discussed in :footcite:p:`Morrison2007a` :footcite:p:`Hanuschkin2010`, this model has so
 simple dynamics that no interpolation or iterative spike location
 technique is required at all.
 
 The general framework for the consistent formulation of systems with
 neuron like dynamics interacting by point events is described in
-[1]_. A flow chart can be found in [2]_.
+:footcite:p:`Rotter1999`. A flow chart can be found in :footcite:p:`Diesmann2001`.
 
 Critical tests for the formulation of the neuron model are the
 comparisons of simulation results for different computation step
@@ -123,18 +123,7 @@ The following parameters can be set in the status dictionary.
 References
 ++++++++++
 
-.. [1] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
-       systems with applications to neuronal modeling. Biologial Cybernetics
-       81:381-402.
-.. [2] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001) State space
-       analysis of synchronous spiking in cortical neural networks.
-       Neurocomputing 38-40:565-571.
-.. [3] Morrison A, Straube S, Plesser H E, & Diesmann M (2006) Exact
-       Subthreshold Integration with Continuous Spike Times in Discrete Time Neural
-       Network Simulations. To appear in Neural Computation.
-.. [4] Hanuschkin A, Kunkel S, Helias M, Morrison A & Diesmann M (2010)
-       A general and efficient method for incorporating exact spike times in
-       globally time-driven simulations Front Neuroinformatics, 4:113
+.. footbibliography::
 
 Sends
 +++++

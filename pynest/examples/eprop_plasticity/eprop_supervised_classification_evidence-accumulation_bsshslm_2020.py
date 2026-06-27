@@ -29,10 +29,10 @@ Description
 ~~~~~~~~~~~
 
 This script demonstrates supervised learning of a classification task with the eligibility propagation (e-prop)
-plasticity mechanism by Bellec et al. [1]_.
+plasticity mechanism by Bellec et al. :footcite:p:`Bellec2020`.
 
-This type of learning is demonstrated at the proof-of-concept task in [1]_. We based this script on their
-TensorFlow script given in [2]_.
+This type of learning is demonstrated at the proof-of-concept task in :footcite:p:`Bellec2020`. We based this script on their
+TensorFlow script given in the `original implementation <https://github.com/IGITUGraz/eligibility_propagation/blob/master/Figure_3_and_S7_e_prop_tutorials/tutorial_evidence_accumulation_with_alif.py>`__.
 
 The task, a so-called evidence accumulation task, is inspired by behavioral tasks, where a lab animal (e.g., a
 mouse) runs along a track, gets cues on the left and right, and has to decide at the end of the track between
@@ -57,21 +57,12 @@ a rate generator. Since the decision is at the end and all the cues are relevant
 cues in memory. Additional adaptive neurons in the network enable this memory. The network's training error is
 assessed by employing a cross-entropy error loss.
 
-Details on the event-based NEST implementation of e-prop can be found in [3]_.
+Details on the event-based NEST implementation of e-prop can be found in :footcite:p:`KorcsakGorzo2025`.
 
 References
 ~~~~~~~~~~
 
-.. [1] Bellec G, Scherr F, Subramoney F, Hajek E, Salaj D, Legenstein R, Maass W (2020). A solution to the
-       learning dilemma for recurrent networks of spiking neurons. Nature Communications, 11:3625.
-       https://doi.org/10.1038/s41467-020-17236-y
-
-.. [2] https://github.com/IGITUGraz/eligibility_propagation/blob/master/Figure_3_and_S7_e_prop_tutorials/tutorial_evidence_accumulation_with_alif.py
-
-.. [3] Korcsak-Gorzo A, Espinoza Valverde JA, Stapmanns J, Plesser HE, Dahmen D,
-       Bolten M, van Albada SJ, Diesmann M (2025). Event-driven eligibility
-       propagation in large sparse networks: efficiency shaped by biological
-       realism. arXiv:2511.21674. https://doi.org/10.48550/arXiv.2511.21674
+.. footbibliography::
 
 """  # pylint: disable=line-too-long # noqa: E501
 
@@ -122,8 +113,8 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # classification error is tested in regular intervals and the training stopped as soon as the error selected as
 # stop criterion is reached. After training, the performance can be tested over a number of test iterations.
 
-batch_size = 32  # batch size, 64 in reference [2], 32 in the README to reference [2]
-n_iter_train = 50  # number of training iterations, 2000 in reference [2]
+batch_size = 32  # batch size, 64 in the original TensorFlow code and 32 in its README
+n_iter_train = 50  # number of training iterations, 2000 in the original TensorFlow code
 n_iter_test = 4  # number of iterations for final test
 do_early_stopping = True  # if True, stop training as soon as stop criterion fulfilled
 n_iter_validate_every = 10  # number of training iterations before validation

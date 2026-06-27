@@ -22,7 +22,7 @@
 r"""Classes for running simulations of the classic game Pong
 --------------------------------------------------------
 The Class GameOfPong contains all necessary functionality for running simple
-simulations of Pong games. See [1]_ for details.
+simulations of Pong games. See :footcite:p:`Wunderlich2019` for details.
 
 See Also
 ---------
@@ -30,9 +30,7 @@ See Also
 
 References
 ----------
-.. [1] Wunderlich T., et al (2019). Demonstrating advantages of
-       neuromorphic computation: a pilot study. Frontiers in neuroscience, 13,
-       260. https://doi.org/10.3389/fnins.2019.00260
+.. footbibliography::
 
 :Authors: T Wunderlich, Electronic Vision(s), J Gille
 """

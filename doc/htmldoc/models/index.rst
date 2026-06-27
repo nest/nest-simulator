@@ -135,7 +135,7 @@ The term `models` in the context of NEST (and the field of computational neurosc
    NEST, the terms neuron and synapse models are also used for the C++
    implementations of these conceptual entities. Most of the models in
    NEST are based on either peer-reviewed publications or text books
-   like [1]_. This is what we mean for models in our model directory.
+   like :footcite:p:`Dayan2001`. This is what we mean for models in our model directory.
    Note that **devices** are not models but are mechanisms to generate or read out
    signals, like spikes. We list them together with neurons and synapses since they
    are required to be able to produce and analyze neuron and synapse activity.
@@ -168,10 +168,7 @@ written in Python with high simulation performance through the automated generat
 References
 ~~~~~~~~~~
 
-.. [1] Dayan P and Abbott L (2001). Theoretical Neuroscience: Computational
-       and Mathematical Modeling of Neural Systems. Cambridge, MA: MIT Press.
-       https://pure.mpg.de/pubman/faces/ViewItemOverviewPage.jsp?itemId=item_300
-
+.. footbibliography::
 
 .. toctree::
     :maxdepth: 1

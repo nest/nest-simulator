@@ -419,6 +419,12 @@ function( NEST_PROCESS_WITH_MPI )
       # consumers use MPI::MPI_CXX imported target
     endif ()
   endif ()
+
+  # Provide a dummy MPI::MPI_CXX if MPI is disabled. Needed to avoid
+  # problems where MPI::MPI_CXX is used unconditionally.
+  if ( NOT TARGET MPI::MPI_CXX )
+    add_library( MPI::MPI_CXX INTERFACE IMPORTED )
+  endif ()
 endfunction()
 
 function( NEST_PROCESS_WITH_DETAILED_TIMERS )

@@ -152,10 +152,8 @@ set_target_properties( nestkernel PROPERTIES POSITION_INDEPENDENT_CODE ON )
 
 target_link_libraries( nestkernel
   nestutil models ${LTDL_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES} ${HDF5_LIBRARIES}
+  MPI::MPI_CXX
 )
-if ( HAVE_MPI )
-  target_link_libraries( nestkernel MPI::MPI_CXX )
-endif ()
 
 target_include_directories( nestkernel PRIVATE
   ${PROJECT_SOURCE_DIR}/thirdparty

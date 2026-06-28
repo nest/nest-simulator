@@ -55,14 +55,14 @@ option( cythonize-pynest "Use Cython to cythonize pynestkernel.pyx [default=ON].
 
 # select parallelization scheme
 set( with-mpi OFF CACHE STRING "Build with MPI parallelization [default=OFF]." )
-set( with-openmp ON CACHE BOOL "Build with OpenMP multi-threading [default=ON]." )
+set( with-openmp ON CACHE STRING "Build with OpenMP multi-threading [default=ON]." )
 
 # external libraries
 set( with-libneurosim OFF CACHE STRING "Build with libneurosim [default=OFF]. Optionally give the directory where libneurosim is installed." )
 set( with-music OFF CACHE STRING "Build with MUSIC [default=OFF]. Optionally give the directory where MUSIC is installed." )
 set( with-sionlib OFF CACHE STRING "Build with SIONlib [default=OFF]. Optionally give the directory where sionlib is installed." )
 set( with-boost ON CACHE STRING "Build with Boost [default=ON]. To set a specific Boost installation, give the install path." )
-set( with-hdf5 OFF CACHE STRING "Find a HDF5 library. To set a specific HDF5 installation, set install path. [default=ON]" )
+set( with-hdf5 OFF CACHE STRING "Find a HDF5 library. To set a specific HDF5 installation, set install path. [default=OFF]" )
 set( with-ltdl ON CACHE STRING "Build with ltdl library [default=ON]. To set a specific ltdl, give the  install path. NEST uses ltdl for dynamic loading of external user modules." )
 set( with-gsl ON CACHE STRING "Build with the GSL library [default=ON]. To set a specific library, give the install path." )
 

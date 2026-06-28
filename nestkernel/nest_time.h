@@ -32,9 +32,6 @@
 #include <limits>
 #include <string>
 
-// Includes from libnestutil:
-#include "numerics.h"
-
 // Includes from nestkernel:
 #include "nest_types.h"
 
@@ -526,7 +523,7 @@ public:
    *
    * This is not a reversible operation, since steps have a finite
    * rounding resolution. This is not a truncation, but rounding as per
-   * ld_round, which is different from ms_stamp --> Time mapping, which rounds
+   * std::round, which is different from ms_stamp --> Time mapping, which rounds
    * up. See #903.
    */
   static double
@@ -538,7 +535,7 @@ public:
   static long
   delay_ms_to_steps( double ms )
   {
-    return ld_round( ms * Range::STEPS_PER_MS );
+    return static_cast< long >( std::round( ms * Range::STEPS_PER_MS ) );
   }
 };
 

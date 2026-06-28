@@ -24,6 +24,7 @@
 #define CONNECTION_MANAGER_H
 
 // C++ includes:
+#include <cmath>
 #include <string>
 
 // Includes from libnestutil:
@@ -128,10 +129,10 @@ public:
    * The target node is defined by the node. The connection is
    * established on the thread/process that owns the target node.
    *
-   * The parameters delay and weight have the default value numerics::nan.
-   * numerics::nan is a special value, which describes double values that
+   * The parameters delay and weight have the default value std::nan( "" ).
+   * std::nan( "" ) is a special value, which describes double values that
    * are not a number. If delay or weight is omitted in a connect call,
-   * numerics::nan indicates this and weight/delay are set only, if they are
+   * std::nan( "" ) indicates this and weight/delay are set only, if they are
    * valid.
    *
    * \param snode_id node ID of the sending Node.
@@ -147,8 +148,8 @@ public:
     size_t target_thread,
     const synindex syn_id,
     const Dictionary& params,
-    const double delay = numerics::nan,
-    const double weight = numerics::nan );
+    const double delay = std::nan( "" ),
+    const double weight = std::nan( "" ) );
 
   /**
    * Connect two nodes.
@@ -534,10 +535,10 @@ private:
    * connect_ is used to establish a connection between a sender and
    * receiving node which both have proxies.
    *
-   * The parameters delay and weight have the default value numerics::nan.
-   * numerics::nan is a special value, which describes double values that
+   * The parameters delay and weight have the default value std::nan( "" ).
+   * std::nan( "" ) is a special value, which describes double values that
    * are not a number. If delay or weight is omitted in an connect call,
-   * numerics::nan indicates this and weight/delay are set only, if they are
+   * std::nan( "" ) indicates this and weight/delay are set only, if they are
    * valid.
    *
    * \param source A reference to the sending Node.
@@ -555,8 +556,8 @@ private:
     const size_t tid,
     const synindex syn_id,
     const Dictionary& params,
-    const double delay = numerics::nan,
-    const double weight = numerics::nan );
+    const double delay = std::nan( "" ),
+    const double weight = std::nan( "" ) );
 
   /**
    * connect_to_device_ is used to establish a connection between a sender and

@@ -25,11 +25,12 @@
 #ifdef HAVE_GSL
 
 // C++ includes:
+#include <cmath>
 #include <cstdio>
+#include <numbers>
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
@@ -345,9 +346,9 @@ nest::iaf_chxk_2008::pre_run_hook()
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
-  V_.PSConInit_E = 1.0 * numerics::e / P_.tau_synE;
-  V_.PSConInit_I = 1.0 * numerics::e / P_.tau_synI;
-  V_.PSConInit_AHP = P_.g_ahp * numerics::e / P_.tau_ahp;
+  V_.PSConInit_E = 1.0 * std::numbers::e / P_.tau_synE;
+  V_.PSConInit_I = 1.0 * std::numbers::e / P_.tau_synI;
+  V_.PSConInit_AHP = P_.g_ahp * std::numbers::e / P_.tau_ahp;
 }
 
 /* ----------------------------------------------------------------

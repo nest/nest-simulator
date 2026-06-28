@@ -25,10 +25,10 @@
 
 // C++ includes:
 #include <cmath>
+#include <numbers>
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
@@ -122,8 +122,8 @@ void
 nest::sinusoidal_poisson_generator::Parameters_::get( Dictionary& d ) const
 {
   d[ names::rate ] = rate_ * 1000.0;
-  d[ names::frequency ] = om_ / ( 2.0 * numerics::pi / 1000.0 );
-  d[ names::phase ] = 180.0 / numerics::pi * phi_;
+  d[ names::frequency ] = om_ / ( 2.0 * std::numbers::pi / 1000.0 );
+  d[ names::phase ] = 180.0 / std::numbers::pi * phi_;
   d[ names::amplitude ] = amplitude_ * 1000.0;
   d[ names::individual_spike_trains ] = individual_spike_trains_;
 }
@@ -156,12 +156,12 @@ nest::sinusoidal_poisson_generator::Parameters_::set( const Dictionary& d,
 
   if ( update_value_param( d, names::frequency, om_, node ) )
   {
-    om_ *= 2.0 * numerics::pi / 1000.0;
+    om_ *= 2.0 * std::numbers::pi / 1000.0;
   }
 
   if ( update_value_param( d, names::phase, phi_, node ) )
   {
-    phi_ *= numerics::pi / 180.0;
+    phi_ *= std::numbers::pi / 180.0;
   }
 
   if ( update_value_param( d, names::amplitude, amplitude_, node ) )

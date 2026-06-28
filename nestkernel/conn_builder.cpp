@@ -37,6 +37,7 @@
 
 // Includes from C++:
 #include <algorithm>
+#include <cmath>
 
 
 nest::ConnBuilder::ConnBuilder( const std::string& primary_rule,
@@ -411,7 +412,7 @@ nest::BipartiteConnBuilder::single_connect_( size_t snode_id, Node& target, size
         target_thread,
         synapse_model_id_[ synapse_indx ],
         param_dicts_[ synapse_indx ][ target_thread ],
-        numerics::nan,
+        std::nan( "" ),
         weights_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target ) );
     }
     else

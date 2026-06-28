@@ -23,12 +23,12 @@
 #include "iaf_psc_exp_ps.h"
 
 // C++ includes:
+#include <cmath>
 #include <limits>
 
 // Includes from libnestutil:
 #include "dict_util.h"
 #include "iaf_propagator.h"
-#include "numerics.h"
 #include "regula_falsi.h"
 
 // Includes from nestkernel:
@@ -259,7 +259,7 @@ nest::iaf_psc_exp_ps::pre_run_hook()
   V_.expm1_tau_m_ = std::expm1( -V_.h_ms_ / P_.tau_m_ );
   V_.exp_tau_ex_ = std::exp( -V_.h_ms_ / P_.tau_ex_ );
   V_.exp_tau_in_ = std::exp( -V_.h_ms_ / P_.tau_in_ );
-  V_.P20_ = -P_.tau_m_ / P_.c_m_ * numerics::expm1( -V_.h_ms_ / P_.tau_m_ );
+  V_.P20_ = -P_.tau_m_ / P_.c_m_ * std::expm1( -V_.h_ms_ / P_.tau_m_ );
 
   // these are determined according to a numeric stability criterion
   propagator_ex_ = IAFPropagatorExp( P_.tau_ex_, P_.tau_m_, P_.c_m_ );
@@ -476,7 +476,7 @@ nest::iaf_psc_exp_ps::propagate_( const double dt )
 
   if ( not S_.is_refractory_ )
   {
-    const double P20 = -P_.tau_m_ / P_.c_m_ * numerics::expm1( -dt / P_.tau_m_ );
+    const double P20 = -P_.tau_m_ / P_.c_m_ * std::expm1( -dt / P_.tau_m_ );
 
     const double P21_ex = propagator_ex_.evaluate( dt );
     const double P21_in = propagator_in_.evaluate( dt );
@@ -542,7 +542,7 @@ nest::iaf_psc_exp_ps::emit_instant_spike_( const Time& origin, const long lag, c
 double
 nest::iaf_psc_exp_ps::threshold_distance( double t_step ) const
 {
-  const double P20 = -P_.tau_m_ / P_.c_m_ * numerics::expm1( -t_step / P_.tau_m_ );
+  const double P20 = -P_.tau_m_ / P_.c_m_ * std::expm1( -t_step / P_.tau_m_ );
 
   const double P21_ex = propagator_ex_.evaluate( t_step );
   const double P21_in = propagator_in_.evaluate( t_step );

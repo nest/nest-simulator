@@ -25,6 +25,9 @@
 // C++ includes:
 #include <cmath>
 
+// Includes from libnestutil:
+#include "numerics.h"
+
 // Includes from nestkernel:
 #include "nest_names.h"
 #include "nest_time.h"

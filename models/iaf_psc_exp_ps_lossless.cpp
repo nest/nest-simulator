@@ -23,6 +23,7 @@
 #include "iaf_psc_exp_ps_lossless.h"
 
 // C++ includes:
+#include <cmath>
 #include <limits>
 
 // Includes from nestkernel:
@@ -281,7 +282,7 @@ nest::iaf_psc_exp_ps_lossless::pre_run_hook()
   V_.exp_tau_ex_ = std::exp( -V_.h_ms_ / P_.tau_ex_ );
   V_.exp_tau_in_ = std::exp( -V_.h_ms_ / P_.tau_in_ );
 
-  V_.P20_ = -P_.tau_m_ / P_.c_m_ * numerics::expm1( -V_.h_ms_ / P_.tau_m_ );
+  V_.P20_ = -P_.tau_m_ / P_.c_m_ * std::expm1( -V_.h_ms_ / P_.tau_m_ );
 
   propagator_ex_ = IAFPropagatorExp( P_.tau_ex_, P_.tau_m_, P_.c_m_ );
   propagator_in_ = IAFPropagatorExp( P_.tau_in_, P_.tau_m_, P_.c_m_ );
@@ -384,7 +385,7 @@ nest::iaf_psc_exp_ps_lossless::update( const Time& origin, const long from, cons
       */
 
       const double spike_time_max = is_spike_( V_.h_ms_ );
-      if ( not numerics::is_nan( spike_time_max ) )
+      if ( not std::isnan( spike_time_max ) )
       {
         emit_spike_( origin, lag, 0, spike_time_max );
       }
@@ -416,7 +417,7 @@ nest::iaf_psc_exp_ps_lossless::update( const Time& origin, const long from, cons
           // interpolation requires continuity
           const double spike_time_max = is_spike_( ministep );
 
-          if ( not numerics::is_nan( spike_time_max ) )
+          if ( not std::isnan( spike_time_max ) )
           {
             emit_spike_( origin, lag, V_.h_ms_ - last_offset, spike_time_max );
           }
@@ -452,7 +453,7 @@ nest::iaf_psc_exp_ps_lossless::update( const Time& origin, const long from, cons
       {
         const double spike_time_max = is_spike_( last_offset );
         propagate_( last_offset );
-        if ( not numerics::is_nan( spike_time_max ) )
+        if ( not std::isnan( spike_time_max ) )
         {
           emit_spike_( origin, lag, V_.h_ms_ - last_offset, spike_time_max );
         }
@@ -516,7 +517,7 @@ nest::iaf_psc_exp_ps_lossless::propagate_( const double dt )
 
   if ( not S_.is_refractory_ )
   {
-    const double P20 = -P_.tau_m_ / P_.c_m_ * numerics::expm1( -dt / P_.tau_m_ );
+    const double P20 = -P_.tau_m_ / P_.c_m_ * std::expm1( -dt / P_.tau_m_ );
 
     const double P21_ex = propagator_ex_.evaluate( dt );
     const double P21_in = propagator_in_.evaluate( dt );
@@ -581,7 +582,7 @@ nest::iaf_psc_exp_ps_lossless::emit_instant_spike_( const Time& origin, const lo
 double
 nest::iaf_psc_exp_ps_lossless::threshold_distance( double t_step ) const
 {
-  const double P20 = -P_.tau_m_ / P_.c_m_ * numerics::expm1( -t_step / P_.tau_m_ );
+  const double P20 = -P_.tau_m_ / P_.c_m_ * std::expm1( -t_step / P_.tau_m_ );
 
   const double P21_ex = propagator_ex_.evaluate( t_step );
   const double P21_in = propagator_in_.evaluate( t_step );
@@ -604,9 +605,9 @@ nest::iaf_psc_exp_ps_lossless::is_spike_( const double dt )
 
   const double I_0 = V_.I_syn_ex_before_ + V_.I_syn_in_before_;
   const double V_0 = V_.y2_before_;
-  const double exp_tau_s = numerics::expm1( dt / P_.tau_ex_ );
-  const double exp_tau_m = numerics::expm1( dt / P_.tau_m_ );
-  const double exp_tau_m_s = numerics::expm1( dt / P_.tau_m_ - dt / P_.tau_ex_ );
+  const double exp_tau_s = std::expm1( dt / P_.tau_ex_ );
+  const double exp_tau_m = std::expm1( dt / P_.tau_m_ );
+  const double exp_tau_m_s = std::expm1( dt / P_.tau_m_ - dt / P_.tau_ex_ );
   const double I_e = V_.y0_before_ + P_.I_e_;
 
   /* Expressions for f and b below are rewritten but equivalent
@@ -627,7 +628,7 @@ nest::iaf_psc_exp_ps_lossless::is_spike_( const double dt )
            / ( V_.b4_ * exp_tau_s ) ) )
     and V_0 <= f )
   {
-    return numerics::nan;
+    return std::nan( "" );
   }
 
   // spike, S_1, V >= f_h,I_e(I)
@@ -639,7 +640,7 @@ nest::iaf_psc_exp_ps_lossless::is_spike_( const double dt )
   else if ( V_0
     < ( V_.c1_ * I_e + V_.c2_ * I_0 + V_.c3_ * std::pow( I_0, V_.c4_ ) * std::pow( ( V_.c5_ - I_e ), V_.c6_ ) ) )
   {
-    return numerics::nan;
+    return std::nan( "" );
   }
   else
   // missed spike detected, S_2

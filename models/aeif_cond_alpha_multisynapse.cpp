@@ -25,11 +25,12 @@
 #ifdef HAVE_GSL
 
 // C++ includes:
+#include <cmath>
 #include <limits>
+#include <numbers>
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
@@ -443,7 +444,7 @@ aeif_cond_alpha_multisynapse::pre_run_hook()
 
   for ( size_t i = 0; i < P_.n_receptors(); ++i )
   {
-    V_.g0_[ i ] = 1.0 * numerics::e / P_.tau_syn[ i ];
+    V_.g0_[ i ] = 1.0 * std::numbers::e / P_.tau_syn[ i ];
   }
 
   // set the right threshold depending on Delta_T

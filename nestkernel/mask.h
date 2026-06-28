@@ -24,11 +24,12 @@
 #define MASK_H
 
 // C++ includes:
+#include <cmath>
 #include <memory>
+#include <numbers>
 
 // Includes from libnestutil:
 #include "dictionary.h"
-#include "numerics.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
@@ -393,10 +394,10 @@ public:
     , x_scale_( 4.0 / ( major_axis_ * major_axis_ ) )
     , y_scale_( 4.0 / ( minor_axis_ * minor_axis_ ) )
     , z_scale_( 4.0 / ( polar_axis_ * polar_axis_ ) )
-    , azimuth_cos_( std::cos( azimuth_angle_ * numerics::pi / 180. ) )
-    , azimuth_sin_( std::sin( azimuth_angle_ * numerics::pi / 180. ) )
-    , polar_cos_( std::cos( polar_angle_ * numerics::pi / 180. ) )
-    , polar_sin_( std::sin( polar_angle_ * numerics::pi / 180. ) )
+    , azimuth_cos_( std::cos( azimuth_angle_ * std::numbers::pi / 180. ) )
+    , azimuth_sin_( std::sin( azimuth_angle_ * std::numbers::pi / 180. ) )
+    , polar_cos_( std::cos( polar_angle_ * std::numbers::pi / 180. ) )
+    , polar_sin_( std::sin( polar_angle_ * std::numbers::pi / 180. ) )
   {
     if ( major_axis_ <= 0 or minor_axis_ <= 0 or polar_axis_ <= 0 )
     {
@@ -768,10 +769,10 @@ BoxMask< D >::BoxMask( const Dictionary& d )
     polar_angle_ = 0.0;
   }
 
-  azimuth_cos_ = std::cos( azimuth_angle_ * numerics::pi / 180. );
-  azimuth_sin_ = std::sin( azimuth_angle_ * numerics::pi / 180. );
-  polar_cos_ = std::cos( polar_angle_ * numerics::pi / 180. );
-  polar_sin_ = std::sin( polar_angle_ * numerics::pi / 180. );
+  azimuth_cos_ = std::cos( azimuth_angle_ * std::numbers::pi / 180. );
+  azimuth_sin_ = std::sin( azimuth_angle_ * std::numbers::pi / 180. );
+  polar_cos_ = std::cos( polar_angle_ * std::numbers::pi / 180. );
+  polar_sin_ = std::sin( polar_angle_ * std::numbers::pi / 180. );
 
   cntr_ = ( upper_right_ + lower_left_ ) * 0.5;
   for ( int i = 0; i != D; ++i )
@@ -824,10 +825,10 @@ inline BoxMask< D >::BoxMask( const Position< D >& lower_left,
   , upper_right_( upper_right )
   , azimuth_angle_( azimuth_angle )
   , polar_angle_( polar_angle )
-  , azimuth_cos_( std::cos( azimuth_angle_ * numerics::pi / 180. ) )
-  , azimuth_sin_( std::sin( azimuth_angle_ * numerics::pi / 180. ) )
-  , polar_cos_( std::cos( polar_angle_ * numerics::pi / 180. ) )
-  , polar_sin_( std::sin( polar_angle_ * numerics::pi / 180. ) )
+  , azimuth_cos_( std::cos( azimuth_angle_ * std::numbers::pi / 180. ) )
+  , azimuth_sin_( std::sin( azimuth_angle_ * std::numbers::pi / 180. ) )
+  , polar_cos_( std::cos( polar_angle_ * std::numbers::pi / 180. ) )
+  , polar_sin_( std::sin( polar_angle_ * std::numbers::pi / 180. ) )
   , cntr_( ( upper_right_ + lower_left_ ) * 0.5 )
   , cntr_x_az_cos_( cntr_[ 0 ] * azimuth_cos_ )
   , cntr_x_az_sin_( cntr_[ 0 ] * azimuth_sin_ )
@@ -996,10 +997,10 @@ EllipseMask< D >::EllipseMask( const Dictionary& d )
     polar_angle_ = 0.0;
   }
 
-  azimuth_cos_ = std::cos( azimuth_angle_ * numerics::pi / 180. );
-  azimuth_sin_ = std::sin( azimuth_angle_ * numerics::pi / 180. );
-  polar_cos_ = std::cos( polar_angle_ * numerics::pi / 180. );
-  polar_sin_ = std::sin( polar_angle_ * numerics::pi / 180. );
+  azimuth_cos_ = std::cos( azimuth_angle_ * std::numbers::pi / 180. );
+  azimuth_sin_ = std::sin( azimuth_angle_ * std::numbers::pi / 180. );
+  polar_cos_ = std::cos( polar_angle_ * std::numbers::pi / 180. );
+  polar_sin_ = std::sin( polar_angle_ * std::numbers::pi / 180. );
 
   create_bbox_();
 }

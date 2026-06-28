@@ -26,11 +26,9 @@
 #ifdef HAVE_GSL
 
 // C++ includes:
+#include <cmath>
 #include <cstdio>
 #include <iostream>
-
-// Includes from libnestutil:
-#include "numerics.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
@@ -621,7 +619,7 @@ nest::pp_cond_exp_mc_urbanczik::update( Time const& origin, const long from, con
         if ( P_.t_ref > 0.0 )
         {
           // Draw random number and compare to prob to have a spike
-          if ( V_.rng_->drand() <= -numerics::expm1( -rate * V_.h_ * 1e-3 ) )
+          if ( V_.rng_->drand() <= -std::expm1( -rate * V_.h_ * 1e-3 ) )
           {
             n_spikes = 1;
           }

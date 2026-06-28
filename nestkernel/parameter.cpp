@@ -21,6 +21,7 @@
  */
 
 #include <cmath>
+#include <numbers>
 
 #include "node.h"
 #include "node_collection.h"
@@ -382,8 +383,8 @@ GaborParameter::GaborParameter( const Dictionary& d )
   : Parameter( true )
   , px_( d.get< ParameterPTR >( "x" ) )
   , py_( d.get< ParameterPTR >( "y" ) )
-  , cos_( std::cos( d.get< double >( "theta" ) * numerics::pi / 180. ) )
-  , sin_( std::sin( d.get< double >( "theta" ) * numerics::pi / 180. ) )
+  , cos_( std::cos( d.get< double >( "theta" ) * std::numbers::pi / 180. ) )
+  , sin_( std::sin( d.get< double >( "theta" ) * std::numbers::pi / 180. ) )
   , gamma_( d.get< double >( "gamma" ) )
   , inv_two_std2_( 1.0 / ( 2 * d.get< double >( "std" ) * d.get< double >( "std" ) ) )
   , lambda_( d.get< double >( "lam" ) )
@@ -415,7 +416,7 @@ GaborParameter::value( RngPtr rng,
   const auto gabor_exp =
     std::exp( -gamma_ * gamma_ * dx_prime * dx_prime * inv_two_std2_ - dy_prime * dy_prime * inv_two_std2_ );
   const auto gabor_cos_plus =
-    std::max( std::cos( 2 * numerics::pi * dy_prime / lambda_ + psi_ * numerics::pi / 180. ), 0. );
+    std::max( std::cos( 2 * std::numbers::pi * dy_prime / lambda_ + psi_ * std::numbers::pi / 180. ), 0. );
   const auto gabor_res = gabor_exp * gabor_cos_plus;
 
   return gabor_res;

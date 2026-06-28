@@ -33,9 +33,6 @@
 #include <limits>
 #include <string>
 
-// Includes from libnestutil:
-#include "numerics.h"
-
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
@@ -202,7 +199,7 @@ nest::rate_neuron_opn< TNonlinearities >::init_buffers_()
   B_.instant_rates_ex_.resize( buffer_size, 0.0 );
   B_.instant_rates_in_.resize( buffer_size, 0.0 );
   B_.last_y_values.resize( buffer_size, 0.0 );
-  B_.random_numbers.resize( buffer_size, numerics::nan );
+  B_.random_numbers.resize( buffer_size, std::nan( "" ) );
 
   // initialize random numbers
   for ( unsigned int i = 0; i < buffer_size; i++ )
@@ -224,7 +221,7 @@ nest::rate_neuron_opn< TNonlinearities >::pre_run_hook()
 
   // propagators
   V_.P1_ = std::exp( -h / P_.tau_ );
-  V_.P2_ = -numerics::expm1( -h / P_.tau_ );
+  V_.P2_ = -std::expm1( -h / P_.tau_ );
 
   // Gaussian white noise approximated by piecewise constant value
   V_.output_noise_factor_ = std::sqrt( P_.tau_ / h );
@@ -340,7 +337,7 @@ nest::rate_neuron_opn< TNonlinearities >::update_( Time const& origin,
     }
 
     // create new random numbers
-    B_.random_numbers.resize( buffer_size, numerics::nan );
+    B_.random_numbers.resize( buffer_size, std::nan( "" ) );
     for ( unsigned int i = 0; i < buffer_size; i++ )
     {
       B_.random_numbers[ i ] = V_.normal_dist_( get_vp_specific_rng( get_thread() ) );

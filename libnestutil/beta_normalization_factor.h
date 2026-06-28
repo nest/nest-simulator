@@ -25,9 +25,7 @@
 
 #include <cmath>
 #include <limits>
-
-// Includes from libnestutil
-#include "numerics.h"
+#include <numbers>
 
 namespace nest
 {
@@ -85,7 +83,7 @@ beta_normalization_factor( const double tau_rise, const double tau_decay )
   if ( std::abs( peak_value ) < std::numeric_limits< double >::epsilon() )
   {
     // if rise time == decay time use alpha function
-    return numerics::e / tau_decay;
+    return std::numbers::e / tau_decay;
   }
   else
   {

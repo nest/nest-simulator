@@ -23,13 +23,11 @@
 #include "nest_time.h"
 
 // C++ includes:
+#include <cmath>
 #include <string>
 
 // Generated includes:
 #include "config.h"
-
-// Includes from libnestutil:
-#include "numerics.h"
 
 using namespace nest;
 
@@ -89,7 +87,7 @@ Time::set_resolution( double ms_per_step )
 {
   assert( ms_per_step > 0 );
 
-  Range::TICS_PER_STEP = static_cast< tic_t >( dround( Range::TICS_PER_MS * ms_per_step ) );
+  Range::TICS_PER_STEP = static_cast< tic_t >( std::round( Range::TICS_PER_MS * ms_per_step ) );
   Range::TICS_PER_STEP_INV = 1. / static_cast< double >( Range::TICS_PER_STEP );
   Range::TICS_PER_STEP_RND = Range::TICS_PER_STEP - 1;
 

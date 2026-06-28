@@ -24,10 +24,11 @@
 
 // C++ includes:
 #include <algorithm>
+#include <cmath>
+#include <numbers>
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
@@ -209,7 +210,7 @@ nest::ppd_sup_generator::pre_run_hook()
   unsigned long num_age_bins = static_cast< unsigned long >( P_.dead_time_ / h );
 
   // compute omega to evaluate modulation with, units [rad/ms]
-  V_.omega_ = 2.0 * numerics::pi * P_.frequency_ / 1000.0;
+  V_.omega_ = 2.0 * std::numbers::pi * P_.frequency_ / 1000.0;
 
   // hazard rate in units of the simulation time step.
   V_.hazard_step_ = 1.0 / ( 1000.0 / P_.rate_ - P_.dead_time_ ) * h;

@@ -23,8 +23,10 @@
 #include "glif_psc.h"
 
 // C++ includes:
+#include <cmath>
 #include <iostream>
 #include <limits>
+#include <numbers>
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -451,7 +453,7 @@ nest::glif_psc::pre_run_hook()
     // input time parameter shall be in ms, capacity in pF
     std::tie( V_.P31_[ i ], V_.P32_[ i ] ) = IAFPropagatorAlpha( P_.tau_syn_[ i ], Tau_, P_.C_m_ ).evaluate( h );
 
-    V_.PSCInitialValues_[ i ] = 1.0 * numerics::e / P_.tau_syn_[ i ];
+    V_.PSCInitialValues_[ i ] = 1.0 * std::numbers::e / P_.tau_syn_[ i ];
     B_.spikes_[ i ].resize();
   }
 

@@ -20,102 +20,14 @@
  *
  */
 
+#include <cmath>
 #include <cstdlib>
-#include <iostream>
 #include <numeric>
 
 #include "nest_types.h"
 #include "numerics.h"
 
-#ifndef HAVE_M_E
-
-#ifdef HAVE_CMATH_MAKROS_IGNORED
-#define M_E_OK
-#undef __PURE_CNAME
-#include <cmath>
-#define __PURE_CNAME
-#else
-#include <cmath>
-#endif
-
-#else
-#define M_E_OK
-#include <cmath>
-#endif
-
-
-#ifndef HAVE_M_PI
-
-#ifdef HAVE_CMATH_MAKROS_IGNORED
-#define M_PI_OK
-#endif
-
-#else
-#define M_PI_OK
-#endif
-
-#if defined( HAVE_STD_NAN )
-#include <cmath>
-#elif defined( HAVE_NAN )
-#include <math.h>
-#endif
-
-//
-//   e
-//
-#ifdef HAVE_GSL
-
-#include <gsl/gsl_math.h>
-const double numerics::e = M_E;
-const double numerics::pi = M_PI;
-
-#else
-
-#ifdef M_E_OK
-const double numerics::e = M_E;
-#else
-const double numerics::e = 2.71828182845904523536028747135;
-#endif
-
-#ifdef M_PI_OK
-const double numerics::pi = M_PI;
-#else
-const double numerics::pi = 3.14159265358979323846264338328;
-#endif
-
-#endif
-
-#if defined( HAVE_STD_NAN )
-const double numerics::nan = ::nan( "" );
-#elif defined( HAVE_NAN )
-const double numerics::nan = NAN;
-#else
-const double numerics::nan = 0.0 / 0.0;
-#endif
-
 const double numerics::sqrt_log_two = std::sqrt( std::log( 2.0 ) );
-
-// later also in namespace
-long
-ld_round( double x )
-{
-  return static_cast< long >( std::floor( x + 0.5 ) );
-}
-
-double
-dround( double x )
-{
-  return std::floor( x + 0.5 );
-}
-
-double
-dtruncate( double x )
-{
-  double ip;
-
-  std::modf( x, &ip );
-  return ip;
-}
 
 bool
 is_integer( double n )

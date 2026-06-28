@@ -31,7 +31,6 @@
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
@@ -299,7 +298,7 @@ nest::siegert_neuron::pre_run_hook()
 
   // propagators
   V_.P1_ = std::exp( -h / P_.tau_ );
-  V_.P2_ = -numerics::expm1( -h / P_.tau_ );
+  V_.P2_ = -std::expm1( -h / P_.tau_ );
 }
 
 /* ----------------------------------------------------------------

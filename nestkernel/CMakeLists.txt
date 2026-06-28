@@ -153,9 +153,9 @@ set_target_properties( nestkernel PROPERTIES POSITION_INDEPENDENT_CODE ON )
 target_link_libraries( nestkernel
   PUBLIC
     nestutil models
+    MPI::MPI_CXX
   PRIVATE
     ${LTDL_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES} ${HDF5_LIBRARIES}
-    MPI::MPI_CXX
     OpenMP::OpenMP_CXX
 )
 

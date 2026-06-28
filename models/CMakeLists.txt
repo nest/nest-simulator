@@ -38,7 +38,13 @@ endif()
 
 set_target_properties(models PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
-target_link_libraries(models nestutil nestkernel)
+target_link_libraries(models
+  PUBLIC
+    nestutil nestkernel
+  PRIVATE
+    GSL::gsl
+    OpenMP::OpenMP_CXX
+)
 
 target_include_directories(models PRIVATE
     ${PROJECT_SOURCE_DIR}/thirdparty

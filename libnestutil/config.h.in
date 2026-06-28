@@ -63,53 +63,14 @@
 /* tics per step in simulation */
 #define CONFIG_TICS_PER_STEP @tics_per_step@
 
-/* Define to 1 if you have a 32 bit architecture */
-#cmakedefine HAVE_32BIT_ARCH 1
-
-/* define if the compiler does not include *.h headers ISO conformant */
-#cmakedefine HAVE_ALPHA_CXX_STD_BUG 1
-
-/* define if the compiler ignores cmath makros */
-#cmakedefine HAVE_CMATH_MAKROS_IGNORED 1
-
-/* "Define if expm1() is available" */
-#cmakedefine HAVE_EXPM1 1
-
 /* Is the GNU Science Library available (ver. >= 1.0)? */
 #cmakedefine HAVE_GSL 1
-
-/* "Define if isnan() is available" */
-#cmakedefine HAVE_ISNAN 1
-
-/* "Define if std::isnan() is available" */
-#cmakedefine HAVE_STD_ISNAN 1
-
-/* define for istream */
-#cmakedefine HAVE_ISTREAM 1
 
 /* Havel libltdl, can load dynamic modules */
 #cmakedefine HAVE_LIBLTDL 1
 
 /* libneurosim support enabled? */
 #cmakedefine HAVE_LIBNEUROSIM 1
-
-/* Define to 1 if you have usable long long type. */
-#cmakedefine HAVE_LONG_LONG 1
-
-/* Define to 1 if you have u_int64_t type. */
-#cmakedefine HAVE_U_INT64_T 1
-
-/* Define to 1 if you have uint64_t type. */
-#cmakedefine HAVE_UINT64_T 1
-
-/* Define to 1 if you have the <mach/mach.h> header file. */
-#cmakedefine HAVE_MACH_MACH_H 1
-
-/* Define to 1 if you have the <mach-o/dyld.h> header file. */
-#cmakedefine HAVE_MACH_O_DYLD_H 1
-
-/* Define to 1 if you have the <memory.h> header file. */
-#cmakedefine HAVE_MEMORY_H 1
 
 /* MPI is available. */
 #cmakedefine HAVE_MPI 1
@@ -120,44 +81,14 @@
 /* MUSIC support enabled? */
 #cmakedefine HAVE_MUSIC 1
 
-/* define if M_E is defined */
-#cmakedefine HAVE_M_E 1
-
-/* define if M_PI is defined */
-#cmakedefine HAVE_M_PI 1
-
-/* "Define if NAN is available" */
-#cmakedefine HAVE_NAN 1
-
-/* "Define if std::nan(nullptr) is available" */
-#cmakedefine HAVE_STD_NAN 1
-
-/* define for ostream */
-#cmakedefine HAVE_OSTREAM 1
-
-/* define if the compiler ignores symbolic signal names in signal.h */
-#cmakedefine HAVE_SIGUSR_IGNORED 1
-
-/* define for sstream */
-#cmakedefine HAVE_SSTREAM 1
-
-/* define if the compiler fails on static template member declaration */
-#cmakedefine HAVE_STATIC_TEMPLATE_DECLARATION_FAIL 1
-
 /* define for STL vector capacity base unity */
 #cmakedefine HAVE_STL_VECTOR_CAPACITY_BASE_UNITY 1
-
-/* define for STL vector capacity doubling strategy */
-#cmakedefine HAVE_STL_VECTOR_CAPACITY_DOUBLING 1
 
 /* Tics per millisecond specified? */
 #cmakedefine HAVE_TICS_PER_MS 1
 
 /* Tics per step specified? */
 #cmakedefine HAVE_TICS_PER_STEP 1
-
-/* define if the compiler fails with ICE */
-#cmakedefine HAVE_XLC_ICE_ON_USING 1
 
 /* Is SIONlib available? */
 #cmakedefine HAVE_SIONLIB 1

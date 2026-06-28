@@ -27,7 +27,6 @@
 
 ####### NEST_EXITCODE_ABORT ########
 function( NEST_CHECK_EXITCODE_ABORT )
-  printInfo( "Check the abort exitcode." )
   set( ABORT_ERR "" )
   try_compile( COMPILE_VAR
       ${CMAKE_BINARY_DIR}
@@ -50,13 +49,12 @@ function( NEST_CHECK_EXITCODE_ABORT )
       file( REMOVE "${CMAKE_BINARY_DIR}/assert_value" )
     endif ()
   endif ()
-  printInfo( "Check the abort exitcode. ${ABORT_ERR}" )
+  printInfo( "Check the abort exitcode: ${ABORT_ERR}" )
   set( NEST_EXITCODE_ABORT ${ABORT_ERR} PARENT_SCOPE )
 endfunction()
 
 ####### NEST_EXITCODE_SEGFAULT ########
 function( NEST_CHECK_EXITCODE_SEGFAULT )
-  printInfo( "Check the segmentation fault exitcode." )
   set( SEG_ERR "" )
   try_compile( COMPILE_VAR
       ${CMAKE_BINARY_DIR}
@@ -78,13 +76,12 @@ function( NEST_CHECK_EXITCODE_SEGFAULT )
       file( REMOVE "${CMAKE_BINARY_DIR}/segfault_value" )
     endif ()
   endif ()
-  printInfo( "Check the segmentation fault exitcode. ${SEG_ERR}" )
+  printInfo( "Check the segmentation fault exitcode: ${SEG_ERR}" )
   set( NEST_EXITCODE_SEGFAULT ${SEG_ERR} PARENT_SCOPE )
 endfunction()
 
 ####### HAVE_STL_VECTOR_CAPACITY_BASE_UNITY ########
 function( NEST_CHECK_HAVE_STL_VECTOR_CAPACITY_BASE_UNITY )
-  printInfo( "Check for STL vector capacity base unity." )
   set( RUN_RESULT 0 )
   set( RUN_RESULT__TRYRUN_OUTPUT "" )
   try_run( RUN_RESULT COMPILE_RESULT
@@ -99,12 +96,11 @@ function( NEST_CHECK_HAVE_STL_VECTOR_CAPACITY_BASE_UNITY )
     set( HAVE_STL_VECTOR_CAPACITY_BASE_UNITY OFF )
   endif ()
   set( HAVE_STL_VECTOR_CAPACITY_BASE_UNITY ${HAVE_STL_VECTOR_CAPACITY_BASE_UNITY} PARENT_SCOPE )
-  printInfo( "Check for STL vector capacity base unity. ${HAVE_STL_VECTOR_CAPACITY_BASE_UNITY}" )
+  printInfo( "Check for STL vector capacity base unity: ${HAVE_STL_VECTOR_CAPACITY_BASE_UNITY}" )
 endfunction()
 
 ####### Test if Random123 generators work #######
 function( NEST_CHECK_RANDOM123 )
-  printInfo( "Check if Random123 generators work." )
   try_run( RUN_RESULT COMPILE_RESULT
       ${CMAKE_BINARY_DIR}
       ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/Random123/tests/kat_cpp.cpp
@@ -123,5 +119,5 @@ function( NEST_CHECK_RANDOM123 )
     set( HAVE_RANDOM123 ON )
   endif ()
   set( HAVE_RANDOM123 ${HAVE_RANDOM123} PARENT_SCOPE )
-  printInfo( "Check if Random123 generators work. ${HAVE_RANDOM123}" )
+  printInfo( "Check if Random123 generators work: ${HAVE_RANDOM123}" )
 endfunction()

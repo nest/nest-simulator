@@ -18,7 +18,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 # Found via find_package(NESTSimulator); defines NEST::nest (see
-# cmake/NESTSimulatorConfigExport.cmake). GSL::gsl/Boost::headers/
+# cmake/ExportModuleBuildConfig.cmake). GSL::gsl/Boost::headers/
 # MPI::MPI_CXX/OpenMP::OpenMP_CXX are referenced by name in NEST::nest's
 # link libraries, so a target by each name must exist here too.
 #
@@ -34,8 +34,8 @@ if ( NOT TARGET GSL::gsl )
   add_library( GSL::gsl INTERFACE IMPORTED )
   if ( @HAVE_GSL@ )
     set_target_properties( GSL::gsl PROPERTIES
-      INTERFACE_INCLUDE_DIRECTORIES "@GSL_INCLUDE_DIRS@"
-      INTERFACE_LINK_LIBRARIES "@GSL_LIBRARIES@"
+      INTERFACE_INCLUDE_DIRECTORIES "@_gsl_includes@"
+      INTERFACE_LINK_LIBRARIES "@_gsl_libs@"
     )
   endif ()
 endif ()
@@ -44,7 +44,7 @@ if ( NOT TARGET Boost::headers )
   add_library( Boost::headers INTERFACE IMPORTED )
   if ( @HAVE_BOOST@ )
     set_target_properties( Boost::headers PROPERTIES
-      INTERFACE_INCLUDE_DIRECTORIES "@_boost_inc@"
+      INTERFACE_INCLUDE_DIRECTORIES "@_boost_includes@"
     )
   endif ()
 endif ()
@@ -53,9 +53,9 @@ if ( NOT TARGET MPI::MPI_CXX )
   add_library( MPI::MPI_CXX INTERFACE IMPORTED )
   if ( @HAVE_MPI@ )
     set_target_properties( MPI::MPI_CXX PROPERTIES
-      INTERFACE_INCLUDE_DIRECTORIES "@MPI_CXX_INCLUDE_DIRS@"
-      INTERFACE_LINK_LIBRARIES "@MPI_CXX_LIBRARIES@"
-      INTERFACE_COMPILE_OPTIONS "@_nest_mpi_compile_options@"
+      INTERFACE_INCLUDE_DIRECTORIES "@_mpi_includes@"
+      INTERFACE_LINK_LIBRARIES "@_mpi_libs@"
+      INTERFACE_COMPILE_OPTIONS "@_mpi_opts@"
     )
   endif ()
 endif ()
@@ -64,9 +64,9 @@ if ( NOT TARGET OpenMP::OpenMP_CXX )
   add_library( OpenMP::OpenMP_CXX INTERFACE IMPORTED )
   if ( @OpenMP_FOUND@ )
     set_target_properties( OpenMP::OpenMP_CXX PROPERTIES
-      INTERFACE_INCLUDE_DIRECTORIES "@OpenMP_CXX_INCLUDE_DIRS@"
-      INTERFACE_LINK_LIBRARIES "@OpenMP_CXX_LIBRARIES@"
-      INTERFACE_COMPILE_OPTIONS "@_nest_openmp_compile_options@"
+      INTERFACE_INCLUDE_DIRECTORIES "@_openmp_includes@"
+      INTERFACE_LINK_LIBRARIES "@_openmp_libs@"
+      INTERFACE_COMPILE_OPTIONS "@_openmp_opts@"
     )
   endif ()
 endif ()

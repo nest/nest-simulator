@@ -271,12 +271,10 @@ function( NEST_PROCESS_WITH_GSL )
     find_package( GSL 1.11 REQUIRED QUIET )
     message( STATUS "Found GSL: ${GSL_LIBRARIES} (found version ${GSL_VERSION})" )
 
+    # HAVE_GSL: simple flag, no equivalent target property exists.
+    # GSL_VERSION: display-only (ConfigureSummary), single consumer.
     set( HAVE_GSL ON PARENT_SCOPE )
-
-    # export variables needed for nest-config generation
     set( GSL_VERSION "${GSL_VERSION}" PARENT_SCOPE )
-    set( GSL_LIBRARIES "${GSL_LIBRARIES}" PARENT_SCOPE )
-    set( GSL_INCLUDE_DIRS "${GSL_INCLUDE_DIRS}" PARENT_SCOPE )
     # consumers use GSL::gsl imported target; no global include_directories() needed
   endif ()
 
@@ -381,10 +379,8 @@ function( NEST_PROCESS_WITH_OPENMP )
     find_package( OpenMP REQUIRED QUIET )
     message( STATUS "Found OpenMP: ${OpenMP_CXX_FLAGS} (found version ${OpenMP_VERSION})" )
 
+    # OpenMP_FOUND: simple flag, no equivalent target property exists.
     set( OpenMP_FOUND "${OpenMP_FOUND}" PARENT_SCOPE )
-    set( OpenMP_CXX_FLAGS "${OpenMP_CXX_FLAGS}" PARENT_SCOPE )
-    set( OpenMP_CXX_LIBRARIES "${OpenMP_CXX_LIBRARIES}" PARENT_SCOPE )
-    set( OpenMP_CXX_INCLUDE_DIRS "${OpenMP_CXX_INCLUDE_DIRS}" PARENT_SCOPE )
     # consumers use OpenMP::OpenMP_CXX imported target
   endif ()  # with-openmp
 
@@ -412,15 +408,14 @@ function( NEST_PROCESS_WITH_MPI )
     # for the other dependencies above.
     message( STATUS "Found MPI: ${MPI_CXX_COMPILER}" )
 
+    # HAVE_MPI: simple flag, no equivalent target property exists.
+    # MPI_CXX_FOUND/MPI_CXX_COMPILER/MPI_CXX_LINK_FLAGS/MPIEXEC*: display-only
+    # (ConfigureSummary) or genuinely unique info (compiler wrapper path,
+    # test launcher), not derivable from MPI::MPI_CXX's own properties.
     set( HAVE_MPI ON PARENT_SCOPE )
-
-    # export variables needed for nest-config generation and ConfigureSummary
     set( MPI_CXX_FOUND "${MPI_CXX_FOUND}" PARENT_SCOPE )
     set( MPI_CXX_COMPILER "${MPI_CXX_COMPILER}" PARENT_SCOPE )
-    set( MPI_CXX_COMPILE_FLAGS "${MPI_CXX_COMPILE_FLAGS}" PARENT_SCOPE )
-    set( MPI_CXX_INCLUDE_PATH "${MPI_CXX_INCLUDE_PATH}" PARENT_SCOPE )
     set( MPI_CXX_LINK_FLAGS "${MPI_CXX_LINK_FLAGS}" PARENT_SCOPE )
-    set( MPI_CXX_LIBRARIES "${MPI_CXX_LIBRARIES}" PARENT_SCOPE )
     set( MPIEXEC "${MPIEXEC}" PARENT_SCOPE )
     set( MPIEXEC_NUMPROC_FLAG "${MPIEXEC_NUMPROC_FLAG}" PARENT_SCOPE )
     set( MPIEXEC_PREFLAGS "${MPIEXEC_PREFLAGS}" PARENT_SCOPE )

@@ -124,9 +124,10 @@ include( CheckIncludesSymbols )
 include( ProcessOptions )
 include( CheckExtraCompilerFeatures )
 include( CheckUnknownOptions )
+include( TargetPropertyHelpers )
 include( ConfigureSummary )
 include( GetTriple )
-include( NESTSimulatorConfigExport )
+include( ExportModuleBuildConfig )
 
 # get triples arch-vendor-os
 get_host_triple( NEST_HOST_TRIPLE NEST_HOST_ARCH NEST_HOST_VENDOR NEST_HOST_OS )
@@ -233,92 +234,11 @@ if ( HAVE_PYTHON )
 endif ()
 
 ################################################################################
-##################           Summary of flags                 ##################
+##################   Build config for downstream modules      ##################
 ################################################################################
 
-# Used in nest-config
-
-# All compiler flags
-if ( NOT CMAKE_BUILD_TYPE OR "${CMAKE_BUILD_TYPE}" STREQUAL "None" )
-  set( ALL_CFLAGS "${CMAKE_C_FLAGS}" )
-  set( ALL_CXXFLAGS "${CMAKE_CXX_FLAGS}" )
-elseif ( "${CMAKE_BUILD_TYPE}" STREQUAL "Debug" )
-  set( ALL_CFLAGS "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_DEBUG}" )
-  set( ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}" )
-elseif ( "${CMAKE_BUILD_TYPE}" STREQUAL "Release" )
-  set( ALL_CFLAGS "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_RELEASE}" )
-  set( ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}" )
-elseif ( "${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo" )
-  set( ALL_CFLAGS "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_RELWITHDEBINFO}" )
-  set( ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELWITHDEBINFO}" )
-elseif ( "${CMAKE_BUILD_TYPE}" STREQUAL "MinSizeRel" )
-  set( ALL_CFLAGS "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_MINSIZEREL}" )
-  set( ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_MINSIZEREL}" )
-else ()
-  printError( "Unknown build type: '${CMAKE_BUILD_TYPE}'" )
-endif ()
-if ( with-defines )
-  foreach ( def ${with-defines} )
-    set( ALL_CFLAGS "${def} ${ALL_CFLAGS}" )
-    set( ALL_CXXFLAGS "${def} ${ALL_CXXFLAGS}" )
-  endforeach ()
-endif ()
-# add sionlib defines
-foreach ( def ${SIONLIB_DEFINES} )
-    set( ALL_CFLAGS "${ALL_CFLAGS} ${def}" )
-    set( ALL_CXXFLAGS "${ALL_CXXFLAGS} ${def}" )
-endforeach ()
-
-# Libraries required to link extension modules
-set( MODULE_LINK_LIBS
-  "${LTDL_LIBRARIES}"
-  "${GSL_LIBRARIES}"
-  "${LIBNEUROSIM_LIBRARIES}"
-  "${MUSIC_LIBRARIES}"
-  "${MPI_CXX_LIBRARIES}"
-  "${OpenMP_CXX_LIBRARIES}"
-  "${SIONLIB_LIBRARIES}" )
-
-if ( with-libraries )
-  set( MODULE_LINK_LIBS "${MODULE_LINK_LIBS};${with-libraries}" )
-endif ()
-string( REPLACE ";" " " MODULE_LINK_LIBS "${MODULE_LINK_LIBS}" )
-
-# All includes
-#
-# We need to add all includes with -I, especially prevent that headers
-# from homebrew are included with -isystem, which some FindPackage might
-# do, see https://github.com/nest/nest-simulator/pull/3544#issuecomment-4284243626.
-if ( HAVE_BOOST )
-  get_target_property( _boost_inc Boost::headers INTERFACE_INCLUDE_DIRECTORIES )
-endif ()
-set( ALL_INCLUDES_tmp
-  "${CMAKE_INSTALL_FULL_INCLUDEDIR}/nest"
-  "${LTDL_INCLUDE_DIRS}"
-  "${GSL_INCLUDE_DIRS}"
-  "${LIBNEUROSIM_INCLUDE_DIRS}"
-  "${MUSIC_INCLUDE_DIRS}"
-  "${OpenMP_CXX_INCLUDE_DIRS}"
-  "${MPI_CXX_INCLUDE_DIRS}"
-  "${SIONLIB_INCLUDE}"
-  "${_boost_inc}"
-  ${with-includes} )
-if ( ALL_INCLUDES_tmp )
-  list( REMOVE_DUPLICATES ALL_INCLUDES_tmp )
-endif ()
-set( ALL_INCLUDES "" )
-foreach ( INC ${ALL_INCLUDES_tmp} )
-  if ( INC )
-    set( ALL_INCLUDES "${ALL_INCLUDES} -I${INC}" )
-  endif ()
-endforeach ()
-
-################################################################################
-##################      NESTSimulator CMake package           ##################
-################################################################################
-
-# Modern alternative to nest-config
-nest_install_cmake_package()
+# Generates both bin/nest-config and the NESTSimulator CMake package.
+nest_export_module_build_config()
 
 ################################################################################
 ##################           File generation here             ##################
@@ -327,11 +247,6 @@ nest_install_cmake_package()
 configure_file(
     "${PROJECT_SOURCE_DIR}/libnestutil/config.h.in"
     "${PROJECT_BINARY_DIR}/libnestutil/config.h" @ONLY
-)
-
-configure_file(
-    "${PROJECT_SOURCE_DIR}/bin/nest-config.in"
-    "${PROJECT_BINARY_DIR}/bin/nest-config" @ONLY
 )
 
 configure_file(

@@ -22,7 +22,7 @@ cmake_minimum_required( VERSION 3.19 )
 # add cmake modules: for all `include(...)` first look here
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
 
-project( nest CXX C )
+project( nest CXX )
 
 set( CMAKE_CXX_STANDARD 20 )
 set( CMAKE_CXX_STANDARD_REQUIRED True )
@@ -175,21 +175,13 @@ nest_process_with_optimize()
 nest_process_with_debug()
 
 nest_get_color_flags()
-set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${NEST_C_COLOR_FLAGS}" )
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${NEST_CXX_COLOR_FLAGS}" )
 
 # check additionals
 nest_check_exitcode_abort()
 nest_check_exitcode_segfault()
 nest_check_have_cmath_makros_ignored()
-nest_check_have_alpha_cxx_std_bug()
-nest_check_have_sigusr_ignored()
-nest_check_have_static_template_declaration_fail()
 nest_check_have_stl_vector_capacity_base_unity()
-nest_check_have_stl_vector_capacity_doubling()
-nest_check_have_xlc_ice_on_using()
-nest_check_have_std_nan()
-nest_check_have_std_isnan()
 nest_check_random123()
 
 include( NestVersionInfo )
@@ -249,16 +241,16 @@ endif ()
 if ( NOT CMAKE_BUILD_TYPE OR "${CMAKE_BUILD_TYPE}" STREQUAL "None" )
   set( ALL_CFLAGS "${CMAKE_C_FLAGS}" )
   set( ALL_CXXFLAGS "${CMAKE_CXX_FLAGS}" )
-elseif ( ${CMAKE_BUILD_TYPE} STREQUAL "Debug" )
+elseif ( "${CMAKE_BUILD_TYPE}" STREQUAL "Debug" )
   set( ALL_CFLAGS "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_DEBUG}" )
   set( ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}" )
-elseif ( ${CMAKE_BUILD_TYPE} STREQUAL "Release" )
+elseif ( "${CMAKE_BUILD_TYPE}" STREQUAL "Release" )
   set( ALL_CFLAGS "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_RELEASE}" )
   set( ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}" )
-elseif ( ${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo" )
+elseif ( "${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo" )
   set( ALL_CFLAGS "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_RELWITHDEBINFO}" )
   set( ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELWITHDEBINFO}" )
-elseif ( ${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel" )
+elseif ( "${CMAKE_BUILD_TYPE}" STREQUAL "MinSizeRel" )
   set( ALL_CFLAGS "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_MINSIZEREL}" )
   set( ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_MINSIZEREL}" )
 else ()
@@ -284,8 +276,7 @@ set( MODULE_LINK_LIBS
   "${MUSIC_LIBRARIES}"
   "${MPI_CXX_LIBRARIES}"
   "${OpenMP_CXX_LIBRARIES}"
-  "${SIONLIB_LIBRARIES}"
-  "${BOOST_LIBRARIES}" )
+  "${SIONLIB_LIBRARIES}" )
 
 if ( with-libraries )
   set( MODULE_LINK_LIBS "${MODULE_LINK_LIBS};${with-libraries}" )
@@ -299,6 +290,9 @@ set( ALL_LIBS
 
 
 # all includes
+if ( HAVE_BOOST )
+  get_target_property( _boost_inc Boost::headers INTERFACE_INCLUDE_DIRECTORIES )
+endif ()
 set( ALL_INCLUDES_tmp
   "${CMAKE_INSTALL_FULL_INCLUDEDIR}/nest"
   "${LTDL_INCLUDE_DIRS}"
@@ -307,7 +301,7 @@ set( ALL_INCLUDES_tmp
   "${MUSIC_INCLUDE_DIRS}"
   "${OpenMP_CXX_INCLUDE_DIRS}"
   "${MPI_CXX_INCLUDE_PATH}"
-  "${BOOST_INCLUDE_DIR}" )
+  "${_boost_inc}" )
 set( ALL_INCLUDES "" )
 foreach ( INC ${ALL_INCLUDES_tmp} ${with-includes} )
   if ( INC AND NOT INC STREQUAL "" )

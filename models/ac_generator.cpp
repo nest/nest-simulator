@@ -24,10 +24,10 @@
 
 // C++ includes:
 #include <cmath>
+#include <numbers>
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
@@ -186,8 +186,8 @@ nest::ac_generator::pre_run_hook()
   const double t = kernel().simulation_manager.get_time().get_ms();
 
   // scale Hz to ms
-  const double omega = 2.0 * numerics::pi * P_.freq_ / 1000.0;
-  const double phi_rad = P_.phi_deg_ * 2.0 * numerics::pi / 360.0;
+  const double omega = 2.0 * std::numbers::pi * P_.freq_ / 1000.0;
+  const double phi_rad = P_.phi_deg_ * 2.0 * std::numbers::pi / 360.0;
 
   // initial state
   S_.y_0_ = P_.amp_ * std::cos( omega * t + phi_rad );

@@ -692,8 +692,8 @@ nest::ConnectionManager::connect_arrays( const long* sources,
       auto t = targets;
       auto w = weights;
       auto d = delays;
-      double weight_buffer = numerics::nan;
-      double delay_buffer = numerics::nan;
+      double weight_buffer = std::nan( "" );
+      double delay_buffer = std::nan( "" );
       int index_counter = 0;  // Index of the current connection, for connection parameters
 
       for ( ; s != sources + n; ++s, ++t, ++index_counter )

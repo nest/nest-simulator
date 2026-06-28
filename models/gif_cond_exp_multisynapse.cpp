@@ -25,13 +25,13 @@
 #ifdef HAVE_GSL
 
 // C++ includes:
+#include <cmath>
 #include <cstdio>
 #include <iostream>
 
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "dict_util.h"
-#include "numerics.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
@@ -531,7 +531,7 @@ nest::gif_cond_exp_multisynapse::update( Time const& origin, const long from, co
 
         // Draw random number and compare to prob to have a spike
         // hazard function is computed by 1 - exp(- lambda * dt)
-        if ( V_.rng_->drand() < -numerics::expm1( -lambda * Time::get_resolution().get_ms() ) )
+        if ( V_.rng_->drand() < -std::expm1( -lambda * Time::get_resolution().get_ms() ) )
         {
 
           for ( size_t i = 0; i < S_.stc_elems_.size(); i++ )

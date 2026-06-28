@@ -25,6 +25,8 @@
 
 #include "connector_model.h"
 
+#include <cmath>
+
 // Generated includes:
 #include "config.h"
 
@@ -225,7 +227,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   const double delay,
   const double weight )
 {
-  if ( not numerics::is_nan( delay ) )
+  if ( not std::isnan( delay ) )
   {
     if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
     {
@@ -260,12 +262,12 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   // create a new instance of the default connection
   ConnectionT connection = ConnectionT( default_connection_ );
 
-  if ( not numerics::is_nan( weight ) )
+  if ( not std::isnan( weight ) )
   {
     connection.set_weight( weight );
   }
 
-  if ( not numerics::is_nan( delay ) )
+  if ( not std::isnan( delay ) )
   {
     connection.set_delay( delay );
   }

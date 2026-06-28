@@ -22,11 +22,12 @@
 
 #include "gif_psc_exp_multisynapse.h"
 
+#include <cmath>
+
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "dict_util.h"
 #include "iaf_propagator.h"
-#include "numerics.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
@@ -292,8 +293,8 @@ nest::gif_psc_exp_multisynapse::pre_run_hook()
   const double tau_m = P_.c_m_ / P_.g_L_;
 
   V_.P33_ = std::exp( -h / tau_m );
-  V_.P30_ = -1 / P_.c_m_ * numerics::expm1( -h / tau_m ) * tau_m;
-  V_.P31_ = -numerics::expm1( -h / tau_m );
+  V_.P30_ = -1 / P_.c_m_ * std::expm1( -h / tau_m ) * tau_m;
+  V_.P31_ = -std::expm1( -h / tau_m );
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
 
@@ -376,7 +377,7 @@ nest::gif_psc_exp_multisynapse::update( Time const& origin, const long from, con
       {
         // Draw random number and compare to prob to have a spike
         // hazard function is computed by 1 - exp(- lambda * dt)
-        if ( V_.rng_->drand() < -numerics::expm1( -lambda * Time::get_resolution().get_ms() ) )
+        if ( V_.rng_->drand() < -std::expm1( -lambda * Time::get_resolution().get_ms() ) )
         {
 
           for ( size_t i = 0; i < S_.stc_elems_.size(); i++ )

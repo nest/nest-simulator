@@ -23,7 +23,9 @@
 #include "iaf_psc_alpha_multisynapse.h"
 
 // C++ includes:
+#include <cmath>
 #include <limits>
+#include <numbers>
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -31,7 +33,6 @@
 #include "iaf_propagator.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
-#include "numerics.h"
 #include "universal_data_logger_impl.h"
 
 /* ----------------------------------------------------------------
@@ -311,7 +312,7 @@ iaf_psc_alpha_multisynapse::pre_run_hook()
     std::tie( V_.P31_syn_[ i ], V_.P32_syn_[ i ] ) =
       IAFPropagatorAlpha( P_.tau_syn_[ i ], P_.Tau_, P_.C_ ).evaluate( h );
 
-    V_.PSCInitialValues_[ i ] = 1.0 * numerics::e / P_.tau_syn_[ i ];
+    V_.PSCInitialValues_[ i ] = 1.0 * std::numbers::e / P_.tau_syn_[ i ];
     B_.spikes_[ i ].resize();
   }
 

@@ -26,11 +26,11 @@
 #include "iaf_psc_delta_ps.h"
 
 // C++ includes:
+#include <cmath>
 #include <limits>
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
@@ -248,7 +248,7 @@ iaf_psc_delta_ps::pre_run_hook()
   V_.h_ms_ = Time::get_resolution().get_ms();
 
   V_.exp_t_ = std::exp( -V_.h_ms_ / P_.tau_m_ );
-  V_.expm1_t_ = numerics::expm1( -V_.h_ms_ / P_.tau_m_ );
+  V_.expm1_t_ = std::expm1( -V_.h_ms_ / P_.tau_m_ );
   V_.R_ = P_.tau_m_ / P_.c_m_;
 
   // t_ref_ is the refractory period in ms
@@ -453,7 +453,7 @@ nest::iaf_psc_delta_ps::propagate_( const double dt )
                                     // refractory
 
   // see comment on regular update above
-  const double expm1_dt = numerics::expm1( -dt / P_.tau_m_ );
+  const double expm1_dt = std::expm1( -dt / P_.tau_m_ );
   const double v_inf = V_.R_ * ( S_.I_ + P_.I_e_ );
   S_.U_ = -v_inf * expm1_dt + S_.U_ * expm1_dt + S_.U_;
 }

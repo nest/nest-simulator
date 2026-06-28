@@ -27,11 +27,12 @@
 
 #include "pp_psc_delta.h"
 
+#include <cmath>
+
 
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "dict_util.h"
-#include "numerics.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
@@ -392,7 +393,7 @@ nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
         if ( P_.dead_time_ > 0.0 )
         {
           // Draw random number and compare to prob to have a spike
-          if ( V_.rng_->drand() <= -numerics::expm1( -rate * V_.h_ * 1e-3 ) )
+          if ( V_.rng_->drand() <= -std::expm1( -rate * V_.h_ * 1e-3 ) )
           {
             n_spikes = 1;
           }

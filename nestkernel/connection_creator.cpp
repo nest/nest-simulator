@@ -22,6 +22,8 @@
 
 #include "connection_creator.h"
 
+#include <cmath>
+
 #include "nest.h"
 #include "spatial.h"
 
@@ -121,7 +123,7 @@ ConnectionCreator::ConnectionCreator( const Dictionary& dict )
   {
     if ( not syn_defaults.get< bool >( names::has_delay ) )
     {
-      delay_ = { create_parameter( numerics::nan ) };
+      delay_ = { create_parameter( std::nan( "" ) ) };
     }
     else
     {
@@ -189,7 +191,7 @@ ConnectionCreator::extract_params_( const Dictionary& dict, std::vector< Diction
   {
     if ( not syn_defaults.get< bool >( names::has_delay ) )
     {
-      delay_.push_back( create_parameter( numerics::nan ) );
+      delay_.push_back( create_parameter( std::nan( "" ) ) );
     }
     else
     {

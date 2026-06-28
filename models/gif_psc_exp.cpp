@@ -22,6 +22,8 @@
 
 #include "gif_psc_exp.h"
 
+#include <cmath>
+
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
@@ -32,7 +34,6 @@
 #include "compose.hpp"
 #include "dict_util.h"
 #include "iaf_propagator.h"
-#include "numerics.h"
 
 namespace nest
 {
@@ -284,8 +285,8 @@ nest::gif_psc_exp::pre_run_hook()
   V_.P21in_ = IAFPropagatorExp( P_.tau_in_, tau_m, P_.c_m_ ).evaluate( h );
 
   V_.P33_ = std::exp( -h / tau_m );
-  V_.P30_ = -1 / P_.c_m_ * numerics::expm1( -h / tau_m ) * tau_m;
-  V_.P31_ = -numerics::expm1( -h / tau_m );
+  V_.P30_ = -1 / P_.c_m_ * std::expm1( -h / tau_m ) * tau_m;
+  V_.P31_ = -std::expm1( -h / tau_m );
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
 
@@ -350,7 +351,7 @@ nest::gif_psc_exp::update( Time const& origin, const long from, const long to )
       {
         // Draw random number and compare to prob to have a spike
         // hazard function is computed by 1 - exp(- lambda * dt)
-        if ( V_.rng_->drand() < -numerics::expm1( -lambda * Time::get_resolution().get_ms() ) )
+        if ( V_.rng_->drand() < -std::expm1( -lambda * Time::get_resolution().get_ms() ) )
         {
 
           for ( size_t i = 0; i < S_.stc_elems_.size(); i++ )

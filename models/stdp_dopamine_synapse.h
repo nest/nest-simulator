@@ -23,11 +23,10 @@
 #ifndef STDP_DOPAMINE_SYNAPSE_H
 #define STDP_DOPAMINE_SYNAPSE_H
 
-// Includes from libnestutil:
-#include "numerics.h"
-
 // Includes from models:
 #include "volume_transmitter.h"
+
+#include <cmath>
 
 // Includes from nestkernel:
 #include "connection.h"
@@ -427,9 +426,7 @@ stdp_dopamine_synapse< targetidentifierT >::update_weight_( double c0,
 {
   const double taus_ = ( cp.tau_c_ + cp.tau_n_ ) / ( cp.tau_c_ * cp.tau_n_ );
   weight_ = weight_
-    - c0
-      * ( n0 / taus_ * numerics::expm1( taus_ * minus_dt )
-        - cp.b_ * cp.tau_c_ * numerics::expm1( minus_dt / cp.tau_c_ ) );
+    - c0 * ( n0 / taus_ * std::expm1( taus_ * minus_dt ) - cp.b_ * cp.tau_c_ * std::expm1( minus_dt / cp.tau_c_ ) );
 
   if ( weight_ < cp.Wmin_ )
   {

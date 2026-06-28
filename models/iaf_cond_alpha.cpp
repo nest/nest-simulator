@@ -28,10 +28,10 @@
 // C++ includes:
 #include <cstdio>
 #include <iostream>
+#include <numbers>
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
@@ -359,8 +359,8 @@ nest::iaf_cond_alpha::pre_run_hook()
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
-  V_.PSConInit_E = 1.0 * numerics::e / P_.tau_synE;
-  V_.PSConInit_I = 1.0 * numerics::e / P_.tau_synI;
+  V_.PSConInit_E = 1.0 * std::numbers::e / P_.tau_synE;
+  V_.PSConInit_I = 1.0 * std::numbers::e / P_.tau_synI;
   V_.RefractoryCounts = Time( Time::ms( P_.t_ref ) ).get_steps();
 
   // since t_ref >= 0, this can only fail in error

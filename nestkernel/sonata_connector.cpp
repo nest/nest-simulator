@@ -26,6 +26,7 @@
 #ifdef HAVE_HDF5
 
 // C++ includes:
+#include <cmath>
 #include <cstdlib>  // for div()
 #include <string>
 #include <vector>
@@ -645,7 +646,7 @@ SonataConnector::get_syn_property_( const Dictionary& syn_spec,
     return syn_spec.get< double >( name );
   }
   // default value is NaN
-  return numerics::nan;
+  return std::nan( "" );
 }
 
 void

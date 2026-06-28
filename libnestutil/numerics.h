@@ -39,49 +39,9 @@
 namespace numerics
 {
 
-extern const double e;
-extern const double pi;
-extern const double nan;
 extern const double sqrt_log_two;
 
-inline double
-expm1( double x )
-{
-  return std::expm1( x );
 }
-
-template < typename T >
-bool
-is_nan( T f )
-{
-  return std::isnan( f );
-}
-}
-
-
-// later also in namespace
-/**
- * Round to nearest int, rounding midpoints upwards.
- *
- * @return Result as long
- * @note [-1/2, 1/2) -> 0 and in general [ (2n-1)/2, (2n+1)/2 ) -> n
- * @see dround
- */
-long ld_round( double );
-
-/**
- * Round to nearest int, rounding midpoints upwards.
- *
- * @return Result as double
- * @note [-1/2, 1/2) -> 0 and in general [ (2n-1)/2, (2n+1)/2 ) -> n
- * @see ld_round
- */
-double dround( double );
-
-/**
- * Return integer part of argument.
- */
-double dtruncate( double );
 
 /**
  * Returns true if n is integer up to rounding error.

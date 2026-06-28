@@ -29,10 +29,10 @@
 #include <cstdio>
 #include <iostream>
 #include <limits>
+#include <numbers>
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
@@ -439,8 +439,8 @@ nest::aeif_cond_alpha_astro::pre_run_hook()
     V_.V_peak = P_.V_th;  // same as IAF dynamics for spikes if Delta_T == 0.
   }
 
-  V_.g0_ex_ = 1.0 * numerics::e / P_.tau_syn_ex;
-  V_.g0_in_ = 1.0 * numerics::e / P_.tau_syn_in;
+  V_.g0_ex_ = 1.0 * std::numbers::e / P_.tau_syn_ex;
+  V_.g0_in_ = 1.0 * std::numbers::e / P_.tau_syn_in;
   V_.refractory_counts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
 }
 

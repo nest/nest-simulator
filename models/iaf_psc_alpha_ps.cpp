@@ -23,12 +23,13 @@
 #include "iaf_psc_alpha_ps.h"
 
 // C++ includes:
+#include <cmath>
 #include <limits>
+#include <numbers>
 
 // Includes from libnestutil:
 #include "dict_util.h"
 #include "iaf_propagator.h"
-#include "numerics.h"
 #include "regula_falsi.h"
 
 // Includes from nestkernel:
@@ -272,11 +273,11 @@ nest::iaf_psc_alpha_ps::pre_run_hook()
   V_.inv_tau_syn_ex_ = 1.0 / P_.tau_syn_ex_;
   V_.inv_tau_syn_in_ = 1.0 / P_.tau_syn_in_;
 
-  V_.psc_norm_ex_ = numerics::e * V_.inv_tau_syn_ex_;
-  V_.psc_norm_in_ = numerics::e * V_.inv_tau_syn_in_;
+  V_.psc_norm_ex_ = std::numbers::e * V_.inv_tau_syn_ex_;
+  V_.psc_norm_in_ = std::numbers::e * V_.inv_tau_syn_in_;
 
   // pre-compute matrix for full time step
-  V_.expm1_tau_m_ = numerics::expm1( -V_.h_ms_ / P_.tau_m_ );
+  V_.expm1_tau_m_ = std::expm1( -V_.h_ms_ / P_.tau_m_ );
   V_.exp_tau_syn_ex_ = std::exp( -V_.h_ms_ / P_.tau_syn_ex_ );
   V_.exp_tau_syn_in_ = std::exp( -V_.h_ms_ / P_.tau_syn_in_ );
 
@@ -504,7 +505,7 @@ nest::iaf_psc_alpha_ps::propagate_( const double dt )
   // V_m_ remains unchanged at 0.0 while neuron is refractory
   if ( not S_.is_refractory_ )
   {
-    const double expm1_tau_m = numerics::expm1( -dt * V_.inv_tau_m_ );
+    const double expm1_tau_m = std::expm1( -dt * V_.inv_tau_m_ );
 
     const double ps_P30 = -P_.tau_m_ * V_.inv_c_m_ * expm1_tau_m;
 
@@ -582,7 +583,7 @@ nest::iaf_psc_alpha_ps::emit_instant_spike_( Time const& origin, const long lag,
 double
 nest::iaf_psc_alpha_ps::threshold_distance( double t_step ) const
 {
-  const double expm1_tau_m = numerics::expm1( -t_step * V_.inv_tau_m_ );
+  const double expm1_tau_m = std::expm1( -t_step * V_.inv_tau_m_ );
 
   const double ps_P30 = -P_.tau_m_ * V_.inv_c_m_ * expm1_tau_m;
 

@@ -25,12 +25,13 @@
 #ifdef HAVE_GSL
 
 // C++ includes:
+#include <cmath>
 #include <iostream>
 #include <limits>
+#include <numbers>
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
@@ -590,7 +591,7 @@ nest::glif_cond::pre_run_hook()
 
   for ( size_t i = 0; i < P_.n_receptors_(); i++ )
   {
-    V_.CondInitialValues_[ i ] = 1.0 * numerics::e / P_.tau_syn_[ i ];
+    V_.CondInitialValues_[ i ] = 1.0 * std::numbers::e / P_.tau_syn_[ i ];
     B_.spikes_[ i ].resize();
   }
 

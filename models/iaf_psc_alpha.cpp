@@ -23,7 +23,9 @@
 #include "iaf_psc_alpha.h"
 
 // C++ includes:
+#include <cmath>
 #include <limits>
+#include <numbers>
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -31,7 +33,6 @@
 #include "iaf_propagator.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
-#include "numerics.h"
 #include "ring_buffer_impl.h"
 #include "universal_data_logger_impl.h"
 
@@ -258,10 +259,10 @@ iaf_psc_alpha::pre_run_hook()
 
   V_.P33_ = std::exp( -h / P_.Tau_ );
 
-  V_.expm1_tau_m_ = numerics::expm1( -h / P_.Tau_ );
+  V_.expm1_tau_m_ = std::expm1( -h / P_.Tau_ );
 
   // these depend on the above. Please do not change the order.
-  V_.P30_ = -P_.Tau_ / P_.C_ * numerics::expm1( -h / P_.Tau_ );
+  V_.P30_ = -P_.Tau_ / P_.C_ * std::expm1( -h / P_.Tau_ );
   V_.P21_ex_ = h * V_.P11_ex_;
   V_.P21_in_ = h * V_.P11_in_;
 
@@ -269,8 +270,8 @@ iaf_psc_alpha::pre_run_hook()
   std::tie( V_.P31_ex_, V_.P32_ex_ ) = IAFPropagatorAlpha( P_.tau_ex_, P_.Tau_, P_.C_ ).evaluate( h );
   std::tie( V_.P31_in_, V_.P32_in_ ) = IAFPropagatorAlpha( P_.tau_in_, P_.Tau_, P_.C_ ).evaluate( h );
 
-  V_.EPSCInitialValue_ = 1.0 * numerics::e / P_.tau_ex_;
-  V_.IPSCInitialValue_ = 1.0 * numerics::e / P_.tau_in_;
+  V_.EPSCInitialValue_ = 1.0 * std::numbers::e / P_.tau_ex_;
+  V_.IPSCInitialValue_ = 1.0 * std::numbers::e / P_.tau_in_;
 
   // TauR specifies the length of the absolute refractory period as
   // a double in ms. The grid based iaf_psc_alpha can only handle refractory

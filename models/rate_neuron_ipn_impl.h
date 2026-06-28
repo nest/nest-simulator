@@ -35,7 +35,6 @@
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
@@ -218,7 +217,7 @@ nest::rate_neuron_ipn< TNonlinearities >::init_buffers_()
   B_.instant_rates_ex_.resize( buffer_size, 0.0 );
   B_.instant_rates_in_.resize( buffer_size, 0.0 );
   B_.last_y_values.resize( buffer_size, 0.0 );
-  B_.random_numbers.resize( buffer_size, numerics::nan );
+  B_.random_numbers.resize( buffer_size, std::nan( "" ) );
 
   // initialize random numbers
   for ( unsigned int i = 0; i < buffer_size; i++ )
@@ -242,8 +241,8 @@ nest::rate_neuron_ipn< TNonlinearities >::pre_run_hook()
   {
     // use stochastic exponential Euler method
     V_.P1_ = std::exp( -P_.lambda_ * h / P_.tau_ );
-    V_.P2_ = -1.0 / P_.lambda_ * numerics::expm1( -P_.lambda_ * h / P_.tau_ );
-    V_.input_noise_factor_ = std::sqrt( -0.5 / P_.lambda_ * numerics::expm1( -2. * P_.lambda_ * h / P_.tau_ ) );
+    V_.P2_ = -1.0 / P_.lambda_ * std::expm1( -P_.lambda_ * h / P_.tau_ );
+    V_.input_noise_factor_ = std::sqrt( -0.5 / P_.lambda_ * std::expm1( -2. * P_.lambda_ * h / P_.tau_ ) );
   }
   else
   {
@@ -367,7 +366,7 @@ nest::rate_neuron_ipn< TNonlinearities >::update_( Time const& origin,
     }
 
     // create new random numbers
-    B_.random_numbers.resize( buffer_size, numerics::nan );
+    B_.random_numbers.resize( buffer_size, std::nan( "" ) );
     for ( unsigned int i = 0; i < buffer_size; i++ )
     {
       B_.random_numbers[ i ] = V_.normal_dist_( get_vp_specific_rng( get_thread() ) );

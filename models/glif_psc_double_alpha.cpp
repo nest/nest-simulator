@@ -23,8 +23,10 @@
 #include "glif_psc_double_alpha.h"
 
 // C++ includes:
+#include <cmath>
 #include <iostream>
 #include <limits>
+#include <numbers>
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -500,8 +502,8 @@ nest::glif_psc_double_alpha::pre_run_hook()
       IAFPropagatorAlpha( P_.tau_syn_slow_[ i ], Tau_, P_.C_m_ ).evaluate( h );
 
 
-    V_.PSCInitialValues_[ i ] = 1.0 * numerics::e / P_.tau_syn_fast_[ i ];
-    V_.PSCInitialValues_slow_[ i ] = 1.0 * numerics::e / P_.tau_syn_slow_[ i ] * P_.amp_slow_[ i ];
+    V_.PSCInitialValues_[ i ] = 1.0 * std::numbers::e / P_.tau_syn_fast_[ i ];
+    V_.PSCInitialValues_slow_[ i ] = 1.0 * std::numbers::e / P_.tau_syn_slow_[ i ] * P_.amp_slow_[ i ];
     B_.spikes_[ i ].resize();
   }
 

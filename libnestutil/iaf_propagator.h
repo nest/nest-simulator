@@ -27,10 +27,6 @@
 #include <cmath>
 #include <tuple>
 
-// Includes from libnestutil:
-#include "numerics.h"
-
-
 /**
  * Exact integration voltage propagator for leaky integrate-and-fire models.
  *
@@ -70,7 +66,7 @@ protected:
    *
    * This method computes all quantities common to alpha and exponential synaptic dynamics.
    *
-   * @note Fourth return value is real-valued only in the singular limit and `numerics::nan` otherwise
+   * @note Fourth return value is real-valued only in the singular limit and `std::nan( "" )` otherwise
    * to avoid unnecessary computation of exp().
    *
    * @param h time interval [ms]

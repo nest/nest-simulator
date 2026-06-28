@@ -22,44 +22,12 @@
 
 #include <cmath>
 #include <cstdlib>
-#include <iostream>
-#include <numbers>
 #include <numeric>
 
 #include "nest_types.h"
 #include "numerics.h"
 
-//
-//   e
-//
-const double numerics::e = std::numbers::e;
-const double numerics::pi = std::numbers::pi;
-
-const double numerics::nan = std::nan( "" );
-
 const double numerics::sqrt_log_two = std::sqrt( std::log( 2.0 ) );
-
-// later also in namespace
-long
-ld_round( double x )
-{
-  return static_cast< long >( std::floor( x + 0.5 ) );
-}
-
-double
-dround( double x )
-{
-  return std::floor( x + 0.5 );
-}
-
-double
-dtruncate( double x )
-{
-  double ip;
-
-  std::modf( x, &ip );
-  return ip;
-}
 
 bool
 is_integer( double n )

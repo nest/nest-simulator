@@ -26,11 +26,12 @@
 #ifdef HAVE_GSL
 
 // C++ includes:
+#include <cmath>
 #include <cstdio>
+#include <numbers>
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
@@ -401,8 +402,8 @@ nest::hh_psc_alpha_clopath::pre_run_hook()
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
-  V_.PSCurrInit_E_ = 1.0 * numerics::e / P_.tau_synE;
-  V_.PSCurrInit_I_ = 1.0 * numerics::e / P_.tau_synI;
+  V_.PSCurrInit_E_ = 1.0 * std::numbers::e / P_.tau_synE;
+  V_.PSCurrInit_I_ = 1.0 * std::numbers::e / P_.tau_synI;
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
   // since t_ref_ >= 0, this can only fail in error
   assert( V_.RefractoryCounts_ >= 0 );

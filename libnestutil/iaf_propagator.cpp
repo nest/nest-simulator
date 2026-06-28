@@ -22,19 +22,21 @@
 
 #include "iaf_propagator.h"
 
+#include <cmath>
+
 
 // Just dummy for buffer construction, these objects will never be used
 IAFPropagator::IAFPropagator()
-  : tau_syn_( numerics::nan )
-  , tau_m_( numerics::nan )
-  , c_m_( numerics::nan )
-  , h_min_regular_( numerics::nan )
-  , beta_( numerics::nan )
-  , gamma_( numerics::nan )
-  , inv_tau_syn_( numerics::nan )
-  , inv_tau_m_( numerics::nan )
-  , inv_c_m_( numerics::nan )
-  , inv_beta_( numerics::nan )
+  : tau_syn_( std::nan( "" ) )
+  , tau_m_( std::nan( "" ) )
+  , c_m_( std::nan( "" ) )
+  , h_min_regular_( std::nan( "" ) )
+  , beta_( std::nan( "" ) )
+  , gamma_( std::nan( "" ) )
+  , inv_tau_syn_( std::nan( "" ) )
+  , inv_tau_m_( std::nan( "" ) )
+  , inv_c_m_( std::nan( "" ) )
+  , inv_beta_( std::nan( "" ) )
 {
 }
 
@@ -57,13 +59,13 @@ std::tuple< double, double, double, double >
 IAFPropagator::evaluate_P32_( double h ) const
 {
   const double exp_h_tau_syn = std::exp( -h * inv_tau_syn_ );
-  const double expm1_h_tau = numerics::expm1( h * inv_beta_ );
+  const double expm1_h_tau = std::expm1( h * inv_beta_ );
 
   const double P32 = gamma_ * exp_h_tau_syn * expm1_h_tau;
 
   if ( std::isnormal( P32 ) and P32 > 0 )
   {
-    return std::make_tuple( P32, exp_h_tau_syn, expm1_h_tau, numerics::nan );
+    return std::make_tuple( P32, exp_h_tau_syn, expm1_h_tau, std::nan( "" ) );
   }
   else
   {

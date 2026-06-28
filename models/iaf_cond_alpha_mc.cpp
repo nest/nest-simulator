@@ -28,10 +28,10 @@
 // C++ includes:
 #include <cstdio>
 #include <iostream>
+#include <numbers>
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
@@ -530,8 +530,8 @@ nest::iaf_cond_alpha_mc::pre_run_hook()
 
   for ( size_t n = 0; n < NCOMP; ++n )
   {
-    V_.PSConInit_E_[ n ] = 1.0 * numerics::e / P_.tau_synE[ n ];
-    V_.PSConInit_I_[ n ] = 1.0 * numerics::e / P_.tau_synI[ n ];
+    V_.PSConInit_E_[ n ] = 1.0 * std::numbers::e / P_.tau_synE[ n ];
+    V_.PSConInit_I_[ n ] = 1.0 * std::numbers::e / P_.tau_synI[ n ];
   }
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref ) ).get_steps();

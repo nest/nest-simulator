@@ -29,26 +29,28 @@
 nest::SliceRingBuffer::SliceRingBuffer()
   : refract_( std::numeric_limits< long >::max(), 0, 0 )
 {
-  //  resize();  // sets up queue_
 }
 
 void
 nest::SliceRingBuffer::resize()
 {
-  long newsize = static_cast< long >( std::ceil(
-    static_cast< double >( kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay() )
-    / kernel().connection_manager.get_min_delay() ) );
-  if ( queue_.size() != static_cast< unsigned long >( newsize ) )
+  // We want to compute ceil( ( d_min + d_max ) / d_min ) = 1 + ceil( d_max / d_min )
+  // and can do so safely without casting to double.
+  const size_t d_min = kernel().connection_manager.get_min_delay();
+  const size_t d_max = kernel().connection_manager.get_max_delay();
+  const size_t new_size = 1 + ( d_max + d_min - 1 ) / d_min;
+
+  if ( queue_.size() != new_size )
   {
-    queue_.resize( newsize );
+    queue_.resize( new_size );
     clear();
   }
 
 #ifndef HAVE_STL_VECTOR_CAPACITY_BASE_UNITY
-  // create 1-element buffers
-  for ( size_t j = 0; j < queue_.size(); ++j )
+  // Ensure capacity doubling starts from capacity 1.
+  for ( auto& q : queue_ )
   {
-    queue_[ j ].reserve( 1 );
+    q.reserve( 1 );
   }
 #endif
 }
@@ -56,9 +58,9 @@ nest::SliceRingBuffer::resize()
 void
 nest::SliceRingBuffer::clear()
 {
-  for ( size_t j = 0; j < queue_.size(); ++j )
+  for ( auto& q : queue_ )
   {
-    queue_[ j ].clear();
+    q.clear();
   }
 }
 

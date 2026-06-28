@@ -106,13 +106,13 @@ nest::weight_recorder::pre_run_hook()
 {
   if ( !P_.include_label_ )
   {
-    RecordingDevice::pre_run_hook(
-      { nest::names::weights }, { nest::names::targets, nest::names::receptors, nest::names::ports } );
+    RecordingDevice::pre_run_hook( { nest::names::weights },
+      { nest::names::label, nest::names::targets, nest::names::receptors, nest::names::ports } );
   }
   else
   {
-    RecordingDevice::pre_run_hook( { nest::names::weights },
-      { nest::names::label, nest::names::targets, nest::names::receptors, nest::names::ports } );
+    RecordingDevice::pre_run_hook(
+      { nest::names::weights }, { nest::names::targets, nest::names::receptors, nest::names::ports } );
   }
 }
 

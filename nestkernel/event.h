@@ -231,11 +231,6 @@ public:
    */
   size_t get_rport() const;
 
-  /**
-   * Return the connection label
-   */
-
-  long get_conn_label() const;
 
   /**
    * Set the port number.
@@ -258,12 +253,6 @@ public:
    * @param p Receiver port number of the connection, or 0 if unused.
    */
   void set_rport( size_t p );
-
-  /**
-   * Set the connection label (conn_label).
-   */
-
-  void set_conn_label( long label );
 
   /**
    * Return the creation time offset of the Event.
@@ -377,14 +366,6 @@ protected:
    */
   size_t rp_;
 
-
-  /**
-   * Connection Label (conn_label)
-   *
-   * The label of the connection (if available).
-   */
-  long label_;
-
   /**
    * Transmission delay.
    *
@@ -493,8 +474,27 @@ public:
 
   void set_receiver_node_id( size_t );
 
+  /**
+   * Return the connection label
+   */
+
+  long get_conn_label() const;
+
+  /**
+   * Set the connection label (conn_label).
+   */
+
+  void set_conn_label( long label );
+
 protected:
   size_t receiver_node_id_;  //!< node ID of receiver or 0.
+
+  /**
+   * Connection Label (conn_label)
+   *
+   * The label of the connection (if available).
+   */
+  long label_;
 };
 
 inline WeightRecorderEvent::WeightRecorderEvent()
@@ -1063,7 +1063,7 @@ Event::get_rport() const
 }
 
 inline long
-Event::get_conn_label() const
+WeightRecorderEvent::get_conn_label() const
 {
   return label_;
 }
@@ -1081,7 +1081,7 @@ Event::set_rport( size_t rp )
 }
 
 inline void
-Event::set_conn_label( long label )
+WeightRecorderEvent::set_conn_label( long label )
 {
   label_ = label;
 }

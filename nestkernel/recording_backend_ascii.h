@@ -25,6 +25,7 @@
 
 // C++ includes:
 #include <fstream>
+#include <mutex>
 
 #include "recording_backend.h"
 
@@ -211,10 +212,12 @@ private:
   const std::string compute_vp_node_id_string_( const RecordingDevice& device ) const;
   struct DeviceData
   {
+    // std::unique_ptr<std::mutex> write_mutex_;
     DeviceData() = delete;
     DeviceData( std::string, std::string );
     void set_value_names( const std::vector< std::string >&, const std::vector< std::string >& );
     void open_file();
+    void open_file_omp();
     void write( const Event&, const std::vector< double >&, const std::vector< long >& );
     void flush_file();
     void close_file();
@@ -230,11 +233,11 @@ private:
     std::string delimiter_;                          //!< File format delimiter (default tab)
     std::string label_;                              //!< The label of the device.
     std::ofstream file_;                             //!< File stream to use for the device
-    bool skip_header_comment_;                       //!< Option to skip the initial header comment (default false)
+    bool no_metadata_;                               //!< Option to skip the initial header comment (default false)
     std::vector< std::string > double_value_names_;  //!< names for values of type double
     std::vector< std::string > long_value_names_;    //!< names for values of type long
-    bool combine_thread_write_;  //!< Option to combine thread write to single files (may have performance bottleneck)
-                                 //!< (default false)
+    std::string write_to_single_file_;  //!< Option to combine thread write to single files (may have performance
+                                        //!< bottleneck) (default false)
 
     std::string compute_filename_() const;  //!< Compose and return the filename
   };

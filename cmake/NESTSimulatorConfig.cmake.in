@@ -1,4 +1,4 @@
-# NESTSimulatorConfig.cmake.in
+# cmake/NESTSimulatorConfig.cmake.in
 #
 # This file is part of NEST.
 #
@@ -17,61 +17,61 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-# Config file for the NEST::nest INTERFACE target, consumed via:
+# Found via find_package(NESTSimulator); defines NEST::nest (see
+# cmake/NESTSimulatorConfigExport.cmake). GSL::gsl/Boost::headers/
+# MPI::MPI_CXX/OpenMP::OpenMP_CXX are referenced by name in NEST::nest's
+# link libraries, so a target by each name must exist here too.
 #
-#   find_package(NESTSimulator REQUIRED)
-#   target_link_libraries(mymodule PRIVATE NEST::nest)
-#
-# For each dependency that uses the dummy-target pattern in NEST's own build
-# (cmake/ProcessOptions.cmake), re-find it here only if NEST was actually
-# built with it, and fall back to the same empty INTERFACE IMPORTED dummy
-# otherwise. This mirrors NEST's own build exactly, so a consumer machine
-# missing a dependency NEST itself didn't need doesn't fail find_package()
-# for no reason -- and it's required either way, since NESTSimulatorTargets.cmake
-# below references these targets by name and needs them to already exist.
+# Deliberately NOT re-discovered via find_dependency(): that needs the
+# consumer's machine to independently re-find each one (fragile -- e.g.
+# NEST's own Homebrew libomp lookup isn't something find_dependency(OpenMP)
+# replicates) and risks resolving a different install than NEST actually
+# used. Instead each target's properties are NEST's own already-resolved
+# values, baked in directly -- same approach nest-config's --includes/--libs
+# output already uses.
 
-include( CMakeFindDependencyMacro )
-
-set( _nest_have_gsl @HAVE_GSL@ )
-if ( _nest_have_gsl )
-  find_dependency( GSL 1.11 )
-endif ()
 if ( NOT TARGET GSL::gsl )
   add_library( GSL::gsl INTERFACE IMPORTED )
+  if ( @HAVE_GSL@ )
+    set_target_properties( GSL::gsl PROPERTIES
+      INTERFACE_INCLUDE_DIRECTORIES "@GSL_INCLUDE_DIRS@"
+      INTERFACE_LINK_LIBRARIES "@GSL_LIBRARIES@"
+    )
+  endif ()
 endif ()
 
-set( _nest_have_boost @HAVE_BOOST@ )
-if ( _nest_have_boost )
-  find_dependency( Boost 1.70 CONFIG )
-endif ()
 if ( NOT TARGET Boost::headers )
   add_library( Boost::headers INTERFACE IMPORTED )
+  if ( @HAVE_BOOST@ )
+    set_target_properties( Boost::headers PROPERTIES
+      INTERFACE_INCLUDE_DIRECTORIES "@_boost_inc@"
+    )
+  endif ()
 endif ()
 
-set( _nest_have_mpi @HAVE_MPI@ )
-if ( _nest_have_mpi )
-  find_dependency( MPI COMPONENTS CXX )
-endif ()
 if ( NOT TARGET MPI::MPI_CXX )
   add_library( MPI::MPI_CXX INTERFACE IMPORTED )
+  if ( @HAVE_MPI@ )
+    set_target_properties( MPI::MPI_CXX PROPERTIES
+      INTERFACE_INCLUDE_DIRECTORIES "@MPI_CXX_INCLUDE_DIRS@"
+      INTERFACE_LINK_LIBRARIES "@MPI_CXX_LIBRARIES@"
+      INTERFACE_COMPILE_OPTIONS "@_nest_mpi_compile_options@"
+    )
+  endif ()
 endif ()
 
-set( _nest_have_openmp @OpenMP_FOUND@ )
-if ( _nest_have_openmp )
-  find_dependency( OpenMP )
-endif ()
 if ( NOT TARGET OpenMP::OpenMP_CXX )
   add_library( OpenMP::OpenMP_CXX INTERFACE IMPORTED )
+  if ( @OpenMP_FOUND@ )
+    set_target_properties( OpenMP::OpenMP_CXX PROPERTIES
+      INTERFACE_INCLUDE_DIRECTORIES "@OpenMP_CXX_INCLUDE_DIRS@"
+      INTERFACE_LINK_LIBRARIES "@OpenMP_CXX_LIBRARIES@"
+      INTERFACE_COMPILE_OPTIONS "@_nest_openmp_compile_options@"
+    )
+  endif ()
 endif ()
 
-unset( _nest_have_gsl )
-unset( _nest_have_boost )
-unset( _nest_have_mpi )
-unset( _nest_have_openmp )
-
-# Note: LTDL/LibNeurosim/MUSIC/SIONlib don't have modern imported targets
-# (cmake/Find{LTDL,LibNeurosim,Music,SIONlib}.cmake), so NEST::nest's link
-# libraries for these are plain absolute paths baked in at NEST's own build
-# time, same pre-existing limitation nest-config's own --libs output has.
+# LTDL/LibNeurosim/MUSIC/SIONlib have no modern imported targets, so they're
+# already plain absolute paths baked into NEST::nest -- nothing to do here.
 
 include( "${CMAKE_CURRENT_LIST_DIR}/NESTSimulatorTargets.cmake" )

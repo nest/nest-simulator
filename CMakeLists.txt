@@ -126,6 +126,7 @@ include( CheckExtraCompilerFeatures )
 include( CheckUnknownOptions )
 include( ConfigureSummary )
 include( GetTriple )
+include( NESTSimulatorConfigExport )
 
 # get triples arch-vendor-os
 get_host_triple( NEST_HOST_TRIPLE NEST_HOST_ARCH NEST_HOST_VENDOR NEST_HOST_OS )
@@ -235,9 +236,9 @@ endif ()
 ##################           Summary of flags                 ##################
 ################################################################################
 
-# used in nest-config
+# Used in nest-config
 
-# all compiler flags
+# All compiler flags
 if ( NOT CMAKE_BUILD_TYPE OR "${CMAKE_BUILD_TYPE}" STREQUAL "None" )
   set( ALL_CFLAGS "${CMAKE_C_FLAGS}" )
   set( ALL_CXXFLAGS "${CMAKE_CXX_FLAGS}" )
@@ -268,7 +269,7 @@ foreach ( def ${SIONLIB_DEFINES} )
     set( ALL_CXXFLAGS "${ALL_CXXFLAGS} ${def}" )
 endforeach ()
 
-# libraries required to link extension modules
+# Libraries required to link extension modules
 set( MODULE_LINK_LIBS
   "${LTDL_LIBRARIES}"
   "${GSL_LIBRARIES}"
@@ -283,17 +284,16 @@ if ( with-libraries )
 endif ()
 string( REPLACE ";" " " MODULE_LINK_LIBS "${MODULE_LINK_LIBS}" )
 
-# all includes
-# NEST's own headers and any user-supplied -Dwith-includes are plain -I;
-# everything else here is a third-party dependency, marked -isystem so
-# extension-module authors don't get warnings from headers they don't own.
+# All includes
+#
+# We need to add all includes with -I, especially prevent that headers
+# from homebrew are included with -isystem, which some FindPackage might
+# do, see https://github.com/nest/nest-simulator/pull/3544#issuecomment-4284243626.
 if ( HAVE_BOOST )
   get_target_property( _boost_inc Boost::headers INTERFACE_INCLUDE_DIRECTORIES )
 endif ()
-set( ALL_INCLUDES_LOCAL
+set( ALL_INCLUDES_tmp
   "${CMAKE_INSTALL_FULL_INCLUDEDIR}/nest"
-  ${with-includes} )
-set( ALL_INCLUDES_SYSTEM
   "${LTDL_INCLUDE_DIRS}"
   "${GSL_INCLUDE_DIRS}"
   "${LIBNEUROSIM_INCLUDE_DIRS}"
@@ -301,22 +301,15 @@ set( ALL_INCLUDES_SYSTEM
   "${OpenMP_CXX_INCLUDE_DIRS}"
   "${MPI_CXX_INCLUDE_DIRS}"
   "${SIONLIB_INCLUDE}"
-  "${_boost_inc}" )
-if ( ALL_INCLUDES_LOCAL )
-  list( REMOVE_DUPLICATES ALL_INCLUDES_LOCAL )
-endif ()
-if ( ALL_INCLUDES_SYSTEM )
-  list( REMOVE_DUPLICATES ALL_INCLUDES_SYSTEM )
+  "${_boost_inc}"
+  ${with-includes} )
+if ( ALL_INCLUDES_tmp )
+  list( REMOVE_DUPLICATES ALL_INCLUDES_tmp )
 endif ()
 set( ALL_INCLUDES "" )
-foreach ( INC ${ALL_INCLUDES_LOCAL} )
+foreach ( INC ${ALL_INCLUDES_tmp} )
   if ( INC )
     set( ALL_INCLUDES "${ALL_INCLUDES} -I${INC}" )
-  endif ()
-endforeach ()
-foreach ( INC ${ALL_INCLUDES_SYSTEM} )
-  if ( INC )
-    set( ALL_INCLUDES "${ALL_INCLUDES} -isystem${INC}" )
   endif ()
 endforeach ()
 
@@ -324,68 +317,8 @@ endforeach ()
 ##################      NESTSimulator CMake package           ##################
 ################################################################################
 
-# Lightweight, additive convenience for CMake-based extension-module authors:
-# bundles the same compile flags / include dirs / third-party link libraries
-# that nest-config already promises into a single INTERFACE target. Does not
-# export nestkernel/models/nestutil as linkable libraries -- those aren't
-# installed today, and extension modules don't link against them at build
-# time anyway (they're dlopen'd into the running NEST process at runtime and
-# resolve NEST's own symbols then, via the same -undefined dynamic_lookup
-# mechanism this target also sets up for downstream modules on Apple).
-add_library( nest_module_interface INTERFACE )
-add_library( NEST::nest ALIAS nest_module_interface )
-
-target_compile_features( nest_module_interface INTERFACE cxx_std_20 )
-
-target_include_directories( nest_module_interface INTERFACE
-  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/thirdparty>
-  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/libnestutil>
-  $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/libnestutil>
-  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/nestkernel>
-  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/nestkernel/spatial>
-  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/models>
-  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/nest>
-)
-
-target_link_libraries( nest_module_interface INTERFACE
-  GSL::gsl
-  Boost::headers
-  MPI::MPI_CXX
-  OpenMP::OpenMP_CXX
-  ${LTDL_LIBRARIES}
-  ${LIBNEUROSIM_LIBRARIES}
-  ${MUSIC_LIBRARIES}
-  ${SIONLIB_LIBRARIES}
-)
-
-# Apple Clang module loading: resolve NEST's own symbols at dlopen time
-# rather than at link time, same as nestkernel/models/nestutil themselves.
-target_link_options( nest_module_interface INTERFACE
-  "$<$<PLATFORM_ID:Darwin>:LINKER:-undefined,dynamic_lookup>"
-)
-
-install( TARGETS nest_module_interface EXPORT NESTSimulatorTargets )
-install( EXPORT NESTSimulatorTargets
-  FILE NESTSimulatorTargets.cmake
-  NAMESPACE NEST::
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/NESTSimulator
-)
-
-include( CMakePackageConfigHelpers )
-write_basic_package_version_file(
-  "${PROJECT_BINARY_DIR}/NESTSimulatorConfigVersion.cmake"
-  VERSION ${NEST_VERSION}
-  COMPATIBILITY SameMajorVersion
-)
-configure_file(
-  "${PROJECT_SOURCE_DIR}/cmake/NESTSimulatorConfig.cmake.in"
-  "${PROJECT_BINARY_DIR}/NESTSimulatorConfig.cmake" @ONLY
-)
-install( FILES
-  "${PROJECT_BINARY_DIR}/NESTSimulatorConfig.cmake"
-  "${PROJECT_BINARY_DIR}/NESTSimulatorConfigVersion.cmake"
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/NESTSimulator
-)
+# Modern alternative to nest-config
+nest_install_cmake_package()
 
 ################################################################################
 ##################           File generation here             ##################

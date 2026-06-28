@@ -22,6 +22,11 @@
 
 #include "exceptions.h"
 
+// Include MPI for MPI error string
+#ifdef HAVE_MPI
+#include <mpi.h>
+#endif
+
 // C++ includes:
 #include <sstream>
 
@@ -162,3 +167,15 @@ nest::UnsupportedEvent::compose_msg_() const
   msg += "    A common cause for this is a plastic synapse between a device and a neuron.";
   return msg;
 }
+
+#ifdef HAVE_MPI
+nest::MPIErrorCode::MPIErrorCode( const int error_code )
+{
+  char errmsg_[ 2 * MPI_MAX_ERROR_STRING ];  // Multiply by two for extra safety
+  int len_;
+  MPI_Error_string( error_code, errmsg_, &len_ );
+  std::string error_;
+  error_.assign( errmsg_, len_ );
+  msg_ = String::compose( "MPI Error: %1", error_ );
+}
+#endif

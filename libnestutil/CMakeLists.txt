@@ -44,7 +44,15 @@ set_target_properties(nestutil PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 # Temporary: nestutil includes nestkernel headers that pull in mpi.h, so nestutil needs
 # the MPI include path. Remove once the nestutil/nestkernel circular include is resolved.
-target_link_libraries(nestutil GSL::gsl ${SIONLIB_LIBS} OpenMP::OpenMP_CXX Boost::headers MPI::MPI_CXX)
+target_link_libraries(nestutil
+  PUBLIC
+    Boost::headers
+  PRIVATE
+    GSL::gsl
+    ${SIONLIB_LIBS}
+    OpenMP::OpenMP_CXX
+    MPI::MPI_CXX
+)
 
 target_include_directories(nestutil PRIVATE
     ${PROJECT_SOURCE_DIR}/libnestutil

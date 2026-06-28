@@ -69,7 +69,7 @@ while test $# -gt 0; do
         echo "@ALL_CXXFLAGS@ -std=c++@CMAKE_CXX_STANDARD@"
         ;;
     --libs)
-        echo "-L${prefix}/@CMAKE_INSTALL_LIBDIR@/nest @MODULE_LINK_LIBS@"
+        echo "@MODULE_LINK_LIBS@"
         ;;
     --compiler)
         echo "@CMAKE_CXX_COMPILER@"

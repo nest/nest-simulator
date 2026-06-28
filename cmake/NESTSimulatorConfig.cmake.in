@@ -1,0 +1,77 @@
+# NESTSimulatorConfig.cmake.in
+#
+# This file is part of NEST.
+#
+# Copyright (C) 2004 The NEST Initiative
+#
+# NEST is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# NEST is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
+# Config file for the NEST::nest INTERFACE target, consumed via:
+#
+#   find_package(NESTSimulator REQUIRED)
+#   target_link_libraries(mymodule PRIVATE NEST::nest)
+#
+# For each dependency that uses the dummy-target pattern in NEST's own build
+# (cmake/ProcessOptions.cmake), re-find it here only if NEST was actually
+# built with it, and fall back to the same empty INTERFACE IMPORTED dummy
+# otherwise. This mirrors NEST's own build exactly, so a consumer machine
+# missing a dependency NEST itself didn't need doesn't fail find_package()
+# for no reason -- and it's required either way, since NESTSimulatorTargets.cmake
+# below references these targets by name and needs them to already exist.
+
+include( CMakeFindDependencyMacro )
+
+set( _nest_have_gsl @HAVE_GSL@ )
+if ( _nest_have_gsl )
+  find_dependency( GSL 1.11 )
+endif ()
+if ( NOT TARGET GSL::gsl )
+  add_library( GSL::gsl INTERFACE IMPORTED )
+endif ()
+
+set( _nest_have_boost @HAVE_BOOST@ )
+if ( _nest_have_boost )
+  find_dependency( Boost 1.70 CONFIG )
+endif ()
+if ( NOT TARGET Boost::headers )
+  add_library( Boost::headers INTERFACE IMPORTED )
+endif ()
+
+set( _nest_have_mpi @HAVE_MPI@ )
+if ( _nest_have_mpi )
+  find_dependency( MPI COMPONENTS CXX )
+endif ()
+if ( NOT TARGET MPI::MPI_CXX )
+  add_library( MPI::MPI_CXX INTERFACE IMPORTED )
+endif ()
+
+set( _nest_have_openmp @OpenMP_FOUND@ )
+if ( _nest_have_openmp )
+  find_dependency( OpenMP )
+endif ()
+if ( NOT TARGET OpenMP::OpenMP_CXX )
+  add_library( OpenMP::OpenMP_CXX INTERFACE IMPORTED )
+endif ()
+
+unset( _nest_have_gsl )
+unset( _nest_have_boost )
+unset( _nest_have_mpi )
+unset( _nest_have_openmp )
+
+# Note: LTDL/LibNeurosim/MUSIC/SIONlib don't have modern imported targets
+# (cmake/Find{LTDL,LibNeurosim,Music,SIONlib}.cmake), so NEST::nest's link
+# libraries for these are plain absolute paths baked in at NEST's own build
+# time, same pre-existing limitation nest-config's own --libs output has.
+
+include( "${CMAKE_CURRENT_LIST_DIR}/NESTSimulatorTargets.cmake" )

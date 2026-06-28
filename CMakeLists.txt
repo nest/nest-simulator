@@ -283,32 +283,109 @@ if ( with-libraries )
 endif ()
 string( REPLACE ";" " " MODULE_LINK_LIBS "${MODULE_LINK_LIBS}" )
 
-# libraries requied to link NEST
-set( ALL_LIBS
-  "-lnest"
-  ${MODULE_LINK_LIBS} )
-
-
 # all includes
+# NEST's own headers and any user-supplied -Dwith-includes are plain -I;
+# everything else here is a third-party dependency, marked -isystem so
+# extension-module authors don't get warnings from headers they don't own.
 if ( HAVE_BOOST )
   get_target_property( _boost_inc Boost::headers INTERFACE_INCLUDE_DIRECTORIES )
 endif ()
-set( ALL_INCLUDES_tmp
+set( ALL_INCLUDES_LOCAL
   "${CMAKE_INSTALL_FULL_INCLUDEDIR}/nest"
+  ${with-includes} )
+set( ALL_INCLUDES_SYSTEM
   "${LTDL_INCLUDE_DIRS}"
   "${GSL_INCLUDE_DIRS}"
   "${LIBNEUROSIM_INCLUDE_DIRS}"
   "${MUSIC_INCLUDE_DIRS}"
   "${OpenMP_CXX_INCLUDE_DIRS}"
-  "${MPI_CXX_INCLUDE_PATH}"
+  "${MPI_CXX_INCLUDE_DIRS}"
+  "${SIONLIB_INCLUDE}"
   "${_boost_inc}" )
+if ( ALL_INCLUDES_LOCAL )
+  list( REMOVE_DUPLICATES ALL_INCLUDES_LOCAL )
+endif ()
+if ( ALL_INCLUDES_SYSTEM )
+  list( REMOVE_DUPLICATES ALL_INCLUDES_SYSTEM )
+endif ()
 set( ALL_INCLUDES "" )
-foreach ( INC ${ALL_INCLUDES_tmp} ${with-includes} )
-  if ( INC AND NOT INC STREQUAL "" )
+foreach ( INC ${ALL_INCLUDES_LOCAL} )
+  if ( INC )
     set( ALL_INCLUDES "${ALL_INCLUDES} -I${INC}" )
   endif ()
 endforeach ()
-set( ALL_INCLUDES "${ALL_INCLUDES} ${SIONLIB_INCLUDE}" )
+foreach ( INC ${ALL_INCLUDES_SYSTEM} )
+  if ( INC )
+    set( ALL_INCLUDES "${ALL_INCLUDES} -isystem${INC}" )
+  endif ()
+endforeach ()
+
+################################################################################
+##################      NESTSimulator CMake package           ##################
+################################################################################
+
+# Lightweight, additive convenience for CMake-based extension-module authors:
+# bundles the same compile flags / include dirs / third-party link libraries
+# that nest-config already promises into a single INTERFACE target. Does not
+# export nestkernel/models/nestutil as linkable libraries -- those aren't
+# installed today, and extension modules don't link against them at build
+# time anyway (they're dlopen'd into the running NEST process at runtime and
+# resolve NEST's own symbols then, via the same -undefined dynamic_lookup
+# mechanism this target also sets up for downstream modules on Apple).
+add_library( nest_module_interface INTERFACE )
+add_library( NEST::nest ALIAS nest_module_interface )
+
+target_compile_features( nest_module_interface INTERFACE cxx_std_20 )
+
+target_include_directories( nest_module_interface INTERFACE
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/thirdparty>
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/libnestutil>
+  $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/libnestutil>
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/nestkernel>
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/nestkernel/spatial>
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/models>
+  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/nest>
+)
+
+target_link_libraries( nest_module_interface INTERFACE
+  GSL::gsl
+  Boost::headers
+  MPI::MPI_CXX
+  OpenMP::OpenMP_CXX
+  ${LTDL_LIBRARIES}
+  ${LIBNEUROSIM_LIBRARIES}
+  ${MUSIC_LIBRARIES}
+  ${SIONLIB_LIBRARIES}
+)
+
+# Apple Clang module loading: resolve NEST's own symbols at dlopen time
+# rather than at link time, same as nestkernel/models/nestutil themselves.
+target_link_options( nest_module_interface INTERFACE
+  "$<$<PLATFORM_ID:Darwin>:LINKER:-undefined,dynamic_lookup>"
+)
+
+install( TARGETS nest_module_interface EXPORT NESTSimulatorTargets )
+install( EXPORT NESTSimulatorTargets
+  FILE NESTSimulatorTargets.cmake
+  NAMESPACE NEST::
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/NESTSimulator
+)
+
+include( CMakePackageConfigHelpers )
+write_basic_package_version_file(
+  "${PROJECT_BINARY_DIR}/NESTSimulatorConfigVersion.cmake"
+  VERSION ${NEST_VERSION}
+  COMPATIBILITY SameMajorVersion
+)
+configure_file(
+  "${PROJECT_SOURCE_DIR}/cmake/NESTSimulatorConfig.cmake.in"
+  "${PROJECT_BINARY_DIR}/NESTSimulatorConfig.cmake" @ONLY
+)
+install( FILES
+  "${PROJECT_BINARY_DIR}/NESTSimulatorConfig.cmake"
+  "${PROJECT_BINARY_DIR}/NESTSimulatorConfigVersion.cmake"
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/NESTSimulator
+)
 
 ################################################################################
 ##################           File generation here             ##################

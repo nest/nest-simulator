@@ -82,23 +82,6 @@ function( NEST_CHECK_EXITCODE_SEGFAULT )
   set( NEST_EXITCODE_SEGFAULT ${SEG_ERR} PARENT_SCOPE )
 endfunction()
 
-####### HAVE_CMATH_MAKROS_IGNORED ########
-function( NEST_CHECK_HAVE_CMATH_MAKROS_IGNORED )
-  printInfo( "Check whether the compiler ignores cmath makros." )
-  try_compile( COMPILE_RESULT
-      ${CMAKE_BINARY_DIR}
-      ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/CMathMacros.cxx
-      OUTPUT_VARIABLE OUTPUT
-      )
-  if ( COMPILE_RESULT )
-    set( HAVE_CMATH_MAKROS_IGNORED OFF )
-  else ()
-    set( HAVE_CMATH_MAKROS_IGNORED ON )
-  endif ()
-  printInfo( "Check whether the compiler ignores cmath makros. ${HAVE_CMATH_MAKROS_IGNORED}" )
-  set( HAVE_CMATH_MAKROS_IGNORED ${HAVE_CMATH_MAKROS_IGNORED} PARENT_SCOPE)
-endfunction()
-
 ####### HAVE_STL_VECTOR_CAPACITY_BASE_UNITY ########
 function( NEST_CHECK_HAVE_STL_VECTOR_CAPACITY_BASE_UNITY )
   printInfo( "Check for STL vector capacity base unity." )

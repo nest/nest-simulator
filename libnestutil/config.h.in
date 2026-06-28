@@ -63,9 +63,6 @@
 /* tics per step in simulation */
 #define CONFIG_TICS_PER_STEP @tics_per_step@
 
-/* define if the compiler ignores cmath makros */
-#cmakedefine HAVE_CMATH_MAKROS_IGNORED 1
-
 /* Is the GNU Science Library available (ver. >= 1.0)? */
 #cmakedefine HAVE_GSL 1
 
@@ -83,12 +80,6 @@
 
 /* MUSIC support enabled? */
 #cmakedefine HAVE_MUSIC 1
-
-/* define if M_E is defined */
-#cmakedefine HAVE_M_E 1
-
-/* define if M_PI is defined */
-#cmakedefine HAVE_M_PI 1
 
 /* define for STL vector capacity base unity */
 #cmakedefine HAVE_STL_VECTOR_CAPACITY_BASE_UNITY 1

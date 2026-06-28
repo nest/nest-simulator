@@ -180,7 +180,6 @@ set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${NEST_CXX_COLOR_FLAGS}" )
 # check additionals
 nest_check_exitcode_abort()
 nest_check_exitcode_segfault()
-nest_check_have_cmath_makros_ignored()
 nest_check_have_stl_vector_capacity_base_unity()
 nest_check_random123()
 

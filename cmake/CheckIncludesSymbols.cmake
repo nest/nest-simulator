@@ -22,11 +22,6 @@
 # Check types exist
 include( CheckTypeSize )
 
-# Check symbols / defines exist
-include( CheckCXXSymbolExists )
-check_cxx_symbol_exists( M_E "cmath" HAVE_M_E )
-check_cxx_symbol_exists( M_PI "cmath" HAVE_M_PI )
-
 # given a list, filter all header files
 function( FILTER_HEADERS in_list out_list )
     set( tmp_list ${in_list} )

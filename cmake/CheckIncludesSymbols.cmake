@@ -22,16 +22,6 @@
 # Check types exist
 include( CheckTypeSize )
 
-if( CMAKE_SIZEOF_VOID_P EQUAL 4 )
-    set( CMAKE_EXTRA_INCLUDE_FILES "stdint.h" )
-    check_type_size( "long" LONG_SIZE LANGUAGE CXX )
-    if( NOT LONG_SIZE EQUAL 4 )
-        printError( "Platform not supported: None-ILP32 data model for 32 bit architecture." )
-    else ()
-        set( HAVE_32BIT_ARCH ON )
-    endif()
-endif()
-
 # Check symbols / defines exist
 include( CheckCXXSymbolExists )
 check_cxx_symbol_exists( M_E "cmath" HAVE_M_E )

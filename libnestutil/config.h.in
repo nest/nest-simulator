@@ -63,9 +63,6 @@
 /* tics per step in simulation */
 #define CONFIG_TICS_PER_STEP @tics_per_step@
 
-/* Define to 1 if you have a 32 bit architecture */
-#cmakedefine HAVE_32BIT_ARCH 1
-
 /* define if the compiler ignores cmath makros */
 #cmakedefine HAVE_CMATH_MAKROS_IGNORED 1
 

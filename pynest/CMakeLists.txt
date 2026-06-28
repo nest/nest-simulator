@@ -35,8 +35,8 @@ if ( HAVE_PYTHON )
     message( FATAL_ERROR "Building PyNEST requires Cython." )
   endif ()
 
-  # PYNEST-NG-FUTURE: somehow it works without models being in here, but why?
-  target_link_libraries( nestkernel_api nestutil nestkernel )
+  # nestutil and models are pulled in transitively via nestkernel's PUBLIC links.
+  target_link_libraries( nestkernel_api nestkernel )
 
   if ( APPLE )
     set_target_properties( nestkernel_api PROPERTIES LINK_FLAGS "-undefined dynamic_lookup" )

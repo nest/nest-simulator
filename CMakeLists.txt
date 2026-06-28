@@ -38,9 +38,9 @@ if("${CMAKE_INSTALL_PREFIX}" STREQUAL "")
 endif()
 
 # handle relative installation prefixes
-if( NOT IS_ABSOLUTE ${CMAKE_INSTALL_PREFIX})
+if( NOT IS_ABSOLUTE "${CMAKE_INSTALL_PREFIX}")
     # convert relative path to absolute path
-    get_filename_component(absPath ${CMAKE_INSTALL_PREFIX} ABSOLUTE BASE_DIR ${CMAKE_BINARY_DIR})
+    get_filename_component(absPath "${CMAKE_INSTALL_PREFIX}" ABSOLUTE BASE_DIR "${CMAKE_BINARY_DIR}")
     set(CMAKE_INSTALL_PREFIX ${absPath})
     printInfo("Relative CMAKE_INSTALL_PREFIX has been converted to absolute path ${CMAKE_INSTALL_PREFIX}")
 endif()
@@ -123,6 +123,7 @@ include( CheckIncludesSymbols )
 # These includes publish function names.
 include( ProcessOptions )
 include( CheckExtraCompilerFeatures )
+include( CheckUnknownOptions )
 include( ConfigureSummary )
 include( GetTriple )
 
@@ -349,4 +350,5 @@ install( DIRECTORY examples/
     DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples
 )
 
+nest_check_unknown_options()
 nest_print_config_summary()

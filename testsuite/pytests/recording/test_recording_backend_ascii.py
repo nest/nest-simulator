@@ -103,6 +103,67 @@ class TestRecordingBackendASCII(unittest.TestCase):
         self.assertTrue(label in fname)
         self.assertTrue(mm.model not in fname)
 
+    def testFileContentNewFeatures(self):
+        """Test if the file contains correct headers and expected content with new features"""
+
+        nest.ResetKernel()
+        nest.overwrite_files = True
+        nest.local_num_threads = 2
+
+        mm = nest.Create(
+            "multimeter",
+            params={
+                "record_to": "ascii",
+                "precision": 6,
+                "file_extension": "csv",
+                "delimiter": ",",
+                "no_metadata": True,
+                "write_to_single_file": "Asyncronous",
+            },
+        )
+        mm.set({"interval": 0.1, "record_from": ["V_m"]})
+        nest.Connect(mm, nest.Create("iaf_psc_alpha"))
+
+        nest.Simulate(15)
+
+        fname = mm.filenames[0]
+        with open(fname) as f:
+            lines = f.readlines()
+
+            self.assertEqual(len(lines), mm.n_events + 1)
+
+            self.assertEqual(lines[0], "sender,time_ms,V_m\n")
+
+        nest.ResetKernel()
+        nest.overwrite_files = True
+        nest.local_num_threads = 2
+
+        mm = nest.Create(
+            "multimeter",
+            params={
+                "record_to": "ascii",
+                "precision": 6,
+                "file_extension": "csv",
+                "delimiter": ",",
+                "no_metadata": True,
+                "write_to_single_file": "Syncronous",
+            },
+        )
+        mm.set({"interval": 0.1, "record_from": ["V_m"]})
+        nest.Connect(mm, nest.Create("iaf_psc_alpha"))
+
+        nest.Simulate(15)
+
+        fname = mm.filenames[0]
+        with open(fname) as f:
+            lines = f.readlines()
+
+            self.assertEqual(len(lines), mm.n_events + 1)
+
+            self.assertEqual(lines[0], "sender,time_ms,V_m\n")
+
+            self.assertEqual(lines[1], "2,0.100000,-70.000000\n")
+
     def testFileContent(self):
         """Test if the file contains correct headers and expected content"""
 

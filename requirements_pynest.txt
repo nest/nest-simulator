@@ -4,7 +4,7 @@
 # with PyNEST. It is meant for those who would like to compile NEST
 # or build NEST documentation themselves. If you just want to execute
 # NEST, you should install NEST directly as described in
-# https://www.nest-simulator.org/installation.
+# https://nest-simulator.readthedocs.io/en/stable/installation/index.html.
 #
 # The listed requirements are used to build the mamba environment defined
 # in the environment yaml file. If you want to build an environment

@@ -105,12 +105,16 @@ nest::weight_recorder::Parameters_::set( const Dictionary& d )
 void
 nest::weight_recorder::pre_run_hook()
 {
-auto long_headers = { nest::names::targets, nest::names::receptors, nest::names::ports };
-if ( P_.include_label_ )
-{
-  long_headers.push_back( nest::names::label );
-}
-RecordingDevice::pre_run_hook({ nest::names::weights }, long_headers);
+  if ( !P_.include_label_ )
+  {
+    RecordingDevice::pre_run_hook(
+      { nest::names::weights }, { nest::names::targets, nest::names::receptors, nest::names::ports } );
+  }
+  else
+  {
+    RecordingDevice::pre_run_hook( { nest::names::weights },
+      { nest::names::label, nest::names::targets, nest::names::receptors, nest::names::ports } );
+  }
 }
 
 void

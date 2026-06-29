@@ -138,16 +138,18 @@ delimiter
   A string value that specified the delimiter of the produced ASCII file
   (default *"\t"*).
 
-skip_header_comment
+no_header
   A boolean value that gives the user the option to skip the printing of
   the header comment containing information about nest and backend versions
   and etc. (default *false*).
 
-combine_thread_write
-  A boolean value that gives the user the option to write in a single file
-  from mutiple threads and processes. Please note the using this option in
-  large distributed systems may result in considerable simulation slowdowns.
-  (default *false*).
+write_single_file
+  A string value that gives the user the option to write in a single file
+  from mutiple threads and processes either by keeing the time order of the file
+  (*"Syncronous" *option) or not (*"Asyncronous"* option). Please note the using
+  this option in large distributed systems may result in considerable simulation
+  slowdowns especially when using the *"Syncronous"* option.
+  (default *"Off"*).
 
 
 EndUserDocs */

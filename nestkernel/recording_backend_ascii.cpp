@@ -304,9 +304,16 @@ nest::RecordingBackendASCII::DeviceData::open_file()
     }
     file_ << std::endl;
   }
-  else
+  else if ( write_to_single_file_ == "Asyncronous" || write_to_single_file_ == "Syncronous" )
   {
     open_file_omp();
+  }
+  else
+  {
+    std::string msg = String::compose( "write_to_single_file: Unsupported option given.",
+      "Supported options are: \"Off\", \"Syncronous\",\"Asyncronous\"." );
+    LOG( VerbosityLevel::ERROR, "RecordingBackendASCII::prepare()", msg );
+    throw IOError();
   }
 }
 
@@ -370,7 +377,7 @@ nest::RecordingBackendASCII::DeviceData::open_file_omp()
     LOG( VerbosityLevel::ERROR, "RecordingBackendASCII::prepare()", msg );
     throw IOError();
   }
-  file_ << std::fixed << std::setprecision( precision_ );
+  // file_ << std::fixed << std::setprecision( precision_ );
 }
 
 
@@ -397,6 +404,7 @@ nest::RecordingBackendASCII::DeviceData::write( const Event& event,
 {
 
   std::ostringstream line;
+  line << std::fixed << std::setprecision( precision_ );
   line << event.get_sender_node_id() << delimiter_;
   if ( time_in_steps_ )
   {

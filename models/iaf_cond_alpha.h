@@ -76,10 +76,10 @@ See also [1]_, [2]_, [3]_.
 
 .. note::
 
-   The **sign of the synaptic weight** determines which synapse receives the input: a positive
+   The **sign of the synaptic weight** determines which synapse receives an incoming spike: a positive
    weight routes the spike to the excitatory synapse (governed by ``E_ex`` and ``tau_syn_ex``),
    while a negative weight routes it to the inhibitory synapse (governed by ``E_in`` and
-   ``tau_syn_in``). Only the absolute value of the weight determines the conductance amplitude.
+   ``tau_syn_in``). The absolute value of the weight determines the change in conductance amplitude.
    This convention mirrors the ``iaf_psc_*`` current-based models to simplify migration between
    the two model families.
 

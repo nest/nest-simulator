@@ -442,14 +442,14 @@ shows the setup and connection of such a model in more detail:
 
 .. note::
 
-   For single-compartment conductance-based neuron models (``iaf_cond_exp``,
-   ``iaf_cond_alpha``, ``iaf_cond_beta``, ``iaf_cond_exp_sfa_rr``), ``receptor_type``
-   is **not** used to select the excitatory or inhibitory synapse. Instead, the **sign of
+   Many single-compartment conductance-based neuron models (``iaf_cond_exp``,
+   ``iaf_cond_alpha``, ``iaf_cond_beta``, ``iaf_cond_exp_sfa_rr``) do **not** use
+   ``receptor_type`` to select the excitatory or inhibitory synapse. Instead, the **sign of
    the connection weight** determines the target synapse: a positive weight connects to
-   the excitatory synapse (``E_ex``), while a negative weight connects to the inhibitory
-   synapse (``E_in``). Only the absolute value of the weight determines the conductance
-   amplitude. Attempting to set ``receptor_type`` to a value other than 0 for these models
-   raises an ``UnknownReceptorType`` error at runtime.
+   the excitatory synapse (``E_ex``, ``tau_syn_ex``), while a negative weight connects
+   to the inhibitory synapse (``E_in``, ``tau_syn_in``). The absolute value of the weight
+   determines the conductance amplitude. Attempting to set ``receptor_type`` to a value
+   other than 0 for these models raises an ``UnknownReceptorType`` error at runtime.
 
    .. code-block:: python
 

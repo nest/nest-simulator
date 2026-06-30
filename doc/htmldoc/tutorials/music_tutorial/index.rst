@@ -3,9 +3,6 @@
 MUSIC Tutorials
 ===============
 
-Learn step-by-step how to develop your PyNEST scripts and simulate your first
-networks!
-
 .. grid:: 1 1 1 1
 
 

@@ -49,7 +49,7 @@ connections with a single call to Connect via the make_symmetric flag.
 The value of the parameter ``delay`` is ignored for connections of
 type ``gap_junction``.
 
-See also [1]_, [2]_.
+See also :footcite:p:`Hahne2015`, :footcite:p:`Mancilla2007`.
 
 Sends
 +++++
@@ -59,15 +59,7 @@ GapJunctionEvent
 References
 ++++++++++
 
-.. [1] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A, Diesmann,
-       M (2015). A unified framework for spiking and gap-junction interactions
-       in distributed neuronal network simulations. Frontiers in
-       Neuroinformatics 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
-
-.. [2] Mancilla JG, Lewis,TJ, Pinto DJ, Rinzel J, Connors BW (2007).
-       Synchronization of electrically coupled pairs of inhibitory
-       interneurons in neocortex. Journal of Neuroscience 27:2058-2073.
-       DOI: https://doi.org/10.1523/JNEUROSCI.2715-06.2007
+.. footbibliography::
 
 See also
 ++++++++

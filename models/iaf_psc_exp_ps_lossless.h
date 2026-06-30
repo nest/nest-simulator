@@ -58,7 +58,7 @@ Description
 
 ``iaf_psc_exp_ps_lossless`` is the precise state space implementation of the leaky
 integrate-and-fire model neuron with exponential postsynaptic currents
-that uses time reversal to detect spikes [1]_. This is the most exact
+that uses time reversal to detect spikes :footcite:p:`Krishnan2018`. This is the most exact
 implementation available.
 
 Time-reversed state space analysis provides a general method to solve the
@@ -98,10 +98,7 @@ The following parameters can be set in the status dictionary.
 References
 ++++++++++
 
-.. [1] Krishnan J, Porta Mana P, Helias M, Diesmann M and Di Napoli E
-       (2018) Perfect Detection of Spikes in the Linear Sub-threshold
-       Dynamics of Point Neurons. Front. Neuroinform. 11:75.
-       doi: 10.3389/fninf.2017.00075
+.. footbibliography::
 
 Sends
 +++++
@@ -256,7 +253,7 @@ private:
    * threshold line V < \theta, envelope, V > b(I_e) and line corresponding to
    * the final timestep
    * V > f(h, I) (or) linear approximation of the envelope, V < g(h, I_e).
-   * Note that in Algorithm 1 and 2 of [1], a typo interchanges g and f.
+   * Note that in Algorithm 1 and 2 of Krishnan et al. (2018), a typo interchanges g and f.
    * @returns time interval in which threshold was crossed, or nan.
    */
   double is_spike_( const double );

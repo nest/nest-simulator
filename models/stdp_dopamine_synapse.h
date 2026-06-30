@@ -48,7 +48,7 @@ Description
 
 ``stdp_dopamine_synapse`` is a connection to create synapses with
 dopamine-modulated spike-timing dependent plasticity (used as a
-benchmark model in [1]_, based on [2]_). The dopaminergic signal is a
+benchmark model in :footcite:p:`Potjans2010`, based on :footcite:p:`Izhikevich2007`). The dopaminergic signal is a
 low-pass filtered version of the spike rate of a user-specific pool
 of neurons. The spikes emitted by the pool of dopamine neurons are
 delivered to the synapse via the assigned volume transmitter. The
@@ -113,13 +113,7 @@ to all instances of the synapse model.
 References
 ++++++++++
 
-.. [1] Potjans W, Morrison A, Diesmann M (2010). Enabling functional neural
-       circuit simulations with distributed computing of neuromodulated
-       plasticity. Frontiers in Computational Neuroscience, 4:141.
-       DOI: https://doi.org/10.3389/fncom.2010.00141
-.. [2] Izhikevich EM (2007). Solving the distal reward problem through linkage
-       of STDP and dopamine signaling. Cerebral Cortex, 17(10):2443-2452.
-       DOI: https://doi.org/10.1093/cercor/bhl152
+.. footbibliography::
 
 Transmits
 +++++++++

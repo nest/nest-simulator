@@ -29,9 +29,7 @@ initial values of the membrane potential.
 References
 ~~~~~~~~~~
 
-.. [1] Dayan, P. and Abbott, L.F. (2001) Theoretical neuroscience,
-       MIT Press, page 166
-
+.. footbibliography::
 """
 
 ###############################################################################
@@ -51,7 +49,7 @@ import numpy
 # ``iaf_cond_exp_sfa_rr`` is an implementation of a spiking neuron with
 # integrate-and-fire dynamics, conductance-based synapses, an additional
 # spike-frequency adaptation and relative refractory mechanisms as described
-# in [1]_. Incoming spike events induce a postsynaptic change of
+# in :footcite:p:`Dayan2001`. Incoming spike events induce a postsynaptic change of
 # conductance  modeled  by an  exponential  function.
 #
 # ``Create`` is used once more to instantiate a ``voltmeter`` as recording device

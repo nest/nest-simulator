@@ -114,7 +114,7 @@ Description
 
 pp_cond_exp_mc_urbanczik is an implementation of a two-compartment spiking
 point process neuron with conductance-based synapses as it is used
-in [1]_. It is capable of connecting to an :doc:`Urbanczik synapse
+in :footcite:p:`Urbanczik2014`. It is capable of connecting to an :doc:`Urbanczik synapse
 <urbanczik_synapse>`.
 
 The model has two compartments: soma and dendrite, labeled as s and p,
@@ -158,7 +158,7 @@ In the :doc:`Urbanczik synapse <urbanczik_synapse>`, the change of the synaptic
 weight is driven by an error signal, which is the difference between the firing
 rate of the soma (derived from the somatic spike train :math:`S_{post}`) and the
 dendritic prediction of the firing rate of the soma (derived from the dendritic
-membrane potential :math:`V`). The original publication [1]_ does not assume any
+membrane potential :math:`V`). The original publication :footcite:p:`Urbanczik2014` does not assume any
 delay in the interaction between the soma and the dendritic compartment.
 Therefore, we evaluate the firing rate and the dendritic prediction at equal
 time points to calculate the error signal at that time point. Due to the
@@ -211,7 +211,7 @@ these parameters are marked with an asterisk.
 .. note::
 
    The neuron model uses standard units of NEST instead of the unitless quantities
-   used in [1]_.
+   used in :footcite:p:`Urbanczik2014`.
 
 .. note::
 
@@ -231,8 +231,7 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 References
 ++++++++++
 
-.. [1] R. Urbanczik, W. Senn (2014). Learning by the Dendritic Prediction of
-       Somatic Spiking. Neuron, 81, 521 - 528.
+.. footbibliography::
 
 See also
 ++++++++
@@ -410,7 +409,7 @@ public:
     };
 
     //! total size of state vector
-    static const size_t STATE_VEC_SIZE = static_cast< size_t >( STATE_VEC_COMPS ) * static_cast< size_t >( NCOMP );
+    static const size_t STATE_VEC_SIZE = to_underlying( STATE_VEC_COMPS ) * to_underlying( NCOMP );
 
     //! neuron state, must be C-array for GSL solver
     double y_[ STATE_VEC_SIZE ];

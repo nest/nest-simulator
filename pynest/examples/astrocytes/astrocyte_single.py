@@ -24,8 +24,8 @@ A model using a single astrocyte with calcium dynamics
 -------------------------------------------------------
 
 This script simulates an astrocyte with the model ``astrocyte_lr_1994``, which
-implements the dynamics in the astrocyte based on [1]_, [2]_, and
-[3]_. Recordings are made for two variables in the astrocyte,
+implements the dynamics in the astrocyte based on :footcite:p:`Li1994`, :footcite:p:`DeYoung1992`, and
+:footcite:p:`Nadkarni2003`. Recordings are made for two variables in the astrocyte,
 inositol 1,4,5-trisphosphate (IP3) and cytosolic calcium. The astrocyte is driven
 by a Poissonian spike train which induces the
 generation of IP3 in the astrocyte, which in turn influences the calcium dynamics in
@@ -39,21 +39,7 @@ See Also
 References
 ~~~~~~~~~~
 
-.. [1] Li, Y. X., & Rinzel, J. (1994). Equations for InsP3 receptor-mediated
-       [Ca2+]i oscillations derived from a detailed kinetic model: a
-       Hodgkin-Huxley like formalism. Journal of theoretical Biology, 166(4),
-       461-473. DOI: https://doi.org/10.1006/jtbi.1994.1041
-
-.. [2] De Young, G. W., & Keizer, J. (1992). A single-pool inositol
-       1,4,5-trisphosphate-receptor-based model for agonist-stimulated
-       oscillations in Ca2+ concentration. Proceedings of the National Academy
-       of Sciences, 89(20), 9895-9899. DOI:
-       https://doi.org/10.1073/pnas.89.20.9895
-
-.. [3] Nadkarni, S., & Jung, P. (2003). Spontaneous oscillations of dressed
-       neurons: a new mechanism for epilepsy?. Physical review letters, 91(26),
-       268101. DOI: https://doi.org/10.1103/PhysRevLett.91.268101
-
+.. footbibliography::
 """
 
 ###############################################################################

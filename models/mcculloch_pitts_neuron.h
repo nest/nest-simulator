@@ -40,7 +40,7 @@ Description
 +++++++++++
 
 The ``mcculloch_pitts_neuron`` is an implementation of a binary
-neuron that is irregularly updated as Poisson time points [1]_. At
+neuron that is irregularly updated as Poisson time points :footcite:p:`McCulloch1943`. At
 each update point the total synaptic input h into the neuron is
 summed up, passed through a Heaviside gain function :math:`g(h) = H(h-\theta)`,
 whose output is either 1 (if input is above) or 0 (if input is below
@@ -49,20 +49,20 @@ threshold theta).
 The time constant :math:`\tau_m` is defined as the
 mean inter-update-interval that is drawn from an exponential
 distribution with this parameter. Using this neuron to reproduce
-simulations with asynchronous update [1]_, the time constant needs
+simulations with asynchronous update :footcite:p:`McCulloch1943`, the time constant needs
 to be chosen as :math:`\tau_m = dt \times N`, where :math:`dt` is the simulation time
 step and :math:`N` the number of neurons in the original simulation with
 asynchronous update. This ensures that a neuron is updated on
-average every :math:`\tau_m` ms. Since in the original paper [1]_ neurons
+average every :math:`\tau_m` ms. Since in the original paper :footcite:p:`McCulloch1943` neurons
 are coupled with zero delay, this implementation follows this
-definition. It uses the update scheme described in [3]_ to
+definition. It uses the update scheme described in :footcite:p:`Morrison2007b` to
 maintain causality: The incoming events in time step :math:`t_i` are
 taken into account at the beginning of the time step to calculate
 the gain function and to decide upon a transition.  In order to
 obtain delayed coupling with delay :math:`d`, the user has to specify the
 delay :math:`d+h` upon connection, where :math:`h` is the simulation time step.
 
-See also [2]_.
+See also :footcite:p:`Hertz1991`.
 
 Parameters
 ++++++++++
@@ -97,17 +97,7 @@ Parameters
 References
 ++++++++++
 
-.. [1] McCulloch W, Pitts W (1943). A logical calculus of the ideas
-       immanent in nervous activity. Bulletin of Mathematical Biophysics,
-       5:115-133. DOI: https://doi.org/10.1007/BF02478259
-.. [2] Hertz J, Krogh A, Palmer R (1991). Introduction to the theory of neural
-       computation. Addison-Wesley Publishing Conmpany.
-.. [3] Morrison A, Diesmann M (2007). Maintaining causality in discrete time
-       neuronal simulations. In: Lectures in Supercomputational Neuroscience,
-       p. 267. Peter beim Graben, Changsong Zhou, Marco Thiel, Juergen Kurths
-       (Eds.), Springer.
-       DOI: https://doi.org/10.1007/978-3-540-73159-7_10
-
+.. footbibliography::
 
 Receives
 ++++++++

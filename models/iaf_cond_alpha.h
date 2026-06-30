@@ -74,6 +74,18 @@ at :math:`t = \tau_{syn}`.
 
 See also :footcite:p:`Meffin2004`, :footcite:p:`Bernander1991`, :footcite:p:`Kuhn2004`.
 
+.. note::
+
+   The **sign of the synaptic weight** determines which synapse receives an incoming spike: a positive
+   weight routes the spike to the excitatory synapse (governed by ``E_ex`` and ``tau_syn_ex``),
+   while a negative weight routes it to the inhibitory synapse (governed by ``E_in`` and
+   ``tau_syn_in``). The absolute value of the weight determines the change in conductance amplitude.
+   This convention mirrors the ``iaf_psc_*`` current-based models to simplify migration between
+   the two model families.
+
+   ``receptor_type`` is not used in this model; setting it to any value other than 0 raises an
+   ``UnknownReceptorType`` error.
+
 Parameters
 ++++++++++
 

@@ -207,7 +207,7 @@ def from_device(detec, **kwargs):
 
     elif detec.get("record_to") == "ascii":
         fname = detec.get("filenames")
-        skip_lines = detec.get("no_metadata")
+        no_metadata = detec.get("no_metadata")
         delimiter = detec.get("delimiter")
         if detec.get("no_metadata") == True:
             skip_lines = 0

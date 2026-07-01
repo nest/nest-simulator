@@ -140,7 +140,6 @@ nest::TargetTableDevices::get_connections_to_device_for_lid_( const size_t lid,
   if ( target_to_devices_[ tid ][ lid ].size() > 0 )
   {
     const size_t source_node_id = kernel().vp_manager.lid_to_node_id( lid );
-    // not the valid connector
     if ( source_node_id > 0 and target_to_devices_[ tid ][ lid ][ syn_id ] )
     {
       target_to_devices_[ tid ][ lid ][ syn_id ]->get_all_connections(

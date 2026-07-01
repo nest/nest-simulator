@@ -101,7 +101,7 @@ def from_data(data, sel=None, **kwargs):
     return _make_plot(ts, ts1, node_ids, data[:, 0], **kwargs)
 
 
-def from_file(fname, **kwargs):
+def from_file(fname, delimiter, no_metadata, **kwargs):
     """Plot raster from file.
 
     Parameters
@@ -112,6 +112,10 @@ def from_file(fname, **kwargs):
         If a list of files is given, the data from them is concatenated as if
         it had been stored in a single file - useful when MPI is enabled and
         data is logged separately for each MPI rank, for example.
+
+    delimiter: str or tuple(str) or list(str)
+        File delimiters (default="\t")
+
     kwargs:
         Parameters passed to _make_plot
     """
@@ -123,20 +127,23 @@ def from_file(fname, **kwargs):
         try:
             global pandas
             pandas = __import__("pandas")
-            from_file_pandas(fname, **kwargs)
+            from_file_pandas(fname, delimiter, no_metadata, **kwargs)
         except ImportError:
-            from_file_numpy(fname, **kwargs)
+            from_file_numpy(fname, delimiter, no_metadata, **kwargs)
     else:
         print("fname should be one of str/list(str)/tuple(str).")
 
 
-def from_file_pandas(fname, **kwargs):
+def from_file_pandas(fname, delimiter, no_metadata, **kwargs):
     """Use pandas."""
 
     data = None
-    for f in fname:
+    for f, d, m in fname, delimiter, no_metadata:
         # pylint: disable=possibly-used-before-assignment
-        dataFrame = pandas.read_table(f, header=2, skipinitialspace=True)
+        head = 2
+        if m == True:
+            head = 0
+        dataFrame = pandas.read_table(f, delimiter=d, header=head, skipinitialspace=True)
         newdata = dataFrame.values
 
         if data is None:
@@ -147,12 +154,16 @@ def from_file_pandas(fname, **kwargs):
     return from_data(data, **kwargs)
 
 
-def from_file_numpy(fname, **kwargs):
+def from_file_numpy(fname, delimiter, no_metadata, **kwargs):
     """Use numpy."""
 
     data = None
-    for f in fname:
-        newdata = numpy.loadtxt(f, skiprows=3)
+    for f, d, m in fname, delimiter, no_metadata:
+        r_skip = 3
+        if m == True:
+            r_skip = 1
+
+        newdata = numpy.loadtxt(f, delimiter=d, skiprows=rskip)
 
         if data is None:
             data = newdata
@@ -196,7 +207,12 @@ def from_device(detec, **kwargs):
 
     elif detec.get("record_to") == "ascii":
         fname = detec.get("filenames")
-        return from_file(fname, **kwargs)
+        skip_lines = detec.get("no_metadata")
+        delimiter = detec.get("delimiter")
+        if detec.get("no_metadata") == True:
+            skip_lines = 0
+
+        return from_file(fname, delimiter, **kwargs)
 
     else:
         raise ValueError("No data to plot. Make sure that 'record_to' is set to either 'ascii' or 'memory'.")

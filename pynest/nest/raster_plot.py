@@ -212,7 +212,7 @@ def from_device(detec, **kwargs):
         if detec.get("no_metadata") == True:
             skip_lines = 0
 
-        return from_file(fname, delimiter, **kwargs)
+        return from_file(fname, delimiter, no_metadata, **kwargs)
 
     else:
         raise ValueError("No data to plot. Make sure that 'record_to' is set to either 'ascii' or 'memory'.")

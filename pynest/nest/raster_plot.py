@@ -138,12 +138,13 @@ def from_file_pandas(fname, delimiter, no_metadata, **kwargs):
     """Use pandas."""
 
     data = None
-    for f, d, m in fname, delimiter, no_metadata:
+    head = 2
+    if no_metadata == True:
+        head = 0
+    for f in fname:
         # pylint: disable=possibly-used-before-assignment
-        head = 2
-        if m == True:
-            head = 0
-        dataFrame = pandas.read_table(f, delimiter=d, header=head, skipinitialspace=True)
+
+        dataFrame = pandas.read_table(f, delimiter=delimiter, header=head, skipinitialspace=True)
         newdata = dataFrame.values
 
         if data is None:
@@ -158,12 +159,11 @@ def from_file_numpy(fname, delimiter, no_metadata, **kwargs):
     """Use numpy."""
 
     data = None
-    for f, d, m in fname, delimiter, no_metadata:
-        r_skip = 3
-        if m == True:
-            r_skip = 1
-
-        newdata = numpy.loadtxt(f, delimiter=d, skiprows=rskip)
+    r_skip = 3
+    if no_metadata == True:
+        r_skip = 1
+    for f in fname:
+        newdata = numpy.loadtxt(f, delimiter=delimiter, skiprows=rskip)
 
         if data is None:
             data = newdata

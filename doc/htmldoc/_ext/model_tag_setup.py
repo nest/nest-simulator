@@ -73,7 +73,7 @@ def extract_model_text():
         with open(file_path, "r", encoding="utf8") as file:
             match = userdoc_re.search(file.read())
         if not match:
-            log.info("No user documentation found in " + str(file_path))
+            log.info("No user documentation found in %s", str(file_path))
             continue
         yield match, file_path
 
@@ -101,7 +101,7 @@ def create_rst_files(app, config):
 
     outdir = "models/"
     if not os.path.exists(outdir):
-        log.info("creating output directory " + outdir)
+        log.info("creating output directory %s", outdir)
         os.mkdir(outdir)
     outnames = []
     for match, file_path in extract_model_text():

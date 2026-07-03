@@ -4,6 +4,8 @@
 Model directory
 ===============
 
+.. meta::
+   :description: Browse 100+ neuron, synapse, and device models in NEST Simulator. Interactive model selector with tags, A-Z listing, and links to detailed parameter documentation.
 
 What type of model?
 -------------------

@@ -1,0 +1,143 @@
+# NEST Simulator
+
+NEST is a simulator for spiking neural network models, focused on circuit models of large networks of point neurons.
+
+## Quick Start
+- Install: `pip install nest-simulator`
+- Tutorial: [PyNEST Tutorial](tutorials/pynest_tutorial/index.html)
+- Examples: [Example Gallery](examples/index.html)
+
+## Core Concepts
+- [Neuron Models](neurons/index.html) - 60+ built-in neuron models (iaf_psc_alpha, gif_neuron, hh_psc_alpha, etc.)
+- [Synapse Models](synapses/index.html) - Plasticity, gap junctions, STDP, Tsodyks-Markram
+- [Devices](devices/index.html) - Stimulation (poisson_generator, dc_generator) and recording (spike_detector, multimeter)
+- [Connectivity](synapses/connectivity_concepts.html) - All-to-all, pairwise, distance-dependent, data-driven
+
+## Key Features
+- Parallel computing with MPI and threading
+- Exact integration for precise spike times
+- SONATA format support for network data
+- MUSIC interface for multi-simulator coupling
+- NESTML for custom neuron and synapse models
+- Built-in raster plots and voltage traces
+- **GPU acceleration**: [NEST GPU](https://nest-gpu.readthedocs.io/en/latest/) for large-scale simulations
+- **NEAT project**: [NEST NEAT](https://nest-neat.readthedocs.io/en/latest/) for anatomically accurate models
+
+## Common API Patterns
+
+**Create neurons:**
+```python
+import nest
+nest.ResetKernel()
+neurons = nest.Create('iaf_psc_alpha', n=100)
+```
+
+**Connect neurons:**
+```python
+nest.Connect(neurons, neurons, 'all_to_all', {'synapse_model': 'stdp_synapse'})
+```
+
+**Record spikes:**
+```python
+spike_detector = nest.Create('spike_detector')
+nest.Connect(spike_detector, neurons)
+```
+
+**Run simulation:**
+```python
+nest.Simulate(1000.0)  # ms
+```
+
+## Documentation Sections
+
+### Getting Started
+- [Installation Guide](installation/index.html) - pip, conda, Docker, source build
+- [Tutorials and Guides](get-started_index.html) - Comprehensive learning path
+- [PyNEST Tutorial](tutorials/pynest_tutorial/index.html) - Step-by-step introduction
+- [NEST Desktop](https://nest-desktop.readthedocs.io/en/latest/) - Interactive GUI for network building
+- [One Neuron Example](auto_examples/one_neuron.html) - Minimal working script
+
+### Building Networks
+- [Model Directory](models/index.html) - Browse 100+ neuron, synapse, and device models
+- [Connectivity Concepts](synapses/connectivity_concepts.html) - Connection rules and patterns
+- [Spatial Networks](networks/spatially_structured_networks.html) - 2D and 3D network construction
+
+### Running Simulations
+- [Stimulation Devices](devices/index.html#stimulation) - Input generators
+- [Recording Devices](devices/index.html#recording) - Data acquisition
+- [Parallel Computing](hpc/parallel_computing.html) - MPI and threading guide
+- [Performance Optimization](hpc/optimize_performance.html) - Tuning tips
+
+### Advanced Topics
+- [NESTML](https://nestml.readthedocs.io/en/latest/) - Custom model development
+- [SONATA Format](nest_sonata/nest_sonata_guide.html) - Network data interchange
+- [MUSIC Interface](interface_nest/using_nest_with_music.html) - Multi-simulator coupling
+- [HPC Benchmarking](hpc/benchmarking.html) - Performance measurement
+- [Contributing to NEST](developer_space/index.html) - Development guidelines, workflows, and how to contribute
+- [Developer Installation](developer_space/index.html#dev_install) - Build from source for development
+
+### Reference
+- [Python API Reference](ref_material/pynest_api/index.html) - Complete function documentation
+- [Model Parameters](models/index.html) - All model parameters and defaults
+- [Glossary](ref_material/glossary.html) - Terminology and abbreviations
+
+### Examples Gallery
+- [Simple Networks](examples/index.html#simple-networks) - One neuron, balanced networks
+- [Spatial Networks](examples/index.html#2d-spatially-structured-networks) - 2D/3D structured connectivity
+- [Plasticity](examples/index.html#eprop-plasticity) - STDP, eProp, Clopath, Urbanczik
+- [Large Networks](examples/index.html#large-scale-cortical-network-models) - Brunel, microcircuit, mesocircuit
+- [Fun Projects](examples/index.html#nest-pong-game) - Sudoku solver, Pong game
+
+## Common Tasks
+
+**How to install NEST:**
+```bash
+pip install nest-simulator
+```
+
+**How to create a network:**
+```python
+import nest
+nest.ResetKernel()
+pop1 = nest.Create('iaf_psc_alpha', 100)
+pop2 = nest.Create('iaf_psc_alpha', 100)
+nest.Connect(pop1, pop2)
+nest.Simulate(1000.0)
+```
+
+**How to record data:**
+```python
+spike_detector = nest.Create('spike_detector')
+nest.Connect(spike_detector, neurons)
+nest.Simulate(1000.0)
+events = nest.GetStatus(spike_detector, 'events')[0]
+print(events['spikes'])
+```
+
+**How to run in parallel:**
+```bash
+mpirun -n 4 python my_simulation.py
+```
+Then in Python: `nest.SetStatus(nest.LR(), {'local_num_threads': 2})`
+
+**How to use a custom model:**
+```python
+# With NESTML
+import nestml
+nestml.setup_model('my_neuron.nestml')
+neuron = nest.Create('my_neuron')
+```
+
+## Troubleshooting
+- [Installation Issues](installation/index.html#troubleshooting)
+- [Import Errors](troubleshooting.html#import-error)
+- [MPI Configuration](hpc/parallel_computing.html#mpi-setup)
+- [Performance Issues](hpc/optimize_performance.html)
+
+## Community
+- [GitHub Issues](https://github.com/nest/nest-simulator/issues)
+- [Mailing List](https://www.nest-initiative.org/mailinglist)
+- [NEST Homepage](https://nest-simulator.org)
+
+---
+*This file is optimized for AI agent discovery. For full documentation, visit https://nest-simulator.readthedocs.io*

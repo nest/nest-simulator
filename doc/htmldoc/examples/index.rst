@@ -266,6 +266,7 @@ PyNEST examples
            :img-top: ../auto_examples/hpc_benchmark_connectivity.svg
 
            * :doc:`../auto_examples/hpc_benchmark`
+           * :doc:`../auto_examples/ignore_and_spike_mechanism`
 
     .. grid-item-card:: Brette et al. 2007 Benchmarks
            :img-top: ../static/img/nest_logo-faded.png
@@ -287,6 +288,7 @@ PyNEST examples
    running_notebooks
    ../auto_examples/sudoku/index
    ../auto_examples/pong/index
+   ../auto_examples/ignore_and_spike_mechanism
    ../auto_examples/spatial/index
    ../auto_examples/music_cont_out_proxy_example/index
    ../auto_examples/compartmental_model/index

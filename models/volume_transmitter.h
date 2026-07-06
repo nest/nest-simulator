@@ -66,7 +66,7 @@ intervals. The interval is equal to ``deliver_interval * d_min``,
 where ``deliver_interval`` is an (integer) entry in the parameter
 dictionary and ``d_min`` is the minimal synaptic delay.
 
-The implementation is based on the framework presented in [1]_.
+The implementation is based on the framework presented in :footcite:p:`Potjans2010`.
 
 Please note that the ``volume_transmitter`` property of a synapse can
 only be set by means of :py:func:`.CopyModel` or
@@ -86,11 +86,7 @@ References
 ++++++++++
 
 
-.. [1] Potjans W, Morrison A, Diesmann M (2010). Enabling functional
-       neural circuit simulations with distributed computing of
-       neuromodulated plasticity. Frontiers in Computattional Neuroscience,
-       4:141. DOI: https://doi.org/10.3389/fncom.2010.00141
-
+.. footbibliography::
 
 Receives
 ++++++++

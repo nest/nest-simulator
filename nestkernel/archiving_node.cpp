@@ -32,7 +32,9 @@ namespace nest
 // member functions for ArchivingNode
 
 nest::ArchivingNode::ArchivingNode()
-  : n_incoming_( 0 )
+  : StructuralPlasticityNode()
+  , IgnoreAndSpikeMechanism()
+  , n_incoming_( 0 )
   , Kminus_( 0.0 )
   , Kminus_triplet_( 0.0 )
   , tau_minus_( 20.0 )
@@ -47,6 +49,7 @@ nest::ArchivingNode::ArchivingNode()
 
 nest::ArchivingNode::ArchivingNode( const ArchivingNode& n )
   : StructuralPlasticityNode( n )
+  , IgnoreAndSpikeMechanism( n )
   , n_incoming_( n.n_incoming_ )
   , Kminus_( n.Kminus_ )
   , Kminus_triplet_( n.Kminus_triplet_ )
@@ -229,6 +232,7 @@ nest::ArchivingNode::get_status( Dictionary& d ) const
 
   // add status dict items from the parent class
   StructuralPlasticityNode::get_status( d );
+  IgnoreAndSpikeMechanism::get_status( d );
 }
 
 void
@@ -260,6 +264,8 @@ nest::ArchivingNode::set_status( const Dictionary& d )
   {
     clear_history();
   }
+
+  IgnoreAndSpikeMechanism::set_status( d, this );
 }
 
 void

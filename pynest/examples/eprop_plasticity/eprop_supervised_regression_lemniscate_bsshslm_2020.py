@@ -29,10 +29,10 @@ Description
 ~~~~~~~~~~~
 
 This script demonstrates supervised learning of a regression task with a recurrent spiking neural network that
-is equipped with the eligibility propagation (e-prop) plasticity mechanism by Bellec et al. [1]_.
+is equipped with the eligibility propagation (e-prop) plasticity mechanism by Bellec et al. :footcite:p:`Bellec2020`.
 
-This type of learning is demonstrated at the proof-of-concept task in [1]_. We based this script on their
-TensorFlow script given in [2]_ and changed the task as well as the parameters slightly.
+This type of learning is demonstrated at the proof-of-concept task in :footcite:p:`Bellec2020`. We based this script on their
+TensorFlow script given in the `original implementation <https://github.com/IGITUGraz/eligibility_propagation/blob/master/Figure_3_and_S7_e_prop_tutorials/tutorial_pattern_generation.py>`__ and changed the task as well as the parameters slightly.
 
 In this task, the network learns to generate an arbitrary N-dimensional temporal pattern. Here, the network
 learns to reproduce with its overall spiking activity a two-dimensional, roughly one-second-long target signal
@@ -50,7 +50,7 @@ readout neurons. Each individual readout signal denoted as :math:`y_k` is compar
 signal represented as :math:`y_k^*`. The network's training error is assessed by employing a mean-squared error
 loss.
 
-Details on the event-based NEST implementation of e-prop can be found in [3]_.
+Details on the event-based NEST implementation of e-prop can be found in :footcite:p:`KorcsakGorzo2025`.
 
 The development of this task and the hyper-parameter optimization were conducted by Agnes Korcsak-Gorzo and
 Charl Linssen, inspired by activities and feedback received at the CapoCaccia Workshop toward Neuromorphic
@@ -59,16 +59,7 @@ Intelligence 2023.
 References
 ~~~~~~~~~~
 
-.. [1] Bellec G, Scherr F, Subramoney F, Hajek E, Salaj D, Legenstein R, Maass W (2020). A solution to the
-       learning dilemma for recurrent networks of spiking neurons. Nature Communications, 11:3625.
-       https://doi.org/10.1038/s41467-020-17236-y
-
-.. [2] https://github.com/IGITUGraz/eligibility_propagation/blob/master/Figure_3_and_S7_e_prop_tutorials/tutorial_pattern_generation.py
-
-.. [3] Korcsak-Gorzo A, Espinoza Valverde JA, Stapmanns J, Plesser HE, Dahmen D,
-       Bolten M, van Albada SJ, Diesmann M (2025). Event-driven eligibility
-       propagation in large sparse networks: efficiency shaped by biological
-       realism. arXiv:2511.21674. https://doi.org/10.48550/arXiv.2511.21674
+.. footbibliography::
 
 """  # pylint: disable=line-too-long # noqa: E501
 
@@ -190,7 +181,6 @@ params_nrn_out = {
 tau_m_mean = 30.0  # ms, mean of membrane time constant distribution
 
 params_nrn_rec = {
-    "beta": 1.0,  # width scaling of the pseudo-derivative
     "adapt_tau": 2000.0,  # ms, time constant of adaptive threshold
     "C_m": 250.0,
     "c_reg": 150.0,  # coefficient of firing rate regularization
@@ -199,10 +189,11 @@ params_nrn_rec = {
     "flush_event_send_interval": duration[
         "sequence"
     ],  # ms, inactivity period before flushing outgoing synapses to free memory
-    "gamma": 0.3,  # height scaling of the pseudo-derivative
     "I_e": 0.0,
     "regular_spike_arrival": False,
     "surrogate_gradient_function": "piecewise_linear",  # surrogate gradient / pseudo-derivative function
+    "surrogate_gradient_height": 0.3,  # height scaling of the pseudo-derivative
+    "surrogate_gradient_width": 1.0,  # width scaling of the pseudo-derivative
     "t_ref": 0.0,  # ms, duration of refractory period
     "tau_m": nest.random.normal(mean=tau_m_mean, std=2.0),
     "V_m": 0.0,
@@ -210,8 +201,10 @@ params_nrn_rec = {
 }
 
 # factors from the original pseudo-derivative definition are incorporated into the parameters
-params_nrn_rec["gamma"] /= params_nrn_rec["V_th"]
-params_nrn_rec["beta"] /= np.abs(params_nrn_rec["V_th"])  # prefactor is inside abs in the original definition
+params_nrn_rec["surrogate_gradient_height"] /= params_nrn_rec["V_th"]
+params_nrn_rec["surrogate_gradient_width"] *= np.abs(
+    params_nrn_rec["V_th"]
+)  # prefactor is inside abs in the original definition
 
 params_nrn_rec["adapt_beta"] = (
     1.7 * (1.0 - np.exp(-1 / params_nrn_rec["adapt_tau"])) / (1.0 - np.exp(-1.0 / tau_m_mean))

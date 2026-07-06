@@ -308,7 +308,7 @@ nest::iaf_psc_delta::update( Time const& origin, const long from, const long to 
     }
 
     // threshold crossing
-    if ( S_.y3_ >= P_.V_th_ )
+    if ( spike_event_is_due( S_.y3_ >= P_.V_th_ ) )
     {
       S_.r_ = V_.RefractoryCounts_;
       S_.y3_ = P_.V_reset_;

@@ -131,17 +131,15 @@ This error message means something in your environment is not set correctly, dep
 
    In case ``python`` returns "command not found", consider one of the following:
    1. Make sure your environment (venv, virtualenv, mamba, …) is correctly loaded
-   2. If you want to run with your system Python, make sure you have a
-      corresponding symlink in place (e.g. by installing ``sudo apt install
-      python-is-python3``)
+   2. If you want to run with your system Python, make sure you have a corresponding symlink in place (e.g. by installing ``sudo apt install python-is-python3``)
 
 If your Python version is correct and you still have the same error, then try one of the following options:
 
 2a. If you compiled NEST from source and installed into a non-standard location
 
     * Make sure the installed NEST can be found by Python by adding the install
-    path to your ``PYTHONPATH`` variable. Find the path corresponding to your
-    installation and run a command in the following format:
+      path to your ``PYTHONPATH`` variable. Find the path corresponding to your
+      installation and run a command in the following format:
 
           .. code-block:: bash
 

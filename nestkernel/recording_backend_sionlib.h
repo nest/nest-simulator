@@ -31,8 +31,10 @@
 
 /* BeginUserDocs: NOINDEX
 
+Short description
++++++++++++++++++
+
 Recording backend `sionlib` - Store data to an efficient binary format
-----------------------------------------------------------------------
 
 Description
 ~~~~~~~~~~~

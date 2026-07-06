@@ -185,18 +185,18 @@ def test_eprop_regression(neuron_model, optimizer, loss_nest_reference):
     }
 
     params_nrn_rec = {
-        "beta": 33.3,
         "C_m": 1.0,
         "c_reg": 300.0 / duration["sequence"],
         "E_L": 0.0,
         "eprop_isi_trace_cutoff": 100,
         "f_target": 10.0,
         "flush_event_send_interval": duration["sequence"],
-        "gamma": 10.0,
         "I_e": 0.0,
         "kappa": 0.97,
         "kappa_reg": 0.97,
         "surrogate_gradient_function": "piecewise_linear",
+        "surrogate_gradient_height": 10.0,
+        "surrogate_gradient_width": 0.03,
         "t_ref": 0.0,
         "tau_m": 30.0,
         "V_m": 0.0,
@@ -474,13 +474,13 @@ def test_unsupported_surrogate_gradient(source_model):
             ],
         ),
         (
-            "arctan",
+            "arctan_derivative",
             [
-                0.03689910976700,
-                0.03308744332685,
-                0.03008806500220,
-                0.02768876792046,
-                0.02574163163544,
+                0.37433498786304,
+                0.36073812744784,
+                0.34852165076370,
+                0.33759316659435,
+                0.32784181049728,
             ],
         ),
     ],
@@ -511,13 +511,13 @@ def test_eprop_surrogate_gradients(surrogate_gradient_type, surrogate_gradient_r
     nest.set(**params_setup)
 
     params_nrn_rec = {
-        "beta": 1.7,
         "C_m": 1.0,
         "c_reg": 0.0,
         "E_L": 0.0,
-        "gamma": 0.5,
         "I_e": 0.0,
         "surrogate_gradient_function": surrogate_gradient_type,
+        "surrogate_gradient_height": 0.5,
+        "surrogate_gradient_width": 1.0 / 1.7,
         "t_ref": 3.0,
         "V_m": 0.0,
         "V_th": 0.6,

@@ -39,6 +39,14 @@ namespace nest
 
 /* BeginUserDocs: NOINDEX
 
+Short description
++++++++++++++++++
+
+Stimulation device
+
+Description
++++++++++++
+
 All stimulation devices share the parameters ``start`` and ``stop``,
 which control the stimulation period. The property ``origin`` is a
 global offset that shifts the stimulation period. All three values are

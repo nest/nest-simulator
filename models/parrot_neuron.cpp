@@ -97,7 +97,7 @@ void
 parrot_neuron::set_status( const Dictionary& d )
 {
   ArchivingNode::set_status( d );
-  FlushEventMechanism::set_status( d );
+  FlushEventMechanism::set_status( d, this );
 }
 
 void

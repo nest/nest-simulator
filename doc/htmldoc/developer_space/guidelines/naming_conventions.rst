@@ -7,7 +7,8 @@ Conventions for parameters
 --------------------------
 
 #. Do not use capitalization to indicate whether a value in the status dictionary is variable.
-#. Where available, use the notation from P.Dayan & L.F.Abbott, Theoretical Neuroscience, MIT Press, 2001.
+#. Where available, use the notation from
+   P.Dayan & L.F.Abbott, Theoretical Neuroscience, MIT Press, 2001 :footcite:p:`Dayan2001`.
 #. Where not available, use a notation that is consistent with Dayan & Abbott.
 #. Subscripts are indicated by underscores
 
@@ -80,3 +81,8 @@ Common suffixes (subscripts)
 +----------------------------------+-------------+
 | in                               | inhibitory  |
 +----------------------------------+-------------+
+
+References
+---------
+
+.. footbibliography::

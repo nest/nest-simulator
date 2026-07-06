@@ -33,8 +33,10 @@
 
 /* BeginUserDocs: NOINDEX
 
+Short description
++++++++++++++++++
+
 Recording backend `mpi` - Send data with MPI
---------------------------------------------
 
 Description
 ~~~~~~~~~~~

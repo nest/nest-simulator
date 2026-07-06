@@ -43,8 +43,8 @@ Description
 +++++++++++
 
 This synapse model implements synaptic short-term depression and short-term
-facilitation according to [1]_ and [2]_. It solves Eq (2) from [1]_ and
-modulates U according to eq. (2) of [2]_.
+facilitation according to :footcite:p:`Tsodyks1997` and :footcite:p:`Fuhrmann2002`. It solves Eq (2) from
+:footcite:p:`Tsodyks1997` and modulates U according to eq. (2) of :footcite:p:`Fuhrmann2002`.
 
 This connection merely scales the synaptic weight, based on the spike history
 and the parameters of the kinetic model. Thus, it is suitable for all types
@@ -67,7 +67,7 @@ simulation, make sure to set ``u`` to the same value.
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 
-See also [3]_.
+See also :footcite:p:`Maass2002`.
 
 Under identical conditions, the tsodyks2_synapse produces slightly
 lower peak amplitudes than the tsodyks_synapse. However, the
@@ -93,17 +93,7 @@ The following parameters can be set in the status dictionary:
 References
 ++++++++++
 
-.. [1] Tsodyks MV,  Markram H (1997). The neural code between neocortical
-       pyramidal neurons depends on neurotransmitter release probability.
-       PNAS, 94(2):719-23.
-       DOI: https://doi.org/10.1073/pnas.94.2.719
-.. [2] Fuhrman, G, Segev I, Markram H, Tsodyks MV (2002). Coding of
-       temporal information by activity-dependent synapses. Journal of
-       Neurophysiology, 87(1):140-8.
-       DOI: https://doi.org/10.1152/jn.00258.2001
-.. [3] Maass W, Markram H (2002). Synapses as dynamic memory buffers.
-       Neural Networks, 15(2):155-61.
-       DOI: https://doi.org/10.1016/S0893-6080(01)00144-7
+.. footbibliography::
 
 Transmits
 +++++++++
@@ -243,8 +233,8 @@ tsodyks2_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSyn
     double u_decay = ( tau_fac_ == 0 ) ? 0.0 : std::exp( -h / tau_fac_ );  // tau_fac == 0 disables facilitation
 
     // now we compute spike number n+1
-    x_ = 1. + ( x_ - x_ * u_ - 1. ) * x_decay;  // Eq. 5 from reference [3]_
-    u_ = U_ + u_ * ( 1. - U_ ) * u_decay;       // Eq. 4 from [3]_
+    x_ = 1. + ( x_ - x_ * u_ - 1. ) * x_decay;  // Eq. 5 from Maass & Markram (2002)
+    u_ = U_ + u_ * ( 1. - U_ ) * u_decay;       // Eq. 4 from Maass & Markram (2002)
   }
 
   // We use the current values for the spike number n.

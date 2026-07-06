@@ -98,12 +98,16 @@ EpropArchivingNodeReadout< hist_shift_required >::set_status( const Dictionary& 
 {
   if constexpr ( not hist_shift_required )
   {
-    d.update_value( names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
+    double eprop_isi_trace_cutoff_tmp = eprop_isi_trace_cutoff_;
 
-    if ( eprop_isi_trace_cutoff_ < 0.0 )
+    update_value_param( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_tmp, this );
+
+    if ( eprop_isi_trace_cutoff_tmp < 0.0 )
     {
-      throw BadProperty( "Computation cutoff of eprop trace eprop_isi_trace_cutoff ≥ 0 required." );
+      throw BadProperty( "eprop_isi_trace_cutoff ≥ 0 required." );
     }
+
+    eprop_isi_trace_cutoff_ = eprop_isi_trace_cutoff_tmp;
   }
 }
 

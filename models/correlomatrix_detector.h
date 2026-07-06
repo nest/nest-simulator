@@ -171,7 +171,7 @@ public:
     return true;
   }
 
-  Name
+  std::string
   get_element_type() const override
   {
     return names::recorder;
@@ -189,8 +189,8 @@ public:
 
   size_t handles_test_event( SpikeEvent&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
   void calibrate_time( const TimeConverter& tc ) override;
 
@@ -238,25 +238,25 @@ private:
 
   struct Parameters_
   {
-    Time delta_tau_;    //!< width of correlation histogram bins
-    Time tau_max_;      //!< maximum time difference of events to detect
-    Time Tstart_;       //!< start of recording
-    Time Tstop_;        //!< end of recording      //!< end of recording
-    size_t N_channels_; //!< number of channels
+    Time delta_tau_;     //!< width of correlation histogram bins
+    Time tau_max_;       //!< maximum time difference of events to detect
+    Time Tstart_;        //!< start of recording
+    Time Tstop_;         //!< end of recording      //!< end of recording
+    size_t N_channels_;  //!< number of channels
 
-    Parameters_();                     //!< Sets default parameter values
-    Parameters_( const Parameters_& ); //!< Recalibrate all times
+    Parameters_();                      //!< Sets default parameter values
+    Parameters_( const Parameters_& );  //!< Recalibrate all times
 
     Parameters_& operator=( const Parameters_& );
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const;  //!< Store current values in dictionary
 
     /**
      * Set values from dictionary.
      * @returns true if the state needs to be reset after a change of
      *          binwidth or tau_max.
      */
-    bool set( const DictionaryDatum&, const correlomatrix_detector&, Node* node );
+    bool set( const Dictionary&, const correlomatrix_detector&, Node* node );
 
     Time get_default_delta_tau();
   };
@@ -274,25 +274,25 @@ private:
    */
   struct State_
   {
-    std::vector< long > n_events_; //!< spike counters
-    SpikelistType incoming_;       //!< incoming spikes, sorted
-                                   /** Weighted covariance matrix.
-                                    *  @note Data type is double to accommodate weights.
-                                    */
+    std::vector< long > n_events_;  //!< spike counters
+    SpikelistType incoming_;        //!< incoming spikes, sorted
+                                    /** Weighted covariance matrix.
+                                     *  @note Data type is double to accommodate weights.
+                                     */
     std::vector< std::vector< std::vector< double > > > covariance_;
 
     /** Unweighted covariance matrix.
      */
     std::vector< std::vector< std::vector< long > > > count_covariance_;
 
-    State_(); //!< initialize default state
+    State_();  //!< initialize default state
 
-    void get( DictionaryDatum& ) const;
+    void get( Dictionary& ) const;
 
     /**
      * @param bool if true, force state reset
      */
-    void set( const DictionaryDatum&, const Parameters_&, bool, Node* node );
+    void set( const Dictionary&, const Parameters_&, bool, Node* node );
 
     void reset( const Parameters_& );
   };
@@ -315,7 +315,7 @@ correlomatrix_detector::handles_test_event( SpikeEvent&, size_t receptor_type )
 }
 
 inline void
-correlomatrix_detector::get_status( DictionaryDatum& d ) const
+correlomatrix_detector::get_status( Dictionary& d ) const
 {
   device_.get_status( d );
   P_.get( d );
@@ -323,7 +323,7 @@ correlomatrix_detector::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-correlomatrix_detector::set_status( const DictionaryDatum& d )
+correlomatrix_detector::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;
   const bool reset_required = ptmp.set( d, *this, this );
@@ -342,6 +342,6 @@ correlomatrix_detector::Parameters_::get_default_delta_tau()
   return 5 * Time::get_resolution();
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef CORRELOMATRIX_DETECTOR_H */

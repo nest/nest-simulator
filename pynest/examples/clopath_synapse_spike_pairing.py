@@ -24,7 +24,7 @@ Clopath Rule: Spike pairing experiment
 --------------------------------------
 
 This script simulates one ``aeif_psc_delta_clopath`` neuron that is connected with
-a Clopath connection [1]_. The synapse receives pairs of a pre- and a postsynaptic
+a Clopath connection :footcite:p:`Clopath2010a`. The synapse receives pairs of a pre- and a postsynaptic
 spikes that are separated by either 10 ms (pre before post) or -10 ms (post
 before pre). The change of the synaptic weight is measured after five of such
 pairs. This experiment is repeated five times with different rates of the
@@ -33,9 +33,7 @@ sequence of the spike pairs: 10Hz, 20Hz, 30Hz, 40Hz, and 50Hz.
 References
 ~~~~~~~~~~
 
-.. [1] Clopath C, Büsing L, Vasilaki E, Gerstner W (2010). Connectivity reflects coding:
-       a model of voltage-based STDP with homeostasis.
-       Nature Neuroscience 13:3, 344--352
+.. footbibliography::
 """
 
 import matplotlib.pyplot as plt
@@ -111,18 +109,18 @@ for s_t_pre, s_t_post in zip(spike_times_pre, spike_times_post):
     nest.resolution = resolution
 
     # Create one neuron
-    nrn = nest.Create("aeif_psc_delta_clopath", 1, nrn_params)
+    nrn = nest.Create("aeif_psc_delta_clopath", params=nrn_params)
 
     # We need a parrot neuron since spike generators can only
     # be connected with static connections
-    prrt_nrn = nest.Create("parrot_neuron", 1)
+    prrt_nrn = nest.Create("parrot_neuron")
 
     # Create and connect spike generators
-    spike_gen_pre = nest.Create("spike_generator", {"spike_times": s_t_pre})
+    spike_gen_pre = nest.Create("spike_generator", params={"spike_times": s_t_pre})
 
     nest.Connect(spike_gen_pre, prrt_nrn, syn_spec={"delay": resolution})
 
-    spike_gen_post = nest.Create("spike_generator", {"spike_times": s_t_post})
+    spike_gen_post = nest.Create("spike_generator", params={"spike_times": s_t_post})
 
     nest.Connect(spike_gen_post, nrn, syn_spec={"delay": resolution, "weight": 80.0})
 

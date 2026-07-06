@@ -64,8 +64,8 @@ operator<( const cons< T1, T2 >& lhs, const cons< S1, S2 >& rhs )
 
   return lhs.get_head() < rhs.get_head();
 }
-} // namespace tuples
-} // namespace boost
+}  // namespace tuples
+}  // namespace boost
 
 /**
  * @brief Helper class holding type definitions.
@@ -96,8 +96,17 @@ class IteratorPair : public boost::iterator_facade< IteratorPair< sort_iter_type
                        typename iterator_pair_types< sort_iter_type_, perm_iter_type_ >::difference_type >
 {
 public:
+  using ReferenceType = iterator_pair_types< sort_iter_type_, perm_iter_type_ >::ref_type;
+  using DifferenceType = iterator_pair_types< sort_iter_type_, perm_iter_type_ >::difference_type;
+
   IteratorPair() = default;
   IteratorPair( sort_iter_type_, perm_iter_type_ );
+
+  ReferenceType
+  operator[]( DifferenceType n ) const
+  {
+    return *( *this + n );
+  }
 
 private:
   friend class boost::iterator_core_access;
@@ -170,7 +179,7 @@ struct rightshift_iterator_pair
   }
 
   template < typename T >
-  inline int
+  inline size_t
   operator()( boost::tuples::tuple< nest::Source&, T& > s, unsigned offset )
   {
     return boost::get< 0 >( s ).get_node_id() >> offset;

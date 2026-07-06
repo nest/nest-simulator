@@ -85,6 +85,12 @@ enum enum_status_spike_data_id
   SPIKE_DATA_ID_INVALID
 };
 
+enum enum_flush_event
+{
+  FLUSH_EVENT_FALSE,
+  FLUSH_EVENT_TRUE
+};
+
 /**
  * Used to communicate spikes. These are the elements of the MPI buffers.
  *
@@ -95,16 +101,17 @@ class SpikeData
 protected:
   static constexpr int MAX_LAG = generate_max_value( NUM_BITS_LAG );
 
-  size_t lcid_ : NUM_BITS_LCID;                      //!< local connection index
-  unsigned int marker_ : NUM_BITS_MARKER_SPIKE_DATA; //!< status flag
-  unsigned int lag_ : NUM_BITS_LAG;                  //!< lag in this min-delay interval
-  unsigned int tid_ : NUM_BITS_TID;                  //!< thread index
-  synindex syn_id_ : NUM_BITS_SYN_ID;                //!< synapse-type index
+  size_t lcid_ : NUM_BITS_LCID;                       //!< local connection index
+  unsigned int marker_ : NUM_BITS_MARKER_SPIKE_DATA;  //!< status flag
+  unsigned int flush_event_ : NUM_BITS_FLUSH_EVENT;   //!< flush event flag
+  unsigned int lag_ : NUM_BITS_LAG;                   //!< lag in this min-delay interval
+  unsigned int tid_ : NUM_BITS_TID;                   //!< thread index
+  synindex syn_id_ : NUM_BITS_SYN_ID;                 //!< synapse-type index
 
 public:
   SpikeData();
   SpikeData( const SpikeData& rhs );
-  SpikeData( const Target& target, const size_t lag );
+  SpikeData( const Target& target, const size_t lag, const bool is_flush_event );
   SpikeData( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag );
 
   SpikeData& operator=( const SpikeData& rhs );
@@ -183,9 +190,19 @@ public:
   bool is_invalid_marker() const;
 
   /**
+   * Returns whether this spike is a flush event.
+   */
+  bool is_flush_event() const;
+
+  /**
    * Returns offset.
    */
   double get_offset() const;
+
+  /**
+   * Sets the flush event flag.
+   */
+  void set_flush_event_flag( bool is_flush_event );
 };
 
 //! check legal size
@@ -194,6 +211,7 @@ using success_spike_data_size = StaticAssert< sizeof( SpikeData ) == 8 >::succes
 inline SpikeData::SpikeData()
   : lcid_( 0 )
   , marker_( SPIKE_DATA_ID_DEFAULT )
+  , flush_event_( FLUSH_EVENT_FALSE )
   , lag_( 0 )
   , tid_( 0 )
   , syn_id_( 0 )
@@ -203,24 +221,31 @@ inline SpikeData::SpikeData()
 inline SpikeData::SpikeData( const SpikeData& rhs )
   : lcid_( rhs.lcid_ )
   , marker_( rhs.marker_ )
+  , flush_event_( rhs.flush_event_ )
   , lag_( rhs.lag_ )
   , tid_( rhs.tid_ )
   , syn_id_( rhs.syn_id_ )
 {
 }
 
-inline SpikeData::SpikeData( const Target& target, const size_t lag )
+inline SpikeData::SpikeData( const Target& target, const size_t lag, const bool is_flush_event )
   : lcid_( target.get_lcid() )
   , marker_( SPIKE_DATA_ID_DEFAULT )
+  , flush_event_( FLUSH_EVENT_FALSE )
   , lag_( lag )
   , tid_( target.get_tid() )
   , syn_id_( target.get_syn_id() )
 {
+  if ( is_flush_event )
+  {
+    flush_event_ = FLUSH_EVENT_TRUE;
+  }
 }
 
 inline SpikeData::SpikeData( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag )
   : lcid_( lcid )
   , marker_( SPIKE_DATA_ID_DEFAULT )
+  , flush_event_( FLUSH_EVENT_FALSE )
   , lag_( lag )
   , tid_( tid )
   , syn_id_( syn_id )
@@ -232,6 +257,7 @@ SpikeData::operator=( const SpikeData& rhs )
 {
   lcid_ = rhs.lcid_;
   marker_ = rhs.marker_;
+  flush_event_ = rhs.flush_event_;
   lag_ = rhs.lag_;
   tid_ = rhs.tid_;
   syn_id_ = rhs.syn_id_;
@@ -241,7 +267,7 @@ SpikeData::operator=( const SpikeData& rhs )
 inline void
 SpikeData::set( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag, const double )
 {
-  assert( tid <= MAX_TID ); // MAX_TID is allowed since it is not used as invalid value
+  assert( tid <= MAX_TID );  // MAX_TID is allowed since it is not used as invalid value
   assert( syn_id < MAX_SYN_ID );
   assert( lcid < MAX_LCID );
   assert( lag < MAX_LAG );
@@ -346,10 +372,22 @@ SpikeData::is_invalid_marker() const
   return marker_ == SPIKE_DATA_ID_INVALID;
 }
 
+inline bool
+SpikeData::is_flush_event() const
+{
+  return flush_event_ == FLUSH_EVENT_TRUE;
+}
+
 inline double
 SpikeData::get_offset() const
 {
   return 0;
+}
+
+inline void
+SpikeData::set_flush_event_flag( bool is_flush_event )
+{
+  flush_event_ = is_flush_event ? FLUSH_EVENT_TRUE : FLUSH_EVENT_FALSE;
 }
 
 class OffGridSpikeData : public SpikeData
@@ -385,7 +423,7 @@ inline OffGridSpikeData::OffGridSpikeData()
 }
 
 inline OffGridSpikeData::OffGridSpikeData( const Target& target, const size_t lag, const double offset )
-  : SpikeData( target, lag )
+  : SpikeData( target, lag, false )
   , offset_( offset )
 {
 }
@@ -439,7 +477,7 @@ OffGridSpikeData::set( const size_t tid,
   const unsigned int lag,
   const double offset )
 {
-  assert( tid <= MAX_TID ); // MAX_TID is allowed since it is not used as invalid value
+  assert( tid <= MAX_TID );  // MAX_TID is allowed since it is not used as invalid value
   assert( syn_id < MAX_SYN_ID );
   assert( lcid < MAX_LCID );
   assert( lag < MAX_LAG );
@@ -475,15 +513,15 @@ OffGridSpikeData::get_offset() const
  */
 struct SpikeDataWithRank
 {
-  SpikeDataWithRank( const Target& target, const size_t lag );
+  SpikeDataWithRank( const Target& target, const size_t lag, const bool is_flush_event );
 
-  const size_t rank;          //!< rank of target neuron
-  const SpikeData spike_data; //! data on spike transmitted
+  const size_t rank;           //!< rank of target neuron
+  const SpikeData spike_data;  //! data on spike transmitted
 };
 
-inline SpikeDataWithRank::SpikeDataWithRank( const Target& target, const size_t lag )
+inline SpikeDataWithRank::SpikeDataWithRank( const Target& target, const size_t lag, const bool is_flush_event )
   : rank( target.get_rank() )
-  , spike_data( target, lag )
+  , spike_data( target, lag, is_flush_event )
 {
 }
 
@@ -496,8 +534,8 @@ struct OffGridSpikeDataWithRank
 {
   OffGridSpikeDataWithRank( const Target& target, const size_t lag, const double offset );
 
-  const size_t rank;                 //!< rank of target neuron
-  const OffGridSpikeData spike_data; //! data on spike transmitted
+  const size_t rank;                  //!< rank of target neuron
+  const OffGridSpikeData spike_data;  //! data on spike transmitted
 };
 
 inline OffGridSpikeDataWithRank::OffGridSpikeDataWithRank( const Target& target, const size_t lag, const double offset )
@@ -507,6 +545,6 @@ inline OffGridSpikeDataWithRank::OffGridSpikeDataWithRank( const Target& target,
 }
 
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* SPIKE_DATA_H */

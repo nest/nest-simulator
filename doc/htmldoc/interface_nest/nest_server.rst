@@ -598,7 +598,7 @@ For POST requests to the NEST API Server, we recommend to use a Bash function:
 
 .. code-block:: sh
 
-    #!/bin/bash
+    #!/usr/bin/env bash
     NEST_API=localhost:52425/api
 
     nest-server-api() {

@@ -23,8 +23,8 @@
 #ifndef WEIGHT_OPTIMIZER_H
 #define WEIGHT_OPTIMIZER_H
 
-// Includes from sli
-#include "dictdatum.h"
+// nestkernel
+#include "dictionary.h"
 
 namespace nest
 {
@@ -46,7 +46,7 @@ This method is an essential part of plasticity rules like e-prop plasticity.
 
 Currently two weight optimizers are implemented: gradient descent and the Adam optimizer.
 
-In gradient descent [1]_ the weights are optimized via:
+In gradient descent :footcite:p:`Huh2018` the weights are optimized via:
 
 .. math::
   W_t = W_{t-1} - \eta g_t \,, \\
@@ -54,7 +54,7 @@ In gradient descent [1]_ the weights are optimized via:
 where :math:`\eta` denotes the learning rate and :math:`g_t` the gradient of the current
 time step :math:`t`.
 
-In the Adam scheme [2]_ the weights are optimized via:
+In the Adam scheme :footcite:p:`Kingma2015` the weights are optimized via:
 
 .. math::
   m_0 &= 0, v_0 = 0, t = 1 \,, \\
@@ -63,9 +63,9 @@ In the Adam scheme [2]_ the weights are optimized via:
   \alpha_t &= \eta \frac{ \sqrt{ 1- \beta_2^t } }{ 1 - \beta_1^t } \,, \\
   W_t &= W_{t-1} - \alpha_t \frac{ m_t }{ \sqrt{v_t} + \hat{\epsilon} } \,. \\
 
-Note that the implementation follows the implementation in TensorFlow [3]_ for comparability.
-The TensorFlow implementation deviates from [1]_ in that it assumes
-:math:`\hat{\epsilon} = \epsilon \sqrt{ 1 - \beta_2^t }` to be constant, whereas [1]_
+Note that the implementation follows the implementation in TensorFlow :footcite:p:`KerasTeam2024` for comparability.
+The TensorFlow implementation deviates from :footcite:p:`Huh2018` in that it assumes
+:math:`\hat{\epsilon} = \epsilon \sqrt{ 1 - \beta_2^t }` to be constant, whereas :footcite:p:`Huh2018`
 assumes :math:`\epsilon = \hat{\epsilon} \sqrt{ 1 - \beta_2^t }` to be constant.
 
 When `optimize_each_step` is set to `True`, the weights are optimized at every
@@ -74,7 +74,7 @@ significant speed-up. For gradient descent, both settings yield the same
 results under exact arithmetic; however, small numerical differences may be
 observed due to floating point precision. For the Adam optimizer, only setting
 `optimize_each_step` to `True` precisely implements the algorithm as described
-in [2]_. The impact of this setting on learning performance may vary depending
+in :footcite:p:`Kingma2015`. The impact of this setting on learning performance may vary depending
 on the task.
 
 Parameters
@@ -82,17 +82,18 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-====================== ==== ========================= ========= =================================
+====================== ==== ========================= ========= ============================================
 **Common optimizer parameters**
--------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------
 Parameter              Unit Math equivalent           Default   Description
-====================== ==== ========================= ========= =================================
+====================== ==== ========================= ========= ============================================
 ``batch_size``                                              1   Size of batch
 ``eta``                     :math:`\eta`                 1e-4   Learning rate
-``optimize_each_step``                                 ``True``
+``optimize_each_step``                                 ``True`` If ``True``, optimize each step, if ``False``
+                                                                once per spike
 ``Wmax``                pA  :math:`W_{ji}^\text{max}`   100.0   Maximal value for synaptic weight
 ``Wmin``                pA  :math:`W_{ji}^\text{min}`  -100.0   Minimal value for synaptic weight
-====================== ==== ========================= ========= =================================
+====================== ==== ========================= ========= ============================================
 
 ========= ==== =============== ================== ==============
 **Gradient descent parameters (default optimizer)**
@@ -128,15 +129,7 @@ State variable Unit Math equivalent Initial value Description
 References
 ++++++++++
 
-.. [1] Huh D, Sejnowski TJ (2018). Gradient descent for spiking neural networks.
-       Advances in Neural Information Processing Systems, 31:1433-1443.
-       https://proceedings.neurips.cc/paper_files/paper/2018/hash/185e65bc40581880c4f2c82958de8cfe-Abstract.html
-
-.. [2] Kingma DP, Ba JL (2015). Adam: A method for stochastic optimization.
-       Proceedings of 3rd International Conference for Learning Representations (ICLR).
-       https://doi.org/10.48550/arXiv.1412.6980
-
-.. [3] https://github.com/keras-team/keras/blob/v2.15.0/keras/optimizers/adam.py#L26-L220
+.. footbibliography::
 
 See also
 ++++++++
@@ -175,10 +168,10 @@ public:
   WeightOptimizer& operator=( const WeightOptimizer& ) = delete;
 
   //! Get parameter dictionary.
-  virtual void get_status( DictionaryDatum& d ) const;
+  virtual void get_status( Dictionary& d ) const;
 
   //! Update parameters in parameter dictionary.
-  virtual void set_status( const DictionaryDatum& d );
+  virtual void set_status( const Dictionary& d );
 
   //! Clone constructor.
   virtual WeightOptimizerCommonProperties* clone() const = 0;
@@ -259,10 +252,10 @@ public:
   WeightOptimizer& operator=( const WeightOptimizer& ) = delete;
 
   //! Get parameter dictionary.
-  virtual void get_status( DictionaryDatum& d ) const;
+  virtual void get_status( Dictionary& d ) const;
 
   //! Update values in parameter dictionary.
-  virtual void set_status( const DictionaryDatum& d );
+  virtual void set_status( const Dictionary& d );
 
   //! Return optimized weight based on current weight.
   double optimized_weight( const WeightOptimizerCommonProperties& cp,
@@ -274,8 +267,8 @@ protected:
   //! Perform specific optimization.
   virtual double optimize_( const WeightOptimizerCommonProperties& cp, double weight, size_t current_opt_step ) = 0;
 
-  //! Sum of gradients accumulated in current batch.
-  double sum_gradients_;
+  //! Cumulative gradient over the current batch.
+  double cumulative_gradient_;
 
   //! Current optimization step, whereby optimization happens every batch_size_ steps.
   size_t optimization_step_;
@@ -320,6 +313,12 @@ class WeightOptimizerCommonPropertiesGradientDescent : public WeightOptimizerCom
   friend class WeightOptimizerGradientDescent;
 
 public:
+  //! Default constructor.
+  WeightOptimizerCommonPropertiesGradientDescent();
+
+  //! Copy constructor.
+  WeightOptimizerCommonPropertiesGradientDescent( const WeightOptimizerCommonPropertiesGradientDescent& ) = default;
+
   //! Assignment operator.
   WeightOptimizerCommonPropertiesGradientDescent& operator=(
     const WeightOptimizerCommonPropertiesGradientDescent& ) = delete;
@@ -349,8 +348,8 @@ public:
   //! Assignment operator.
   WeightOptimizerAdam& operator=( const WeightOptimizerAdam& ) = delete;
 
-  void get_status( DictionaryDatum& d ) const override;
-  void set_status( const DictionaryDatum& d ) override;
+  void get_status( Dictionary& d ) const override;
+  void set_status( const Dictionary& d ) override;
 
 private:
   double optimize_( const WeightOptimizerCommonProperties& cp, double weight, size_t current_opt_step ) override;
@@ -380,14 +379,17 @@ public:
   //! Default constructor.
   WeightOptimizerCommonPropertiesAdam();
 
+  //! Copy constructor.
+  WeightOptimizerCommonPropertiesAdam( const WeightOptimizerCommonPropertiesAdam& ) = default;
+
   //! Assignment operator.
   WeightOptimizerCommonPropertiesAdam& operator=( const WeightOptimizerCommonPropertiesAdam& ) = delete;
 
   WeightOptimizerCommonProperties* clone() const override;
   WeightOptimizer* get_optimizer() const override;
 
-  void get_status( DictionaryDatum& d ) const override;
-  void set_status( const DictionaryDatum& d ) override;
+  void get_status( Dictionary& d ) const override;
+  void set_status( const Dictionary& d ) override;
 
   std::string
   get_name() const override
@@ -406,6 +408,6 @@ private:
   double epsilon_;
 };
 
-} // namespace nest
+}  // namespace nest
 
-#endif // WEIGHT_OPTIMIZER_H
+#endif  // WEIGHT_OPTIMIZER_H

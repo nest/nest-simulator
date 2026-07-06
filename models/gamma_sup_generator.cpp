@@ -34,10 +34,6 @@
 #include "kernel_manager.h"
 #include "nest_impl.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "doubledatum.h"
-
 void
 nest::register_gamma_sup_generator( const std::string& name )
 {
@@ -67,7 +63,7 @@ gamma_sup_generator::Internal_states_::Internal_states_( size_t num_bins,
 unsigned long
 gamma_sup_generator::Internal_states_::update( double transition_prob, RngPtr rng )
 {
-  std::vector< unsigned long > n_trans; // only set from poisson_dist_, bino_dist_ or 0, thus >= 0
+  std::vector< unsigned long > n_trans;  // only set from poisson_dist_, bino_dist_ or 0, thus >= 0
   n_trans.resize( occ_.size() );
 
   // go through all states and draw number of transitioning components
@@ -131,7 +127,7 @@ gamma_sup_generator::Internal_states_::update( double transition_prob, RngPtr rn
  * ---------------------------------------------------------------- */
 
 gamma_sup_generator::Parameters_::Parameters_()
-  : rate_( 0.0 ) // Hz
+  : rate_( 0.0 )  // Hz
   , gamma_shape_( 1 )
   , n_proc_( 1 )
   , num_targets_( 0 )
@@ -143,37 +139,32 @@ gamma_sup_generator::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-gamma_sup_generator::Parameters_::get( DictionaryDatum& d ) const
+gamma_sup_generator::Parameters_::get( Dictionary& d ) const
 {
-  ( *d )[ names::rate ] = rate_;
-  ( *d )[ names::gamma_shape ] = gamma_shape_;
-  ( *d )[ names::n_proc ] = n_proc_;
+  d[ names::rate ] = rate_;
+  d[ names::gamma_shape ] = gamma_shape_;
+  d[ names::n_proc ] = n_proc_;
 }
 
 void
-gamma_sup_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
+gamma_sup_generator::Parameters_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< long >( d, names::gamma_shape, gamma_shape_, node );
+  update_value_param( d, names::gamma_shape, gamma_shape_, node );
   if ( gamma_shape_ < 1 )
   {
     throw BadProperty( "The shape must be larger or equal 1" );
   }
 
-  updateValueParam< double >( d, names::rate, rate_, node );
+  update_value_param( d, names::rate, rate_, node );
   if ( rate_ < 0.0 )
   {
     throw BadProperty( "The rate must be larger than 0." );
   }
 
-  long n_proc_l = n_proc_;
-  updateValueParam< long >( d, names::n_proc, n_proc_l, node );
-  if ( n_proc_l < 1 )
+  update_value_param( d, names::n_proc, n_proc_, node );
+  if ( n_proc_ < 1 )
   {
     throw BadProperty( "The number of component processes cannot be smaller than one" );
-  }
-  else
-  {
-    n_proc_ = static_cast< unsigned long >( n_proc_l );
   }
 }
 
@@ -250,7 +241,7 @@ gamma_sup_generator::update( Time const& T, const long from, const long to )
 
     if ( not StimulationDevice::is_active( t ) )
     {
-      continue; // no spike at this lag
+      continue;  // no spike at this lag
     }
 
     DSSpikeEvent se;
@@ -272,7 +263,7 @@ gamma_sup_generator::event_hook( DSSpikeEvent& e )
   unsigned long n_spikes =
     B_.internal_states_[ prt ].update( V_.transition_prob_, get_vp_specific_rng( get_thread() ) );
 
-  if ( n_spikes > 0 ) // we must not send events with multiplicity 0
+  if ( n_spikes > 0 )  // we must not send events with multiplicity 0
   {
     e.set_multiplicity( n_spikes );
     e.get_receiver().handle( e );
@@ -286,7 +277,7 @@ gamma_sup_generator::event_hook( DSSpikeEvent& e )
 void
 gamma_sup_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
 
   // For the input backend
   if ( not input_param.empty() )
@@ -296,10 +287,10 @@ gamma_sup_generator::set_data_from_stimulation_backend( std::vector< double >& i
       throw BadParameterValue(
         "The size of the data for the gamma_sup_generator needs to be 3 [gamma_shape, rate, n_proc]." );
     }
-    DictionaryDatum d = DictionaryDatum( new Dictionary );
-    ( *d )[ names::gamma_shape ] = DoubleDatum( lround( input_param[ 0 ] ) );
-    ( *d )[ names::rate ] = DoubleDatum( input_param[ 1 ] );
-    ( *d )[ names::n_proc ] = DoubleDatum( lround( input_param[ 2 ] ) );
+    Dictionary d;
+    d[ names::gamma_shape ] = lround( input_param[ 0 ] );
+    d[ names::rate ] = input_param[ 1 ];
+    d[ names::n_proc ] = lround( input_param[ 2 ] );
     ptmp.set( d, this );
   }
 
@@ -307,4 +298,4 @@ gamma_sup_generator::set_data_from_stimulation_backend( std::vector< double >& i
   P_ = ptmp;
 }
 
-} // namespace nest
+}  // namespace nest

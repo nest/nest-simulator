@@ -29,13 +29,12 @@
 
 // Includes from nestkernel:
 #include "histentry.h"
+#include "ignore_and_spike_mechanism.h"
 #include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
 #include "structural_plasticity_node.h"
 
-// Includes from sli:
-#include "dictdatum.h"
 
 #define DEBUG_ARCHIVER 1
 
@@ -46,7 +45,7 @@ namespace nest
  * A node which archives spike history for the purposes of spike-timing
  * dependent plasticity (STDP)
  */
-class ArchivingNode : public StructuralPlasticityNode
+class ArchivingNode : public StructuralPlasticityNode, public IgnoreAndSpikeMechanism
 {
 public:
   ArchivingNode();
@@ -96,8 +95,8 @@ public:
     const double dendritic_delay,
     const double axonal_delay ) override;
 
-  void get_status( DictionaryDatum& d ) const override;
-  void set_status( const DictionaryDatum& d ) override;
+  void get_status( Dictionary& d ) const override;
+  void set_status( const Dictionary& d ) override;
 
   /**
    * Framework for STDP with predominantly axonal delays: Buffer a correction entry for a short time window.
@@ -192,12 +191,12 @@ private:
     {
     }
 
-    unsigned int lcid_;       //!< local connection index
-    synindex syn_id_;         //!< synapse-type index
-    double t_last_pre_spike_; //!< time of the last pre-synaptic spike before this spike
-    double weight_revert_;    //!< synaptic weight to revert to (STDP depression needs to be undone)
-    double new_weight_;       //!< new weight after the latest correction
-    double K_plus_revert_;    //!< pre-synaptic trace before possibly incorrect facilitation
+    unsigned int lcid_;        //!< local connection index
+    synindex syn_id_;          //!< synapse-type index
+    double t_last_pre_spike_;  //!< time of the last pre-synaptic spike before this spike
+    double weight_revert_;     //!< synaptic weight to revert to (STDP depression needs to be undone)
+    double new_weight_;        //!< new weight after the latest correction
+    double K_plus_revert_;     //!< pre-synaptic trace before possibly incorrect facilitation
   };
 
   //! check for correct correction entry size
@@ -226,5 +225,5 @@ ArchivingNode::get_spiketime_ms() const
   return last_spike_;
 }
 
-} // of namespace
+}  // of namespace
 #endif

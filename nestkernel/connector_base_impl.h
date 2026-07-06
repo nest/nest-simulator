@@ -88,6 +88,6 @@ Connector< ConnectionT >::correct_synapse_stdp_ax_delay( const size_t tid,
     cp );
 }
 
-} // of namespace nest
+}  // of namespace nest
 
 #endif

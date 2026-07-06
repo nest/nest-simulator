@@ -50,7 +50,7 @@ Description
 ``eprop_readout`` is an implementation of an integrate-and-fire neuron model
 with delta-shaped postsynaptic currents used as readout neuron for eligibility propagation (e-prop) plasticity.
 
-E-prop plasticity was originally introduced and implemented in TensorFlow in [1]_.
+E-prop plasticity was originally introduced and implemented in TensorFlow in :footcite:p:`Bellec2020`.
 
 The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given by:
 
@@ -148,7 +148,7 @@ For more information on e-prop plasticity, see the documentation on the other e-
  * :doc:`eprop_synapse<../models/eprop_synapse/>`
  * :doc:`eprop_learning_signal_connection<../models/eprop_learning_signal_connection/>`
 
-Details on the event-based NEST implementation of e-prop can be found in [2]_.
+Details on the event-based NEST implementation of e-prop can be found in :footcite:p:`KorcsakGorzo2025`.
 
 Parameters
 ++++++++++
@@ -166,7 +166,7 @@ Parameter                 Unit    Math equivalent       Default            Descr
 ``tau_m``                 ms      :math:`\tau_\text{m}`               10.0 Time constant of the membrane
 ``V_min``                 mV      :math:`v_\text{min}`  negative maximum   Absolute lower bound of the membrane
                                                         value              voltage
-                                                        representable by a
+                                                        representable by
                                                         ``double`` type in
                                                         C++
 ========================= ======= ===================== ================== =====================================
@@ -178,7 +178,7 @@ Parameter                   Unit    Math equivalent             Default         
 =========================== ======= =========================== ================ ===============================
 ``eprop_isi_trace_cutoff``  ms      :math:`{\Delta t}_\text{c}` maximum value    Cutoff for integration of
                                                                 representable    e-prop update between two
-                                                                by a ``long``    spikes
+                                                                by ``double``    spikes
                                                                 type in C++
 =========================== ======= =========================== ================ ===============================
 
@@ -212,19 +212,12 @@ This model can only be used in combination with the other e-prop models
 and the network architecture requires specific wiring, input, and output.
 The usage is demonstrated in several
 :doc:`supervised regression and classification tasks <../auto_examples/eprop_plasticity/index>`
-reproducing among others the original proof-of-concept tasks in [1]_.
+reproducing among others the original proof-of-concept tasks in :footcite:p:`Bellec2020`.
 
 References
 ++++++++++
 
-.. [1] Bellec G, Scherr F, Subramoney F, Hajek E, Salaj D, Legenstein R,
-       Maass W (2020). A solution to the learning dilemma for recurrent
-       networks of spiking neurons. Nature Communications, 11:3625.
-       https://doi.org/10.1038/s41467-020-17236-y
-
-.. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Plesser HE,
-       Dahmen D, Bolten M, Van Albada SJ, Diesmann M. Event-based
-       implementation of eligibility propagation (in preparation)
+.. footbibliography::
 
 Sends
 +++++
@@ -253,7 +246,7 @@ void register_eprop_readout( const std::string& name );
  *
  * Class implementing a current-based leaky integrate readout neuron model with delta-shaped postsynaptic currents for
  * e-prop plasticity according to Bellec et al. (2020) with additional biological features described in
- * Korcsak-Gorzo, Stapmanns, and Espinoza Valverde et al. (in preparation).
+ * Korcsak-Gorzo et al. (2025).
  */
 class eprop_readout : public EpropArchivingNodeReadout< false >
 {
@@ -290,8 +283,8 @@ public:
   size_t handles_test_event( DelayedRateConnectionEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_buffers_() override;
@@ -308,11 +301,15 @@ private:
     double&,
     double&,
     const CommonSynapseProperties&,
-    WeightOptimizer* ) override;
+    WeightOptimizer*,
+    const bool,
+    const bool,
+    double&,
+    long&,
+    long& ) override;
 
   long get_shift() const override;
   bool is_eprop_recurrent_node() const override;
-  long get_eprop_isi_trace_cutoff() const override;
 
   //! Map for storing a static set of recordables.
   friend class RecordablesMap< eprop_readout >;
@@ -338,17 +335,14 @@ private:
     //! Absolute lower bound of the membrane voltage relative to the leak membrane potential (mV).
     double V_min_;
 
-    //! Time interval from the previous spike until the cutoff of e-prop update integration between two spikes (ms).
-    double eprop_isi_trace_cutoff_;
-
     //! Default constructor.
     Parameters_();
 
     //! Get the parameters and their values.
-    void get( DictionaryDatum& ) const;
+    void get( Dictionary& ) const;
 
     //! Set the parameters and throw errors in case of invalid values.
-    double set( const DictionaryDatum&, Node* );
+    double set( const Dictionary&, Node* );
   };
 
   //! Structure of state variables.
@@ -379,10 +373,10 @@ private:
     State_();
 
     //! Get the state variables and their values.
-    void get( DictionaryDatum&, const Parameters_& ) const;
+    void get( Dictionary&, const Parameters_& ) const;
 
     //! Set the state variables.
-    void set( const DictionaryDatum&, const Parameters_&, double, Node* );
+    void set( const Dictionary&, const Parameters_&, double, Node* );
   };
 
   //! Structure of buffers.
@@ -412,9 +406,6 @@ private:
 
     //! Propagator matrix entry for evolving the incoming currents.
     double P_i_in_;
-
-    //! Time steps from the previous spike until the cutoff of e-prop update integration between two spikes.
-    long eprop_isi_trace_cutoff_steps_;
   };
 
   //! Minimal spike receptor type. Start with 1 to forbid port 0 and avoid accidental creation of connections with no
@@ -487,12 +478,6 @@ eprop_readout::is_eprop_recurrent_node() const
   return false;
 }
 
-inline long
-eprop_readout::get_eprop_isi_trace_cutoff() const
-{
-  return V_.eprop_isi_trace_cutoff_steps_;
-}
-
 inline size_t
 eprop_readout::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
@@ -548,22 +533,24 @@ eprop_readout::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type
 }
 
 inline void
-eprop_readout::get_status( DictionaryDatum& d ) const
+eprop_readout::get_status( Dictionary& d ) const
 {
+  EpropArchivingNodeReadout::get_status( d );
   P_.get( d );
   S_.get( d, P_ );
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 
-  DictionaryDatum receptor_dict_ = new Dictionary();
-  ( *receptor_dict_ )[ names::eprop_learning_window ] = LEARNING_WINDOW_SIG;
-  ( *receptor_dict_ )[ names::target_signal ] = TARGET_SIG;
+  Dictionary receptor_dict;
+  receptor_dict[ names::eprop_learning_window ] = static_cast< long >( LEARNING_WINDOW_SIG );
+  receptor_dict[ names::target_signal ] = static_cast< long >( TARGET_SIG );
 
-  ( *d )[ names::receptor_types ] = receptor_dict_;
+  d[ names::receptor_types ] = receptor_dict;
 }
 
 inline void
-eprop_readout::set_status( const DictionaryDatum& d )
+eprop_readout::set_status( const Dictionary& d )
 {
+  EpropArchivingNodeReadout::set_status( d );
   // temporary copies in case of errors
   Parameters_ ptmp = P_;
   State_ stmp = S_;
@@ -576,6 +563,6 @@ eprop_readout::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
-} // namespace nest
+}  // namespace nest
 
-#endif // EPROP_READOUT_H
+#endif  // EPROP_READOUT_H

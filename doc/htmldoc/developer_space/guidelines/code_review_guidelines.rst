@@ -26,9 +26,8 @@ can be discussed on the :ref:`NEST mailing lists <contact_us>`.
   review can be waived, and a single review plus the OK from the CI
   system is sufficient to merge the request.
 
-* New features like SLI or PyNEST functions, neuron or synapse models
-  need to be accompanied by one or more tests written in either SLI or
-  Python.
+* New features like PyNEST functions, neuron or synapse models
+  need to be accompanied by one or more tests written in Python.
 
 * Each change to the code has to be reflected in the
   corresponding examples and documentation.

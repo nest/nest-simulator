@@ -32,7 +32,7 @@ Model improvements
 Documentation additions
 -----------------------
 
-* We now have a detailed description of neuron models in NEST, inclduding :ref:`update
+* We now have a detailed description of neuron models in NEST, including :ref:`update
   algorithm <neuron_update>` and :ref:`neuron types <types_neurons>`.
 
 * We updated the :ref:`Built-in timers <built_in_timers>` section to include a graphical description of a simulation run

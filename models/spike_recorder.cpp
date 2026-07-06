@@ -32,10 +32,6 @@
 #include "model_manager_impl.h"
 #include "nest_impl.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-
 
 namespace nest
 {
@@ -76,13 +72,13 @@ spike_recorder::get_type() const
 }
 
 void
-spike_recorder::get_status( DictionaryDatum& d ) const
+spike_recorder::get_status( Dictionary& d ) const
 {
   RecordingDevice::get_status( d );
 
   if ( is_model_prototype() )
   {
-    return; // no data to collect
+    return;  // no data to collect
   }
 
   // if we are the device on thread 0, also get the data from the siblings on other threads
@@ -98,7 +94,7 @@ spike_recorder::get_status( DictionaryDatum& d ) const
 }
 
 void
-spike_recorder::set_status( const DictionaryDatum& d )
+spike_recorder::set_status( const Dictionary& d )
 {
   RecordingDevice::set_status( d );
 }
@@ -118,4 +114,4 @@ spike_recorder::handle( SpikeEvent& e )
   }
 }
 
-} // namespace nest
+}  // namespace nest

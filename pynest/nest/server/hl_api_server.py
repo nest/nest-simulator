@@ -36,7 +36,6 @@ import RestrictedPython
 from flask import Flask, jsonify, request
 from flask.logging import default_handler
 from flask_cors import CORS
-from nest.lib.hl_api_exceptions import NESTError
 
 # This ensures that the logging information shows up in the console running the server,
 # even when Flask's event loop is running.
@@ -182,7 +181,7 @@ print(80 * "*")
 def index():
     return jsonify(
         {
-            "nest": nest.__version__,
+            "nest": nest.build_info["version"],
             "mpi": mpi_comm is not None,
         }
     )
@@ -192,28 +191,27 @@ def do_exec(args, kwargs):
     source_code = kwargs.get("source", "")
     source_cleaned = clean_code(source_code)
 
-    locals_ = dict()
     response = dict()
     if RESTRICTION_DISABLED:
         with Capturing() as stdout:
             globals_ = globals().copy()
             globals_.update(get_modules_from_env())
-            get_or_error(exec)(source_cleaned, globals_, locals_)
+            get_or_error(exec)(source_cleaned, globals_)
         if len(stdout) > 0:
             response["stdout"] = "\n".join(stdout)
     else:
         code = RestrictedPython.compile_restricted(source_cleaned, "<inline>", "exec")  # noqa
         globals_ = get_restricted_globals()
         globals_.update(get_modules_from_env())
-        get_or_error(exec)(code, globals_, locals_)
-        if "_print" in locals_:
-            response["stdout"] = "".join(locals_["_print"].txt)
+        get_or_error(exec)(code, globals_)
+        if "_print" in globals_:
+            response["stdout"] = "".join(globals_["_print"].txt)
 
     if "return" in kwargs:
         if isinstance(kwargs["return"], (list, tuple)):
-            data = dict([(variable, locals_.get(variable, None)) for variable in kwargs["return"]])
+            data = dict([(variable, globals_.get(variable, None)) for variable in kwargs["return"]])
         else:
-            data = locals_.get(kwargs["return"], None)
+            data = globals_.get(kwargs["return"], None)
 
         response["data"] = get_or_error(nest.serialize_data)(data)
     return response
@@ -303,7 +301,7 @@ def route_api():
 @app.route("/api/<call>", methods=["GET", "POST"])
 def route_api_call(call):
     """Route to call function in NEST."""
-    print(f"\n{'='*40}\n", flush=True)
+    print(f"\n{'=' * 40}\n", flush=True)
     args, kwargs = get_arguments(request)
     log("route_api_call", f"call={call}, args={args}, kwargs={kwargs}")
     response = api_client(call, args, kwargs)
@@ -437,7 +435,7 @@ def get_or_error(func):
         try:
             return func(call, *args, **kwargs)
 
-        except NESTError as err:
+        except nest.NESTError as err:
             error_class = err.errorname + " (NESTError)"
             detail = err.errormessage
             lineno = get_lineno(err, 1)
@@ -588,7 +586,14 @@ def combine(call_name, response):
         return None
 
     # return the master response if all responses are known to be the same
-    if call_name in ("exec", "Create", "GetDefaults", "GetKernelStatus", "SetKernelStatus", "SetStatus"):
+    if call_name in (
+        "exec",
+        "Create",
+        "GetDefaults",
+        "GetKernelStatus",
+        "SetKernelStatus",
+        "SetStatus",
+    ):
         return response[0]
 
     # return a single response if there is only one which is not None

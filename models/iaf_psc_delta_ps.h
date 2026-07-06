@@ -63,8 +63,8 @@ refractory period, dampened according to the interval between
 arrival and end of refractoriness.
 
 The linear subthreshold dynamics is integrated by the Exact
-Integration scheme [1]_. The neuron dynamics are solved exactly in
-time. Incoming and outgoing spike times are handled precisely [3]_.
+Integration scheme :footcite:p:`Rotter1999`. The neuron dynamics are solved exactly in
+time. Incoming and outgoing spike times are handled precisely :footcite:p:`Morrison2007a`.
 
 An additional state variable and the corresponding differential
 equation represents a piecewise constant external current.
@@ -75,13 +75,13 @@ incoming spikes, will occur precisely at the time of spike arrival,
 since incoming spikes are modeled as instantaneous potential
 jumps. Times of spikes caused by current input are determined
 exactly by solving the membrane potential equation. Note that, in
-contrast to the neuron models discussed in [3]_ [4]_, this model has so
+contrast to the neuron models discussed in :footcite:p:`Morrison2007a` :footcite:p:`Hanuschkin2010`, this model has so
 simple dynamics that no interpolation or iterative spike location
 technique is required at all.
 
 The general framework for the consistent formulation of systems with
 neuron like dynamics interacting by point events is described in
-[1]_. A flow chart can be found in [2]_.
+:footcite:p:`Rotter1999`. A flow chart can be found in :footcite:p:`Diesmann2001`.
 
 Critical tests for the formulation of the neuron model are the
 comparisons of simulation results for different computation step
@@ -123,18 +123,7 @@ The following parameters can be set in the status dictionary.
 References
 ++++++++++
 
-.. [1] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
-       systems with applications to neuronal modeling. Biologial Cybernetics
-       81:381-402.
-.. [2] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001) State space
-       analysis of synchronous spiking in cortical neural networks.
-       Neurocomputing 38-40:565-571.
-.. [3] Morrison A, Straube S, Plesser H E, & Diesmann M (2006) Exact
-       Subthreshold Integration with Continuous Spike Times in Discrete Time Neural
-       Network Simulations. To appear in Neural Computation.
-.. [4] Hanuschkin A, Kunkel S, Helias M, Morrison A & Diesmann M (2010)
-       A general and efficient method for incorporating exact spike times in
-       globally time-driven simulations Front Neuroinformatics, 4:113
+.. footbibliography::
 
 Sends
 +++++
@@ -201,10 +190,10 @@ public:
   is_off_grid() const override
   {
     return true;
-  } // uses off_grid events
+  }  // uses off_grid events
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   /** @name Interface functions
@@ -282,14 +271,14 @@ private:
     */
     double U_reset_;
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const;  //!< Store current values in dictionary
 
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      */
-    double set( const DictionaryDatum&, Node* );
+    double set( const Dictionary&, Node* );
   };
 
 
@@ -306,27 +295,27 @@ private:
   {
     //! This is the membrane potential RELATIVE TO RESTING POTENTIAL.
     double U_;
-    double I_; //!< This is the current to be applied during this time step
+    double I_;  //!< This is the current to be applied during this time step
 
     //! step of last spike, for reporting in status dict
     long last_spike_step_;
-    double last_spike_offset_; //!< offset of last spike, for reporting in
-                               //!< status dict
+    double last_spike_offset_;  //!< offset of last spike, for reporting in
+                                //!< status dict
 
-    bool is_refractory_;   //!< flag for refractoriness
-    bool with_refr_input_; //!< spikes arriving during refractory period are
-                           //!< counted
+    bool is_refractory_;    //!< flag for refractoriness
+    bool with_refr_input_;  //!< spikes arriving during refractory period are
+                            //!< counted
 
-    State_(); //!< Default initialization
+    State_();  //!< Default initialization
 
-    void get( DictionaryDatum&, const Parameters_& ) const;
+    void get( Dictionary&, const Parameters_& ) const;
 
     /** Set values from dictionary.
      * @param dictionary to take data from
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const DictionaryDatum&, const Parameters_&, double, Node* );
+    void set( const Dictionary&, const Parameters_&, double, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -362,13 +351,13 @@ private:
    */
   struct Variables_
   {
-    double exp_t_;   //!< @$ e^{-t/\tau_m} @$
-    double expm1_t_; //!< @$ e^{-t/\tau_m} - 1 @$
-    double R_;       //!< @$ \frac{\tau_m}{c_m} @$
+    double exp_t_;    //!< @$ e^{-t/\tau_m} @$
+    double expm1_t_;  //!< @$ e^{-t/\tau_m} - 1 @$
+    double R_;        //!< @$ \frac{\tau_m}{c_m} @$
 
-    double h_ms_; //!< duration of time step [ms]
+    double h_ms_;  //!< duration of time step [ms]
 
-    long refractory_steps_; //!< refractory time in steps
+    long refractory_steps_;  //!< refractory time in steps
 
     /** Accumulate spikes arriving during refractory period, discounted for
         decay until end of refractory period.
@@ -443,22 +432,22 @@ iaf_psc_delta_ps::handles_test_event( DataLoggingRequest& dlr, size_t receptor_t
 }
 
 inline void
-iaf_psc_delta_ps::get_status( DictionaryDatum& d ) const
+iaf_psc_delta_ps::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
   ArchivingNode::get_status( d );
 
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
-iaf_psc_delta_ps::set_status( const DictionaryDatum& d )
+iaf_psc_delta_ps::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;                       // temporary copy in case of errors
-  const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
-  State_ stmp = S_;                            // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
+  Parameters_ ptmp = P_;                        // temporary copy in case of errors
+  const double delta_EL = ptmp.set( d, this );  // throws if BadProperty
+  State_ stmp = S_;                             // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );          // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -471,6 +460,6 @@ iaf_psc_delta_ps::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
-} // namespace
+}  // namespace
 
-#endif // IAF_PSC_DELTA_PS_H
+#endif  // IAF_PSC_DELTA_PS_H

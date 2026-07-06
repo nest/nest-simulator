@@ -44,7 +44,7 @@ RecordingBackendScreen::finalize()
 }
 
 void
-RecordingBackendScreen::enroll( const RecordingDevice& device, const DictionaryDatum& params )
+RecordingBackendScreen::enroll( const RecordingDevice& device, const Dictionary& params )
 {
   const size_t node_id = device.get_node_id();
   const size_t t = device.get_thread();
@@ -74,8 +74,8 @@ RecordingBackendScreen::disenroll( const RecordingDevice& device )
 
 void
 RecordingBackendScreen::set_value_names( const RecordingDevice&,
-  const std::vector< Name >&,
-  const std::vector< Name >& )
+  const std::vector< std::string >&,
+  const std::vector< std::string >& )
 {
   // nothing to do
 }
@@ -110,21 +110,21 @@ RecordingBackendScreen::write( const RecordingDevice& device,
 }
 
 void
-RecordingBackendScreen::check_device_status( const DictionaryDatum& params ) const
+RecordingBackendScreen::check_device_status( const Dictionary& params ) const
 {
   DeviceData dd;
-  dd.set_status( params ); // throws if params contains invalid entries
+  dd.set_status( params );  // throws if params contains invalid entries
 }
 
 void
-RecordingBackendScreen::get_device_defaults( DictionaryDatum& params ) const
+RecordingBackendScreen::get_device_defaults( Dictionary& params ) const
 {
   DeviceData dd;
   dd.get_status( params );
 }
 
 void
-RecordingBackendScreen::get_device_status( const RecordingDevice& device, DictionaryDatum& d ) const
+RecordingBackendScreen::get_device_status( const nest::RecordingDevice& device, Dictionary& d ) const
 {
   const size_t t = device.get_thread();
   const size_t node_id = device.get_node_id();
@@ -156,13 +156,13 @@ RecordingBackendScreen::post_step_hook()
 }
 
 void
-RecordingBackendScreen::set_status( const DictionaryDatum& )
+RecordingBackendScreen::set_status( const Dictionary& )
 {
   // nothing to do
 }
 
 void
-RecordingBackendScreen::get_status( DictionaryDatum& ) const
+RecordingBackendScreen::get_status( Dictionary& ) const
 {
   // nothing to do
 }
@@ -176,17 +176,17 @@ RecordingBackendScreen::DeviceData::DeviceData()
 }
 
 void
-RecordingBackendScreen::DeviceData::get_status( DictionaryDatum& d ) const
+RecordingBackendScreen::DeviceData::get_status( Dictionary& d ) const
 {
-  ( *d )[ names::precision ] = precision_;
-  ( *d )[ names::time_in_steps ] = time_in_steps_;
+  d[ names::precision ] = precision_;
+  d[ names::time_in_steps ] = time_in_steps_;
 }
 
 void
-RecordingBackendScreen::DeviceData::set_status( const DictionaryDatum& d )
+RecordingBackendScreen::DeviceData::set_status( const Dictionary& d )
 {
-  updateValue< long >( d, names::precision, precision_ );
-  updateValue< bool >( d, names::time_in_steps, time_in_steps_ );
+  d.update_value( names::precision, precision_ );
+  d.update_value( names::time_in_steps, time_in_steps_ );
 }
 
 void

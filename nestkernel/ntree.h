@@ -307,6 +307,12 @@ public:
   iterator insert( iterator, const value_type& val );
 
   /**
+   * STL container compatible push_back method
+   */
+  void push_back( const value_type& val );
+
+
+  /**
    * @returns member nodes in ntree and their position.
    */
   std::vector< value_type > get_nodes();
@@ -391,10 +397,10 @@ protected:
   std::vector< value_type > nodes_;
 
   Ntree* parent_;
-  int my_subquad_; ///< This Ntree's subquad number within parent
-  int my_depth_;   ///< This Ntree's depth in the tree
+  int my_subquad_;  ///< This Ntree's subquad number within parent
+  int my_depth_;    ///< This Ntree's depth in the tree
   Ntree* children_[ N ];
-  std::bitset< D > periodic_; ///< periodic b.c.
+  std::bitset< D > periodic_;  ///< periodic b.c.
 
   friend class iterator;
   friend class masked_iterator;
@@ -427,7 +433,7 @@ Ntree< D, T, max_capacity, max_depth >::~Ntree()
 
   for ( size_t n = 0; n < static_cast< size_t >( N ); ++n )
   {
-    delete children_[ n ]; // calls destructor in child, thus recursing
+    delete children_[ n ];  // calls destructor in child, thus recursing
   }
 }
 
@@ -486,6 +492,15 @@ Ntree< D, T, max_capacity, max_depth >::insert( iterator, const std::pair< Posit
   return insert( val.first, val.second );
 }
 
-} // namespace nest
+template < int D, class T, int max_capacity, int max_depth >
+void
+Ntree< D, T, max_capacity, max_depth >::push_back( const value_type& val )
+{
+  insert( val );
+}
+
+
+}  // namespace nest
+
 
 #endif

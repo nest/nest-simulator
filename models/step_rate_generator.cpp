@@ -28,10 +28,6 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "booldatum.h"
-#include "dict.h"
-#include "dictutils.h"
 
 namespace nest
 {
@@ -47,7 +43,7 @@ template <>
 void
 RecordablesMap< step_rate_generator >::create()
 {
-  insert_( Name( names::rate ), &step_rate_generator::get_rate_ );
+  insert_( names::rate, &step_rate_generator::get_rate_ );
 }
 
 /* ----------------------------------------------------------------
@@ -56,7 +52,7 @@ RecordablesMap< step_rate_generator >::create()
 
 step_rate_generator::Parameters_::Parameters_()
   : amp_time_stamps_()
-  , amp_values_() // pA
+  , amp_values_()  // pA
   , allow_offgrid_amp_times_( false )
 {
 }
@@ -107,17 +103,17 @@ step_rate_generator::Buffers_::Buffers_( const Buffers_&, step_rate_generator& n
  * ---------------------------------------------------------------- */
 
 void
-step_rate_generator::Parameters_::get( DictionaryDatum& d ) const
+step_rate_generator::Parameters_::get( Dictionary& d ) const
 {
-  std::vector< double >* times_ms = new std::vector< double >();
-  times_ms->reserve( amp_time_stamps_.size() );
+  std::vector< double > times_ms;
+  times_ms.reserve( amp_time_stamps_.size() );
   for ( auto amp_time_stamp : amp_time_stamps_ )
   {
-    times_ms->push_back( amp_time_stamp.get_ms() );
+    times_ms.push_back( amp_time_stamp.get_ms() );
   }
-  ( *d )[ names::amplitude_times ] = DoubleVectorDatum( times_ms );
-  ( *d )[ names::amplitude_values ] = DoubleVectorDatum( new std::vector< double >( amp_values_ ) );
-  ( *d )[ names::allow_offgrid_times ] = BoolDatum( allow_offgrid_amp_times_ );
+  d[ names::amplitude_times ] = times_ms;
+  d[ names::amplitude_values ] = amp_values_;
+  d[ names::allow_offgrid_times ] = allow_offgrid_amp_times_;
 }
 
 Time
@@ -165,12 +161,12 @@ step_rate_generator::Parameters_::validate_time_( double t, const Time& t_previo
 }
 
 void
-step_rate_generator::Parameters_::set( const DictionaryDatum& d, Buffers_& b, Node* )
+step_rate_generator::Parameters_::set( const Dictionary& d, Buffers_& b, Node* )
 {
   std::vector< double > new_times;
-  const bool times_changed = updateValue< std::vector< double > >( d, names::amplitude_times, new_times );
-  const bool values_changed = updateValue< std::vector< double > >( d, names::amplitude_values, amp_values_ );
-  const bool allow_offgrid_changed = updateValue< bool >( d, names::allow_offgrid_times, allow_offgrid_amp_times_ );
+  const bool times_changed = d.update_value( names::amplitude_times, new_times );
+  const bool values_changed = d.update_value( names::amplitude_values, amp_values_ );
+  const bool allow_offgrid_changed = d.update_value( names::allow_offgrid_times, allow_offgrid_amp_times_ );
 
   if ( times_changed xor values_changed )
   {
@@ -216,7 +212,7 @@ step_rate_generator::Parameters_::set( const DictionaryDatum& d, Buffers_& b, No
 
   if ( times_changed or values_changed )
   {
-    b.idx_ = 0; // reset if we got new data
+    b.idx_ = 0;  // reset if we got new data
   }
 }
 
@@ -342,7 +338,7 @@ step_rate_generator::handle( DataLoggingRequest& e )
 void
 step_rate_generator::set_data_from_stimulation_backend( std::vector< double >& time_amplitude )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
 
   assert( time_amplitude.size() % 2 == 0 );
 
@@ -354,7 +350,7 @@ step_rate_generator::set_data_from_stimulation_backend( std::vector< double >& t
       throw BadParameterValue(
         "The size of the data for the step_rate_generator needs to be even [(time,rate) pairs] " );
     }
-    DictionaryDatum d = DictionaryDatum( new Dictionary );
+    Dictionary d;
     std::vector< double > times_ms;
     std::vector< double > amplitudes_Hz;
     const size_t n_step = P_.amp_time_stamps_.size();
@@ -370,8 +366,8 @@ step_rate_generator::set_data_from_stimulation_backend( std::vector< double >& t
       times_ms.push_back( time_amplitude[ n * 2 ] );
       amplitudes_Hz.push_back( time_amplitude[ n * 2 + 1 ] );
     }
-    ( *d )[ names::amplitude_times ] = DoubleVectorDatum( times_ms );
-    ( *d )[ names::amplitude_values ] = DoubleVectorDatum( amplitudes_Hz );
+    d[ names::amplitude_times ] = times_ms;
+    d[ names::amplitude_values ] = amplitudes_Hz;
 
     ptmp.set( d, B_, this );
   }
@@ -380,4 +376,4 @@ step_rate_generator::set_data_from_stimulation_backend( std::vector< double >& t
   P_ = ptmp;
 }
 
-} // namespace nest
+}  // namespace nest

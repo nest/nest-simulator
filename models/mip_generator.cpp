@@ -47,7 +47,7 @@ namespace nest
  * ---------------------------------------------------------------- */
 
 mip_generator::Parameters_::Parameters_()
-  : rate_( 0.0 ) // spks/s
+  : rate_( 0.0 )  // spks/s
   , p_copy_( 1.0 )
 {
 }
@@ -57,17 +57,17 @@ mip_generator::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-mip_generator::Parameters_::get( DictionaryDatum& d ) const
+mip_generator::Parameters_::get( Dictionary& d ) const
 {
-  ( *d )[ names::rate ] = rate_;
-  ( *d )[ names::p_copy ] = p_copy_;
+  d[ names::rate ] = rate_;
+  d[ names::p_copy ] = p_copy_;
 }
 
 void
-mip_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
+mip_generator::Parameters_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::rate, rate_, node );
-  updateValueParam< double >( d, names::p_copy, p_copy_, node );
+  update_value_param( d, names::rate, rate_, node );
+  update_value_param( d, names::p_copy, p_copy_, node );
 
   if ( rate_ < 0 )
   {
@@ -92,7 +92,7 @@ mip_generator::mip_generator()
 
 mip_generator::mip_generator( const mip_generator& n )
   : StimulationDevice( n )
-  , P_( n.P_ ) // also causes deep copy of random nnumber generator
+  , P_( n.P_ )  // also causes deep copy of random nnumber generator
 {
 }
 
@@ -134,7 +134,7 @@ mip_generator::update( Time const& T, const long from, const long to )
   {
     if ( not StimulationDevice::is_active( T ) or P_.rate_ <= 0 )
     {
-      return; // no spikes to be generated
+      return;  // no spikes to be generated
     }
 
     // generate spikes of parent process for each time slice
@@ -191,7 +191,7 @@ mip_generator::event_hook( DSSpikeEvent& e )
 void
 mip_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
 
   // For the input backend
   if ( not input_param.empty() )
@@ -202,9 +202,9 @@ mip_generator::set_data_from_stimulation_backend( std::vector< double >& input_p
     }
     else
     {
-      DictionaryDatum d = DictionaryDatum( new Dictionary );
-      ( *d )[ names::rate ] = DoubleDatum( input_param[ 0 ] );
-      ( *d )[ names::p_copy ] = DoubleDatum( input_param[ 1 ] );
+      Dictionary d;
+      d[ names::rate ] = input_param[ 0 ];
+      d[ names::p_copy ] = input_param[ 1 ];
       ptmp.set( d, this );
     }
   }
@@ -213,4 +213,4 @@ mip_generator::set_data_from_stimulation_backend( std::vector< double >& input_p
   P_ = ptmp;
 }
 
-} // namespace nest
+}  // namespace nest

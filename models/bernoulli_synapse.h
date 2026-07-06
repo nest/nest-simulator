@@ -43,9 +43,9 @@ Description
 
 Spikes are transmitted by ``bernoulli_synapse`` following a Bernoulli
 trial with success probability ``p_transmit``. This synaptic mechanism was
-inspired by the results described in [1]_ of greater transmission
+inspired by the results described in :footcite:p:`Lefort2009` of greater transmission
 probability for stronger excitatory connections and it was previously
-applied in [2]_ and [3]_.
+applied in :footcite:p:`Teramae2012` and :footcite:p:`Omura2015`.
 
 ``bernoulli_synapse`` does not support any kind of plasticity. It simply
 stores the parameters target, weight, transmission probability, delay
@@ -67,19 +67,7 @@ DoubleDataEvent, DataLoggingRequest
 References
 ++++++++++
 
-.. [1] Lefort S, Tomm C, Sarria J-C F, Petersen CCH (2009). The excitatory
-       neuronal network of the C2 barrel column in mouse primary
-       somatosensory cortex. Neuron, 61(2):301-316.
-       DOI: https://doi.org/10.1016/j.neuron.2008.12.020.
-
-.. [2] Teramae J, Tsubo Y, Fukai T (2012). Optimal spike-based communication
-       in excitable networks with strong-sparse and weak-dense  links,
-       Scientific Reports 2,485. DOI: https://doi.org/10.1038/srep00485
-
-.. [3] Omura Y, Carvalho MM, Inokuchi K, Fukai T (2015). A lognormal recurrent
-       network model for burst generation during hippocampal sharp waves.
-       Journal of Neuroscience, 35(43):14585-14601.
-       DOI: https://doi.org/10.1523/JNEUROSCI.4944-14.2015
+.. footbibliography::
 
 See also
 ++++++++
@@ -175,9 +163,9 @@ public:
     return send_spike;
   }
 
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   void
   set_weight( double w )
@@ -195,21 +183,21 @@ constexpr ConnectionModelProperties bernoulli_synapse< targetidentifierT >::prop
 
 template < typename targetidentifierT >
 void
-bernoulli_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
+bernoulli_synapse< targetidentifierT >::get_status( Dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
-  def< double >( d, names::p_transmit, p_transmit_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::weight ] = weight_;
+  d[ names::p_transmit ] = p_transmit_;
+  d[ names::size_of ] = static_cast< long >( sizeof( *this ) );
 }
 
 template < typename targetidentifierT >
 void
-bernoulli_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+bernoulli_synapse< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
-  updateValue< double >( d, names::p_transmit, p_transmit_ );
+  d.update_value( names::weight, weight_ );
+  d.update_value( names::p_transmit, p_transmit_ );
 
   if ( p_transmit_ < 0 or p_transmit_ > 1 )
   {
@@ -217,6 +205,6 @@ bernoulli_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Co
   }
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef BERNOULLI_SYNAPSE_H */

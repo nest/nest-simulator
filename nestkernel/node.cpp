@@ -30,11 +30,6 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "dictutils.h"
-#include "namedatum.h"
-
 namespace nest
 {
 
@@ -124,10 +119,10 @@ Node::get_model_() const
   return *kernel().model_manager.get_node_model( model_id_ );
 }
 
-DictionaryDatum
+Dictionary
 Node::get_status_dict_()
 {
-  return DictionaryDatum( new Dictionary );
+  return {};
 }
 
 void
@@ -155,26 +150,26 @@ Node::update_weight_revert( const size_t, const double )
   throw UnexpectedEvent( "Node does not support framework for STDP synapses with predominantly axonal delays." );
 }
 
-DictionaryDatum
+Dictionary
 Node::get_status_base()
 {
-  DictionaryDatum dict = get_status_dict_();
+  Dictionary dict = get_status_dict_();
 
   // add information available for all nodes
-  ( *dict )[ names::local ] = kernel().node_manager.is_local_node( this );
-  ( *dict )[ names::model ] = LiteralDatum( get_name() );
-  ( *dict )[ names::model_id ] = get_model_id();
-  ( *dict )[ names::global_id ] = get_node_id();
-  ( *dict )[ names::vp ] = get_vp();
-  ( *dict )[ names::element_type ] = LiteralDatum( get_element_type() );
+  dict[ names::local ] = kernel().node_manager.is_local_node( this );
+  dict[ names::model ] = get_name();
+  dict[ names::model_id ] = get_model_id();
+  dict[ names::global_id ] = static_cast< long >( get_node_id() );
+  dict[ names::vp ] = static_cast< long >( get_vp() );
+  dict[ names::element_type ] = get_element_type();
 
   // add information available only for local nodes
   if ( not is_proxy() )
   {
-    ( *dict )[ names::frozen ] = is_frozen();
-    ( *dict )[ names::node_uses_wfr ] = node_uses_wfr();
-    ( *dict )[ names::thread_local_id ] = get_thread_lid();
-    ( *dict )[ names::thread ] = get_thread();
+    dict[ names::frozen ] = is_frozen();
+    dict[ names::node_uses_wfr ] = node_uses_wfr();
+    dict[ names::thread_local_id ] = static_cast< long >( get_thread_lid() );
+    dict[ names::thread ] = static_cast< long >( get_thread() );
   }
 
   // now call the child class' hook
@@ -184,7 +179,7 @@ Node::get_status_base()
 }
 
 void
-Node::set_status_base( const DictionaryDatum& dict )
+Node::set_status_base( const Dictionary& dict )
 {
   try
   {
@@ -193,10 +188,10 @@ Node::set_status_base( const DictionaryDatum& dict )
   catch ( BadProperty& e )
   {
     throw BadProperty(
-      String::compose( "Setting status of a '%1' with node ID %2: %3", get_name(), get_node_id(), e.message() ) );
+      String::compose( "Setting status of a '%1' with node ID %2: %3", get_name(), get_node_id(), e.what() ) );
   }
 
-  updateValue< bool >( dict, names::frozen, frozen_ );
+  dict.update_value( names::frozen, frozen_ );
 }
 
 /**
@@ -236,6 +231,12 @@ Node::register_eprop_connection()
   throw IllegalConnection( "The target node does not support eprop synapses." );
 }
 
+void
+Node::initialize_update_history()
+{
+  throw IllegalConnection( "The target node does not support eprop synapses." );
+}
+
 long
 Node::get_shift() const
 {
@@ -243,13 +244,19 @@ Node::get_shift() const
 }
 
 void
-Node::write_update_to_history( const long, const long, const long )
+Node::write_update_to_history( const long, const long, const bool, const bool )
 {
   throw IllegalConnection( "The target node is not an e-prop neuron." );
 }
 
-long
-Node::get_eprop_isi_trace_cutoff() const
+void
+Node::erase_used_eprop_history()
+{
+  throw IllegalConnection( "The target node is not an e-prop neuron." );
+}
+
+void
+Node::erase_used_eprop_history( const long, const long )
 {
   throw IllegalConnection( "The target node is not an e-prop neuron." );
 }
@@ -584,7 +591,12 @@ nest::Node::compute_gradient( const long,
   double&,
   double&,
   const CommonSynapseProperties&,
-  WeightOptimizer* )
+  WeightOptimizer*,
+  bool,
+  bool,
+  double&,
+  long&,
+  long& )
 {
   throw IllegalConnection( "The target node does not support compute_gradient()." );
 }
@@ -607,4 +619,4 @@ Node::event_hook( DSCurrentEvent& e )
   e.get_receiver().handle( e );
 }
 
-} // namespace
+}  // namespace

@@ -31,12 +31,6 @@
 // Includes from libnestutil:
 #include "dict_util.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-
-
 namespace nest
 {
 
@@ -51,7 +45,7 @@ register_poisson_generator( const std::string& name )
  * ---------------------------------------------------------------- */
 
 poisson_generator::Parameters_::Parameters_()
-  : rate_( 0.0 ) // spks/s
+  : rate_( 0.0 )  // spks/s
 {
 }
 
@@ -61,15 +55,15 @@ poisson_generator::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-poisson_generator::Parameters_::get( DictionaryDatum& d ) const
+poisson_generator::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::rate, rate_ );
+  d[ names::rate ] = rate_;
 }
 
 void
-poisson_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
+poisson_generator::Parameters_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::rate, rate_, node );
+  update_value_param( d, names::rate, rate_, node );
   if ( rate_ < 0 )
   {
     throw BadProperty( "The rate cannot be negative." );
@@ -137,7 +131,7 @@ poisson_generator::update( Time const& T, const long from, const long to )
   {
     if ( not StimulationDevice::is_active( T + Time::step( lag ) ) )
     {
-      continue; // no spike at this lag
+      continue;  // no spike at this lag
     }
 
     DSSpikeEvent se;
@@ -150,7 +144,7 @@ poisson_generator::event_hook( DSSpikeEvent& e )
 {
   long n_spikes = V_.poisson_dist_( get_vp_specific_rng( get_thread() ) );
 
-  if ( n_spikes > 0 ) // we must not send events with multiplicity 0
+  if ( n_spikes > 0 )  // we must not send events with multiplicity 0
   {
     e.set_multiplicity( n_spikes );
     e.get_receiver().handle( e );
@@ -164,7 +158,7 @@ poisson_generator::event_hook( DSSpikeEvent& e )
 void
 poisson_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
 
   // For the input backend
   if ( not input_param.empty() )
@@ -173,8 +167,8 @@ poisson_generator::set_data_from_stimulation_backend( std::vector< double >& inp
     {
       throw BadParameterValue( "The size of the data for the poisson generator needs to be 1 [rate]." );
     }
-    DictionaryDatum d = DictionaryDatum( new Dictionary );
-    ( *d )[ names::rate ] = DoubleDatum( input_param[ 0 ] );
+    Dictionary d;
+    d[ names::rate ] = input_param[ 0 ];
     ptmp.set( d, this );
   }
 

@@ -42,8 +42,6 @@
 #include "nest_timeconverter.h"
 #include "secondary_event_impl.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 namespace nest
 {
@@ -52,7 +50,7 @@ template < typename ConnectionT >
 ConnectorModel*
 GenericConnectorModel< ConnectionT >::clone( std::string name, synindex syn_id ) const
 {
-  ConnectorModel* new_cm = new GenericConnectorModel( *this, name ); // calls copy construtor
+  ConnectorModel* new_cm = new GenericConnectorModel( *this, name );  // calls copy construtor
   new_cm->set_syn_id( syn_id );
 
   const bool is_primary = new_cm->has_property( ConnectionModelProperties::IS_PRIMARY );
@@ -80,7 +78,7 @@ GenericConnectorModel< ConnectionT >::calibrate( const TimeConverter& tc )
 
 template < typename ConnectionT >
 void
-GenericConnectorModel< ConnectionT >::get_status( DictionaryDatum& d ) const
+GenericConnectorModel< ConnectionT >::get_status( Dictionary& d ) const
 {
   // first get properties common to all synapses
   // these are stored only once (not within each Connection)
@@ -89,21 +87,21 @@ GenericConnectorModel< ConnectionT >::get_status( DictionaryDatum& d ) const
   // then get default properties for individual synapses
   default_connection_.get_status( d );
 
-  ( *d )[ names::receptor_type ] = receptor_type_;
-  ( *d )[ names::synapse_model ] = LiteralDatum( name_ );
-  ( *d )[ names::synapse_modelid ] = kernel().model_manager.get_synapse_model_id( name_ );
-  ( *d )[ names::requires_symmetric ] = has_property( ConnectionModelProperties::REQUIRES_SYMMETRIC );
-  ( *d )[ names::has_delay ] = has_property( ConnectionModelProperties::HAS_DELAY );
+  d[ names::receptor_type ] = static_cast< long >( receptor_type_ );
+  d[ names::synapse_model ] = name_;
+  d[ names::synapse_modelid ] = static_cast< long >( kernel().model_manager.get_synapse_model_id( name_ ) );
+  d[ names::requires_symmetric ] = has_property( ConnectionModelProperties::REQUIRES_SYMMETRIC );
+  d[ names::has_delay ] = has_property( ConnectionModelProperties::HAS_DELAY );
 }
 
 template < typename ConnectionT >
 void
-GenericConnectorModel< ConnectionT >::set_status( const DictionaryDatum& d )
+GenericConnectorModel< ConnectionT >::set_status( const Dictionary& d )
 {
-  updateValue< long >( d, names::receptor_type, receptor_type_ );
+  d.update_integer_value( names::receptor_type, receptor_type_ );
 #ifdef HAVE_MUSIC
   // We allow music_channel as alias for receptor_type during connection setup
-  updateValue< long >( d, names::music_channel, receptor_type_ );
+  d.update_integer_value( names::music_channel, receptor_type_ );
 #endif
 
   // If the parameter dict d contains /delay, this should set the delay
@@ -126,16 +124,16 @@ GenericConnectorModel< ConnectionT >::set_status( const DictionaryDatum& d )
 
 template < typename ConnectionT >
 void
-GenericConnectorModel< ConnectionT >::check_synapse_params( const DictionaryDatum& syn_spec ) const
+GenericConnectorModel< ConnectionT >::check_synapse_params( const Dictionary& syn_spec ) const
 {
   // This is called just once per Connect() call, so we need not worry much about performance.
   // We get a dictionary with synapse default values and check if any of its keys are in syn_spec.
-  DictionaryDatum dummy( new Dictionary );
+  Dictionary dummy;
   cp_.get_status( dummy );
 
-  for ( [[maybe_unused]] const auto& [ key, val ] : *syn_spec )
+  for ( [[maybe_unused]] const auto& [ key, val ] : syn_spec )
   {
-    if ( dummy->known( key ) )
+    if ( dummy.known( key ) )
     {
       throw NotImplemented(
         String::compose( "Synapse parameter \"%1\" can only be set via SetDefaults() or CopyModel().", key ) );
@@ -233,7 +231,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   Node& tgt,
   std::vector< ConnectorBase* >& thread_local_connectors,
   const synindex syn_id,
-  const DictionaryDatum& p,
+  const Dictionary& p,
   const double delay,
   const double dendritic_delay,
   const double axonal_delay,
@@ -255,7 +253,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
           + "' is not allowed for synapse types which use both dendritic and axonal delays, because of ambiguity." );
       }
 
-      if ( not numerics::is_nan( dendritic_delay ) and p->known( names::dendritic_delay ) )
+      if ( not numerics::is_nan( dendritic_delay ) and p.known( names::dendritic_delay ) )
       {
         throw BadParameter(
           "Parameter dictionary must not contain dendritic delay if dendritic delay is given explicitly." );
@@ -268,13 +266,11 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 
       double actual_dendritic_delay = dendritic_delay;
       double actual_axonal_delay = axonal_delay;
-      if ( not numerics::is_nan( dendritic_delay )
-        or updateValue< double >( p, names::dendritic_delay, actual_dendritic_delay ) )
+      if ( not numerics::is_nan( dendritic_delay ) or p.update_value( names::dendritic_delay, actual_dendritic_delay ) )
       {
         connection.set_dendritic_delay_ms( actual_dendritic_delay );
       }
-      if ( not numerics::is_nan( axonal_delay )
-        or updateValue< double >( p, names::axonal_delay, actual_axonal_delay ) )
+      if ( not numerics::is_nan( axonal_delay ) or p.update_value( names::axonal_delay, actual_axonal_delay ) )
       {
         connection.set_axonal_delay_ms( axonal_delay );
       }
@@ -290,7 +286,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
         throw BadParameter( "Synapse type does not support explicitly setting dendritic delay." );
       }
 
-      if ( not numerics::is_nan( axonal_delay ) or p->known( names::axonal_delay ) )
+      if ( not numerics::is_nan( axonal_delay ) or p.known( names::axonal_delay ) )
       {
         throw BadParameter( "Synapse type does not support explicitly setting axonal delay." );
       }
@@ -301,7 +297,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
       }
 
       double actual_delay = delay;
-      if ( updateValue< double >( p, names::delay, actual_delay ) or not numerics::is_nan( delay ) )
+      if ( p.update_value( names::delay, actual_delay ) or not numerics::is_nan( delay ) )
       {
         connection.set_delay_ms( actual_delay );
         default_delay_used = false;
@@ -320,7 +316,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     connection.set_weight( weight );
   }
 
-  if ( not p->empty() )
+  if ( not p.empty() )
   {
     // Reference to connector model needed here to check delay (maybe this could be done one level above?).
     connection.set_status( p, *this );
@@ -342,9 +338,9 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   size_t actual_receptor_type = receptor_type_;
 #ifdef HAVE_MUSIC
   // We allow music_channel as alias for receptor_type during connection setup
-  updateValue< long >( p, names::music_channel, actual_receptor_type );
+  p.update_integer_value( names::music_channel, actual_receptor_type );
 #endif
-  updateValue< long >( p, names::receptor_type, actual_receptor_type );
+  p.update_value( names::receptor_type, actual_receptor_type );
   assert( syn_id != invalid_synindex );
 
   if ( not thread_local_connectors[ syn_id ] )
@@ -364,6 +360,6 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   vc->push_back( std::move( connection ) );
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif

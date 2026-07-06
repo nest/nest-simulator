@@ -40,8 +40,6 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-#include "dictdatum.h"
-
 /* BeginUserDocs:  neuron, integrate-and-fire, conductance-based, adaptation, hard threshold
 
 Short description
@@ -53,9 +51,9 @@ Description
 +++++++++++
 
 ``glif_cond`` provides five generalized leaky integrate
-and fire (GLIF) models [1]_ with conductance-based synapses.
+and fire (GLIF) models :footcite:p:`Teeter2018` with conductance-based synapses.
 Incoming spike events induce a postsynaptic change of conductance modeled
-by an alpha function [2]_. The alpha function is normalized such that an event
+by an alpha function :footcite:p:`Meffin2004`. The alpha function is normalized such that an event
 of weight 1.0 results in a peak conductance change of 1 nS at :math:`t = \tau_\mathrm{syn}`.
 On the postsynaptic side, there can be arbitrarily many synaptic time constants.
 This can be reached by specifying separate receptor ports, each for a different
@@ -72,6 +70,8 @@ The five GLIF models are:
   and after-spike currents (LIF_R_ASC)
 * **GLIF Model 5** - Leaky integrate and fire with biologically defined reset rules,
   after-spike currents and a voltage dependent threshold (LIF_R_ASC_A)
+
+Remarks:
 
 GLIF model mechanism setting is based on three parameters
 (``spike_dependent_threshold``, ``after_spike_currents``, ``adapting_threshold``).
@@ -117,7 +117,7 @@ to follow the condition of
 Parameters
 ++++++++++
 
-The following parameters can be set in the status dictionary.
+The following parameters can be set in the status Dictionary.
 
 ========= ======== ============================================================
 **Membrane parameters**
@@ -136,36 +136,36 @@ V_reset    double   Reset potential of the membrane in mV (GLIF 1 or GLIF 3)
 -------------------------------------------------------------------------------
 th_spike_add               double         Threshold addition following spike
                                           in mV (delta_theta_s in Equation (6)
-                                          in [1]_)
+                                          in :footcite:p:`Teeter2018`)
 th_spike_decay             double         Spike-induced threshold time
                                           constant in 1/ms (bs in Equation (2)
-                                          in [1]_)
+                                          in :footcite:p:`Teeter2018`)
 voltage_reset_fraction     double         Voltage fraction coefficient
                                           following spike (fv in Equation (5)
-                                          in [1]_)
+                                          in :footcite:p:`Teeter2018`)
 voltage_reset_add          double         Voltage addition following spike in
                                           mV (-delta_V (sign flipped) in
-                                          Equation (5) in [1]_)
+                                          Equation (5) in :footcite:p:`Teeter2018`)
 asc_init                   double vector  Initial values of after-spike
                                           currents in pA
 asc_decay                  double vector  After-spike current time constants
-                                          in 1/ms (kj in Equation (3) in [1]_)
+                                          in 1/ms (kj in Equation (3) in :footcite:p:`Teeter2018`)
 asc_amps                   double vector  After-spike current amplitudes in
-                                          pA (deltaIj in Equation (7) in [1]_)
+                                          pA (deltaIj in Equation (7) in :footcite:p:`Teeter2018`)
 asc_r                      double vector  Current fraction following spike
                                           coefficients for fj in Equation (7)
-                                          in [1]_
+                                          in :footcite:p:`Teeter2018`
 th_voltage_index           double         Adaptation index of threshold - A
                                           'leak-conductance' for the
                                           voltage-dependent component of the
                                           threshold in 1/ms (av in Equation
-                                          (4) in [1]_)
+                                          (4) in :footcite:p:`Teeter2018`)
 th_voltage_decay           double         Voltage-induced threshold time
                                           constant - Inverse of which is the
                                           time constant of the
                                           voltage-dependent component of the
                                           threshold in 1/ms (bv in Equation
-                                          (4) in [1]_)
+                                          (4) in :footcite:p:`Teeter2018`)
 tau_syn                    double vector  Rise time constants of the synaptic
                                           alpha function in ms
 E_rev                      double vector  Reversal potential in mV
@@ -182,13 +182,7 @@ adapting_threshold         bool           flag whether the neuron has a
 References
 ++++++++++
 
-.. [1] Teeter C, Iyer R, Menon V, Gouwens N, Feng D, Berg J, Szafer A,
-       Cain N, Zeng H, Hawrylycz M, Koch C, & Mihalas S (2018)
-       Generalized leaky integrate-and-fire models classify multiple neuron
-       types. Nature Communications 9:709.
-.. [2] Meffin, H., Burkitt, A. N., & Grayden, D. B. (2004). An analytical
-       model for the large, fluctuating synaptic conductance state typical of
-       neocortical neurons in vivo. J.  Comput. Neurosci., 16, 159-175.
+.. footbibliography::
 
 See also
 ++++++++
@@ -231,8 +225,8 @@ public:
   size_t handles_test_event( nest::CurrentEvent&, size_t ) override;
   size_t handles_test_event( nest::DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   //! Reset internal buffers of neuron.
@@ -254,26 +248,26 @@ private:
 
   struct Parameters_
   {
-    double G_;                        //!< membrane conductance in nS
-    double E_L_;                      //!< resting potential in mV
-    double th_inf_;                   //!< infinity threshold in mV
-    double C_m_;                      //!< capacitance in pF
-    double t_ref_;                    //!< refractory time in ms
-    double V_reset_;                  //!< Membrane voltage following spike in mV
-    double th_spike_add_;             //!< threshold additive constant following reset in mV
-    double th_spike_decay_;           //!< spike induced threshold in 1/ms
-    double voltage_reset_fraction_;   //!< voltage fraction following reset coefficient
-    double voltage_reset_add_;        //!< voltage additive constant following reset in mV
-    double th_voltage_index_;         //!< a 'leak-conductance' for the voltage-dependent
-                                      //!< component of the threshold in 1/ms
-    double th_voltage_decay_;         //!< inverse of which is the time constant of the
-                                      //!< voltage-dependent component of the threshold in 1/ms
-    std::vector< double > asc_init_;  //!< initial values of ASCurrents_ in pA
-    std::vector< double > asc_decay_; //!< predefined time scale in 1/ms
-    std::vector< double > asc_amps_;  //!< in pA
-    std::vector< double > asc_r_;     //!< coefficient
-    std::vector< double > tau_syn_;   //!< synaptic port time constants in ms
-    std::vector< double > E_rev_;     //!< reversal potential in mV
+    double G_;                         //!< membrane conductance in nS
+    double E_L_;                       //!< resting potential in mV
+    double th_inf_;                    //!< infinity threshold in mV
+    double C_m_;                       //!< capacitance in pF
+    double t_ref_;                     //!< refractory time in ms
+    double V_reset_;                   //!< Membrane voltage following spike in mV
+    double th_spike_add_;              //!< threshold additive constant following reset in mV
+    double th_spike_decay_;            //!< spike induced threshold in 1/ms
+    double voltage_reset_fraction_;    //!< voltage fraction following reset coefficient
+    double voltage_reset_add_;         //!< voltage additive constant following reset in mV
+    double th_voltage_index_;          //!< a 'leak-conductance' for the voltage-dependent
+                                       //!< component of the threshold in 1/ms
+    double th_voltage_decay_;          //!< inverse of which is the time constant of the
+                                       //!< voltage-dependent component of the threshold in 1/ms
+    std::vector< double > asc_init_;   //!< initial values of ASCurrents_ in pA
+    std::vector< double > asc_decay_;  //!< predefined time scale in 1/ms
+    std::vector< double > asc_amps_;   //!< in pA
+    std::vector< double > asc_r_;      //!< coefficient
+    std::vector< double > tau_syn_;    //!< synaptic port time constants in ms
+    std::vector< double > E_rev_;      //!< reversal potential in mV
 
     //! boolean flag which indicates whether the neuron has connections
     bool has_connections_;
@@ -287,24 +281,24 @@ private:
     //! boolean flag which indicates whether the neuron has voltage dependent threshold component
     bool has_theta_voltage_;
 
-    size_t n_receptors_() const; //!< Returns the size of tau_syn_
+    size_t n_receptors_() const;  //!< Returns the size of tau_syn_
 
     Parameters_();
 
-    void get( DictionaryDatum& ) const;
-    double set( const DictionaryDatum&, Node* );
+    void get( Dictionary& ) const;
+    double set( const Dictionary&, Node* );
   };
 
 
   struct State_
   {
 
-    double threshold_;                 //!< voltage threshold in mV
-    double threshold_spike_;           //!< spike component of threshold in mV
-    double threshold_voltage_;         //!< voltage component of threshold in mV
-    std::vector< double > ASCurrents_; //!< after-spike currents in pA
-    double ASCurrents_sum_;            //!< in pA
-    int refractory_steps_;             //!< Number of refractory steps remaining
+    double threshold_;                  //!< voltage threshold in mV
+    double threshold_spike_;            //!< spike component of threshold in mV
+    double threshold_voltage_;          //!< voltage component of threshold in mV
+    std::vector< double > ASCurrents_;  //!< after-spike currents in pA
+    double ASCurrents_sum_;             //!< in pA
+    int refractory_steps_;              //!< Number of refractory steps remaining
 
     //! Symbolic indices to the elements of the state vector y and recordables
     //! y only includes state of V_M and DG_SYN, G_SYN
@@ -325,16 +319,16 @@ private:
       STATE_VECTOR_MIN_SIZE
     };
 
-    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 1;         // V_M
-    static const size_t NUMBER_OF_RECORDABLES_ELEMENTS = DG_SYN - 1; // I, ASC, TH, Th_SPK, TH_VLT
-    static const size_t NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR = 2;  // DG_SYN, G_SYN
+    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 1;          // V_M
+    static const size_t NUMBER_OF_RECORDABLES_ELEMENTS = DG_SYN - 1;  // I, ASC, TH, Th_SPK, TH_VLT
+    static const size_t NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR = 2;   // DG_SYN, G_SYN
 
-    std::vector< double > y_; //!< neuron state
+    std::vector< double > y_;  //!< neuron state
 
     State_( const Parameters_& );
 
-    void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, double, Node* );
+    void get( Dictionary&, const Parameters_& ) const;
+    void set( const Dictionary&, const Parameters_&, double, Node* );
   };
 
 
@@ -343,24 +337,24 @@ private:
     Buffers_( glif_cond& );
     Buffers_( const Buffers_&, glif_cond& );
 
-    std::vector< nest::RingBuffer > spikes_; //!< Buffer incoming spikes through delay, as sum
-    nest::RingBuffer currents_;              //!< Buffer incoming currents through delay,
+    std::vector< nest::RingBuffer > spikes_;  //!< Buffer incoming spikes through delay, as sum
+    nest::RingBuffer currents_;               //!< Buffer incoming currents through delay,
 
     //! Logger for all analog data
     DynamicUniversalDataLogger< glif_cond > logger_;
 
     /* GSL ODE stuff */
-    gsl_odeiv_step* s_;    //!< stepping function
-    gsl_odeiv_control* c_; //!< adaptive stepsize control function
-    gsl_odeiv_evolve* e_;  //!< evolution function
-    gsl_odeiv_system sys_; //!< struct describing system
+    gsl_odeiv_step* s_;     //!< stepping function
+    gsl_odeiv_control* c_;  //!< adaptive stepsize control function
+    gsl_odeiv_evolve* e_;   //!< evolution function
+    gsl_odeiv_system sys_;  //!< struct describing system
 
     // IntegrationStep_ should be reset with the neuron on ResetNetwork,
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
-    double step_;            //!< step size in ms
-    double IntegrationStep_; //!< current integration time step, updated by GSL
+    double step_;             //!< step size in ms
+    double IntegrationStep_;  //!< current integration time step, updated by GSL
 
     /**
      * Input current injected by CurrentEvent.
@@ -374,16 +368,16 @@ private:
 
   struct Variables_
   {
-    int RefractoryCounts_;                             //!< counter during refractory period
-    double theta_spike_decay_rate_;                    //!< threshold spike component decay rate
-    double theta_spike_refractory_decay_rate_;         //!< threshold spike component decay rate during refractory
-    double theta_voltage_decay_rate_inverse_;          //!< inverse of threshold voltage component decay rate
-    double potential_decay_rate_;                      //!< membrane potential decay rate
-    double abpara_ratio_voltage_;                      //!< ratio of parameters of voltage threshold component av/bv
-    std::vector< double > asc_decay_rates_;            //!< after spike current decay rates
-    std::vector< double > asc_stable_coeff_;           //!< after spike current stable coefficient
-    std::vector< double > asc_refractory_decay_rates_; //!< after spike current decay rates during refractory
-    double phi;                                        //!< threshold voltage component coefficient
+    int RefractoryCounts_;                              //!< counter during refractory period
+    double theta_spike_decay_rate_;                     //!< threshold spike component decay rate
+    double theta_spike_refractory_decay_rate_;          //!< threshold spike component decay rate during refractory
+    double theta_voltage_decay_rate_inverse_;           //!< inverse of threshold voltage component decay rate
+    double potential_decay_rate_;                       //!< membrane potential decay rate
+    double abpara_ratio_voltage_;                       //!< ratio of parameters of voltage threshold component av/bv
+    std::vector< double > asc_decay_rates_;             //!< after spike current decay rates
+    std::vector< double > asc_stable_coeff_;            //!< after spike current stable coefficient
+    std::vector< double > asc_refractory_decay_rates_;  //!< after spike current decay rates during refractory
+    double phi;                                         //!< threshold voltage component coefficient
 
     /** Amplitude of the synaptic conductance.
         This value is chosen such that an event of weight 1.0 results in a peak
@@ -438,7 +432,7 @@ private:
   // Utility function that inserts the synaptic conductances to the
   // recordables map
 
-  Name get_g_receptor_name( size_t receptor );
+  std::string get_g_receptor_name( size_t receptor );
   void insert_conductance_recordables( size_t first = 0 );
 };
 
@@ -480,7 +474,7 @@ nest::glif_cond::handles_test_event( nest::DataLoggingRequest& dlr, size_t recep
 }
 
 inline void
-glif_cond::get_status( DictionaryDatum& d ) const
+glif_cond::get_status( Dictionary& d ) const
 {
   // get our own parameter and state data
   P_.get( d );
@@ -489,16 +483,16 @@ glif_cond::get_status( DictionaryDatum& d ) const
   // get information managed by parent class
   ArchivingNode::get_status( d );
 
-  ( *d )[ nest::names::recordables ] = recordablesMap_.get_list();
+  d[ nest::names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
-glif_cond::set_status( const DictionaryDatum& d )
+glif_cond::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;                       // temporary copy in case of errors
-  const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
-  State_ stmp = S_;                            // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
+  Parameters_ ptmp = P_;                        // temporary copy in case of errors
+  const double delta_EL = ptmp.set( d, this );  // throws if BadProperty
+  State_ stmp = S_;                             // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );          // throws if BadProperty
 
   ArchivingNode::set_status( d );
 
@@ -506,7 +500,7 @@ glif_cond::set_status( const DictionaryDatum& d )
    * Here is where we must update the recordablesMap_ if new receptors
    * are added!
    */
-  if ( ptmp.n_receptors_() > P_.n_receptors_() ) // Number of receptors increased
+  if ( ptmp.n_receptors_() > P_.n_receptors_() )  // Number of receptors increased
   {
     for ( size_t receptor = P_.n_receptors_(); receptor < ptmp.n_receptors_(); ++receptor )
     {
@@ -515,7 +509,7 @@ glif_cond::set_status( const DictionaryDatum& d )
     }
   }
   else if ( ptmp.n_receptors_() < P_.n_receptors_() )
-  { // Number of receptors decreased
+  {  // Number of receptors decreased
     for ( size_t receptor = ptmp.n_receptors_(); receptor < P_.n_receptors_(); ++receptor )
     {
       recordablesMap_.erase( get_g_receptor_name( receptor ) );
@@ -527,7 +521,7 @@ glif_cond::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
-} // namespace nest
+}  // namespace nest
 
-#endif // HAVE_GSL
+#endif  // HAVE_GSL
 #endif

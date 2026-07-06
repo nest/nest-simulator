@@ -40,12 +40,6 @@
 #include "spikecounter.h"
 #include "target_identifier.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-
 namespace nest
 {
 
@@ -81,11 +75,11 @@ class ConnTestDummyNodeBase : public Node
   {
   }
   void
-  set_status( const DictionaryDatum& ) override
+  set_status( const Dictionary& ) override
   {
   }
   void
-  get_status( DictionaryDatum& ) const override
+  get_status( Dictionary& ) const override
   {
   }
   void
@@ -120,6 +114,9 @@ public:
   // properties used when registering a connection with the ModelManager
   static constexpr ConnectionModelProperties properties = ConnectionModelProperties::NONE;
 
+  // Whether this connection type supports flush events.
+  static constexpr bool supports_flush_event = false;
+
   Connection()
     : target_()
     , more_targets_( false )
@@ -143,7 +140,7 @@ public:
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
   /**
    * Set properties of this connection from the values given in dictionary.
@@ -151,7 +148,7 @@ public:
    * @note Target and Rport cannot be changed after a connection has been
    * created.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   /**
    * Check syn_spec dictionary for parameters that are not allowed with the
@@ -165,7 +162,7 @@ public:
    *
    * @see ConnectorModel::check_synapse_params
    */
-  void check_synapse_params( const DictionaryDatum& d ) const;
+  void check_synapse_params( const Dictionary& d ) const;
 
   /**
    * Calibrate the delay of this connection to the desired resolution.
@@ -435,7 +432,7 @@ Connection< targetidentifierT, DelayTypeT >::check_connection_( Node& dummy_targ
 
 template < typename targetidentifierT, typename DelayTypeT >
 inline void
-Connection< targetidentifierT, DelayTypeT >::get_status( DictionaryDatum& d ) const
+Connection< targetidentifierT, DelayTypeT >::get_status( Dictionary& d ) const
 {
   delay_.get_status( d );
   target_.get_status( d );
@@ -443,7 +440,7 @@ Connection< targetidentifierT, DelayTypeT >::get_status( DictionaryDatum& d ) co
 
 template < typename targetidentifierT, typename DelayTypeT >
 inline void
-Connection< targetidentifierT, DelayTypeT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+Connection< targetidentifierT, DelayTypeT >::set_status( const Dictionary& d, ConnectorModel& )
 {
   delay_.set_status( d, cm );
   // no call to target_.set_status() because target and rport cannot be changed
@@ -451,7 +448,7 @@ Connection< targetidentifierT, DelayTypeT >::set_status( const DictionaryDatum& 
 
 template < typename targetidentifierT, typename DelayTypeT >
 inline void
-Connection< targetidentifierT, DelayTypeT >::check_synapse_params( const DictionaryDatum& ) const
+Connection< targetidentifierT, DelayTypeT >::check_synapse_params( const Dictionary& ) const
 {
 }
 
@@ -495,6 +492,6 @@ Connection< targetidentifierT, DelayTypeT >::get_secondary_event()
   return nullptr;
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* CONNECTION_H */

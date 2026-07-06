@@ -150,6 +150,7 @@ PyNEST examples
            :img-top: ../static/img/pynest/precisespiking.png
 
            * :doc:`../auto_examples/precise_spiking`
+           * :doc:`../auto_examples/artificial_synchrony`
 
     .. grid-item-card:: Campbell Siegert
            :img-top: ../static/img/nest_logo-faded.png
@@ -213,7 +214,7 @@ PyNEST examples
 .. grid:: 1 1 2 3
 
     .. grid-item-card:: :doc:`../auto_examples/eprop_plasticity/index`
-           :img-top: ../static/img/pynest/eprop_supervised_classification_infrastructure.png
+           :img-top: ../../../pynest/examples/eprop_plasticity/eprop_supervised_regression_sine-waves.png
 
            * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_classification_evidence-accumulation_bsshslm_2020`
            * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_sine-waves_bsshslm_2020`
@@ -269,7 +270,15 @@ PyNEST examples
            :img-top: ../auto_examples/hpc_benchmark_connectivity.svg
 
            * :doc:`../auto_examples/hpc_benchmark`
+           * :doc:`../auto_examples/ignore_and_spike_mechanism`
 
+    .. grid-item-card:: Brette et al. 2007 Benchmarks
+           :img-top: ../static/img/nest_logo-faded.png
+
+           :doc:`../auto_examples/brette_et_al_2007/index`
+
+
+.. grid:: 1 1 2 3
 
     .. grid-item-card:: Connection set algebra
            :img-top: ../static/img/nest_logo-faded.png
@@ -283,6 +292,7 @@ PyNEST examples
    running_notebooks
    ../auto_examples/sudoku/index
    ../auto_examples/pong/index
+   ../auto_examples/ignore_and_spike_mechanism
    ../auto_examples/spatial/index
    ../auto_examples/music_cont_out_proxy_example/index
    ../auto_examples/compartmental_model/index
@@ -304,6 +314,7 @@ PyNEST examples
    ../auto_examples/glif_psc_neuron
    ../auto_examples/glif_psc_double_alpha_neuron
    ../auto_examples/precise_spiking
+   ../auto_examples/artificial_synchrony
    ../auto_examples/CampbellSiegert
    ../auto_examples/vinit_example
    ../auto_examples/recording_demo
@@ -343,6 +354,7 @@ PyNEST examples
    ../auto_examples/csa_example
    ../auto_examples/csa_spatial_example
    ../auto_examples/hpc_benchmark
+   ../auto_examples/brette_et_al_2007/index
    ../auto_examples/astrocytes/index
    ../auto_examples/EI_clustered_network/index
    ../auto_examples/eprop_plasticity/index

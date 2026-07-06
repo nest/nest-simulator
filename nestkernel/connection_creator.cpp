@@ -21,12 +21,14 @@
  */
 
 #include "connection_creator.h"
-#include "dictutils.h"
+
+#include "nest.h"
+#include "spatial.h"
 
 namespace nest
 {
 
-ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
+ConnectionCreator::ConnectionCreator( const Dictionary& dict )
   : allow_autapses_( true )
   , allow_multapses_( true )
   , allow_oversized_( false )
@@ -39,58 +41,61 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   , dendritic_delay_()
   , axonal_delay_()
 {
-  Name connection_type;
+  std::string connection_type;
 
-  updateValue< std::string >( dict, names::connection_type, connection_type );
-  updateValue< bool >( dict, names::allow_autapses, allow_autapses_ );
-  updateValue< bool >( dict, names::allow_multapses, allow_multapses_ );
-  updateValue< bool >( dict, names::allow_oversized_mask, allow_oversized_ );
+  dict.update_value( names::connection_type, connection_type );
+  dict.update_value( names::allow_autapses, allow_autapses_ );
+  dict.update_value( names::allow_multapses, allow_multapses_ );
+  dict.update_value( names::allow_oversized_mask, allow_oversized_ );
 
   // Need to store number of connections in a temporary variable to be able to detect negative values.
-
-  if ( dict->known( names::number_of_connections ) )
+  if ( dict.known( names::number_of_connections ) )
   {
-    ParameterDatum* pd = dynamic_cast< ParameterDatum* >( ( *dict )[ names::number_of_connections ].datum() );
-    if ( pd )
+    if ( std::holds_alternative< ParameterPTR >( dict.at( names::number_of_connections ) ) )
     {
-      number_of_connections_ = *pd;
+      dict.update_value< ParameterPTR >( names::number_of_connections, number_of_connections_ );
     }
     else
     {
       // Assume indegree is a scalar.
-      const long value = ( *dict )[ names::number_of_connections ];
+      const long value = dict.get< long >( names::number_of_connections );
       if ( value < 0 )
       {
         throw BadProperty( "Number of connections cannot be less than zero." );
       }
-      number_of_connections_ = std::shared_ptr< Parameter >( new ConstantParameter( value ) );
+      number_of_connections_ = ParameterPTR( new ConstantParameter( value ) );
     }
   }
+  if ( dict.known( names::mask ) )
+  {
+    mask_ = create_mask( dict.get< Dictionary >( names::mask ) );
+  }
+  if ( dict.known( names::kernel ) )
+  {
+    kernel_ = create_parameter( dict.at( names::kernel ) );
+  }
 
-  if ( dict->known( names::mask ) )
-  {
-    mask_ = NestModule::create_mask( ( *dict )[ names::mask ] );
-  }
-  if ( dict->known( names::kernel ) )
-  {
-    kernel_ = NestModule::create_parameter( ( *dict )[ names::kernel ] );
-  }
-  if ( dict->known( names::synapse_parameters ) )
+  if ( dict.known( names::synapse_parameters ) )
   {
     // If synapse_parameters exists, we have collocated synapses.
-    ArrayDatum* syn_params_dvd = dynamic_cast< ArrayDatum* >( ( *dict )[ names::synapse_parameters ].datum() );
-    if ( not syn_params_dvd )
+    std::vector< Dictionary > syn_params_dvd;
+
+    try
     {
+      dict.update_value( names::synapse_parameters, syn_params_dvd );
+    }
+    catch ( const nest::TypeMismatch& )
+    {
+      // Give a more helpful message if the provided type is wrong.
       throw BadProperty( "synapse_parameters must be list of dictionaries" );
     }
 
-    param_dicts_.resize( syn_params_dvd->size() );
+    param_dicts_.resize( syn_params_dvd.size() );
     auto param_dict = param_dicts_.begin();
-    for ( auto synapse_datum = syn_params_dvd->begin(); synapse_datum < syn_params_dvd->end();
-          ++synapse_datum, ++param_dict )
+    for ( auto syn_param_it = syn_params_dvd.begin(); syn_param_it < syn_params_dvd.end();
+      ++syn_param_it, ++param_dict )
     {
-      auto syn_param = dynamic_cast< DictionaryDatum* >( synapse_datum->datum() );
-      extract_params_( *syn_param, *param_dict );
+      extract_params_( *syn_param_it, *param_dict );
     }
   }
   else
@@ -101,17 +106,18 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
     extract_params_( dict, param_dicts_[ 0 ] );
   }
 
-  ALL_ENTRIES_ACCESSED( *dict, "ConnectionCreator", "Unread dictionary entries: " );
+  // We check if dict has been read out completely to stop the process early in case of errors
+  dict.all_entries_accessed( "synapse_specs", "ConnectionCreator" );
 
   // Set default synapse_model, weight and delay if not given explicitly
   if ( synapse_model_.empty() )
   {
     synapse_model_ = { kernel().model_manager.get_synapse_model_id( "static_synapse" ) };
   }
-  DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_[ 0 ] );
+  Dictionary syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_[ 0 ] );
   if ( weight_.empty() )
   {
-    weight_ = { NestModule::create_parameter( ( *syn_defaults )[ names::weight ] ) };
+    weight_ = { create_parameter( syn_defaults[ names::weight ] ) };
   }
 
   // In case the synapse type uses split axonal and dendritic delays, the synapse default dict will contain values for
@@ -155,21 +161,20 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
 
   if ( delay_.empty() )
   {
-    if ( not getValue< bool >( ( *syn_defaults )[ names::has_delay ] ) or not syn_defaults->known( names::delay )
+    if ( not syn_defaults.get< bool >( names::has_delay ) or not syn_defaults.known( names::delay )
       or axonal_or_dendritic_delay_set )
     {
-      delay_ = { NestModule::create_parameter( numerics::nan ) };
+      delay_ = { create_parameter( numerics::nan ) };
     }
     else
     {
-      delay_ = { NestModule::create_parameter( ( *syn_defaults )[ names::delay ] ) };
+      delay_ = { create_parameter( syn_defaults[ names::delay ] ) };
     }
   }
 
   if ( connection_type == names::pairwise_bernoulli_on_source )
   {
-
-    if ( dict->known( names::number_of_connections ) )
+    if ( dict.known( names::number_of_connections ) )
     {
       type_ = Fixed_indegree;
     }
@@ -184,8 +189,7 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   }
   else if ( connection_type == names::pairwise_bernoulli_on_target )
   {
-
-    if ( dict->known( names::number_of_connections ) )
+    if ( dict.known( names::number_of_connections ) )
     {
       type_ = Fixed_outdegree;
     }
@@ -201,33 +205,30 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
 }
 
 void
-ConnectionCreator::extract_params_( const DictionaryDatum& dict_datum, std::vector< DictionaryDatum >& params )
+ConnectionCreator::extract_params_( const Dictionary& dict, std::vector< Dictionary >& params )
 {
-  if ( not dict_datum->known( names::synapse_model ) )
-  {
-    dict_datum->insert( names::synapse_model, "static_synapse" );
-  }
-  std::string syn_name = ( *dict_datum )[ names::synapse_model ];
+  const std::string syn_name = dict.known( names::synapse_model ) ? dict.get< std::string >( names::synapse_model )
+                                                                  : std::string( "static_synapse" );
 
   // The following call will throw "UnknownSynapseType" if syn_name is not naming a known model
   const size_t synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
   synapse_model_.push_back( synapse_model_id );
 
-  DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );
-  if ( dict_datum->known( names::weight ) )
+  Dictionary syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );
+  if ( dict.known( names::weight ) )
   {
-    weight_.push_back( NestModule::create_parameter( ( *dict_datum )[ names::weight ] ) );
+    weight_.push_back( create_parameter( dict.at( names::weight ) ) );
   }
   else
   {
-    weight_.push_back( NestModule::create_parameter( ( *syn_defaults )[ names::weight ] ) );
+    weight_.push_back( create_parameter( syn_defaults[ names::weight ] ) );
   }
 
-  if ( dict_datum->known( names::delay ) )
+  if ( dict.known( names::delay ) )
   {
-    delay_.push_back( NestModule::create_parameter( ( *dict_datum )[ names::delay ] ) );
-    dendritic_delay_.push_back( NestModule::create_parameter( numerics::nan ) );
-    axonal_delay_.push_back( NestModule::create_parameter( numerics::nan ) );
+    delay_.push_back( create_parameter( dict.at( names::delay ) ) );
+    dendritic_delay_.push_back( create_parameter( numerics::nan ) );
+    axonal_delay_.push_back( create_parameter( numerics::nan ) );
   }
   else
   {
@@ -235,62 +236,60 @@ ConnectionCreator::extract_params_( const DictionaryDatum& dict_datum, std::vect
     // the dendritic delay, the axonal delay, and also the total delay. But we only want to use the delay value if we
     // are not explicitly using axonal and dendritic delays, so we only set the delay here if those are not provided.
     bool axonal_or_dendritic_delay_set = false;
-    if ( dict_datum->known( names::dendritic_delay ) )
+    if ( dict.known( names::dendritic_delay ) )
     {
-      dendritic_delay_.push_back( NestModule::create_parameter( ( *dict_datum )[ names::dendritic_delay ] ) );
+      dendritic_delay_.push_back( create_parameter( dict.at( names::dendritic_delay ) );
       axonal_or_dendritic_delay_set = true;
     }
     else
     {
-      if ( not getValue< bool >( ( *syn_defaults )[ names::has_delay ] )
-        or not syn_defaults->known( names::dendritic_delay ) )
+      if ( not syn_defaults.get< bool >( names::has_delay ) or not syn_defaults->known( names::dendritic_delay ) )
       {
-        dendritic_delay_.push_back( NestModule::create_parameter( numerics::nan ) );
+        dendritic_delay_.push_back( create_parameter( numerics::nan ) );
       }
       else
       {
-        dendritic_delay_.push_back( NestModule::create_parameter( ( *syn_defaults )[ names::dendritic_delay ] ) );
+        dendritic_delay_.push_back( create_parameter( syn_defaults.at( names::dendritic_delay ) );
         axonal_or_dendritic_delay_set = true;
       }
     }
-    if ( dict_datum->known( names::axonal_delay ) )
+    if ( dict.known( names::axonal_delay ) )
     {
-      axonal_delay_.push_back( NestModule::create_parameter( ( *dict_datum )[ names::axonal_delay ] ) );
+      axonal_delay_.push_back( create_parameter( dict.at( names::axonal_delay ) );
       axonal_or_dendritic_delay_set = true;
     }
     else
     {
-      if ( not getValue< bool >( ( *syn_defaults )[ names::has_delay ] )
-        or not syn_defaults->known( names::axonal_delay ) )
+      if ( not syn_defaults.get< bool >( names::has_delay ) or not syn_defaults->known( names::axonal_delay ) )
       {
-        axonal_delay_.push_back( NestModule::create_parameter( numerics::nan ) );
+        axonal_delay_.push_back( create_parameter( numerics::nan ) );
       }
       else
       {
-        axonal_delay_.push_back( NestModule::create_parameter( ( *syn_defaults )[ names::axonal_delay ] ) );
+        axonal_delay_.push_back( create_parameter( syn_defaults.at( names::axonal_delay ) );
         axonal_or_dendritic_delay_set = true;
       }
     }
 
-    if ( not getValue< bool >( ( *syn_defaults )[ names::has_delay ] ) or not syn_defaults->known( names::delay )
+    if ( not syn_defaults.get< bool >( names::has_delay ) or not syn_defaults.known( names::delay )
       or axonal_or_dendritic_delay_set )
     {
-      delay_.push_back( NestModule::create_parameter( numerics::nan ) );
+      delay_.push_back( create_parameter( numerics::nan ) );
     }
     else
     {
-      delay_.push_back( NestModule::create_parameter( ( *syn_defaults )[ names::delay ] ) );
+      delay_.push_back( create_parameter( syn_defaults[ names::delay ] ) );
     }
   }
 
-  DictionaryDatum syn_dict = new Dictionary();
+  Dictionary syn_dict;
   // Using a lambda function here instead of updateValue because updateValue causes
   // problems when setting a value to a dictionary-entry in syn_dict.
-  auto copy_long_if_known = [ &syn_dict, &dict_datum ]( const Name& name ) -> void
+  auto copy_long_if_known = [ &syn_dict, &dict ]( const std::string& name ) -> void
   {
-    if ( dict_datum->known( name ) )
+    if ( dict.known( name ) )
     {
-      ( *syn_dict )[ name ] = getValue< long >( dict_datum, name );
+      syn_dict[ name ] = dict.get< long >( name );
     }
   };
   copy_long_if_known( names::synapse_label );
@@ -303,4 +302,4 @@ ConnectionCreator::extract_params_( const DictionaryDatum& dict_datum, std::vect
   }
 }
 
-} // namespace nest
+}  // namespace nest

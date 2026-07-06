@@ -44,10 +44,6 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-// Includes from
-
-// Includes from sli:
-#include "stringdatum.h"
 
 namespace nest
 {
@@ -74,13 +70,13 @@ Description
 +++++++++++
 
 This model neuron implements a slightly modified version of the
-neuron model described in [1]_. The most important properties are:
+neuron model described in :footcite:p:`Hill2005`. The most important properties are:
 
 - Integrate-and-fire with adaptive threshold.
 - Repolarizing potassium current instead of hard reset.
 - AMPA, NMDA, GABA_A, and GABA_B conductance-based synapses with
   beta-function (difference of exponentials) time course.
-- Voltage-dependent NMDA with instantaneous or two-stage unblocking [1]_, [2]_.
+- Voltage-dependent NMDA with instantaneous or two-stage unblocking :footcite:p:`Hill2005`, :footcite:p:`Vargas2003`.
 - Intrinsic currents I_h, I_T, I_Na(p), and I_KNa.
 - Synaptic "minis" are not implemented.
 
@@ -93,7 +89,7 @@ For examples, see:
 - :doc:`../auto_examples/intrinsic_currents_spiking`
 - :doc:`../auto_examples/intrinsic_currents_subthreshold`
 
-For an example network model using ``ht_neuron`` (based on [1]_), see:
+For an example network model using ``ht_neuron`` (based on :footcite:p:`Hill2005`), see:
 
 - `Multiarea Hill-Tononi thalamocortical network model
   <https://github.com/ricardomurphy/Multiarea-Hill-Tononi-thalamocortical-network-model>`_
@@ -104,9 +100,9 @@ Parameters
 =============== ======= =========================================================
  V_m            mV      Membrane potential
  tau_m          ms      Membrane time constant applying to all currents except
-                        repolarizing K-current (see [1]_, p 1677)
+                        repolarizing K-current (see :footcite:p:`Hill2005`, p 1677)
  t_ref          ms      Refractory time and duration of post-spike repolarizing
-                        potassium current (t_spike in [1]_)
+                        potassium current (t_spike in :footcite:p:`Hill2005`)
  tau_spike      ms      Membrane time constant for post-spike repolarizing
                         potassium current
  voltage_clamp  boolean If true, clamp voltage to value at beginning of
@@ -167,13 +163,7 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 References
 ++++++++++
 
-.. [1] Hill S, Tononi G (2005). Modeling sleep and wakefulness in the
-       thalamocortical system. Journal of Neurophysiology. 93:1671-1698.
-       DOI: https://doi.org/10.1152/jn.00915.2004
-.. [2] Vargas-Caballero M, Robinson HPC (2003). A slow fraction of Mg2+
-       unblock of NMDA receptors limits their  contribution to spike generation
-       in cortical pyramidal neurons. Journal of Neurophysiology 89:2778-2783.
-       DOI: https://doi.org/10.1152/jn.01038.2002
+.. footbibliography::
 
 See also
 ++++++++
@@ -214,8 +204,8 @@ public:
   size_t handles_test_event( CurrentEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   /**
@@ -256,66 +246,66 @@ private:
   {
     Parameters_();
 
-    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
+    void get( Dictionary& ) const;              //!< Store current values in Dictionary
+    void set( const Dictionary&, Node* node );  //!< Set values from Dictionary
 
     // Note: Conductances are unitless
     // Leaks
-    double E_Na; // mV
-    double E_K;  // mV
+    double E_Na;  // mV
+    double E_K;   // mV
     double g_NaL;
     double g_KL;
-    double tau_m; // ms
+    double tau_m;  // ms
 
     // Dynamic threshold
-    double theta_eq;  // mV
-    double tau_theta; // ms
+    double theta_eq;   // mV
+    double tau_theta;  // ms
 
     // Post-spike potassium current
-    double tau_spike; // ms, membrane time constant for this current
-    double t_ref;     // ms, refractory time
+    double tau_spike;  // ms, membrane time constant for this current
+    double t_ref;      // ms, refractory time
 
     // Parameters for synapse of type AMPA, GABA_A, GABA_B and NMDA
     double g_peak_AMPA;
-    double tau_rise_AMPA;  // ms
-    double tau_decay_AMPA; // ms
-    double E_rev_AMPA;     // mV
+    double tau_rise_AMPA;   // ms
+    double tau_decay_AMPA;  // ms
+    double E_rev_AMPA;      // mV
 
     double g_peak_NMDA;
-    double tau_rise_NMDA;    // ms
-    double tau_decay_NMDA;   // ms
-    double E_rev_NMDA;       // mV
-    double V_act_NMDA;       // mV, inactive for V << Vact, inflection of sigmoid
-    double S_act_NMDA;       // mV, scale of inactivation
-    double tau_Mg_slow_NMDA; // ms
-    double tau_Mg_fast_NMDA; // ms
+    double tau_rise_NMDA;     // ms
+    double tau_decay_NMDA;    // ms
+    double E_rev_NMDA;        // mV
+    double V_act_NMDA;        // mV, inactive for V << Vact, inflection of sigmoid
+    double S_act_NMDA;        // mV, scale of inactivation
+    double tau_Mg_slow_NMDA;  // ms
+    double tau_Mg_fast_NMDA;  // ms
     bool instant_unblock_NMDA;
 
     double g_peak_GABA_A;
-    double tau_rise_GABA_A;  // ms
-    double tau_decay_GABA_A; // ms
-    double E_rev_GABA_A;     // mV
+    double tau_rise_GABA_A;   // ms
+    double tau_decay_GABA_A;  // ms
+    double E_rev_GABA_A;      // mV
 
     double g_peak_GABA_B;
-    double tau_rise_GABA_B;  // ms
-    double tau_decay_GABA_B; // ms
-    double E_rev_GABA_B;     // mV
+    double tau_rise_GABA_B;   // ms
+    double tau_decay_GABA_B;  // ms
+    double E_rev_GABA_B;      // mV
 
     // parameters for intrinsic currents
     double g_peak_NaP;
-    double E_rev_NaP; // mV
+    double E_rev_NaP;  // mV
     double N_NaP;
 
     double g_peak_KNa;
-    double E_rev_KNa; // mV
-    double tau_D_KNa; // ms
+    double E_rev_KNa;  // mV
+    double tau_D_KNa;  // ms
 
     double g_peak_T;
-    double E_rev_T; // mV
+    double E_rev_T;  // mV
     double N_T;
 
     double g_peak_h;
-    double E_rev_h; // mV
+    double E_rev_h;  // mV
 
     bool voltage_clamp;
   };
@@ -340,8 +330,8 @@ public:
       DG_GABA_A,
       G_GABA_A,
       DG_GABA_B,
-      G_GABA_B, // DO NOT INSERT ANYTHING UP TO HERE, WILL MIX UP
-                // SPIKE DELIVERY
+      G_GABA_B,  // DO NOT INSERT ANYTHING UP TO HERE, WILL MIX UP
+                 // SPIKE DELIVERY
       m_fast_NMDA,
       m_slow_NMDA,
       m_Ih,
@@ -359,10 +349,10 @@ public:
      */
     long ref_steps_;
 
-    double I_NaP_; //!< Persistent Na current; member only to allow recording
-    double I_KNa_; //!< Depol act. K current; member only to allow recording
-    double I_T_;   //!< Low-thresh Ca current; member only to allow recording
-    double I_h_;   //!< Pacemaker current; member only to allow recording
+    double I_NaP_;  //!< Persistent Na current; member only to allow recording
+    double I_KNa_;  //!< Depol act. K current; member only to allow recording
+    double I_T_;    //!< Low-thresh Ca current; member only to allow recording
+    double I_h_;    //!< Pacemaker current; member only to allow recording
 
     State_( const ht_neuron&, const Parameters_& p );
     State_( const State_& s );
@@ -371,8 +361,8 @@ public:
 
     ~State_();
 
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const ht_neuron&, Node* node );
+    void get( Dictionary& ) const;
+    void set( const Dictionary&, const ht_neuron&, Node* node );
   };
 
 private:
@@ -398,16 +388,16 @@ private:
     RingBuffer currents_;
 
     /** GSL ODE stuff */
-    gsl_odeiv_step* s_;    //!< stepping function
-    gsl_odeiv_control* c_; //!< adaptive stepsize control function
-    gsl_odeiv_evolve* e_;  //!< evolution function
-    gsl_odeiv_system sys_; //!< struct describing system
+    gsl_odeiv_step* s_;     //!< stepping function
+    gsl_odeiv_control* c_;  //!< adaptive stepsize control function
+    gsl_odeiv_evolve* e_;   //!< evolution function
+    gsl_odeiv_system sys_;  //!< struct describing system
 
     // Since IntegrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
-    double step_;             //!< step size in ms
-    double integration_step_; //!< current integration time step, updated by GSL
+    double step_;              //!< step size in ms
+    double integration_step_;  //!< current integration time step, updated by GSL
 
     /**
      * Input current injected by CurrentEvent.
@@ -567,5 +557,5 @@ ht_neuron::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 }
 }
 
-#endif // HAVE_GSL
-#endif // HT_NEURON_H
+#endif  // HAVE_GSL
+#endif  // HT_NEURON_H

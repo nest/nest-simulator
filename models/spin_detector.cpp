@@ -32,9 +32,6 @@
 #include "model_manager_impl.h"
 #include "nest_impl.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
 
 namespace nest
 {
@@ -54,7 +51,7 @@ spin_detector::spin_detector()
 spin_detector::spin_detector( const spin_detector& n )
   : RecordingDevice( n )
   , last_in_node_id_( 0 )
-  , t_last_in_spike_( Time::neg_inf() ) // mark as not initialized
+  , t_last_in_spike_( Time::neg_inf() )  // mark as not initialized
 {
 }
 
@@ -72,7 +69,7 @@ spin_detector::pre_run_hook()
 void
 spin_detector::update( Time const&, const long, const long )
 {
-  if ( last_in_node_id_ != 0 ) // if last_* is empty we dont write
+  if ( last_in_node_id_ != 0 )  // if last_* is empty we dont write
   {
     write( last_event_, RecordingBackend::NO_DOUBLE_VALUES, { static_cast< int >( last_event_.get_weight() ) } );
     last_in_node_id_ = 0;
@@ -86,14 +83,14 @@ spin_detector::get_type() const
 }
 
 void
-spin_detector::get_status( DictionaryDatum& d ) const
+spin_detector::get_status( Dictionary& d ) const
 {
   // get the data from the device
   RecordingDevice::get_status( d );
 
   if ( is_model_prototype() )
   {
-    return; // no data to collect
+    return;  // no data to collect
   }
 
   // if we are the device on thread 0, also get the data from the
@@ -110,7 +107,7 @@ spin_detector::get_status( DictionaryDatum& d ) const
 }
 
 void
-spin_detector::set_status( const DictionaryDatum& d )
+spin_detector::set_status( const Dictionary& d )
 {
   RecordingDevice::set_status( d );
 }
@@ -145,13 +142,13 @@ spin_detector::handle( SpikeEvent& e )
       // if m == 2 this will just trigger writing in the following sections
       last_event_.set_weight( 1.0 );
     }
-    if ( last_in_node_id_ != 0 ) // if last_* is empty we dont write
+    if ( last_in_node_id_ != 0 )  // if last_* is empty we dont write
     {
       // if it's the second event we write out the last event first
       write( last_event_, RecordingBackend::NO_DOUBLE_VALUES, { static_cast< int >( last_event_.get_weight() ) } );
     }
     if ( m == 2 )
-    { // already full event
+    {  // already full event
       write( e, RecordingBackend::NO_DOUBLE_VALUES, { 1 } );
       last_in_node_id_ = 0;
     }
@@ -173,4 +170,4 @@ spin_detector::handle( SpikeEvent& e )
   }
 }
 
-} // namespace nest
+}  // namespace nest

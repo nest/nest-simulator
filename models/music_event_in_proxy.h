@@ -67,7 +67,7 @@ This model is only available if NEST was compiled with MUSIC.
 Parameters
 ++++++++++
 
-The following properties are available in the status dictionary:
+The following properties are available in the status Dictionary:
 
 ============== ======== =======================================================
  port_name     string   The name of the MUSIC input port to listen to (default:
@@ -122,8 +122,8 @@ public:
   void handle( SpikeEvent& );
   size_t send_test_event( Node&, size_t, synindex, bool );
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( Dictionary& ) const;
+  void set_status( const Dictionary& );
 
 private:
   void init_buffers_();
@@ -139,31 +139,31 @@ private:
 
   struct Parameters_
   {
-    std::string port_name_; //!< the name of MUSIC port to connect to
-    int channel_;           //!< the MUSIC channel of the port
+    std::string port_name_;  //!< the name of MUSIC port to connect to
+    long channel_;           //!< the MUSIC channel of the port
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const;
+    void get( Dictionary& ) const;
 
     /**
-     * Set values from dictionary.
+     * Set values from Dictionary.
      */
-    void set( const DictionaryDatum&, State_& );
+    void set( const Dictionary&, State_& );
   };
 
   // ------------------------------------------------------------
 
   struct State_
   {
-    bool registered_; //!< indicates whether this node has been registered
-                      //!< already with MUSIC
+    bool registered_;  //!< indicates whether this node has been registered
+                       //!< already with MUSIC
 
-    State_(); //!< Sets default state value
+    State_();  //!< Sets default state value
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    //!< Set values from dictionary
-    void set( const DictionaryDatum&, const Parameters_& );
+    void get( Dictionary& ) const;  //!< Store current values in Dictionary
+    //!< Set values from Dictionary
+    void set( const Dictionary&, const Parameters_& );
   };
 
   // ------------------------------------------------------------
@@ -181,7 +181,7 @@ music_event_in_proxy::send_test_event( Node& target, size_t receptor_type, synin
   return target.handles_test_event( e, receptor_type );
 }
 
-} // namespace
+}  // namespace
 
 #endif
 

@@ -19,8 +19,8 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+from .. import nestkernel_api as nestkernel
 from ..lib.hl_api_types import CreateParameter
-from ..ll_api import sli_func
 
 __all__ = [
     "conditional",
@@ -49,4 +49,4 @@ def conditional(condition, param_if_true, param_if_false):
         param_if_true = CreateParameter("constant", {"value": float(param_if_true)})
     if isinstance(param_if_false, (int, float)):
         param_if_false = CreateParameter("constant", {"value": float(param_if_false)})
-    return sli_func("conditional", condition, param_if_true, param_if_false)
+    return nestkernel.llapi_conditional_parameter(condition._datum, param_if_true._datum, param_if_false._datum)

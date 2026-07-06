@@ -65,7 +65,7 @@ code repository <https://github.com/nest/nest-simulator>`_ and create a `pull
 request <https://github.com/nest/nest-simulator/pulls>`_. Just follow the
 workflow below!
 
-If you have not done so alrealdy first
+If you have not done so already first
 
 * Fork the nest-simulator repository (see :ref:`here <fork>` for details on first time setup)
 
@@ -134,8 +134,8 @@ If you use pip, install ``pandoc`` from your platform's package manager (e.g. ap
    You will need to
 
    - check if you have Java installed. The minimum version needed is Java 8.
-     (e.g., to install the latest available version on Ubuntu: ``apt install jre-default``)
-   - Download the `plantuml jar file <https://plantuml.com/download>`_ (Minimum version is 1-2023-10)
+     (e.g., to install the latest available version on Ubuntu: ``sudo apt install default-jre``)
+   - Download the `GPL version of the plantuml jar file <https://plantuml.com/download>`_ (Minimum version is :version:`plantuml`)
    - Move the jar file to ``/tmp/plantuml.jar``
 
    - To see if plantuml diagrams render correctly after building the documentation you can take a look
@@ -181,8 +181,8 @@ If you want to edit Model docs, PyNEST API files, or PyNEST examples, you will n
 
 
 
-Review changes you made
-~~~~~~~~~~~~~~~~~~~~~~~
+Review changes you made locally
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To check that the changes you made are correct in the HTML output,
 you will need to build the documentation locally with Sphinx.
@@ -231,6 +231,17 @@ Create a pull request
 Once you're happy with the changes, you can submit a pull request on Github from your fork.
 Github has a nice help page that outlines the process for
 `submitting pull requests <https://help.github.com/articles/using-pull-requests/#initiating-the-pull-request>`_.
+
+The pull request will automatically trigger a series of checks, including building the docs on Read the Docs.
+Once it passes, you can open the preview to see how the changes rendered in HTML. You can find all the checks at the
+bottom of the PR conversation tab:
+
+
+.. image:: /static/img/docs_build.png
+    :width: 50%
+    :align: center
+
+The URL for PR previews has the following format ``https://nest-simulator--<pr-number>.org.readthedocs.build/en/<pr-number>/index.html``
 
 Reviewers will be assigned and go through your changes.
 

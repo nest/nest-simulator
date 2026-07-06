@@ -41,12 +41,6 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "booldatum.h"
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-
 
 void
 nest::register_sinusoidal_gamma_generator( const std::string& name )
@@ -67,11 +61,11 @@ RecordablesMap< sinusoidal_gamma_generator >::create()
 }
 
 sinusoidal_gamma_generator::Parameters_::Parameters_()
-  : om_( 0.0 )  // radian/ms
-  , phi_( 0.0 ) // radian
+  : om_( 0.0 )   // radian/ms
+  , phi_( 0.0 )  // radian
   , order_( 1.0 )
-  , rate_( 0.0 )      // spikes/ms
-  , amplitude_( 0.0 ) // spikes/ms
+  , rate_( 0.0 )       // spikes/ms
+  , amplitude_( 0.0 )  // spikes/ms
   , individual_spike_trains_( true )
   , num_trains_( 0 )
 {
@@ -116,10 +110,10 @@ sinusoidal_gamma_generator::State_::State_()
 sinusoidal_gamma_generator::Buffers_::Buffers_( sinusoidal_gamma_generator& n )
   : logger_( n )
   , t0_ms_()
-  , // will be set in init_buffers_
+  ,  // will be set in init_buffers_
   Lambda_t0_()
-  ,               // will be set in init_buffers_
-  P_prev_( n.P_ ) // when creating Buffer, base on current parameters
+  ,                // will be set in init_buffers_
+  P_prev_( n.P_ )  // when creating Buffer, base on current parameters
 {
 }
 
@@ -136,29 +130,27 @@ sinusoidal_gamma_generator::Buffers_::Buffers_( const Buffers_& b, sinusoidal_ga
  * ---------------------------------------------------------------- */
 
 void
-sinusoidal_gamma_generator::Parameters_::get( DictionaryDatum& d ) const
+sinusoidal_gamma_generator::Parameters_::get( Dictionary& d ) const
 {
-  ( *d )[ names::rate ] = rate_ * 1000.0;
-  ( *d )[ names::frequency ] = om_ / ( 2.0 * numerics::pi / 1000.0 );
-  ( *d )[ names::phase ] = 180.0 / numerics::pi * phi_;
-  ( *d )[ names::amplitude ] = amplitude_ * 1000.0;
-  ( *d )[ names::order ] = order_;
-  ( *d )[ names::individual_spike_trains ] = individual_spike_trains_;
+  d[ names::rate ] = rate_ * 1000.0;
+  d[ names::frequency ] = om_ / ( 2.0 * numerics::pi / 1000.0 );
+  d[ names::phase ] = 180.0 / numerics::pi * phi_;
+  d[ names::amplitude ] = amplitude_ * 1000.0;
+  d[ names::order ] = order_;
+  d[ names::individual_spike_trains ] = individual_spike_trains_;
 }
 
 void
-sinusoidal_gamma_generator::Parameters_::set( const DictionaryDatum& d,
-  const sinusoidal_gamma_generator& n,
-  Node* node )
+sinusoidal_gamma_generator::Parameters_::set( const Dictionary& d, const sinusoidal_gamma_generator& n, Node* node )
 {
-  if ( not n.is_model_prototype() and d->known( names::individual_spike_trains ) )
+  if ( not n.is_model_prototype() and d.known( names::individual_spike_trains ) )
   {
     throw BadProperty(
       "The individual_spike_trains property can only be set as"
       " a model default using SetDefaults or upon CopyModel." );
   }
 
-  if ( updateValue< bool >( d, names::individual_spike_trains, individual_spike_trains_ ) )
+  if ( d.update_value( names::individual_spike_trains, individual_spike_trains_ ) )
   {
     // this can happen only on model prototypes
     if ( individual_spike_trains_ )
@@ -173,17 +165,17 @@ sinusoidal_gamma_generator::Parameters_::set( const DictionaryDatum& d,
     }
   }
 
-  if ( updateValueParam< double >( d, names::frequency, om_, node ) )
+  if ( update_value_param( d, names::frequency, om_, node ) )
   {
     om_ *= 2.0 * numerics::pi / 1000.0;
   }
 
-  if ( updateValueParam< double >( d, names::phase, phi_, node ) )
+  if ( update_value_param( d, names::phase, phi_, node ) )
   {
     phi_ *= numerics::pi / 180.0;
   }
 
-  if ( updateValueParam< double >( d, names::order, order_, node ) )
+  if ( update_value_param( d, names::order, order_, node ) )
   {
     if ( order_ < 1.0 )
     {
@@ -195,15 +187,15 @@ sinusoidal_gamma_generator::Parameters_::set( const DictionaryDatum& d,
      floating-point comparison issues under 32-bit Linux.
   */
   double dc_unscaled = 1e3 * rate_;
-  if ( updateValueParam< double >( d, names::rate, dc_unscaled, node ) )
+  if ( update_value_param( d, names::rate, dc_unscaled, node ) )
   {
-    rate_ = 1e-3 * dc_unscaled; // scale to 1/ms
+    rate_ = 1e-3 * dc_unscaled;  // scale to 1/ms
   }
 
   double ac_unscaled = 1e3 * amplitude_;
-  if ( updateValueParam< double >( d, names::amplitude, ac_unscaled, node ) )
+  if ( update_value_param( d, names::amplitude, ac_unscaled, node ) )
   {
-    amplitude_ = 1e-3 * ac_unscaled; // scale to 1/ms
+    amplitude_ = 1e-3 * ac_unscaled;  // scale to 1/ms
   }
 
   if ( not( 0.0 <= ac_unscaled and ac_unscaled <= dc_unscaled ) )
@@ -375,7 +367,7 @@ sinusoidal_gamma_generator::handle( DataLoggingRequest& e )
 void
 sinusoidal_gamma_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
 
   // For the input backend
   if ( not input_param.empty() )
@@ -386,13 +378,13 @@ sinusoidal_gamma_generator::set_data_from_stimulation_backend( std::vector< doub
         "The size of the data for the sinusoidal_gamma_generator needs to 6 "
         "[frequency, phase, order, rate, amplitude, individual_spike_trains]." );
     }
-    DictionaryDatum d = DictionaryDatum( new Dictionary );
-    ( *d )[ names::frequency ] = DoubleDatum( input_param[ 0 ] );
-    ( *d )[ names::phase ] = DoubleDatum( input_param[ 1 ] );
-    ( *d )[ names::order ] = DoubleDatum( input_param[ 2 ] );
-    ( *d )[ names::rate ] = DoubleDatum( input_param[ 3 ] );
-    ( *d )[ names::amplitude ] = DoubleDatum( input_param[ 4 ] );
-    ( *d )[ names::individual_spike_trains ] = BoolDatum( input_param[ 5 ] );
+    Dictionary d;
+    d[ names::frequency ] = input_param[ 0 ];
+    d[ names::phase ] = input_param[ 1 ];
+    d[ names::order ] = input_param[ 2 ];
+    d[ names::rate ] = input_param[ 3 ];
+    d[ names::amplitude ] = input_param[ 4 ];
+    d[ names::individual_spike_trains ] = input_param[ 5 ];
     ptmp.set( d, *this, this );
   }
 
@@ -400,6 +392,6 @@ sinusoidal_gamma_generator::set_data_from_stimulation_backend( std::vector< doub
   P_ = ptmp;
 }
 
-} // namespace nest
+}  // namespace nest
 
-#endif // HAVE_GSL
+#endif  // HAVE_GSL

@@ -37,11 +37,11 @@ class histentry
 public:
   histentry( double t, double Kminus, double Kminus_triplet, size_t access_counter );
 
-  double t_;              //!< point in time when spike occurred (in ms)
-  double Kminus_;         //!< value of Kminus at that time
-  double Kminus_triplet_; //!< value of triplet STDP Kminus at that time
+  double t_;               //!< point in time when spike occurred (in ms)
+  double Kminus_;          //!< value of Kminus at that time
+  double Kminus_triplet_;  //!< value of triplet STDP Kminus at that time
   size_t
-    access_counter_; //! how often this entry was accessed (to enable removal, once read by all synapses which need it)
+    access_counter_;  //! how often this entry was accessed (to enable removal, once read by all synapses which need it)
 };
 
 /**
@@ -55,16 +55,16 @@ class histentry_extended
 public:
   histentry_extended( double t, double dw, size_t access_counter );
 
-  double t_; //!< point in time for the history entry (in ms)
+  double t_;  //!< point in time for the history entry (in ms)
   double dw_;
   size_t
-    access_counter_; //! how often this entry was accessed (to enable removal, once read by all synapses which need it)
+    access_counter_;  //! how often this entry was accessed (to enable removal, once read by all synapses which need it)
 
-  friend bool operator<( const histentry_extended he, double t );
+  friend bool operator<( const histentry_extended& he, double t );
 };
 
 inline bool
-operator<( const histentry_extended he, double t )
+operator<( const histentry_extended& he, double t )
 {
   return he.t_ < t;
 }
@@ -82,13 +82,25 @@ public:
   {
   }
 
-  friend bool operator<( const HistEntryEprop& he, long t );
+  friend bool operator<( const HistEntryEprop& a, const HistEntryEprop& b );
 };
 
 inline bool
-operator<( const HistEntryEprop& he, long t )
+operator<( const HistEntryEprop& a, const HistEntryEprop& b )
 {
-  return he.t_ < t;
+  return a.t_ < b.t_;
+}
+
+inline bool
+operator<( const HistEntryEprop& e, long t )
+{
+  return e.t_ < t;
+}
+
+inline bool
+operator<( long t, const HistEntryEprop& e )
+{
+  return t < e.t_;
 }
 
 /**

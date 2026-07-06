@@ -325,16 +325,14 @@ We use the `modern random package introduced with NumPy 1.17 <https://numpy.org/
     nest.total_num_virtual_procs = n_vp
     nrns = nest.Create('iaf_psc_alpha', 12)
 
-    rngs = {vp: np.random.default_rng(py_seed + vp) for vp in nest.GetLocalVPs()}
+    numpy_rngs = {vp: np.random.default_rng(py_seed + vp) for vp in nest.GetLocalVPs()}
 
-    for n in nest.GetLocalNodeCollection(nrns):
-        n.set({'V_m': rngs[n.get('vp')].uniform()})
+    for n in nrns[nrns.local]:
+        n.set({'V_m': numpy_rngs[n.get('vp')].uniform()})
 
-After creating the neurons, we create ``n_vp`` random number generators. We then use
-``nest.GetLocalNodeCollection()`` to obtain all those neurons that belong to the local
-MPI rank, since each rank can only access local nodes. We then use ``n.get('vp')`` to obtain
-the virtual processes responsible for the node and use it to pick out the correct RNG,
-from which we draw the random membrane potential.
+After creating the neurons, we create ``n_vp`` random number generators. We then iterate over
+the neurons local to this MPI rank. ``n.get('vp')`` gives the virtual processes responsible for
+the node so we can select the correct RNG, from which we draw the random membrane potential.
 
 To parameterize a connection, we need to use the random generator for the virtual process of
 the target neuron. Continuing from the example above, we can randomize the connection weight
@@ -346,6 +344,9 @@ as follows:
 
     for c in nest.GetConnections():
         c.set({'weight': rngs[c.get('vp')].uniform()})
+
+Here, we exploit that ``nest.GetConnections()`` only returns connections local to the rank.
+
 
 .. _random_internals:
 

@@ -31,11 +31,6 @@
 // Includes from libnestutil:
 #include "dict_util.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-
 namespace nest
 {
 void
@@ -50,7 +45,7 @@ template <>
 void
 RecordablesMap< dc_generator >::create()
 {
-  insert_( Name( names::I ), &dc_generator::get_I_ );
+  insert_( names::I, &dc_generator::get_I_ );
 }
 
 /* ----------------------------------------------------------------
@@ -58,7 +53,7 @@ RecordablesMap< dc_generator >::create()
  * ---------------------------------------------------------------- */
 
 dc_generator::Parameters_::Parameters_()
-  : amp_( 0.0 ) // pA
+  : amp_( 0.0 )  // pA
 {
 }
 
@@ -81,7 +76,7 @@ dc_generator::Parameters_::operator=( const Parameters_& p )
 }
 
 dc_generator::State_::State_()
-  : I_( 0.0 ) // pA
+  : I_( 0.0 )  // pA
 {
 }
 
@@ -101,15 +96,15 @@ dc_generator::Buffers_::Buffers_( const Buffers_&, dc_generator& n )
  * ---------------------------------------------------------------- */
 
 void
-dc_generator::Parameters_::get( DictionaryDatum& d ) const
+dc_generator::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::amplitude, amp_ );
+  d[ names::amplitude ] = amp_;
 }
 
 void
-dc_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
+dc_generator::Parameters_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::amplitude, amp_, node );
+  update_value_param( d, names::amplitude, amp_, node );
 }
 
 
@@ -192,7 +187,7 @@ dc_generator::handle( DataLoggingRequest& e )
 void
 dc_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
 
   // For the input backend
   if ( not input_param.empty() )
@@ -201,8 +196,8 @@ dc_generator::set_data_from_stimulation_backend( std::vector< double >& input_pa
     {
       throw BadParameterValue( "The size of the data for the dc_generator needs to be 1 [amplitude]." );
     }
-    DictionaryDatum d = DictionaryDatum( new Dictionary );
-    ( *d )[ names::amplitude ] = DoubleDatum( input_param[ 0 ] );
+    Dictionary d;
+    d[ names::amplitude ] = input_param[ 0 ];
     ptmp.set( d, this );
   }
 
@@ -210,4 +205,4 @@ dc_generator::set_data_from_stimulation_backend( std::vector< double >& input_pa
   P_ = ptmp;
 }
 
-} // namespace nest
+}  // namespace nest

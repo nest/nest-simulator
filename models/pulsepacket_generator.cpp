@@ -35,11 +35,6 @@
 #include "kernel_manager.h"
 #include "nest_impl.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-
 void
 nest::register_pulsepacket_generator( const std::string& name )
 {
@@ -74,20 +69,20 @@ pulsepacket_generator::Variables_::Variables_()
  * ---------------------------------------------------------------- */
 
 void
-pulsepacket_generator::Parameters_::get( DictionaryDatum& d ) const
+pulsepacket_generator::Parameters_::get( Dictionary& d ) const
 {
-  ( *d )[ names::pulse_times ] = DoubleVectorDatum( new std::vector< double >( pulse_times_ ) );
-  ( *d )[ names::activity ] = a_;
-  ( *d )[ names::sdev ] = sdev_;
+  d[ names::pulse_times ] = pulse_times_;
+  d[ names::activity ] = a_;
+  d[ names::sdev ] = sdev_;
 }
 
 void
-pulsepacket_generator::Parameters_::set( const DictionaryDatum& d, pulsepacket_generator& ppg, Node* node )
+pulsepacket_generator::Parameters_::set( const Dictionary& d, pulsepacket_generator& ppg, Node* node )
 {
   // We cannot use a single line here since short-circuiting may stop evaluation
   // prematurely. Therefore, neednewpulse must be second arg on second line.
-  bool neednewpulse = updateValueParam< long >( d, names::activity, a_, node );
-  neednewpulse = updateValueParam< double >( d, names::sdev, sdev_, node ) or neednewpulse;
+  bool neednewpulse = update_value_param( d, names::activity, a_, node );
+  neednewpulse = update_value_param( d, names::sdev, sdev_, node ) or neednewpulse;
   if ( a_ < 0 )
   {
     throw BadProperty( "The activity cannot be negative." );
@@ -98,7 +93,7 @@ pulsepacket_generator::Parameters_::set( const DictionaryDatum& d, pulsepacket_g
   }
 
 
-  if ( updateValue< std::vector< double > >( d, "pulse_times", pulse_times_ ) or neednewpulse )
+  if ( d.update_value( "pulse_times", pulse_times_ ) or neednewpulse )
   {
     std::sort( pulse_times_.begin(), pulse_times_.end() );
     ppg.B_.spiketimes_.clear();
@@ -178,7 +173,7 @@ pulsepacket_generator::update( Time const& T, const long, const long to )
   if ( ( V_.start_center_idx_ == P_.pulse_times_.size() and B_.spiketimes_.empty() )
     or ( not StimulationDevice::is_active( T ) ) )
   {
-    return; // nothing left to do
+    return;  // nothing left to do
   }
 
   // determine next pulse-center times (around sdev*tolerance window)
@@ -243,7 +238,7 @@ pulsepacket_generator::update( Time const& T, const long, const long to )
 void
 pulsepacket_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
 
   // For the input backend
   if ( not input_param.empty() )
@@ -254,11 +249,12 @@ pulsepacket_generator::set_data_from_stimulation_backend( std::vector< double >&
         "The size of the data for the pulse_generator needs to be higher than 3 "
         "[activity, sdev, all the pulse times]." );
     }
-    DictionaryDatum d = DictionaryDatum( new Dictionary );
-    ( *d )[ names::activity ] = DoubleDatum( input_param[ 0 ] );
-    ( *d )[ names::sdev ] = DoubleDatum( input_param[ 1 ] );
+    Dictionary d;
+
+    d[ names::activity ] = input_param[ 0 ];
+    d[ names::sdev ] = input_param[ 1 ];
     input_param.erase( input_param.begin(), input_param.begin() + 2 );
-    ( *d )[ names::pulse_times ] = DoubleVectorDatum( input_param );
+    d[ names::pulse_times ] = input_param;
     ptmp.set( d, *this, this );
   }
 
@@ -266,4 +262,4 @@ pulsepacket_generator::set_data_from_stimulation_backend( std::vector< double >&
   P_ = ptmp;
 }
 
-} // namespace nest
+}  // namespace nest

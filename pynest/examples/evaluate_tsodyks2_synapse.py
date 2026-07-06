@@ -24,7 +24,8 @@ Example of the tsodyks2_synapse in NEST
 ---------------------------------------
 
 This synapse model implements synaptic short-term depression and short-term f
-according to [1]_ and [2]_. It solves Eq (2) from [1]_ and modulates U according
+according to :footcite:p:`Tsodyks1997` and :footcite:p:`Fuhrmann2002`. It solves
+Eq (2) from :footcite:p:`Tsodyks1997` and modulates U according
 
 This connection merely scales the synaptic weight, based on the spike history
 parameters of the kinetic model. Thus, it is suitable for any type of synapse
@@ -34,7 +35,7 @@ The parameter `A_se` from the publications is represented by the
 synaptic weight. The variable `x` in the synapse properties is the
 factor that scales the synaptic weight.
 
-See also [3]_.
+See also :footcite:p:`Maass2002`.
 
 Parameters
 ~~~~~~~~~~
@@ -59,15 +60,7 @@ This compares the two synapse models.
 References
 ~~~~~~~~~~
 
-.. [1] Tsodyks MV, and Markram H. (1997). The neural code between
-       neocortical depends on neurotransmitter release probability. PNAS,
-       94(2), 719-23.
-.. [2] Fuhrmann G, Segev I, Markram H, and Tsodyks MV. (2002). Coding of
-       temporal information by activity-dependent synapses. Journal of
-       Neurophysiology, 8. https://doi.org/10.1152/jn.00258.2001
-.. [3] Maass W, and Markram H. (2002). Synapses as dynamic memory buffers.
-       Neural Networks, 15(2), 155-161.
-       http://dx.doi.org/10.1016/S0893-6080(01)00144-7
+.. footbibliography::
 """
 
 import matplotlib.pyplot as plt

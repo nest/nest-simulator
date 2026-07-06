@@ -135,6 +135,6 @@ TargetTable::clear( const size_t tid )
   secondary_send_buffer_pos_[ tid ].clear();
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifndef TARGET_TABLE_H */

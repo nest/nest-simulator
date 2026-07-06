@@ -28,7 +28,7 @@
 template < unsigned int num_channels >
 nest::MultiChannelInputBuffer< num_channels >::MultiChannelInputBuffer()
   : buffer_( kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay(),
-    std::array< double, num_channels >() )
+      std::array< double, num_channels >() )
 {
 }
 
@@ -47,7 +47,7 @@ template < unsigned int num_channels >
 void
 nest::MultiChannelInputBuffer< num_channels >::clear()
 {
-  resize(); // does nothing if size is fine
+  resize();  // does nothing if size is fine
   // set all elements to 0.0
   for ( size_t slot = 0; slot < buffer_.size(); ++slot )
   {

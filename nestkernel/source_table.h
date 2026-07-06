@@ -500,8 +500,8 @@ SourceTable::num_unique_sources( const size_t tid, const synindex syn_id ) const
   size_t n = 0;
   size_t last_source = 0;
   for ( BlockVector< Source >::const_iterator cit = sources_[ tid ][ syn_id ].begin();
-        cit != sources_[ tid ][ syn_id ].end();
-        ++cit )
+    cit != sources_[ tid ][ syn_id ].end();
+    ++cit )
   {
     if ( last_source != ( *cit ).get_node_id() )
     {
@@ -531,6 +531,6 @@ SourceTable::clear_compressed_spike_data_map()
   }
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifndef SOURCE_TABLE_H */

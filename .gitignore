@@ -34,7 +34,6 @@ CMakeDoxygenDefaults.cmake
 
 # generated files
 bin/nest-config
-bin/nest_vars.sh
 libnestutil/config.h
 nest/static_modules.h
 pynest/setup.py

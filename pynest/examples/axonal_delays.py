@@ -33,7 +33,6 @@ use of axonal delays.
 For more information see :ref:`delays`.
 """
 
-
 ########################################
 # First, we import all necessary modules
 

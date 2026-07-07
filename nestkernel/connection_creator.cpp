@@ -126,14 +126,13 @@ ConnectionCreator::ConnectionCreator( const Dictionary& dict )
   bool axonal_or_dendritic_delay_set = false;
   if ( dendritic_delay_.empty() )
   {
-    if ( not getValue< bool >( ( *syn_defaults )[ names::has_delay ] )
-      or not syn_defaults->known( names::dendritic_delay ) )
+    if ( not syn_defaults.get< bool >( names::has_delay ) or not syn_defaults.known( names::dendritic_delay ) )
     {
-      dendritic_delay_ = { NestModule::create_parameter( numerics::nan ) };
+      dendritic_delay_ = { create_parameter( numerics::nan ) };
     }
     else
     {
-      dendritic_delay_ = { NestModule::create_parameter( ( *syn_defaults )[ names::dendritic_delay ] ) };
+      dendritic_delay_ = { create_parameter( ( *syn_defaults )[ names::dendritic_delay ] ) };
       axonal_or_dendritic_delay_set = true;
     }
   }
@@ -143,14 +142,13 @@ ConnectionCreator::ConnectionCreator( const Dictionary& dict )
   }
   if ( axonal_delay_.empty() )
   {
-    if ( not getValue< bool >( ( *syn_defaults )[ names::has_delay ] )
-      or not syn_defaults->known( names::axonal_delay ) )
+    if ( not syn_defaults.get< bool >( names::has_delay ) or not syn_defaults.known( names::axonal_delay ) )
     {
-      axonal_delay_ = { NestModule::create_parameter( numerics::nan ) };
+      axonal_delay_ = { create_parameter( numerics::nan ) };
     }
     else
     {
-      axonal_delay_ = { NestModule::create_parameter( ( *syn_defaults )[ names::axonal_delay ] ) };
+      axonal_delay_ = { create_parameter( ( *syn_defaults )[ names::axonal_delay ] ) };
       axonal_or_dendritic_delay_set = true;
     }
   }
@@ -238,35 +236,35 @@ ConnectionCreator::extract_params_( const Dictionary& dict, std::vector< Diction
     bool axonal_or_dendritic_delay_set = false;
     if ( dict.known( names::dendritic_delay ) )
     {
-      dendritic_delay_.push_back( create_parameter( dict.at( names::dendritic_delay ) );
+      dendritic_delay_.push_back( create_parameter( dict.at( names::dendritic_delay ) ) );
       axonal_or_dendritic_delay_set = true;
     }
     else
     {
-      if ( not syn_defaults.get< bool >( names::has_delay ) or not syn_defaults->known( names::dendritic_delay ) )
+      if ( not syn_defaults.get< bool >( names::has_delay ) or not syn_defaults.known( names::dendritic_delay ) )
       {
         dendritic_delay_.push_back( create_parameter( numerics::nan ) );
       }
       else
       {
-        dendritic_delay_.push_back( create_parameter( syn_defaults.at( names::dendritic_delay ) );
+        dendritic_delay_.push_back( create_parameter( syn_defaults.at( names::dendritic_delay ) ) );
         axonal_or_dendritic_delay_set = true;
       }
     }
     if ( dict.known( names::axonal_delay ) )
     {
-      axonal_delay_.push_back( create_parameter( dict.at( names::axonal_delay ) );
+      axonal_delay_.push_back( create_parameter( dict.at( names::axonal_delay ) ) );
       axonal_or_dendritic_delay_set = true;
     }
     else
     {
-      if ( not syn_defaults.get< bool >( names::has_delay ) or not syn_defaults->known( names::axonal_delay ) )
+      if ( not syn_defaults.get< bool >( names::has_delay ) or not syn_defaults.known( names::axonal_delay ) )
       {
         axonal_delay_.push_back( create_parameter( numerics::nan ) );
       }
       else
       {
-        axonal_delay_.push_back( create_parameter( syn_defaults.at( names::axonal_delay ) );
+        axonal_delay_.push_back( create_parameter( syn_defaults.at( names::axonal_delay ) ) );
         axonal_or_dendritic_delay_set = true;
       }
     }

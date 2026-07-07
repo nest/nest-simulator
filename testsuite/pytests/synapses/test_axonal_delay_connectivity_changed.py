@@ -41,7 +41,7 @@ def test_axonal_delay_connectivity_changed(conn1, conn2):
     nest.Connect(neuron, neuron, syn_spec={"synapse_model": "stdp_pl_synapse_hom_ax_delay", "axonal_delay": conn2})
 
     if conn1 > 0.0 or conn2 > 0.0:
-        with pytest.raises(nest.kernel.NESTError):
+        with pytest.raises(nest.NESTError):
             nest.Simulate(nest.resolution)
     else:
         nest.Simulate(nest.resolution)

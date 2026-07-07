@@ -440,7 +440,7 @@ Connection< targetidentifierT, DelayTypeT >::get_status( Dictionary& d ) const
 
 template < typename targetidentifierT, typename DelayTypeT >
 inline void
-Connection< targetidentifierT, DelayTypeT >::set_status( const Dictionary& d, ConnectorModel& )
+Connection< targetidentifierT, DelayTypeT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   delay_.set_status( d, cm );
   // no call to target_.set_status() because target and rport cannot be changed

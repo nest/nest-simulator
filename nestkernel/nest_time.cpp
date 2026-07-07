@@ -29,6 +29,7 @@
 #include "config.h"
 
 // Includes from libnestutil:
+#include "exceptions.h"
 #include "numerics.h"
 
 using namespace nest;

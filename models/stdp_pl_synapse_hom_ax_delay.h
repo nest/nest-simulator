@@ -104,16 +104,16 @@ public:
   /**
    * Get all properties and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
   /**
    * Set properties from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   // data members common to all connections
   double tau_plus_;
-  double tau_plus_inv_; //!< 1 / tau_plus for efficiency
+  double tau_plus_inv_;  //!< 1 / tau_plus for efficiency
   double lambda_;
   double alpha_;
   double mu_;
@@ -168,12 +168,12 @@ public:
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   /**
    * Send an event to the receiver of this connection.
@@ -363,26 +363,26 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::stdp_pl_synapse_hom_ax_delay(
 
 template < typename targetidentifierT >
 void
-stdp_pl_synapse_hom_ax_delay< targetidentifierT >::get_status( DictionaryDatum& d ) const
+stdp_pl_synapse_hom_ax_delay< targetidentifierT >::get_status( Dictionary& d ) const
 {
 
   // base class properties, different for individual synapse
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
+  d[ names::weight ] = weight_;
 
   // own properties, different for individual synapse
-  def< double >( d, names::Kplus, Kplus_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::Kplus ] = Kplus_;
+  d[ names::size_of ] = static_cast< long >( sizeof( *this ) );
 }
 
 template < typename targetidentifierT >
 void
-stdp_pl_synapse_hom_ax_delay< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+stdp_pl_synapse_hom_ax_delay< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
+  d.update_value( names::weight, weight_ );
 
-  updateValue< double >( d, names::Kplus, Kplus_ );
+  d.update_value( names::Kplus, Kplus_ );
 }
 
 template < typename targetidentifierT >
@@ -397,7 +397,7 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::correct_synapse_stdp_ax_delay
   const double t_post_spike,
   const STDPPLHomAxDelayCommonProperties& cp )
 {
-  const double wrong_weight = weight_; // incorrectly transmitted weight
+  const double wrong_weight = weight_;  // incorrectly transmitted weight
   Node* target = get_target( tid );
 
   const double axonal_delay_ms = get_axonal_delay_ms();
@@ -434,6 +434,6 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::correct_synapse_stdp_ax_delay
   e();
 }
 
-} // of namespace nest
+}  // of namespace nest
 
-#endif // of #ifndef STDP_PL_SYNAPSE_HOM_AX_DELAY_H
+#endif  // of #ifndef STDP_PL_SYNAPSE_HOM_AX_DELAY_H

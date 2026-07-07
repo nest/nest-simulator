@@ -475,7 +475,7 @@ ModelManager::create_proxynode_( size_t t, int model_id )
 }
 
 void
-ModelManager::check_valid_default_delay_parameters( const synindex syn_id, DictionaryDatum syn_params )
+ModelManager::check_valid_default_delay_parameters( const synindex syn_id, const Dictionary& syn_params )
 {
   get_connection_model( syn_id, kernel().vp_manager.get_thread_id() )
     .check_valid_default_delay_parameters( syn_params );

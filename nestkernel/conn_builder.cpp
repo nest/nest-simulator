@@ -538,7 +538,7 @@ nest::BipartiteConnBuilder::set_synapse_model_( const Dictionary& syn_params, si
 }
 
 void
-BipartiteConnBuilder::set_default_weight_or_delay_( const Dictionary& syn_params, size_t synapse_indx )
+nest::BipartiteConnBuilder::set_default_weight_or_delays_( const Dictionary& syn_params, size_t synapse_indx )
 {
   Dictionary syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
 
@@ -576,7 +576,7 @@ BipartiteConnBuilder::set_default_weight_or_delay_( const Dictionary& syn_params
 
   if ( not default_dendritic_delay_[ synapse_indx ] )
   {
-    dendritic_delays_[ synapse_indx ] = syn_params->known( names::dendritic_delay )
+    dendritic_delays_[ synapse_indx ] = syn_params.known( names::dendritic_delay )
       ? ConnParameter::create( ( *syn_params )[ names::dendritic_delay ], kernel().vp_manager.get_num_threads() )
       : ConnParameter::create( ( *syn_defaults )[ names::dendritic_delay ], kernel().vp_manager.get_num_threads() );
     register_parameters_requiring_skipping_( *dendritic_delays_[ synapse_indx ] );
@@ -584,7 +584,7 @@ BipartiteConnBuilder::set_default_weight_or_delay_( const Dictionary& syn_params
 
   if ( not default_axonal_delay_[ synapse_indx ] )
   {
-    axonal_delays_[ synapse_indx ] = syn_params->known( names::axonal_delay )
+    axonal_delays_[ synapse_indx ] = syn_params.known( names::axonal_delay )
       ? ConnParameter::create( ( *syn_params )[ names::axonal_delay ], kernel().vp_manager.get_num_threads() )
       : ConnParameter::create( ( *syn_defaults )[ names::axonal_delay ], kernel().vp_manager.get_num_threads() );
     register_parameters_requiring_skipping_( *axonal_delays_[ synapse_indx ] );

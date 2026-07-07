@@ -202,23 +202,23 @@ GenericConnectorModel< ConnectionT >::set_syn_id( synindex syn_id )
 
 template < typename ConnectionT >
 void
-GenericConnectorModel< ConnectionT >::check_valid_default_delay_parameters( DictionaryDatum syn_params ) const
+GenericConnectorModel< ConnectionT >::check_valid_default_delay_parameters( const Dictionary& syn_params ) const
 {
   if constexpr ( std::is_base_of< Connection< TargetIdentifierPtrRport, AxonalDendriticDelay >, ConnectionT >::value
     or std::is_base_of< Connection< TargetIdentifierIndex, AxonalDendriticDelay >, ConnectionT >::value )
   {
-    if ( syn_params->known( names::delay ) )
+    if ( syn_params.known( names::delay ) )
     {
       throw BadParameter( "Synapse type does not support explicitly setting total transmission delay." );
     }
   }
   else
   {
-    if ( syn_params->known( names::dendritic_delay ) )
+    if ( syn_params.known( names::dendritic_delay ) )
     {
       throw BadParameter( "Synapse type does not support explicitly setting dendritic delay." );
     }
-    if ( syn_params->known( names::axonal_delay ) )
+    if ( syn_params.known( names::axonal_delay ) )
     {
       throw BadParameter( "Synapse type does not support explicitly setting axonal delay." );
     }
@@ -247,9 +247,9 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     if constexpr ( std::is_base_of< Connection< TargetIdentifierPtrRport, AxonalDendriticDelay >, ConnectionT >::value
       or std::is_base_of< Connection< TargetIdentifierIndex, AxonalDendriticDelay >, ConnectionT >::value )
     {
-      if ( not numerics::is_nan( delay ) or p->known( names::delay ) )
+      if ( not numerics::is_nan( delay ) or p.known( names::delay ) )
       {
-        throw BadProperty( "Setting the total transmission delay via the parameter '" + names::delay.toString()
+        throw BadProperty( "Setting the total transmission delay via the parameter '" + names::delay
           + "' is not allowed for synapse types which use both dendritic and axonal delays, because of ambiguity." );
       }
 
@@ -259,7 +259,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
           "Parameter dictionary must not contain dendritic delay if dendritic delay is given explicitly." );
       }
 
-      if ( not numerics::is_nan( axonal_delay ) and p->known( names::axonal_delay ) )
+      if ( not numerics::is_nan( axonal_delay ) and p.known( names::axonal_delay ) )
       {
         throw BadParameter( "Parameter dictionary must not contain axonal delay if axonal delay is given explicitly." );
       }
@@ -281,7 +281,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     }
     else
     {
-      if ( not numerics::is_nan( dendritic_delay ) or p->known( names::dendritic_delay ) )
+      if ( not numerics::is_nan( dendritic_delay ) or p.known( names::dendritic_delay ) )
       {
         throw BadParameter( "Synapse type does not support explicitly setting dendritic delay." );
       }
@@ -291,7 +291,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
         throw BadParameter( "Synapse type does not support explicitly setting axonal delay." );
       }
 
-      if ( not numerics::is_nan( delay ) and ( p->known( names::delay ) or p->known( names::dendritic_delay ) ) )
+      if ( not numerics::is_nan( delay ) and ( p.known( names::delay ) or p.known( names::dendritic_delay ) ) )
       {
         throw BadParameter( "Parameter dictionary must not contain delay if delay is given explicitly." );
       }
@@ -304,7 +304,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
       }
     }
   }
-  else if ( p->known( names::delay ) or p->known( names::dendritic_delay ) or p->known( names::axonal_delay )
+  else if ( p.known( names::delay ) or p.known( names::dendritic_delay ) or p.known( names::axonal_delay )
     or not numerics::is_nan( delay ) or not numerics::is_nan( dendritic_delay )
     or not numerics::is_nan( axonal_delay ) )
   {
@@ -340,7 +340,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   // We allow music_channel as alias for receptor_type during connection setup
   p.update_integer_value( names::music_channel, actual_receptor_type );
 #endif
-  p.update_value( names::receptor_type, actual_receptor_type );
+  p.update_integer_value( names::receptor_type, actual_receptor_type );
   assert( syn_id != invalid_synindex );
 
   if ( not thread_local_connectors[ syn_id ] )

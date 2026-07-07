@@ -119,7 +119,7 @@ public:
    */
   virtual void check_synapse_params( const Dictionary& ) const = 0;
 
-  virtual void check_valid_default_delay_parameters( DictionaryDatum syn_params ) const = 0;
+  virtual void check_valid_default_delay_parameters( const Dictionary& syn_params ) const = 0;
 
   virtual std::unique_ptr< SecondaryEvent > get_secondary_event() = 0;
 
@@ -206,7 +206,7 @@ public:
 
   void check_synapse_params( const Dictionary& syn_spec ) const override;
 
-  void check_valid_default_delay_parameters( DictionaryDatum syn_params ) const override;
+  void check_valid_default_delay_parameters( const Dictionary& syn_params ) const override;
 
   std::unique_ptr< SecondaryEvent >
   get_secondary_event() override

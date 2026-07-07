@@ -133,9 +133,9 @@ def test_total_delay_user_interface_connect_failure():
 
     neuron = nest.Create("iaf_psc_alpha")
 
-    with pytest.raises(nest.kernel.NESTError):
+    with pytest.raises(nest.NESTError):
         nest.Connect(neuron, neuron, syn_spec={"synapse_model": "stdp_pl_synapse_hom", "axonal_delay": 1.0})
-    with pytest.raises(nest.kernel.NESTError):
+    with pytest.raises(nest.NESTError):
         nest.Connect(neuron, neuron, syn_spec={"synapse_model": "stdp_pl_synapse_hom", "dendritic_delay": 1.0})
 
 
@@ -151,9 +151,9 @@ def test_total_delay_user_interface_set_status_failure():
     conn = nest.Connect(
         neuron, neuron, syn_spec={"synapse_model": "stdp_pl_synapse_hom"}, return_synapsecollection=True
     )
-    with pytest.raises(nest.kernel.NESTError):
+    with pytest.raises(nest.NESTError):
         nest.SetStatus(conn, {"dendritic_delay": 1.0})
-    with pytest.raises(nest.kernel.NESTError):
+    with pytest.raises(nest.NESTError):
         nest.SetStatus(conn, {"axonal_delay": 1.0})
 
 
@@ -164,9 +164,9 @@ def test_total_delay_user_interface_set_defaults_failure():
     """
     nest.ResetKernel()
 
-    with pytest.raises(nest.kernel.NESTError):
+    with pytest.raises(nest.NESTError):
         nest.SetDefaults("stdp_pl_synapse_hom", {"axonal_delay": 1.0})
-    with pytest.raises(nest.kernel.NESTError):
+    with pytest.raises(nest.NESTError):
         nest.SetDefaults("stdp_pl_synapse_hom", {"dendritic_delay": 1.0})
 
 
@@ -179,7 +179,7 @@ def test_split_delay_user_interface_connect_failure():
 
     neuron = nest.Create("iaf_psc_alpha")
 
-    with pytest.raises(nest.kernel.NESTError):
+    with pytest.raises(nest.NESTError):
         nest.Connect(neuron, neuron, syn_spec={"synapse_model": "stdp_pl_synapse_hom_ax_delay", "delay": 1.0})
 
 
@@ -195,7 +195,7 @@ def test_split_delay_user_interface_set_status_failure():
     conn = nest.Connect(
         neuron, neuron, syn_spec={"synapse_model": "stdp_pl_synapse_hom_ax_delay"}, return_synapsecollection=True
     )
-    with pytest.raises(nest.kernel.NESTError):
+    with pytest.raises(nest.NESTError):
         nest.SetStatus(conn, {"delay": 1.0})
 
 
@@ -206,7 +206,7 @@ def test_split_delay_user_interface_set_defaults_failure():
     """
     nest.ResetKernel()
 
-    with pytest.raises(nest.kernel.NESTError):
+    with pytest.raises(nest.NESTError):
         nest.SetDefaults("stdp_pl_synapse_hom_ax_delay", {"delay": 1.0})
 
 
@@ -218,7 +218,7 @@ def test_split_delay_user_interface_connect_zero_delay_failure():
 
     neuron = nest.Create("iaf_psc_alpha")
 
-    with pytest.raises(nest.kernel.NESTError):
+    with pytest.raises(nest.NESTError):
         nest.Connect(
             neuron,
             neuron,
@@ -237,7 +237,7 @@ def test_split_delay_user_interface_set_status_zero_delay_failure():
     conn = nest.Connect(
         neuron, neuron, syn_spec={"synapse_model": "stdp_pl_synapse_hom_ax_delay"}, return_synapsecollection=True
     )
-    with pytest.raises(nest.kernel.NESTError):
+    with pytest.raises(nest.NESTError):
         nest.SetStatus(conn, {"dendritic_delay": 0.0, "axonal_delay": 0.0})
 
 
@@ -247,5 +247,5 @@ def test_split_delay_user_interface_set_defaults_zero_delay_failure():
     """
     nest.ResetKernel()
 
-    with pytest.raises(nest.kernel.NESTError):
+    with pytest.raises(nest.NESTError):
         nest.SetDefaults("stdp_pl_synapse_hom_ax_delay", {"dendritic_delay": 0.0, "axonal_delay": 0.0})

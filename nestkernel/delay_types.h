@@ -166,23 +166,23 @@ struct TotalDelay
   }
 
   void
-  get_status( DictionaryDatum& d ) const
+  get_status( Dictionary& d ) const
   {
-    def< double >( d, names::delay, Time::delay_steps_to_ms( delay_ ) );
+    d[ names::delay ] = Time::delay_steps_to_ms( delay_ );
   }
 
   void
-  set_status( const DictionaryDatum& d, ConnectorModel& )
+  set_status( const Dictionary& d, ConnectorModel& )
   {
     // Check for allowed combinations. See PR #2989 for more details.
-    if ( d->known( names::dendritic_delay ) or d->known( names::axonal_delay ) )
+    if ( d.known( names::dendritic_delay ) or d.known( names::axonal_delay ) )
     {
       throw BadParameter( "Synapse type does not support explicitly setting axonal and dendritic delays." );
     }
 
     // Update delay values
     double delay;
-    if ( updateValue< double >( d, names::delay, delay ) )
+    if ( d.update_value( names::delay, delay ) )
     {
       set_delay_ms( delay );
     }
@@ -333,30 +333,30 @@ struct AxonalDendriticDelay
   }
 
   void
-  get_status( DictionaryDatum& d ) const
+  get_status( Dictionary& d ) const
   {
-    def< double >( d, names::dendritic_delay, Time::delay_steps_to_ms( dendritic_delay_ ) );
-    def< double >( d, names::axonal_delay, Time::delay_steps_to_ms( axonal_delay_ ) );
-    def< double >( d, names::delay, Time::delay_steps_to_ms( axonal_delay_ + dendritic_delay_ ) );
+    d[ names::dendritic_delay ] = Time::delay_steps_to_ms( dendritic_delay_ );
+    d[ names::axonal_delay ] = Time::delay_steps_to_ms( axonal_delay_ );
+    d[ names::delay ] = Time::delay_steps_to_ms( axonal_delay_ + dendritic_delay_ );
   }
 
   void
-  set_status( const DictionaryDatum& d, ConnectorModel& )
+  set_status( const Dictionary& d, ConnectorModel& )
   {
-    if ( d->known( names::delay ) )
+    if ( d.known( names::delay ) )
     {
-      throw BadParameter( "Setting the total transmission delay via the parameter '" + names::delay.toString()
+      throw BadParameter( "Setting the total transmission delay via the parameter '" + names::delay
         + "' is not allowed for synapse types which use both dendritic and axonal delays, because of ambiguity." );
     }
 
     // Update delay values
     double dendritic_delay = get_dendritic_delay_ms();
-    if ( updateValue< double >( d, names::dendritic_delay, dendritic_delay ) )
+    if ( d.update_value( names::dendritic_delay, dendritic_delay ) )
     {
       set_dendritic_delay_ms( dendritic_delay );
     }
     double axonal_delay = get_axonal_delay_ms();
-    if ( updateValue< double >( d, names::axonal_delay, axonal_delay ) )
+    if ( d.update_value( names::axonal_delay, axonal_delay ) )
     {
       set_axonal_delay_ms( axonal_delay );
     }

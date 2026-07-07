@@ -328,11 +328,9 @@ ArchivingNode::reset_correction_entries_stdp_ax_delay_( const size_t lag )
 {
   if ( has_predominant_stdp_ax_delay_ )
   {
-    const Time& ori = kernel().simulation_manager.get_slice_origin();
-
-    const long mindelay_steps = kernel().connection_manager.get_min_delay();
     assert( correction_entries_stdp_ax_delay_.size()
-      == static_cast< size_t >( mindelay_steps + kernel().connection_manager.get_max_delay() ) );
+      == static_cast< size_t >(
+        kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay() ) );
 
     const size_t idx = kernel().event_delivery_manager.get_modulo( lag );
     assert( static_cast< size_t >( idx ) < correction_entries_stdp_ax_delay_.size() );

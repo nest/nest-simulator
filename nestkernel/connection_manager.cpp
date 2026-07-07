@@ -227,7 +227,7 @@ ConnectionManager::get_status( Dictionary& dict )
   dict[ names::keep_source_table ] = keep_source_table_;
   dict[ names::use_compressed_spikes ] = use_compressed_spikes_;
 
-  def< size_t >( dict, names::num_corrections, num_corrections_ );
+  dict[ names::num_corrections ] = static_cast< long >( num_corrections_ );
 
   sw_construction_connect.get_status( dict, names::time_construction_connect, names::time_construction_connect_cpu );
 
@@ -616,8 +616,8 @@ ConnectionManager::connect_arrays( const long* sources,
   const long* targets,
   const double* weights,
   const double* delays,
-  double* dendritic_delays,
-  double* axonal_delays,
+  const double* dendritic_delays,
+  const double* axonal_delays,
   const std::vector< std::string >& p_keys,
   const double* p_values,
   size_t n,

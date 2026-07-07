@@ -33,7 +33,6 @@
 // C++ includes:
 #include <map>
 #include <set>
-#include <stdexcept>
 #include <vector>
 
 // Includes from libnestutil

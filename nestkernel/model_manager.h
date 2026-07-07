@@ -171,7 +171,7 @@ public:
 
   std::unique_ptr< SecondaryEvent > get_secondary_event_prototype( const synindex syn_id, const size_t tid );
 
-  void check_valid_default_delay_parameters( const synindex syn_id, DictionaryDatum syn_params );
+  void check_valid_default_delay_parameters( const synindex syn_id, const Dictionary& syn_params );
 
 private:
   /**

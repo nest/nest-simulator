@@ -25,11 +25,7 @@
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
 #include "connector_model.h"
-#include "event.h"
 #include "nest_impl.h"
-
-// Includes from sli:
-#include "dictdatum.h"
 
 
 void
@@ -56,22 +52,22 @@ STDPPLHomAxDelayCommonProperties::STDPPLHomAxDelayCommonProperties()
 }
 
 void
-STDPPLHomAxDelayCommonProperties::get_status( DictionaryDatum& d ) const
+STDPPLHomAxDelayCommonProperties::get_status( Dictionary& d ) const
 {
   CommonSynapseProperties::get_status( d );
 
-  def< double >( d, names::tau_plus, tau_plus_ );
-  def< double >( d, names::lambda, lambda_ );
-  def< double >( d, names::alpha, alpha_ );
-  def< double >( d, names::mu, mu_ );
+  d[ names::tau_plus ] = tau_plus_;
+  d[ names::lambda ] = lambda_;
+  d[ names::alpha ] = alpha_;
+  d[ names::mu ] = mu_;
 }
 
 void
-STDPPLHomAxDelayCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+STDPPLHomAxDelayCommonProperties::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   CommonSynapseProperties::set_status( d, cm );
 
-  updateValue< double >( d, names::tau_plus, tau_plus_ );
+  d.update_value( names::tau_plus, tau_plus_ );
   if ( tau_plus_ > 0. )
   {
     tau_plus_inv_ = 1. / tau_plus_;
@@ -80,9 +76,9 @@ STDPPLHomAxDelayCommonProperties::set_status( const DictionaryDatum& d, Connecto
   {
     throw BadProperty( "tau_plus > 0. required." );
   }
-  updateValue< double >( d, names::lambda, lambda_ );
-  updateValue< double >( d, names::alpha, alpha_ );
-  updateValue< double >( d, names::mu, mu_ );
+  d.update_value( names::lambda, lambda_ );
+  d.update_value( names::alpha, alpha_ );
+  d.update_value( names::mu, mu_ );
 }
 
-} // of namespace nest
+}  // of namespace nest

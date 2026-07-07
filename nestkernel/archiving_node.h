@@ -192,7 +192,7 @@ private:
     }
 
     unsigned int lcid_;        //!< local connection index
-    synindex syn_id_;          //!< synapse-type index
+    unsigned int syn_id_;      //!< synapse-type index
     double t_last_pre_spike_;  //!< time of the last pre-synaptic spike before this spike
     double weight_revert_;     //!< synaptic weight to revert to (STDP depression needs to be undone)
     double new_weight_;        //!< new weight after the latest correction

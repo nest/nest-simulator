@@ -45,36 +45,59 @@ Welcome to the NEST Simulator documentation!
 
        .. grid-item-card::
 
-          .. carousel::
-              :show_indicators:
-              :show_fade:
-              :show_dark:
-              :data-bs-ride: carousel
+          .. raw:: html
 
-                .. figure:: static/img/network_model_sketch_mesocircuit.png
-                  :target: networks/index.html
-
-                  Create large network models
-
-                .. figure:: static/img/astrocyte_interaction.png
-                  :target: auto_examples/astrocytes/index.html
-
-                  Inspect neuron and astrocyte interactions
-
-                .. figure:: static/img/hpc_benchmark_connectivity.svg
-                  :target: auto_examples/hpc_benchmark.html
-
-                  Test perfomance and benchmarks
-
-                .. figure:: static/img/pong_sim.gif
-                  :target: auto_examples/pong/run_simulations.html
-
-                  Simulate a game of PONG with NEST
-
-                .. figure:: ../../pynest/examples/eprop_plasticity/eprop_supervised_regression_sine-waves.png
-                  :target: auto_examples/eprop_plasticity/index.html
-
-                  Explore eligibility propagation plasticity
+             <div id="home-carousel" class="carousel slide carousel-fade carousel-dark" data-bs-ride="carousel">
+               <div class="carousel-indicators">
+                 <button type="button" data-bs-target="#home-carousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                 <button type="button" data-bs-target="#home-carousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                 <button type="button" data-bs-target="#home-carousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                 <button type="button" data-bs-target="#home-carousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
+                 <button type="button" data-bs-target="#home-carousel" data-bs-slide-to="4" aria-label="Slide 5"></button>
+               </div>
+               <div class="carousel-inner">
+                 <div class="carousel-item active">
+                   <a href="networks/index.html">
+                     <img src="_static/img/network_model_sketch_mesocircuit.png" class="d-block w-100" alt="Create large network models">
+                   </a>
+                   <div class="carousel-caption d-none d-md-block">
+                     <h5>Create large network models</h5>
+                   </div>
+                 </div>
+                 <div class="carousel-item">
+                   <a href="auto_examples/astrocytes/index.html">
+                     <img src="_static/img/astrocyte_interaction.png" class="d-block w-100" alt="Inspect neuron and astrocyte interactions">
+                   </a>
+                   <div class="carousel-caption d-none d-md-block">
+                     <h5>Inspect neuron and astrocyte interactions</h5>
+                   </div>
+                 </div>
+                 <div class="carousel-item">
+                   <a href="auto_examples/hpc_benchmark.html">
+                     <img src="_static/img/hpc_benchmark_connectivity.svg" class="d-block w-100" alt="Test performance and benchmarks">
+                   </a>
+                   <div class="carousel-caption d-none d-md-block">
+                     <h5>Test performance and benchmarks</h5>
+                   </div>
+                 </div>
+                 <div class="carousel-item">
+                   <a href="auto_examples/pong/run_simulations.html">
+                     <img src="_static/img/pong_sim.gif" class="d-block w-100" alt="Simulate a game of PONG with NEST">
+                   </a>
+                   <div class="carousel-caption d-none d-md-block">
+                     <h5>Simulate a game of PONG with NEST</h5>
+                   </div>
+                 </div>
+                 <div class="carousel-item">
+                   <a href="auto_examples/eprop_plasticity/index.html">
+                     <img src="_static/img/eprop_supervised_regression_sine-waves.png" class="d-block w-100" alt="Explore eligibility propagation plasticity">
+                   </a>
+                   <div class="carousel-caption d-none d-md-block">
+                     <h5>Explore eligibility propagation plasticity</h5>
+                   </div>
+                 </div>
+               </div>
+             </div>
 
        .. grid-item::
 

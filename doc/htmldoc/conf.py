@@ -20,24 +20,20 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import json
 import os
-
-# import shutil
 import subprocess
 import sys
 from pathlib import Path
-from shutil import copyfile
 from urllib.request import urlretrieve
 
 # Add the extension modules to the path
-extension_module_dir = os.path.abspath("./_ext")
-sys.path.append(extension_module_dir)
+extension_module_dir = Path("_ext").resolve()
+sys.path.append(str(extension_module_dir))
 
-repo_root_dir = os.path.abspath("../..")
-pynest_dir = os.path.join(repo_root_dir, "pynest")
+repo_root_dir = Path("../..").resolve()
+pynest_dir = repo_root_dir / "pynest"
 # Add the NEST Python module to the path (just the py files, the binaries are mocked)
-sys.path.append(pynest_dir)
+sys.path.append(str(pynest_dir))
 # Suppress the NEST welcome message during docs build. Without this, importing
 # nest triggers ll_api.init() which prints version info using mocked kernel
 # values, producing nonsensical output like
@@ -47,7 +43,7 @@ os.environ.setdefault("PYNEST_QUIET", "1")
 # -- General configuration ------------------------------------------------
 
 source_suffix = ".rst"
-master_doc = "index"
+root_doc = "index"
 extensions = [
     "sphinx_gallery.gen_gallery",
     "list_examples",
@@ -263,7 +259,7 @@ nitpick_ignore = [
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "NESTsimulator.tex", "NEST Simulator Documentation", "NEST Developer Community", "manual"),
+    (root_doc, "NESTsimulator.tex", "NEST Simulator Documentation", "NEST Developer Community", "manual"),
 ]
 
 
@@ -271,7 +267,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "nestsimulator", "NEST Simulator Documentation", [author], 1)]
+man_pages = [(root_doc, "nestsimulator", "NEST Simulator Documentation", [author], 1)]
 
 
 # -- Options for Texinfo output -------------------------------------------
@@ -281,7 +277,7 @@ man_pages = [(master_doc, "nestsimulator", "NEST Simulator Documentation", [auth
 #  dir menu entry, description, category)
 texinfo_documents = [
     (
-        master_doc,
+        root_doc,
         "NESTsimulator",
         "NEST Simulator Documentation",
         author,
@@ -319,7 +315,7 @@ def patch_documentation(patch_url):
     """
     print("Preparing patch...")
     try:
-        git_dir = f"{repo_root_dir}/.git"
+        git_dir = repo_root_dir / ".git"
         git_hash = subprocess.check_output(
             f"GIT_DIR='{git_dir}' git rev-parse HEAD", shell=True, encoding="utf8"
         ).strip()

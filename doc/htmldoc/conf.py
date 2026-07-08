@@ -59,7 +59,6 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinxcontrib.mermaid",
     "sphinx.ext.mathjax",
-    "sphinx_carousel.carousel",
     "sphinxcontrib.plantuml",
     "add_button_notebook",
     "IPython.sphinxext.ipython_console_highlighting",
@@ -83,6 +82,13 @@ autodoc_mock_imports = [
     "flask_cors",
     "RestrictedPython",
 ]
+# The `nest` module intentionally freezes its attribute namespace (see
+# pynest/nest/__init__.py `_setattr_error`) to catch public-API typos.
+# Sphinx's type-comment normalization pass unconditionally does
+# `module.__annotations__ = {}` on every documented module, which trips
+# that guard. We don't use Python 2-style type comments anywhere, so
+# disable this pass rather than punching a hole in the module freeze.
+autodoc_use_type_comments = False
 mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["templates"]

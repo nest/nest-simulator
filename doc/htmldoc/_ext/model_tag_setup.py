@@ -32,13 +32,14 @@ log.setLevel(level=logging.WARNING)
 # The following function is used in two other functions, in two separate Sphinx events
 
 
-def extract_model_text():
+def extract_model_text(app):
     """
     Function to extract user documentation from header files.
 
     This function searches for documentation blocks in header files located in
-    two specified directories: "../../models" and "../../nestkernel". The documentation
-    blocks are identified by markers "BeginUserDocs" and "EndUserDocs".
+    the "models" and "nestkernel" directories, under the Sphinx source
+    directory. The documentation blocks are identified by markers
+    "BeginUserDocs" and "EndUserDocs".
 
     Yields
     ------
@@ -54,8 +55,8 @@ def extract_model_text():
     Documentation text
     EndUserDocs
     """
-    model_paths = Path("../../models").glob("*.h")
-    nestkernel_paths = Path("../../nestkernel").glob("*.h")
+    model_paths = Path(app.srcdir, "..", "..", "models").glob("*.h")
+    nestkernel_paths = Path(app.srcdir, "..", "..", "nestkernel").glob("*.h")
     file_paths = list(model_paths) + list(nestkernel_paths)
 
     userdoc_re = re.compile(
@@ -99,12 +100,12 @@ def create_rst_files(app, config):
 
     """
 
-    outdir = "models/"
+    outdir = os.path.join(app.srcdir, "models")
     if not os.path.exists(outdir):
         log.info("creating output directory %s", outdir)
         os.mkdir(outdir)
     outnames = []
-    for match, file_path in extract_model_text():
+    for match, file_path in extract_model_text(app):
         doc = match.group("doc")
         filename = file_path.name
         outname = filename.replace(".h", ".rst")
@@ -231,17 +232,17 @@ def get_model_tags(app, env, docname):
         env.model_dict = {}
 
     # Extract models and tags, and find tag-to-model relationships
-    env.model_dict = prepare_model_dict()
+    env.model_dict = prepare_model_dict(app)
     env.tag_dict = find_models_in_tag_combinations(env.model_dict)
 
-    json_output = Path("static/data/filter_model.json")
+    json_output = Path(app.srcdir, "static", "data", "filter_model.json")
     json_output.parent.mkdir(exist_ok=True, parents=True)
     # Write the JSON output directly to a file used for dynamically loading data client-side
     with open(json_output, "w+") as json_file:
         json.dump(env.tag_dict, json_file, indent=2)
 
 
-def prepare_model_dict():
+def prepare_model_dict(app):
     """
     Extracts user documentation tags from header files and organizes them into a dictionary.
 
@@ -274,7 +275,7 @@ def prepare_model_dict():
     """
     models_dict = {}
 
-    for match, file_path in extract_model_text():
+    for match, file_path in extract_model_text(app):
         filename = file_path.name
         formatted_path = filename.replace(".h", ".html")
 

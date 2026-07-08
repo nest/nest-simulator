@@ -53,6 +53,9 @@ a:visited,
 a:active {color:var(--nest-orange);}
 a:hover{color:var(--nest-orange); text-decoration:underline;}
 
+.carousel-dark .carousel-caption {
+	position: static !important;
+}
 /* set api function and class names style */
 
 .sig-prename.descclassname {
@@ -986,7 +989,6 @@ ul.srt-menu li li li.sfHover ul {
 	margin:40px 0 -13px;
 }
 
-}
 
 /*
 DESKTOP

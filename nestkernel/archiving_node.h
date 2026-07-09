@@ -181,13 +181,15 @@ private:
       const double t_last_pre_spike,
       const double weight_revert,
       const double new_weight,
-      const double K_plus_revert )
+      const double K_plus_revert,
+      const long next_lag = -1 )
       : lcid_( lcid )
       , syn_id_( syn_id )
       , t_last_pre_spike_( t_last_pre_spike )
       , weight_revert_( weight_revert )
       , new_weight_( new_weight )
       , K_plus_revert_( K_plus_revert )
+      , next_lag_( next_lag )
     {
     }
 
@@ -197,10 +199,11 @@ private:
     double weight_revert_;     //!< synaptic weight to revert to (STDP depression needs to be undone)
     double new_weight_;        //!< new weight after the latest correction
     double K_plus_revert_;     //!< pre-synaptic trace before possibly incorrect facilitation
+    long next_lag_;            //!< step lag of the next spike on this connection in the buffer (-1 if none)
   };
 
   //! check for correct correction entry size
-  using correction_entry_size = StaticAssert< sizeof( ArchivingNode::CorrectionEntrySTDPAxDelay ) == 40 >::success;
+  using correction_entry_size = StaticAssert< sizeof( ArchivingNode::CorrectionEntrySTDPAxDelay ) == 48 >::success;
 
 protected:
   /**
@@ -211,6 +214,7 @@ protected:
   std::vector< std::vector< CorrectionEntrySTDPAxDelay > > correction_entries_stdp_ax_delay_;
   //! false by default and set to true if any incoming connection has predominant axonal delays
   bool has_predominant_stdp_ax_delay_;
+  std::vector< long > last_lag_by_lcid_;
 
   /**
    * Framework for STDP with predominantly axonal delays:

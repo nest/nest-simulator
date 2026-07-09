@@ -247,32 +247,44 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     if constexpr ( std::is_base_of< Connection< TargetIdentifierPtrRport, AxonalDendriticDelay >, ConnectionT >::value
       or std::is_base_of< Connection< TargetIdentifierIndex, AxonalDendriticDelay >, ConnectionT >::value )
     {
-      if ( not numerics::is_nan( delay ) or p.known( names::delay ) )
+      if ( not numerics::is_nan( delay ) )
       {
         throw BadProperty( "Setting the total transmission delay via the parameter '" + names::delay
           + "' is not allowed for synapse types which use both dendritic and axonal delays, because of ambiguity." );
       }
 
-      if ( not numerics::is_nan( dendritic_delay ) and p.known( names::dendritic_delay ) )
+      if ( not p.empty() )
       {
-        throw BadParameter(
-          "Parameter dictionary must not contain dendritic delay if dendritic delay is given explicitly." );
-      }
+        if ( p.known( names::delay ) )
+        {
+          throw BadProperty( "Setting the total transmission delay via the parameter '" + names::delay
+            + "' is not allowed for synapse types which use both dendritic and axonal delays, because of ambiguity." );
+        }
 
-      if ( not numerics::is_nan( axonal_delay ) and p.known( names::axonal_delay ) )
-      {
-        throw BadParameter( "Parameter dictionary must not contain axonal delay if axonal delay is given explicitly." );
+        if ( not numerics::is_nan( dendritic_delay ) and p.known( names::dendritic_delay ) )
+        {
+          throw BadParameter(
+            "Parameter dictionary must not contain dendritic delay if dendritic delay is given explicitly." );
+        }
+
+        if ( not numerics::is_nan( axonal_delay ) and p.known( names::axonal_delay ) )
+        {
+          throw BadParameter(
+            "Parameter dictionary must not contain axonal delay if axonal delay is given explicitly." );
+        }
       }
 
       double actual_dendritic_delay = dendritic_delay;
       double actual_axonal_delay = axonal_delay;
-      if ( not numerics::is_nan( dendritic_delay ) or p.update_value( names::dendritic_delay, actual_dendritic_delay ) )
+      if ( not numerics::is_nan( dendritic_delay )
+        or ( not p.empty() and p.update_value( names::dendritic_delay, actual_dendritic_delay ) ) )
       {
         connection.set_dendritic_delay_ms( actual_dendritic_delay );
       }
-      if ( not numerics::is_nan( axonal_delay ) or p.update_value( names::axonal_delay, actual_axonal_delay ) )
+      if ( not numerics::is_nan( axonal_delay )
+        or ( not p.empty() and p.update_value( names::axonal_delay, actual_axonal_delay ) ) )
       {
-        connection.set_axonal_delay_ms( axonal_delay );
+        connection.set_axonal_delay_ms( actual_axonal_delay );
       }
       if ( not numerics::is_nan( actual_dendritic_delay ) or not numerics::is_nan( actual_axonal_delay ) )
       {
@@ -281,34 +293,63 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     }
     else
     {
-      if ( not numerics::is_nan( dendritic_delay ) or p.known( names::dendritic_delay ) )
+      if ( not numerics::is_nan( dendritic_delay ) )
       {
         throw BadParameter( "Synapse type does not support explicitly setting dendritic delay." );
       }
 
-      if ( not numerics::is_nan( axonal_delay ) or p.known( names::axonal_delay ) )
+      if ( not numerics::is_nan( axonal_delay ) )
       {
         throw BadParameter( "Synapse type does not support explicitly setting axonal delay." );
       }
 
-      if ( not numerics::is_nan( delay ) and ( p.known( names::delay ) or p.known( names::dendritic_delay ) ) )
-      {
-        throw BadParameter( "Parameter dictionary must not contain delay if delay is given explicitly." );
-      }
-
       double actual_delay = delay;
-      if ( p.update_value( names::delay, actual_delay ) or not numerics::is_nan( delay ) )
+      if ( not p.empty() )
       {
-        connection.set_delay_ms( actual_delay );
+        if ( p.known( names::dendritic_delay ) )
+        {
+          throw BadParameter( "Synapse type does not support explicitly setting dendritic delay." );
+        }
+
+        if ( p.known( names::axonal_delay ) )
+        {
+          throw BadParameter( "Synapse type does not support explicitly setting axonal delay." );
+        }
+
+        if ( p.update_value( names::delay, actual_delay ) )
+        {
+          if ( not numerics::is_nan( delay ) )
+          {
+            throw BadParameter( "Parameter dictionary must not contain delay if delay is given explicitly." );
+          }
+          connection.set_delay_ms( actual_delay );
+          default_delay_used = false;
+        }
+        else if ( not numerics::is_nan( delay ) )
+        {
+          connection.set_delay_ms( delay );
+          default_delay_used = false;
+        }
+      }
+      else if ( not numerics::is_nan( delay ) )
+      {
+        connection.set_delay_ms( delay );
         default_delay_used = false;
       }
     }
   }
-  else if ( p.known( names::delay ) or p.known( names::dendritic_delay ) or p.known( names::axonal_delay )
-    or not numerics::is_nan( delay ) or not numerics::is_nan( dendritic_delay )
-    or not numerics::is_nan( axonal_delay ) )
+  else
   {
-    throw BadProperty( "Delay specified for a connection type which doesn't use delays." );
+    if ( not numerics::is_nan( delay ) or not numerics::is_nan( dendritic_delay )
+      or not numerics::is_nan( axonal_delay ) )
+    {
+      throw BadProperty( "Delay specified for a connection type which doesn't use delays." );
+    }
+    if ( not p.empty()
+      and ( p.known( names::delay ) or p.known( names::dendritic_delay ) or p.known( names::axonal_delay ) ) )
+    {
+      throw BadProperty( "Delay specified for a connection type which doesn't use delays." );
+    }
   }
 
   if ( not numerics::is_nan( weight ) )

@@ -302,6 +302,7 @@ ArchivingNode::clear_history()
   Kminus_ = 0.0;
   Kminus_triplet_ = 0.0;
   history_.clear();
+  last_lag_by_lcid_.clear();
 }
 
 void
@@ -315,12 +316,38 @@ ArchivingNode::add_correction_entry_stdp_ax_delay( SpikeEvent& spike_event,
   assert( correction_entries_stdp_ax_delay_.size()
     == static_cast< size_t >(
       kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay() ) );
-  const long idx = kernel().event_delivery_manager.get_modulo( time_while_critical - 1 );
+
+  const long lag = static_cast< long >( time_while_critical - 1 );
+  const long idx = kernel().event_delivery_manager.get_modulo( lag );
   assert( static_cast< size_t >( idx ) < correction_entries_stdp_ax_delay_.size() );
 
   const SpikeData& spike_data = spike_event.get_sender_spike_data();
+  const size_t lcid = spike_data.get_lcid();
+
+  if ( lcid >= last_lag_by_lcid_.size() )
+  {
+    last_lag_by_lcid_.resize( lcid + 1, -1 );
+  }
+
+  const long last_lag = last_lag_by_lcid_[ lcid ];
+  if ( last_lag != -1 && lag > last_lag
+    && lag - last_lag < static_cast< long >( correction_entries_stdp_ax_delay_.size() ) )
+  {
+    const size_t last_idx = kernel().event_delivery_manager.get_modulo( last_lag );
+    for ( CorrectionEntrySTDPAxDelay& entry : correction_entries_stdp_ax_delay_[ last_idx ] )
+    {
+      if ( entry.lcid_ == lcid )
+      {
+        entry.next_lag_ = lag;
+        break;
+      }
+    }
+  }
+
+  last_lag_by_lcid_[ lcid ] = lag;
+
   correction_entries_stdp_ax_delay_[ idx ].push_back( CorrectionEntrySTDPAxDelay(
-    spike_data.get_lcid(), spike_data.get_syn_id(), t_last_pre_spike, weight_revert, new_weight, K_plus_revert ) );
+    lcid, spike_data.get_syn_id(), t_last_pre_spike, weight_revert, new_weight, K_plus_revert ) );
 }
 
 void
@@ -338,35 +365,29 @@ ArchivingNode::reset_correction_entries_stdp_ax_delay_( const size_t lag )
     // iterate over all pre-synaptic spikes which are no longer critical
     for ( CorrectionEntrySTDPAxDelay& it_corr_entry : correction_entries_stdp_ax_delay_[ idx ] )
     {
-      // For each other still critical pre-synaptic spike which arrived over the same synapse, update the weight to
-      // revert to, as the pre-synaptic spike which is now no longer critical will no longer perform facilitation
-      for ( size_t other_idx = idx + 1; other_idx < correction_entries_stdp_ax_delay_.size(); ++other_idx )
+      if ( it_corr_entry.next_lag_ != -1 )
       {
-        std::vector< CorrectionEntrySTDPAxDelay >& correction_entries_per_timestep =
-          correction_entries_stdp_ax_delay_[ other_idx ];
-        for ( CorrectionEntrySTDPAxDelay& other_it_corr_entry : correction_entries_per_timestep )
+        const size_t next_idx = kernel().event_delivery_manager.get_modulo( it_corr_entry.next_lag_ );
+        for ( CorrectionEntrySTDPAxDelay& next_entry : correction_entries_stdp_ax_delay_[ next_idx ] )
         {
-          if ( other_it_corr_entry.lcid_ == it_corr_entry.lcid_ )
+          if ( next_entry.lcid_ == it_corr_entry.lcid_ )
           {
-            other_it_corr_entry.weight_revert_ = it_corr_entry.new_weight_;
+            next_entry.weight_revert_ = it_corr_entry.new_weight_;
+            break;
           }
         }
       }
-      for ( size_t other_idx = 0; other_idx < idx; ++other_idx )
+      else
       {
-        std::vector< CorrectionEntrySTDPAxDelay >& correction_entries_per_timestep =
-          correction_entries_stdp_ax_delay_[ other_idx ];
-        for ( CorrectionEntrySTDPAxDelay& other_it_corr_entry : correction_entries_per_timestep )
+        const size_t lcid = it_corr_entry.lcid_;
+        if ( lcid < last_lag_by_lcid_.size() && last_lag_by_lcid_[ lcid ] == static_cast< long >( lag ) )
         {
-          if ( other_it_corr_entry.lcid_ == it_corr_entry.lcid_ )
-          {
-            other_it_corr_entry.weight_revert_ = it_corr_entry.new_weight_;
-          }
+          last_lag_by_lcid_[ lcid ] = -1;
         }
       }
     }
 
-    std::vector< CorrectionEntrySTDPAxDelay >().swap( correction_entries_stdp_ax_delay_[ idx ] );
+    correction_entries_stdp_ax_delay_[ idx ].clear();
   }
 }
 

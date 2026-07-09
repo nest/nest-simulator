@@ -44,7 +44,8 @@ Description
 +++++++++++
 
 ``stdp_pl_synapse_hom_ax_delay`` is a connector to create synapses with spike time dependent plasticity using
- homogeneous parameters (as defined in [1]_). Both axonal and dendritic delays can be specified for this model.
+ homogeneous parameters (as defined in :footcite:p:`Morrison2007c`). Both axonal and dendritic delays can be specified
+for this model.
 
 Parameters
 ++++++++++
@@ -71,9 +72,7 @@ the model.
 References
 ++++++++++
 
-.. [1] Morrison A, Aertsen A, Diesmann M. (2007) Spike-timing dependent
-       plasticity in balanced random netrks. Neural Computation,
-       19(6):1437-1467. DOI: https://doi.org/10.1162/neco.2007.19.6.1437
+.. footbibliography::
 
 Transmits
 +++++++++
@@ -120,14 +119,11 @@ public:
 };
 
 /**
- * Class representing an STDP connection with homogeneous parameters, i.e. parameters are the same for all synapses.
- */
-void register_stdp_pl_synapse_hom_ax_delay( const std::string& name );
-
-/**
  * Class representing an STDP connection with homogeneous parameters, i.e.
  * parameters are the same for all synapses.
  */
+void register_stdp_pl_synapse_hom_ax_delay( const std::string& name );
+
 template < typename targetidentifierT >
 class stdp_pl_synapse_hom_ax_delay : public Connection< targetidentifierT, AxonalDendriticDelay >
 {

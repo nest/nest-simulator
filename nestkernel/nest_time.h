@@ -529,9 +529,28 @@ public:
    * ld_round, which is different from ms_stamp --> Time mapping, which rounds
    * up. See #903.
    */
-  static double delay_steps_to_ms( long steps );
+  static inline double
+  delay_steps_to_ms( long steps )
+  {
+    if ( steps < 0 )
+    {
+      throw_bad_delay_( steps * Range::MS_PER_STEP );
+    }
+    return steps * Range::MS_PER_STEP;
+  }
 
-  static long delay_ms_to_steps( double ms );
+  static inline long
+  delay_ms_to_steps( double ms )
+  {
+    if ( ms < 0 )
+    {
+      throw_bad_delay_( ms );
+    }
+    return ld_round( ms * Range::STEPS_PER_MS );
+  }
+
+private:
+  static void throw_bad_delay_( double val );
 };
 
 /////////////////////////////////////////////////////////////

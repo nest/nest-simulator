@@ -183,22 +183,8 @@ operator<<( std::ostream& strm, const Time& t )
   return strm;
 }
 
-double
-Time::delay_steps_to_ms( long steps )
+void
+Time::throw_bad_delay_( double val )
 {
-  if ( steps < 0 )
-  {
-    throw BadDelay( steps * Range::MS_PER_STEP, "Delay value must be greater than or equal to zero." );
-  }
-  return steps * Range::MS_PER_STEP;
-}
-
-long
-Time::delay_ms_to_steps( double ms )
-{
-  if ( ms < 0 )
-  {
-    throw BadDelay( ms, "Delay value must be greater than or equal to zero." );
-  }
-  return ld_round( ms * Range::STEPS_PER_MS );
+  throw BadDelay( val, "Delay value must be greater than or equal to zero." );
 }

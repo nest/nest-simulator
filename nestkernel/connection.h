@@ -23,6 +23,8 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
+#include <type_traits>
+
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
 #include "connection_label.h"
@@ -111,6 +113,8 @@ class Connection
 {
 
 public:
+  static constexpr bool requires_axonal_delay_feedback = std::is_same< DelayTypeT, AxonalDendriticDelay >::value;
+
   // properties used when registering a connection with the ModelManager
   static constexpr ConnectionModelProperties properties = ConnectionModelProperties::NONE;
 

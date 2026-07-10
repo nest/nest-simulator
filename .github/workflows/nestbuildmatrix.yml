@@ -409,7 +409,7 @@ jobs:
 
   sphinx-rtd:
     # as close as possible to the Readthedocs setup (system install cmake, pip install -r doc/requirements.txt)
-    runs-on: "ubuntu-22.04"
+    runs-on: "ubuntu-24.04"
     needs: [pydocstyle, rstcheck, vale]
     steps:
       - name: Harden Runner
@@ -428,7 +428,7 @@ jobs:
         with:
           # Using 3.8 because Read the docs does not work with higher versions.
           # See also: https://github.com/nest/nest-simulator/pull/2744
-          python-version: "3.10"
+          python-version: "3.12"
 
       - name: "Install dependencies"
         run: |

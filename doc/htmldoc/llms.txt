@@ -136,7 +136,7 @@ neuron = nest.Create('my_neuron')
 
 ## Community
 - [GitHub Issues](https://github.com/nest/nest-simulator/issues)
-- [Mailing List](https://www.nest-initiative.org/mailinglist)
+- [Mailing List](https://www.nest-simulator.org/mailinglist)
 - [NEST Homepage](https://nest-simulator.org)
 
 ---

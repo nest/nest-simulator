@@ -43,7 +43,7 @@ Description
 +++++++++++
 
 This synapse model implements synaptic short-term depression and short-term
-facilitation according to [1]_. In particular it solves Eqs (3) and (4) from
+facilitation according to :footcite:p:`Tsodyks2000`. In particular it solves Eqs (3) and (4) from
 this paper in an exact manner.
 
 Synaptic depression is motivated by depletion of vesicles in the readily
@@ -52,10 +52,10 @@ facilitation comes about by a presynaptic increase of release probability,
 which is modeled by variable U in Eq (4).
 
 The original interpretation of variable y is the amount of glutamate
-concentration in the synaptic cleft. In [1]_ this variable is taken to be
+concentration in the synaptic cleft. In :footcite:p:`Tsodyks2000` this variable is taken to be
 directly proportional to the synaptic current caused in the postsynaptic
 neuron (with the synaptic weight w as a proportionality constant). In order
-to reproduce the results of [1]_ and to use this model of synaptic plasticity
+to reproduce the results of :footcite:p:`Tsodyks2000` and to use this model of synaptic plasticity
 in its original sense, the user therefore has to ensure the following
 conditions:
 
@@ -115,9 +115,7 @@ The following parameters can be set in the status dictionary:
 References
 ++++++++++
 
-.. [1] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent
-       networks with frequency-dependent synapses. Journal of Neuroscience,
-       20 RC50. URL: http://infoscience.epfl.ch/record/183402
+.. footbibliography::
 
 Transmits
 +++++++++

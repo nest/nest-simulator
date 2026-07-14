@@ -85,16 +85,12 @@ represents phi) or to each input individually (False, input represents psi).
 In case of multiplicative coupling the nonlinearity is applied separately
 to the summed excitatory and inhibitory inputs if ``linear_summation=True``.
 
-See also [1]_.
+See also :footcite:p:`Hahne2017`.
 
 References
 ++++++++++
 
-.. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M,
-       Diesmann M (2017). Integration of continuous-time dynamics in a
-       spiking neural network simulator. Frontiers in Neuroinformatics, 11:34.
-       DOI: https://doi.org/10.3389/fninf.2017.00034
-
+.. footbibliography::
 
 See also
 ++++++++

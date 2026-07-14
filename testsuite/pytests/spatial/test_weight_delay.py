@@ -74,6 +74,8 @@ def build_network(layer_type):
             "use_on_source": False,
             "mask": {"rectangular": {"lower_left": [-0.5, -0.5], "upper_right": [9.5, 0.5]}},
         }
+    else:
+        raise NotImplementedError("unknown layer type")
 
     src_layer = nest.Create("iaf_psc_alpha", positions=pos)
     tgt_layer = nest.Create("iaf_psc_alpha", positions=pos)

@@ -2,8 +2,8 @@ Brette et al. 2007 Benchmarks
 ==============================
 
 This directory contains Python implementations of the benchmarks from the
-FACETS simulator review (Brette et al. 2007) [2]_. These benchmarks are based
-on the Vogels & Abbott network model [1]_ and are designed to test different
+FACETS simulator review (Brette et al. 2007) :footcite:p:`Brette2007`. These benchmarks are based
+on the Vogels & Abbott network model :footcite:p:`Vogels2005` and are designed to test different
 aspects of neural network simulation:
 
 - **Benchmark 1 (COBA)**: Conductance-based synapses with integrate-and-fire neurons
@@ -81,12 +81,4 @@ Benchmark Details
 References
 ----------
 
-.. [1] Vogels TP, Abbott LF. 2005. Signal propagation and logic gating in
-       networks of integrate-and-fire neurons. Journal of Neuroscience.
-       25(46):10786-10795.
-       https://doi.org/10.1523/JNEUROSCI.3508-05.2005
-
-.. [2] Brette R, Rudolph M, Carnevale T, Hines M, Beeman D, Bower JM, et al.
-       2007. Simulation of networks of spiking neurons: a review of tools and
-       strategies. Journal of Computational Neuroscience. 23(3):349-398.
-       https://doi.org/10.1007/s10827-007-0038-6
+.. footbibliography::

@@ -58,7 +58,7 @@ Description
 ``siegert_neuron`` is an implementation of a rate model with the
 non-linearity given by the gain function of the
 leaky-integrate-and-fire neuron with delta or exponentially decaying
-synapses [2]_ and [3]_ (their eq. 25). The model can be used for a
+synapses :footcite:p:`Fourcaud2002` and :footcite:p:`Schuecker2015` (their eq. 25). The model can be used for a
 mean-field analysis of spiking networks. A constant mean input can be
 provided to create neurons with a target rate, e.g. to model a constant
 external input.
@@ -72,7 +72,7 @@ check out the `Siegert_neuron_integration
 <../model_details/siegert_neuron_integration.ipynb>`_
 notebook in the NEST source code.
 
-See also [1]_, [4]_.
+See also :footcite:p:`Hahne2017`, :footcite:p:`Hahne2015`.
 
 Parameters
 ++++++++++
@@ -100,21 +100,7 @@ iaf_psc_exp/delta.
 References
 ++++++++++
 
-.. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M,
-       Diesmann M (2017). Integration of continuous-time dynamics in a
-       spiking neural network simulator. Frontiers in Neuroinformatics, 11:34.
-       DOI: https://doi.org/10.3389/fninf.2017.00034
-.. [2] Fourcaud N, Brunel N (2002). Dynamics of the firing
-       probability of noisy integrate-and-fire neurons, Neural Computation,
-       14(9):2057-2110
-       DOI: https://doi.org/10.1162/089976602320264015
-.. [3] Schuecker J, Diesmann M, Helias M  (2015). Modulated escape from a
-       metastable state driven by colored noise. Physical Review E 92:052119
-       DOI: https://doi.org/10.1103/PhysRevE.92.052119
-.. [4] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A, Diesmann M
-       (2015). A unified framework for spiking and gap-junction interactions
-       in distributed neuronal network simulations. Frontiers in
-       Neuroinformatics, 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
+.. footbibliography::
 
 Sends
 +++++

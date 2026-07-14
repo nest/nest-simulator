@@ -42,9 +42,9 @@ Description
 +++++++++++
 
 ``glif_psc_double_alpha`` provides five generalized leaky integrate-and-fire
-(GLIF) models [1]_ with double alpha-function shaped synaptic currents.
+(GLIF) models :footcite:p:`Teeter2018` with double alpha-function shaped synaptic currents.
 Incoming spike events induce a postsynaptic change of current modeled
-by the sum of two alpha functions (fast and slow components) for each receptor [2]_.
+by the sum of two alpha functions (fast and slow components) for each receptor :footcite:p:`Meffin2004`.
 This function is normalized such that an event of weight 1.0 results in a peak current
 of the fast component of the alpha function to be 1 pA at
 :math:`t = \tau_\text{syn, fast}`.
@@ -146,36 +146,36 @@ V_reset    double   Reset potential of the membrane in mV (GLIF 1 or GLIF 3)
 -------------------------------------------------------------------------------
 th_spike_add               double         Threshold addition following spike
                                           in mV (delta_theta_s in Equation (6)
-                                          in [1]_)
+                                          in :footcite:p:`Teeter2018`)
 th_spike_decay             double         Spike-induced threshold time
                                           constant in 1/ms (bs in Equation (2)
-                                          in [1]_)
+                                          in :footcite:p:`Teeter2018`)
 voltage_reset_fraction     double         Voltage fraction coefficient
                                           following spike (fv in Equation (5)
-                                          in [1]_)
+                                          in :footcite:p:`Teeter2018`)
 voltage_reset_add          double         Voltage addition following spike in
                                           mV (-delta_V (sign flipped) in
-                                          Equation (5) in [1]_)
+                                          Equation (5) in :footcite:p:`Teeter2018`)
 asc_init                   double vector  Initial values of after-spike
                                           currents in pA
 asc_decay                  double vector  After-spike current time constants
-                                          in 1/ms (kj in Equation (3) in [1]_)
+                                          in 1/ms (kj in Equation (3) in :footcite:p:`Teeter2018`)
 asc_amps                   double vector  After-spike current amplitudes in
-                                          pA (deltaIj in Equation (7) in [1]_)
+                                          pA (deltaIj in Equation (7) in :footcite:p:`Teeter2018`)
 asc_r                      double vector  Current fraction following spike
                                           coefficients for fj in Equation (7)
-                                          in [1]_
+                                          in :footcite:p:`Teeter2018`
 th_voltage_index           double         Adaptation index of threshold - A
                                           'leak-conductance' for the
                                           voltage-dependent component of the
                                           threshold in 1/ms (av in Equation
-                                          (4) in [1]_)
+                                          (4) in :footcite:p:`Teeter2018`)
 th_voltage_decay           double         Voltage-induced threshold time
                                           constant - Inverse of which is the
                                           time constant of the
                                           voltage-dependent component of the
                                           threshold in 1/ms (bv in Equation
-                                          (4) in [1]_)
+                                          (4) in :footcite:p:`Teeter2018`)
 tau_syn_fast               double vector  Time constants of the faster
                                           synaptic alpha function in ms
 tau_syn_slow               double vector  Time constants of the slower
@@ -196,13 +196,7 @@ adapting_threshold         bool           flag whether the neuron has a
 References
 ++++++++++
 
-.. [1] Teeter C, Iyer R, Menon V, Gouwens N, Feng D, Berg J, Szafer A,
-       Cain N, Zeng H, Hawrylycz M, Koch C, & Mihalas S (2018)
-       Generalized leaky integrate-and-fire models classify multiple neuron
-       types. Nature Communications 9:709.
-.. [2] Meffin, H., Burkitt, A. N., & Grayden, D. B. (2004). An analytical
-       model for the large, fluctuating synaptic conductance state typical of
-       neocortical neurons in vivo. J.  Comput. Neurosci., 16, 159-175.
+.. footbibliography::
 
 See also
 ++++++++

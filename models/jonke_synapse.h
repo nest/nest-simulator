@@ -69,7 +69,8 @@ and
    F_-(t) &= \exp((t - t_j^(k))/\tau_-)
 
 This makes it possible to implement update rules which approximate the
-rule stated in [1]_, and for examples, the rules given in [2]_ and [3]_.
+rule stated in :footcite:p:`Nessler2013`, and for examples, the rules given in :footcite:p:`Legenstein2016` and
+:footcite:p:`Jonke2017`.
 
 .. warning::
 
@@ -102,14 +103,12 @@ SpikeEvent
 References
 ++++++++++
 
-.. [1] Nessler, Bernhard, et al. "Bayesian computation emerges in generic
-       cortical microcircuits through spike-timing-dependent plasticity." PLoS
-       computational biology 9.4 (2013): e1003037.
-.. [2] Legenstein, Robert, et al. "Assembly pointers for variable binding in
-       networks of spiking neurons." arXiv preprint arXiv:1611.03698 (2016).
-.. [3] Jonke, Zeno, et al. "Feedback inhibition shapes emergent computational
-       properties of cortical microcircuit motifs." arXiv preprint
-       arXiv:1705.07614 (2017).
+Note that the original citation for Mueller et al. 2020 referred to the preprint v1 on ArXiv:
+`Legenstein, Papadimitriou, Vempala and Maass. 2016. Assembly pointers for variable binding in networks of
+spiking neuron. ArXiv.`
+
+
+.. footbibliography::
 
 See also
 ++++++++

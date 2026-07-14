@@ -71,7 +71,11 @@ extensions = [
     "HoverXTooltip",
     "sphinx_copybutton",
     "notfound.extension",
+    "sphinxcontrib.bibtex",
 ]
+
+bibtex_bibfiles = ["refs.bib"]
+bibtex_default_style = "unsrt"
 
 autodoc_mock_imports = [
     "nest.nestkernel_api",  # compiled binary
@@ -190,6 +194,10 @@ html_theme_options = {
 }
 
 html_static_path = ["static"]
+
+# Files copied verbatim to the output root (served as-is, not processed by Sphinx).
+# llms.txt provides an AI-agent-friendly index of the documentation.
+html_extra_path = ["llms.txt"]
 
 html_css_files = [
     "css/custom.css",

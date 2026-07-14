@@ -69,7 +69,7 @@ Description
 
 ``iaf_bw_2001`` is a leaky integrate-and-fire neuron model with
 
-* an approximate version of the neuron model described in [1]_, [2]_, [3]_.
+* an approximate version of the neuron model described in :footcite:p:`Wang1999`, :footcite:p:`Brunel2001`, :footcite:p:`Wang2002`.
 * exponential conductance-based AMPA and GABA-synapses
 * exponential conductance-based NMDA-synapses weighted such that it approximates the original non-linear dynamics
 * a fixed refractory period
@@ -101,11 +101,11 @@ where :math:`\Gamma_\mathrm{ex}` and :math:`\Gamma_\mathrm{in}` are index sets f
 where :math:`\gamma` is the `lower incomplete gamma function
 <https://en.wikipedia.org/wiki/Incomplete_gamma_function>`_. For these values of :math:`k_0` and :math:`k_1`, the approximate model will approach the exact model for large `t`.
 
-The specification of this model differs slightly from the one in [1]_. The parameters :math:`g_\mathrm{AMPA}`,
+The specification of this model differs slightly from the one in :footcite:p:`Wang1999`. The parameters :math:`g_\mathrm{AMPA}`,
 :math:`g_\mathrm{GABA}`, and :math:`g_\mathrm{NMDA}` have been absorbed into the respective synaptic weights.
 Additionally, the synapses from the external population are not separated from the recurrent AMPA-synapses.
 
-See also [2]_ and [3]_.
+See also :footcite:p:`Brunel2001` and :footcite:p:`Wang2002`.
 
 For more implementation details and a comparison to the exact version, see:
 
@@ -151,7 +151,7 @@ The following state variables evolve during simulation and are available either 
 ================== ================= ========================== =================================
 
 .. note::
-   :math:`g_{\mathrm{\{\{rec,AMPA\}, \{ext,AMPA\}, GABA, NMBA}\}}` from [1]_ are built into the weights in this NEST model, so these variables are set by changing the weights.
+   :math:`g_{\mathrm{\{\{rec,AMPA\}, \{ext,AMPA\}, GABA, NMBA}\}}` from :footcite:p:`Wang1999` are built into the weights in this NEST model, so these variables are set by changing the weights.
 
 .. note::
     For the NMDA dynamics to work,  both pre-synaptic and post-synaptic neurons must be of type ``iaf_bw_2001``. For AMPA/GABA synapses, any pre-synaptic neuron can be used.
@@ -172,16 +172,7 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 References
 ++++++++++
 
-.. [1] Wang, X.-J. (1999). Synaptic Basis of Cortical Persistent Activity: The
-       Importance of NMDA Receptors to Working Memory. Journal of Neuroscience,
-       19(21), 9587–9603. https://doi.org/10.1523/JNEUROSCI.19-21-09587.1999
-
-.. [2] Brunel, N., & Wang, X.-J. (2001). Effects of Neuromodulation in a Cortical
-       Network Model of Object Working Memory Dominated by Recurrent Inhibition.
-       Journal of Computational Neuroscience, 11(1), 63–85. https://doi.org/10.1023/A:1011204814320
-
-.. [3] Wang, X. J. (2002). Probabilistic decision making by slow reverberation in
-       cortical circuits. Neuron, 36(5), 955-968. https://doi.org/10.1016/S0896-6273(02)01092-9
+.. footbibliography::
 
 See also
 ++++++++

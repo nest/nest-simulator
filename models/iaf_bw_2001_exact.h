@@ -68,7 +68,7 @@ Description
 
 ``iaf_bw_2001_exact`` is a leaky integrate-and-fire neuron model with
 
-* an exact implementation of the neuron model described in [1]_.
+* an exact implementation of the neuron model described in :footcite:p:`Wang1999`.
 * exponential conductance-based AMPA and GABA-synapses
 * NMDA synapses with slow nonlinear dynamics
 * a fixed refractory period
@@ -101,12 +101,12 @@ a piecewise exponential function, and can be stored in a single synaptic variabl
 cannot be simplified. Therefore, for each synapse, we need to integrate separate state variables, which makes the model
 slow.
 
-The specification of this model differs slightly from the one in [1]_. The parameters :math:`g_\mathrm{AMPA}`,
+The specification of this model differs slightly from the one in :footcite:p:`Wang1999`. The parameters :math:`g_\mathrm{AMPA}`,
 :math:`g_\mathrm{GABA}`, and :math:`g_\mathrm{NMDA}` have been absorbed into the respective synaptic weights.
 Additionally, the synapses from the external population is not separated from the recurrent AMPA-synapses.
 This model is slow to simulate when there are many neurons with NMDA-synapses, since each post-synaptic neuron simulates each pre-synaptic connection explicitly. The model :doc:`iaf_bw_2001 </models/iaf_bw_2001>` is an approximation to this model which is significantly faster.
 
-See also [2]_, [3]_
+See also :footcite:p:`Brunel2001`, :footcite:p:`Wang2002`
 
 Parameters
 ++++++++++
@@ -151,7 +151,7 @@ The following state variables evolve during simulation and are available either 
    It is possible to set values for :math:`V_\mathrm{m}`, :math:`S_\mathrm{AMPA}` and :math:`S_\mathrm{GABA}` when creating the model, while the different :math:`s_{j,\mathrm{NMDA}}` (`j` represents presynaptic neuron `j`) can not be set by the user.
 
 .. note::
-   :math:`g_{\mathrm{\{\{rec,AMPA\}, \{ext,AMPA\}, GABA, NMBA}\}}` from [1]_ is built into the weights in this NEST model, so these variables are set by changing the weights.
+   :math:`g_{\mathrm{\{\{rec,AMPA\}, \{ext,AMPA\}, GABA, NMBA}\}}` from :footcite:p:`Wang1999` is built into the weights in this NEST model, so these variables are set by changing the weights.
 
 Sends
 +++++
@@ -166,10 +166,7 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 References
 ++++++++++
 
-.. [1] Wang, X.-J. (1999). Synaptic Basis of Cortical Persistent Activity: The Importance of NMDA Receptors to Working Memory. Journal of Neuroscience, 19(21), 9587–9603. https://doi.org/10.1523/JNEUROSCI.19-21-09587.1999
-.. [2] Brunel, N., & Wang, X.-J. (2001). Effects of Neuromodulation in a Cortical Network Model of Object Working Memory Dominated by Recurrent Inhibition. Journal of Computational Neuroscience, 11(1), 63–85. https://doi.org/10.1023/A:1011204814320
-.. [3] Wang, X. J. (2002). Probabilistic decision making by slow reverberation in
-       cortical circuits. Neuron, 36(5), 955-968. https://doi.org/10.1016/S0896-6273(02)01092-9
+.. footbibliography::
 
 See also
 ++++++++

@@ -72,7 +72,7 @@ of conductance modelled by an alpha function. The alpha function
 is normalized such that an event of weight 1.0 results in a peak conductance of 1 nS
 at :math:`t = \tau_{syn}`.
 
-See also [1]_, [2]_, [3]_.
+See also :footcite:p:`Meffin2004`, :footcite:p:`Bernander1991`, :footcite:p:`Kuhn2004`.
 
 Parameters
 ++++++++++
@@ -107,20 +107,7 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 References
 ++++++++++
 
-.. [1] Meffin H, Burkitt AN, Grayden DB (2004). An analytical
-       model for the large, fluctuating synaptic conductance state typical of
-       neocortical neurons in vivo. Journal of Computational Neuroscience,
-       16:159-175.
-       DOI: https://doi.org/10.1023/B:JCNS.0000014108.03012.81
-.. [2] Bernander O, Douglas RJ, Martin KAC, Koch C (1991). Synaptic background
-       activity influences spatiotemporal integration in single pyramidal
-       cells.  Proceedings of the National Academy of Science USA,
-       88(24):11569-11573.
-       DOI: https://doi.org/10.1073/pnas.88.24.11569
-.. [3] Kuhn A, Rotter S (2004) Neuronal integration of synaptic input in
-       the fluctuation- driven regime. Journal of Neuroscience,
-       24(10):2345-2356
-       DOI: https://doi.org/10.1523/JNEUROSCI.3349-03.2004
+.. footbibliography::
 
 See also
 ++++++++

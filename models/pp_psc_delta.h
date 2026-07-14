@@ -90,11 +90,9 @@ Here this is implemented by subtracting the value of the adaptive threshold
 E_sfa from the membrane potential ``V_m`` before passing the potential to the
 transfer function, see also above. ``E_sfa`` jumps by ``q_sfa`` when the neuron
 fires a spike, and decays exponentially with the time constant tau_sfa
-after (see [2]_ or [3]_). Thus, the ``E_sfa`` corresponds to the convolution of the
-neuron's spike train with an exponential kernel.
-This adaptation kernel may also be chosen as the sum of n exponential
-kernels. To use this feature,`` ``q_sfa and ``tau_sfa`` have to be given as a list
-of n values each.
+after (see :footcite:p:`Jolivet2006` or :footcite:p:`Pozzorini2013`). Thus, the ``E_sfa`` corresponds to the convolution
+of the neuron's spike train with an exponential kernel. This adaptation kernel may also be chosen as the sum of n
+exponential kernels. To use this feature,`` ``q_sfa and ``tau_sfa`` have to be given as a list of n values each.
 
 The firing of ``pp_psc_delta`` is usually not a renewal process. For example,
 its firing may depend on its past spikes if it has non-zero adaptation terms
@@ -105,19 +103,19 @@ is True, and all adaptation terms (``q_sfa``) are 0, then it will reset
 it a renewal process model (where ``rate`` above is its hazard function,
 also known as conditional intensity).
 
-``pp_psc_delta`` may also be called a spike-response model with escape-noise [6]_
+``pp_psc_delta`` may also be called a spike-response model with escape-noise :footcite:p:`Gerstner2014`
 (for vanishing, non-random dead_time). If ``c_1>0`` and ``c_2==0``, the rate is a
 convolution of the inputs with exponential filters -- which is a model known
-as a Hawkes point process (see [4]_). If instead ``c_1==0``, then ``pp_psc_delta`` is
+as a Hawkes point process (see :footcite:p:`Grytskyy2013`). If instead ``c_1==0``, then ``pp_psc_delta`` is
 a point process generalized linear model (with the canonical link function,
 and exponential input filters) (see [5,6]_).
 
 This model has been adapted from ``iaf_psc_delta``. The default parameters are
-set to the mean values given in [2]_, which have been matched to spike-train
+set to the mean values given in :footcite:p:`Jolivet2006`, which have been matched to spike-train
 recordings. Due to the many features of ``pp_psc_delta`` and its versatility,
 parameters should be set carefully and consciously.
 
-See also [1]_, [5]_.
+See also :footcite:p:`Cardanobile2010`, :footcite:p:`Deger2014`.
 
 Parameters
 ++++++++++
@@ -150,30 +148,7 @@ The following parameters can be set in the status dictionary.
 References
 ++++++++++
 
-.. [1] Cardanobile S, Rotter S (2010). Multiplicatively interacting point
-       processes and applications to neural modeling. Journal of
-       Computational Neuroscience 28(2):267-284
-       DOI: https://doi.org/10.1007/s10827-009-0204-0
-.. [2] Jolivet R, Rauch A, Luescher H-R, Gerstner W. (2006). Predicting spike
-       timing of neocortical pyramidal neurons by simple threshold models.
-       Journal of Computational Neuroscience 21:35-49.
-       DOI: https://doi.org/10.1007/s10827-006-7074-5
-.. [3] Pozzorini C, Naud R, Mensi S, Gerstner W (2013). Temporal whitening by
-       power-law adaptation in neocortical neurons. Nature Neuroscience
-       16:942-948. (Uses a similar model of multi-timescale adaptation)
-       DOI: https://doi.org/10.1038/nn.3431
-.. [4] Grytskyy D, Tetzlaff T, Diesmann M, Helias M (2013). A unified view
-       on weakly correlated recurrent networks. Frontiers in Computational
-       Neuroscience, 7:131.
-       DOI: https://doi.org/10.3389/fncom.2013.00131
-.. [5] Deger M, Schwalger T, Naud R, Gerstner W (2014). Fluctuations and
-       information filtering in coupled populations of spiking neurons with
-       adaptation. Physical Review E 90:6, 062704.
-       DOI: https://doi.org/10.1103/PhysRevE.90.062704
-.. [6] Gerstner W, Kistler WM, Naud R, Paninski L (2014). Neuronal Dynamics:
-       From single neurons to networks and models of cognition.
-       Cambridge University Press
-
+.. footbibliography::
 
 Sends
 +++++

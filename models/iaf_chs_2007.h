@@ -60,7 +60,7 @@ reset/after-hyperpolarization and ``tau_reset`` is the time constant of
 recovery from this hyperpolarization.
 
 The linear subthreshold dynamics is integrated by the Exact
-Integration scheme [1]_. The neuron dynamics is solved on the time
+Integration scheme :footcite:p:`Carandini2007`. The neuron dynamics is solved on the time
 grid given by the computation step size. Incoming as well as emitted
 spikes are forced to that grid.
 
@@ -71,7 +71,7 @@ spikes are forced to that grid.
    the noise signal externally prior to simulation. The noise signal,
    if present, has to be at least as long as the simulation.
 
-See also [2]_.
+See also :footcite:p:`Rotter1999`.
 
 Parameters
 ++++++++++
@@ -90,13 +90,7 @@ The following parameters can be set in the status dictionary.
 References
 ++++++++++
 
-.. [1] Carandini M, Horton JC, Sincich LC (2007). Thalamic filtering of retinal
-       spike trains by postsynaptic summation. Journal of Vision 7(14):20,1-11.
-       DOI: https://doi.org/10.1167/7.14.20
-.. [2] Rotter S,  Diesmann M (1999). Exact simulation of time-invariant linear
-       systems with applications to neuronal modeling. Biologial Cybernetics
-       81:381-402.
-       DOI: https://doi.org/10.1007/s004220050570
+.. footbibliography::
 
 Sends
 +++++

@@ -43,7 +43,7 @@ Description
 +++++++++++
 
 ``stdp_pl_synapse`` is a connector to create synapses with spike time
-dependent plasticity using homoegeneous parameters (as defined in [1]_).
+dependent plasticity using homoegeneous parameters (as defined in :footcite:p:`Morrison2007c`).
 
 Parameters
 ++++++++++
@@ -70,9 +70,7 @@ the model.
 References
 ++++++++++
 
-.. [1] Morrison A, Aertsen A, Diesmann M. (2007) Spike-timing dependent
-       plasticity in balanced random netrks. Neural Computation,
-       19(6):1437-1467. DOI: https://doi.org/10.1162/neco.2007.19.6.1437
+.. footbibliography::
 
 Transmits
 +++++++++

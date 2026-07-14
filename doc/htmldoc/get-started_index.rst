@@ -3,6 +3,8 @@
 Tutorials and Guides
 ====================
 
+.. meta::
+   :description: Complete tutorials and guides for NEST Simulator. Learn to build and simulate spiking neural networks with step-by-step PyNEST tutorials, examples, and best practices.
 
 First steps: Learn how to use NEST
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -131,6 +133,7 @@ Next steps: Create your own network model
          ^^^
 
          * :ref:`parallel_computing`: How NEST handles thread parallel and distributed computing
+         * :ref:`simulation_limits`: Hard limits on nodes, synapse types, threads, ranks, and delays
 
 ----
 
@@ -211,8 +214,8 @@ More topics
    :maxdepth: 1
    :hidden:
 
-   tutorials/index
    tutorials/pynest_tutorial/index
+   tutorials/music_tutorial/index
    neurons/neuron_update
    neurons/neuron_types
 

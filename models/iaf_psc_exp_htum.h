@@ -46,10 +46,10 @@ Description
 +++++++++++
 
 ``iaf_psc_exp_htum`` is an implementation of a leaky integrate-and-fire model
-with exponential shaped postsynaptic currents (PSCs) according to [1]_.
+with exponential shaped postsynaptic currents (PSCs) according to :footcite:p:`Tsodyks2000`.
 The postsynaptic currents have an infinitely short rise time.
 In particular, this model allows setting an absolute and relative
-refractory time separately, as required by [1]_.
+refractory time separately, as required by :footcite:p:`Tsodyks2000`.
 
 The threshold crossing is followed by an absolute refractory period
 (``t_ref_abs``) during which the membrane potential is clamped to the resting
@@ -60,7 +60,7 @@ larger or equal to the absolute refractory time. If equal, the
 refractoriness of the model if equivalent to the other models of NEST.
 
 The linear subthreshold dynamics is integrated by the Exact
-Integration scheme [2]_. The neuron dynamics is solved on the time
+Integration scheme :footcite:p:`Hill1936`. The neuron dynamics is solved on the time
 grid given by the computation step size. Incoming as well as emitted
 spikes are forced to that grid.
 
@@ -69,7 +69,7 @@ equation represents a piecewise constant external current.
 
 The general framework for the consistent formulation of systems with
 neuron like dynamics interacting by point events is described in
-[2]_. A flow chart can be found in [3]_.
+:footcite:p:`Hill1936`. A flow chart can be found in :footcite:p:`Rotter1999`.
 
 .. note::
 
@@ -96,7 +96,7 @@ neuron like dynamics interacting by point events is described in
     `IAF Integration Singularity notebook <../model_details/IAF_Integration_Singularity.ipynb>`_.
 
 
-See also [4]_.
+See also :footcite:p:`Diesmann2001`.
 
 Parameters
 ++++++++++
@@ -121,20 +121,7 @@ The following parameters can be set in the status dictionary.
 References
 ++++++++++
 
-.. [1] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent
-       networks with frequency-dependent synapses. The Journal of Neuroscience,
-       20,RC50:1-5. URL: https://infoscience.epfl.ch/record/183402
-.. [2] Hill, A. V. (1936). Excitation and accommodation in nerve. Proceedings of
-       the Royal Society of London. Series B-Biological Sciences, 119(814), 305-355.
-       DOI: https://doi.org/10.1098/rspb.1936.0012
-.. [3] Rotter S,  Diesmann M (1999). Exact simulation of
-       time-invariant linear systems with applications to neuronal
-       modeling. Biologial Cybernetics 81:381-402.
-       DOI: https://doi.org/10.1007/s004220050570
-.. [4] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001). State
-       space analysis of synchronous spiking in cortical neural
-       networks. Neurocomputing 38-40:565-571.
-       DOI: https://doi.org/10.1016/S0925-2312(01)00409-X
+.. footbibliography::
 
 Sends
 +++++

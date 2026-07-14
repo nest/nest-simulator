@@ -50,7 +50,7 @@ Description
 neuron model with delta-shaped postsynaptic currents used for eligibility
 propagation (e-prop) plasticity.
 
-E-prop plasticity was originally introduced and implemented in TensorFlow in [1]_.
+E-prop plasticity was originally introduced and implemented in TensorFlow in :footcite:p:`Bellec2020`.
 
 The suffix ``_bsshslm_2020`` follows the NEST convention to indicate in the
 model name the paper that introduced it by the first letter of the authors' last
@@ -149,7 +149,7 @@ For more information on e-prop plasticity, see the documentation on the other e-
  * :doc:`eprop_synapse_bsshslm_2020<../models/eprop_synapse_bsshslm_2020/>`
  * :doc:`eprop_learning_signal_connection_bsshslm_2020<../models/eprop_learning_signal_connection_bsshslm_2020/>`
 
-Details on the event-based NEST implementation of e-prop can be found in [2]_.
+Details on the event-based NEST implementation of e-prop can be found in :footcite:p:`KorcsakGorzo2025`.
 
 Parameters
 ++++++++++
@@ -235,24 +235,12 @@ This model can only be used in combination with the other e-prop models
 and the network architecture requires specific wiring, input, and output.
 The usage is demonstrated in several
 :doc:`supervised regression and classification tasks <../auto_examples/eprop_plasticity/index>`
-reproducing among others the original proof-of-concept tasks in [1]_.
+reproducing among others the original proof-of-concept tasks in :footcite:p:`Bellec2020`.
 
 References
 ++++++++++
 
-.. [1] Bellec G, Scherr F, Subramoney F, Hajek E, Salaj D, Legenstein R,
-       Maass W (2020). A solution to the learning dilemma for recurrent
-       networks of spiking neurons. Nature Communications, 11:3625.
-       https://doi.org/10.1038/s41467-020-17236-y
-
-.. [2] Korcsak-Gorzo A, Espinoza Valverde JA, Stapmanns J, Plesser HE, Dahmen D,
-       Bolten M, van Albada SJ, Diesmann M (2025). Event-driven eligibility
-       propagation in large sparse networks: efficiency shaped by biological
-       realism. arXiv:2511.21674. https://doi.org/10.48550/arXiv.2511.21674
-
-.. include:: ../models/eprop_iaf.rst
-   :start-after: .. start_surrogate-gradient-references
-   :end-before: .. end_surrogate-gradient-references
+.. footbibliography::
 
 Sends
 +++++

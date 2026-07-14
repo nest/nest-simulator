@@ -181,8 +181,8 @@ If you want to edit Model docs, PyNEST API files, or PyNEST examples, you will n
 
 
 
-Review changes you made
-~~~~~~~~~~~~~~~~~~~~~~~
+Review changes you made locally
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To check that the changes you made are correct in the HTML output,
 you will need to build the documentation locally with Sphinx.
@@ -231,6 +231,17 @@ Create a pull request
 Once you're happy with the changes, you can submit a pull request on Github from your fork.
 Github has a nice help page that outlines the process for
 `submitting pull requests <https://help.github.com/articles/using-pull-requests/#initiating-the-pull-request>`_.
+
+The pull request will automatically trigger a series of checks, including building the docs on Read the Docs.
+Once it passes, you can open the preview to see how the changes rendered in HTML. You can find all the checks at the
+bottom of the PR conversation tab:
+
+
+.. image:: /static/img/docs_build.png
+    :width: 50%
+    :align: center
+
+The URL for PR previews has the following format ``https://nest-simulator--<pr-number>.org.readthedocs.build/en/<pr-number>/index.html``
 
 Reviewers will be assigned and go through your changes.
 

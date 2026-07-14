@@ -57,6 +57,8 @@ namespace nest
  */
 extern "C" int hh_psc_alpha_dynamics( double, const double*, double*, void* );
 
+// Disable clang-formatting for documentation due to over-wide tables.
+// clang-format off
 /* BeginUserDocs: neuron, Hodgkin-Huxley, current-based, soft threshold
 
 Short description
@@ -68,20 +70,80 @@ Description
 +++++++++++
 
 ``hh_psc_alpha`` is an implementation of a spiking neuron using the Hodgkin-Huxley
-formalism.
+formalism :footcite:p:`Hodgkin1952`, with
 
-1. Postsynaptic currents
-Incoming spike events induce a postsynaptic change of current modelled
-by an alpha function. The alpha function is normalized such that an event of
-weight 1.0 results in a peak current of 1 pA.
+* membrane dynamics governed by sodium, potassium, and leak currents,
+* :math:`\alpha`-shaped synaptic input currents,
+* spike detection by a combined threshold-and-local-maximum search.
 
+The Hodgkin-Huxley formalism is also described in standard textbooks
+:footcite:p:`Gerstner2002`, :footcite:p:`Dayan2001`.
 
-2. Spike Detection
-Spike detection is done by a combined threshold-and-local-maximum search: if
-there is a local maximum above a certain threshold of the membrane potential,
-it is considered a spike.
+Membrane potential and channel dynamics
+.......................................
 
-See also :footcite:p:`Gerstner2002`, :footcite:p:`Dayan2001`, :footcite:p:`Hodgkin1952`.
+The membrane potential evolves according to
+
+.. math::
+
+   C_{\text{m}} \frac{dV_\text{m}}{dt} = -(I_{\text{Na}} + I_{\text{K}} + I_{\text{L}}) + I_{\text{syn}} + I_\text{e}
+
+with the voltage-gated sodium current, the delayed-rectifier potassium current, and the
+leak current
+
+.. math::
+
+   I_{\text{Na}} &= g_{\text{Na}} \, m^3 h \, (V_\text{m} - E_{\text{Na}}) \\
+   I_{\text{K}}  &= g_{\text{K}} \, n^4 \, (V_\text{m} - E_{\text{K}}) \\
+   I_{\text{L}}  &= g_{\text{L}} \, (V_\text{m} - E_{\text{L}}) \;.
+
+The gating variables :math:`m`, :math:`h`, and :math:`n` follow
+
+.. math::
+
+   \frac{dx}{dt} = \alpha_x(V_\text{m}) (1 - x) - \beta_x(V_\text{m}) \, x, \quad x \in \{m, h, n\} \;,
+
+with voltage-dependent rates (:math:`V_\text{m}` in mV)
+
+.. math::
+
+   \alpha_m &= \frac{0.1 (V_\text{m} + 40)}{1 - e^{-(V_\text{m} + 40)/10}} \\
+   \beta_m  &= 4 \, e^{-(V_\text{m} + 65)/18} \\
+   \alpha_h &= 0.07 \, e^{-(V_\text{m} + 65)/20} \\
+   \beta_h  &= \frac{1}{1 + e^{-(V_\text{m} + 35)/10}} \\
+   \alpha_n &= \frac{0.01 (V_\text{m} + 55)}{1 - e^{-(V_\text{m} + 55)/10}} \\
+   \beta_n  &= 0.125 \, e^{-(V_\text{m} + 65)/80} \;.
+
+Spike detection is done by a combined threshold-and-local-maximum search: if there is a
+local maximum of the membrane potential above a certain threshold, it is considered a spike.
+
+Synaptic input
+..............
+
+The total synaptic input current :math:`I_{\text{syn}}` entering the voltage equation above has an
+excitatory and an inhibitory component,
+
+.. math::
+
+   I_{\text{syn}}(t) = I_{\text{syn, ex}}(t) + I_{\text{syn, in}}(t) \;.
+
+Each incoming spike evokes an :math:`\alpha`-shaped post-synaptic current
+
+.. math::
+
+   i_{\text{syn, X}}(t) = \frac{e}{\tau_{\text{syn, X}}} t e^{-\frac{t}{\tau_{\text{syn, X}}}} \Theta(t) \;,
+
+for :math:`\text{X} \in \{\text{ex}, \text{in}\}`, with :math:`\Theta(x)` the Heaviside step function. The
+currents are normalized such that an event of weight 1.0 evokes a peak current of 1 pA at
+:math:`t = \tau_{\text{syn, X}}`. Each channel current is the sum of these single-spike responses over
+all presynaptic neurons :math:`j` and their spike times :math:`t_j^k`, weighted by the synaptic weights
+:math:`w_j`,
+
+.. math::
+
+   I_{\text{syn, X}}(t) = \sum_j w_j \sum_k i_{\text{syn, X}}(t - t_j^k) \;.
+
+Excitatory and inhibitory inputs are distinguished by the sign of the synaptic weight.
 
 For details on asynchronicity in spike and firing events with Hodgkin Huxley models
 see :ref:`here <hh_details>`.
@@ -89,25 +151,39 @@ see :ref:`here <hh_details>`.
 Parameters
 ++++++++++
 
-The following parameters can be set in the status Dictionary.
+The following parameters can be set in the status dictionary.
 
-========  ======  ============================================================
-V_m       mV      Membrane potential
-E_L       mV      Leak reversal potential
-C_m       pF      Capacity of the membrane
-t_ref     ms      Duration of refractory period
-g_L       nS      Leak conductance
-tau_ex    ms      Rise time of the excitatory synaptic alpha function
-tau_in    ms      Rise time of the inhibitory synaptic alpha function
-E_Na      mV      Sodium reversal potential
-g_Na      nS      Sodium peak conductance
-E_K       mV      Potassium reversal potential
-g_K       nS      Potassium peak conductance
-Act_m     real    Activation variable m
-Inact_h   real    Inactivation variable h
-Act_n     real    Activation variable n
-I_e       pA      External input current
-========  ======  ============================================================
+============== =========== ============================= ===================================================
+**Parameter**  **Default** **Math equivalent**           **Description**
+============== =========== ============================= ===================================================
+``E_L``        -54.402 mV  :math:`E_\text{L}`            Leak reversal potential
+``C_m``        100 pF      :math:`C_{\text{m}}`          Capacity of the membrane
+``t_ref``      2 ms        :math:`t_{\text{ref}}`        Duration of refractory period
+``g_L``        30 nS       :math:`g_\text{L}`            Leak conductance
+``E_Na``       50 mV       :math:`E_{\text{Na}}`         Sodium reversal potential
+``g_Na``       12000 nS    :math:`g_{\text{Na}}`         Sodium peak conductance
+``E_K``        -77 mV      :math:`E_{\text{K}}`          Potassium reversal potential
+``g_K``        3600 nS     :math:`g_{\text{K}}`          Potassium peak conductance
+``tau_syn_ex`` 0.2 ms      :math:`\tau_{\text{syn, ex}}` Rise time of the excitatory input current
+``tau_syn_in`` 2.0 ms      :math:`\tau_{\text{syn, in}}` Rise time of the inhibitory input current
+``I_e``        0 pA        :math:`I_\text{e}`            Constant input current
+============== =========== ============================= ===================================================
+
+The following state variables evolve during simulation and are available either as neuron properties or as recordables.
+
+================== =========================== ========================== =================================
+**State variable** **Initial value**           **Math equivalent**        **Description**
+================== =========================== ========================== =================================
+``V_m``            -65 mV                      :math:`V_{\text{m}}`       Membrane potential
+``Act_m``          :math:`m_\infty` [#steady]_ :math:`m`                  Sodium activation variable
+``Inact_h``        :math:`h_\infty` [#steady]_ :math:`h`                  Sodium inactivation variable
+``Act_n``          :math:`n_\infty` [#steady]_ :math:`n`                  Potassium activation variable
+``I_syn_ex``       0 pA                        :math:`I_{\text{syn, ex}}` Excitatory synaptic input current
+``I_syn_in``       0 pA                        :math:`I_{\text{syn, in}}` Inhibitory synaptic input current
+================== =========================== ========================== =================================
+
+.. [#steady] The gating variables are initialized to their steady-state values
+   :math:`x_\infty = \alpha_x / (\alpha_x + \beta_x)` at :math:`V_\text{m} = -65` mV.
 
 Problems/Todo
 +++++++++++++
@@ -142,6 +218,7 @@ Examples using this model
 .. listexamples:: hh_psc_alpha
 
 EndUserDocs */
+// clang-format on
 
 void register_hh_psc_alpha( const std::string& name );
 

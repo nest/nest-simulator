@@ -4,22 +4,33 @@
 
 For developer documentation of the C++ code, we use [Doxygen](http://doxygen.org/) comments
 extensively throughout NEST. If you add or modify the code, please ensure you document your
-changes with the correct Doxygen syntax (see also \ref devdoc_coding_conventions "Coding conventions").
+changes with the correct Doxygen syntax (see \ref devdoc_coding_conventions "Coding conventions").
+
+### Update PyNEST code
 
 For information on updating PyNEST, see [our Read the Docs contribution guide](https://nest-simulator.readthedocs.io/en/stable/contribute/index.html).
 
 ## Contribute to developer documentation
 
-Add or update pages in `doc/developer_space/` as markdown (`.md`) files. Each file
-should begin with a level-1 heading followed by a Doxygen page label:
+### Add or modify pages in the developer space
+
+The `doc/developer_space/`  contains several topics for developers, including NEST architecture,
+design decisions, coding conventions and workflows. These topics are written
+in markdown so Doxygen can easily build them along with the C++ code. We welcome all developers
+to contribute and improve these documents. The same rules for contributing other docs and code apply to these pages.
+
+We have additional documentation that is more user-oriented on Read the Docs. Please ensure the changes you make
+to code are reflected in the appropriate documentation sections for either developer or users/contributors.
+
+All contribution guides can be found [here](https://nest-simulator.readthedocs.io/en/stable/contribute/index.html).
+
+#### Format of markdown files
+
+Each file should begin with a level-1 heading followed by a Doxygen page label:
 
 ```markdown
 # Page Title {#devdoc_my_page}
 ```
-
-To nest the page under this index in the HTML tree nav, add it to this file
-using `\subpage devdoc_my_page "Link text"`. For cross-references from other
-pages (not intended as children), use `\ref devdoc_my_page "Link text"`.
 
 Images go in `doc/developer_space/static/img/` and can be embedded with:
 
@@ -27,7 +38,28 @@ Images go in `doc/developer_space/static/img/` and can be embedded with:
 ![Alt text](static/img/my_image.png)
 ```
 
-### Linking to C++ Symbols
+
+For diagrams, you can use PlantUML:
+
+````
+```plantuml
+@startuml
+a --> b
+@enduml
+```
+````
+
+#### Add new page to tree nav
+
+If you want your new page nested under the the main page in the HTML tree nav,
+ add  the following line to `index.md`:
+
+`\subpage devdoc_my_page "Link text"`.
+
+
+#### Cross-references and Linking to C++ Symbols
+
+For cross-references from other pages (not intended as children), use `\ref devdoc_my_page "Link text"`.
 
 From any markdown page you can link directly to C++ documentation:
 
@@ -43,8 +75,16 @@ Always qualify class and method names with their namespace; unqualified names
 are not resolved from markdown pages. Method links require trailing `()`.
 
 Additional documentation for developers and contributors can be found on
-[Read the Docs](https://nest-simulator.readthedocs.io/en/stable/developer_space/),
+[Read the Docs](https://nest-simulator.readthedocs.io/en/stable/contribute/index.html),
 including reviewer guidelines, git workflows etc.
+
+### Modify the output of Doxygen
+
+If you want to change the output for Doxygen, you can modify the `doc/fulldoc.conf.in` file. This contains all the settings
+for Doxygen, including which INPUT files are rendered, the diagrams that get built etc.
+
+For the visual style and display rendered on GitHub Pages,
+you can modify the `doc/developer_space/static/css/doxygen-awesome.css` file.
 
 ## Documentation deployment
 

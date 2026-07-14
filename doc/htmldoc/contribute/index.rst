@@ -52,17 +52,17 @@ Contribute code or docs to the NEST project
 
     .. grid-item-card:: Contribute code, modules, models
 
-       * Adding neuron or synapses models to NEST? Consider :doc:`NESTML <nestml:index>`:
+       * Adding **neuron or synapses models** to NEST? Consider :doc:`NESTML <nestml:index>`:
          a modeling language supporting neuron and synapse specification, based on the syntax of Python.
-       * Modifying or adding C++ code? See `our developer space <https://nest.github.io/nest-simulator/index.html>`_
-       * For making changes to the PyNEST APIs, see our :ref:`pyapi_template`
-       * Writing an extension module? See :doc:`extmod:index`
+       * Modifying or adding **C++ code**? See `our developer space <https://nest.github.io/nest-simulator/index.html>`_
+       * For making changes to the **PyNEST APIs**, see our :ref:`pyapi_template`
+       * Writing an **extension module**? See :doc:`extmod:index`
 
     .. grid-item-card:: Contribute documentation
 
-       * If you have a ***Python example network** to contribute, please refer to our
-         :ref:`pyexample_template`
        * Review the :ref:`documentation style guide <doc_styleguide>`.
+       * If you have a **Python example network** to contribute, please refer to our
+         :ref:`pyexample_template`
        * For **model** contributions, ensure the documentation meets our criteria. For an example, see the model docs in the
          `header file section 'BeginUserDocs' <https://github.com/nest/nest-simulator/blob/main/models/iaf_psc_alpha.h>`_ for ``iaf_psc_alpha``.
        * Check that documentation renders properly: See the :ref:`build documentation steps <doc_workflow>`.

@@ -2,10 +2,13 @@
 
 This section contains internal documentation for NEST developers. It covers
 architecture decisions, design rationale, coding conventions, and other
-material relevant to contributors working on the NEST source code.
+material relevant to contributors working on the **NEST source code**. The entire
+C++ codebase is rendered with Doxygen (see below).
 
 Please ensure you are familiar with [all the relevant workflows for contributing
 code and documentation](https://nest-simulator.readthedocs.io/en/stable/contribute/index.html#contribute-to-nest).
+
+If you have ideas on improving these docs or if you find errors, please create an issue on GitHub!
 
 ## Contents
 

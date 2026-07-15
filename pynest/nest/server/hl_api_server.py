@@ -562,7 +562,7 @@ def combine(response: list) -> dict | list | None:
         None otherwise, the combined response will be that one actual
         response
        * if the response contains one list per process, the combined
-        response will be those first list
+        response will be those first list concatenated and flattened.
 
     """
 

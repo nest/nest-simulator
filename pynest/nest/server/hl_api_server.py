@@ -28,7 +28,6 @@ import os
 import sys
 import time
 import traceback
-from copy import deepcopy
 
 import flask
 import nest
@@ -665,10 +664,6 @@ def merge_response(response: list):
         return [{"data": {"events": merged}}]
     else:
         return response
-
-
-def _flatten(xss):
-    return [x for xs in xss for x in xs]
 
 
 def _merge_event(event: list):

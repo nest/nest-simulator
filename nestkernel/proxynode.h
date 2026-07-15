@@ -83,6 +83,8 @@ public:
 
   void sends_secondary_event( GapJunctionEvent& ) override;
 
+  void sends_secondary_event( GapJunctionEvent&, const size_t source_port ) override;
+
   /**
    * This function returns the type of signal this node produces.
    *

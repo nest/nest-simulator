@@ -102,6 +102,7 @@ public:
   gap_junction()
     : ConnectionBase()
     , weight_( 1.0 )
+    , source_port_( 0 )
   {
   }
 
@@ -115,12 +116,22 @@ public:
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
+  /**
+   * Secondary-event source port selecting which waveform this connection
+   * receives from the source node. See names::source_port.
+   */
+  size_t
+  get_source_port() const
+  {
+    return source_port_;
+  }
+
   void
   check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
     GapJunctionEvent ge;
 
-    s.sends_secondary_event( ge );
+    s.sends_secondary_event( ge, source_port_ );
     ge.set_sender( s );
     Connection< targetidentifierT >::target_.set_rport( t.handles_test_event( ge, receptor_type ) );
     Connection< targetidentifierT >::target_.set_target( &t );
@@ -158,7 +169,8 @@ public:
   }
 
 private:
-  double weight_;  //!< connection weight
+  double weight_;     //!< connection weight
+  long source_port_;  //!< secondary-event source port (zero-based, default 0)
 };
 
 template < typename targetidentifierT >
@@ -173,6 +185,7 @@ gap_junction< targetidentifierT >::get_status( Dictionary& d ) const
   // this function in SLI/pyNEST
   ConnectionBase::get_status( d );
   d[ names::weight ] = weight_;
+  d[ names::source_port ] = source_port_;
   d[ names::size_of ] = static_cast< long >( sizeof( *this ) );
 }
 
@@ -195,6 +208,17 @@ gap_junction< targetidentifierT >::set_status( const Dictionary& d, ConnectorMod
 
   ConnectionBase::set_status( d, cm );
   d.update_value( names::weight, weight_ );
+
+  // Non-integral values are rejected by update_integer_value; reject negatives
+  // here. Out-of-range values are rejected by the source node when the
+  // connection is checked (see check_connection / sends_secondary_event).
+  long source_port = source_port_;
+  d.update_integer_value( names::source_port, source_port );
+  if ( source_port < 0 )
+  {
+    throw BadProperty( "source_port cannot be negative." );
+  }
+  source_port_ = source_port;
 }
 
 }  // namespace

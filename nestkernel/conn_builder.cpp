@@ -314,6 +314,10 @@ nest::BipartiteConnBuilder::connect()
         }
       }
 
+      // The reverse connection uses the swapped endpoint ports: it sends from
+      // the original target port and arrives at the original source port.
+      swap_source_port_and_receptor_type_();
+
       std::swap( sources_, targets_ );
       connect_();
       std::swap( sources_, targets_ );  // re-establish original state
@@ -574,6 +578,60 @@ nest::BipartiteConnBuilder::set_synapse_params( const Dictionary& syn_defaults,
       else
       {
         param_dicts_[ synapse_indx ][ tid ][ param.first ] = 0.0;
+      }
+    }
+  }
+}
+
+void
+nest::BipartiteConnBuilder::swap_source_port_and_receptor_type_()
+{
+  for ( size_t synapse_indx = 0; synapse_indx < synapse_params_.size(); ++synapse_indx )
+  {
+    ConnParameterMap& params = synapse_params_[ synapse_indx ];
+
+    const auto sp_it = params.find( names::source_port );
+    const auto rt_it = params.find( names::receptor_type );
+    ConnParameter* const source_port_param = ( sp_it != params.end() ) ? sp_it->second : nullptr;
+    ConnParameter* const receptor_type_param = ( rt_it != params.end() ) ? rt_it->second : nullptr;
+
+    // Only relevant for synapse models that use at least one of the two ports.
+    if ( source_port_param == nullptr and receptor_type_param == nullptr )
+    {
+      continue;
+    }
+
+    // Relabel the parameters: the original receptor_type becomes the reverse
+    // source_port and vice versa. A missing parameter defaults to port zero,
+    // which is expressed by leaving that key out (add_connection falls back to
+    // the model default of zero).
+    params.erase( names::source_port );
+    params.erase( names::receptor_type );
+    if ( receptor_type_param != nullptr )
+    {
+      params[ names::source_port ] = receptor_type_param;
+    }
+    if ( source_port_param != nullptr )
+    {
+      params[ names::receptor_type ] = source_port_param;
+    }
+
+    // Rebuild the pass-through dictionaries so their keys match the relabeled
+    // parameters exactly and no stale port value from the forward pass remains.
+    param_dicts_[ synapse_indx ].clear();
+    for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+    {
+      param_dicts_[ synapse_indx ].emplace_back();
+      for ( auto param : synapse_params_[ synapse_indx ] )
+      {
+        if ( param.second->provides_long() )
+        {
+          param_dicts_[ synapse_indx ][ tid ][ param.first ] = 0;
+        }
+        else
+        {
+          param_dicts_[ synapse_indx ][ tid ][ param.first ] = 0.0;
+        }
       }
     }
   }

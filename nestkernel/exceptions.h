@@ -485,6 +485,34 @@ public:
 };
 
 /**
+ * To be thrown if a source port does not exist.
+ * This exception is thrown when a connection requests a `source_port`
+ * that the sending node does not expose as a secondary-event source.
+ * It is the source-side counterpart to UnknownReceptorType.
+ * @ingroup KernelExceptions
+ */
+class UnknownSourcePort : public KernelException
+{
+  std::string
+  compose_msg_( const long source_port ) const
+  {
+    return String::compose( "Source port %1 does not exist.", source_port );
+  }
+
+public:
+  UnknownSourcePort( long source_port )
+    : KernelException( compose_msg_( source_port ) )
+  {
+  }
+
+  std::string
+  exception_name() const override
+  {
+    return "UnknownSourcePort";
+  }
+};
+
+/**
  * To be thrown if a connection is not possible.
  * This exception is e.g. thrown if a connection was attempted with
  * an unsupported Event type.

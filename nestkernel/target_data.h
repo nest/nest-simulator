@@ -118,6 +118,8 @@ class SecondaryTargetDataFields
 private:
   unsigned int recv_buffer_pos_;
   unsigned char syn_id_;
+  //! secondary-event source port; occupies otherwise unused padding, so the field size is unchanged
+  unsigned short source_port_;
 
 public:
   // Members must be set explicitly -- no defaults
@@ -125,6 +127,8 @@ public:
   size_t get_recv_buffer_pos() const;
   void set_syn_id( const synindex syn_id );
   synindex get_syn_id() const;
+  void set_source_port( const size_t source_port );
+  size_t get_source_port() const;
 };
 
 //! check legal size
@@ -154,6 +158,19 @@ inline synindex
 SecondaryTargetDataFields::get_syn_id() const
 {
   return syn_id_;
+}
+
+inline void
+SecondaryTargetDataFields::set_source_port( const size_t source_port )
+{
+  assert( source_port < std::numeric_limits< unsigned short >::max() );
+  source_port_ = source_port;
+}
+
+inline size_t
+SecondaryTargetDataFields::get_source_port() const
+{
+  return source_port_;
 }
 
 enum enum_status_target_data_id

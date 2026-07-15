@@ -229,21 +229,22 @@ nest::SourceTable::remove_disabled_sources( const size_t tid, const synindex syn
 
 void
 nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const size_t tid,
-  std::map< size_t, size_t >& buffer_pos_of_source_node_id_syn_id )
+  std::map< SecondarySourceId, size_t >& buffer_pos_of_secondary_source )
 {
-  // set of unique sources & synapse types, required to determine
-  // secondary events MPI buffer positions
-  // initialized and deleted by thread 0 in this method
-  static std::set< std::pair< size_t, size_t > >* unique_secondary_source_node_id_syn_id;
+  // set of unique secondary sources, required to determine secondary-event
+  // MPI buffer positions; keyed by (source node ID, synapse-type ID, source
+  // port). Initialized and deleted by thread 0 in this method.
+  static std::set< SecondarySourceId >* unique_secondary_source_id;
 #pragma omp single
   {
-    unique_secondary_source_node_id_syn_id = new std::set< std::pair< size_t, size_t > >();
+    unique_secondary_source_id = new std::set< SecondarySourceId >();
   }
 
-  // collect all unique pairs of source node ID and synapse-type id
+  // collect all unique (source node ID, synapse-type ID, source port) triples
   // corresponding to continuous-data connections on this MPI rank;
   // using a set makes sure secondary events are not duplicated for
-  // targets on the same process, but different threads
+  // targets on the same process, but different threads. Distinct source ports
+  // of one node are distinct sources, so each obtains its own buffer slot.
   for ( size_t syn_id = 0; syn_id < sources_[ tid ].size(); ++syn_id )
   {
     const ConnectorModel& conn_model = kernel().model_manager.get_connection_model( syn_id, tid );
@@ -251,13 +252,14 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const size_t
 
     if ( not is_primary )
     {
-      for ( BlockVector< Source >::const_iterator source_cit = sources_[ tid ][ syn_id ].begin();
-        source_cit != sources_[ tid ][ syn_id ].end();
-        ++source_cit )
+      const size_t num_connections = sources_[ tid ][ syn_id ].size();
+      for ( size_t lcid = 0; lcid < num_connections; ++lcid )
       {
+        const size_t source_node_id = sources_[ tid ][ syn_id ][ lcid ].get_node_id();
+        const size_t source_port = kernel().connection_manager.get_source_port( tid, syn_id, lcid );
 #pragma omp critical
         {
-          ( *unique_secondary_source_node_id_syn_id ).insert( std::make_pair( source_cit->get_node_id(), syn_id ) );
+          ( *unique_secondary_source_id ).insert( SecondarySourceId { source_node_id, syn_id, source_port } );
         }
       }
     }
@@ -268,21 +270,19 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const size_t
 
 #pragma omp single
   {
-    // compute receive buffer positions for all unique pairs of source
-    // node ID and synapse-type id on this MPI rank
+    // compute receive buffer positions for all unique secondary sources on
+    // this MPI rank
     std::vector< int > recv_counts_secondary_events_in_int_per_rank( kernel().mpi_manager.get_num_processes(), 0 );
 
-    for ( std::set< std::pair< size_t, size_t > >::const_iterator cit =
-            ( *unique_secondary_source_node_id_syn_id ).begin();
-      cit != ( *unique_secondary_source_node_id_syn_id ).end();
-      ++cit )
+    for ( const auto& secondary_source_id : *unique_secondary_source_id )
     {
-      const size_t source_rank = kernel().mpi_manager.get_process_id_of_node_id( cit->first );
-      const size_t event_size = kernel().model_manager.get_secondary_event_prototype( cit->second, tid )->size();
+      const size_t source_node_id = std::get< 0 >( secondary_source_id );
+      const synindex syn_id = std::get< 1 >( secondary_source_id );
+      const size_t source_rank = kernel().mpi_manager.get_process_id_of_node_id( source_node_id );
+      const size_t event_size = kernel().model_manager.get_secondary_event_prototype( syn_id, tid )->size();
 
-      buffer_pos_of_source_node_id_syn_id.insert(
-        std::make_pair( pack_source_node_id_and_syn_id( cit->first, cit->second ),
-          recv_counts_secondary_events_in_int_per_rank[ source_rank ] ) );
+      buffer_pos_of_secondary_source.insert(
+        std::make_pair( secondary_source_id, recv_counts_secondary_events_in_int_per_rank[ source_rank ] ) );
 
       recv_counts_secondary_events_in_int_per_rank[ source_rank ] += event_size;
     }
@@ -296,7 +296,7 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const size_t
 
     kernel().mpi_manager.set_recv_counts_secondary_events_in_int_per_rank(
       recv_counts_secondary_events_in_int_per_rank );
-    delete unique_secondary_source_node_id_syn_id;
+    delete unique_secondary_source_id;
   }  // of omp single
 }
 
@@ -329,8 +329,16 @@ nest::SourceTable::next_entry_has_same_source_( const SourceTablePosition& curre
   const auto& local_sources = sources_[ current_position.tid ][ current_position.syn_id ];
   const size_t next_lcid = current_position.lcid + 1;
 
-  return (
-    next_lcid < local_sources.size() and local_sources[ next_lcid ].get_node_id() == current_source.get_node_id() );
+  if ( next_lcid >= local_sources.size() or local_sources[ next_lcid ].get_node_id() != current_source.get_node_id() )
+  {
+    return false;
+  }
+
+  // For secondary connections a source is identified by (node, source port),
+  // so a differing source port breaks the group even for the same node. This
+  // keeps waveforms of distinct source ports in separate delivery groups.
+  // Primary connections always use port zero, so this is a no-op for them.
+  return current_source.is_primary() or same_source_port_( current_position, next_lcid );
 }
 
 bool
@@ -343,8 +351,23 @@ nest::SourceTable::previous_entry_has_same_source_( const SourceTablePosition& c
   const long previous_lcid = current_position.lcid - 1;  // needs to be a signed type such that negative
                                                          // values can signal invalid indices
 
-  return ( previous_lcid >= 0 and not local_sources[ previous_lcid ].is_processed()
-    and local_sources[ previous_lcid ].get_node_id() == current_source.get_node_id() );
+  if ( previous_lcid < 0 or local_sources[ previous_lcid ].is_processed()
+    or local_sources[ previous_lcid ].get_node_id() != current_source.get_node_id() )
+  {
+    return false;
+  }
+
+  // See next_entry_has_same_source_: distinct source ports are distinct
+  // secondary sources and must each be communicated once.
+  return current_source.is_primary() or same_source_port_( current_position, previous_lcid );
+}
+
+bool
+nest::SourceTable::same_source_port_( const SourceTablePosition& current_position, const size_t other_lcid ) const
+{
+  return kernel().connection_manager.get_source_port(
+           current_position.tid, current_position.syn_id, current_position.lcid )
+    == kernel().connection_manager.get_source_port( current_position.tid, current_position.syn_id, other_lcid );
 }
 
 bool
@@ -387,6 +410,8 @@ nest::SourceTable::populate_target_data_fields_( const SourceTablePosition& curr
     SecondaryTargetDataFields& secondary_fields = next_target_data.secondary_data;
     secondary_fields.set_recv_buffer_pos( relative_recv_buffer_pos );
     secondary_fields.set_syn_id( current_position.syn_id );
+    secondary_fields.set_source_port( kernel().connection_manager.get_source_port(
+      current_position.tid, current_position.syn_id, current_position.lcid ) );
   }
 
   return true;
@@ -476,19 +501,35 @@ nest::SourceTable::collect_compressible_sources( const size_t tid )
 {
   for ( synindex syn_id = 0; syn_id < sources_[ tid ].size(); ++syn_id )
   {
+    const ConnectorModel& conn_model = kernel().model_manager.get_connection_model( syn_id, tid );
+    const bool is_primary = conn_model.has_property( ConnectionModelProperties::IS_PRIMARY );
+
+    // For secondary connections a source is identified by (node, source port),
+    // packed into the compression key so distinct ports of one node stay
+    // separate sources. Primary connections use the node ID directly (port
+    // zero packs to the node ID), so their keys and behavior are unchanged.
+    auto compression_key = [ & ]( const size_t lcid ) -> size_t
+    {
+      const size_t node_id = sources_[ tid ][ syn_id ][ lcid ].get_node_id();
+      if ( is_primary )
+      {
+        return node_id;
+      }
+      return pack_source_node_id_and_source_port(
+        node_id, kernel().connection_manager.get_source_port( tid, syn_id, lcid ) );
+    };
+
     size_t lcid = 0;
     auto& syn_sources = sources_[ tid ][ syn_id ];
     while ( lcid < syn_sources.size() )
     {
-      const size_t old_source_node_id = syn_sources[ lcid ].get_node_id();
-      const std::pair< size_t, SpikeData > source_node_id_to_spike_data =
-        std::make_pair( old_source_node_id, SpikeData( tid, syn_id, lcid, 0 ) );
-      compressible_sources_[ tid ][ syn_id ].insert( source_node_id_to_spike_data );
+      const size_t old_key = compression_key( lcid );
+      compressible_sources_[ tid ][ syn_id ].insert( std::make_pair( old_key, SpikeData( tid, syn_id, lcid, 0 ) ) );
 
       // For all subsequent connections with same source, set "has more targets" on preceding connection.
       // Requires sorted connections.
       ++lcid;
-      while ( ( lcid < syn_sources.size() ) and ( syn_sources[ lcid ].get_node_id() == old_source_node_id ) )
+      while ( ( lcid < syn_sources.size() ) and ( compression_key( lcid ) == old_key ) )
       {
         kernel().connection_manager.set_source_has_more_targets( tid, syn_id, lcid - 1, true );
         ++lcid;

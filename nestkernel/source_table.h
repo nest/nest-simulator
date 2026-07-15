@@ -29,6 +29,7 @@
 #include <iostream>
 #include <map>
 #include <set>
+#include <tuple>
 #include <vector>
 
 // Includes from nestkernel:
@@ -47,6 +48,17 @@ namespace nest
 {
 
 class TargetData;
+
+/**
+ * Identity of a unique secondary-event source as seen by the receive side.
+ *
+ * A secondary source is unique per (source node ID, synapse-model ID, source
+ * port). All target connections sharing this triple read the same waveform
+ * from one receive-buffer slot. The port distinguishes the several waveforms a
+ * single node may emit through one synapse model; port zero is the
+ * backward-compatible default used by all single-port models.
+ */
+using SecondarySourceId = std::tuple< size_t /* node ID */, synindex /* syn_id */, size_t /* source port */ >;
 
 /**
  * Entry of compressed_spike_data_map_.
@@ -160,6 +172,13 @@ private:
    */
   bool previous_entry_has_same_source_( const SourceTablePosition& current_position,
     const Source& current_source ) const;
+
+  /**
+   * Returns true if the connection at current_position and the one at
+   * other_lcid (same thread and synapse type) share the same secondary-event
+   * source port.
+   */
+  bool same_source_port_( const SourceTablePosition& current_position, const size_t other_lcid ) const;
 
   /**
    * Fills the fields of a TargetData during construction of *
@@ -293,7 +312,7 @@ public:
    * connections.
    */
   void compute_buffer_pos_for_unique_secondary_sources( const size_t tid,
-    std::map< size_t, size_t >& buffer_pos_of_source_node_id_syn_id_ );
+    std::map< SecondarySourceId, size_t >& buffer_pos_of_secondary_source );
 
   /**
    * Finds the first non-disabled entry in sources_ at the given thread id and synapse type that has sender equal to
@@ -340,10 +359,18 @@ public:
   void resize_sources();
 
   /**
-   * Encodes combination of node ID and synapse types as single
-   * long number.
+   * Encodes a (source node ID, source port) pair as a single number for use as
+   * a compressed-spike-data map key. The source port occupies the high bits, so
+   * port zero (all single-port connections, including every primary connection)
+   * yields exactly the node ID and leaves existing behavior unchanged.
    */
-  size_t pack_source_node_id_and_syn_id( const size_t source_node_id, const synindex syn_id ) const;
+  size_t pack_source_node_id_and_source_port( const size_t source_node_id, const size_t source_port ) const;
+
+  //! Extracts the source node ID from a value packed by pack_source_node_id_and_source_port.
+  size_t unpack_source_node_id( const size_t packed ) const;
+
+  //! Extracts the source port from a value packed by pack_source_node_id_and_source_port.
+  size_t unpack_source_port( const size_t packed ) const;
 
   void resize_compressible_sources();
 
@@ -513,13 +540,26 @@ SourceTable::num_unique_sources( const size_t tid, const synindex syn_id ) const
 }
 
 inline size_t
-SourceTable::pack_source_node_id_and_syn_id( const size_t source_node_id, const synindex syn_id ) const
+SourceTable::pack_source_node_id_and_source_port( const size_t source_node_id, const size_t source_port ) const
 {
-  assert( source_node_id < 72057594037927936 );
-  assert( syn_id < invalid_synindex );
-  // syn_id is maximally 256, so shifting node ID by 8 bits and storing
-  // syn_id in the lowest 8 leads to a unique number
-  return ( source_node_id << 8 ) + syn_id;
+  assert( source_node_id < 72057594037927936 );  // 2^56, must fit in the low 56 bits
+  assert( source_port < 256 );                   // source port must fit in the high 8 bits
+  // Store the source port in the top 8 bits and the node ID in the low 56 bits.
+  // Port zero therefore yields exactly the node ID, keeping single-port and all
+  // primary connections at their historical keys.
+  return ( source_port << 56 ) + source_node_id;
+}
+
+inline size_t
+SourceTable::unpack_source_node_id( const size_t packed ) const
+{
+  return packed & 72057594037927935;  // 2^56 - 1
+}
+
+inline size_t
+SourceTable::unpack_source_port( const size_t packed ) const
+{
+  return packed >> 56;
 }
 
 inline void

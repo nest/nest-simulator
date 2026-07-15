@@ -29,8 +29,8 @@ simulated in ``brunel_delta_nest.py``. We refer to this spiking network of LIF
 neurons with 'SLIFN'.
 
 The self-consistent equation for the population-averaged firing rates
-(eq.27 in [1]_, [2]_) is solved by integrating a pseudo-time dynamics
-(eq.30 in [1]_). The latter constitutes a network of rate neurons, which is
+(eq.27 in :footcite:p:`Hahne2017`, :footcite:p:`Schuecker2017`) is solved by integrating a pseudo-time dynamics
+(eq.30 in :footcite:p:`Hahne2017`). The latter constitutes a network of rate neurons, which is
 simulated here. The asymptotic rates, i.e., the fixed points of the
 dynamics (eq.30), are the prediction for the population and
 time-averaged from the spiking simulation.
@@ -38,17 +38,7 @@ time-averaged from the spiking simulation.
 References
 ~~~~~~~~~~
 
-.. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M,
-       Helias M and Diesmann M. (2017).  Integration of continuous-time
-       dynamics in a spiking neural network simulator. Front. Neuroinform.
-       11:34. doi: 10.3389/fninf.2017.00034
-
-.. [2] Schuecker J, Schmidt M, van Albada SJ, Diesmann M.
-       and Helias, M. (2017). Fundamental activity constraints lead
-       to specific interpretations of the connectome.
-       PLOS Computational Biology 13(2): e1005179.
-       https://doi.org/10.1371/journal.pcbi.1005179
-
+.. footbibliography::
 """
 
 import nest

@@ -24,7 +24,7 @@
 function( get_host_triple out out_arch out_vendor out_os )
   # Get the architecture.
   set( arch "${CMAKE_HOST_SYSTEM_PROCESSOR}" )
-  # i686 is an enhanced version of x86 
+  # i686 is an enhanced version of x86
   if ( arch STREQUAL "x86" )
     set( arch "i686" )
   endif ()
@@ -58,7 +58,7 @@ endfunction ()
 function( get_target_triple out out_arch out_vendor out_os )
   # Get the architecture.
   set( arch "${CMAKE_SYSTEM_PROCESSOR}" )
-  # i686 is an enhanced version of x86 
+  # i686 is an enhanced version of x86
   if ( arch STREQUAL "x86" )
     set( arch "i686" )
   endif ()

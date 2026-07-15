@@ -60,13 +60,13 @@ public:
 
 
   void
-  get_status( DictionaryDatum& d ) const
+  get_status( Dictionary& d ) const
   {
     // Do nothing if called on synapse prototype
     if ( target_ )
     {
-      def< long >( d, names::rport, rport_ );
-      def< long >( d, names::target, target_->get_node_id() );
+      d[ names::rport ] = static_cast< long >( rport_ );
+      d[ names::target ] = static_cast< long >( target_->get_node_id() );
     }
   }
 
@@ -95,8 +95,8 @@ public:
   }
 
 private:
-  Node* target_; //!< Target node
-  size_t rport_; //!< Receiver port at the target node
+  Node* target_;  //!< Target node
+  size_t rport_;  //!< Receiver port at the target node
 };
 
 
@@ -118,19 +118,17 @@ public:
   {
   }
 
-
   TargetIdentifierIndex( const TargetIdentifierIndex& t ) = default;
   TargetIdentifierIndex& operator=( const TargetIdentifierIndex& t ) = default;
 
-
   void
-  get_status( DictionaryDatum& d ) const
+  get_status( Dictionary& d ) const
   {
     // Do nothing if called on synapse prototype
     if ( target_ != invalid_targetindex )
     {
-      def< long >( d, names::rport, 0 );
-      def< long >( d, names::target, target_ );
+      d[ names::rport ] = 0;
+      d[ names::target ] = target_;
     }
   }
 
@@ -162,13 +160,13 @@ public:
   }
 
 private:
-  targetindex target_; //!< Target node
+  targetindex target_;  //!< Target node
 };
 
 inline void
 TargetIdentifierIndex::set_target( Node* target )
 {
-  kernel().node_manager.ensure_valid_thread_local_ids();
+  assert( kernel().node_manager.thread_local_data_is_up_to_date() );
 
   size_t target_lid = target->get_thread_lid();
   if ( target_lid > max_targetindex )
@@ -182,7 +180,7 @@ TargetIdentifierIndex::set_target( Node* target )
 }
 
 
-} // namespace nest
+}  // namespace nest
 
 
 #endif

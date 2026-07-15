@@ -32,9 +32,6 @@
 #include "connector_model.h"
 #include "event.h"
 
-// Includes from sli:
-#include "dictdatum.h"
-#include "dictutils.h"
 
 namespace nest
 {
@@ -72,7 +69,8 @@ and
    F_-(t) &= \exp((t - t_j^(k))/\tau_-)
 
 This makes it possible to implement update rules which approximate the
-rule stated in [1]_, and for examples, the rules given in [2]_ and [3]_.
+rule stated in :footcite:p:`Nessler2013`, and for examples, the rules given in :footcite:p:`Legenstein2016` and
+:footcite:p:`Jonke2017`.
 
 .. warning::
 
@@ -105,14 +103,12 @@ SpikeEvent
 References
 ++++++++++
 
-.. [1] Nessler, Bernhard, et al. "Bayesian computation emerges in generic
-       cortical microcircuits through spike-timing-dependent plasticity." PLoS
-       computational biology 9.4 (2013): e1003037.
-.. [2] Legenstein, Robert, et al. "Assembly pointers for variable binding in
-       networks of spiking neurons." arXiv preprint arXiv:1611.03698 (2016).
-.. [3] Jonke, Zeno, et al. "Feedback inhibition shapes emergent computational
-       properties of cortical microcircuit motifs." arXiv preprint
-       arXiv:1705.07614 (2017).
+Note that the original citation for Mueller et al. 2020 referred to the preprint v1 on ArXiv:
+`Legenstein, Papadimitriou, Vempala and Maass. 2016. Assembly pointers for variable binding in networks of
+spiking neuron. ArXiv.`
+
+
+.. footbibliography::
 
 See also
 ++++++++
@@ -143,12 +139,12 @@ public:
   /**
    * Get all properties and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
   /**
    * Set properties from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   double alpha_;
   double beta_;
@@ -158,7 +154,6 @@ public:
   double tau_plus_;
   double Wmax_;
 };
-
 
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
@@ -202,12 +197,12 @@ public:
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   /**
    * Send an event to the receiver of this connection.
@@ -363,28 +358,29 @@ jonke_synapse< targetidentifierT >::jonke_synapse()
 
 template < typename targetidentifierT >
 void
-jonke_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
+jonke_synapse< targetidentifierT >::get_status( Dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
-  def< double >( d, names::Kplus, Kplus_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::weight ] = weight_;
+  d[ names::Kplus ] = Kplus_;
+  d[ names::size_of ] = static_cast< long >( sizeof( *this ) );
 }
 
 template < typename targetidentifierT >
 void
-jonke_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+jonke_synapse< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
-  updateValue< double >( d, names::Kplus, Kplus_ );
 
+  d.update_value( names::weight, weight_ );
+
+  d.update_value( names::Kplus, Kplus_ );
   if ( Kplus_ < 0 )
   {
     throw BadProperty( "Kplus must be non-negative." );
   }
 }
 
-} // of namespace nest
+}  // of namespace nest
 
-#endif // of #ifndef JONKE_SYNAPSE_H
+#endif  // of #ifndef JONKE_SYNAPSE_H

@@ -25,7 +25,7 @@
 #ifdef HAVE_GSL
 
 // C++ includes:
-#include <cmath> // in case we need isnan() // fabs
+#include <cmath>  // in case we need isnan() // fabs
 #include <cstdio>
 #include <string>
 
@@ -39,9 +39,6 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
 
 struct my_params
 {
@@ -89,13 +86,13 @@ RecordablesMap< siegert_neuron >::create()
  * ---------------------------------------------------------------- */
 
 nest::siegert_neuron::Parameters_::Parameters_()
-  : tau_( 1.0 )     // ms
-  , tau_m_( 5.0 )   // ms
-  , tau_syn_( 0.0 ) // ms
-  , t_ref_( 2.0 )   // ms
-  , mean_( 0.0 )    // 1/ms
-  , theta_( 15.0 )  // mV, rel to E_L_
-  , V_reset_( 0.0 ) // mV, rel to E_L_
+  : tau_( 1.0 )      // ms
+  , tau_m_( 5.0 )    // ms
+  , tau_syn_( 0.0 )  // ms
+  , t_ref_( 2.0 )    // ms
+  , mean_( 0.0 )     // 1/ms
+  , theta_( 15.0 )   // mV, rel to E_L_
+  , V_reset_( 0.0 )  // mV, rel to E_L_
 {
 }
 
@@ -110,27 +107,27 @@ nest::siegert_neuron::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::siegert_neuron::Parameters_::get( DictionaryDatum& d ) const
+nest::siegert_neuron::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::mean, mean_ );
-  def< double >( d, names::theta, theta_ );
-  def< double >( d, names::V_reset, V_reset_ );
-  def< double >( d, names::tau, tau_ );
-  def< double >( d, names::tau_m, tau_m_ );
-  def< double >( d, names::tau_syn, tau_syn_ );
-  def< double >( d, names::t_ref, t_ref_ );
+  d[ names::mean ] = mean_;
+  d[ names::theta ] = theta_;
+  d[ names::V_reset ] = V_reset_;
+  d[ names::tau ] = tau_;
+  d[ names::tau_m ] = tau_m_;
+  d[ names::tau_syn ] = tau_syn_;
+  d[ names::t_ref ] = t_ref_;
 }
 
 void
-nest::siegert_neuron::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::siegert_neuron::Parameters_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::mean, mean_, node );
-  updateValueParam< double >( d, names::theta, theta_, node );
-  updateValueParam< double >( d, names::V_reset, V_reset_, node );
-  updateValueParam< double >( d, names::tau, tau_, node );
-  updateValueParam< double >( d, names::tau_m, tau_m_, node );
-  updateValueParam< double >( d, names::tau_syn, tau_syn_, node );
-  updateValueParam< double >( d, names::t_ref, t_ref_, node );
+  update_value_param( d, names::mean, mean_, node );
+  update_value_param( d, names::theta, theta_, node );
+  update_value_param( d, names::V_reset, V_reset_, node );
+  update_value_param( d, names::tau, tau_, node );
+  update_value_param( d, names::tau_m, tau_m_, node );
+  update_value_param( d, names::tau_syn, tau_syn_, node );
+  update_value_param( d, names::t_ref, t_ref_, node );
 
   if ( V_reset_ >= theta_ )
   {
@@ -159,15 +156,15 @@ nest::siegert_neuron::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-nest::siegert_neuron::State_::get( DictionaryDatum& d ) const
+nest::siegert_neuron::State_::get( Dictionary& d ) const
 {
-  def< double >( d, names::rate, r_ ); // Rate
+  d[ names::rate ] = r_;  // Rate
 }
 
 void
-nest::siegert_neuron::State_::set( const DictionaryDatum& d, Node* node )
+nest::siegert_neuron::State_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::rate, r_, node ); // Rate
+  update_value_param( d, names::rate, r_, node );  // Rate
 }
 
 nest::siegert_neuron::Buffers_::Buffers_( siegert_neuron& n )
@@ -289,14 +286,14 @@ nest::siegert_neuron::init_buffers_()
   B_.diffusion_input_.resize( buffer_size, 0.0 );
   B_.last_y_values.resize( buffer_size, 0.0 );
 
-  B_.logger_.reset(); // includes resize
+  B_.logger_.reset();  // includes resize
   ArchivingNode::clear_history();
 }
 
 void
 nest::siegert_neuron::pre_run_hook()
 {
-  B_.logger_.init(); // ensures initialization in case mm connected after Simulate
+  B_.logger_.init();  // ensures initialization in case mm connected after Simulate
 
   const double h = Time::get_resolution().get_ms();
 
@@ -333,7 +330,7 @@ nest::siegert_neuron::update_( Time const& origin, const long from, const long t
       // rate logging
       B_.logger_.record_data( origin.get_steps() + lag );
     }
-    else // check convergence of waveform relaxation
+    else  // check convergence of waveform relaxation
     {
       // check if deviation from last iteration exceeds wfr_tol
       wfr_tol_exceeded = wfr_tol_exceeded or fabs( S_.r_ - B_.last_y_values[ lag ] ) > wfr_tol;
@@ -390,6 +387,6 @@ nest::siegert_neuron::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-} // namespace
+}  // namespace
 
-#endif // HAVE_GSL
+#endif  // HAVE_GSL

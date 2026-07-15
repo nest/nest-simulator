@@ -32,9 +32,6 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -66,14 +63,14 @@ RecordablesMap< iaf_chs_2007 >::create()
  * ---------------------------------------------------------------- */
 
 nest::iaf_chs_2007::Parameters_::Parameters_()
-  : tau_epsp_( 8.5 )   // in ms
-  , tau_reset_( 15.4 ) // in ms
-  , E_L_( 0.0 )        // normalized
-  , U_th_( 1.0 )       // normalized
-  , U_epsp_( 0.77 )    // normalized
-  , U_reset_( 2.31 )   // normalized
-  , C_( 1.0 )          // Should not be modified
-  , U_noise_( 0.0 )    // normalized
+  : tau_epsp_( 8.5 )    // in ms
+  , tau_reset_( 15.4 )  // in ms
+  , E_L_( 0.0 )         // normalized
+  , U_th_( 1.0 )        // normalized
+  , U_epsp_( 0.77 )     // normalized
+  , U_reset_( 2.31 )    // normalized
+  , C_( 1.0 )           // Should not be modified
+  , U_noise_( 0.0 )     // normalized
   , noise_()
 
 {
@@ -93,26 +90,26 @@ nest::iaf_chs_2007::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_chs_2007::Parameters_::get( DictionaryDatum& d ) const
+nest::iaf_chs_2007::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::V_reset, U_reset_ );
-  def< double >( d, names::V_epsp, U_epsp_ );
-  def< double >( d, names::tau_epsp, tau_epsp_ );
-  def< double >( d, names::tau_reset, tau_reset_ );
-  def< double >( d, names::V_noise, U_noise_ );
-  ( *d )[ names::noise ] = DoubleVectorDatum( new std::vector< double >( noise_ ) );
+  d[ names::V_reset ] = U_reset_;
+  d[ names::V_epsp ] = U_epsp_;
+  d[ names::tau_epsp ] = tau_epsp_;
+  d[ names::tau_reset ] = tau_reset_;
+  d[ names::V_noise ] = U_noise_;
+  d[ names::noise ] = noise_;
 }
 
 void
-nest::iaf_chs_2007::Parameters_::set( const DictionaryDatum& d, State_& s, Node* node )
+nest::iaf_chs_2007::Parameters_::set( const Dictionary& d, State_& s, Node* node )
 {
-  updateValueParam< double >( d, names::V_reset, U_reset_, node );
-  updateValueParam< double >( d, names::V_epsp, U_epsp_, node );
-  updateValueParam< double >( d, names::tau_epsp, tau_epsp_, node );
-  updateValueParam< double >( d, names::tau_reset, tau_reset_, node );
-  updateValueParam< double >( d, names::V_noise, U_noise_, node );
+  update_value_param( d, names::V_reset, U_reset_, node );
+  update_value_param( d, names::V_epsp, U_epsp_, node );
+  update_value_param( d, names::tau_epsp, tau_epsp_, node );
+  update_value_param( d, names::tau_reset, tau_reset_, node );
+  update_value_param( d, names::V_noise, U_noise_, node );
 
-  const bool updated_noise = updateValue< std::vector< double > >( d, names::noise, noise_ );
+  const bool updated_noise = d.update_value( names::noise, noise_ );
   if ( updated_noise )
   {
     s.position_ = 0;
@@ -129,7 +126,7 @@ nest::iaf_chs_2007::Parameters_::set( const DictionaryDatum& d, State_& s, Node*
     throw BadProperty( "EPSP cannot be negative." );
   }
 
-  if ( U_reset_ < 0 ) // sign switched above
+  if ( U_reset_ < 0 )  // sign switched above
   {
     throw BadProperty( "Reset potential cannot be negative." );
   }
@@ -140,15 +137,15 @@ nest::iaf_chs_2007::Parameters_::set( const DictionaryDatum& d, State_& s, Node*
 }
 
 void
-nest::iaf_chs_2007::State_::get( DictionaryDatum& d ) const
+nest::iaf_chs_2007::State_::get( Dictionary& d ) const
 {
-  def< double >( d, names::V_m, V_m_ ); // Membrane potential
+  d[ names::V_m ] = V_m_;  // Membrane potential
 }
 
 void
-nest::iaf_chs_2007::State_::set( DictionaryDatum const& d, Node* node )
+nest::iaf_chs_2007::State_::set( Dictionary const& d, Node* node )
 {
-  updateValueParam< double >( d, names::V_m, V_m_, node );
+  update_value_param( d, names::V_m, V_m_, node );
 }
 
 nest::iaf_chs_2007::Buffers_::Buffers_( iaf_chs_2007& n )
@@ -189,8 +186,8 @@ nest::iaf_chs_2007::iaf_chs_2007( const iaf_chs_2007& n )
 void
 nest::iaf_chs_2007::init_buffers_()
 {
-  B_.spikes_ex_.clear(); // includes resize
-  B_.currents_.clear();  // includes resize
+  B_.spikes_ex_.clear();  // includes resize
+  B_.currents_.clear();   // includes resize
   B_.logger_.reset();
   ArchivingNode::clear_history();
 }
@@ -244,7 +241,7 @@ nest::iaf_chs_2007::update( const Time& origin, const long from, const long to )
     S_.V_m_ = S_.V_syn_ + S_.V_spike_ + noise_term;
 
 
-    if ( S_.V_m_ >= P_.U_th_ ) // threshold crossing
+    if ( S_.V_m_ >= P_.U_th_ )  // threshold crossing
     {
       S_.V_spike_ -= P_.U_reset_;
       S_.V_m_ -= P_.U_reset_;

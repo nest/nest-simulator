@@ -23,14 +23,12 @@
 Functions for node handling
 """
 
-import warnings
-
 import nest
+import numpy as np
 
-from .. import pynestkernel as kernel
-from ..ll_api import check_stack, sli_func, spp, sps, sr
-from .hl_api_helper import is_iterable, model_deprecation_warning
-from .hl_api_info import SetStatus
+from .. import nestkernel_api as nestkernel
+from .hl_api_helper import deprecated, is_iterable, model_deprecation_warning
+from .hl_api_parallel_computing import NumProcesses, Rank
 from .hl_api_types import NodeCollection, Parameter
 
 __all__ = [
@@ -41,7 +39,6 @@ __all__ = [
 ]
 
 
-@check_stack
 def Create(model, n=1, params=None, positions=None):
     """Create one or more nodes.
 
@@ -51,6 +48,9 @@ def Create(model, n=1, params=None, positions=None):
 
     Note
     ----
+    If `Create()` is called with two arguments and the second argument (`n`) is a dictionary,
+    this dictionary will be intepreted as `params` for backward compatibility.
+
     During network construction, create all nodes representing model neurons first, then all nodes
     representing devices (generators, recorders, or detectors), or all devices first and then all neurons.
     Otherwise, network connection can be slow, especially in parallel simulations of networks
@@ -91,12 +91,25 @@ def Create(model, n=1, params=None, positions=None):
 
     model_deprecation_warning(model)
 
-    # If any of the elements in the parameter dictionary is either an array-like object,
-    # or a NEST parameter, we create the nodes first, then set the given values. If not,
-    # we can pass the parameter specification to SLI when the nodes are created.
-    iterable_or_parameter_in_params = True
-    if isinstance(params, dict) and params:  # if params is a dict and not empty
-        iterable_or_parameter_in_params = any(is_iterable(v) or isinstance(v, Parameter) for k, v in params.items())
+    if isinstance(n, dict):
+        if not (params is None and positions is None):
+            raise ValueError(
+                "A parameter dictionary can be passed as second argument only of Create() is called with two arguments."
+            )
+        params = n
+        n = 1
+
+    if int(n) != n:
+        raise TypeError("n must have an integer value")
+    n = int(n)
+
+    if isinstance(params, (list, tuple)) and len(params) != n:
+        raise TypeError("list of params must have one dictionary per node")
+
+    if params is not None and not (
+        isinstance(params, dict) or (isinstance(params, (list, tuple)) and all(isinstance(e, dict) for e in params))
+    ):
+        raise TypeError("params must be either a dict of parameters or a list or tuple of dicts")
 
     if positions is not None:
         # Explicitly retrieve lazy loaded spatial property from the module class.
@@ -115,54 +128,30 @@ def Create(model, n=1, params=None, positions=None):
         else:
             # If positions is not a free object, it must be a grid object.
             if n > 1:
-                raise kernel.NESTError("Cannot specify number of nodes with grid positions")
+                raise ValueError("Cannot specify number of nodes with grid positions")
             layer_specs["shape"] = positions.shape
             if positions.center is not None:
-                layer_specs["center"] = positions.center
+                layer_specs["center"] = [float(v) for v in positions.center]
         if positions.extent is not None:
-            layer_specs["extent"] = positions.extent
+            layer_specs["extent"] = [float(v) for v in positions.extent]
 
-        if not iterable_or_parameter_in_params:
-            if params is None:
-                # For compatibility with SLI.
-                params = {}
-            node_ids = sli_func("CreateLayerParams", layer_specs, params)
-        else:
-            # If node params contains iterable of Parameter, set after nodes are created. Empty dictionary
-            # needed for SLI
-            node_ids = sli_func("CreateLayerParams", layer_specs, {})
-    else:
-        # Nodes without positions
-        if not iterable_or_parameter_in_params:
-            cmd = "/%s 3 1 roll exch Create" % model
-            sps(params)
-        else:
-            cmd = "/%s exch Create" % model
+        layer = nestkernel.llapi_create_spatial(layer_specs)
+        layer.set(params if params else {})
+        return layer
 
-        sps(n)
-        sr(cmd)
+    node_ids = nestkernel.llapi_create(model, n)
 
-        node_ids = spp()
-
-    if params is not None and iterable_or_parameter_in_params:
-        try:
-            SetStatus(node_ids, params)
-        except Exception:
-            warnings.warn(
-                "SetStatus() call failed, but nodes have already been "
-                + "created! The node IDs of the new nodes are: {0}.".format(node_ids)
-            )
-            raise
+    if (isinstance(params, dict) and params) or isinstance(params, (list, tuple)):
+        # if params is a non-empty dict or a list of dicts
+        node_ids.set(params)
 
     return node_ids
 
 
-@check_stack
 def PrintNodes():
     """Print the `node ID` ranges and `model names` of all the nodes in the network."""
 
-    sr("PrintNodesToStream")
-    print(spp())
+    print(nestkernel.llapi_print_nodes())
 
 
 def GetNodes(properties={}, local_only=False):
@@ -189,15 +178,30 @@ def GetNodes(properties={}, local_only=False):
         `NodeCollection` of nodes
     """
 
-    return sli_func("GetNodes", properties, local_only)
+    return nestkernel.llapi_get_nodes(properties, local_only)
 
 
-@check_stack
+@deprecated("", "GetLocalNodeCollection() leads to inherently unsafe code; see documentation for details.")
 def GetLocalNodeCollection(nc):
     """Get local nodes of a `NodeCollection` as a new `NodeCollection`.
 
     This function returns the local nodes of a `NodeCollection`. If there are no
     local elements, an empty `NodeCollection` is returned.
+
+    Note
+    ----
+    You should not use this function except in very special circumstances, e.g.,
+    in when writing tests. The main reason to avoid `GetLocalNodeCollection()` is
+    that it is very difficult to get code correct that does different things on
+    different MPI ranks. Remember that a NEST simulation should always return the
+    same results if run with the same number of virtual processes, independent of
+    how these VPs are distrbuted across MPI ranks.
+
+    Quite likely, you can do what you want using NEST's parallel features, e.g.,
+    initializing neurons or synapses. If you see a need for a feature that needs
+    to do rank-specific things, please consider to add it to NEST!
+
+    Since this function should not be used, it's implementation is not efficient.
 
     Parameters
     ----------
@@ -212,6 +216,4 @@ def GetLocalNodeCollection(nc):
     if not isinstance(nc, NodeCollection):
         raise TypeError("GetLocalNodeCollection requires a NodeCollection in order to run")
 
-    sps(nc)
-    sr("LocalOnly")
-    return spp()
+    return nc[nc.local]

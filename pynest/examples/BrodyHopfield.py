@@ -26,7 +26,7 @@ Spike synchronization through subthreshold oscillation
 
 This script reproduces the spike synchronization behavior
 of integrate-and-fire neurons in response to a subthreshold
-oscillation. This phenomenon is shown in Fig. 1 of [1]_
+oscillation. This phenomenon is shown in Fig. 1 of :footcite:p:`Brody2003`
 
 Neurons receive a weak 35 Hz oscillation, a gaussian noise current
 and an increasing DC. The time-locking capability is shown to
@@ -36,10 +36,7 @@ matplotlib. All parameters are taken from the above paper.
 References
 ~~~~~~~~~~
 
-.. [1] Brody CD and Hopfield JJ (2003). Simple networks for
-       spike-timing-based computation, with application to olfactory
-       processing. Neuron 37, 843-852.
-
+.. footbibliography::
 """
 
 #################################################################################

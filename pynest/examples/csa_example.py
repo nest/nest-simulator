@@ -27,7 +27,7 @@ This example sets up a simple network in NEST using the Connection Set
 Algebra (CSA) instead of using the built-in connection routines.
 
 Using the CSA requires NEST to be compiled with support for
-libneurosim. For details, see [1]_.
+libneurosim. For details, see :footcite:p:`Djurfeldt2014`.
 
 See Also
 ~~~~~~~~
@@ -37,23 +37,30 @@ See Also
 References
 ~~~~~~~~~~
 
-.. [1] Djurfeldt M, Davison AP and Eppler JM (2014). Efficient generation of
-       connectivity in neuronal networks from simulator-independent
-       descriptions, Front. Neuroinform.
-       http://dx.doi.org/10.3389/fninf.2014.00043
-
+.. footbibliography::
 """
 
 ###############################################################################
 # First, we import all necessary modules for simulation and plotting.
+
+import sys
 
 import matplotlib.pyplot as plt
 import nest
 from nest import visualization, voltage_trace
 
 ###############################################################################
-# Next, we check for the availability of the CSA Python module. If it does
-# not import, we exit with an error message.
+# Next, we check for the availability of libneuronsim and the CSA Python module.
+# If either does not import, we exit with an error message.
+
+if not nest.build_info["have_libneurosim"]:
+    print(
+        "This example requires CSA to be installed in order to run.\n"
+        + "Please make sure you compiled NEST using\n"
+        + "  -Dwith-libneurosim=[OFF|ON|</path/to/libneurosim>]\n"
+        + "and CSA and libneurosim are available."
+    )
+    sys.exit(1)
 
 try:
     import csa
@@ -66,8 +73,6 @@ except ImportError:
         + "  -Dwith-libneurosim=[OFF|ON|</path/to/libneurosim>]\n"
         + "and CSA and libneurosim are available."
     )
-    import sys
-
     sys.exit(1)
 
 ###############################################################################

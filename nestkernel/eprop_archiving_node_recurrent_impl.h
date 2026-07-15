@@ -26,9 +26,6 @@
 #include "eprop_archiving_node_recurrent.h"
 #include "kernel_manager.h"
 
-// sli
-#include "dictutils.h"
-
 namespace nest
 {
 
@@ -40,7 +37,8 @@ std::map< std::string, typename EpropArchivingNodeRecurrent< hist_shift_required
     { "exponential", &EpropArchivingNodeRecurrent< hist_shift_required >::compute_exponential_surrogate_gradient },
     { "fast_sigmoid_derivative",
       &EpropArchivingNodeRecurrent< hist_shift_required >::compute_fast_sigmoid_derivative_surrogate_gradient },
-    { "arctan", &EpropArchivingNodeRecurrent< hist_shift_required >::compute_arctan_surrogate_gradient }
+    { "arctan_derivative",
+      &EpropArchivingNodeRecurrent< hist_shift_required >::compute_arctan_derivative_surrogate_gradient }
   };
 
 template < bool hist_shift_required >
@@ -89,15 +87,15 @@ double
 EpropArchivingNodeRecurrent< hist_shift_required >::compute_piecewise_linear_surrogate_gradient( const double r,
   const double v_m,
   const double v_th,
-  const double beta,
-  const double gamma )
+  const double height,
+  const double width )
 {
-  if ( r > 0 )
+  if ( r > 0.0 )
   {
     return 0.0;
   }
 
-  return gamma * std::max( 0.0, 1.0 - beta * std::abs( v_m - v_th ) );
+  return height * std::max( 0.0, 1.0 - std::abs( v_m - v_th ) / width );
 }
 
 template < bool hist_shift_required >
@@ -105,15 +103,15 @@ double
 EpropArchivingNodeRecurrent< hist_shift_required >::compute_exponential_surrogate_gradient( const double r,
   const double v_m,
   const double v_th,
-  const double beta,
-  const double gamma )
+  const double height,
+  const double width )
 {
-  if ( r > 0 )
+  if ( r > 0.0 )
   {
     return 0.0;
   }
 
-  return gamma * std::exp( -beta * std::abs( v_m - v_th ) );
+  return height * std::exp( -std::abs( v_m - v_th ) / width );
 }
 
 template < bool hist_shift_required >
@@ -121,31 +119,31 @@ double
 EpropArchivingNodeRecurrent< hist_shift_required >::compute_fast_sigmoid_derivative_surrogate_gradient( const double r,
   const double v_m,
   const double v_th,
-  const double beta,
-  const double gamma )
+  const double height,
+  const double width )
 {
-  if ( r > 0 )
+  if ( r > 0.0 )
   {
     return 0.0;
   }
 
-  return gamma * std::pow( 1.0 + beta * std::abs( v_m - v_th ), -2 );
+  return height * std::pow( 1.0 + std::abs( v_m - v_th ) / width, -2.0 );
 }
 
 template < bool hist_shift_required >
 double
-EpropArchivingNodeRecurrent< hist_shift_required >::compute_arctan_surrogate_gradient( const double r,
+EpropArchivingNodeRecurrent< hist_shift_required >::compute_arctan_derivative_surrogate_gradient( const double r,
   const double v_m,
   const double v_th,
-  const double beta,
-  const double gamma )
+  const double height,
+  const double width )
 {
-  if ( r > 0 )
+  if ( r > 0.0 )
   {
     return 0.0;
   }
 
-  return gamma / M_PI * ( 1.0 / ( 1.0 + std::pow( beta * M_PI * ( v_m - v_th ), 2 ) ) );
+  return height / ( 1.0 + std::pow( ( v_m - v_th ) / width, 2.0 ) );
 }
 
 template < bool hist_shift_required >
@@ -191,7 +189,6 @@ EpropArchivingNodeRecurrent< hist_shift_required >::write_learning_signal_to_his
     shift += delay_out_norm_;
   }
 
-
   auto it_hist = get_eprop_history( time_step - shift );
   const auto it_hist_end = get_eprop_history( time_step - shift + delay_out_rec_ );
 
@@ -217,7 +214,7 @@ EpropArchivingNodeRecurrent< hist_shift_required >::write_firing_rate_reg_to_his
   const long shift = Time::get_resolution().get_steps();
 
   const double f_av = n_spikes_ / update_interval;
-  const double f_target_ = f_target * dt; // convert from spikes/ms to spikes/step
+  const double f_target_ = f_target * dt;  // convert from spikes/ms to spikes/step
   const double firing_rate_reg = c_reg * ( f_av - f_target_ ) / update_interval;
 
   firing_rate_reg_history_.emplace_back( t_current_update + shift, firing_rate_reg );
@@ -238,7 +235,7 @@ EpropArchivingNodeRecurrent< hist_shift_required >::write_firing_rate_reg_to_his
 
   const double dt = Time::get_resolution().get_ms();
 
-  const double f_target_ = f_target * dt; // convert from spikes/ms to spikes/step
+  const double f_target_ = f_target * dt;  // convert from spikes/ms to spikes/step
 
   f_av_ = kappa_reg * f_av_ + ( 1.0 - kappa_reg ) * z / dt;
 
@@ -264,7 +261,7 @@ EpropArchivingNodeRecurrent< hist_shift_required >::get_learning_signal_from_his
 {
   long shift = delay_rec_out_ + delay_out_rec_;
 
-  if ( hist_shift_required )
+  if constexpr ( hist_shift_required )
   {
     shift += delay_out_norm_;
   }
@@ -299,5 +296,4 @@ EpropArchivingNodeRecurrent< hist_shift_required >::erase_used_firing_rate_reg_h
   }
 }
 
-
-} // namespace nest
+}  // namespace nest

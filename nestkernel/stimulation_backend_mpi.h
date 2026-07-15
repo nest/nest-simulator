@@ -35,8 +35,13 @@
 
 /* BeginUserDocs: stimulation backend
 
+Short description
++++++++++++++++++
+
 Stimulation backend `mpi` - Receive stimulation parameters via MPI
-##################################################################
+
+Description
++++++++++++
 
 .. admonition:: Availability
 
@@ -122,7 +127,7 @@ public:
 
   void finalize() override;
 
-  void enroll( StimulationDevice& device, const DictionaryDatum& params ) override;
+  void enroll( StimulationDevice& device, const Dictionary& params ) override;
 
   void disenroll( StimulationDevice& device ) override;
 
@@ -190,6 +195,6 @@ private:
   void clean_memory_input_data( std::vector< std::pair< int*, double* > >& data );
 };
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef STIMULATION_BACKEND_MPI_H */

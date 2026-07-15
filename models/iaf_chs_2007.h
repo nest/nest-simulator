@@ -60,7 +60,7 @@ reset/after-hyperpolarization and ``tau_reset`` is the time constant of
 recovery from this hyperpolarization.
 
 The linear subthreshold dynamics is integrated by the Exact
-Integration scheme [1]_. The neuron dynamics is solved on the time
+Integration scheme :footcite:p:`Carandini2007`. The neuron dynamics is solved on the time
 grid given by the computation step size. Incoming as well as emitted
 spikes are forced to that grid.
 
@@ -71,7 +71,7 @@ spikes are forced to that grid.
    the noise signal externally prior to simulation. The noise signal,
    if present, has to be at least as long as the simulation.
 
-See also [2]_.
+See also :footcite:p:`Rotter1999`.
 
 Parameters
 ++++++++++
@@ -90,13 +90,7 @@ The following parameters can be set in the status dictionary.
 References
 ++++++++++
 
-.. [1] Carandini M, Horton JC, Sincich LC (2007). Thalamic filtering of retinal
-       spike trains by postsynaptic summation. Journal of Vision 7(14):20,1-11.
-       DOI: https://doi.org/10.1167/7.14.20
-.. [2] Rotter S,  Diesmann M (1999). Exact simulation of time-invariant linear
-       systems with applications to neuronal modeling. Biologial Cybernetics
-       81:381-402.
-       DOI: https://doi.org/10.1007/s004220050570
+.. footbibliography::
 
 Sends
 +++++
@@ -140,8 +134,8 @@ public:
   size_t handles_test_event( SpikeEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_buffers_() override;
@@ -161,17 +155,17 @@ private:
   struct State_
   {
     // state variables
-    double i_syn_ex_; // postsynaptic current for exc. inputs, variable 1
-    double V_syn_;    // psp waveform, variable 2
-    double V_spike_;  // post spike reset waveform, variable 3
-    double V_m_;      // membrane potential, variable 4
+    double i_syn_ex_;  // postsynaptic current for exc. inputs, variable 1
+    double V_syn_;     // psp waveform, variable 2
+    double V_spike_;   // post spike reset waveform, variable 3
+    double V_m_;       // membrane potential, variable 4
 
     unsigned long position_;
 
-    State_(); //!< Default initialization
+    State_();  //!< Default initialization
 
-    void get( DictionaryDatum& ) const;
-    void set( DictionaryDatum const&, Node* );
+    void get( Dictionary& ) const;
+    void set( Dictionary const&, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -208,16 +202,16 @@ private:
     /** Noise signal. */
     std::vector< double > noise_;
 
-    Parameters_(); //!< Sets default parameter values
+    Parameters_();  //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const;  //!< Store current values in dictionary
 
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      * @note State is passed so that the position can be reset if the
      *       noise_ vector has been filled with new data.
      */
-    void set( const DictionaryDatum&, State_& s, Node* node );
+    void set( const Dictionary&, State_& s, Node* node );
   };
 
 
@@ -260,7 +254,7 @@ private:
     double P22_;
     double P30_;
 
-    normal_distribution normal_dist_; //!< random distribution
+    normal_distribution normal_dist_;  //!< random distribution
   };
 
   // Access functions for UniversalDataLogger -------------------------------
@@ -320,22 +314,22 @@ iaf_chs_2007::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type 
 }
 
 inline void
-iaf_chs_2007::get_status( DictionaryDatum& d ) const
+iaf_chs_2007::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
   ArchivingNode::get_status( d );
 
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
-iaf_chs_2007::set_status( const DictionaryDatum& d )
+iaf_chs_2007::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
   ptmp.set( d, S_, this );
-  State_ stmp = S_;    // temporary copy in case of errors
-  stmp.set( d, this ); // throws if BadProperty
+  State_ stmp = S_;     // temporary copy in case of errors
+  stmp.set( d, this );  // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -348,6 +342,6 @@ iaf_chs_2007::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
-} // namespace
+}  // namespace
 
-#endif // IAF_CHS_2007_H
+#endif  // IAF_CHS_2007_H

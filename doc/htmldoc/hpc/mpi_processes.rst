@@ -16,6 +16,7 @@ Multiplied together, we suggest that the values should equal the total number of
     * :ref:`overview_hardware`
     * :ref:`threads`
     * :ref:`slurm_script`
+    * :ref:`simulation_limits`: Maximum threads, MPI ranks, synapse types, and delay bounds
 
 After allocation of resources on which one wants to run the MPI processes, you also may want to export environment
 variables related the implementation of the multiprocessing API.
@@ -62,5 +63,3 @@ with eachother (e.g., virtual memory thrashing).
 
 Over-subscribing processes is typically used in development in testing and can help identify performance bottlenecks.
 But performance can be degraded in this scenario.
-
-

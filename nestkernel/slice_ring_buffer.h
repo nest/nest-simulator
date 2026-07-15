@@ -141,9 +141,9 @@ private:
 
     // data elements must not be const, since heap implementation
     // in DEC STL uses operator=().
-    long stamp_;       //<! spike's time stamp
-    double ps_offset_; //<! spike offset is PS sense
-    double weight_;    //<! spike weight
+    long stamp_;        //<! spike's time stamp
+    double ps_offset_;  //<! spike offset is PS sense
+    double weight_;     //<! spike weight
   };
 
   //! entire queue, one slot per min_delay block within max_delay
@@ -152,7 +152,7 @@ private:
   //! slot to deliver from
   std::vector< SpikeInfo >* deliver_;
 
-  SpikeInfo refract_; //!< pseudo-event for return from refractoriness
+  SpikeInfo refract_;  //!< pseudo-event for return from refractoriness
 };
 
 inline void
@@ -191,7 +191,7 @@ SliceRingBuffer::get_next_spike( const long req_stamp,
   if ( deliver_->empty() or refract_ <= deliver_->back() )
   {
     if ( refract_.stamp_ == req_stamp )
-    { // if relies on stamp_==long::max() if not refractory
+    {  // if relies on stamp_==long::max() if not refractory
       // return from refractoriness
       ps_offset = refract_.ps_offset_;
       weight = 0;
@@ -259,6 +259,6 @@ SliceRingBuffer::SpikeInfo::operator>( const SpikeInfo& b ) const
   return stamp_ == b.stamp_ ? ps_offset_ < b.ps_offset_ : stamp_ > b.stamp_;
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* #ifndef SLICE_RING_BUFFER_H */

@@ -1,3 +1,0 @@
-NEST example networks
-=====================
-

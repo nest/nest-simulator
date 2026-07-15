@@ -35,7 +35,7 @@ import matplotlib.pyplot as plt
 import nest
 import numpy as np
 
-nest.set_verbosity("M_WARNING")
+nest.verbosity = nest.VerbosityLevel.WARNING
 nest.ResetKernel()
 
 simtime = 1000

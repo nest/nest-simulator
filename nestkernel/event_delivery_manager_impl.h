@@ -112,7 +112,7 @@ EventDeliveryManager::send_remote( size_t tid, SpikeEvent& e, const long lag )
     // Unroll spike multiplicity as plastic synapses only handle individual spikes.
     for ( size_t i = 0; i < e.get_multiplicity(); ++i )
     {
-      ( *emitted_spikes_register_[ tid ] ).emplace_back( target, lag );
+      ( *emitted_spikes_register_[ tid ] ).emplace_back( target, lag, e.is_flush_event() );
     }
   }
 }
@@ -163,9 +163,9 @@ EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e )
   }
   else
   {
-    send_local_( source, e, 0 ); // need to pass lag (last argument), but not
-                                 // used in template specialization, so pass
-                                 // zero as dummy value
+    send_local_( source, e, 0 );  // need to pass lag (last argument), but not
+                                  // used in template specialization, so pass
+                                  // zero as dummy value
   }
 }
 
@@ -176,6 +176,6 @@ EventDeliveryManager::write_toggle() const
 }
 
 
-} // of namespace nest
+}  // of namespace nest
 
 #endif

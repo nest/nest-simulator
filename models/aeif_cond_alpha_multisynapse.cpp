@@ -37,12 +37,8 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
 
-
-namespace nest // template specialization must be placed in namespace
+namespace nest  // template specialization must be placed in namespace
 {
 void
 register_aeif_cond_alpha_multisynapse( const std::string& name )
@@ -69,12 +65,12 @@ DynamicRecordablesMap< aeif_cond_alpha_multisynapse >::create( aeif_cond_alpha_m
   host.insert_conductance_recordables();
 }
 
-Name
+std::string
 aeif_cond_alpha_multisynapse::get_g_receptor_name( size_t receptor )
 {
   std::stringstream receptor_name;
   receptor_name << "g_" << receptor + 1;
-  return Name( receptor_name.str() );
+  return receptor_name.str();
 }
 
 void
@@ -154,20 +150,20 @@ aeif_cond_alpha_multisynapse_dynamics( double, const double y[], double f[], voi
  * ---------------------------------------------------------------- */
 
 aeif_cond_alpha_multisynapse::Parameters_::Parameters_()
-  : V_peak_( 0.0 )    // mV
-  , V_reset_( -60.0 ) // mV
-  , t_ref_( 0.0 )     // ms
-  , g_L( 30.0 )       // nS
-  , C_m( 281.0 )      // pF
-  , E_L( -70.6 )      // mV
-  , Delta_T( 2.0 )    // mV
-  , tau_w( 144.0 )    // ms
-  , a( 4.0 )          // nS
-  , b( 80.5 )         // pA
-  , V_th( -50.4 )     // mV
-  , tau_syn( 1, 2.0 ) // ms
-  , E_rev( 1, 0.0 )   // mV
-  , I_e( 0.0 )        // pA
+  : V_peak_( 0.0 )     // mV
+  , V_reset_( -60.0 )  // mV
+  , t_ref_( 0.0 )      // ms
+  , g_L( 30.0 )        // nS
+  , C_m( 281.0 )       // pF
+  , E_L( -70.6 )       // mV
+  , Delta_T( 2.0 )     // mV
+  , tau_w( 144.0 )     // ms
+  , a( 4.0 )           // nS
+  , b( 80.5 )          // pA
+  , V_th( -50.4 )      // mV
+  , tau_syn( 1, 2.0 )  // ms
+  , E_rev( 1, 0.0 )    // mV
+  , I_e( 0.0 )         // pA
   , gsl_error_tol( 1e-6 )
   , has_connections_( false )
 {
@@ -185,46 +181,44 @@ aeif_cond_alpha_multisynapse::State_::State_( const Parameters_& p )
  * ---------------------------------------------------------------- */
 
 void
-aeif_cond_alpha_multisynapse::Parameters_::get( DictionaryDatum& d ) const
+aeif_cond_alpha_multisynapse::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::C_m, C_m );
-  def< double >( d, names::V_th, V_th );
-  def< double >( d, names::t_ref, t_ref_ );
-  def< double >( d, names::g_L, g_L );
-  def< double >( d, names::E_L, E_L );
-  def< double >( d, names::V_reset, V_reset_ );
-  def< size_t >( d, names::n_receptors, n_receptors() );
-  ArrayDatum E_rev_ad( E_rev );
-  ArrayDatum tau_syn_ad( tau_syn );
-  def< ArrayDatum >( d, names::E_rev, E_rev_ad );
-  def< ArrayDatum >( d, names::tau_syn, tau_syn_ad );
-  def< double >( d, names::a, a );
-  def< double >( d, names::b, b );
-  def< double >( d, names::Delta_T, Delta_T );
-  def< double >( d, names::tau_w, tau_w );
-  def< double >( d, names::I_e, I_e );
-  def< double >( d, names::V_peak, V_peak_ );
-  def< double >( d, names::gsl_error_tol, gsl_error_tol );
-  def< bool >( d, names::has_connections, has_connections_ );
+  d[ names::C_m ] = C_m;
+  d[ names::V_th ] = V_th;
+  d[ names::t_ref ] = t_ref_;
+  d[ names::g_L ] = g_L;
+  d[ names::E_L ] = E_L;
+  d[ names::V_reset ] = V_reset_;
+  d[ names::n_receptors ] = static_cast< long >( n_receptors() );
+  d[ names::E_rev ] = E_rev;
+  d[ names::tau_syn ] = tau_syn;
+  d[ names::a ] = a;
+  d[ names::b ] = b;
+  d[ names::Delta_T ] = Delta_T;
+  d[ names::tau_w ] = tau_w;
+  d[ names::I_e ] = I_e;
+  d[ names::V_peak ] = V_peak_;
+  d[ names::gsl_error_tol ] = gsl_error_tol;
+  d[ names::has_connections ] = has_connections_;
 }
 
 void
-aeif_cond_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d, Node* node )
+aeif_cond_alpha_multisynapse::Parameters_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::V_th, V_th, node );
-  updateValueParam< double >( d, names::V_peak, V_peak_, node );
-  updateValueParam< double >( d, names::t_ref, t_ref_, node );
-  updateValueParam< double >( d, names::E_L, E_L, node );
-  updateValueParam< double >( d, names::V_reset, V_reset_, node );
+  update_value_param( d, names::V_th, V_th, node );
+  update_value_param( d, names::V_peak, V_peak_, node );
+  update_value_param( d, names::t_ref, t_ref_, node );
+  update_value_param( d, names::E_L, E_L, node );
+  update_value_param( d, names::V_reset, V_reset_, node );
 
-  updateValueParam< double >( d, names::C_m, C_m, node );
-  updateValueParam< double >( d, names::g_L, g_L, node );
+  update_value_param( d, names::C_m, C_m, node );
+  update_value_param( d, names::g_L, g_L, node );
 
   const size_t old_n_receptors = n_receptors();
-  bool Erev_flag = updateValue< std::vector< double > >( d, names::E_rev, E_rev );
-  bool tau_flag = updateValue< std::vector< double > >( d, names::tau_syn, tau_syn );
+  bool Erev_flag = d.update_value( names::E_rev, E_rev );
+  bool tau_flag = d.update_value( names::tau_syn, tau_syn );
   if ( Erev_flag or tau_flag )
-  { // receptor arrays have been modified
+  {  // receptor arrays have been modified
     if ( ( E_rev.size() != old_n_receptors or tau_syn.size() != old_n_receptors )
       and ( not Erev_flag or not tau_flag ) )
     {
@@ -253,14 +247,14 @@ aeif_cond_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d, Node* 
     }
   }
 
-  updateValueParam< double >( d, names::a, a, node );
-  updateValueParam< double >( d, names::b, b, node );
-  updateValueParam< double >( d, names::Delta_T, Delta_T, node );
-  updateValueParam< double >( d, names::tau_w, tau_w, node );
+  update_value_param( d, names::a, a, node );
+  update_value_param( d, names::b, b, node );
+  update_value_param( d, names::Delta_T, Delta_T, node );
+  update_value_param( d, names::tau_w, tau_w, node );
 
-  updateValueParam< double >( d, names::I_e, I_e, node );
+  update_value_param( d, names::I_e, I_e, node );
 
-  updateValueParam< double >( d, names::gsl_error_tol, gsl_error_tol, node );
+  update_value_param( d, names::gsl_error_tol, gsl_error_tol, node );
 
   if ( V_peak_ < V_th )
   {
@@ -313,32 +307,32 @@ aeif_cond_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d, Node* 
 }
 
 void
-aeif_cond_alpha_multisynapse::State_::get( DictionaryDatum& d ) const
+aeif_cond_alpha_multisynapse::State_::get( Dictionary& d ) const
 {
-  def< double >( d, names::V_m, y_[ V_M ] );
+  d[ names::V_m ] = y_[ V_M ];
 
-  std::vector< double >* dg = new std::vector< double >();
-  std::vector< double >* g = new std::vector< double >();
+  std::vector< double > dg;
+  std::vector< double > g;
 
   for ( size_t i = 0;
-        i < ( ( y_.size() - State_::NUMBER_OF_FIXED_STATES_ELEMENTS ) / State_::NUM_STATE_ELEMENTS_PER_RECEPTOR );
-        ++i )
+    i < ( ( y_.size() - State_::NUMBER_OF_FIXED_STATES_ELEMENTS ) / State_::NUM_STATE_ELEMENTS_PER_RECEPTOR );
+    ++i )
   {
-    dg->push_back( y_[ State_::DG + ( State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * i ) ] );
-    g->push_back( y_[ State_::G + ( State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * i ) ] );
+    dg.push_back( y_[ State_::DG + ( State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * i ) ] );
+    g.push_back( y_[ State_::G + ( State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * i ) ] );
   }
 
-  ( *d )[ names::dg ] = DoubleVectorDatum( dg );
-  ( *d )[ names::g ] = DoubleVectorDatum( g );
+  d[ names::dg ] = dg;
+  d[ names::g ] = g;
 
-  def< double >( d, names::w, y_[ W ] );
+  d[ names::w ] = y_[ W ];
 }
 
 void
-aeif_cond_alpha_multisynapse::State_::set( const DictionaryDatum& d, Node* node )
+aeif_cond_alpha_multisynapse::State_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
-  updateValueParam< double >( d, names::w, y_[ W ], node );
+  update_value_param( d, names::V_m, y_[ V_M ], node );
+  update_value_param( d, names::w, y_[ W ], node );
 }
 
 aeif_cond_alpha_multisynapse::Buffers_::Buffers_( aeif_cond_alpha_multisynapse& n )
@@ -409,16 +403,16 @@ aeif_cond_alpha_multisynapse::~aeif_cond_alpha_multisynapse()
 void
 aeif_cond_alpha_multisynapse::init_buffers_()
 {
-  B_.spikes_.clear();   // includes resize
-  B_.currents_.clear(); // includes resize
+  B_.spikes_.clear();    // includes resize
+  B_.currents_.clear();  // includes resize
   ArchivingNode::clear_history();
 
   B_.logger_.reset();
 
   B_.step_ = Time::get_resolution().get_ms();
   B_.IntegrationStep_ =
-    B_.step_; // reasonable initial value for numerical integrator step size; this will anyway be overwritten by
-              // gsl_odeiv_evolve_apply(), but it might confuse the integrator if it contains uninitialised data
+    B_.step_;  // reasonable initial value for numerical integrator step size; this will anyway be overwritten by
+               // gsl_odeiv_evolve_apply(), but it might confuse the integrator if it contains uninitialised data
 
   if ( not B_.c_ )
   {
@@ -459,7 +453,7 @@ aeif_cond_alpha_multisynapse::pre_run_hook()
   }
   else
   {
-    V_.V_peak = P_.V_th; // same as IAF dynamics for spikes if Delta_T == 0.
+    V_.V_peak = P_.V_th;  // same as IAF dynamics for spikes if Delta_T == 0.
   }
 
   V_.refractory_counts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
@@ -493,9 +487,9 @@ aeif_cond_alpha_multisynapse::update( Time const& origin, const long from, const
 {
   assert( State_::V_M == 0 );
 
-  for ( long lag = from; lag < to; ++lag ) // proceed by stepsize B_.step_
+  for ( long lag = from; lag < to; ++lag )  // proceed by stepsize B_.step_
   {
-    double t = 0.0; // internal time of the integration period
+    double t = 0.0;  // internal time of the integration period
 
     // numerical integration with adaptive step size control:
     // ------------------------------------------------------
@@ -515,11 +509,11 @@ aeif_cond_alpha_multisynapse::update( Time const& origin, const long from, const
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
-        &B_.sys_,             // system of ODE
-        &t,                   // from t
-        B_.step_,             // to t <= step
-        &B_.IntegrationStep_, // integration step size
-        &S_.y_[ 0 ] );        // neuronal state converted to double[]
+        &B_.sys_,              // system of ODE
+        &t,                    // from t
+        B_.step_,              // to t <= step
+        &B_.IntegrationStep_,  // integration step size
+        &S_.y_[ 0 ] );         // neuronal state converted to double[]
 
       if ( status != GSL_SUCCESS )
       {
@@ -532,14 +526,14 @@ aeif_cond_alpha_multisynapse::update( Time const& origin, const long from, const
         throw NumericalInstability( get_name() );
       }
 
-      if ( S_.r_ > 0 ) // if neuron is still in refractory period
+      if ( S_.r_ > 0 )  // if neuron is still in refractory period
       {
-        S_.y_[ State_::V_M ] = P_.V_reset_; // clamp it to V_reset
+        S_.y_[ State_::V_M ] = P_.V_reset_;  // clamp it to V_reset
       }
-      else if ( S_.y_[ State_::V_M ] >= V_.V_peak ) // V_m >= V_peak: spike
+      else if ( S_.y_[ State_::V_M ] >= V_.V_peak )  // V_m >= V_peak: spike
       {
         S_.y_[ State_::V_M ] = P_.V_reset_;
-        S_.y_[ State_::W ] += P_.b; // spike-driven adaptation
+        S_.y_[ State_::W ] += P_.b;  // spike-driven adaptation
 
         /* Initialize refractory step counter.
          * - We need to add 1 to compensate for count-down immediately after
@@ -563,7 +557,7 @@ aeif_cond_alpha_multisynapse::update( Time const& origin, const long from, const
     for ( size_t i = 0; i < P_.n_receptors(); ++i )
     {
       S_.y_[ State_::DG + ( State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * i ) ] +=
-        B_.spikes_[ i ].get_value( lag ) * V_.g0_[ i ]; // add incoming spike
+        B_.spikes_[ i ].get_value( lag ) * V_.g0_[ i ];  // add incoming spike
     }
     // set new input current
     B_.I_stim_ = B_.currents_.get_value( lag );
@@ -571,7 +565,7 @@ aeif_cond_alpha_multisynapse::update( Time const& origin, const long from, const
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );
 
-  } // for-loop
+  }  // for-loop
 }
 
 size_t
@@ -620,12 +614,12 @@ aeif_cond_alpha_multisynapse::handle( DataLoggingRequest& e )
 }
 
 void
-aeif_cond_alpha_multisynapse::set_status( const DictionaryDatum& d )
+aeif_cond_alpha_multisynapse::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d, this );   // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, this );   // throws if BadProperty
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
+  ptmp.set( d, this );    // throws if BadProperty
+  State_ stmp = S_;       // temporary copy in case of errors
+  stmp.set( d, this );    // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -637,7 +631,7 @@ aeif_cond_alpha_multisynapse::set_status( const DictionaryDatum& d )
    * Here is where we must update the recordablesMap_ if new receptors
    * are added!
    */
-  if ( ptmp.E_rev.size() > P_.E_rev.size() ) // Number of receptors increased
+  if ( ptmp.E_rev.size() > P_.E_rev.size() )  // Number of receptors increased
   {
     for ( size_t receptor = P_.E_rev.size(); receptor < ptmp.E_rev.size(); ++receptor )
     {
@@ -647,7 +641,7 @@ aeif_cond_alpha_multisynapse::set_status( const DictionaryDatum& d )
     }
   }
   else if ( ptmp.E_rev.size() < P_.E_rev.size() )
-  { // Number of receptors decreased
+  {  // Number of receptors decreased
     for ( size_t receptor = ptmp.E_rev.size(); receptor < P_.E_rev.size(); ++receptor )
     {
       recordablesMap_.erase( get_g_receptor_name( receptor ) );
@@ -659,6 +653,6 @@ aeif_cond_alpha_multisynapse::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
-} // namespace nest
+}  // namespace nest
 
-#endif // HAVE_GSL
+#endif  // HAVE_GSL

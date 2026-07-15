@@ -90,7 +90,7 @@ total number of gap junctions should be chosen as
   full set of random numbers and temporarily represent the total
   connectivity in variable ``m``. Therefore it is advisable to use the
   internal random connection rules of NEST for the creation of connections
-  whenever possible. For more details see Hahne et al. [1]_
+  whenever possible. For more details see Hahne et al. :footcite:p:`Hahne2016`
 
 Adjust settings of iterative solution scheme
 --------------------------------------------
@@ -99,7 +99,7 @@ For simulations with gap junctions, NEST uses an iterative solution
 scheme based on a numerical method called Jacobi waveform relaxation.
 The default settings of the iterative method are based on numerical
 results, benchmarks, and previous experience with gap-junction
-simulations [2]_.
+simulations :footcite:p:`Hahne2015`.
 and should only be changed with proper knowledge of the method. In
 general the following parameters can be set via kernel parameters:
 
@@ -112,7 +112,7 @@ general the following parameters can be set via kernel parameters:
     nest.wfr_interpolation_order = 3
 
 For a detailed description of the parameters and their function see
-[3]_, Table 2.
+:footcite:p:`Hahne2017`, Table 2.
 
 .. seealso::
 
@@ -122,17 +122,4 @@ For a detailed description of the parameters and their function see
 References
 ----------
 
-.. [1] Hahne J, et al. 2016. Including Gap Junctions into Distributed Neuronal Network Simulations.
-       In: Amunts K, Grandinetti L, Lippert T, Petkov N. (eds) Brain-Inspired Computing.
-       BrainComp 2015. Lecture  Notes in Computer Science(), vol 10087. Springer, Cham.
-       https://doi.org/10.1007/978-3-319-50862-7_4
-
-.. [2] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A, Diesmann M 2015.
-       A unified framework for spiking and gap-junction interactions in distributed neuronal network simulations.
-       Frontiers in Neuroinformatics. 9
-       https://www.frontiersin.org/journals/neuroinformatics/articles/10.3389/fninf.2015.00022
-
-.. [3] Hahne J, Dahmen D , Schuecker J, Frommer A, Bolten M, Helias M, Diesmann M. 2017.
-       Integration of Continuous-Time Dynamics in a Spiking Neural Network Simulator.
-       Frontiers in Neuroinformatics. 11.
-       https://www.frontiersin.org/journals/neuroinformatics/articles/10.3389/fninf.2017.00034
+.. footbibliography::

@@ -44,14 +44,13 @@ Description
 +++++++++++
 
 ``stdp_facetshw_synapse`` is a connector to create synapses with spike-timing
-dependent plasticity (as defined in [1]_).
+dependent plasticity (as defined in :footcite:p:`Morrison2008`).
 This connector is a modified version of ``stdp_synapse``.
 It includes constraints of the hardware developed in the FACETS (BrainScaleS)
-project [2]_, [3]_, as for example, 4-bit weight resolution, sequential updates of groups
-of synapses and reduced symmetric nearest-neighbor spike pairing scheme. For
-details see [3]_.
-The modified spike pairing scheme requires the calculation of ``tau_minus_``
-within this synapse and not at the neuron site via ``Kplus_`` like in
+project :footcite:p:`Schemmel2006`, :footcite:p:`Pfeil2012`, as for example, 4-bit weight resolution, sequential updates
+of groups of synapses and reduced symmetric nearest-neighbor spike pairing scheme. For details see
+:footcite:p:`Pfeil2012`. The modified spike pairing scheme requires the calculation of ``tau_minus_`` within this
+synapse and not at the neuron site via ``Kplus_`` like in
 ``stdp_synapse_hom``.
 
 .. warning::
@@ -93,9 +92,10 @@ Parameters
                         integers
  configbit_0            list of     Configuration bits for evaluation
                         integers    function. For details see code in
-                                    function ``eval_function_`` and [4]_
-                                    (configbit[0]=e_cc, ..[1]_=e_ca,
-                                    ..[2]_=e_ac, ..[3]=e_aa).
+                                    function ``eval_function_`` and
+                                    :footcite:p:`Friedmann2013`
+                                    (configbit[0]=e_cc, :footcite:p:`Morrison2008` =e_ca,
+                                    :footcite:p:`Schemmel2006` =e_ac, :footcite:p:`Pfeil2012` =e_aa).
                                     Depending on these two sets of
                                     configuration bits weights are updated
                                     according LUTs (out of three: (1,0),
@@ -134,19 +134,7 @@ SpikeEvent
 References
 ++++++++++
 
-.. [1] Morrison A, Diesmann M, Gerstner W (2008). Phenomenological models of
-       synaptic plasticity based on spike-timing. Biological Cybernetics,
-       98:459-478. DOI: https://doi.org/10.1007/s00422-008-0233-1
-.. [2] Schemmel J, Gruebl A, Meier K, Mueller E (2006). Implementing synaptic
-       plasticity in a VLSI spiking neural network model. In Proceedings of the
-       2006 International Joint Conference on Neural Networks, pp.1--6,
-       IEEE Press. DOI: https://doi.org/10.1109/IJCNN.2006.246651
-.. [3] Pfeil T, Potjans TC, Schrader S, Potjans W, Schemmel J, Diesmann M,
-       Meier K (2012). Is a 4-bit synaptic weight resolution enough? -
-       constraints on enabling spike-timing dependent plasticity in
-       neuromorphic hardware. Frontiers in Neuroscience 6(90).
-       DOI: https://doi.org/10.3389/fnins.2012.00090
-.. [4] Friedmann, S. in preparation
+.. footbibliography::
 
 See also
 ++++++++
@@ -187,12 +175,12 @@ public:
   /**
    * Get all properties and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
   /**
    * Set properties from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   // overloaded for all supported event types
   void
@@ -221,9 +209,7 @@ private:
   // TODO: TP: size in memory could be reduced
   std::vector< long > lookuptable_0_;
   std::vector< long > lookuptable_1_;
-  std::vector< long > lookuptable_2_; // TODO: TP: to save memory one could
-                                      // introduce vector<bool> &
-                                      // BoolVectorDatum
+  std::vector< long > lookuptable_2_;
   std::vector< long > configbit_0_;
   std::vector< long > configbit_1_;
   std::vector< long > reset_pattern_;
@@ -271,12 +257,12 @@ public:
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   /**
    * Send an event to the receiver of this connection.
@@ -351,8 +337,8 @@ private:
   bool init_flag_;
   long synapse_id_;
   double next_readout_time_;
-  unsigned int discrete_weight_; // TODO: TP: only needed in send, move to common
-                                 // properties or "static"?
+  unsigned int discrete_weight_;  // TODO: TP: only needed in send, move to common
+                                  // properties or "static"?
   double t_lastspike_;
 };
 
@@ -536,6 +522,6 @@ stdp_facetshw_synapse_hom< targetidentifierT >::send( Event& e,
 
   return true;
 }
-} // of namespace nest
+}  // of namespace nest
 
-#endif // of #ifndef STDP_SYNAPSE_FACETSHW_HOM_H
+#endif  // of #ifndef STDP_SYNAPSE_FACETSHW_HOM_H

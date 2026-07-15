@@ -29,18 +29,19 @@
 #include <cstddef>
 #include <limits>
 #include <stdint.h>
+#include <type_traits>
 
 // Generated includes:
 #include "config.h"
 
 #ifdef HAVE_32BIT_ARCH
-#ifdef HAVE_UINT64_T // 32-bit platforms usually provide the ...
-#include <stdint.h>  // ... 64-bit unsigned integer data type 'uint64_t' in stdint.h
+#ifdef HAVE_UINT64_T  // 32-bit platforms usually provide the ...
+#include <stdint.h>   // ... 64-bit unsigned integer data type 'uint64_t' in stdint.h
 #else
 #error "32-bit platform does not provide a 64-bit unsigned integer data type"
 #endif
 #else
-#include <cstdint> // `uint64_t` on 64-bit platforms
+#include <cstdint>  // `uint64_t` on 64-bit platforms
 #endif
 
 /**
@@ -90,9 +91,10 @@ constexpr uint8_t NUM_BITS_SYN_ID = 6U;
 constexpr uint8_t NUM_BITS_LCID = 27U;
 constexpr uint8_t NUM_BITS_PROCESSED_FLAG = 1U;
 constexpr uint8_t NUM_BITS_MARKER_SPIKE_DATA = 2U;
+constexpr uint8_t NUM_BITS_FLUSH_EVENT = 1U;
 constexpr uint8_t NUM_BITS_LAG = 14U;
 constexpr uint8_t NUM_BITS_DELAY = 21U;
-constexpr uint8_t NUM_BITS_NODE_ID = 62U;
+constexpr uint8_t NUM_BITS_NODE_ID = 61U;
 
 // Maximally allowed values for bitfields
 
@@ -129,7 +131,7 @@ __attribute__( ( __unused__ ) ) constexpr size_t invalid_index = std::numeric_li
 /**
  *  For enumerations of synapse types.
  */
-typedef unsigned int synindex;
+typedef size_t synindex;
 const synindex invalid_synindex = MAX_SYN_ID;
 
 /**
@@ -185,6 +187,21 @@ enum SignalType
   BINARY = 2,
   ALL = SPIKE | BINARY
 };
+
+/**
+ * Cast enum value to underlying integer type.
+ *
+ * @note Useful where we do arithmetic mixing different enum types.
+ * @note Once we switch to C++23, replace with @c std::to_underlying()
+ *
+ * Suggested by Claude Haiku 4.5.
+ */
+template < typename E >
+constexpr auto
+to_underlying( E e ) noexcept
+{
+  return static_cast< std::underlying_type_t< E > >( e );
+}
 }
 
 #endif /* #ifndef NEST_TYPES_H */

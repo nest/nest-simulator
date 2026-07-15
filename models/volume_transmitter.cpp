@@ -34,8 +34,6 @@
 // Includes from libnestutil:
 #include "dict_util.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 void
 nest::register_volume_transmitter( const std::string& name )
@@ -49,7 +47,7 @@ nest::register_volume_transmitter( const std::string& name )
  * ---------------------------------------------------------------- */
 
 nest::volume_transmitter::Parameters_::Parameters_()
-  : deliver_interval_( 1 ) // in steps of mindelay
+  : deliver_interval_( 1 )  // in steps of mindelay
 {
 }
 
@@ -58,14 +56,14 @@ nest::volume_transmitter::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-nest::volume_transmitter::Parameters_::get( DictionaryDatum& d ) const
+nest::volume_transmitter::Parameters_::get( Dictionary& d ) const
 {
-  def< long >( d, names::deliver_interval, deliver_interval_ );
+  d[ names::deliver_interval ] = deliver_interval_;
 }
 
-void ::nest::volume_transmitter::Parameters_::set( const DictionaryDatum& d, Node* node )
+void ::nest::volume_transmitter::Parameters_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< long >( d, names::deliver_interval, deliver_interval_, node );
+  update_value_param( d, names::deliver_interval, deliver_interval_, node );
 }
 
 /* ----------------------------------------------------------------
@@ -91,7 +89,7 @@ nest::volume_transmitter::init_buffers_()
 {
   B_.neuromodulatory_spikes_.clear();
   B_.spikecounter_.clear();
-  B_.spikecounter_.push_back( spikecounter( 0.0, 0.0 ) ); // insert pseudo last dopa spike at t = 0.0
+  B_.spikecounter_.push_back( spikecounter( 0.0, 0.0 ) );  // insert pseudo last dopa spike at t = 0.0
 }
 
 void

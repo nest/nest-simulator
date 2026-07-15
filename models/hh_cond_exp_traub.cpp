@@ -41,8 +41,6 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 nest::RecordablesMap< nest::hh_cond_exp_traub > nest::hh_cond_exp_traub::recordablesMap_;
 
@@ -108,9 +106,9 @@ hh_cond_exp_traub_dynamics( double, const double y[], double f[], void* pnode )
   const double alpha_h = 0.128 * std::exp( ( 17. - V ) / 18. );
   const double beta_h = 4. / ( 1. + std::exp( ( 40. - V ) / 5. ) );
 
-  f[ S::HH_M ] = alpha_m - ( alpha_m + beta_m ) * y[ S::HH_M ]; // m-variable
-  f[ S::HH_H ] = alpha_h - ( alpha_h + beta_h ) * y[ S::HH_H ]; // h-variable
-  f[ S::HH_N ] = alpha_n - ( alpha_n + beta_n ) * y[ S::HH_N ]; // n-variable
+  f[ S::HH_M ] = alpha_m - ( alpha_m + beta_m ) * y[ S::HH_M ];  // m-variable
+  f[ S::HH_H ] = alpha_h - ( alpha_h + beta_h ) * y[ S::HH_H ];  // h-variable
+  f[ S::HH_N ] = alpha_n - ( alpha_n + beta_n ) * y[ S::HH_N ];  // n-variable
 
   // synapses: exponential conductance
   f[ S::G_EXC ] = -y[ S::G_EXC ] / node.P_.tau_synE;
@@ -124,20 +122,20 @@ hh_cond_exp_traub_dynamics( double, const double y[], double f[], void* pnode )
  * ---------------------------------------------------------------- */
 
 nest::hh_cond_exp_traub::Parameters_::Parameters_()
-  : g_Na( 20000.0 ) // Sodium Conductance (nS)
-  , g_K( 6000.0 )   // K Conductance      (nS)
-  , g_L( 10.0 )     // Leak Conductance   (nS)
-  , C_m( 200.0 )    // Membrane Capacitance (pF)
-  , E_Na( 50.0 )    // Reversal potentials (mV)
+  : g_Na( 20000.0 )  // Sodium Conductance (nS)
+  , g_K( 6000.0 )    // K Conductance      (nS)
+  , g_L( 10.0 )      // Leak Conductance   (nS)
+  , C_m( 200.0 )     // Membrane Capacitance (pF)
+  , E_Na( 50.0 )     // Reversal potentials (mV)
   , E_K( -90.0 )
   , E_L( -60.0 )
-  , V_T( -63.0 ) // adjusts threshold to around -50 mV
+  , V_T( -63.0 )  // adjusts threshold to around -50 mV
   , E_ex( 0.0 )
   , E_in( -80.0 )
-  , tau_synE( 5.0 )  // Synaptic Time Constant Excitatory Synapse (ms)
-  , tau_synI( 10.0 ) // Synaptic Time Constant Excitatory Synapse (ms)
-  , t_ref_( 2.0 )    // Refractory time in ms
-  , I_e( 0.0 )       // Stimulus Current (pA)
+  , tau_synE( 5.0 )   // Synaptic Time Constant Excitatory Synapse (ms)
+  , tau_synI( 10.0 )  // Synaptic Time Constant Excitatory Synapse (ms)
+  , t_ref_( 2.0 )     // Refractory time in ms
+  , I_e( 0.0 )        // Stimulus Current (pA)
 {
 }
 
@@ -188,41 +186,41 @@ nest::hh_cond_exp_traub::State_::operator=( const State_& s )
  * ---------------------------------------------------------------- */
 
 void
-nest::hh_cond_exp_traub::Parameters_::get( DictionaryDatum& d ) const
+nest::hh_cond_exp_traub::Parameters_::get( Dictionary& d ) const
 {
-  def< double >( d, names::g_Na, g_Na );
-  def< double >( d, names::g_K, g_K );
-  def< double >( d, names::g_L, g_L );
-  def< double >( d, names::C_m, C_m );
-  def< double >( d, names::E_Na, E_Na );
-  def< double >( d, names::E_K, E_K );
-  def< double >( d, names::E_L, E_L );
-  def< double >( d, names::V_T, V_T );
-  def< double >( d, names::E_ex, E_ex );
-  def< double >( d, names::E_in, E_in );
-  def< double >( d, names::tau_syn_ex, tau_synE );
-  def< double >( d, names::tau_syn_in, tau_synI );
-  def< double >( d, names::t_ref, t_ref_ );
-  def< double >( d, names::I_e, I_e );
+  d[ names::g_Na ] = g_Na;
+  d[ names::g_K ] = g_K;
+  d[ names::g_L ] = g_L;
+  d[ names::C_m ] = C_m;
+  d[ names::E_Na ] = E_Na;
+  d[ names::E_K ] = E_K;
+  d[ names::E_L ] = E_L;
+  d[ names::V_T ] = V_T;
+  d[ names::E_ex ] = E_ex;
+  d[ names::E_in ] = E_in;
+  d[ names::tau_syn_ex ] = tau_synE;
+  d[ names::tau_syn_in ] = tau_synI;
+  d[ names::t_ref ] = t_ref_;
+  d[ names::I_e ] = I_e;
 }
 
 void
-nest::hh_cond_exp_traub::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::hh_cond_exp_traub::Parameters_::set( const Dictionary& d, Node* node )
 {
-  updateValueParam< double >( d, names::g_Na, g_Na, node );
-  updateValueParam< double >( d, names::g_K, g_K, node );
-  updateValueParam< double >( d, names::g_L, g_L, node );
-  updateValueParam< double >( d, names::C_m, C_m, node );
-  updateValueParam< double >( d, names::E_Na, E_Na, node );
-  updateValueParam< double >( d, names::E_K, E_K, node );
-  updateValueParam< double >( d, names::E_L, E_L, node );
-  updateValueParam< double >( d, names::V_T, V_T, node );
-  updateValueParam< double >( d, names::E_ex, E_ex, node );
-  updateValueParam< double >( d, names::E_in, E_in, node );
-  updateValueParam< double >( d, names::tau_syn_ex, tau_synE, node );
-  updateValueParam< double >( d, names::tau_syn_in, tau_synI, node );
-  updateValueParam< double >( d, names::t_ref, t_ref_, node );
-  updateValueParam< double >( d, names::I_e, I_e, node );
+  update_value_param( d, names::g_Na, g_Na, node );
+  update_value_param( d, names::g_K, g_K, node );
+  update_value_param( d, names::g_L, g_L, node );
+  update_value_param( d, names::C_m, C_m, node );
+  update_value_param( d, names::E_Na, E_Na, node );
+  update_value_param( d, names::E_K, E_K, node );
+  update_value_param( d, names::E_L, E_L, node );
+  update_value_param( d, names::V_T, V_T, node );
+  update_value_param( d, names::E_ex, E_ex, node );
+  update_value_param( d, names::E_in, E_in, node );
+  update_value_param( d, names::tau_syn_ex, tau_synE, node );
+  update_value_param( d, names::tau_syn_in, tau_synI, node );
+  update_value_param( d, names::t_ref, t_ref_, node );
+  update_value_param( d, names::I_e, I_e, node );
 
   if ( C_m <= 0 )
   {
@@ -241,21 +239,21 @@ nest::hh_cond_exp_traub::Parameters_::set( const DictionaryDatum& d, Node* node 
 }
 
 void
-nest::hh_cond_exp_traub::State_::get( DictionaryDatum& d ) const
+nest::hh_cond_exp_traub::State_::get( Dictionary& d ) const
 {
-  def< double >( d, names::V_m, y_[ V_M ] ); // Membrane potential
-  def< double >( d, names::Act_m, y_[ HH_M ] );
-  def< double >( d, names::Inact_h, y_[ HH_H ] );
-  def< double >( d, names::Act_n, y_[ HH_N ] );
+  d[ names::V_m ] = y_[ V_M ];  // Membrane potential
+  d[ names::Act_m ] = y_[ HH_M ];
+  d[ names::Inact_h ] = y_[ HH_H ];
+  d[ names::Act_n ] = y_[ HH_N ];
 }
 
 void
-nest::hh_cond_exp_traub::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
+nest::hh_cond_exp_traub::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
-  updateValueParam< double >( d, names::V_m, y_[ V_M ], node );
-  updateValueParam< double >( d, names::Act_m, y_[ HH_M ], node );
-  updateValueParam< double >( d, names::Inact_h, y_[ HH_H ], node );
-  updateValueParam< double >( d, names::Act_n, y_[ HH_N ], node );
+  update_value_param( d, names::V_m, y_[ V_M ], node );
+  update_value_param( d, names::Act_m, y_[ HH_M ], node );
+  update_value_param( d, names::Inact_h, y_[ HH_H ], node );
+  update_value_param( d, names::Act_n, y_[ HH_N ], node );
   if ( y_[ HH_M ] < 0 or y_[ HH_H ] < 0 or y_[ HH_N ] < 0 )
   {
     throw BadProperty( "All (in)activation variables must be non-negative." );
@@ -327,9 +325,9 @@ nest::hh_cond_exp_traub::~hh_cond_exp_traub()
 void
 nest::hh_cond_exp_traub::init_buffers_()
 {
-  B_.spike_exc_.clear(); // includes resize
-  B_.spike_inh_.clear(); // includes resize
-  B_.currents_.clear();  // includes resize
+  B_.spike_exc_.clear();  // includes resize
+  B_.spike_inh_.clear();  // includes resize
+  B_.currents_.clear();   // includes resize
   ArchivingNode::clear_history();
 
   B_.logger_.reset();
@@ -390,7 +388,7 @@ nest::hh_cond_exp_traub::update( Time const& origin, const long from, const long
   for ( long lag = from; lag < to; ++lag )
   {
 
-    double tt = 0.0; // it's all relative!
+    double tt = 0.0;  // it's all relative!
     V_.U_old_ = S_.y_[ State_::V_M ];
 
 
@@ -400,11 +398,11 @@ nest::hh_cond_exp_traub::update( Time const& origin, const long from, const long
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
-        &B_.sys_,             // system of ODE
-        &tt,                  // from t...
-        B_.step_,             // ...to t=t+h
-        &B_.IntegrationStep_, // integration window (written on!)
-        S_.y_ );              // neuron state
+        &B_.sys_,              // system of ODE
+        &tt,                   // from t...
+        B_.step_,              // ...to t=t+h
+        &B_.IntegrationStep_,  // integration window (written on!)
+        S_.y_ );               // neuron state
       if ( status != GSL_SUCCESS )
       {
         throw GSLSolverFailure( get_name(), status );
@@ -420,18 +418,14 @@ nest::hh_cond_exp_traub::update( Time const& origin, const long from, const long
     {
       --S_.r_;
     }
-    else
+    else if ( S_.y_[ State_::V_M ] >= P_.V_T + 30. and V_.U_old_ > S_.y_[ State_::V_M ] )  // (threshold and maximum)
     {
-      // (threshold   and    maximum    )
-      if ( S_.y_[ State_::V_M ] >= P_.V_T + 30. and V_.U_old_ > S_.y_[ State_::V_M ] )
-      {
-        S_.r_ = V_.refractory_counts_;
+      S_.r_ = V_.refractory_counts_;
 
-        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+      set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
-        SpikeEvent se;
-        kernel().event_delivery_manager.send( *this, se, lag );
-      }
+      SpikeEvent se;
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     // set new input current
@@ -479,6 +473,6 @@ nest::hh_cond_exp_traub::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-} // namespace nest
+}  // namespace nest
 
-#endif // HAVE_GSL
+#endif  // HAVE_GSL

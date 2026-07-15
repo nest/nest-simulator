@@ -28,6 +28,7 @@
 #include <map>
 
 // Includes from nestkernel:
+#include "exceptions.h"
 #include "nest_types.h"
 
 // Includes from libnestutil
@@ -114,12 +115,12 @@ public:
      */
     NodeEntry( Node&, size_t );
 
-    Node* get_node() const;     //!< return pointer to represented node
-    size_t get_node_id() const; //!< return ID of represented node
+    Node* get_node() const;      //!< return pointer to represented node
+    size_t get_node_id() const;  //!< return ID of represented node
 
   private:
-    Node* node_;     //!< @note pointer to allow zero-entries for BlockVector compatibility
-    size_t node_id_; //!< store node ID locally for faster searching
+    Node* node_;      //!< @note pointer to allow zero-entries for BlockVector compatibility
+    size_t node_id_;  //!< store node ID locally for faster searching
   };
 
   //! Iterator inherited from BlockVector
@@ -186,13 +187,13 @@ public:
 private:
   bool is_consistent_() const;
 
-  BlockVector< NodeEntry > nodes_; //!< stores local node information
-  size_t global_max_node_id_;      //!< globally largest node ID
-  size_t local_min_node_id_;       //!< smallest local node ID
-  size_t local_max_node_id_;       //!< largest local node ID
+  BlockVector< NodeEntry > nodes_;  //!< stores local node information
+  size_t global_max_node_id_;       //!< globally largest node ID
+  size_t local_min_node_id_;        //!< smallest local node ID
+  size_t local_max_node_id_;        //!< largest local node ID
 
-  double left_scale_;  //!< scale factor for left side of array
-  double right_scale_; //!< scale factor for right side of array
+  double left_scale_;   //!< scale factor for left side of array
+  double right_scale_;  //!< scale factor for right side of array
 
   /**
    * Globally smallest node ID in right side of array.
@@ -220,7 +221,7 @@ private:
   bool left_side_has_proxies_;
 };
 
-} // namespace nest
+}  // namespace nest
 
 
 inline nest::SparseNodeArray::const_iterator

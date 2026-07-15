@@ -30,9 +30,6 @@
 #include "ring_buffer.h"
 #include "spikecounter.h"
 
-// Includes from sli:
-#include "namedatum.h"
-
 
 namespace nest
 {
@@ -69,7 +66,13 @@ intervals. The interval is equal to ``deliver_interval * d_min``,
 where ``deliver_interval`` is an (integer) entry in the parameter
 dictionary and ``d_min`` is the minimal synaptic delay.
 
-The implementation is based on the framework presented in [1]_.
+The implementation is based on the framework presented in :footcite:p:`Potjans2010`.
+
+Please note that the ``volume_transmitter`` property of a synapse can
+only be set by means of :py:func:`.CopyModel` or
+:py:func:`.SetDefaults`; setting the property inside of a
+:py:func:`.Connect` call is not supported for technical reasons.
+
 
 Parameters
 ++++++++++
@@ -83,11 +86,7 @@ References
 ++++++++++
 
 
-.. [1] Potjans W, Morrison A, Diesmann M (2010). Enabling functional
-       neural circuit simulations with distributed computing of
-       neuromodulated plasticity. Frontiers in Computattional Neuroscience,
-       4:141. DOI: https://doi.org/10.3389/fncom.2010.00141
-
+.. footbibliography::
 
 Receives
 ++++++++
@@ -130,7 +129,7 @@ public:
     return false;
   }
 
-  Name
+  std::string
   get_element_type() const override
   {
     return names::other;
@@ -148,8 +147,8 @@ public:
 
   size_t handles_test_event( SpikeEvent&, size_t ) override;
 
-  void get_status( DictionaryDatum& d ) const override;
-  void set_status( const DictionaryDatum& d ) override;
+  void get_status( Dictionary& d ) const override;
+  void set_status( const Dictionary& d ) override;
 
   /**
    * Since volume transmitters are duplicated on each thread, and are
@@ -175,16 +174,16 @@ private:
   struct Parameters_
   {
     Parameters_();
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, Node* node );
-    long deliver_interval_; //!< update interval in d_min time steps
+    void get( Dictionary& ) const;
+    void set( const Dictionary&, Node* node );
+    long deliver_interval_;  //!< update interval in d_min time steps
   };
 
   //-----------------------------------------------
 
   struct Buffers_
   {
-    RingBuffer neuromodulatory_spikes_; //!< buffer to store incoming spikes
+    RingBuffer neuromodulatory_spikes_;  //!< buffer to store incoming spikes
     //! vector to store and deliver spikes
     std::vector< spikecounter > spikecounter_;
   };
@@ -206,16 +205,16 @@ volume_transmitter::handles_test_event( SpikeEvent&, size_t receptor_type )
 }
 
 inline void
-volume_transmitter::get_status( DictionaryDatum& d ) const
+volume_transmitter::get_status( Dictionary& d ) const
 {
   P_.get( d );
 }
 
 inline void
-volume_transmitter::set_status( const DictionaryDatum& d )
+volume_transmitter::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d, this );   // throws if BadProperty
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
+  ptmp.set( d, this );    // throws if BadProperty
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
@@ -239,6 +238,6 @@ volume_transmitter::get_local_device_id() const
   return local_device_id_;
 }
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef VOLUME_TRANSMITTER_H */

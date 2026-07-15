@@ -13,4 +13,3 @@ and their values are forwarded through MUSIC to the receiver.
 .. code-block:: bash
 
   mpiexec -np 3 music test.music
-

@@ -52,7 +52,7 @@ def ProcessExamples(app, doctree, docname):
                 # correct model name
                 if requested_list["name"] == docname:
                     if requested_list["model_name"] not in models_to_examples_map:
-                        log.info("No examples found for Model: " + requested_list["model_name"])
+                        log.info("No examples found for Model: %s", requested_list["model_name"])
                         bullet_list = nodes.Text("None")
                         break
 

@@ -5,4 +5,3 @@ level: warning
 nonword: true
 tokens:
   - '\w+\s&\s\w+'
-

@@ -4,7 +4,7 @@ NEST SONATA guide
 =================
 
 NEST supports building and simulating networks of point neurons described by the
-`SONATA <https://github.com/AllenInstitute/sonata>`_ format [1]_.
+`SONATA <https://github.com/AllenInstitute/sonata>`_ format :footcite:p:`Dai2020`.
 This guide provides the details about how a SONATA network must be specified to be supported natively by NEST.
 
 .. _sec:sonata_configure:
@@ -90,7 +90,7 @@ multiple node population HDF5 files.
 
 NEST assumes the following structure of the node HDF5 files:
 
-:: 
+::
 
     <nodes_file.h5>                     Filename
     ├─ nodes                            Group - required
@@ -147,7 +147,7 @@ circumvented by assigning a single node its own node type id.
 Below is an example of a node type CSV file with the required headers for neuron nodes:
 
 +--------------+---------------+--------------------+-----------------+
-| node_type_id | model_type    | model_template     | dynamics_params | 
+| node_type_id | model_type    | model_template     | dynamics_params |
 +==============+===============+====================+=================+
 | 1            | point_process | nest:iaf_psc_alpha | params_1.json   |
 +--------------+---------------+--------------------+-----------------+
@@ -155,7 +155,7 @@ Below is an example of a node type CSV file with the required headers for neuron
 +--------------+---------------+--------------------+-----------------+
 
 The only required CSV header for ``virtual`` nodes is ``model_type``. The ``spike_train_injector``\s spike-time arrays
-are expected to be provided in HDF5 datasets with the configuration details specified in the JSON configuration file. 
+are expected to be provided in HDF5 datasets with the configuration details specified in the JSON configuration file.
 
 
 .. _sec:sonata_edges:
@@ -168,7 +168,7 @@ CSV file that assigns properties to all edges with a given edge type id.
 
 NEST assumes the following structure of the edge HDF5 files:
 
-:: 
+::
 
     <edges_file.h5>                     Filename
     ├─ edges                            Group - required
@@ -213,7 +213,7 @@ NEST assumes the ``edge_id``\s are contiguous numeric keys starting from zero, t
 Below is an example of a edge type CSV file:
 
 +--------------+----------------+-------+-----------------+
-| edge_type_id | model_template | delay | dynamics_params | 
+| edge_type_id | model_template | delay | dynamics_params |
 +==============+================+=======+=================+
 | 1            | static_synapse | 2.0   | params_1.json   |
 +--------------+----------------+-------+-----------------+
@@ -293,12 +293,10 @@ expects to be included:
 More about SONATA
 -----------------
 
-For a full specification of the SONATA format, see [1]_ and the `SONATA GitHub page <https://github.com/AllenInstitute/sonata>`_.
+For a full specification of the SONATA format, see :footcite:p:`Dai2020` and the `SONATA GitHub page <https://github.com/AllenInstitute/sonata>`_.
 
 
 References
 ~~~~~~~~~~
 
-.. [1] Dai K, Hernando J, Billeh YN, Gratiy SL, Planas J, et al. (2020).
-       The SONATA data format for efficient description of large-scale network models.
-       PLOS Computational Biology 16(2): e1007696. https://doi.org/10.1371/journal.pcbi.1007696
+.. footbibliography::

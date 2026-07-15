@@ -30,8 +30,6 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-#include "dictdatum.h"
-
 /* BeginUserDocs: neuron, integrate-and-fire, current-based, adaptation, hard threshold
 
 Short description
@@ -44,9 +42,9 @@ Description
 +++++++++++
 
 ``glif_psc_double_alpha`` provides five generalized leaky integrate-and-fire
-(GLIF) models [1]_ with double alpha-function shaped synaptic currents.
+(GLIF) models :footcite:p:`Teeter2018` with double alpha-function shaped synaptic currents.
 Incoming spike events induce a postsynaptic change of current modeled
-by the sum of two alpha functions (fast and slow components) for each receptor [2]_.
+by the sum of two alpha functions (fast and slow components) for each receptor :footcite:p:`Meffin2004`.
 This function is normalized such that an event of weight 1.0 results in a peak current
 of the fast component of the alpha function to be 1 pA at
 :math:`t = \tau_\text{syn, fast}`.
@@ -148,36 +146,36 @@ V_reset    double   Reset potential of the membrane in mV (GLIF 1 or GLIF 3)
 -------------------------------------------------------------------------------
 th_spike_add               double         Threshold addition following spike
                                           in mV (delta_theta_s in Equation (6)
-                                          in [1]_)
+                                          in :footcite:p:`Teeter2018`)
 th_spike_decay             double         Spike-induced threshold time
                                           constant in 1/ms (bs in Equation (2)
-                                          in [1]_)
+                                          in :footcite:p:`Teeter2018`)
 voltage_reset_fraction     double         Voltage fraction coefficient
                                           following spike (fv in Equation (5)
-                                          in [1]_)
+                                          in :footcite:p:`Teeter2018`)
 voltage_reset_add          double         Voltage addition following spike in
                                           mV (-delta_V (sign flipped) in
-                                          Equation (5) in [1]_)
+                                          Equation (5) in :footcite:p:`Teeter2018`)
 asc_init                   double vector  Initial values of after-spike
                                           currents in pA
 asc_decay                  double vector  After-spike current time constants
-                                          in 1/ms (kj in Equation (3) in [1]_)
+                                          in 1/ms (kj in Equation (3) in :footcite:p:`Teeter2018`)
 asc_amps                   double vector  After-spike current amplitudes in
-                                          pA (deltaIj in Equation (7) in [1]_)
+                                          pA (deltaIj in Equation (7) in :footcite:p:`Teeter2018`)
 asc_r                      double vector  Current fraction following spike
                                           coefficients for fj in Equation (7)
-                                          in [1]_
+                                          in :footcite:p:`Teeter2018`
 th_voltage_index           double         Adaptation index of threshold - A
                                           'leak-conductance' for the
                                           voltage-dependent component of the
                                           threshold in 1/ms (av in Equation
-                                          (4) in [1]_)
+                                          (4) in :footcite:p:`Teeter2018`)
 th_voltage_decay           double         Voltage-induced threshold time
                                           constant - Inverse of which is the
                                           time constant of the
                                           voltage-dependent component of the
                                           threshold in 1/ms (bv in Equation
-                                          (4) in [1]_)
+                                          (4) in :footcite:p:`Teeter2018`)
 tau_syn_fast               double vector  Time constants of the faster
                                           synaptic alpha function in ms
 tau_syn_slow               double vector  Time constants of the slower
@@ -198,13 +196,7 @@ adapting_threshold         bool           flag whether the neuron has a
 References
 ++++++++++
 
-.. [1] Teeter C, Iyer R, Menon V, Gouwens N, Feng D, Berg J, Szafer A,
-       Cain N, Zeng H, Hawrylycz M, Koch C, & Mihalas S (2018)
-       Generalized leaky integrate-and-fire models classify multiple neuron
-       types. Nature Communications 9:709.
-.. [2] Meffin, H., Burkitt, A. N., & Grayden, D. B. (2004). An analytical
-       model for the large, fluctuating synaptic conductance state typical of
-       neocortical neurons in vivo. J.  Comput. Neurosci., 16, 159-175.
+.. footbibliography::
 
 See also
 ++++++++
@@ -231,21 +223,21 @@ public:
 
   glif_psc_double_alpha( const glif_psc_double_alpha& );
 
-  using nest::Node::handle;
-  using nest::Node::handles_test_event;
+  using Node::handle;
+  using Node::handles_test_event;
 
-  size_t send_test_event( nest::Node&, size_t, nest::synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  void handle( nest::SpikeEvent& ) override;
-  void handle( nest::CurrentEvent& ) override;
-  void handle( nest::DataLoggingRequest& ) override;
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  size_t handles_test_event( nest::SpikeEvent&, size_t ) override;
-  size_t handles_test_event( nest::CurrentEvent&, size_t ) override;
-  size_t handles_test_event( nest::DataLoggingRequest&, size_t ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   //! Reset internal buffers of neuron.
@@ -255,35 +247,35 @@ private:
   void pre_run_hook() override;
 
   //! Take neuron through given time interval
-  void update( nest::Time const&, const long, const long ) override;
+  void update( Time const&, const long, const long ) override;
 
   // The next two classes need to be friends to access the State_ class/member
-  friend class nest::RecordablesMap< glif_psc_double_alpha >;
-  friend class nest::UniversalDataLogger< glif_psc_double_alpha >;
+  friend class RecordablesMap< glif_psc_double_alpha >;
+  friend class UniversalDataLogger< glif_psc_double_alpha >;
 
   struct Parameters_
   {
-    double G_;                           //!< membrane conductance in nS
-    double E_L_;                         //!< resting potential in mV
-    double th_inf_;                      //!< infinity threshold in mV
-    double C_m_;                         //!< capacitance in pF
-    double t_ref_;                       //!< refractory time in ms
-    double V_reset_;                     //!< Membrane voltage following spike in mV
-    double th_spike_add_;                //!< threshold additive constant following reset in mV
-    double th_spike_decay_;              //!< spike induced threshold in 1/ms
-    double voltage_reset_fraction_;      //!< voltage fraction following reset coefficient
-    double voltage_reset_add_;           //!< voltage additive constant following reset in mV
-    double th_voltage_index_;            //!< a 'leak-conductance' for the voltage-dependent
-                                         //!< component of the threshold in 1/ms
-    double th_voltage_decay_;            //!< inverse of which is the time constant of the
-                                         //!< voltage-dependent component of the threshold in 1/ms
-    std::vector< double > asc_init_;     //!< initial values of ASCurrents_ in pA
-    std::vector< double > asc_decay_;    //!< predefined time scale in 1/ms
-    std::vector< double > asc_amps_;     //!< in pA
-    std::vector< double > asc_r_;        //!< coefficient
-    std::vector< double > tau_syn_fast_; //!< synaptic port time constants in ms
-    std::vector< double > tau_syn_slow_; //!< synaptic port time constants in ms
-    std::vector< double > amp_slow_;     //!< synaptic port time constants in ms
+    double G_;                            //!< membrane conductance in nS
+    double E_L_;                          //!< resting potential in mV
+    double th_inf_;                       //!< infinity threshold in mV
+    double C_m_;                          //!< capacitance in pF
+    double t_ref_;                        //!< refractory time in ms
+    double V_reset_;                      //!< Membrane voltage following spike in mV
+    double th_spike_add_;                 //!< threshold additive constant following reset in mV
+    double th_spike_decay_;               //!< spike induced threshold in 1/ms
+    double voltage_reset_fraction_;       //!< voltage fraction following reset coefficient
+    double voltage_reset_add_;            //!< voltage additive constant following reset in mV
+    double th_voltage_index_;             //!< a 'leak-conductance' for the voltage-dependent
+                                          //!< component of the threshold in 1/ms
+    double th_voltage_decay_;             //!< inverse of which is the time constant of the
+                                          //!< voltage-dependent component of the threshold in 1/ms
+    std::vector< double > asc_init_;      //!< initial values of ASCurrents_ in pA
+    std::vector< double > asc_decay_;     //!< predefined time scale in 1/ms
+    std::vector< double > asc_amps_;      //!< in pA
+    std::vector< double > asc_r_;         //!< coefficient
+    std::vector< double > tau_syn_fast_;  //!< synaptic port time constants in ms
+    std::vector< double > tau_syn_slow_;  //!< synaptic port time constants in ms
+    std::vector< double > amp_slow_;      //!< synaptic port time constants in ms
 
     //! boolean flag which indicates whether the neuron has connections
     bool has_connections_;
@@ -297,36 +289,36 @@ private:
     //! boolean flag which indicates whether the neuron has voltage dependent threshold component
     bool has_theta_voltage_;
 
-    size_t n_receptors_() const; //!< Returns the size of tau_syn_fast_
+    size_t n_receptors_() const;  //!< Returns the size of tau_syn_fast_
 
     Parameters_();
 
-    void get( DictionaryDatum& ) const;
-    double set( const DictionaryDatum&, Node* );
+    void get( Dictionary& ) const;
+    double set( const Dictionary&, Node* );
   };
 
   struct State_
   {
-    double U_;                         //!< relative membrane potential in mV
-    double threshold_;                 //!< total threshold in mV
-    double threshold_spike_;           //!< spike component of threshold in mV
-    double threshold_voltage_;         //!< voltage component of threshold in mV
-    double I_;                         //!< external current in pA
-    double I_syn_;                     //!< postsynaptic current in pA
-    double I_syn_fast_;                //!< postsynaptic current in pA
-    double I_syn_slow_;                //!< postsynaptic current in pA
-    std::vector< double > ASCurrents_; //!< after-spike currents in pA
-    double ASCurrents_sum_;            //!< in pA
-    int refractory_steps_;             //!< Number of refractory steps remaining
-    std::vector< double > y1_fast_;    //!< synapse current evolution state 1 in pA
-    std::vector< double > y2_fast_;    //!< synapse current evolution state 2 in pA
-    std::vector< double > y1_slow_;    //!< synapse current evolution state 1 in pA
-    std::vector< double > y2_slow_;    //!< synapse current evolution state 2 in pA
+    double U_;                          //!< relative membrane potential in mV
+    double threshold_;                  //!< total threshold in mV
+    double threshold_spike_;            //!< spike component of threshold in mV
+    double threshold_voltage_;          //!< voltage component of threshold in mV
+    double I_;                          //!< external current in pA
+    double I_syn_;                      //!< postsynaptic current in pA
+    double I_syn_fast_;                 //!< postsynaptic current in pA
+    double I_syn_slow_;                 //!< postsynaptic current in pA
+    std::vector< double > ASCurrents_;  //!< after-spike currents in pA
+    double ASCurrents_sum_;             //!< in pA
+    int refractory_steps_;              //!< Number of refractory steps remaining
+    std::vector< double > y1_fast_;     //!< synapse current evolution state 1 in pA
+    std::vector< double > y2_fast_;     //!< synapse current evolution state 2 in pA
+    std::vector< double > y1_slow_;     //!< synapse current evolution state 1 in pA
+    std::vector< double > y2_slow_;     //!< synapse current evolution state 2 in pA
 
     State_( const Parameters_& );
 
-    void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, double, Node* );
+    void get( Dictionary&, const Parameters_& ) const;
+    void set( const Dictionary&, const Parameters_&, double, Node* );
   };
 
 
@@ -335,40 +327,40 @@ private:
     Buffers_( glif_psc_double_alpha& );
     Buffers_( const Buffers_&, glif_psc_double_alpha& );
 
-    std::vector< nest::RingBuffer > spikes_; //!< Buffer incoming spikes through delay, as sum
-    nest::RingBuffer currents_;              //!< Buffer incoming currents through delay,
+    std::vector< RingBuffer > spikes_;  //!< Buffer incoming spikes through delay, as sum
+    RingBuffer currents_;               //!< Buffer incoming currents through delay,
 
     //! Logger for all analog data
-    nest::UniversalDataLogger< glif_psc_double_alpha > logger_;
+    UniversalDataLogger< glif_psc_double_alpha > logger_;
   };
 
   struct Variables_
   {
-    int RefractoryCounts_;                             //!< counter during refractory period
-    double theta_spike_decay_rate_;                    //!< threshold spike component decay rate
-    double theta_spike_refractory_decay_rate_;         //!< threshold spike component decay rate during refractory
-    double theta_voltage_decay_rate_inverse_;          //!< inverse of threshold voltage component decay rate
-    double potential_decay_rate_;                      //!< membrane potential decay rate
-    double abpara_ratio_voltage_;                      //!< ratio of parameters of voltage threshold component av/bv
-    std::vector< double > asc_decay_rates_;            //!< after spike current decay rates
-    std::vector< double > asc_stable_coeff_;           //!< after spike current stable coefficient
-    std::vector< double > asc_refractory_decay_rates_; //!< after spike current decay rates during refractory
-    double phi;                                        //!< threshold voltage component coefficient
+    int RefractoryCounts_;                              //!< counter during refractory period
+    double theta_spike_decay_rate_;                     //!< threshold spike component decay rate
+    double theta_spike_refractory_decay_rate_;          //!< threshold spike component decay rate during refractory
+    double theta_voltage_decay_rate_inverse_;           //!< inverse of threshold voltage component decay rate
+    double potential_decay_rate_;                       //!< membrane potential decay rate
+    double abpara_ratio_voltage_;                       //!< ratio of parameters of voltage threshold component av/bv
+    std::vector< double > asc_decay_rates_;             //!< after spike current decay rates
+    std::vector< double > asc_stable_coeff_;            //!< after spike current stable coefficient
+    std::vector< double > asc_refractory_decay_rates_;  //!< after spike current decay rates during refractory
+    double phi;                                         //!< threshold voltage component coefficient
 
-    std::vector< double > P11_fast_; //!< synaptic current evolution parameter
-    std::vector< double > P21_fast_; //!< synaptic current evolution parameter
-    std::vector< double > P22_fast_; //!< synaptic current evolution parameter
-    double P30_;                     //!< membrane current/voltage evolution parameter
-    double P33_;                     //!< membrane voltage evolution parameter
-    std::vector< double > P31_fast_; //!< synaptic/membrane current evolution parameter
-    std::vector< double > P32_fast_; //!< synaptic/membrane current evolution parameter
+    std::vector< double > P11_fast_;  //!< synaptic current evolution parameter
+    std::vector< double > P21_fast_;  //!< synaptic current evolution parameter
+    std::vector< double > P22_fast_;  //!< synaptic current evolution parameter
+    double P30_;                      //!< membrane current/voltage evolution parameter
+    double P33_;                      //!< membrane voltage evolution parameter
+    std::vector< double > P31_fast_;  //!< synaptic/membrane current evolution parameter
+    std::vector< double > P32_fast_;  //!< synaptic/membrane current evolution parameter
 
     // slow component
-    std::vector< double > P11_slow_; //!< synaptic current evolution parameter
-    std::vector< double > P21_slow_; //!< synaptic current evolution parameter
-    std::vector< double > P22_slow_; //!< synaptic current evolution parameter
-    std::vector< double > P31_slow_; //!< synaptic/membrane current evolution parameter
-    std::vector< double > P32_slow_; //!< synaptic/membrane current evolution parameter
+    std::vector< double > P11_slow_;  //!< synaptic current evolution parameter
+    std::vector< double > P21_slow_;  //!< synaptic current evolution parameter
+    std::vector< double > P22_slow_;  //!< synaptic current evolution parameter
+    std::vector< double > P31_slow_;  //!< synaptic/membrane current evolution parameter
+    std::vector< double > P32_slow_;  //!< synaptic/membrane current evolution parameter
 
 
     /** Amplitude of the synaptic current.
@@ -427,46 +419,46 @@ private:
   Buffers_ B_;
 
   //! Mapping of recordables names to access functions
-  static nest::RecordablesMap< glif_psc_double_alpha > recordablesMap_;
+  static RecordablesMap< glif_psc_double_alpha > recordablesMap_;
 };
 
 
 inline size_t
-nest::glif_psc_double_alpha::Parameters_::n_receptors_() const
+glif_psc_double_alpha::Parameters_::n_receptors_() const
 {
   return tau_syn_fast_.size();
 }
 
 inline size_t
-nest::glif_psc_double_alpha::send_test_event( nest::Node& target, size_t receptor_type, nest::synindex, bool )
+glif_psc_double_alpha::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
-  nest::SpikeEvent e;
+  SpikeEvent e;
   e.set_sender( *this );
   return target.handles_test_event( e, receptor_type );
 }
 
 inline size_t
-nest::glif_psc_double_alpha::handles_test_event( nest::CurrentEvent&, size_t receptor_type )
+glif_psc_double_alpha::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
-    throw nest::UnknownReceptorType( receptor_type, get_name() );
+    throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
 }
 
 inline size_t
-nest::glif_psc_double_alpha::handles_test_event( nest::DataLoggingRequest& dlr, size_t receptor_type )
+glif_psc_double_alpha::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
-    throw nest::UnknownReceptorType( receptor_type, get_name() );
+    throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 
 inline void
-glif_psc_double_alpha::get_status( DictionaryDatum& d ) const
+glif_psc_double_alpha::get_status( Dictionary& d ) const
 {
   // get our own parameter and state data
   P_.get( d );
@@ -475,16 +467,16 @@ glif_psc_double_alpha::get_status( DictionaryDatum& d ) const
   // get information managed by parent class
   ArchivingNode::get_status( d );
 
-  ( *d )[ nest::names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
-glif_psc_double_alpha::set_status( const DictionaryDatum& d )
+glif_psc_double_alpha::set_status( const Dictionary& d )
 {
-  Parameters_ ptmp = P_;                       // temporary copy in case of errors
-  const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
-  State_ stmp = S_;                            // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
+  Parameters_ ptmp = P_;                        // temporary copy in case of errors
+  const double delta_EL = ptmp.set( d, this );  // throws if BadProperty
+  State_ stmp = S_;                             // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );          // throws if BadProperty
 
   ArchivingNode::set_status( d );
 
@@ -493,6 +485,6 @@ glif_psc_double_alpha::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
-} // namespace nest
+}  // namespace nest
 
 #endif

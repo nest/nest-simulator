@@ -83,7 +83,7 @@ void
 nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::reset()
 {
   data_.clear();
-  next_rec_step_ = -1; // flag as uninitialized
+  next_rec_step_ = -1;  // flag as uninitialized
 }
 
 template < typename HostNode >
@@ -93,7 +93,7 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::init()
   if ( num_vars_ < 1 )
   {
     return;
-  } // not recording anything
+  }  // not recording anything
 
   // Next recording step is in current slice or beyond, indicates that
   // buffer is properly initialized.
@@ -120,7 +120,7 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::init()
   // step to be offset and then iterating until the variable is greater than current simulation time.
   if ( recording_offset_.get_steps() != 0 )
   {
-    next_rec_step_ = recording_offset_.get_steps() - 1; // shifted one to left
+    next_rec_step_ = recording_offset_.get_steps() - 1;  // shifted one to left
     while ( next_rec_step_ <= kernel().simulation_manager.get_time().get_steps() )
     {
       next_rec_step_ += rec_int_steps_;
@@ -133,8 +133,8 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::init()
 
   data_.resize( 2, DataLoggingReply::Container( recs_per_slice, DataLoggingReply::Item( num_vars_ ) ) );
 
-  next_rec_.resize( 2 );               // just for safety's sake
-  next_rec_[ 0 ] = next_rec_[ 1 ] = 0; // start at beginning of buffer
+  next_rec_.resize( 2 );                // just for safety's sake
+  next_rec_[ 0 ] = next_rec_[ 1 ] = 0;  // start at beginning of buffer
 }
 
 template < typename HostNode >
@@ -186,7 +186,7 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& hos
   if ( num_vars_ < 1 )
   {
     return;
-  } // nothing to do
+  }  // nothing to do
 
   // The following assertions will fire if the user forgot to call init()
   // on the data logger.
@@ -283,7 +283,7 @@ void
 nest::UniversalDataLogger< HostNode >::DataLogger_::reset()
 {
   data_.clear();
-  next_rec_step_ = -1; // flag as uninitialized
+  next_rec_step_ = -1;  // flag as uninitialized
 }
 
 template < typename HostNode >
@@ -321,7 +321,7 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::init()
   // step to be offset and then iterating until the variable is greater than current simulation time.
   if ( recording_offset_.get_steps() != 0 )
   {
-    next_rec_step_ = recording_offset_.get_steps() - 1; // shifted one to left
+    next_rec_step_ = recording_offset_.get_steps() - 1;  // shifted one to left
     while ( next_rec_step_ <= kernel().simulation_manager.get_time().get_steps() )
     {
       next_rec_step_ += rec_int_steps_;
@@ -334,8 +334,8 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::init()
 
   data_.resize( 2, DataLoggingReply::Container( recs_per_slice, DataLoggingReply::Item( num_vars_ ) ) );
 
-  next_rec_.resize( 2 );               // just for safety's sake
-  next_rec_[ 0 ] = next_rec_[ 1 ] = 0; // start at beginning of buffer
+  next_rec_.resize( 2 );                // just for safety's sake
+  next_rec_[ 0 ] = next_rec_[ 1 ] = 0;  // start at beginning of buffer
 }
 
 template < typename HostNode >

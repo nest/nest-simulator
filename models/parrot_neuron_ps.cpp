@@ -31,8 +31,6 @@
 #include "kernel_manager.h"
 #include "nest_impl.h"
 
-// Includes from sli:
-#include "dictutils.h"
 
 namespace nest
 {
@@ -71,7 +69,7 @@ parrot_neuron_ps::update( Time const& origin, long const from, long const to )
     long const T = origin.get_steps() + lag;
 
     double ev_offset;
-    double ev_multiplicity; // parrot stores multiplicity in weight
+    double ev_multiplicity;  // parrot stores multiplicity in weight
     bool end_of_refract;
 
     while ( B_.events_.get_next_spike( T, false, ev_offset, ev_multiplicity, end_of_refract ) )
@@ -93,13 +91,13 @@ parrot_neuron_ps::update( Time const& origin, long const from, long const to )
 }
 
 void
-parrot_neuron_ps::get_status( DictionaryDatum& d ) const
+parrot_neuron_ps::get_status( Dictionary& d ) const
 {
   ArchivingNode::get_status( d );
 }
 
 void
-parrot_neuron_ps::set_status( const DictionaryDatum& d )
+parrot_neuron_ps::set_status( const Dictionary& d )
 {
   ArchivingNode::set_status( d );
 }
@@ -126,4 +124,4 @@ parrot_neuron_ps::handle( SpikeEvent& e )
   }
 }
 
-} // namespace
+}  // namespace

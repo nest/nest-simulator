@@ -24,14 +24,13 @@ Correlospinmatrix detector example
 ----------------------------------
 
 This scripts simulates two connected binary neurons, similar
-as in [1]_. It measures and plots the auto- and cross covariance functions
+as in :footcite:p:`Ginzburg1994`. It measures and plots the auto- and cross covariance functions
 of the individual neurons and between them, respectively.
 
 References
 ~~~~~~~~~~
 
-.. [1] Ginzburg and Sompolinsky (1994). Theory of correlations in stochastic neural networks. 50(4) p. 3175. Fig. 1.
-
+.. footbibliography::
 """
 
 import matplotlib.pyplot as plt
@@ -62,13 +61,13 @@ nest.Simulate(T)
 
 count_covariance = csd.count_covariance
 
-mean_activities = np.zeros(2, dtype=np.float)
+mean_activities = np.zeros(2)
 for i in range(2):
     mean_activities[i] = count_covariance[i][i][int(tau_max / h)] * (h / T)
 
 print("mean activities =", mean_activities)
 
-covariance_matrix = np.zeros((2, 2, int(2 * tau_max / h) + 1), dtype=np.float)
+covariance_matrix = np.zeros((2, 2, int(2 * tau_max / h) + 1))
 for i in range(2):
     for j in range(2):
         covariance_matrix[i, j] = count_covariance[i][j] * (h / T) - mean_activities[i] * mean_activities[j]

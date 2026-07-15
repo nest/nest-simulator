@@ -29,14 +29,14 @@ A Quick Introduction to NEST and MUSIC
 --------------------------------------
 
 In this tutorial, we will show you how to use the MUSIC library together
-with NEST. We will cover how to use the library from PyNEST and from the
-SLI language interface. In addition, we'll introduce the use of MUSIC in
+with NEST. We will cover how to use the library from PyNEST. In addition,
+we'll introduce the use of MUSIC in
 a C++ application and how to connect such an application to a NEST
 simulation.
 
 Our aim is to show practical examples of how to use MUSIC, and
 highlight common pitfalls that can trip the unwary. Also, we assume only
-a minimal knowledge of Python, C++ and (especially) SLI, so the examples
+a minimal knowledge of Python and C++, so the examples
 will favour clarity and simplicity over elegance and idiomatic
 constructs.
 

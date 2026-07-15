@@ -37,7 +37,7 @@
 #include <boost/sort/spreadsort/spreadsort.hpp>
 #endif
 
-#define INSERTION_SORT_CUTOFF 10 // use insertion sort for smaller arrays
+#define INSERTION_SORT_CUTOFF 10  // use insertion sort for smaller arrays
 
 namespace nest
 {
@@ -49,12 +49,12 @@ template < typename T >
 inline size_t
 median3_( const BlockVector< T >& vec, const size_t i, const size_t j, const size_t k )
 {
-  return ( ( vec[ i ] < vec[ j ] ) ? ( ( vec[ j ] < vec[ k ] ) ? j
-               : ( vec[ i ] < vec[ k ] )                       ? k
-                                                               : i )
-                                   : ( ( vec[ k ] < vec[ j ] )   ? j
-                                       : ( vec[ k ] < vec[ i ] ) ? k
-                                                                 : i ) );
+  return ( ( vec[ i ] < vec[ j ] ) ? ( ( vec[ j ] < vec[ k ] )     ? j
+                                         : ( vec[ i ] < vec[ k ] ) ? k
+                                                                   : i )
+                                   : ( ( vec[ k ] < vec[ j ] )     ? j
+                                         : ( vec[ k ] < vec[ i ] ) ? k
+                                                                   : i ) );
 }
 
 /**
@@ -125,7 +125,7 @@ quicksort3way( BlockVector< T1 >& vec_sort, BlockVector< T2 >& vec_perm, const s
   size_t lt = lo;
   size_t i = lo + 1;
   size_t gt = hi;
-  const T1 v = vec_sort[ lt ]; // pivot
+  const T1 v = vec_sort[ lt ];  // pivot
 
   // adjust position of i and lt (useful for sorted arrays)
   while ( vec_sort[ i ] < v and i < vec_sort.size() - 1 )
@@ -185,6 +185,6 @@ sort( BlockVector< T1 >& vec_sort, BlockVector< T2 >& vec_perm )
 #endif
 }
 
-} // namespace sort
+}  // namespace sort
 
 #endif /* #ifndef SORT_H */

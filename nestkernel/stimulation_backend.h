@@ -26,10 +26,6 @@
 // C++ includes:
 #include <vector>
 
-// Includes from sli:
-#include "dictdatum.h"
-#include "dictutils.h"
-#include "name.h"
 #include "stimulation_device.h"
 
 namespace nest
@@ -108,7 +104,7 @@ public:
    * @see disenroll()
    *
    */
-  virtual void enroll( StimulationDevice&, const DictionaryDatum& ) {};
+  virtual void enroll( StimulationDevice&, const Dictionary& ) {};
 
   /**
    * Disenroll a `StimulationDevice` from the `StimulationBackend`.
@@ -188,6 +184,6 @@ public:
   void clear( const StimulationDevice& ) {};
 };
 
-} // namespace
+}  // namespace
 
 #endif /* #ifndef STIMULATION_BACKEND_H */

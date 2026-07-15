@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-from ..ll_api import sli_func
+from .. import nestkernel_api as nestkernel
 
 __all__ = [
     "exp",
@@ -47,7 +47,7 @@ def exp(parameter):
     Parameter:
         Object representing the exponential of the parameter.
     """
-    return sli_func("exp", parameter)
+    return nestkernel.llapi_exp_parameter(parameter._datum)
 
 
 def sin(parameter):
@@ -64,7 +64,7 @@ def sin(parameter):
     Parameter:
         Object representing the sine of the parameter.
     """
-    return sli_func("sin", parameter)
+    return nestkernel.llapi_sin_parameter(parameter._datum)
 
 
 def cos(parameter):
@@ -81,7 +81,7 @@ def cos(parameter):
     Parameter:
         Object representing the cosine of the parameter.
     """
-    return sli_func("cos", parameter)
+    return nestkernel.llapi_cos_parameter(parameter._datum)
 
 
 def min(parameter, value):
@@ -100,7 +100,7 @@ def min(parameter, value):
     Parameter:
         Object yielding the smallest value.
     """
-    return sli_func("min", parameter, float(value))
+    return nestkernel.llapi_min_parameter(parameter._datum, float(value))
 
 
 def max(parameter, value):
@@ -119,7 +119,7 @@ def max(parameter, value):
     Parameter:
         Object yielding the largest value.
     """
-    return sli_func("max", parameter, float(value))
+    return nestkernel.llapi_max_parameter(parameter._datum, float(value))
 
 
 def redraw(parameter, min, max):
@@ -142,4 +142,4 @@ def redraw(parameter, min, max):
     Parameter:
         Object redrawing the parameter until it can yield a value within the given limits.
     """
-    return sli_func("redraw", parameter, float(min), float(max))
+    return nestkernel.llapi_redraw_parameter(parameter._datum, float(min), float(max))

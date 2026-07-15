@@ -36,9 +36,6 @@
 #include "node_collection.h"
 #include "sparse_node_array.h"
 
-// Includes from sli:
-#include "arraydatum.h"
-#include "dictdatum.h"
 
 namespace nest
 {
@@ -54,8 +51,8 @@ public:
 
   void initialize( const bool ) override;
   void finalize( const bool ) override;
-  void set_status( const DictionaryDatum& ) override;
-  void get_status( DictionaryDatum& ) override;
+  void set_status( const Dictionary& ) override;
+  void get_status( Dictionary& ) override;
 
   /**
    * Get properties of a node.
@@ -63,7 +60,7 @@ public:
    * The specified node must exist.
    * @throws nest::UnknownNode       Target does not exist in the network.
    */
-  DictionaryDatum get_status( size_t );
+  Dictionary get_status( size_t );
 
   /**
    * Set properties of a Node.
@@ -74,7 +71,7 @@ public:
    *                                          entry.
    * @throws TypeMismatch   Array is not a flat & homogeneous array of integers.
    */
-  void set_status( size_t, const DictionaryDatum& );
+  void set_status( size_t, const Dictionary& );
 
   /**
    * Add a number of nodes to the network.
@@ -102,7 +99,7 @@ public:
    *
    * @returns NodeCollection as lock pointer
    */
-  NodeCollectionPTR get_nodes( const DictionaryDatum& dict, const bool local_only );
+  NodeCollectionPTR get_nodes( const Dictionary& dict, const bool local_only );
 
   /**
    * Return total number of network nodes.
@@ -175,13 +172,23 @@ public:
   std::vector< Node* > get_thread_siblings( size_t n ) const;
 
   /**
-   * Ensure that all nodes in the network have valid thread-local IDs.
+   * Rebuild per-thread vectors of local nodes and of local nodes needing WFR and set thread-local ID on nodes.
    *
-   * Create up-to-date vector of local nodes, nodes_vec_.
-   * This method also sets the thread-local ID on all local nodes.
+   * @note This method must be called from a serial context before connection creation or simulation.
    */
-  void ensure_valid_thread_local_ids();
+  void update_thread_local_node_data();
 
+  /**
+   * Return true if thread-local data structures and thread-local node IDs are up to date.
+   *
+   * @note The decision is based on whether new nodes have been created since update_thread_local_node_data()
+   * was run last.
+   */
+  bool thread_local_data_is_up_to_date() const;
+
+  /**
+   * Return node on thread t with given local node id.
+   */
   Node* thread_lid_to_node( size_t t, targetindex thread_local_id ) const;
 
   /**
@@ -272,7 +279,7 @@ private:
    *        each call so Node::set_status_()
    * @throws UnaccessedDictionaryEntry
    */
-  void set_status_single_node_( Node&, const DictionaryDatum&, bool clear_flags = true );
+  void set_status_single_node_( Node&, const Dictionary&, bool clear_flags = true );
 
   /**
    * Initialized buffers, register in list of nodes to update/finalize.
@@ -331,29 +338,29 @@ private:
    */
   std::vector< SparseNodeArray > local_nodes_;
 
-  std::vector< NodeCollectionPTR > node_collection_container_; //!< a vector of the original/primitive NodeCollection
+  std::vector< NodeCollectionPTR > node_collection_container_;  //!< a vector of the original/primitive NodeCollection
 
   std::vector< size_t >
-    node_collection_last_; //!< Store the ID of the last element in each NodeCollection instance.
-                           //!<  Mainly, the node_collection_last_ must be the same size as node_collection_container,
-                           //!< where each  element at position i in the nodeCollection_last_ is the last node ID
-                           //!< stored in the node_collection_container_ at position i.
+    node_collection_last_;  //!< Store the ID of the last element in each NodeCollection instance.
+                            //!<  Mainly, the node_collection_last_ must be the same size as node_collection_container,
+                            //!< where each  element at position i in the nodeCollection_last_ is the last node ID
+                            //!< stored in the node_collection_container_ at position i.
 
-  std::vector< std::vector< Node* > > wfr_nodes_vec_; //!< Nodelists for unfrozen nodes that
-                                                      //!< use the waveform relaxation method
-  bool wfr_is_used_;                                  //!< there is at least one node that uses
-                                                      //!< waveform relaxation
-  //! Network size when wfr_nodes_vec_ was last updated
-  size_t wfr_network_size_;
-  size_t num_active_nodes_; //!< number of nodes created by prepare_nodes
+  std::vector< std::vector< Node* > > wfr_nodes_vec_;  //!< Nodelists for unfrozen nodes that
+                                                       //!< use the waveform relaxation method
+  bool wfr_is_used_;                                   //!< there is at least one node that uses
+                                                       //!< waveform relaxation
 
-  std::vector< size_t > num_thread_local_devices_; //!< stores number of thread local devices
+  size_t size_last_local_data_update_;  //! Network size when local node data was last updated
+  size_t num_active_nodes_;             //!< number of nodes created by prepare_nodes
 
-  bool have_nodes_changed_; //!< true if new nodes have been created
-                            //!< since startup or last call to simulate
+  std::vector< size_t > num_thread_local_devices_;  //!< stores number of thread local devices
+
+  bool have_nodes_changed_;  //!< true if new nodes have been created
+                             //!< since startup or last call to simulate
 
   //! Store exceptions raised in thread-parallel sections for later handling
-  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_;
+  std::vector< std::exception_ptr > exceptions_raised_;
 
   // private stop watch for benchmarking purposes
   Stopwatch< StopwatchGranularity::Normal, StopwatchParallelism::MasterOnly > sw_construction_create_;
@@ -401,6 +408,15 @@ NodeManager::set_have_nodes_changed( const bool changed )
   have_nodes_changed_ = changed;
 }
 
-} // namespace
+inline bool
+NodeManager::thread_local_data_is_up_to_date() const
+{
+  // Our logic assumes that we never delete nodes from a network
+  assert( size() >= size_last_local_data_update_ );
+
+  return size() == size_last_local_data_update_;
+}
+
+}  // namespace
 
 #endif /* NODE_MANAGER_H */

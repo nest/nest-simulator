@@ -34,9 +34,6 @@
 #include "nest.h"
 #include "ring_buffer.h"
 
-// Includes from sli:
-#include "dictdatum.h"
-#include "dictutils.h"
 
 namespace nest
 {
@@ -52,7 +49,7 @@ Description
 +++++++++++
 
 ``clopath_synapse`` is a connector to create Clopath synapses as defined
-in [1]_. In contrast to usual STDP, the change of the synaptic weight does
+in :footcite:p:`Clopath2010a`. In contrast to usual STDP, the change of the synaptic weight does
 not only depend on the pre- and postsynaptic spike timing but also on the
 postsynaptic membrane potential.
 
@@ -68,7 +65,7 @@ archiving. So far, compatible models are ``aeif_psc_delta_clopath`` and
    account. When calculating the weight update, the precise spike time part
    of the timestamp is ignored.
 
-See also [2]_, [3]_.
+See also :footcite:p:`Clopath2010b`, :footcite:p:`Torben-Nielsen2010`.
 
 Parameters
 ++++++++++
@@ -91,14 +88,7 @@ SpikeEvent
 References
 ++++++++++
 
-.. [1] Clopath et al. (2010). Connectivity reflects coding:
-       a model of voltage-based STDP with homeostasis.
-       Nature Neuroscience 13:3, 344--352. DOI: https://doi.org/10.1038/nn.2479
-.. [2] Clopath and Gerstner (2010). Voltage and spike timing interact
-       in STDP – a unified model. Frontiers in Synaptic Neuroscience 2:25.
-       DOI: https://doi.org/10.3389/fnsyn.2010.00025
-.. [3] Voltage-based STDP synapse (Clopath et al. 2010) on ModelDB
-       https://modeldb.science/144566?tab=1
+.. footbibliography::
 
 See also
 ++++++++
@@ -155,12 +145,12 @@ public:
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
-  void get_status( DictionaryDatum& d ) const;
+  void get_status( Dictionary& d ) const;
 
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const Dictionary& d, ConnectorModel& cm );
 
   /**
    * Send an event to the receiver of this connection.
@@ -300,27 +290,27 @@ clopath_synapse< targetidentifierT >::clopath_synapse()
 
 template < typename targetidentifierT >
 void
-clopath_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
+clopath_synapse< targetidentifierT >::get_status( Dictionary& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
-  def< double >( d, names::x_bar, x_bar_ );
-  def< double >( d, names::tau_x, tau_x_ );
-  def< double >( d, names::Wmin, Wmin_ );
-  def< double >( d, names::Wmax, Wmax_ );
-  def< long >( d, names::size_of, sizeof( *this ) );
+  d[ names::weight ] = weight_;
+  d[ names::x_bar ] = x_bar_;
+  d[ names::tau_x ] = tau_x_;
+  d[ names::Wmin ] = Wmin_;
+  d[ names::Wmax ] = Wmax_;
+  d[ names::size_of ] = static_cast< long >( sizeof( *this ) );
 }
 
 template < typename targetidentifierT >
 void
-clopath_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+clopath_synapse< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
-  updateValue< double >( d, names::x_bar, x_bar_ );
-  updateValue< double >( d, names::tau_x, tau_x_ );
-  updateValue< double >( d, names::Wmin, Wmin_ );
-  updateValue< double >( d, names::Wmax, Wmax_ );
+  d.update_value( names::weight, weight_ );
+  d.update_value( names::x_bar, x_bar_ );
+  d.update_value( names::tau_x, tau_x_ );
+  d.update_value( names::Wmin, Wmin_ );
+  d.update_value( names::Wmax, Wmax_ );
 
   // check if weight_ and Wmin_ has the same sign
   if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) == ( ( Wmin_ >= 0 ) - ( Wmin_ < 0 ) ) ) )
@@ -335,6 +325,6 @@ clopath_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Conn
   }
 }
 
-} // of namespace nest
+}  // of namespace nest
 
-#endif // of #ifndef CLOPATH_SYNAPSE_H
+#endif  // of #ifndef CLOPATH_SYNAPSE_H

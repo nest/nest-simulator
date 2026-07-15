@@ -36,4 +36,3 @@ severity and further handling via [Security
 Advisories](https://github.com/nest/nest-simulator/security/advisories)
 or as normal [Issue](https://github.com/nest/nest-simulator/issues) in
 non-critical cases.
-

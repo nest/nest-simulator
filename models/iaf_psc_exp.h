@@ -51,7 +51,7 @@ Description
 * a hard threshold (if :math:`\delta=0`, see below)
 * a fixed refractory period,
 * no adaptation mechanisms,
-* exponential-shaped synaptic input currents according to [1]_.
+* exponential-shaped synaptic input currents according to :footcite:p:`Tsodyks2000`.
 
 Membrane potential evolution, spike emission, and refractoriness
 ................................................................
@@ -135,7 +135,7 @@ on the synaptic time constant according to
   will numerically behave as if ``tau_m`` is equal to ``tau_syn_ex`` or
   ``tau_syn_in``, respectively, to avoid numerical instabilities.
 
-  NEST uses exact integration [2]_, [3]_ to integrate subthreshold membrane dynamics
+  NEST uses exact integration :footcite:p:`Rotter1999`, :footcite:p:`Diesmann2001` to integrate subthreshold membrane dynamics
   with  maximum precision.
 
   For implementation details see the
@@ -150,7 +150,7 @@ on the synaptic time constant according to
    exponential kernel with the time constant of the excitatory synapse,
    ``tau_syn_ex``.
 
-   For an example application, see [4]_.
+   For an example application, see :footcite:p:`Schuecker2015`.
 
    **Warning:** this current input is added to the state variable
    ``i_syn_ex_``. If this variable is being recorded, its numerical value
@@ -160,7 +160,7 @@ on the synaptic time constant according to
 
 For conversion between postsynaptic potentials (PSPs) and PSCs,
 please refer to the ``postsynaptic_potential_to_current`` function in
-:doc:`PyNEST Microcircuit: Helper Functions <../auto_examples/Potjans_2014/helpers>`.
+`PyNEST Microcircuit: Helper Functions <https://github.com/INM-6/microcircuit-PD14-model/blob/main/PyNEST/src/microcircuit/helpers.py>`_.
 
 Parameters
 ++++++++++
@@ -198,20 +198,7 @@ The following state variables evolve during simulation and are available either 
 References
 ++++++++++
 
-.. [1] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent
-       networks with frequency-dependent synapses. The Journal of Neuroscience,
-       20,RC50:1-5. URL: https://infoscience.epfl.ch/record/183402
-.. [2] Rotter S,  Diesmann M (1999). Exact simulation of
-       time-invariant linear systems with applications to neuronal
-       modeling. Biologial Cybernetics 81:381-402.
-       DOI: https://doi.org/10.1007/s004220050570
-.. [3] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001). State
-       space analysis of synchronous spiking in cortical neural
-       networks. Neurocomputing 38-40:565-571.
-       DOI: https://doi.org/10.1016/S0925-2312(01)00409-X
-.. [4] Schuecker J, Diesmann M, Helias M (2015). Modulated escape from a
-       metastable state driven by colored noise. Physical Review E 92:052119
-       DOI: https://doi.org/10.1103/PhysRevE.92.052119
+.. footbibliography::
 
 Sends
 +++++
@@ -277,8 +264,8 @@ public:
   size_t handles_test_event( CurrentEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const override;
-  void set_status( const DictionaryDatum& ) override;
+  void get_status( Dictionary& ) const override;
+  void set_status( const Dictionary& ) override;
 
 private:
   void init_buffers_() override;
@@ -336,12 +323,12 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( Dictionary& ) const; //!< Store current values in dictionary
 
     /** Set values from dictionary.
      * @returns Change in reversal potential E_L, to be passed to State_::set()
      */
-    double set( const DictionaryDatum&, Node* node );
+    double set( const Dictionary&, Node* node );
   };
 
   // ----------------------------------------------------------------
@@ -362,14 +349,14 @@ private:
 
     State_(); //!< Default initialization
 
-    void get( DictionaryDatum&, const Parameters_& ) const;
+    void get( Dictionary&, const Parameters_& ) const;
 
     /** Set values from dictionary.
      * @param dictionary to take data from
      * @param current parameters
      * @param Change in reversal potential E_L specified by this dict
      */
-    void set( const DictionaryDatum&, const Parameters_&, const double, Node* );
+    void set( const Dictionary&, const Parameters_&, const double, Node* );
   };
 
   // ----------------------------------------------------------------
@@ -515,17 +502,17 @@ iaf_psc_exp::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 }
 
 inline void
-iaf_psc_exp::get_status( DictionaryDatum& d ) const
+iaf_psc_exp::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
   ArchivingNode::get_status( d );
 
-  ( *d )[ names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
-iaf_psc_exp::set_status( const DictionaryDatum& d )
+iaf_psc_exp::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;                       // temporary copy in case of errors
   const double delta_EL = ptmp.set( d, this ); // throws if BadProperty

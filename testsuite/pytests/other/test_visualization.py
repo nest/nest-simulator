@@ -144,7 +144,7 @@ class TestVisualization:
             nest.Connect(parrot, sr)
             nest.Connect(parrot, sr_to_file)
             nest.Simulate(100.0)
-            return sr, sr_to_file , "\t" , False  
+            return sr, sr_to_file
         else:
             nest.Simulate(100.0)
             return sr
@@ -164,7 +164,7 @@ class TestVisualization:
         """Test raster_plot"""
         import nest.raster_plot
 
-        sr, sr_to_file, delimitter, no_metadata = self.spike_recorder_data_setup(to_file=True)
+        sr, sr_to_file = self.spike_recorder_data_setup(to_file=True)
         spikes = sr.events["times"]
         senders = sr.events["senders"]
 
@@ -182,16 +182,16 @@ class TestVisualization:
         # Test from_file
         filename = sr_to_file.filenames[0]
         self.filenames.append(filename)
-        nest.raster_plot.from_file(filename,delimitter,no_metadata)
+        nest.raster_plot.from_file(filename)
         self.spike_recorder_raster_verify(spikes)
 
         # Test from_file_numpy
-        nest.raster_plot.from_file_numpy([filename],delimitter,no_metadata)
+        nest.raster_plot.from_file_numpy([filename])
         self.spike_recorder_raster_verify(spikes)
 
         if HAVE_PANDAS:
             # Test from_file_pandas
-            nest.raster_plot.from_file_pandas([filename],delimitter,no_metadata)
+            nest.raster_plot.from_file_pandas([filename])
             self.spike_recorder_raster_verify(spikes)
 
         # Test extract_events

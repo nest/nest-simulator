@@ -101,7 +101,7 @@ def from_data(data, sel=None, **kwargs):
     return _make_plot(ts, ts1, node_ids, data[:, 0], **kwargs)
 
 
-def from_file(fname, delimiter, no_metadata, **kwargs):
+def from_file(fname, delimiter="\t", no_metadata=False, **kwargs):
     """Plot raster from file.
 
     Parameters
@@ -134,7 +134,7 @@ def from_file(fname, delimiter, no_metadata, **kwargs):
         print("fname should be one of str/list(str)/tuple(str).")
 
 
-def from_file_pandas(fname, delimiter, no_metadata, **kwargs):
+def from_file_pandas(fname, delimiter="\t", no_metadata=False, **kwargs):
     """Use pandas."""
 
     data = None
@@ -155,7 +155,7 @@ def from_file_pandas(fname, delimiter, no_metadata, **kwargs):
     return from_data(data, **kwargs)
 
 
-def from_file_numpy(fname, delimiter, no_metadata, **kwargs):
+def from_file_numpy(fname, delimiter="\t", no_metadata=False, **kwargs):
     """Use numpy."""
 
     data = None
@@ -163,7 +163,7 @@ def from_file_numpy(fname, delimiter, no_metadata, **kwargs):
     if no_metadata == True:
         r_skip = 1
     for f in fname:
-        newdata = numpy.loadtxt(f, delimiter=delimiter, skiprows=rskip)
+        newdata = numpy.loadtxt(f, delimiter=delimiter, skiprows=r_skip)
 
         if data is None:
             data = newdata

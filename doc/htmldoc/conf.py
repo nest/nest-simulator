@@ -79,9 +79,6 @@ bibtex_default_style = "unsrt"
 
 autodoc_mock_imports = [
     "nest.nestkernel_api",  # compiled binary
-    "flask",  # optional server dependencies not present during docs build
-    "flask_cors",
-    "RestrictedPython",
 ]
 mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
 # Add any paths that contain templates here, relative to this directory.

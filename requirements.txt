@@ -23,6 +23,3 @@
 
 # To build NEST documentation
 -r doc/requirements.txt
-
-# To run NEST Server
--r requirements_nest_server.txt

@@ -1,8 +1,10 @@
 .. _pynest_tutorial:
 
 PyNEST tutorial
-================
+===============
 
+.. meta::
+   :description: Step-by-step PyNEST tutorial for NEST Simulator. Learn to create neurons, build connections, and simulate networks with Python. Four-part guide from basics to spatially structured networks.
 
 The PyNEST tutorial series will guide you through the first steps to use the NEST
 Simulator, from creating neurons and connections to developing spatially structured networks.

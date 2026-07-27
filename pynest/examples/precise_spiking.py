@@ -30,8 +30,7 @@ overcome this by handling spikes in continuous time :footcite:p:`Morrison2007a` 
 The precise spiking neuron models in NEST include: ``iaf_psc_exp_ps``,
 ``iaf_psc_alpha_ps`` and ``iaf_psc_delta_ps``.
 More detailed information about the precise spiking models can be
-found here:
-https://www.nest-simulator.org/simulations-with-precise-spike-times/
+found here: :ref:`sim_precise_spike_times`
 
 This example compares the conventional grid-constrained model and the
 precise version for an integrate-and-fire neuron model with exponential

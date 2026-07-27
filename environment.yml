@@ -3,7 +3,7 @@
 # This file specifies a mamba environment for those who would
 # like to compile NEST or build NEST documentation themselves.
 # If you just want to execute NEST, you should install NEST
-# directly as described in https://www.nest-simulator.org/installation.
+# directly as described in https://www.nest-simulator.org/documentation/installation.
 #
 # The environment specification below is comprehensive: it includes
 # all packages required to build and run NEST with OpenMP and MPI

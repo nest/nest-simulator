@@ -48,21 +48,18 @@ BOOST_AUTO_TEST_CASE( test_gaussianKernel )
   SPManager sp_manager;
 
   // Test for zero distance
-  std::vector< double > pos1 = { 0.0, 0.0 };
-  std::vector< double > pos2 = { 0.0, 0.0 };
   double sigma = 1.0;
 
   double expected = 1.0;
-  BOOST_REQUIRE_CLOSE( sp_manager.gaussian_kernel( pos1, pos2, sigma ), expected, 1e-6 );
+  BOOST_REQUIRE_CLOSE( sp_manager.gaussian_kernel( 0.0, sigma ), expected, 1e-6 );
 
   // Test for unit distance
-  pos2 = { 1.0, 0.0 };
   expected = std::exp( -1.0 );
-  BOOST_REQUIRE_CLOSE( sp_manager.gaussian_kernel( pos1, pos2, sigma ), expected, 1e-6 );
+  BOOST_REQUIRE_CLOSE( sp_manager.gaussian_kernel( 1.0, sigma ), expected, 1e-6 );
 
   // Test for negative sigma (will compute as if sigma were positive)
   sigma = -1.0;
-  double result = sp_manager.gaussian_kernel( pos1, pos2, sigma );
+  double result = sp_manager.gaussian_kernel( 1.0, sigma );
   expected = std::exp( -1.0 );  // Same as sigma=1 since squared value is used
   BOOST_REQUIRE_CLOSE( result, expected, 1e-6 );
 }

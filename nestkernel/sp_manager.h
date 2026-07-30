@@ -197,14 +197,13 @@ public:
   void global_shuffle( std::vector< size_t >& v, size_t n );
 
   /**
-   * Compute the Gaussian kernel value between two positions.
+   * Compute the Gaussian kernel value based on distance between two positions.
    *
-   * @param pos1 Position of the first neuron.
-   * @param pos2 Position of the second neuron.
+   * @param distance Distance between two neurons.
    * @param sigma Standard deviation for the Gaussian kernel.
    * @return Gaussian kernel value.
    */
-  double gaussian_kernel( const std::vector< double >& pos1, const std::vector< double >& pos2, const double sigma );
+  double gaussian_kernel( const double distance, const double sigma );
 
   /**
    * Perform global shuffling of pre- and post-synaptic neurons based on spatial probabilities.

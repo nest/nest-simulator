@@ -195,7 +195,7 @@ SPManager::gather_global_positions_and_ids()
 
     for ( auto node_it = local_nodes.begin(); node_it < local_nodes.end(); ++node_it )
     {
-      int node_id = node_it->get_node_id();
+      const size_t node_id = node_it->get_node_id();
       if ( node_id < 1 )
       {
         throw std::runtime_error( "Invalid neuron ID (must be >= 1)." );
@@ -246,25 +246,17 @@ SPManager::gather_global_positions_and_ids()
     id_pos_pairs.emplace_back( node_id, pos );
   }
 
-  // Sort id_pos_pairs based on node_id to ensure ordering from 1 to num_neurons
+  // Sort id_pos_pairs based on node_id
   std::sort( id_pos_pairs.begin(),
     id_pos_pairs.end(),
     []( const std::pair< int, std::vector< double > >& a, const std::pair< int, std::vector< double > >& b ) -> bool
     { return a.first < b.first; } );
 
-  // Verify that IDs are sequential
-  for ( size_t i = 0; i < num_neurons; ++i )
-  {
-    if ( id_pos_pairs[ i ].first != static_cast< int >( i + 1 ) )
-    {
-      throw std::runtime_error( "Neuron IDs are not sequential after sorting." );
-    }
-  }
-
-  // Assign sorted positions to temp_positions
+  // Assign sorted IDs and positions
   std::vector< double > temp_positions( num_neurons * pos_dim, 0.0 );
   for ( size_t i = 0; i < num_neurons; ++i )
   {
+    global_ids[ i ] = id_pos_pairs[ i ].first;
     std::copy( id_pos_pairs[ i ].second.begin(), id_pos_pairs[ i ].second.end(), temp_positions.begin() + i * pos_dim );
   }
 
@@ -303,10 +295,9 @@ SPManager::roulette_wheel_selection( const std::vector< double >& probabilities,
 
 
 double
-SPManager::gaussian_kernel( const std::vector< double >& pos1, const std::vector< double >& pos2, const double sigma )
+SPManager::gaussian_kernel( const double distance, const double sigma )
 {
-  const double d2 = squared_distance( pos1, pos2 );
-  return std::exp( -d2 / ( sigma * sigma ) );
+  return std::exp( -distance * distance / ( sigma * sigma ) );
 }
 
 long
@@ -842,20 +833,25 @@ SPManager::global_shuffle_spatial( std::vector< size_t >& pre_ids,
   std::vector< size_t >& post_ids_results,
   bool allow_autapses )
 {
-  size_t maxIterations = std::min( pre_ids.size(), post_ids.size() );
-
-  for ( size_t iteration = 0; iteration < maxIterations; ++iteration )
+  const auto get_global_position = [ this ]( const size_t node_id )
   {
-    if ( pre_ids.empty() || post_ids.empty() )
+    const auto id_it = std::lower_bound( global_ids.begin(), global_ids.end(), node_id );
+    if ( id_it == global_ids.end() or static_cast< size_t >( *id_it ) != node_id )
     {
-      break;  // Stop if either vector is empty
+      throw std::runtime_error( "Position for neuron ID not found." );
     }
 
+    const size_t position_idx = std::distance( global_ids.begin(), id_it );
+    return std::vector< double >(
+      global_positions.begin() + position_idx * pos_dim, global_positions.begin() + ( position_idx + 1 ) * pos_dim );
+  };
+
+  while ( not pre_ids.empty() and not post_ids.empty() )
+  {
     size_t pre_id = pre_ids.back();
     pre_ids.pop_back();
 
-    std::vector< double > pre_pos(
-      global_positions.begin() + ( pre_id - 1 ) * pos_dim, global_positions.begin() + pre_id * pos_dim );
+    const std::vector< double > pre_pos = get_global_position( pre_id );
 
     std::vector< double > probabilities;
     std::vector< size_t > valid_post_ids;
@@ -867,17 +863,16 @@ SPManager::global_shuffle_spatial( std::vector< size_t >& pre_ids,
         continue;  // Skip self-connections
       }
 
-      // fetch post position
-      std::vector< double > post_pos(
-        global_positions.begin() + ( post_id - 1 ) * pos_dim, global_positions.begin() + post_id * pos_dim );
+      const std::vector< double > post_pos = get_global_position( post_id );
+      const AbstractLayerPTR post_layer = get_layer( kernel().node_manager.node_id_to_node_collection( post_id ) );
+      const double distance = post_layer->compute_distance( pre_pos, post_pos );
 
-      if ( !within_max_distance( pre_pos, post_pos ) )
+      if ( distance > structural_plasticity_max_distance_ )
       {
         continue;  // distance > max_distance -> masked out entirely
       }
 
-      double prob;
-      prob = gaussian_kernel( pre_pos, post_pos, structural_plasticity_gaussian_kernel_sigma_ );
+      const double prob = gaussian_kernel( distance, structural_plasticity_gaussian_kernel_sigma_ );
 
       if ( prob > 0 )
       {
@@ -908,36 +903,6 @@ SPManager::global_shuffle_spatial( std::vector< size_t >& pre_ids,
     post_ids_results.push_back( selected_post_id );
   }
 }
-
-double
-SPManager::squared_distance( const std::vector< double >& a, const std::vector< double >& b ) const
-{
-  if ( a.size() != b.size() )
-  {
-    throw std::runtime_error( "Position vectors must have the same dimension." );
-  }
-
-  double d2 = 0.0;
-  for ( std::size_t i = 0; i < a.size(); ++i )
-  {
-    const double diff = b[ i ] - a[ i ];
-    d2 += diff * diff;
-  }
-  return d2;
-}
-
-bool
-SPManager::within_max_distance( const std::vector< double >& a, const std::vector< double >& b ) const
-{
-  if ( !std::isfinite( structural_plasticity_max_distance_ ) )
-  {
-    return true;
-  }
-  const double r2 = structural_plasticity_max_distance_ * structural_plasticity_max_distance_;
-
-  return squared_distance( a, b ) <= r2;
-}
-
 
 void
 nest::SPManager::enable_structural_plasticity( bool use_gaussian_kernel,

@@ -135,12 +135,6 @@ public:
 
   bool is_structural_plasticity_enabled() const;
 
-  /** Squared distance. Uses current pos_dim. */
-  double squared_distance( const std::vector< double >& pos1, const std::vector< double >& pos2 ) const;
-
-  /** Hard cutoff check using current max distance and metric. */
-  bool within_max_distance( const std::vector< double >& pos1, const std::vector< double >& pos2 ) const;
-
   double get_structural_plasticity_update_interval() const;
 
   double get_structural_plasticity_gaussian_kernel_sigma() const;

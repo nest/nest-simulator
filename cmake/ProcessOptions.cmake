@@ -394,7 +394,7 @@ function( NEST_PROCESS_WITH_MPI )
     endif ()
     find_package( MPI REQUIRED QUIET )
     if ( MPI_CXX_FOUND )
-      message( STATUS "Found MPI: ${MPI_CXX_COMPILER} (found version ${MPI_VERSION})" )
+      message( STATUS "Found MPI: ${MPI_CXX_COMPILER}" )
       set( HAVE_MPI ON PARENT_SCOPE )
 
       # export variables needed for nest-config generation and ConfigureSummary

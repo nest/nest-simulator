@@ -48,9 +48,9 @@ nest::SliceRingBuffer::resize()
 
 #ifndef HAVE_STL_VECTOR_CAPACITY_BASE_UNITY
   // Ensure capacity doubling starts from capacity 1.
-  for ( auto& q : queue_ )
+  for ( auto& elem : queue_ )
   {
-    q.reserve( 1 );
+    elem.reserve( 1 );
   }
 #endif
 }
@@ -58,9 +58,9 @@ nest::SliceRingBuffer::resize()
 void
 nest::SliceRingBuffer::clear()
 {
-  for ( auto& q : queue_ )
+  for ( auto& elem : queue_ )
   {
-    q.clear();
+    elem.clear();
   }
 }
 

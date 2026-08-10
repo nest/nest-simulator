@@ -8,9 +8,9 @@
 int
 main( void )
 {
-  std::vector< int > v;
-  v.push_back( 7 );
+  std::vector< int > vec;
+  vec.push_back( 7 );
 
   // Return 0 if capacity is 1 as desired, non-zero otherwise.
-  return v.capacity() > 1;
+  return vec.capacity() > 1;
 }

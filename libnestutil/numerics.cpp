@@ -29,15 +29,12 @@
 #include "nest_types.h"
 #include "numerics.h"
 
-//
-//   e
-//
-const double numerics::e = std::numbers::e;
-const double numerics::pi = std::numbers::pi;
+constexpr double numerics::e = std::numbers::e;
+constexpr double numerics::pi = std::numbers::pi;
 
+// The following two cannot be determined at compile time and thus not be constexpr
 const double numerics::nan = std::nan( "" );
-
-const double numerics::sqrt_log_two = std::sqrt( std::log( 2.0 ) );
+const double numerics::sqrt_log_two = std::sqrt( std::numbers::ln2 );
 
 // later also in namespace
 long

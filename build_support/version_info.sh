@@ -31,7 +31,7 @@ fi
 HASH="$(git rev-parse HEAD)"
 
 # Might fail if not on a branch, or no remote tracking branch is set
-if BRANCH_REMOTE="$(git rev-parse --abbrev-ref --symbolic-full-name '@{u}' || exit $?)"; then
+if BRANCH_REMOTE="$(git rev-parse --abbrev-ref --symbolic-full-name '@{u}' 2>/dev/null)"; then
   REMOTE="$(echo "${BRANCH_REMOTE}" | cut -d/ -f1)"
 else
   REMOTE="unknown"

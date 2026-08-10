@@ -27,7 +27,6 @@
 
 ####### NEST_EXITCODE_ABORT ########
 function( NEST_CHECK_EXITCODE_ABORT )
-  printInfo( "Check the abort exitcode." )
   set( ABORT_ERR "" )
   try_compile( COMPILE_VAR
       ${CMAKE_BINARY_DIR}
@@ -50,13 +49,12 @@ function( NEST_CHECK_EXITCODE_ABORT )
       file( REMOVE "${CMAKE_BINARY_DIR}/assert_value" )
     endif ()
   endif ()
-  printInfo( "Check the abort exitcode. ${ABORT_ERR}" )
+  printInfo( "Check the abort exitcode: ${ABORT_ERR}" )
   set( NEST_EXITCODE_ABORT ${ABORT_ERR} PARENT_SCOPE )
 endfunction()
 
 ####### NEST_EXITCODE_SEGFAULT ########
 function( NEST_CHECK_EXITCODE_SEGFAULT )
-  printInfo( "Check the segmentation fault exitcode." )
   set( SEG_ERR "" )
   try_compile( COMPILE_VAR
       ${CMAKE_BINARY_DIR}
@@ -78,30 +76,12 @@ function( NEST_CHECK_EXITCODE_SEGFAULT )
       file( REMOVE "${CMAKE_BINARY_DIR}/segfault_value" )
     endif ()
   endif ()
-  printInfo( "Check the segmentation fault exitcode. ${SEG_ERR}" )
+  printInfo( "Check the segmentation fault exitcode: ${SEG_ERR}" )
   set( NEST_EXITCODE_SEGFAULT ${SEG_ERR} PARENT_SCOPE )
-endfunction()
-
-####### HAVE_CMATH_MAKROS_IGNORED ########
-function( NEST_CHECK_HAVE_CMATH_MAKROS_IGNORED )
-  printInfo( "Check whether the compiler ignores cmath makros." )
-  try_compile( COMPILE_RESULT
-      ${CMAKE_BINARY_DIR}
-      ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/CMathMacros.cxx
-      OUTPUT_VARIABLE OUTPUT
-      )
-  if ( COMPILE_RESULT )
-    set( HAVE_CMATH_MAKROS_IGNORED OFF )
-  else ()
-    set( HAVE_CMATH_MAKROS_IGNORED ON )
-  endif ()
-  printInfo( "Check whether the compiler ignores cmath makros. ${HAVE_CMATH_MAKROS_IGNORED}" )
-  set( HAVE_CMATH_MAKROS_IGNORED ${HAVE_CMATH_MAKROS_IGNORED} PARENT_SCOPE)
 endfunction()
 
 ####### HAVE_STL_VECTOR_BASE_CAPACITY_GREATER_ONE ########
 function( NEST_CHECK_HAVE_STL_VECTOR_BASE_CAPACITY_GREATER_ONE )
-  printInfo( "Check if STL vector base capacity is larger one." )
   set( RUN_RESULT 0 )
   try_run( RUN_RESULT COMPILE_RESULT
       ${CMAKE_BINARY_DIR}
@@ -115,12 +95,11 @@ function( NEST_CHECK_HAVE_STL_VECTOR_BASE_CAPACITY_GREATER_ONE )
     set( HAVE_STL_VECTOR_BASE_CAPACITY_GREATER_ONE OFF )
   endif ()
   set( HAVE_STL_VECTOR_BASE_CAPACITY_GREATER_ONE ${HAVE_STL_VECTOR_BASE_CAPACITY_GREATER_ONE} PARENT_SCOPE )
-  printInfo( "Check if STL vector base capacity is larger one. ${HAVE_STL_VECTOR_BASE_CAPACITY_GREATER_ONE}" )
+  printInfo( "Check if STL vector base capacity is larger one: ${HAVE_STL_VECTOR_BASE_CAPACITY_GREATER_ONE}" )
 endfunction()
 
 ####### Test if Random123 generators work #######
 function( NEST_CHECK_RANDOM123 )
-  printInfo( "Check if Random123 generators work." )
   try_run( RUN_RESULT COMPILE_RESULT
       ${CMAKE_BINARY_DIR}
       ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/Random123/tests/kat_cpp.cpp
@@ -139,5 +118,5 @@ function( NEST_CHECK_RANDOM123 )
     set( HAVE_RANDOM123 ON )
   endif ()
   set( HAVE_RANDOM123 ${HAVE_RANDOM123} PARENT_SCOPE )
-  printInfo( "Check if Random123 generators work. ${HAVE_RANDOM123}" )
+  printInfo( "Check if Random123 generators work: ${HAVE_RANDOM123}" )
 endfunction()

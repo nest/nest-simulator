@@ -20,69 +20,21 @@
  *
  */
 
+#include <cmath>
 #include <cstdlib>
 #include <iostream>
+#include <numbers>
 #include <numeric>
 
 #include "nest_types.h"
 #include "numerics.h"
 
-#ifndef HAVE_M_E
+constexpr double numerics::e = std::numbers::e;
+constexpr double numerics::pi = std::numbers::pi;
 
-#ifdef HAVE_CMATH_MAKROS_IGNORED
-#define M_E_OK
-#undef __PURE_CNAME
-#include <cmath>
-#define __PURE_CNAME
-#else
-#include <cmath>
-#endif
-
-#else
-#define M_E_OK
-#include <cmath>
-#endif
-
-
-#ifndef HAVE_M_PI
-
-#ifdef HAVE_CMATH_MAKROS_IGNORED
-#define M_PI_OK
-#endif
-
-#else
-#define M_PI_OK
-#endif
-
-
-//
-//   e
-//
-#ifdef HAVE_GSL
-
-#include <gsl/gsl_math.h>
-const double numerics::e = M_E;
-const double numerics::pi = M_PI;
-
-#else
-
-#ifdef M_E_OK
-const double numerics::e = M_E;
-#else
-const double numerics::e = 2.71828182845904523536028747135;
-#endif
-
-#ifdef M_PI_OK
-const double numerics::pi = M_PI;
-#else
-const double numerics::pi = 3.14159265358979323846264338328;
-#endif
-
-#endif
-
+// The following two cannot be determined at compile time and thus not be constexpr
 const double numerics::nan = std::nan( "" );
-
-const double numerics::sqrt_log_two = std::sqrt( std::log( 2.0 ) );
+const double numerics::sqrt_log_two = std::sqrt( std::numbers::ln2 );
 
 // later also in namespace
 long

@@ -3,6 +3,9 @@
 PyNEST examples
 ===============
 
+.. meta::
+   :description: NEST example gallery with 50+ working scripts: Brunel networks, spatial connectivity, plasticity rules (STDP, eProp), astrocytes, HPC benchmarks, and fun projects like Sudoku and Pong.
+
 .. grid:: 1 1 2 3
     :gutter: 1
 

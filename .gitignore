@@ -74,3 +74,7 @@ cscope.out
 
 # Merge conflict artifacts
 *.orig
+
+# User-specific LLM files
+CLAUDE.md
+.claude/settings.local.json

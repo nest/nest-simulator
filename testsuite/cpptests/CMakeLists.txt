@@ -18,11 +18,9 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 if ( HAVE_BOOST )
-  include_directories( ${BOOST_INCLUDE_DIR} )
-
   add_executable( run_all_cpptests run_all.cpp )
 
-  target_link_libraries( run_all_cpptests ${BOOST_LIBRARIES} nestkernel models OpenMP::OpenMP_CXX )
+  target_link_libraries( run_all_cpptests nestkernel models OpenMP::OpenMP_CXX )
 
   target_include_directories( run_all_cpptests PRIVATE
     ${PROJECT_SOURCE_DIR}/libnestutil

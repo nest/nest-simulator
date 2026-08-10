@@ -256,24 +256,28 @@ function( NEST_PROCESS_WITH_GSL )
   # Find GSL
   set( HAVE_GSL OFF PARENT_SCOPE )
   if ( with-gsl )
-    if ( NOT ${with-gsl} STREQUAL "ON" )
+    if ( NOT "${with-gsl}" STREQUAL "ON" )
       # if set, use this prefix
-      set( GSL_ROOT "${with-gsl}" )
+      set( GSL_ROOT_DIR "${with-gsl}" )
     endif ()
 
-    find_package( GSL 1.11 )
+    find_package( GSL 1.11 REQUIRED )
 
     if ( GSL_FOUND )
       set( HAVE_GSL ON PARENT_SCOPE )
 
-      # export found variables to parent scope
+      # export variables needed for nest-config generation
       set( GSL_VERSION "${GSL_VERSION}" PARENT_SCOPE )
       set( GSL_LIBRARIES "${GSL_LIBRARIES}" PARENT_SCOPE )
       set( GSL_INCLUDE_DIRS "${GSL_INCLUDE_DIRS}" PARENT_SCOPE )
-
-      include_directories( ${GSL_INCLUDE_DIRS} )
-      # is linked in libnestutil/CMakeLists.txt
+      # consumers use GSL::gsl imported target; no global include_directories() needed
     endif ()
+  endif ()
+
+  # Provide a dummy GSL::gsl if GSL is disabled. Needed to avoid problems
+  # where GSL::gsl is used unconditionally.
+  if ( NOT TARGET GSL::gsl )
+    add_library( GSL::gsl INTERFACE IMPORTED )
   endif ()
 endfunction()
 
@@ -530,7 +534,7 @@ function( NEST_PROCESS_WITH_BOOST )
   # Find Boost
   set( HAVE_BOOST OFF PARENT_SCOPE )
   if ( with-boost )
-    if ( NOT ${with-boost} STREQUAL "ON" )
+    if ( NOT "${with-boost}" STREQUAL "ON" )
       # a path is set
       set( Boost_ROOT "${with-boost}" )
     endif ()
@@ -542,16 +546,16 @@ function( NEST_PROCESS_WITH_BOOST )
     # Require Boost version >=1.70.0 due to change in package finding
     find_package( Boost 1.70 CONFIG )
     if ( Boost_FOUND )
-      # export found variables to parent scope
       set( HAVE_BOOST ON PARENT_SCOPE )
-      # Boost uses lower case in variable names
       set( BOOST_FOUND "${Boost_FOUND}" PARENT_SCOPE )
-      set( BOOST_LIBRARIES "${Boost_LIBRARIES}" PARENT_SCOPE )
-      set( BOOST_INCLUDE_DIR "${Boost_INCLUDE_DIRS}" PARENT_SCOPE )
       set( BOOST_VERSION "${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}" PARENT_SCOPE )
-
-      include_directories( ${Boost_INCLUDE_DIRS} )
     endif ()
+  endif ()
+
+  # Provide a dummy Boost::headers if Boost is disabled or not found.
+  # Needed to avoid problems where Boost::headers is used unconditionally.
+  if ( NOT TARGET Boost::headers )
+    add_library( Boost::headers INTERFACE IMPORTED )
   endif ()
 endfunction()
 

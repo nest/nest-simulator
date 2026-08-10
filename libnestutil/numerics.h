@@ -32,10 +32,6 @@
 #include <cstddef>
 #include <limits>
 
-// Generated includes:
-#include "config.h"
-
-
 namespace numerics
 {
 
@@ -51,7 +47,7 @@ expm1( double x )
 }
 
 template < typename T >
-bool
+inline bool
 is_nan( T f )
 {
   return std::isnan( f );

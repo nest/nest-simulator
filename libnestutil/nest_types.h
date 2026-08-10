@@ -34,15 +34,7 @@
 // Generated includes:
 #include "config.h"
 
-#ifdef HAVE_32BIT_ARCH
-#ifdef HAVE_UINT64_T  // 32-bit platforms usually provide the ...
-#include <stdint.h>   // ... 64-bit unsigned integer data type 'uint64_t' in stdint.h
-#else
-#error "32-bit platform does not provide a 64-bit unsigned integer data type"
-#endif
-#else
-#include <cstdint>  // `uint64_t` on 64-bit platforms
-#endif
+#include <cstdint>  // `uint64_t`
 
 /**
  * Namespace for the NEST simulation kernel.
@@ -109,8 +101,8 @@ constexpr uint64_t MAX_NODE_ID = DISABLED_NODE_ID - 1;
  * Type for Time tics.
  */
 typedef long long tic_t;
-const tic_t tic_t_max = std::numeric_limits< tic_t >::max();
-const tic_t tic_t_min = std::numeric_limits< tic_t >::min();
+constexpr tic_t tic_t_max = std::numeric_limits< tic_t >::max();
+constexpr tic_t tic_t_min = std::numeric_limits< tic_t >::min();
 
 /**
  *  Unsigned long type for enumerations.
@@ -121,7 +113,7 @@ __attribute__( ( __unused__ ) ) constexpr size_t invalid_index = std::numeric_li
  *  For enumerations of synapse types.
  */
 typedef size_t synindex;
-const synindex invalid_synindex = MAX_SYN_ID;
+constexpr synindex invalid_synindex = MAX_SYN_ID;
 
 /**
  * Unsigned short type for compact target representation.
@@ -130,7 +122,7 @@ const synindex invalid_synindex = MAX_SYN_ID;
  */
 //! target index into thread local node vector
 typedef unsigned short targetindex;
-const targetindex invalid_targetindex = USHRT_MAX;
+constexpr targetindex invalid_targetindex = USHRT_MAX;
 __attribute__( ( __unused__ ) ) const size_t max_targetindex = invalid_targetindex - 1;
 
 /**

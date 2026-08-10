@@ -22,7 +22,7 @@ cmake_minimum_required( VERSION 3.19 )
 # add cmake modules: for all `include(...)` first look here
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
 
-project( nest CXX C )
+project( nest CXX )
 
 set( CMAKE_CXX_STANDARD 20 )
 set( CMAKE_CXX_STANDARD_REQUIRED True )
@@ -175,21 +175,13 @@ nest_process_with_optimize()
 nest_process_with_debug()
 
 nest_get_color_flags()
-set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${NEST_C_COLOR_FLAGS}" )
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${NEST_CXX_COLOR_FLAGS}" )
 
 # check additionals
 nest_check_exitcode_abort()
 nest_check_exitcode_segfault()
 nest_check_have_cmath_makros_ignored()
-nest_check_have_alpha_cxx_std_bug()
-nest_check_have_sigusr_ignored()
-nest_check_have_static_template_declaration_fail()
 nest_check_have_stl_vector_capacity_base_unity()
-nest_check_have_stl_vector_capacity_doubling()
-nest_check_have_xlc_ice_on_using()
-nest_check_have_std_nan()
-nest_check_have_std_isnan()
 nest_check_random123()
 
 include( NestVersionInfo )

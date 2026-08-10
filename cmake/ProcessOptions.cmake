@@ -119,19 +119,9 @@ function( NEST_PROCESS_WITH_DEFINES )
 endfunction()
 
 function( NEST_GET_COLOR_FLAGS )
-    set( NEST_C_COLOR_FLAGS "" PARENT_SCOPE )
     set( NEST_CXX_COLOR_FLAGS "" PARENT_SCOPE )
-
-    # add colored output from gcc
-    if ( CMAKE_C_COMPILER_ID STREQUAL "GNU" )
-      if ( NOT CMAKE_C_COMPILER_VERSION VERSION_LESS "4.9" )
-        set( NEST_C_COLOR_FLAGS "-fdiagnostics-color=auto" PARENT_SCOPE )
-      endif ()
-    endif ()
     if ( CMAKE_CXX_COMPILER_ID STREQUAL "GNU" )
-      if ( NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.9" )
         set( NEST_CXX_COLOR_FLAGS "-fdiagnostics-color=auto" PARENT_SCOPE )
-      endif ()
     endif ()
 endfunction()
 
@@ -372,9 +362,10 @@ function( NEST_PROCESS_WITH_OPENMP )
       endif ()
     endif ()
 
-    find_package( OpenMP REQUIRED )
+    find_package( OpenMP REQUIRED QUIET )
 
     if ( OpenMP_FOUND )
+      message( STATUS "Found OpenMP: ${OpenMP_CXX_FLAGS} (found version ${OpenMP_VERSION})" )
       set( OpenMP_FOUND "${OpenMP_FOUND}" PARENT_SCOPE )
       set( OpenMP_CXX_FLAGS "${OpenMP_CXX_FLAGS}" PARENT_SCOPE )
       set( OpenMP_CXX_LIBRARIES "${OpenMP_CXX_LIBRARIES}" PARENT_SCOPE )
@@ -401,8 +392,9 @@ function( NEST_PROCESS_WITH_MPI )
       # if set, use this prefix
       set( MPI_ROOT "${with-mpi}" )
     endif ()
-    find_package( MPI REQUIRED )
+    find_package( MPI REQUIRED QUIET )
     if ( MPI_CXX_FOUND )
+      message( STATUS "Found MPI: ${MPI_CXX_COMPILER} (found version ${MPI_VERSION})" )
       set( HAVE_MPI ON PARENT_SCOPE )
 
       # export variables needed for nest-config generation and ConfigureSummary
@@ -547,6 +539,7 @@ function( NEST_PROCESS_WITH_BOOST )
     # Require Boost version >=1.70.0 due to change in package finding
     find_package( Boost 1.70 CONFIG )
     if ( Boost_FOUND )
+      message( STATUS "Found Boost: ${Boost_INCLUDE_DIRS} (found version ${Boost_VERSION_STRING})" )
       set( HAVE_BOOST ON PARENT_SCOPE )
       set( BOOST_FOUND "${Boost_FOUND}" PARENT_SCOPE )
       set( BOOST_VERSION "${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}" PARENT_SCOPE )

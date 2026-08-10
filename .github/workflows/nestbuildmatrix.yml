@@ -441,7 +441,7 @@ jobs:
         run: |
           mkdir -pv build
           cd build
-          cmake -Dwith-userdoc=ON -DCMAKE_INSTALL_PREFIX=../install ..
+          cmake -Dwith-userdoc=ON -Dwith-boost=OFF -Dwith-ltdl=OFF -DCMAKE_INSTALL_PREFIX=../install ..
           make docs |& tee sphinx-output.log
 
       - name: Upload artifacts
@@ -487,7 +487,7 @@ jobs:
           conda activate conda/
           mkdir -pv build
           cd build
-          cmake -DCMAKE_INSTALL_PREFIX=../install ..
+          cmake -Dwith-boost=OFF -Dwith-ltdl=OFF -DCMAKE_INSTALL_PREFIX=../install ..
           make html |& tee sphinx-output.log
 
       - name: Upload artifacts
@@ -513,13 +513,13 @@ jobs:
         cpp_compiler: ["gcc"]
 
         # available use flags (all default to "OFF"):
-        # openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning, userdoc, music, readline
+        # openmp, mpi, python, gsl, ltdl, boost, sionlib, optimize, warning, userdoc, music, readline
         use:
           - "python, optimize, warning"
           - "python, boost, optimize, warning"
           - "openmp, python, gsl, ltdl, boost, optimize, warning"
           - "mpi, python, gsl, ltdl, boost, optimize, warning"
-          - "openmp, mpi, python, gsl, ltdl, boost, hdf5, sionlib, libneurosim, optimize, warning, music, detailed-timers, threaded-timers, mpi-sync-timer"
+          - "openmp, mpi, python, gsl, ltdl, boost, hdf5, sionlib, optimize, warning, music, detailed-timers, threaded-timers, mpi-sync-timer"
 
     steps:
       - name: Harden Runner
@@ -659,13 +659,6 @@ jobs:
           chmod +x build_support/install_sionlib.sh
           ./build_support/install_sionlib.sh
 
-      - name: "Install LibNeurosim – WARNING WARNING NO PROPER PYTHON INSTALL!"
-        if: "${{ contains(matrix.use, 'libneurosim') }}"
-        run: |
-          chmod +x build_support/install_csa-libneurosim.sh
-          PYLIB_DIR="$(python3 -c "import sysconfig; print(sysconfig.get_path('include'))" | sed 's/include/lib/')"
-          ./build_support/install_csa-libneurosim.sh $PYLIB_DIR
-
       - name: "Uninstall Boost development libraries"
         if: "${{ ! contains(matrix.use, 'boost') }}"
         run: |
@@ -713,7 +706,6 @@ jobs:
               -Dwith-ltdl=${{ contains(matrix.use, 'ltdl') && 'ON' || 'OFF' }} \
               -Dwith-hdf5=${{ contains(matrix.use, 'hdf5') && 'ON' || 'OFF' }} \
               -Dwith-sionlib=${{ contains(matrix.use, 'sionlib') && '$HOME/.cache/sionlib.install' || 'OFF' }} \
-              -Dwith-libneurosim=${{ contains(matrix.use, 'libneurosim') && '$HOME/.cache/libneurosim.install' || 'OFF' }} \
               -Dwith-music=${{ contains(matrix.use, 'music') && '$HOME/.cache/music.install' || 'OFF' }} \
               -Dwith-threaded-timers=${{ contains(matrix.use, 'threaded-timers') && 'ON' || 'OFF' }} \
               -Dwith-detailed-timers=${{ contains(matrix.use, 'detailed-timers') && 'ON' || 'OFF' }} \
@@ -779,7 +771,7 @@ jobs:
         cpp_compiler: ["clang"]
 
         # available use flags (all default to "OFF"):
-        # openmp, mpi, python, gsl, ltdl, boost, hdf5, sionlib, libneurosim, optimize, warning, userdoc, music
+        # openmp, mpi, python, gsl, ltdl, boost, hdf5, sionlib, optimize, warning, userdoc, music
         use:
           - "openmp, mpi, python, gsl, ltdl, boost, hdf5, optimize, warning"
 
@@ -844,7 +836,6 @@ jobs:
               -Dwith-ltdl=${{ contains(matrix.use, 'ltdl') && 'ON' || 'OFF' }} \
               -Dwith-hdf5=${{ contains(matrix.use, 'hdf5') && 'ON' || 'OFF' }} \
               -Dwith-sionlib=${{ contains(matrix.use, 'sionlib') && '$HOME/.cache/sionlib.install' || 'OFF' }} \
-              -Dwith-libneurosim=${{ contains(matrix.use, 'libneurosim') && '$HOME/.cache/libneurosim.install' || 'OFF' }} \
               -Dwith-music=${{ contains(matrix.use, 'music') && '$HOME/.cache/music.install' || 'OFF' }} \
               ..
 

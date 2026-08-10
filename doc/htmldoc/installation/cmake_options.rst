@@ -282,6 +282,9 @@ Generic build configuration
 +------------------------------------------------------+------------------------------------------------------------------+
 | ``-Dwith-version-suffix=[string]``                   | Set a user defined version suffix [default=''].                  |
 +------------------------------------------------------+------------------------------------------------------------------+
+| ``-DCMAKE_INSTALL_MESSAGE=[ALWAYS|LAZY|NEVER]``      | Verbosity of installation process [default=LAZY]. LAZY displays  |
+|                                                      | only new or updated files, ALWAYS everything, NEVER nothing.     |
++------------------------------------------------------+------------------------------------------------------------------+
 
 
 .. _compile-with-mpi:

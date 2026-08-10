@@ -46,7 +46,7 @@ nest::SliceRingBuffer::resize()
     clear();
   }
 
-#ifndef HAVE_STL_VECTOR_CAPACITY_BASE_UNITY
+#ifdef HAVE_STL_VECTOR_BASE_CAPACITY_GREATER_ONE
   // Ensure capacity doubling starts from capacity 1.
   for ( auto& slot : queue_ )
   {

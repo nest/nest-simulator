@@ -36,7 +36,7 @@ namespace nest
 {
 
 // clang-format off
-/* BeginUserDocs: neuron, integrate-and-fire, current-based, short-term plasticity, hard threshold
+/* BeginUserDocs: neuron, integrate-and-fire, current-based, stp, hard threshold
 
 Short description
 +++++++++++++++++

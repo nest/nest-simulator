@@ -35,7 +35,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: neuron, e-prop plasticity, current-based, integrate-and-fire, adaptation, hard threshold
+/* BeginUserDocs: neuron, e-prop plasticity, current-based, integrate-and-fire, adaptation, hard threshold, Bellec
 
 Short description
 +++++++++++++++++

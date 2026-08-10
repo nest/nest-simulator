@@ -3,8 +3,6 @@
 MUSIC Tutorials
 ===============
 
-Learn step-by-step how to develop your PyNEST scripts and simulate your first
-networks!
 
 .. grid:: 1 1 1 1
 
@@ -22,9 +20,8 @@ networks!
    :maxdepth: 1
    :hidden:
 
-   music_tutorial/music_tutorial_1
-   music_tutorial/music_tutorial_2
-   music_tutorial/music_tutorial_3
-   music_tutorial/music_tutorial_4
-   music_tutorial/music_tutorial_tips
-   videos/index
+   music_tutorial_1
+   music_tutorial_2
+   music_tutorial_3
+   music_tutorial_4
+   music_tutorial_tips

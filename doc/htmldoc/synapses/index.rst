@@ -3,6 +3,9 @@
 All about synapses and connections in NEST
 ==========================================
 
+.. meta::
+   :description: Synapse models and connectivity in NEST: STDP, gap junctions, Tsodyks-Markram, Clopath, eProp. Learn connection rules, synapse parameters, and plasticity mechanisms.
+
 Guides on using synapses in NEST
 --------------------------------
 

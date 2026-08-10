@@ -28,7 +28,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapse, instantaneous, rate
+/* BeginUserDocs: synapse, abstract, rate
 
 Short description
 +++++++++++++++++

@@ -19,9 +19,6 @@
 
 # Here we check for all required include headers, types, symbols and functions.
 
-# Check types exist
-include( CheckTypeSize )
-
 # given a list, filter all header files
 function( FILTER_HEADERS in_list out_list )
     set( tmp_list ${in_list} )

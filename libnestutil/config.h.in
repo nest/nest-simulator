@@ -91,7 +91,7 @@
 #cmakedefine HAVE_M_PI 1
 
 /* define for STL vector capacity base unity */
-#cmakedefine HAVE_STL_VECTOR_CAPACITY_BASE_UNITY 1
+#cmakedefine HAVE_STL_VECTOR_BASE_CAPACITY_GREATER_ONE 1
 
 /* Tics per millisecond specified? */
 #cmakedefine HAVE_TICS_PER_MS 1

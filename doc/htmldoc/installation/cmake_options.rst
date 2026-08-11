@@ -54,7 +54,6 @@ However, this implies several restrictions:
 To configure NEST for compilation without external packages, use the following  command::
 
     cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> \
-          -Dwith-python=OFF \
           -Dwith-gsl=OFF \
           -Dwith-ltdl=OFF \
           -Dwith-openmp=OFF \
@@ -90,18 +89,6 @@ NEST to your needs:
 |                                       | files (without the .h filename extension) that are to be scanned for models. |
 |                                       | This option is mutually exclusive with -Dwith-modelset. [default=OFF].       |
 +---------------------------------------+------------------------------------------------------------------------------+
-
-Use Python to build PyNEST
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-+-----------------------------------------------+----------------------------------------------------------------+
-| ``-Dwith-python=[OFF|ON]``                    | Build PyNEST [default=ON].                                     |
-+-----------------------------------------------+----------------------------------------------------------------+
-| ``-Dcythonize-pynest=[OFF|ON]``               | Use Cython to cythonize pynestkernel.pyx [default=ON]. If OFF, |
-|                                               | PyNEST has to be build from a pre-cythonized pynestkernel.pyx. |
-+-----------------------------------------------+----------------------------------------------------------------+
-
-For more details, see the :ref:`Python binding <compile_with_python>` section below.
 
 .. _performance_cmake:
 
@@ -201,7 +188,7 @@ External libraries
 +--------------------------------------------------------+------------------------------------------------------------------------------------------------+
 | ``-Dwith-ltdl=[OFF|ON|</path/to/ltdl>]``               | Build with ltdl library [default=ON]. To set a specific ltdl, give the  install path. NEST uses|
 |                                                        | ltdl for dynamic loading of external user modules. Does not work with                          |
-|                                                        | ``-Dstatic-libraries=ON``.                                                                     |
+|                                                        | ``-Dwith-static-linking=ON``.                                                                  |
 +--------------------------------------------------------+------------------------------------------------------------------------------------------------+
 | ``-Dwith-gsl=[OFF|ON|</path/to/gsl>]``                 | Build with the GSL library [default=ON]. To set a specific library, give the install path.     |
 |                                                        | GSL is required for neuron models that use the GSL ODE solver for adaptive-step numerical      |
@@ -220,9 +207,11 @@ NEST properties
 ~~~~~~~~~~~~~~~
 
 +-----------------------------------------------+----------------------------------------------------------------+
-| ``-Dtics_per_ms=[number]``                    | Specify elementary unit of time [default=1000 tics per ms].    |
+| ``-Dwith-tics-per-ms=[number]``               | Specify elementary unit of time [default=1000 tics per ms].    |
+|                                               | Must be a strictly positive integer.                           |
 +-----------------------------------------------+----------------------------------------------------------------+
-| ``-Dtics_per_step=[number]``                  | Specify resolution [default=100 tics per step].                |
+| ``-Dwith-tics-per-step=[number]``             | Specify resolution [default=100 tics per step].                |
+|                                               | Must be a strictly positive integer.                           |
 +-----------------------------------------------+----------------------------------------------------------------+
 | ``-Dwith-threaded-timers=[OFF|ON]``           | Build with one internal timer per thread [default=ON].         |
 |                                               | Multi-threaded timers can affect the performance.              |
@@ -239,8 +228,8 @@ NEST properties
 | ``-Dwith-mpi-sync-timer=[OFF|ON]``            | Build with mpi synchronization barrier and timer [default=OFF].|
 |                                               | Can affect the performance.                                    |
 +-----------------------------------------------+----------------------------------------------------------------+
-| ``-Dtarget-bits-split=['standard'|'hpc']``    | Split of the 64-bit target neuron identifier type              |
-|                                               | [default='standard']. 'standard' is recommended for most users.|
+| ``-Dwith-target-bits-split=['default'|'hpc']``| Split of the 64-bit target neuron identifier type              |
+|                                               | [default='default']. 'default' is recommended for most users.  |
 |                                               | If running on more than 262144 MPI processes or more than 512  |
 |                                               | threads, change to 'hpc'.                                      |
 +-----------------------------------------------+----------------------------------------------------------------+
@@ -255,7 +244,7 @@ Generic build configuration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 +------------------------------------------------------+------------------------------------------------------------------+
-| ``-Dstatic-libraries=[OFF|ON]``                      | Build static executable and libraries [default=OFF].             |
+| ``-Dwith-static-linking=[OFF|ON]``                   | Build with static linking [default=OFF].                         |
 +------------------------------------------------------+------------------------------------------------------------------+
 | ``-Dwith-optimize=[OFF|ON|<list;of;flags>]``         | Enable user defined optimizations                                |
 |                                                      | [default=ON (uses '-O2')]. When OFF, no '-O' flag is passed to   |
@@ -268,8 +257,10 @@ Generic build configuration
 | ``-Dwith-debug=[OFF|ON|<list;of;flags>]``            | Enable user defined debug flags [default=OFF]. When ON, '-g' is  |
 |                                                      | used. Separate  multiple flags by ';'.                           |
 +------------------------------------------------------+------------------------------------------------------------------+
-| ``-Dwith-intel-compiler-flags=[OFF|<list;of;flags>]``| User defined flags for the Intel compiler                        |
-|                                                      | [default='-fp-model strict']. Separate multiple flags by ';'.    |
+| ``-Dwith-intel-compiler-strict-math=[OFF|ON]``       | Pass ``-fp-model strict`` when building with the Intel C++       |
+|                                                      | compiler [default=ON]. This ensures IEEE754-compliant            |
+|                                                      | floating-point arithmetic. Disable only if you have verified     |
+|                                                      | that the looser default model does not affect your results.      |
 +------------------------------------------------------+------------------------------------------------------------------+
 | ``-Dwith-libraries=[OFF|<list;of;libraries>]``       | Link additional libraries [default=OFF]. Give full path. Separate|
 |                                                      | multiple libraries by ';'.                                       |
@@ -358,25 +349,15 @@ For details on how to use the Connection Generator Interface, see the
 Python Binding (PyNEST)
 -----------------------
 
-Note that since NEST 3.0, support for Python 2 has been dropped. Please use Python 3 instead.
+Python 3.10 or later is required; NEST always builds PyNEST.
+``cmake`` autodetects your Python installation.  If it picks the wrong
+interpreter — for example in an environment with multiple Python versions —
+you can steer it with the standard CMake variable::
 
-``cmake`` usually autodetects your Python installation.
-In some cases ``cmake`` might not be able to localize the Python interpreter
-and its corresponding libraries correctly. To circumvent such a problem following
-``cmake`` built-in variables can be set manually and passed to ``cmake``::
+    -DPython_EXECUTABLE=/path/to/python3
 
-  PYTHON_EXECUTABLE ..... path to the Python interpreter
-  PYTHON_LIBRARY ........ path to libpython
-  PYTHON_INCLUDE_DIR .... two include ...
-  PYTHON_INCLUDE_DIR2 ... directories
-
- e.g.: Please note ``-Dwith-python=ON`` is the default::
-  cmake -DCMAKE_INSTALL_PREFIX=<nest_install_dir> \
-        -DPYTHON_EXECUTABLE=/usr/bin/python3 \
-        -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.4m.so \
-        -DPYTHON_INCLUDE_DIR=/usr/include/python3.4 \
-        -DPYTHON_INCLUDE_DIR2=/usr/include/x86_64-linux-gnu/python3.4m \
-        <nest_source_dir>
+Cython 3.0 or later is also required and must be installed in the same
+environment as the Python interpreter.
 
 
 
@@ -388,11 +369,11 @@ NEST has reasonable default compiler options for the most common compilers.
 Intel compiler
 ~~~~~~~~~~~~~~
 
-To ensure that computations obey the IEEE754 standard for floating point
-numerics, the ``-fp-model strict`` flag is used by default, but can be
-overridden with ::
+To ensure that computations obey the IEEE754 standard for floating-point
+numerics, NEST passes ``-fp-model strict`` to the Intel C++ compiler by
+default.  This behaviour is controlled by::
 
-      -Dwith-intel-compiler-flags="<intel-flags>"
+    -Dwith-intel-compiler-strict-math=[OFF|ON]   (default: ON)
 
 Portland compiler
 ~~~~~~~~~~~~~~~~~

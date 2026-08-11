@@ -52,7 +52,7 @@ namespace nest
  *
  *  All times given in multiples of "tics":
  *  A "tic" is a microsecond by default, but may be changed through
- *  the option -Dtics_per_ms to configure.
+ *  the -Dwith-tics-per-ms CMake option.
  *
  *  User access to time only through accessor functions:
  *  - Times can be added, subtracted, and multiplied by ints
@@ -81,8 +81,8 @@ namespace nest
  *    Time objects, must ensure that these are recalibrated before the
  *    simulation starts. This is necessary to ensure that step values
  *    are updated after a change in resolution.
- *  - The default resolution can be changed using the --with-tics_per_step
- *    option to configure.
+ *  - The default resolution can be changed using the -Dwith-tics-per-step
+ *    CMake option.
  *
  *
  *  @NOTE

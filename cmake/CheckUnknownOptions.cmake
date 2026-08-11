@@ -24,16 +24,50 @@
 # warning is based on. We turn it into a hard error here, restricted to
 # names matching NEST's own option naming, so we never misfire on unrelated
 # CMake-internal or generator-specific cache entries.
+#
+# In addition, trap old option names that have been renamed, so users get a
+# clear error message rather than the option being silently ignored.
 function( NEST_CHECK_UNKNOWN_OPTIONS )
-  set( _nest_known_bare_options
-    cythonize-pynest static-libraries tics_per_ms tics_per_step target-bits-split
+  # Deprecated option names with their replacements, stored as a flat list of
+  # (old, new) pairs. If a user passes one of these on the command line it stays
+  # UNINITIALIZED (we never call set() on it), so the generic loop below would
+  # already catch it; but an explicit check lets us print a targeted message.
+  set( _nest_deprecated_options
+    "static-libraries"          "with-static-linking"
+    "cythonize-pynest"          "(removed; Cython is always required)"
+    "with-python"               "(removed; Python is always required)"
+    "tics_per_ms"               "with-tics-per-ms"
+    "tics_per_step"             "with-tics-per-step"
+    "target-bits-split"         "with-target-bits-split"
+    "with-intel-compiler-flags" "with-intel-compiler-strict-math"
   )
+
   get_cmake_property( _nest_cache_vars CACHE_VARIABLES )
+
+  # Check deprecated names first so the user gets a targeted message.
+  list( LENGTH _nest_deprecated_options _dep_len )
+  set( _idx 0 )
+  while ( _idx LESS _dep_len )
+    list( GET _nest_deprecated_options ${_idx} _old_name )
+    math( EXPR _idx "${_idx} + 1" )
+    list( GET _nest_deprecated_options ${_idx} _new_name )
+    math( EXPR _idx "${_idx} + 1" )
+    if ( "${_old_name}" IN_LIST _nest_cache_vars )
+      get_property( _type CACHE ${_old_name} PROPERTY TYPE )
+      if ( _type STREQUAL "UNINITIALIZED" )
+        message( FATAL_ERROR
+          "Option -D${_old_name} has been renamed. Please use -D${_new_name} instead." )
+      endif ()
+    endif ()
+  endwhile ()
+
+  # Generic check: any NEST-style option (with- prefix) that is still
+  # UNINITIALIZED was not recognised by the project.
   set( _nest_unknown_options "" )
   foreach( _v ${_nest_cache_vars} )
-    if ( "${_v}" MATCHES "^with-" OR "${_v}" IN_LIST _nest_known_bare_options )
-      get_property( _nest_var_type CACHE ${_v} PROPERTY TYPE )
-      if ( _nest_var_type STREQUAL "UNINITIALIZED" )
+    if ( "${_v}" MATCHES "^with-" )
+      get_property( _type CACHE ${_v} PROPERTY TYPE )
+      if ( _type STREQUAL "UNINITIALIZED" )
         list( APPEND _nest_unknown_options "${_v}" )
       endif ()
     endif ()

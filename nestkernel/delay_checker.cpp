@@ -161,9 +161,7 @@ nest::DelayChecker::assert_valid_delay_ms( double requested_new_delay )
     const bool bad_max_delay = new_delay > kernel().connection_manager.get_max_delay();
     if ( bad_min_delay or bad_max_delay )
     {
-      throw BadDelay( new_delay_ms,
-        "Minimum and maximum delay cannot be changed "
-        "after Simulate has been called." );
+      throw BadDelay( new_delay_ms, "Minimum and maximum delay cannot be changed after Simulate has been called." );
     }
   }
 
@@ -175,8 +173,7 @@ nest::DelayChecker::assert_valid_delay_ms( double requested_new_delay )
     if ( user_set_delay_extrema_ )
     {
       throw BadDelay( new_delay_ms,
-        "Delay must be greater than or equal to min_delay. "
-        "You may set min_delay before creating connections." );
+        "Delay must be greater than or equal to min_delay. You may set min_delay before creating connections." );
     }
     else
     {
@@ -192,8 +189,7 @@ nest::DelayChecker::assert_valid_delay_ms( double requested_new_delay )
     if ( user_set_delay_extrema_ )
     {
       throw BadDelay( new_delay_ms,
-        "Delay must be smaller than or equal to max_delay. "
-        "You may set min_delay before creating connections." );
+        "Delay must be smaller than or equal to max_delay. You may set min_delay before creating connections." );
     }
     else
     {
@@ -240,8 +236,7 @@ nest::DelayChecker::assert_two_valid_delays_steps( long new_delay1, long new_del
     if ( user_set_delay_extrema_ )
     {
       throw BadDelay( Time::delay_steps_to_ms( ldelay ),
-        "Delay must be greater than or equal to min_delay. "
-        "You may set min_delay before creating connections." );
+        "Delay must be greater than or equal to min_delay. You may set min_delay before creating connections." );
     }
     else
     {
@@ -257,8 +252,7 @@ nest::DelayChecker::assert_two_valid_delays_steps( long new_delay1, long new_del
     if ( user_set_delay_extrema_ )
     {
       throw BadDelay( Time::delay_steps_to_ms( hdelay ),
-        "Delay must be smaller than or equal to max_delay. "
-        "You may set max_delay before creating connections." );
+        "Delay must be smaller than or equal to max_delay. You may set max_delay before creating connections." );
     }
     else
     {

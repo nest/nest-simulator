@@ -111,4 +111,5 @@ Developer guides
    guidelines/*
    guidelines/styleguide/styleguide
    templates/*
+   axonal_delays
    cppcomments

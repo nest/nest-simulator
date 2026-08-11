@@ -154,9 +154,10 @@ SPManager::set_status( const Dictionary& d )
     SPBuilder* conn_builder = new SPBuilder( sources, targets, /* third_out */ nullptr, conn_spec, { syn_spec } );
     conn_builder->set_name( key );
 
-    // check that the user defined the min and max delay properly, if the
-    // default delay is not used.
-    if ( not conn_builder->get_default_delay() and not kernel().connection_manager.get_user_set_delay_extrema() )
+    // check that the user defined the min and max delay properly, if the default delay is not used.
+    if ( not conn_builder->get_default_delay()
+      and not( conn_builder->get_default_axonal_delay() or conn_builder->get_default_dendritic_delay() )
+      and not kernel().connection_manager.get_user_set_delay_extrema() )
     {
       throw BadProperty(
         "Structural Plasticity: to use different delays for synapses you must "
@@ -169,6 +170,7 @@ SPManager::set_status( const Dictionary& d )
 long
 SPManager::builder_min_delay() const
 {
+  // TODO: Consider axonal delays here
   long min_delay = Time::pos_inf().get_steps();
   long builder_delay = Time::pos_inf().get_steps();
 
@@ -183,6 +185,7 @@ SPManager::builder_min_delay() const
 long
 SPManager::builder_max_delay() const
 {
+  // TODO: Consider axonal delays here
   long max_delay = Time::neg_inf().get_steps();
   long builder_delay = Time::neg_inf().get_steps();
 

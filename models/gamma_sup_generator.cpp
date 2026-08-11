@@ -40,11 +40,15 @@ nest::register_gamma_sup_generator( const std::string& name )
   register_node_model< gamma_sup_generator >( name );
 }
 
+
+namespace nest
+{
+
 /* ----------------------------------------------------------------
  * Constructor of internal states class
  * ---------------------------------------------------------------- */
 
-nest::gamma_sup_generator::Internal_states_::Internal_states_( size_t num_bins,
+gamma_sup_generator::Internal_states_::Internal_states_( size_t num_bins,
   unsigned long ini_occ_ref,
   unsigned long ini_occ_act )
 {
@@ -57,7 +61,7 @@ nest::gamma_sup_generator::Internal_states_::Internal_states_( size_t num_bins,
  * ---------------------------------------------------------------- */
 
 unsigned long
-nest::gamma_sup_generator::Internal_states_::update( double transition_prob, RngPtr rng )
+gamma_sup_generator::Internal_states_::update( double transition_prob, RngPtr rng )
 {
   std::vector< unsigned long > n_trans;  // only set from poisson_dist_, bino_dist_ or 0, thus >= 0
   n_trans.resize( occ_.size() );
@@ -122,7 +126,7 @@ nest::gamma_sup_generator::Internal_states_::update( double transition_prob, Rng
  * Default constructors defining default parameter
  * ---------------------------------------------------------------- */
 
-nest::gamma_sup_generator::Parameters_::Parameters_()
+gamma_sup_generator::Parameters_::Parameters_()
   : rate_( 0.0 )  // Hz
   , gamma_shape_( 1 )
   , n_proc_( 1 )
@@ -135,7 +139,7 @@ nest::gamma_sup_generator::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-nest::gamma_sup_generator::Parameters_::get( Dictionary& d ) const
+gamma_sup_generator::Parameters_::get( Dictionary& d ) const
 {
   d[ names::rate ] = rate_;
   d[ names::gamma_shape ] = gamma_shape_;
@@ -143,7 +147,7 @@ nest::gamma_sup_generator::Parameters_::get( Dictionary& d ) const
 }
 
 void
-nest::gamma_sup_generator::Parameters_::set( const Dictionary& d, Node* node )
+gamma_sup_generator::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::gamma_shape, gamma_shape_, node );
   if ( gamma_shape_ < 1 )
@@ -169,13 +173,13 @@ nest::gamma_sup_generator::Parameters_::set( const Dictionary& d, Node* node )
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::gamma_sup_generator::gamma_sup_generator()
+gamma_sup_generator::gamma_sup_generator()
   : StimulationDevice()
   , P_()
 {
 }
 
-nest::gamma_sup_generator::gamma_sup_generator( const gamma_sup_generator& n )
+gamma_sup_generator::gamma_sup_generator( const gamma_sup_generator& n )
   : StimulationDevice( n )
   , P_( n.P_ )
 {
@@ -187,19 +191,19 @@ nest::gamma_sup_generator::gamma_sup_generator( const gamma_sup_generator& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::gamma_sup_generator::init_state_()
+gamma_sup_generator::init_state_()
 {
   StimulationDevice::init_state();
 }
 
 void
-nest::gamma_sup_generator::init_buffers_()
+gamma_sup_generator::init_buffers_()
 {
   StimulationDevice::init_buffers();
 }
 
 void
-nest::gamma_sup_generator::pre_run_hook()
+gamma_sup_generator::pre_run_hook()
 {
   StimulationDevice::pre_run_hook();
 
@@ -224,7 +228,7 @@ nest::gamma_sup_generator::pre_run_hook()
  * ---------------------------------------------------------------- */
 
 void
-nest::gamma_sup_generator::update( Time const& T, const long from, const long to )
+gamma_sup_generator::update( Time const& T, const long from, const long to )
 {
   if ( P_.rate_ <= 0 or P_.num_targets_ == 0 )
   {
@@ -247,7 +251,7 @@ nest::gamma_sup_generator::update( Time const& T, const long from, const long to
 
 
 void
-nest::gamma_sup_generator::event_hook( DSSpikeEvent& e )
+gamma_sup_generator::event_hook( DSSpikeEvent& e )
 {
   // get port number
   const size_t prt = e.get_port();
@@ -271,7 +275,7 @@ nest::gamma_sup_generator::event_hook( DSSpikeEvent& e )
  * ---------------------------------------------------------------- */
 
 void
-nest::gamma_sup_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
+gamma_sup_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
   Parameters_ ptmp = P_;  // temporary copy in case of errors
 
@@ -293,3 +297,5 @@ nest::gamma_sup_generator::set_data_from_stimulation_backend( std::vector< doubl
   // if we get here, temporary contains consistent set of properties
   P_ = ptmp;
 }
+
+}  // namespace nest

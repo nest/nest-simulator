@@ -217,10 +217,12 @@ public:
   size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
   void handle( SpikeEvent& ) override;
+  void handle( CorrectionSpikeEvent& ) override;
   void handle( CurrentEvent& ) override;
   void handle( DataLoggingRequest& ) override;
 
   size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CorrectionSpikeEvent&, size_t ) override;
   size_t handles_test_event( CurrentEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
@@ -413,6 +415,16 @@ nest::iaf_psc_alpha::send_test_event( Node& target, size_t receptor_type, synind
 
 inline size_t
 iaf_psc_alpha::handles_test_event( SpikeEvent&, size_t receptor_type )
+{
+  if ( receptor_type != 0 )
+  {
+    throw UnknownReceptorType( receptor_type, get_name() );
+  }
+  return 0;
+}
+
+inline size_t
+iaf_psc_alpha::handles_test_event( CorrectionSpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

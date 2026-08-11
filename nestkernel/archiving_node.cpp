@@ -31,7 +31,7 @@ namespace nest
 
 // member functions for ArchivingNode
 
-nest::ArchivingNode::ArchivingNode()
+ArchivingNode::ArchivingNode()
   : StructuralPlasticityNode()
   , IgnoreAndSpikeMechanism()
   , n_incoming_( 0 )
@@ -44,10 +44,14 @@ nest::ArchivingNode::ArchivingNode()
   , max_delay_( 0 )
   , trace_( 0.0 )
   , last_spike_( -1.0 )
+  , has_predominant_stdp_ax_delay_( false )
 {
+  const size_t num_time_slots =
+    kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
+  correction_entries_stdp_ax_delay_.resize( num_time_slots );
 }
 
-nest::ArchivingNode::ArchivingNode( const ArchivingNode& n )
+ArchivingNode::ArchivingNode( const ArchivingNode& n )
   : StructuralPlasticityNode( n )
   , IgnoreAndSpikeMechanism( n )
   , n_incoming_( n.n_incoming_ )
@@ -60,16 +64,41 @@ nest::ArchivingNode::ArchivingNode( const ArchivingNode& n )
   , max_delay_( n.max_delay_ )
   , trace_( n.trace_ )
   , last_spike_( n.last_spike_ )
+  , has_predominant_stdp_ax_delay_( false )
 {
+  const size_t num_time_slots =
+    kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
+  correction_entries_stdp_ax_delay_.resize( num_time_slots );
 }
 
 void
-ArchivingNode::register_stdp_connection( double t_first_read, double delay )
+ArchivingNode::pre_run_hook_()
+{
+  if ( has_predominant_stdp_ax_delay_ )
+  {
+    const size_t num_time_slots =
+      kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
+    if ( correction_entries_stdp_ax_delay_.size() != num_time_slots )
+    {
+      correction_entries_stdp_ax_delay_.resize( num_time_slots );
+    }
+  }
+}
+
+void
+ArchivingNode::register_stdp_connection( const double t_first_read,
+  const double dendritic_delay,
+  const double axonal_delay )
 {
   // Mark all entries in the deque, which we will not read in future as read by
   // this input, so that we safely increment the incoming number of
   // connections afterwards without leaving spikes in the history.
   // For details see bug #218. MH 08-04-22
+
+  if ( axonal_delay >= dendritic_delay )
+  {
+    has_predominant_stdp_ax_delay_ = true;
+  }
 
   for ( std::deque< histentry >::iterator runner = history_.begin();
     runner != history_.end() and ( t_first_read - runner->t_ > -1.0 * kernel().connection_manager.get_stdp_eps() );
@@ -80,11 +109,11 @@ ArchivingNode::register_stdp_connection( double t_first_read, double delay )
 
   n_incoming_++;
 
-  max_delay_ = std::max( delay, max_delay_ );
+  max_delay_ = std::max( dendritic_delay + axonal_delay, max_delay_ );
 }
 
 double
-nest::ArchivingNode::get_K_value( double t )
+ArchivingNode::get_K_value( double t )
 {
   // case when the neuron has not yet spiked
   if ( history_.empty() )
@@ -93,8 +122,7 @@ nest::ArchivingNode::get_K_value( double t )
     return trace_;
   }
 
-  // search for the latest post spike in the history buffer that came strictly
-  // before `t`
+  // search for the latest post spike in the history buffer that came strictly before `t`
   int i = history_.size() - 1;
   while ( i >= 0 )
   {
@@ -113,10 +141,7 @@ nest::ArchivingNode::get_K_value( double t )
 }
 
 void
-nest::ArchivingNode::get_K_values( double t,
-  double& K_value,
-  double& nearest_neighbor_K_value,
-  double& K_triplet_value )
+ArchivingNode::get_K_values( double t, double& K_value, double& nearest_neighbor_K_value, double& K_triplet_value )
 {
   // case when the neuron has not yet spiked
   if ( history_.empty() )
@@ -151,7 +176,7 @@ nest::ArchivingNode::get_K_values( double t,
 }
 
 void
-nest::ArchivingNode::get_history( double t1,
+ArchivingNode::get_history( double t1,
   double t2,
   std::deque< histentry >::iterator* start,
   std::deque< histentry >::iterator* finish )
@@ -179,7 +204,7 @@ nest::ArchivingNode::get_history( double t1,
 }
 
 void
-nest::ArchivingNode::set_spiketime( Time const& t_sp, double offset )
+ArchivingNode::set_spiketime( Time const& t_sp, double offset )
 {
   StructuralPlasticityNode::set_spiketime( t_sp, offset );
 
@@ -217,10 +242,12 @@ nest::ArchivingNode::set_spiketime( Time const& t_sp, double offset )
   {
     last_spike_ = t_sp_ms;
   }
+
+  correct_synapses_stdp_ax_delay_( t_sp );
 }
 
 void
-nest::ArchivingNode::get_status( Dictionary& d ) const
+ArchivingNode::get_status( Dictionary& d ) const
 {
   d[ names::t_spike ] = get_spiketime_ms();
   d[ names::tau_minus ] = tau_minus_;
@@ -236,7 +263,7 @@ nest::ArchivingNode::get_status( Dictionary& d ) const
 }
 
 void
-nest::ArchivingNode::set_status( const Dictionary& d )
+ArchivingNode::set_status( const Dictionary& d )
 {
   // We need to preserve values in case invalid values are set
   double new_tau_minus = tau_minus_;
@@ -269,13 +296,148 @@ nest::ArchivingNode::set_status( const Dictionary& d )
 }
 
 void
-nest::ArchivingNode::clear_history()
+ArchivingNode::clear_history()
 {
   last_spike_ = -1.0;
   Kminus_ = 0.0;
   Kminus_triplet_ = 0.0;
   history_.clear();
+  last_lag_by_lcid_.clear();
 }
 
+void
+ArchivingNode::add_correction_entry_stdp_ax_delay( SpikeEvent& spike_event,
+  const double t_last_pre_spike,
+  const double weight_revert,
+  const double new_weight,
+  const double K_plus_revert,
+  const double time_while_critical )
+{
+  assert( correction_entries_stdp_ax_delay_.size()
+    == static_cast< size_t >(
+      kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay() ) );
+
+  const long lag = static_cast< long >( time_while_critical - 1 );
+  const long idx = kernel().event_delivery_manager.get_modulo( lag );
+  assert( static_cast< size_t >( idx ) < correction_entries_stdp_ax_delay_.size() );
+
+  const SpikeData& spike_data = spike_event.get_sender_spike_data();
+  const size_t lcid = spike_data.get_lcid();
+
+  if ( lcid >= last_lag_by_lcid_.size() )
+  {
+    last_lag_by_lcid_.resize( lcid + 1, -1 );
+  }
+
+  const long last_lag = last_lag_by_lcid_[ lcid ];
+  if ( last_lag != -1 && lag > last_lag
+    && lag - last_lag < static_cast< long >( correction_entries_stdp_ax_delay_.size() ) )
+  {
+    const size_t last_idx = kernel().event_delivery_manager.get_modulo( last_lag );
+    for ( CorrectionEntrySTDPAxDelay& entry : correction_entries_stdp_ax_delay_[ last_idx ] )
+    {
+      if ( entry.lcid_ == lcid )
+      {
+        entry.next_lag_ = lag;
+        break;
+      }
+    }
+  }
+
+  last_lag_by_lcid_[ lcid ] = lag;
+
+  correction_entries_stdp_ax_delay_[ idx ].push_back( CorrectionEntrySTDPAxDelay(
+    lcid, spike_data.get_syn_id(), t_last_pre_spike, weight_revert, new_weight, K_plus_revert ) );
+}
+
+void
+ArchivingNode::reset_correction_entries_stdp_ax_delay_( const size_t lag )
+{
+  if ( has_predominant_stdp_ax_delay_ )
+  {
+    assert( correction_entries_stdp_ax_delay_.size()
+      == static_cast< size_t >(
+        kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay() ) );
+
+    const size_t idx = kernel().event_delivery_manager.get_modulo( lag );
+    assert( static_cast< size_t >( idx ) < correction_entries_stdp_ax_delay_.size() );
+
+    // iterate over all pre-synaptic spikes which are no longer critical
+    for ( CorrectionEntrySTDPAxDelay& it_corr_entry : correction_entries_stdp_ax_delay_[ idx ] )
+    {
+      if ( it_corr_entry.next_lag_ != -1 )
+      {
+        const size_t next_idx = kernel().event_delivery_manager.get_modulo( it_corr_entry.next_lag_ );
+        for ( CorrectionEntrySTDPAxDelay& next_entry : correction_entries_stdp_ax_delay_[ next_idx ] )
+        {
+          if ( next_entry.lcid_ == it_corr_entry.lcid_ )
+          {
+            next_entry.weight_revert_ = it_corr_entry.new_weight_;
+            break;
+          }
+        }
+      }
+      else
+      {
+        const size_t lcid = it_corr_entry.lcid_;
+        if ( lcid < last_lag_by_lcid_.size() && last_lag_by_lcid_[ lcid ] == static_cast< long >( lag ) )
+        {
+          last_lag_by_lcid_[ lcid ] = -1;
+        }
+      }
+    }
+
+    correction_entries_stdp_ax_delay_[ idx ].clear();
+  }
+}
+
+void
+ArchivingNode::update_weight_revert( const size_t lcid, const double weight_revert )
+{
+  for ( std::vector< CorrectionEntrySTDPAxDelay >& correction_entries_for_timestep : correction_entries_stdp_ax_delay_ )
+  {
+    for ( CorrectionEntrySTDPAxDelay& it_corr_entry : correction_entries_for_timestep )
+    {
+      if ( it_corr_entry.lcid_ == lcid )
+      {
+        it_corr_entry.weight_revert_ = weight_revert;
+      }
+    }
+  }
+}
+
+void
+ArchivingNode::correct_synapses_stdp_ax_delay_( const Time& t_spike )
+{
+  if ( has_predominant_stdp_ax_delay_ )
+  {
+    const Time& ori = kernel().simulation_manager.get_slice_origin();
+    const Time& t_spike_rel = t_spike - ori;
+    const long maxdelay_steps = kernel().connection_manager.get_max_delay();
+    assert( correction_entries_stdp_ax_delay_.size()
+      == static_cast< size_t >( kernel().connection_manager.get_min_delay() + maxdelay_steps ) );
+
+    for ( long lag = t_spike_rel.get_steps() - 1; lag < maxdelay_steps + 1; ++lag )
+    {
+      const long idx = kernel().event_delivery_manager.get_modulo( lag );
+      assert( static_cast< size_t >( idx ) < correction_entries_stdp_ax_delay_.size() );
+
+      for ( CorrectionEntrySTDPAxDelay& it_corr_entry : correction_entries_stdp_ax_delay_[ idx ] )
+      {
+        kernel().connection_manager.correct_synapse_stdp_ax_delay( get_thread(),
+          it_corr_entry.syn_id_,
+          it_corr_entry.lcid_,
+          it_corr_entry.t_last_pre_spike_,
+          ( ori + Time::step( lag + 1 ) ).get_ms(),
+          it_corr_entry.weight_revert_,
+          it_corr_entry.new_weight_,
+          it_corr_entry.K_plus_revert_,
+          t_spike.get_ms() );
+      }
+      // indicate that the new spike was processed by these STDP synapses
+      history_.back().access_counter_ += correction_entries_stdp_ax_delay_[ idx ].size();
+    }
+  }
+}
 
 }  // of namespace nest

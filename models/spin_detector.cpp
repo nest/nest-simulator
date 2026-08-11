@@ -33,20 +33,22 @@
 #include "nest_impl.h"
 
 
+namespace nest
+{
+
 void
-nest::register_spin_detector( const std::string& name )
+register_spin_detector( const std::string& name )
 {
   register_node_model< spin_detector >( name );
 }
 
-
-nest::spin_detector::spin_detector()
+spin_detector::spin_detector()
   : last_in_node_id_( 0 )
   , t_last_in_spike_( Time::neg_inf() )
 {
 }
 
-nest::spin_detector::spin_detector( const spin_detector& n )
+spin_detector::spin_detector( const spin_detector& n )
   : RecordingDevice( n )
   , last_in_node_id_( 0 )
   , t_last_in_spike_( Time::neg_inf() )  // mark as not initialized
@@ -54,18 +56,18 @@ nest::spin_detector::spin_detector( const spin_detector& n )
 }
 
 void
-nest::spin_detector::init_buffers_()
+spin_detector::init_buffers_()
 {
 }
 
 void
-nest::spin_detector::pre_run_hook()
+spin_detector::pre_run_hook()
 {
-  RecordingDevice::pre_run_hook( RecordingBackend::NO_DOUBLE_VALUE_NAMES, { nest::names::state } );
+  RecordingDevice::pre_run_hook( RecordingBackend::NO_DOUBLE_VALUE_NAMES, { names::state } );
 }
 
 void
-nest::spin_detector::update( Time const&, const long, const long )
+spin_detector::update( Time const&, const long, const long )
 {
   if ( last_in_node_id_ != 0 )  // if last_* is empty we dont write
   {
@@ -74,14 +76,14 @@ nest::spin_detector::update( Time const&, const long, const long )
   }
 }
 
-nest::RecordingDevice::Type
-nest::spin_detector::get_type() const
+RecordingDevice::Type
+spin_detector::get_type() const
 {
   return RecordingDevice::SPIN_DETECTOR;
 }
 
 void
-nest::spin_detector::get_status( Dictionary& d ) const
+spin_detector::get_status( Dictionary& d ) const
 {
   // get the data from the device
   RecordingDevice::get_status( d );
@@ -105,14 +107,14 @@ nest::spin_detector::get_status( Dictionary& d ) const
 }
 
 void
-nest::spin_detector::set_status( const Dictionary& d )
+spin_detector::set_status( const Dictionary& d )
 {
   RecordingDevice::set_status( d );
 }
 
 
 void
-nest::spin_detector::handle( SpikeEvent& e )
+spin_detector::handle( SpikeEvent& e )
 {
   // accept spikes only if detector was active when spike was
   // emitted
@@ -167,3 +169,5 @@ nest::spin_detector::handle( SpikeEvent& e )
     }
   }
 }
+
+}  // namespace nest

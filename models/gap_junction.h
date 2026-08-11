@@ -76,13 +76,13 @@ EndUserDocs */
 void register_gap_junction( const std::string& name );
 
 template < typename targetidentifierT >
-class gap_junction : public Connection< targetidentifierT >
+class gap_junction : public Connection< targetidentifierT, TotalDelay >
 {
 
 public:
   // this line determines which common properties to use
   typedef CommonSynapseProperties CommonPropertiesType;
-  typedef Connection< targetidentifierT > ConnectionBase;
+  typedef Connection< targetidentifierT, TotalDelay > ConnectionBase;
 
   static constexpr ConnectionModelProperties properties =
     ConnectionModelProperties::REQUIRES_SYMMETRIC | ConnectionModelProperties::SUPPORTS_WFR;
@@ -108,14 +108,14 @@ public:
   using ConnectionBase::get_target;
 
   void
-  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, const size_t receptor_type, const synindex syn_id, const CommonPropertiesType& )
   {
     GapJunctionEvent ge;
 
     s.sends_secondary_event( ge );
     ge.set_sender( s );
-    Connection< targetidentifierT >::target_.set_rport( t.handles_test_event( ge, receptor_type ) );
-    Connection< targetidentifierT >::target_.set_target( &t );
+    Connection< targetidentifierT, TotalDelay >::target_.set_rport( t.handles_test_event( ge, receptor_type ) );
+    Connection< targetidentifierT, TotalDelay >::target_.set_target( &t );
   }
 
   /**
@@ -144,7 +144,13 @@ public:
   }
 
   void
-  set_delay( double )
+  set_delay_ms( double )
+  {
+    throw BadProperty( "gap_junction connection has no delay" );
+  }
+
+  void
+  set_delay_steps( long )
   {
     throw BadProperty( "gap_junction connection has no delay" );
   }
@@ -160,9 +166,7 @@ template < typename targetidentifierT >
 void
 gap_junction< targetidentifierT >::get_status( Dictionary& d ) const
 {
-  // We have to include the delay here to prevent
-  // errors due to internal calls of
-  // this function in SLI/pyNEST
+  // We have to include the delay here to prevent errors due to internal calls of this function in SLI/pyNEST
   ConnectionBase::get_status( d );
   d[ names::weight ] = weight_;
   d[ names::size_of ] = static_cast< long >( sizeof( *this ) );
@@ -180,7 +184,7 @@ void
 gap_junction< targetidentifierT >::set_status( const Dictionary& d, ConnectorModel& cm )
 {
   // If the delay is set, we throw a BadProperty
-  if ( d.known( names::delay ) )
+  if ( d.known( names::delay ) or d.known( names::dendritic_delay ) or d.known( names::axonal_delay ) )
   {
     throw BadProperty( "gap_junction connection has no delay" );
   }

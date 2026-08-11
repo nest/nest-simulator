@@ -29,6 +29,7 @@
 #include "config.h"
 
 // Includes from libnestutil:
+#include "exceptions.h"
 #include "numerics.h"
 
 using namespace nest;
@@ -180,4 +181,10 @@ operator<<( std::ostream& strm, const Time& t )
   }
 
   return strm;
+}
+
+void
+Time::throw_bad_delay_( double val )
+{
+  throw BadDelay( val, "Delay value must be greater than or equal to zero." );
 }

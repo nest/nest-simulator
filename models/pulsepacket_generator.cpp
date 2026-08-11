@@ -41,11 +41,15 @@ nest::register_pulsepacket_generator( const std::string& name )
   register_node_model< pulsepacket_generator >( name );
 }
 
+
+namespace nest
+{
+
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and variables
  * ---------------------------------------------------------------- */
 
-nest::pulsepacket_generator::Parameters_::Parameters_()
+pulsepacket_generator::Parameters_::Parameters_()
   : pulse_times_()
   , a_( 0 )
   , sdev_( 0.0 )
@@ -53,7 +57,7 @@ nest::pulsepacket_generator::Parameters_::Parameters_()
 {
 }
 
-nest::pulsepacket_generator::Variables_::Variables_()
+pulsepacket_generator::Variables_::Variables_()
   : start_center_idx_( 0 )
   , stop_center_idx_( 0 )
   , tolerance( 0.0 )
@@ -65,7 +69,7 @@ nest::pulsepacket_generator::Variables_::Variables_()
  * ---------------------------------------------------------------- */
 
 void
-nest::pulsepacket_generator::Parameters_::get( Dictionary& d ) const
+pulsepacket_generator::Parameters_::get( Dictionary& d ) const
 {
   d[ names::pulse_times ] = pulse_times_;
   d[ names::activity ] = a_;
@@ -73,7 +77,7 @@ nest::pulsepacket_generator::Parameters_::get( Dictionary& d ) const
 }
 
 void
-nest::pulsepacket_generator::Parameters_::set( const Dictionary& d, pulsepacket_generator& ppg, Node* node )
+pulsepacket_generator::Parameters_::set( const Dictionary& d, pulsepacket_generator& ppg, Node* node )
 {
   // We cannot use a single line here since short-circuiting may stop evaluation
   // prematurely. Therefore, neednewpulse must be second arg on second line.
@@ -100,13 +104,13 @@ nest::pulsepacket_generator::Parameters_::set( const Dictionary& d, pulsepacket_
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::pulsepacket_generator::pulsepacket_generator()
+pulsepacket_generator::pulsepacket_generator()
   : StimulationDevice()
   , P_()
 {
 }
 
-nest::pulsepacket_generator::pulsepacket_generator( const pulsepacket_generator& ppg )
+pulsepacket_generator::pulsepacket_generator( const pulsepacket_generator& ppg )
   : StimulationDevice( ppg )
   , P_( ppg.P_ )
 {
@@ -117,19 +121,19 @@ nest::pulsepacket_generator::pulsepacket_generator( const pulsepacket_generator&
  * ---------------------------------------------------------------- */
 
 void
-nest::pulsepacket_generator::init_state_()
+pulsepacket_generator::init_state_()
 {
   StimulationDevice::init_state();
 }
 
 void
-nest::pulsepacket_generator::init_buffers_()
+pulsepacket_generator::init_buffers_()
 {
   StimulationDevice::init_buffers();
 }
 
 void
-nest::pulsepacket_generator::pre_run_hook()
+pulsepacket_generator::pre_run_hook()
 {
   StimulationDevice::pre_run_hook();
   assert( V_.start_center_idx_ <= V_.stop_center_idx_ );
@@ -164,7 +168,7 @@ nest::pulsepacket_generator::pre_run_hook()
 
 
 void
-nest::pulsepacket_generator::update( Time const& T, const long, const long to )
+pulsepacket_generator::update( Time const& T, const long, const long to )
 {
   if ( ( V_.start_center_idx_ == P_.pulse_times_.size() and B_.spiketimes_.empty() )
     or ( not StimulationDevice::is_active( T ) ) )
@@ -232,7 +236,7 @@ nest::pulsepacket_generator::update( Time const& T, const long, const long to )
  * ---------------------------------------------------------------- */
 
 void
-nest::pulsepacket_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
+pulsepacket_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
   Parameters_ ptmp = P_;  // temporary copy in case of errors
 
@@ -257,3 +261,5 @@ nest::pulsepacket_generator::set_data_from_stimulation_backend( std::vector< dou
   // if we get here, temporary contains consistent set of properties
   P_ = ptmp;
 }
+
+}  // namespace nest

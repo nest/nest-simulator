@@ -109,7 +109,7 @@ public:
    *
    * @param name The name under which the ConnectorModel will be registered.
    */
-  template < template < typename targetidentifierT > class ConnectionT >
+  template < template < typename > class ConnectionT >
   void register_connection_model( const std::string& name );
 
   /**
@@ -171,6 +171,8 @@ public:
 
   std::unique_ptr< SecondaryEvent > get_secondary_event_prototype( const synindex syn_id, const size_t tid );
 
+  void check_valid_default_delay_parameters( const synindex syn_id, const Dictionary& syn_params );
+
 private:
   /**
    * Delete all models and clear the modeldict
@@ -185,7 +187,7 @@ private:
 
   size_t register_node_model_( Model* model );
 
-  template < typename CompleteConnecionT >
+  template < typename CompleteConnectionT >
   void register_specific_connection_model_( const std::string& name );
 
   /**

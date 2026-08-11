@@ -40,11 +40,15 @@ nest::register_ppd_sup_generator( const std::string& name )
   register_node_model< ppd_sup_generator >( name );
 }
 
+
+namespace nest
+{
+
 /* ----------------------------------------------------------------
  * Constructor of age distribution class
  * ---------------------------------------------------------------- */
 
-nest::ppd_sup_generator::Age_distribution_::Age_distribution_( size_t num_age_bins,
+ppd_sup_generator::Age_distribution_::Age_distribution_( size_t num_age_bins,
   unsigned long ini_occ_ref,
   unsigned long ini_occ_act )
 {
@@ -58,7 +62,7 @@ nest::ppd_sup_generator::Age_distribution_::Age_distribution_( size_t num_age_bi
  * ---------------------------------------------------------------- */
 
 unsigned long
-nest::ppd_sup_generator::Age_distribution_::update( double hazard_step, RngPtr rng )
+ppd_sup_generator::Age_distribution_::update( double hazard_step, RngPtr rng )
 {
   unsigned long n_spikes;  // only set from poisson_dev, bino_dev or 0, thus >= 0
   if ( occ_active_ > 0 )
@@ -105,7 +109,7 @@ nest::ppd_sup_generator::Age_distribution_::update( double hazard_step, RngPtr r
  * Default constructors defining default parameter
  * ---------------------------------------------------------------- */
 
-nest::ppd_sup_generator::Parameters_::Parameters_()
+ppd_sup_generator::Parameters_::Parameters_()
   : rate_( 0.0 )       // Hz
   , dead_time_( 0.0 )  // ms
   , n_proc_( 1 )
@@ -120,7 +124,7 @@ nest::ppd_sup_generator::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-nest::ppd_sup_generator::Parameters_::get( Dictionary& d ) const
+ppd_sup_generator::Parameters_::get( Dictionary& d ) const
 {
   d[ names::rate ] = rate_;
   d[ names::dead_time ] = dead_time_;
@@ -130,7 +134,7 @@ nest::ppd_sup_generator::Parameters_::get( Dictionary& d ) const
 }
 
 void
-nest::ppd_sup_generator::Parameters_::set( const Dictionary& d, Node* node )
+ppd_sup_generator::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::dead_time, dead_time_, node );
   if ( dead_time_ < 0 )
@@ -169,13 +173,13 @@ nest::ppd_sup_generator::Parameters_::set( const Dictionary& d, Node* node )
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::ppd_sup_generator::ppd_sup_generator()
+ppd_sup_generator::ppd_sup_generator()
   : StimulationDevice()
   , P_()
 {
 }
 
-nest::ppd_sup_generator::ppd_sup_generator( const ppd_sup_generator& n )
+ppd_sup_generator::ppd_sup_generator( const ppd_sup_generator& n )
   : StimulationDevice( n )
   , P_( n.P_ )
 {
@@ -187,19 +191,19 @@ nest::ppd_sup_generator::ppd_sup_generator( const ppd_sup_generator& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::ppd_sup_generator::init_state_()
+ppd_sup_generator::init_state_()
 {
   StimulationDevice::init_state();
 }
 
 void
-nest::ppd_sup_generator::init_buffers_()
+ppd_sup_generator::init_buffers_()
 {
   StimulationDevice::init_buffers();
 }
 
 void
-nest::ppd_sup_generator::pre_run_hook()
+ppd_sup_generator::pre_run_hook()
 {
   StimulationDevice::pre_run_hook();
 
@@ -230,7 +234,7 @@ nest::ppd_sup_generator::pre_run_hook()
  * ---------------------------------------------------------------- */
 
 void
-nest::ppd_sup_generator::update( Time const& T, const long from, const long to )
+ppd_sup_generator::update( Time const& T, const long from, const long to )
 {
   if ( P_.rate_ <= 0 or P_.num_targets_ == 0 )
   {
@@ -264,7 +268,7 @@ nest::ppd_sup_generator::update( Time const& T, const long from, const long to )
 
 
 void
-nest::ppd_sup_generator::event_hook( DSSpikeEvent& e )
+ppd_sup_generator::event_hook( DSSpikeEvent& e )
 {
   // get port number
   const size_t prt = e.get_port();
@@ -289,7 +293,7 @@ nest::ppd_sup_generator::event_hook( DSSpikeEvent& e )
  * ---------------------------------------------------------------- */
 
 void
-nest::ppd_sup_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
+ppd_sup_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
   Parameters_ ptmp = P_;  // temporary copy in case of errors
 
@@ -314,3 +318,5 @@ nest::ppd_sup_generator::set_data_from_stimulation_backend( std::vector< double 
   // if we get here, temporary contains consistent set of properties
   P_ = ptmp;
 }
+
+}  // namespace nest

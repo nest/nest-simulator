@@ -26,7 +26,6 @@
 // Includes from nestkernel:
 #include "connector_model.h"
 #include "nest_types.h"
-#include "node.h"
 
 
 namespace nest
@@ -35,6 +34,7 @@ namespace nest
 // forward declarations
 class weight_recorder;
 class ConnectorModel;
+class Node;
 class TimeConverter;
 
 /**

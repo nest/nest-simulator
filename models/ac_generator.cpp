@@ -51,13 +51,12 @@ RecordablesMap< ac_generator >::create()
 {
   insert_( names::I, &ac_generator::get_I_ );
 }
-}
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::ac_generator::Parameters_::Parameters_()
+ac_generator::Parameters_::Parameters_()
   : amp_( 0.0 )      // pA
   , offset_( 0.0 )   // pA
   , freq_( 0.0 )     // Hz
@@ -65,7 +64,7 @@ nest::ac_generator::Parameters_::Parameters_()
 {
 }
 
-nest::ac_generator::Parameters_::Parameters_( const Parameters_& p )
+ac_generator::Parameters_::Parameters_( const Parameters_& p )
   : amp_( p.amp_ )
   , offset_( p.offset_ )
   , freq_( p.freq_ )
@@ -73,8 +72,8 @@ nest::ac_generator::Parameters_::Parameters_( const Parameters_& p )
 {
 }
 
-nest::ac_generator::Parameters_&
-nest::ac_generator::Parameters_::operator=( const Parameters_& p )
+ac_generator::Parameters_&
+ac_generator::Parameters_::operator=( const Parameters_& p )
 {
   if ( this == &p )
   {
@@ -89,19 +88,19 @@ nest::ac_generator::Parameters_::operator=( const Parameters_& p )
   return *this;
 }
 
-nest::ac_generator::State_::State_()
+ac_generator::State_::State_()
   : y_0_( 0.0 )
   , y_1_( 0.0 )  // pA
   , I_( 0.0 )    // pA
 {
 }
 
-nest::ac_generator::Buffers_::Buffers_( ac_generator& n )
+ac_generator::Buffers_::Buffers_( ac_generator& n )
   : logger_( n )
 {
 }
 
-nest::ac_generator::Buffers_::Buffers_( const Buffers_&, ac_generator& n )
+ac_generator::Buffers_::Buffers_( const Buffers_&, ac_generator& n )
   : logger_( n )
 {
 }
@@ -111,7 +110,7 @@ nest::ac_generator::Buffers_::Buffers_( const Buffers_&, ac_generator& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::ac_generator::Parameters_::get( Dictionary& d ) const
+ac_generator::Parameters_::get( Dictionary& d ) const
 {
   d[ names::amplitude ] = amp_;
   d[ names::offset ] = offset_;
@@ -120,14 +119,14 @@ nest::ac_generator::Parameters_::get( Dictionary& d ) const
 }
 
 void
-nest::ac_generator::State_::get( Dictionary& d ) const
+ac_generator::State_::get( Dictionary& d ) const
 {
   d[ names::y_0 ] = y_0_;
   d[ names::y_1 ] = y_1_;
 }
 
 void
-nest::ac_generator::Parameters_::set( const Dictionary& d, Node* node )
+ac_generator::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::amplitude, amp_, node );
   update_value_param( d, names::offset, offset_, node );
@@ -140,7 +139,7 @@ nest::ac_generator::Parameters_::set( const Dictionary& d, Node* node )
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::ac_generator::ac_generator()
+ac_generator::ac_generator()
   : StimulationDevice()
   , P_()
   , S_()
@@ -149,7 +148,7 @@ nest::ac_generator::ac_generator()
   recordablesMap_.create();
 }
 
-nest::ac_generator::ac_generator( const ac_generator& n )
+ac_generator::ac_generator( const ac_generator& n )
   : StimulationDevice( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -163,20 +162,20 @@ nest::ac_generator::ac_generator( const ac_generator& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::ac_generator::init_state_()
+ac_generator::init_state_()
 {
   StimulationDevice::init_state();
 }
 
 void
-nest::ac_generator::init_buffers_()
+ac_generator::init_buffers_()
 {
   StimulationDevice::init_buffers();
   B_.logger_.reset();
 }
 
 void
-nest::ac_generator::pre_run_hook()
+ac_generator::pre_run_hook()
 {
   B_.logger_.init();
 
@@ -201,7 +200,7 @@ nest::ac_generator::pre_run_hook()
 }
 
 void
-nest::ac_generator::update( Time const& origin, const long from, const long to )
+ac_generator::update( Time const& origin, const long from, const long to )
 {
   long start = origin.get_steps();
 
@@ -226,7 +225,7 @@ nest::ac_generator::update( Time const& origin, const long from, const long to )
 }
 
 void
-nest::ac_generator::handle( DataLoggingRequest& e )
+ac_generator::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
@@ -236,7 +235,7 @@ nest::ac_generator::handle( DataLoggingRequest& e )
  * ---------------------------------------------------------------- */
 
 void
-nest::ac_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
+ac_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
   Parameters_ ptmp = P_;  // temporary copy in case of errors
 
@@ -259,3 +258,5 @@ nest::ac_generator::set_data_from_stimulation_backend( std::vector< double >& in
   // if we get here, temporary contains consistent set of properties
   P_ = ptmp;
 }
+
+}  // namespace nest

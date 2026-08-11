@@ -189,6 +189,10 @@ protected:
   void single_connect_( size_t, Node&, size_t, RngPtr );
   void single_disconnect_( size_t, Node&, size_t );
 
+  //! TODO Experimental
+  void
+  clustered_single_connect_( size_t snode_id, Node& target, size_t target_thread, RngPtr rng, const bool is_intra );
+
   /**
    * Moves pointer in parameter array.
    *
@@ -712,6 +716,58 @@ protected:
 private:
   long N_;
 };
+
+class ClusteredFixedTotalNumberBuilder : public BipartiteConnBuilder
+{
+public:
+  ClusteredFixedTotalNumberBuilder( NodeCollectionPTR,
+    NodeCollectionPTR,
+    ThirdOutBuilder* third_out,
+    const DictionaryDatum&,
+    const std::vector< DictionaryDatum >& );
+
+protected:
+  void connect_() override;
+
+private:
+  long N_;
+  long num_clusters_;
+};
+
+class AltClusteredFixedTotalNumberBuilder : public BipartiteConnBuilder
+{
+public:
+  AltClusteredFixedTotalNumberBuilder( NodeCollectionPTR,
+    NodeCollectionPTR,
+    ThirdOutBuilder* third_out,
+    const DictionaryDatum&,
+    const std::vector< DictionaryDatum >& );
+
+protected:
+  void connect_() override;
+
+private:
+  long N_;
+  long num_clusters_;
+};
+
+class ClusteredApproxTotalNumberBuilder : public BipartiteConnBuilder
+{
+public:
+  ClusteredApproxTotalNumberBuilder( NodeCollectionPTR,
+    NodeCollectionPTR,
+    ThirdOutBuilder* third_out,
+    const DictionaryDatum&,
+    const std::vector< DictionaryDatum >& );
+
+protected:
+  void connect_() override;
+
+private:
+  long N_;
+  long num_clusters_;
+};
+
 
 class BernoulliBuilder : public BipartiteConnBuilder
 {

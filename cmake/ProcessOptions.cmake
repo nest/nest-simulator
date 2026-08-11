@@ -397,9 +397,9 @@ function( NEST_PROCESS_WITH_MPI )
       set( MPI_ROOT "${with-mpi}" )
     endif ()
     find_package( MPI REQUIRED QUIET )
-    if ( MPI_CXX_FOUND )
-      message( STATUS "Found MPI: ${MPI_CXX_COMPILER}  (supports MPI standard ${MPI_CXX_VERSION}) " )
-      set( HAVE_MPI ON PARENT_SCOPE )
+
+    message( STATUS "Found MPI: ${MPI_CXX_COMPILER}  (supports MPI standard ${MPI_CXX_VERSION}) " )
+    set( HAVE_MPI ON PARENT_SCOPE )
 
     find_package( MPI REQUIRED QUIET COMPONENTS CXX )
     # No library version printed here: FindMPI only exposes the supported MPI

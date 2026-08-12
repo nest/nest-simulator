@@ -513,13 +513,13 @@ jobs:
         cpp_compiler: ["gcc"]
 
         # available use flags (all default to "OFF"):
-        # openmp, mpi, python, gsl, ltdl, boost, sionlib, optimize, warning, userdoc, music, readline
+        # openmp, mpi, gsl, ltdl, boost, sionlib, optimize, warning, userdoc, music, readline
         use:
-          - "python, optimize, warning"
-          - "python, boost, optimize, warning"
-          - "openmp, python, gsl, ltdl, boost, optimize, warning"
-          - "mpi, python, gsl, ltdl, boost, optimize, warning"
-          - "openmp, mpi, python, gsl, ltdl, boost, hdf5, sionlib, optimize, warning, music, detailed-timers, threaded-timers, mpi-sync-timer"
+          - "optimize, warning"
+          - "boost, optimize, warning"
+          - "openmp, gsl, ltdl, boost, optimize, warning"
+          - "mpi, gsl, ltdl, boost, optimize, warning"
+          - "openmp, mpi, gsl, ltdl, boost, hdf5, sionlib, optimize, warning, music, detailed-timers, threaded-timers, mpi-sync-timer"
 
     steps:
       - name: Harden Runner
@@ -701,7 +701,6 @@ jobs:
               -Dwith-boost=${{ contains(matrix.use, 'boost') && 'ON' || 'OFF' }} \
               -Dwith-openmp=${{ contains(matrix.use, 'openmp') && 'ON' || 'OFF' }} \
               -Dwith-mpi=${{ contains(matrix.use, 'mpi') && 'ON' || 'OFF' }} \
-              -Dwith-python=${{ contains(matrix.use, 'python') && 'ON' || 'OFF' }} \
               -Dwith-gsl=${{ contains(matrix.use, 'gsl') && 'ON' || 'OFF' }} \
               -Dwith-ltdl=${{ contains(matrix.use, 'ltdl') && 'ON' || 'OFF' }} \
               -Dwith-hdf5=${{ contains(matrix.use, 'hdf5') && 'ON' || 'OFF' }} \
@@ -771,9 +770,9 @@ jobs:
         cpp_compiler: ["clang"]
 
         # available use flags (all default to "OFF"):
-        # openmp, mpi, python, gsl, ltdl, boost, hdf5, sionlib, optimize, warning, userdoc, music
+        # openmp, mpi, gsl, ltdl, boost, hdf5, sionlib, optimize, warning, userdoc, music
         use:
-          - "openmp, mpi, python, gsl, ltdl, boost, hdf5, optimize, warning"
+          - "openmp, mpi, gsl, ltdl, boost, hdf5, optimize, warning"
 
     steps:
       - name: Harden Runner
@@ -831,7 +830,6 @@ jobs:
               -Dwith-boost=${{ contains(matrix.use, 'boost') && 'ON' || 'OFF' }} \
               -Dwith-openmp=${{ contains(matrix.use, 'openmp') && '$(brew --prefix libomp)' || 'OFF' }} \
               -Dwith-mpi=${{ contains(matrix.use, 'mpi') && 'ON' || 'OFF' }} \
-              -Dwith-python=${{ contains(matrix.use, 'python') && 'ON' || 'OFF' }} \
               -Dwith-gsl=${{ contains(matrix.use, 'gsl') && 'ON' || 'OFF' }} \
               -Dwith-ltdl=${{ contains(matrix.use, 'ltdl') && 'ON' || 'OFF' }} \
               -Dwith-hdf5=${{ contains(matrix.use, 'hdf5') && 'ON' || 'OFF' }} \

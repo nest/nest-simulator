@@ -207,12 +207,6 @@ NEST properties
 ~~~~~~~~~~~~~~~
 
 +-----------------------------------------------+----------------------------------------------------------------+
-| ``-Dwith-tics-per-ms=[number]``               | Specify elementary unit of time [default=1000 tics per ms].    |
-|                                               | Must be a strictly positive integer.                           |
-+-----------------------------------------------+----------------------------------------------------------------+
-| ``-Dwith-tics-per-step=[number]``             | Specify resolution [default=100 tics per step].                |
-|                                               | Must be a strictly positive integer.                           |
-+-----------------------------------------------+----------------------------------------------------------------+
 | ``-Dwith-threaded-timers=[OFF|ON]``           | Build with one internal timer per thread [default=ON].         |
 |                                               | Multi-threaded timers can affect the performance.              |
 +-----------------------------------------------+----------------------------------------------------------------+

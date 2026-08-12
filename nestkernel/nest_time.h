@@ -51,8 +51,7 @@ namespace nest
  *  Class to handle simulation time and realtime.
  *
  *  All times given in multiples of "tics":
- *  A "tic" is a microsecond by default, but may be changed through
- *  the -Dwith-tics-per-ms CMake option.
+ *  A "tic" is a microsecond by default (1000 tics per ms).
  *
  *  User access to time only through accessor functions:
  *  - Times can be added, subtracted, and multiplied by ints
@@ -67,8 +66,8 @@ namespace nest
  *  The largest representable time is available through Time::max().
  *
  *  @NOTE
- *  - The time base (tics per millisecond) can only be set at
- *    compile time and by the Time::set_resolution().
+ *  - The time base (tics per millisecond) can be set by
+ *    Time::set_resolution().
  *  - Times in ms are rounded up to the next tic interval.
  *    This ensures that the time intervals (0, h] are open at the left
  *    point and closed at the right point. It also ensures compatibility with
@@ -81,9 +80,6 @@ namespace nest
  *    Time objects, must ensure that these are recalibrated before the
  *    simulation starts. This is necessary to ensure that step values
  *    are updated after a change in resolution.
- *  - The default resolution can be changed using the -Dwith-tics-per-step
- *    CMake option.
- *
  *
  *  @NOTE
  *  The step-time counter is NOT changed when the resolution is

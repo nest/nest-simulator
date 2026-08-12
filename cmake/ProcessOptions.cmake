@@ -252,28 +252,6 @@ function( NEST_PROCESS_WITH_STATIC_LINKING )
 endfunction()
 
 ################################################################################
-# NEST time properties
-################################################################################
-
-function( NEST_PROCESS_WITH_TICS_PER_MS )
-  if ( NOT "${with-tics-per-ms}" MATCHES "^[1-9][0-9]*$" )
-    message( FATAL_ERROR
-      "-Dwith-tics-per-ms=${with-tics-per-ms}: value must be a strictly positive integer." )
-  endif ()
-  set( NEST_TICS_PER_MS "${with-tics-per-ms}" PARENT_SCOPE )
-  set( HAVE_TICS_PER_MS ON PARENT_SCOPE )
-endfunction()
-
-function( NEST_PROCESS_WITH_TICS_PER_STEP )
-  if ( NOT "${with-tics-per-step}" MATCHES "^[1-9][0-9]*$" )
-    message( FATAL_ERROR
-      "-Dwith-tics-per-step=${with-tics-per-step}: value must be a strictly positive integer." )
-  endif ()
-  set( NEST_TICS_PER_STEP "${with-tics-per-step}" PARENT_SCOPE )
-  set( HAVE_TICS_PER_STEP ON PARENT_SCOPE )
-endfunction()
-
-################################################################################
 # Library options (category b)
 ################################################################################
 

@@ -25,16 +25,13 @@
 // C++ includes:
 #include <string>
 
-// Generated includes:
-#include "config.h"
-
 // Includes from libnestutil:
 #include "numerics.h"
 
 using namespace nest;
 
-const double Time::Range::TICS_PER_MS_DEFAULT = CONFIG_TICS_PER_MS;
-const tic_t Time::Range::TICS_PER_STEP_DEFAULT = CONFIG_TICS_PER_STEP;
+const double Time::Range::TICS_PER_MS_DEFAULT = 1000.0;
+const tic_t Time::Range::TICS_PER_STEP_DEFAULT = 100;
 
 tic_t Time::Range::TICS_PER_STEP = Time::Range::TICS_PER_STEP_DEFAULT;
 double Time::Range::TICS_PER_STEP_INV = 1. / static_cast< double >( Time::Range::TICS_PER_STEP );

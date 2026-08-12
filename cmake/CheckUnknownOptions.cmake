@@ -25,21 +25,23 @@
 # names matching NEST's own option naming, so we never misfire on unrelated
 # CMake-internal or generator-specific cache entries.
 #
-# In addition, trap old option names that have been renamed, so users get a
-# clear error message rather than the option being silently ignored.
+# In addition, trap old option names that have been renamed or removed, so
+# users get a clear error message rather than the option being silently ignored.
 function( NEST_CHECK_UNKNOWN_OPTIONS )
-  # Deprecated option names with their replacements, stored as a flat list of
-  # (old, new) pairs. If a user passes one of these on the command line it stays
-  # UNINITIALIZED (we never call set() on it), so the generic loop below would
-  # already catch it; but an explicit check lets us print a targeted message.
+  # Flat list of (old_name, action, target) triples.
+  #   action = "renamed"  ->  message says "renamed; please use -D<target>"
+  #   action = "removed"  ->  message says "removed; <target>" (explanation)
+  # No entry may contain a semicolon: CMake treats ; as a list separator even
+  # inside quoted strings when building a list with set().
   set( _nest_deprecated_options
-    "static-libraries"          "with-static-linking"
-    "cythonize-pynest"          "(removed; Cython is always required)"
-    "with-python"               "(removed; Python is always required)"
-    "tics_per_ms"               "with-tics-per-ms"
-    "tics_per_step"             "with-tics-per-step"
-    "target-bits-split"         "with-target-bits-split"
-    "with-intel-compiler-flags" "with-intel-compiler-strict-math"
+    # old_name                    action      target / explanation
+    "static-libraries"            "renamed"   "with-static-linking"
+    "target-bits-split"           "renamed"   "with-target-bits-split"
+    "with-intel-compiler-flags"   "renamed"   "with-intel-compiler-strict-math"
+    "cythonize-pynest"            "removed"   "Cython is always required"
+    "with-python"                 "removed"   "Python is always required"
+    "tics_per_ms"                 "removed"   "Set tics_per_ms at runtime via nest.set"
+    "tics_per_step"               "removed"   "Set tics_per_ms and resolution at runtime via nest.set"
   )
 
   get_cmake_property( _nest_cache_vars CACHE_VARIABLES )
@@ -50,13 +52,20 @@ function( NEST_CHECK_UNKNOWN_OPTIONS )
   while ( _idx LESS _dep_len )
     list( GET _nest_deprecated_options ${_idx} _old_name )
     math( EXPR _idx "${_idx} + 1" )
-    list( GET _nest_deprecated_options ${_idx} _new_name )
+    list( GET _nest_deprecated_options ${_idx} _action )
+    math( EXPR _idx "${_idx} + 1" )
+    list( GET _nest_deprecated_options ${_idx} _target )
     math( EXPR _idx "${_idx} + 1" )
     if ( "${_old_name}" IN_LIST _nest_cache_vars )
       get_property( _type CACHE ${_old_name} PROPERTY TYPE )
       if ( _type STREQUAL "UNINITIALIZED" )
-        message( FATAL_ERROR
-          "Option -D${_old_name} has been renamed. Please use -D${_new_name} instead." )
+        if ( _action STREQUAL "renamed" )
+          message( FATAL_ERROR
+            "Option -D${_old_name} has been renamed. Please use -D${_target} instead." )
+        else ()
+          message( FATAL_ERROR
+            "Option -D${_old_name} has been removed. ${_target}." )
+        endif ()
       endif ()
     endif ()
   endwhile ()

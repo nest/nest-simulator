@@ -48,13 +48,6 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-server = [
-  "Flask",
-  "flask-cors",
-  "gunicorn",
-  "requests",
-  "RestrictedPython"
-]
 test = [
   "pytest",
   "pytest-cov",
@@ -108,9 +101,7 @@ full = [
   # Sonata support
   "h5py>=3.8.0",
   # Additional tools
-  "nestml", "nest-desktop",
-  # Nest server dependencies
-  "Flask", "flask-cors", "gunicorn", "requests", "RestrictedPython",
+  "nestml", "nest-desktop", "nest-server",
   # Development tools
   "jupyter", "jupyterlab", "notebook"
 ]

@@ -349,7 +349,6 @@ function( NEST_FIND_PYTHON )
 
   # Cython is always required; the cythonize-pynest option has been removed.
   find_package( Cython 3.0.0 REQUIRED )
-  set( CYTHON_FOUND "${CYTHON_FOUND}" PARENT_SCOPE )
   set( CYTHON_EXECUTABLE "${CYTHON_EXECUTABLE}" PARENT_SCOPE )
   set( CYTHON_VERSION "${CYTHON_VERSION}" PARENT_SCOPE )
 endfunction()

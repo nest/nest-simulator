@@ -306,18 +306,15 @@ function( NEST_FIND_PYTHON )
   # IMPORTANT: This function must be called before include(GNUInstallDirs)
   # because it may set CMAKE_INSTALL_PREFIX to the active Python environment root.
 
-  find_package( Python 3.10 QUIET COMPONENTS Interpreter Development.Module )
-  if ( NOT Python_FOUND )
-    find_package( Python 3.10 REQUIRED Interpreter Development )
-    string( CONCAT _pyabi_warn
-      "Could not locate Python ABI, using shared libraries and header file instead."
-      " Please clear your CMake cache and build folder and verify that CMake"
-      " is up-to-date (3.18+)."
-    )
-    printWarning( "${_pyabi_warn}" )
-  else ()
-    find_package( Python 3.10 REQUIRED Interpreter Development.Module )
-  endif ()
+  # Declare Python_EXECUTABLE as a typed cache variable so that a user who
+  # passes -DPython_EXECUTABLE=... on the command line does not trigger the
+  # unknown-option check. Without FORCE this only promotes the TYPE from
+  # UNINITIALIZED to FILEPATH while leaving any user-supplied value intact.
+  set( Python_EXECUTABLE "" CACHE FILEPATH "Path to Python interpreter." )
+
+  # Development.Module (CMake 3.18+) finds the Python module ABI without
+  # requiring the embed library, which PyNEST does not need.
+  find_package( Python 3.10 REQUIRED COMPONENTS Interpreter Development.Module )
 
   if ( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
     execute_process(

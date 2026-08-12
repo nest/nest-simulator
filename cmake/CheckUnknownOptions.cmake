@@ -21,9 +21,11 @@
 # line but never declared via set(... CACHE ...) anywhere in the project
 # stays at TYPE=UNINITIALIZED -- this is the same marker CMake's own
 # end-of-run "Manually-specified variables were not used by the project"
-# warning is based on. We turn it into a hard error here, restricted to
-# names matching NEST's own option naming, so we never misfire on unrelated
-# CMake-internal or generator-specific cache entries.
+# warning is based on. We turn it into a hard error here for ALL variables,
+# because warnings are easily overlooked. All legitimate CMake, find_package(),
+# and NEST variables are declared (and therefore no longer UNINITIALIZED) by
+# the time this function runs, so anything still UNINITIALIZED is a typo or
+# an obsolete option.
 #
 # In addition, trap old option names that have been renamed or removed, so
 # users get a clear error message rather than the option being silently ignored.
@@ -70,15 +72,13 @@ function( NEST_CHECK_UNKNOWN_OPTIONS )
     endif ()
   endwhile ()
 
-  # Generic check: any NEST-style option (with- prefix) that is still
-  # UNINITIALIZED was not recognised by the project.
+  # Generic check: any command-line variable still UNINITIALIZED at this point
+  # was not recognised by the project.
   set( _nest_unknown_options "" )
   foreach( _v ${_nest_cache_vars} )
-    if ( "${_v}" MATCHES "^with-" )
-      get_property( _type CACHE ${_v} PROPERTY TYPE )
-      if ( _type STREQUAL "UNINITIALIZED" )
-        list( APPEND _nest_unknown_options "${_v}" )
-      endif ()
+    get_property( _type CACHE ${_v} PROPERTY TYPE )
+    if ( _type STREQUAL "UNINITIALIZED" )
+      list( APPEND _nest_unknown_options "${_v}" )
     endif ()
   endforeach ()
   if ( _nest_unknown_options )

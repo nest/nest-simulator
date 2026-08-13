@@ -2,15 +2,15 @@
 
 /*
  * Test capacity of vector after single push_back().
- * We want capacity 1 as starting point for later capacity doubling,
- * so return value 0 indicates success.
+ *
+ * Return 0 only if capacity is 1.
  */
 int
 main( void )
 {
-  std::vector< int > v;
-  v.push_back( 7 );
+  std::vector< int > vec;
+  vec.push_back( 7 );
 
-  // Return 0 if capacity is 1 as desired, non-zero otherwise.
-  return v.capacity() > 1;
+  // Return 0 if capacity is 1, otherwise return non-zero value.
+  return vec.capacity() > 1;
 }

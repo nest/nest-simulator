@@ -101,8 +101,8 @@ constexpr uint64_t MAX_NODE_ID = DISABLED_NODE_ID - 1;
  * Type for Time tics.
  */
 typedef long long tic_t;
-const tic_t tic_t_max = std::numeric_limits< tic_t >::max();
-const tic_t tic_t_min = std::numeric_limits< tic_t >::min();
+constexpr tic_t tic_t_max = std::numeric_limits< tic_t >::max();
+constexpr tic_t tic_t_min = std::numeric_limits< tic_t >::min();
 
 /**
  *  Unsigned long type for enumerations.
@@ -113,7 +113,7 @@ __attribute__( ( __unused__ ) ) constexpr size_t invalid_index = std::numeric_li
  *  For enumerations of synapse types.
  */
 typedef size_t synindex;
-const synindex invalid_synindex = MAX_SYN_ID;
+constexpr synindex invalid_synindex = MAX_SYN_ID;
 
 /**
  * Unsigned short type for compact target representation.
@@ -122,7 +122,7 @@ const synindex invalid_synindex = MAX_SYN_ID;
  */
 //! target index into thread local node vector
 typedef unsigned short targetindex;
-const targetindex invalid_targetindex = USHRT_MAX;
+constexpr targetindex invalid_targetindex = USHRT_MAX;
 __attribute__( ( __unused__ ) ) const size_t max_targetindex = invalid_targetindex - 1;
 
 /**

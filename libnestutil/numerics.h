@@ -32,10 +32,6 @@
 #include <cstddef>
 #include <limits>
 
-// Generated includes:
-#include "config.h"
-
-
 namespace numerics
 {
 

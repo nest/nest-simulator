@@ -117,7 +117,7 @@ public:
   /**
    * @brief Uses the wrapped RNG engine to draw an unsigned long from a uniform distribution in the range [0, N).
    *
-   * @param N Maximum value that can be drawn.
+   * @param N Number of possible values that can be drawn; the largest is N - 1.
    */
   virtual unsigned long ulrand( unsigned long N ) = 0;
 

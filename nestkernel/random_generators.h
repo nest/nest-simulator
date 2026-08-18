@@ -130,6 +130,11 @@ public:
     NodeCollection::const_iterator last,
     std::back_insert_iterator< std::vector< NodeIDTriple > > dest,
     size_t n ) = 0;
+
+  /**
+   * @biref Return vector containing n elements randomly selected from data.
+   */
+  virtual std::vector< size_t > sample( const std::vector< size_t >& data, const size_t n ) = 0;
 };
 
 /**
@@ -288,6 +293,15 @@ public:
     size_t n ) override
   {
     std::sample( first, last, dest, n, rng_ );
+  }
+
+  inline std::vector< size_t >
+  sample( const std::vector< size_t >& data, const size_t n ) override
+  {
+    std::vector< size_t > tmp;
+    tmp.reserve( n );
+    std::sample( data.begin(), data.end(), std::back_inserter( tmp ), n, rng_ );
+    return tmp;
   }
 
 private:

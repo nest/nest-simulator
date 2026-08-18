@@ -420,17 +420,13 @@ SPManager::create_synapses( std::vector< size_t >& pre_id,
   // Shuffle only the largest vector
   if ( pre_id_rnd.size() > post_id_rnd.size() )
   {
-    // we only shuffle the n first items,
-    // where n is the number of postsynaptic elements
-    global_shuffle( pre_id_rnd, post_id_rnd.size() );
-    pre_id_rnd.resize( post_id_rnd.size() );
+    // randomly select n elements
+    pre_id_rnd = get_rank_synced_rng()->sample( pre_id_rnd, post_id_rnd.size() );
   }
   else
   {
-    // we only shuffle the n first items,
-    // where n is the number of pre synaptic elements
-    global_shuffle( post_id_rnd, pre_id_rnd.size() );
-    post_id_rnd.resize( pre_id_rnd.size() );
+    // randomly select n elements
+    post_id_rnd = get_rank_synced_rng()->sample( post_id_rnd, pre_id_rnd.size() );
   }
 
   // create synapse
@@ -474,7 +470,7 @@ SPManager::delete_synapses_from_pre( const std::vector< size_t >& pre_deleted_id
     {
       *n_it = -global_targets.size();
     }
-    global_shuffle( global_targets, -( *n_it ) );
+    global_targets = get_rank_synced_rng()->sample( global_targets, -( *n_it ) );
 
     for ( int i = 0; i < -( *n_it ); ++i )  // n is negative
     {
@@ -553,7 +549,7 @@ SPManager::delete_synapses_from_post( std::vector< size_t >& post_deleted_id,
     {
       *n_it = -global_sources.size();
     }
-    global_shuffle( global_sources, -( *n_it ) );
+    global_sources = get_rank_synced_rng()->sample( global_sources, -( *n_it ) );
 
     for ( int i = 0; i < -( *n_it ); i++ )  // n is negative
     {
@@ -642,36 +638,6 @@ nest::SPManager::serialize_id( std::vector< size_t >& id, std::vector< int >& n,
     }
   }
 }
-
-void
-nest::SPManager::global_shuffle( std::vector< size_t >& v )
-{
-  global_shuffle( v, v.size() );
-}
-
-void
-nest::SPManager::global_shuffle( std::vector< size_t >& v, size_t n )
-{
-  assert( n <= v.size() );
-
-  // shuffle res using the global random number generator
-  unsigned int N = v.size();
-  std::vector< size_t > v2;
-  size_t tmp;
-  unsigned int rnd;
-  std::vector< size_t >::iterator rndi;
-  for ( unsigned int i = 0; i < n; i++ )
-  {
-    N = v.size();
-    rnd = get_rank_synced_rng()->ulrand( N );
-    tmp = v[ rnd ];
-    v2.push_back( tmp );
-    rndi = v.begin();
-    v.erase( rndi + rnd );
-  }
-  v = v2;
-}
-
 
 void
 nest::SPManager::enable_structural_plasticity()

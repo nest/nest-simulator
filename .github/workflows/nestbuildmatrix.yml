@@ -407,6 +407,24 @@ jobs:
         run: |
           flake8 .
 
+  no-python-in-kernel:
+    # Ensure that no code compiled into libnestkernel (nestkernel/, models/,
+    # libnestutil/, thirdparty/) includes Python.h, which would introduce an
+    # unwanted Python dependency into the kernel library.
+    runs-on: "ubuntu-22.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+
+      - name: "Check for Python.h dependencies in kernel/library code..."
+        run: |
+          ! grep -rn \
+              --include='*.h' --include='*.h.in' --include='*.cpp' --include='*.hpp' \
+              '#include[[:space:]]*[<"]Python\.h[>"]' \
+              nestkernel/ models/ libnestutil/ thirdparty/
+
   sphinx-rtd:
     # as close as possible to the Readthedocs setup (system install cmake, pip install -r doc/requirements.txt)
     runs-on: "ubuntu-22.04"
@@ -500,7 +518,7 @@ jobs:
   build_linux:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
-    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, isort, black, flake8, shellcheck, pre-commit-hooks, cppcheck, no-crlf]
+    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, isort, black, flake8, shellcheck, pre-commit-hooks, cppcheck, no-crlf, no-python-in-kernel]
     env:
       CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
       NEST_VPATH: "build"
@@ -757,7 +775,7 @@ jobs:
   build_macos:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
-    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, isort, black, flake8, shellcheck, pre-commit-hooks, cppcheck, no-crlf]
+    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, isort, black, flake8, shellcheck, pre-commit-hooks, cppcheck, no-crlf, no-python-in-kernel]
     env:
       CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
       NEST_VPATH: "build"

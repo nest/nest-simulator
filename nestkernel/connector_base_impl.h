@@ -46,7 +46,9 @@ Connector< ConnectionT >::send_weight_event( const size_t tid,
   if ( cp.get_weight_recorder() and e.receiver_is_valid() )
   {
     // Create new event to record the weight and copy relevant content.
+    ConnectionT& conn = C_[ lcid ];
     WeightRecorderEvent wr_e;
+    wr_e.set_conn_label( conn.get_label() );
     wr_e.set_port( e.get_port() );
     wr_e.set_rport( e.get_rport() );
     wr_e.set_stamp( e.get_stamp() );

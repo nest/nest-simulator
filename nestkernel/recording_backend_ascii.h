@@ -25,6 +25,7 @@
 
 // C++ includes:
 #include <fstream>
+#include <mutex>
 
 #include "recording_backend.h"
 
@@ -133,6 +134,24 @@ time_in_steps
     point in ms, or just the simulation time in ms. This property
     cannot be set after Simulate has been called.
 
+delimiter
+  A string value that specified the delimiter of the produced ASCII file
+  (default *"\t"*).
+
+no_header
+  A boolean value that gives the user the option to skip the printing of
+  the header comment containing information about nest and backend versions
+  and etc. (default *false*).
+
+write_single_file
+  A string value that gives the user the option to write in a single file
+  from mutiple threads and processes either by keeing the time order of the file
+  (*"Syncronous" *option) or not (*"Asyncronous"* option). Please note the using
+  this option in large distributed systems may result in considerable simulation
+  slowdowns especially when using the *"Syncronous"* option.
+  (default *"Off"*).
+
+
 EndUserDocs */
 
 namespace nest
@@ -193,13 +212,14 @@ public:
 
 private:
   const std::string compute_vp_node_id_string_( const RecordingDevice& device ) const;
-
   struct DeviceData
   {
+    // std::unique_ptr<std::mutex> write_mutex_;
     DeviceData() = delete;
     DeviceData( std::string, std::string );
     void set_value_names( const std::vector< std::string >&, const std::vector< std::string >& );
     void open_file();
+    void open_file_omp();
     void write( const Event&, const std::vector< double >&, const std::vector< long >& );
     void flush_file();
     void close_file();
@@ -212,10 +232,14 @@ private:
     std::string modelname_;                          //!< File name up to but not including the "."
     std::string vp_node_id_string_;                  //!< The vp and node ID component of the filename
     std::string file_extension_;                     //!< File name extension without leading "."
+    std::string delimiter_;                          //!< File format delimiter (default tab)
     std::string label_;                              //!< The label of the device.
     std::ofstream file_;                             //!< File stream to use for the device
+    bool no_metadata_;                               //!< Option to skip the initial header comment (default false)
     std::vector< std::string > double_value_names_;  //!< names for values of type double
     std::vector< std::string > long_value_names_;    //!< names for values of type long
+    std::string write_to_single_file_;  //!< Option to combine thread write to single files (may have performance
+                                        //!< bottleneck) (default false)
 
     std::string compute_filename_() const;  //!< Compose and return the filename
   };

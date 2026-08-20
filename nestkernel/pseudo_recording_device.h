@@ -35,23 +35,19 @@
 namespace nest
 {
 
-/** @BeginDocumentation
-  Name: PseudoRecordingDevice - Common properties of all pseudo-recording
-                                devices.
-  Description:
-
-  Pseudo recording devices are used to measure properties of or signals emitted
-  by network nodes. In contrast to fully flegded recording devices, they only
-  register data in memory, but do not write data to file or screen.
-
-  Parameters:
-  The following parameters are shared with all devices:
-  /start  - Actication time, relative to origin.
-  /stop   - Inactivation time, relative to origin.
-  /origin - Reference time for start and stop.
-
-  SeeAlso: Device, StimulationDevice, RecordingDevice
-*/
+/**
+ * @brief Common properties of all pseudo-recording devices.
+ *
+ * Pseudo recording devices are used to measure properties of or signals emitted
+ * by network nodes. In contrast to fully fledged recording devices, they only
+ * register data in memory, but do not write data to file or screen.
+ *
+ * @param start Activation time, relative to origin.
+ * @param stop Inactivation time, relative to origin.
+ * @param origin Reference time for start and stop.
+ *
+ * @see Device, StimulationDevice, RecordingDevice
+ */
 
 
 /**

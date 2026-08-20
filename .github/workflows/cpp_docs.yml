@@ -1,0 +1,182 @@
+name: Build and Deploy C++ Documentation
+
+on:
+  # Automatically deploy when relevant files are merged into main
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/cpp_docs.yml'
+      - '**/*.cpp'
+      - '**/*.h'
+      - 'doc/fulldoc.conf.in'
+      - 'doc/developer_space/static/css/doxygen-awesome.css'
+      - 'doc/developer_space/**'
+  # Contributors can manually trigger a preview build from the Actions tab
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PLANTUML_JAR_URL: https://github.com/plantuml/plantuml/releases/download/v1.2023.10/plantuml.jar
+  PLANTUML_SHA256: ee06454723028763dd8280459e8fd8f31fcd85b1ae8d9ab0e32122243c098c3b
+
+permissions: {}
+
+jobs:
+  build-docs-push:
+    if: github.event_name == 'push' && github.repository == 'nest/nest-simulator'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+       - name: Harden Runner
+         uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+         with:
+           egress-policy: audit
+           disable-telemetry: true
+
+       - name: Checkout repository
+         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+       - name: Cache PlantUML
+         id: cache-deps
+         uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
+         with:
+           path: ${{ github.workspace }}/plantuml.jar
+           key: plantuml-${{ env.PLANTUML_SHA256 }}
+
+       - name: Install dependencies
+         run: |
+           sudo apt-get update
+           sudo apt-get install -y graphviz cmake build-essential default-jre-headless doxygen
+           if [ "${{ steps.cache-deps.outputs.cache-hit }}" != "true" ]; then
+             wget -q "$PLANTUML_JAR_URL" -O "$GITHUB_WORKSPACE/plantuml.jar"
+             echo "$PLANTUML_SHA256  $GITHUB_WORKSPACE/plantuml.jar" | sha256sum -c
+           fi
+
+       - name: Configure with CMake
+         run: |
+           mkdir -p build
+           cd build
+           cmake -Dwith-devdoc=ON -Dwith-python=OFF ..
+           sed -i "s|^PLANTUML_JAR_PATH.*|PLANTUML_JAR_PATH      = $GITHUB_WORKSPACE/plantuml.jar|" doc/fulldoc.conf
+           GIT_HASH=$(git rev-parse --short HEAD)
+           sed -i "s|^PROJECT_NUMBER.*|PROJECT_NUMBER         = main@${GIT_HASH}|" doc/fulldoc.conf
+
+       - name: Generate Doxygen documentation
+         run: |
+           cd build
+           doxygen doc/fulldoc.conf
+
+       - name: Upload docs artifact
+         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+         with:
+           name: docs-main
+           path: build/doc/doxygen/html/
+
+  prepare-pages:
+    needs: build-docs-push
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+        with:
+          egress-policy: audit
+          disable-telemetry: true
+
+      - name: Download docs artifact
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: docs-main
+          path: _site
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: _site
+
+  deploy:
+    needs: prepare-pages
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      # url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+        with:
+          egress-policy: audit
+          disable-telemetry: true
+
+      - name: Configure Pages
+        id: pages
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
+  # build the documentation for manual preview runs
+  build-docs-pull:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+        with:
+          egress-policy: audit
+          disable-telemetry: true
+
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 1
+
+      - name: Cache PlantUML
+        id: cache-deps
+        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
+        with:
+          path: ${{ github.workspace }}/plantuml.jar
+          key: plantuml-${{ env.PLANTUML_SHA256 }}
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y graphviz cmake build-essential default-jre-headless doxygen
+          if [ "${{ steps.cache-deps.outputs.cache-hit }}" != "true" ]; then
+            wget -q "$PLANTUML_JAR_URL" -O "$GITHUB_WORKSPACE/plantuml.jar"
+            echo "$PLANTUML_SHA256  $GITHUB_WORKSPACE/plantuml.jar" | sha256sum -c
+          fi
+
+      - name: Configure with CMake
+        run: |
+          mkdir -p build
+          cd build
+          cmake -Dwith-devdoc=ON -Dwith-python=OFF ..
+          sed -i "s|^PLANTUML_JAR_PATH.*|PLANTUML_JAR_PATH      = $GITHUB_WORKSPACE/plantuml.jar|" doc/fulldoc.conf
+          GIT_HASH=$(git rev-parse --short HEAD)
+          sed -i "s|^PROJECT_NUMBER.*|PROJECT_NUMBER         = main@${GIT_HASH}|" doc/fulldoc.conf
+
+      - name: Generate Doxygen documentation
+        run: |
+          cd build
+          doxygen doc/fulldoc.conf
+
+      - name: Upload docs artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: docs-${{ github.run_id }}
+          path: build/doc/doxygen/html/

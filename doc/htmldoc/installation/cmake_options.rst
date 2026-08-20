@@ -267,6 +267,9 @@ Generic build configuration
 +------------------------------------------------------+------------------------------------------------------------------+
 | ``-Dwith-version-suffix=[string]``                   | Set a user defined version suffix [default=''].                  |
 +------------------------------------------------------+------------------------------------------------------------------+
+| ``-Dwith-prebuilt-pynest-cxx=[OFF|ON|path/to/cxx]``  | Use pre-built ``nestkernel_api.cxx`` file [default=OFF].         |
+|                                                      | See :ref:`compile_with_python` for details.                      |
++------------------------------------------------------+------------------------------------------------------------------+
 
 
 .. _compile-with-mpi:
@@ -353,6 +356,18 @@ you can steer it with the standard CMake variable::
 Cython 3.0 or later is also required and must be installed in the same
 environment as the Python interpreter.
 
+In special cases you may want to run ``cython`` outside the NEST build process
+to generate ``nestkernel_api.cxx``. In this case, you can either place that file
+in ``<nest_build_dir>/pynest`` and run CMake with
+
+    -Dwith-prebuilt-pynest-cxx=ON
+
+or pass the full path as
+
+    -Dwith-prebuilt-pynest-cxx=/absolute/path/to/nestkernel_api.cxx
+
+When either form is used, Cython does not need to be installed.  The default
+is ``OFF``, i.e., Cython will run during the build process to create ``nestkernel_api.cxx``.
 
 
 Compiler-specific options

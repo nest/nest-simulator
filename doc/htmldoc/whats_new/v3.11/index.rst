@@ -36,9 +36,8 @@ renamed, or extended. Unrecognised ``-D`` options now produce a hard error
 during configuration.
 
 **Python bindings are always built.**
-The ``-Dwith-python`` and ``-Dcythonize-pynest`` options have been removed.
-Python 3.10 or later and Cython 3.0 or later are now unconditional build
-requirements. To select a specific Python installation use
+The ``-Dwith-python`` has been removed. Python 3.10 or later is now an
+unconditional build requirement. To select a specific Python installation use
 ``-DPython_EXECUTABLE=/path/to/python``.
 
 **Time resolution is now a runtime-only setting.**
@@ -73,6 +72,8 @@ a hard error with a pointer to the new name.
    * - ``-Dtarget-bits-split=['standard'|'hpc']``
      - ``-Dwith-target-bits-split=['default'|'hpc']``
    * - ``-Dwith-intel-compiler-flags=<flags>``
-     - ``-Dwith-intel-compiler-strict-math=[ON|OFF]`` (boolean, default ``ON``)
+     - ``-Dwith-intel-compiler-strict-math=[ON|OFF]``
+   * - ``-Dcythonize-nest=[ON|OFF]``
+     - ``-Dwith-prebuilt-pynest-cxx=[OFF|ON|<path>]``
 
 For the full list of available options see :ref:`cmake_options`.

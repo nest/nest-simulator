@@ -23,6 +23,11 @@
 # Helper functions
 ################################################################################
 
+# Regular expressions for CMake's false-ish and true-ish boolean spellings.
+# Defined once here and inherited by all helper functions below.
+set( _NEST_FALSE_REGEX "^(0|OFF|NO|FALSE|N|IGNORE|NOTFOUND)?$" )
+set( _NEST_TRUE_REGEX  "^(1|ON|YES|TRUE|Y)$" )
+
 # Validate that option_value is a recognised CMake boolean spelling
 # (ON/YES/TRUE/Y/1 or OFF/NO/FALSE/N/IGNORE/NOTFOUND/empty); terminate with a
 # clear error otherwise. Sets result_var to ON or OFF in the caller's scope.
@@ -30,8 +35,8 @@
 # so that any future CMake boolean spellings are handled correctly automatically.
 function( NEST_VALIDATE_BOOL_OPTION option_name option_value result_var )
   string( TOUPPER "${option_value}" _upper )
-  if ( NOT ( _upper MATCHES "^(1|ON|YES|TRUE|Y)$"
-          OR _upper MATCHES "^(0|OFF|NO|FALSE|N|IGNORE|NOTFOUND)?$" ) )
+  if ( NOT ( _upper MATCHES "${_NEST_TRUE_REGEX}"
+          OR _upper MATCHES "${_NEST_FALSE_REGEX}" ) )
     message( FATAL_ERROR
       "Invalid value -D${option_name}=${option_value}, please use 'ON' or 'OFF'." )
   endif ()
@@ -65,9 +70,9 @@ endfunction()
 # existing directory path.
 function( NEST_LIBRARY_OPTION_SETUP option_name option_value root_var enabled_var )
   string( TOUPPER "${option_value}" _upper )
-  if ( _upper MATCHES "^(0|OFF|NO|FALSE|N|IGNORE|NOTFOUND)?$" )
+  if ( _upper MATCHES "${_NEST_FALSE_REGEX}" )
     set( ${enabled_var} OFF PARENT_SCOPE )
-  elseif ( _upper MATCHES "^(1|ON|YES|TRUE|Y)$" )
+  elseif ( _upper MATCHES "${_NEST_TRUE_REGEX}" )
     set( ${enabled_var} ON PARENT_SCOPE )
   elseif ( IS_DIRECTORY "${option_value}" )
     set( ${root_var} "${option_value}" PARENT_SCOPE )
@@ -94,9 +99,9 @@ endfunction()
 #   "${option_value}" otherwise (use the value directly).
 function( NEST_RESOLVE_FLAG_OPTION option_value default_value result_var )
   string( TOUPPER "${option_value}" _upper )
-  if ( _upper MATCHES "^(0|OFF|NO|FALSE|N|IGNORE|NOTFOUND)?$" )
+  if ( _upper MATCHES "${_NEST_FALSE_REGEX}" )
     set( ${result_var} "" PARENT_SCOPE )
-  elseif ( _upper MATCHES "^(1|ON|YES|TRUE|Y)$" )
+  elseif ( _upper MATCHES "${_NEST_TRUE_REGEX}" )
     set( ${result_var} "${default_value}" PARENT_SCOPE )
   else ()
     set( ${result_var} "${option_value}" PARENT_SCOPE )
@@ -301,6 +306,34 @@ function( NEST_PROCESS_WITH_GSL )
   endif ()
 endfunction()
 
+# Resolve the -Dwith-prebuilt-pynest-cxx tristate option and set NEST_PREBUILT_PYNEST_CXX
+# in the caller's scope:
+#   ""                    — option is OFF-ish: run Cython as normal.
+#   "/abs/path/to/….cxx"  — option is ON-ish or an explicit path: use that pre-generated file.
+# Must be called before NEST_FIND_PYTHON() so that the Cython find can be skipped when not needed.
+function( NEST_PROCESS_WITH_PREBUILT_PYNEST_CXX )
+  string( TOUPPER "${with-prebuilt-pynest-cxx}" _upper )
+  if ( _upper MATCHES "${_NEST_FALSE_REGEX}" )
+    # Default: run Cython.
+    set( NEST_PREBUILT_PYNEST_CXX "" PARENT_SCOPE )
+  elseif ( _upper MATCHES "${_NEST_TRUE_REGEX}" )
+    # ON: use the file at the default location UseCython.cmake would generate to.
+    set( NEST_PREBUILT_PYNEST_CXX
+      "${PROJECT_BINARY_DIR}/pynest/nestkernel_api.cxx" PARENT_SCOPE )
+  elseif ( IS_ABSOLUTE "${with-prebuilt-pynest-cxx}" )
+    # Explicit absolute path: must exist now (regular file or symlink).
+    if ( NOT EXISTS "${with-prebuilt-pynest-cxx}" )
+      message( FATAL_ERROR
+        "-Dwith-prebuilt-pynest-cxx=${with-prebuilt-pynest-cxx}: file not found." )
+    endif ()
+    set( NEST_PREBUILT_PYNEST_CXX "${with-prebuilt-pynest-cxx}" PARENT_SCOPE )
+  else ()
+    message( FATAL_ERROR
+      "-Dwith-prebuilt-pynest-cxx=${with-prebuilt-pynest-cxx}: "
+      "value must be 'ON', 'OFF', or an absolute path to nestkernel_api.cxx." )
+  endif ()
+endfunction()
+
 function( NEST_FIND_PYTHON )
   # Python is always required; the with-python option has been removed.
   # IMPORTANT: This function must be called before include(GNUInstallDirs)
@@ -344,10 +377,12 @@ function( NEST_FIND_PYTHON )
   set( Python_INCLUDE_DIRS "${Python_INCLUDE_DIRS}" PARENT_SCOPE )
   set( Python_LIBRARIES "${Python_LIBRARIES}" PARENT_SCOPE )
 
-  # Cython is always required; the cythonize-pynest option has been removed.
-  find_package( Cython 3.0.0 REQUIRED )
-  set( CYTHON_EXECUTABLE "${CYTHON_EXECUTABLE}" PARENT_SCOPE )
-  set( CYTHON_VERSION "${CYTHON_VERSION}" PARENT_SCOPE )
+  # Cython is required only when Cython is to be run (i.e., not using a pre-generated file).
+  if ( NEST_PREBUILT_PYNEST_CXX STREQUAL "" )
+    find_package( Cython 3.0.0 REQUIRED )
+    set( CYTHON_EXECUTABLE "${CYTHON_EXECUTABLE}" PARENT_SCOPE )
+    set( CYTHON_VERSION "${CYTHON_VERSION}" PARENT_SCOPE )
+  endif ()
 endfunction()
 
 function( NEST_SETUP_PYTHON )

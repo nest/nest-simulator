@@ -62,6 +62,13 @@ set( with-hdf5 OFF CACHE STRING "Find a HDF5 library. To set a specific HDF5 ins
 set( with-ltdl ON CACHE STRING "Build with ltdl library [default=ON]. To set a specific ltdl, give the  install path. NEST uses ltdl for dynamic loading of external user modules." )
 set( with-gsl ON CACHE STRING "Build with the GSL library [default=ON]. To set a specific library, give the install path." )
 
+# PyNEST options
+set( with-prebuilt-pynest-cxx "OFF" CACHE STRING
+  "Use a pre-generated nestkernel_api.cxx instead of running Cython [default=OFF]. \
+OFF: run Cython (requires Cython >= 3.0). \
+ON: use the pre-generated file from the default build location. \
+/absolute/path/to/nestkernel_api.cxx: use that specific file; fatal error if not found." )
+
 # NEST properties
 set( with-modelset "full" CACHE STRING "The modelset to include. Sample configurations are in the modelsets directory. This option is mutually exclusive with -Dwith-models. [default=full]." )
 set( with-models OFF CACHE STRING "The models to include as a semicolon-separated list of model headers (without the .h extension). This option is mutually exclusive with -Dwith-modelset. [default=OFF]." )
@@ -126,10 +133,13 @@ get_host_triple( NEST_HOST_TRIPLE NEST_HOST_ARCH NEST_HOST_VENDOR NEST_HOST_OS )
 get_target_triple( NEST_TARGET_TRIPLE NEST_TARGET_ARCH NEST_TARGET_VENDOR NEST_TARGET_OS )
 
 # Process the command line arguments
-# IMPORTANT: Do not change the order of nest_find_python() and include( GNUInstallDirs )!
+# IMPORTANT: Do not change the order of these calls relative to include( GNUInstallDirs )!
 #            nest_find_python() defaults CMAKE_INSTALL_PREFIX to the active virtual Python
 #            environment. This effects the inclusion of GNUInstallDirs defining
 #            CMAKE_INSTALL_<dir> and CMAKE_INSTALL_FULL_<dir>.
+#            nest_process_with_prebuilt_pynest_cxx() must precede nest_find_python() because
+#            NEST_FIND_PYTHON() uses NEST_PREBUILT_PYNEST_CXX to decide whether to require Cython.
+nest_process_with_prebuilt_pynest_cxx()
 nest_find_python()
 include( GNUInstallDirs )
 nest_setup_python()

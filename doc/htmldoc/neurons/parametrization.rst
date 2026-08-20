@@ -94,7 +94,7 @@ Obtaining specific values from a parameter object
 Parameter objects in NEST are only converted to concrete values
 internally, after nodes are created and/or connections are defined.
 
-To check if a parameter is drawñ from the expected distribution, or to
+To check if a parameter is drawn from the expected distribution, or to
 generate example samples, use :py:meth:`GetValue()<nest.lib.hl_api_types.Parameter.GetValue>`.
 
 

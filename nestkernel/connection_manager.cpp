@@ -623,7 +623,8 @@ nest::ConnectionManager::connect_arrays( const long* sources,
     size_t i = 0;
     for ( const auto& key : p_keys )
     {
-      const bool is_int = ( key == names::receptor_type or key == names::music_channel or key == names::synapse_label );
+      const bool is_int = ( key == names::receptor_type or key == names::music_channel or key == names::synapse_label
+        or key == names::source_port );
 
       // Shifting the pointer to the first value of the parameter.
       param_pointers[ key ] = std::make_pair( p_values + i * n, is_int );
@@ -1473,10 +1474,10 @@ nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions( con
 {
 #pragma omp single
   {
-    buffer_pos_of_source_node_id_syn_id_.clear();
+    buffer_pos_of_secondary_source_.clear();
   }
 
-  source_table_.compute_buffer_pos_for_unique_secondary_sources( tid, buffer_pos_of_source_node_id_syn_id_ );
+  source_table_.compute_buffer_pos_for_unique_secondary_sources( tid, buffer_pos_of_secondary_source_ );
   secondary_recv_buffer_pos_[ tid ].resize( connections_[ tid ].size() );
 
   const synindex syn_id_end = connections_[ tid ].size();
@@ -1500,10 +1501,11 @@ nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions( con
         for ( size_t lcid = 0; lcid < lcid_end; ++lcid )
         {
           const size_t source_node_id = source_table_.get_node_id( tid, syn_id, lcid );
-          const size_t sg_s_id = source_table_.pack_source_node_id_and_syn_id( source_node_id, syn_id );
+          const size_t source_port = get_source_port( tid, syn_id, lcid );
+          const SecondarySourceId secondary_source_id { source_node_id, syn_id, source_port };
           const size_t source_rank = kernel().mpi_manager.get_process_id_of_node_id( source_node_id );
 
-          positions[ lcid ] = buffer_pos_of_source_node_id_syn_id_[ sg_s_id ]
+          positions[ lcid ] = buffer_pos_of_secondary_source_[ secondary_source_id ]
             + kernel().mpi_manager.get_recv_displacement_secondary_events_in_int( source_rank );
         }
       }
@@ -1808,7 +1810,11 @@ nest::ConnectionManager::fill_target_buffer( const size_t tid,
 
     while ( source_2_idx != csd_maps.at( syn_id ).end() )
     {
-      const auto source_gid = source_2_idx->first;
+      // The map key packs the source port for secondary connections; primary
+      // connections use the bare node ID (port zero). Unpack the node ID for
+      // all node-based lookups below.
+      const auto source_key = source_2_idx->first;
+      const auto source_gid = source_table_.unpack_source_node_id( source_key );
       const auto source_rank = kernel().mpi_manager.get_process_id_of_node_id( source_gid );
       if ( not( rank_start <= source_rank and source_rank < rank_end ) )
       {
@@ -1857,6 +1863,7 @@ nest::ConnectionManager::fill_target_buffer( const size_t tid,
         SecondaryTargetDataFields& secondary_fields = next_target_data.secondary_data;
         secondary_fields.set_recv_buffer_pos( relative_recv_buffer_pos );
         secondary_fields.set_syn_id( syn_id );
+        secondary_fields.set_source_port( source_table_.unpack_source_port( source_key ) );
       }
 
       send_buffer_target_data.at( send_buffer_position.idx( source_rank ) ) = next_target_data;

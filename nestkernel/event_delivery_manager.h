@@ -79,9 +79,20 @@ public:
   void send( Node& source, EventT& e, const long lag = 0 );
 
   /**
-   * Send a secondary event remote.
+   * Send a secondary event remote through source port zero.
+   *
+   * Backward-compatible single-port form; also delivers to devices.
    */
   void send_secondary( Node& source, SecondaryEvent& e );
+
+  /**
+   * Send a secondary event remote through the given source port.
+   *
+   * Only the connections registered for this source port receive the event,
+   * so a node may emit several independently routed waveforms per synapse
+   * model. Device delivery is handled by the single-port overload.
+   */
+  void send_secondary( Node& source, SecondaryEvent& e, const size_t source_port );
 
   /**
    * Send event e to all targets of node source on thread t

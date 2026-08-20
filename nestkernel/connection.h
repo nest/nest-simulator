@@ -247,6 +247,20 @@ public:
   }
 
   /**
+   * Returns the secondary-event source port of this connection.
+   *
+   * Connections that route only a single secondary waveform per source node
+   * (all synapse types except those explicitly supporting multiple source
+   * ports) use port zero. Synapse models exposing several source ports, such
+   * as gap_junction, override this to return their stored port.
+   */
+  size_t
+  get_source_port() const
+  {
+    return 0;
+  }
+
+  /**
    * Sets a flag in the connection to signal that the following connection has
    * the same source.
    *

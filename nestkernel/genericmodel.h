@@ -73,6 +73,8 @@ public:
 
   void sends_secondary_event( GapJunctionEvent& ge ) override;
 
+  void sends_secondary_event( GapJunctionEvent& ge, const size_t source_port ) override;
+
   SignalType sends_signal() const override;
 
   void sends_secondary_event( InstantaneousRateConnectionEvent& re ) override;
@@ -194,6 +196,13 @@ inline void
 GenericModel< ElementT >::sends_secondary_event( GapJunctionEvent& ge )
 {
   return proto_.sends_secondary_event( ge );
+}
+
+template < typename ElementT >
+inline void
+GenericModel< ElementT >::sends_secondary_event( GapJunctionEvent& ge, const size_t source_port )
+{
+  return proto_.sends_secondary_event( ge, source_port );
 }
 
 template < typename ElementT >

@@ -76,7 +76,6 @@ docs = [
   "sphinx_design",
   "sphinx-material",
   "sphinx-copybutton",
-  "sphinx-carousel",
   "sphinx-notfound-page",
   "sphinxcontrib-mermaid",
   "sphinxcontrib-plantuml",

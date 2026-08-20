@@ -112,7 +112,8 @@ def process_directory(directory):
 
 
 def get_pynest_list(app, env, docname):
-    directory = "../../pynest/nest/"
+    # Absolute path to the pynest/nest package directory
+    directory = os.path.join(app.srcdir, "..", "..", "pynest", "nest") + os.path.sep
 
     if not hasattr(env, "pynest_dict"):
         env.pynest_dict = {}

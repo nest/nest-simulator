@@ -44,7 +44,7 @@ def ProcessExamples(app, doctree, docname):
     examples_titles_map = {}
 
     try:
-        models_to_examples_map = ModelMatchExamples()
+        models_to_examples_map = ModelMatchExamples(app)
 
         for node in doctree.findall(listnode):
             for requested_list in env.list_examples_directive_requests:
@@ -85,11 +85,11 @@ def ProcessExamples(app, doctree, docname):
         raise
 
 
-def ModelMatchExamples():
+def ModelMatchExamples(app):
     # Get list of models and search the examples directory for matches
 
-    filepath_models = "../../models/"
-    filepath_examples = "auto_examples/"
+    filepath_models = os.path.join(app.srcdir, "..", "..", "models")
+    filepath_examples = os.path.join(app.srcdir, "auto_examples")
 
     model_files = []
     for filename in os.listdir(filepath_models):
@@ -97,16 +97,19 @@ def ModelMatchExamples():
             model_files.append(os.path.splitext(filename)[0])
 
     matches = {}
-    files = glob.glob(filepath_examples + "**/*.rst", recursive=True)
+    files = glob.glob(os.path.join(filepath_examples, "**/*.rst"), recursive=True)
     for filename in files:
-        if "auto_examples/index" in filename:
+        # Docname (e.g. "auto_examples/foo/bar"), used as the key into
+        # `env.titles` and passed to `get_relative_uri()` below.
+        relpath = os.path.relpath(filename, app.srcdir)
+        if "auto_examples/index" in relpath:
             continue
         with open(filename, "r", errors="ignore") as file:
             content = file.read()
             if "AUTOMATICALLY GENERATED" in content:
                 for model_file in model_files:
                     if model_file in content:
-                        matches.setdefault(model_file, []).append(filename)
+                        matches.setdefault(model_file, []).append(relpath)
             else:
                 continue
     return matches

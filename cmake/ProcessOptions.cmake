@@ -48,49 +48,49 @@ function( NEST_VALIDATE_BOOL_OPTION option_name option_value result_var )
   endif ()
 endfunction()
 
-# Resolve the tristate (OFF | ON | <path>) value of a library option and set up
-# the package root variable. Sets in the caller's scope:
-#   ${enabled_var}  ON if the library should be searched for, OFF otherwise.
-#   ${root_var}     Set to the given path when a directory was provided.
-#
-# When a specific directory is given the function additionally restricts the
-# find_package() call that follows to that path only, by setting in the
-# caller's scope:
-#   CMAKE_PREFIX_PATH            — set to just ${option_value}
-#   CMAKE_FIND_USE_CMAKE_SYSTEM_PATH  OFF  — disables platform-default prefixes
-#                                            (e.g. /opt/homebrew on Apple Silicon)
-#   CMAKE_FIND_USE_SYSTEM_PATH        OFF  — disables /usr/lib etc.
+# Claim <package_name>_ROOT as a typed CACHE PATH variable and, when the user
+# has pinned a location via that variable (or its ENV counterpart, or via
+# CMAKE_PREFIX_PATH), restrict the subsequent find_package() to that path only
+# by setting in the caller's (processor function's) scope:
+#   CMAKE_PREFIX_PATH                         — set to the pinned root
+#   CMAKE_FIND_USE_CMAKE_SYSTEM_PATH  OFF     — disables platform-default prefixes
+#   CMAKE_FIND_USE_SYSTEM_PATH        OFF     — disables /usr/lib etc.
 #   CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH OFF — disables PATH/LD_LIBRARY_PATH
 #
-# These are local variables in the caller (processor) function, so they
-# automatically disappear when that function returns and never affect other
-# library searches or the parent CMakeLists.txt scope.
+# Always call this near the top of each library processor function (before any
+# early return) so that <package_name>_ROOT is always claimed.  This prevents
+# the unknown-option check from firing when the user passes
+# -D<package_name>_ROOT=... on the command line while the library option is OFF.
 #
-# Terminates with FATAL_ERROR if the value is not a recognised boolean or an
-# existing directory path.
-function( NEST_LIBRARY_OPTION_SETUP option_name option_value root_var enabled_var )
-  string( TOUPPER "${option_value}" _upper )
-  if ( _upper MATCHES "${_NEST_FALSE_REGEX}" )
-    set( ${enabled_var} OFF PARENT_SCOPE )
-  elseif ( _upper MATCHES "${_NEST_TRUE_REGEX}" )
-    set( ${enabled_var} ON PARENT_SCOPE )
-  elseif ( IS_DIRECTORY "${option_value}" )
-    set( ${root_var} "${option_value}" PARENT_SCOPE )
-    set( ${enabled_var} ON PARENT_SCOPE )
-    # Restrict the subsequent find_package() to this path only.
-    # CMAKE_PREFIX_PATH covers config-mode packages; ${root_var} (via CMP0074)
-    # and explicit HINTS inside Find<Name>.cmake cover module-mode packages.
-    # Disabling system/env paths prevents CMake from falling back to, e.g.,
-    # /opt/homebrew when the user-specified path does not contain the library.
-    set( CMAKE_PREFIX_PATH "${option_value}" PARENT_SCOPE )
+# All variables set by this function are local to the calling (processor)
+# function's scope and automatically disappear when that function returns,
+# so they never affect other library searches or the parent CMakeLists.txt scope.
+function( NEST_RESTRICT_FIND_IF_PINNED package_name )
+  # Promote UNINITIALIZED → PATH so the unknown-option check never fires.
+  # Without FORCE, any user-supplied value is preserved; only the type changes.
+  set( ${package_name}_ROOT "" CACHE PATH
+    "Restrict the ${package_name} search to this installation root (empty = search system)." )
+
+  # Determine the effective root (CMake variable takes precedence over env).
+  set( _root "${${package_name}_ROOT}" )
+  if ( "${_root}" STREQUAL "" AND DEFINED ENV{${package_name}_ROOT} )
+    set( _root "$ENV{${package_name}_ROOT}" )
+  endif ()
+
+  if ( NOT "${_root}" STREQUAL "" OR CMAKE_PREFIX_PATH )
+    # When the user pinned a specific location, restrict the search to that path
+    # only so CMake cannot silently fall back to a system-installed version.
     set( CMAKE_FIND_USE_CMAKE_SYSTEM_PATH OFF PARENT_SCOPE )
     set( CMAKE_FIND_USE_SYSTEM_PATH OFF PARENT_SCOPE )
     set( CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH OFF PARENT_SCOPE )
-  else ()
-    message( FATAL_ERROR
-      "-D${option_name}=${option_value}: value must be 'ON', 'OFF', or an existing directory path." )
+    if ( NOT "${_root}" STREQUAL "" )
+      # CMAKE_PREFIX_PATH covers config-mode packages and is checked by many
+      # module-mode Find<Name>.cmake files; <package>_ROOT (CMP0074) covers the rest.
+      set( CMAKE_PREFIX_PATH "${_root}" PARENT_SCOPE )
+    endif ()
   endif ()
 endfunction()
+
 
 # Resolve the tristate (OFF | ON | <flags>) value of a compiler-flag option.
 # Sets result_var in the caller's scope to:
@@ -262,13 +262,13 @@ endfunction()
 
 function( NEST_PROCESS_WITH_LIBLTDL )
   set( HAVE_LIBLTDL OFF PARENT_SCOPE )
+  nest_restrict_find_if_pinned( LTDL )  # always: claims LTDL_ROOT
   # ltdl enables dynamic loading of user modules; incompatible with full static linking.
   if ( with-static-linking )
     message( STATUS "LTDL disabled: incompatible with -Dwith-static-linking=ON." )
     return()
   endif ()
-  nest_library_option_setup( "with-ltdl" "${with-ltdl}" LTDL_ROOT _enabled )
-  if ( NOT _enabled )
+  if ( NOT with-ltdl )
     return()
   endif ()
   find_package( LTDL REQUIRED QUIET )
@@ -287,9 +287,9 @@ function( NEST_PROCESS_WITH_GSL )
   # GSL_ROOT is the CMP0074 convention variable; CMake searches it in config mode
   # and injects it into find_path/find_library hints inside FindGSL.cmake.
   # FindGSL.cmake additionally checks GSL_ROOT_DIR explicitly; we set that too.
-  nest_library_option_setup( "with-gsl" "${with-gsl}" GSL_ROOT _enabled )
+  nest_restrict_find_if_pinned( GSL )
   set( GSL_ROOT_DIR "${GSL_ROOT}" )
-  if ( _enabled )
+  if ( with-gsl )
     find_package( GSL 1.11 REQUIRED QUIET )
     message( STATUS "Found GSL: ${GSL_LIBRARIES} (found version ${GSL_VERSION})" )
     set( HAVE_GSL ON PARENT_SCOPE )
@@ -306,31 +306,24 @@ function( NEST_PROCESS_WITH_GSL )
   endif ()
 endfunction()
 
-# Resolve the -Dwith-prebuilt-pynest-cxx tristate option and set NEST_PREBUILT_PYNEST_CXX
+# Resolve the NESTKERNEL_API_CXX variable and set NEST_PREBUILT_PYNEST_CXX
 # in the caller's scope:
-#   ""                    — option is OFF-ish: run Cython as normal.
-#   "/abs/path/to/….cxx"  — option is ON-ish or an explicit path: use that pre-generated file.
-# Must be called before NEST_FIND_PYTHON() so that the Cython find can be skipped when not needed.
+#   ""             — NESTKERNEL_API_CXX not set: run Cython as normal.
+#   "/abs/path/…"  — use that file, skip Cython.  If the file is absent at
+#                    configure time a warning is issued at summary time (not fatal,
+#                    because the file may be generated by a preceding build step).
+# Must be called before NEST_FIND_PYTHON() so the Cython find is skipped when not needed.
 function( NEST_PROCESS_WITH_PREBUILT_PYNEST_CXX )
-  string( TOUPPER "${with-prebuilt-pynest-cxx}" _upper )
-  if ( _upper MATCHES "${_NEST_FALSE_REGEX}" )
-    # Default: run Cython.
-    set( NEST_PREBUILT_PYNEST_CXX "" PARENT_SCOPE )
-  elseif ( _upper MATCHES "${_NEST_TRUE_REGEX}" )
-    # ON: use the file at the default location UseCython.cmake would generate to.
-    set( NEST_PREBUILT_PYNEST_CXX
-      "${PROJECT_BINARY_DIR}/pynest/nestkernel_api.cxx" PARENT_SCOPE )
-  elseif ( IS_ABSOLUTE "${with-prebuilt-pynest-cxx}" )
-    # Explicit absolute path: must exist now (regular file or symlink).
-    if ( NOT EXISTS "${with-prebuilt-pynest-cxx}" )
-      message( FATAL_ERROR
-        "-Dwith-prebuilt-pynest-cxx=${with-prebuilt-pynest-cxx}: file not found." )
-    endif ()
-    set( NEST_PREBUILT_PYNEST_CXX "${with-prebuilt-pynest-cxx}" PARENT_SCOPE )
+  # Claim NESTKERNEL_API_CXX as a typed variable so a user-supplied
+  # -DNESTKERNEL_API_CXX=... does not linger as UNINITIALIZED in the cache.
+  # Without FORCE this only promotes the type; any user-supplied value is preserved.
+  set( NESTKERNEL_API_CXX "" CACHE FILEPATH
+    "Path to a pre-generated nestkernel_api.cxx. When set, Cython is not run." )
+
+  if ( NESTKERNEL_API_CXX )
+    set( NEST_PREBUILT_PYNEST_CXX "${NESTKERNEL_API_CXX}" PARENT_SCOPE )
   else ()
-    message( FATAL_ERROR
-      "-Dwith-prebuilt-pynest-cxx=${with-prebuilt-pynest-cxx}: "
-      "value must be 'ON', 'OFF', or an absolute path to nestkernel_api.cxx." )
+    set( NEST_PREBUILT_PYNEST_CXX "" PARENT_SCOPE )
   endif ()
 endfunction()
 
@@ -392,34 +385,44 @@ function( NEST_SETUP_PYTHON )
 endfunction()
 
 function( NEST_PROCESS_WITH_OPENMP )
-  nest_library_option_setup( "with-openmp" "${with-openmp}" OpenMP_ROOT _enabled )
+  nest_restrict_find_if_pinned( OpenMP )
 
-  if ( _enabled )
-    # Apple Clang does not bundle libomp. When ON (not a specific path), try
-    # Homebrew's libomp as an additional search hint.
-    if ( APPLE AND NOT IS_DIRECTORY "${with-openmp}" )
-      execute_process(
-        COMMAND brew --prefix libomp
-        OUTPUT_VARIABLE _brew_libomp_prefix
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-        ERROR_QUIET
-        RESULT_VARIABLE _brew_result
-      )
-      if ( _brew_result EQUAL 0 AND EXISTS "${_brew_libomp_prefix}" )
-        set( OpenMP_ROOT "${_brew_libomp_prefix}" )
-      endif ()
+  if ( NOT with-openmp )
+    # Provide a dummy OpenMP::OpenMP_CXX if OpenMP is disabled so unconditional
+    # target_link_libraries() calls do not fail.
+    if ( NOT TARGET OpenMP::OpenMP_CXX )
+      add_library( OpenMP::OpenMP_CXX INTERFACE IMPORTED )
     endif ()
-
-    find_package( OpenMP REQUIRED QUIET )
-    message( STATUS "Found OpenMP: ${OpenMP_CXX_FLAGS} (found version ${OpenMP_VERSION})" )
-    set( OpenMP_FOUND "${OpenMP_FOUND}" PARENT_SCOPE )
-    set( OpenMP_CXX_FLAGS "${OpenMP_CXX_FLAGS}" PARENT_SCOPE )
-    set( OpenMP_CXX_LIBRARIES "${OpenMP_CXX_LIBRARIES}" PARENT_SCOPE )
-    set( OpenMP_CXX_INCLUDE_DIRS "${OpenMP_CXX_INCLUDE_DIRS}" PARENT_SCOPE )
-    # consumers use OpenMP::OpenMP_CXX imported target
+    return()
   endif ()
 
-  # Provide a dummy OpenMP::OpenMP_CXX if OpenMP is disabled so unconditional
+  # Apple Clang does not bundle libomp. When no explicit OpenMP_ROOT is set,
+  # try Homebrew's libomp as an additional search hint.
+  if ( APPLE AND "${OpenMP_ROOT}" STREQUAL "" AND NOT DEFINED ENV{OpenMP_ROOT} )
+    execute_process(
+      COMMAND brew --prefix libomp
+      OUTPUT_VARIABLE _brew_libomp_prefix
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      ERROR_QUIET
+      RESULT_VARIABLE _brew_result
+    )
+    if ( _brew_result EQUAL 0 AND EXISTS "${_brew_libomp_prefix}" )
+      set( OpenMP_ROOT "${_brew_libomp_prefix}" )
+      # Also update CMAKE_PREFIX_PATH for module-mode Find*.cmake compatibility.
+      set( CMAKE_PREFIX_PATH "${_brew_libomp_prefix}" )
+    endif ()
+  endif ()
+
+  find_package( OpenMP REQUIRED QUIET )
+  message( STATUS "Found OpenMP: ${OpenMP_CXX_FLAGS} (found version ${OpenMP_VERSION})" )
+  set( OpenMP_FOUND "${OpenMP_FOUND}" PARENT_SCOPE )
+  set( OpenMP_CXX_FLAGS "${OpenMP_CXX_FLAGS}" PARENT_SCOPE )
+  set( OpenMP_CXX_LIBRARIES "${OpenMP_CXX_LIBRARIES}" PARENT_SCOPE )
+  set( OpenMP_CXX_INCLUDE_DIRS "${OpenMP_CXX_INCLUDE_DIRS}" PARENT_SCOPE )
+  # consumers use OpenMP::OpenMP_CXX imported target
+
+  # Provide a dummy OpenMP::OpenMP_CXX if find_package somehow did not create
+  # the target (e.g., unsupported compiler) so unconditional
   # target_link_libraries() calls do not fail.
   if ( NOT TARGET OpenMP::OpenMP_CXX )
     add_library( OpenMP::OpenMP_CXX INTERFACE IMPORTED )
@@ -428,9 +431,9 @@ endfunction()
 
 function( NEST_PROCESS_WITH_MPI )
   set( HAVE_MPI OFF PARENT_SCOPE )
-  nest_library_option_setup( "with-mpi" "${with-mpi}" MPI_ROOT _enabled )
+  nest_restrict_find_if_pinned( MPI )
 
-  if ( _enabled )
+  if ( with-mpi )
     find_package( MPI REQUIRED QUIET COMPONENTS CXX )
     if ( MPI_CXX_FOUND )
       message( STATUS "Found MPI: ${MPI_CXX_COMPILER} (supports MPI standard ${MPI_CXX_VERSION})" )
@@ -448,7 +451,7 @@ function( NEST_PROCESS_WITH_MPI )
       set( MPIEXEC_POSTFLAGS "${MPIEXEC_POSTFLAGS}" PARENT_SCOPE )
       # consumers use MPI::MPI_CXX imported target
     endif ()
-  endif ()
+  endif ()   # with-mpi
 
   # Provide a dummy MPI::MPI_CXX if MPI is disabled so unconditional
   # target_link_libraries() calls do not fail.
@@ -493,8 +496,8 @@ endfunction()
 
 function( NEST_PROCESS_WITH_LIBNEUROSIM )
   set( HAVE_LIBNEUROSIM OFF PARENT_SCOPE )
-  nest_library_option_setup( "with-libneurosim" "${with-libneurosim}" LibNeurosim_ROOT _enabled )
-  if ( NOT _enabled )
+  nest_restrict_find_if_pinned( LibNeurosim )
+  if ( NOT with-libneurosim )
     return()
   endif ()
   find_package( LibNeurosim REQUIRED QUIET )
@@ -510,8 +513,8 @@ endfunction()
 
 function( NEST_PROCESS_WITH_MUSIC )
   set( HAVE_MUSIC OFF PARENT_SCOPE )
-  nest_library_option_setup( "with-music" "${with-music}" Music_ROOT _enabled )
-  if ( NOT _enabled )
+  nest_restrict_find_if_pinned( Music )
+  if ( NOT with-music )
     return()
   endif ()
   if ( NOT HAVE_MPI )
@@ -531,8 +534,8 @@ endfunction()
 
 function( NEST_PROCESS_WITH_SIONLIB )
   set( HAVE_SIONLIB OFF CACHE INTERNAL "sionlib" )
-  nest_library_option_setup( "with-sionlib" "${with-sionlib}" SIONlib_ROOT _enabled )
-  if ( NOT _enabled )
+  nest_restrict_find_if_pinned( SIONlib )
+  if ( NOT with-sionlib )
     return()
   endif ()
   if ( NOT HAVE_MPI )
@@ -547,8 +550,8 @@ endfunction()
 
 function( NEST_PROCESS_WITH_BOOST )
   set( HAVE_BOOST OFF PARENT_SCOPE )
-  nest_library_option_setup( "with-boost" "${with-boost}" Boost_ROOT _enabled )
-  if ( _enabled )
+  nest_restrict_find_if_pinned( Boost )
+  if ( with-boost )
     set( Boost_USE_DEBUG_LIBS OFF )
     set( Boost_USE_RELEASE_LIBS ON )
     find_package( Boost 1.70 REQUIRED CONFIG )
@@ -567,8 +570,8 @@ endfunction()
 
 function( NEST_PROCESS_WITH_HDF5 )
   set( HAVE_HDF5 OFF PARENT_SCOPE )
-  nest_library_option_setup( "with-hdf5" "${with-hdf5}" HDF5_ROOT _enabled )
-  if ( NOT _enabled )
+  nest_restrict_find_if_pinned( HDF5 )
+  if ( NOT with-hdf5 )
     return()
   endif ()
   find_package( HDF5 REQUIRED QUIET COMPONENTS C CXX )

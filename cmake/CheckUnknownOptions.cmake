@@ -40,7 +40,7 @@ function( NEST_CHECK_UNKNOWN_OPTIONS )
     "static-libraries"            "renamed"   "with-static-linking"
     "target-bits-split"           "renamed"   "with-target-bits-split"
     "with-intel-compiler-flags"   "renamed"   "with-intel-compiler-strict-math"
-    "cythonize-pynest"            "renamed"   "with-prebuilt-pynest-cxx"
+    "cythonize-pynest"            "removed"   "Set -DNESTKERNEL_API_CXX=<file> instead"
     "with-python"                 "removed"   "Python is always required"
     "tics_per_ms"                 "removed"   "Set tics_per_ms at runtime via nest.set"
     "tics_per_step"               "removed"   "Set tics_per_ms and resolution at runtime via nest.set"

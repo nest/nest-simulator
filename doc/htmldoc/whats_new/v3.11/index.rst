@@ -46,16 +46,18 @@ their ``tics_per_step`` equivalents) have been removed. The default values
 (1000 tics per ms, 100 tics per step) are compiled in, and can be changed at
 runtime as before via ``nest.set(tics_per_ms=...)``.
 
-**Library options accept an installation prefix.**
-All ``-Dwith-<library>`` options that enable an optional library now accept
-an absolute path to the library's installation prefix in addition to ``ON``
-and ``OFF``. For example::
+**Library options are now plain booleans; use** ``<Package>_ROOT`` **to pin a location.**
+All ``-Dwith-<library>`` options are now simple ``ON``/``OFF`` switches.
+To restrict CMake's search to a specific installation prefix, set the
+corresponding ``<Package>_ROOT`` variable separately. For example::
 
-    cmake -Dwith-gsl=/opt/homebrew/opt/gsl ...
+    cmake -Dwith-gsl=ON -DGSL_ROOT=/opt/homebrew/opt/gsl ...
 
-When a path is given, CMake restricts its search to that prefix and reports
-an error if the library is not found there, preventing silent fallback to a
-system-wide installation.
+When ``<Package>_ROOT`` is set, CMake restricts its search to that prefix and
+reports an error if the library is not found there, preventing silent fallback
+to a system-wide installation. The affected variables are ``GSL_ROOT``,
+``Boost_ROOT``, ``MPI_ROOT``, ``OpenMP_ROOT``, ``LTDL_ROOT``, ``HDF5_ROOT``,
+``LibNeurosim_ROOT``, ``Music_ROOT``, and ``SIONlib_ROOT``.
 
 **Renamed options.**
 The following options have been renamed for consistency. The old names produce
@@ -74,6 +76,6 @@ a hard error with a pointer to the new name.
    * - ``-Dwith-intel-compiler-flags=<flags>``
      - ``-Dwith-intel-compiler-strict-math=[ON|OFF]``
    * - ``-Dcythonize-nest=[ON|OFF]``
-     - ``-Dwith-prebuilt-pynest-cxx=[OFF|ON|<path>]``
+     - ``-DNESTKERNEL_API_CXX=<path>``
 
 For the full list of available options see :ref:`cmake_options`.

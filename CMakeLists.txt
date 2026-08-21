@@ -50,24 +50,21 @@ endif()
 ################################################################################
 
 # select parallelization scheme
-set( with-mpi OFF CACHE STRING "Build with MPI parallelization [default=OFF]." )
-set( with-openmp ON CACHE STRING "Build with OpenMP multi-threading [default=ON]." )
+option( with-mpi "Build with MPI parallelization [default=OFF]." OFF )
+option( with-openmp "Build with OpenMP multi-threading [default=ON]." ON )
 
 # external libraries
-set( with-libneurosim OFF CACHE STRING "Build with libneurosim [default=OFF]. Optionally give the directory where libneurosim is installed." )
-set( with-music OFF CACHE STRING "Build with MUSIC [default=OFF]. Optionally give the directory where MUSIC is installed." )
-set( with-sionlib OFF CACHE STRING "Build with SIONlib [default=OFF]. Optionally give the directory where sionlib is installed." )
-set( with-boost ON CACHE STRING "Build with Boost [default=ON]. To set a specific Boost installation, give the install path." )
-set( with-hdf5 OFF CACHE STRING "Find a HDF5 library. To set a specific HDF5 installation, set install path. [default=OFF]" )
-set( with-ltdl ON CACHE STRING "Build with ltdl library [default=ON]. To set a specific ltdl, give the  install path. NEST uses ltdl for dynamic loading of external user modules." )
-set( with-gsl ON CACHE STRING "Build with the GSL library [default=ON]. To set a specific library, give the install path." )
+# To pin a specific installation root, set the corresponding <Package>_ROOT variable,
+# e.g. cmake -DGSL_ROOT=/opt/gsl or -DBoost_ROOT=/opt/boost.
+option( with-libneurosim "Build with libneurosim [default=OFF]." OFF )
+option( with-music "Build with MUSIC [default=OFF]. Requires -Dwith-mpi=ON." OFF )
+option( with-sionlib "Build with SIONlib [default=OFF]. Requires -Dwith-mpi=ON." OFF )
+option( with-boost "Build with Boost [default=ON]." ON )
+option( with-hdf5 "Build with HDF5 [default=OFF]." OFF )
+option( with-ltdl "Build with ltdl for dynamic loading of user modules [default=ON]." ON )
+option( with-gsl "Build with the GSL library [default=ON]." ON )
 
-# PyNEST options
-set( with-prebuilt-pynest-cxx "OFF" CACHE STRING
-  "Use a pre-generated nestkernel_api.cxx instead of running Cython [default=OFF]. \
-OFF: run Cython (requires Cython >= 3.0). \
-ON: use the pre-generated file from the default build location. \
-/absolute/path/to/nestkernel_api.cxx: use that specific file; fatal error if not found." )
+# PyNEST options: set -DNESTKERNEL_API_CXX=<path> to skip Cython and use a pre-generated file.
 
 # NEST properties
 set( with-modelset "full" CACHE STRING "The modelset to include. Sample configurations are in the modelsets directory. This option is mutually exclusive with -Dwith-models. [default=full]." )

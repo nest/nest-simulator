@@ -722,8 +722,10 @@ jobs:
               -Dwith-gsl=${{ contains(matrix.use, 'gsl') && 'ON' || 'OFF' }} \
               -Dwith-ltdl=${{ contains(matrix.use, 'ltdl') && 'ON' || 'OFF' }} \
               -Dwith-hdf5=${{ contains(matrix.use, 'hdf5') && 'ON' || 'OFF' }} \
-              -Dwith-sionlib=${{ contains(matrix.use, 'sionlib') && '$HOME/.cache/sionlib.install' || 'OFF' }} \
-              -Dwith-music=${{ contains(matrix.use, 'music') && '$HOME/.cache/music.install' || 'OFF' }} \
+              -Dwith-sionlib=${{ contains(matrix.use, 'sionlib') && 'ON' || 'OFF' }} \
+              -DSIONlib_ROOT=$HOME/.cache/sionlib.install \
+              -Dwith-music=${{ contains(matrix.use, 'music') && 'ON' || 'OFF' }} \
+              -DMusic_ROOT=$HOME/.cache/music.install \
               -Dwith-threaded-timers=${{ contains(matrix.use, 'threaded-timers') && 'ON' || 'OFF' }} \
               -Dwith-detailed-timers=${{ contains(matrix.use, 'detailed-timers') && 'ON' || 'OFF' }} \
               -Dwith-mpi-sync-timer=${{ contains(matrix.use, 'mpi-sync-timer') && 'ON' || 'OFF' }} \
@@ -846,13 +848,15 @@ jobs:
               -Dwith-optimize=${{ contains(matrix.use, 'optimize') && 'ON' || 'OFF' }} \
               -Dwith-warning=${{ contains(matrix.use, 'warning') && 'ON' || 'OFF' }} \
               -Dwith-boost=${{ contains(matrix.use, 'boost') && 'ON' || 'OFF' }} \
-              -Dwith-openmp=${{ contains(matrix.use, 'openmp') && '$(brew --prefix libomp)' || 'OFF' }} \
+              -Dwith-openmp=${{ contains(matrix.use, 'openmp') && 'ON' || 'OFF' }} \
               -Dwith-mpi=${{ contains(matrix.use, 'mpi') && 'ON' || 'OFF' }} \
               -Dwith-gsl=${{ contains(matrix.use, 'gsl') && 'ON' || 'OFF' }} \
               -Dwith-ltdl=${{ contains(matrix.use, 'ltdl') && 'ON' || 'OFF' }} \
               -Dwith-hdf5=${{ contains(matrix.use, 'hdf5') && 'ON' || 'OFF' }} \
-              -Dwith-sionlib=${{ contains(matrix.use, 'sionlib') && '$HOME/.cache/sionlib.install' || 'OFF' }} \
-              -Dwith-music=${{ contains(matrix.use, 'music') && '$HOME/.cache/music.install' || 'OFF' }} \
+              -Dwith-sionlib=${{ contains(matrix.use, 'sionlib') && 'ON' || 'OFF' }} \
+              -DSIONlib_ROOT=$HOME/.cache/sionlib.install \
+              -Dwith-music=${{ contains(matrix.use, 'music') && 'ON' || 'OFF' }} \
+              -DMusic_ROOT=$HOME/.cache/music.install \
               ..
 
       - name: "Add GCC problem matcher"

@@ -31,7 +31,7 @@ if( NEST_PREBUILT_PYNEST_CXX STREQUAL "" )
   set_source_files_properties( nestkernel_api.pyx PROPERTIES CYTHON_IS_CXX TRUE )
   cython_add_module( nestkernel_api nestkernel_api.pyx )
 else()
-  # Use a pre-generated nestkernel_api.cxx (set by -Dwith-prebuilt-pynest-cxx).
+  # Use a pre-generated nestkernel_api.cxx (set by -DNESTKERNEL_API_CXX).
   # If the file is absent (ON case), the warning appears at the end of the summary.
   # GENERATED TRUE suppresses CMake's source-existence check at configure time.
   set_source_files_properties( "${NEST_PREBUILT_PYNEST_CXX}" PROPERTIES GENERATED TRUE )

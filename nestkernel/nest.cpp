@@ -104,9 +104,9 @@ reset_kernel()
 }
 
 void
-enable_structural_plasticity()
+enable_structural_plasticity( bool use_gaussian_kernel, double gaussian_kernel_sigma, double max_distance )
 {
-  kernel().sp_manager.enable_structural_plasticity();
+  kernel().sp_manager.enable_structural_plasticity( use_gaussian_kernel, gaussian_kernel_sigma, max_distance );
 }
 
 void

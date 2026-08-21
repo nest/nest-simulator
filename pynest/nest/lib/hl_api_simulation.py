@@ -312,16 +312,34 @@ def Install(module_name):
     nestkernel.llapi_install_module(module_name)
 
 
-def EnableStructuralPlasticity():
+def EnableStructuralPlasticity(
+    use_gaussian_kernel=False,
+    gaussian_kernel_sigma=1.0,
+    max_distance=float("inf"),
+):
     """Enable structural plasticity for the network simulation
+
+    Parameters
+    ----------
+    use_gaussian_kernel : bool, optional
+        Whether to use a Gaussian distance-dependent kernel for selecting
+        structural-plasticity partners.
+    gaussian_kernel_sigma : float, optional
+        Width of the Gaussian kernel.
+    max_distance : float, optional
+        Maximum allowed source-target distance.
 
     See Also
     --------
     DisableStructuralPlasticity
 
-    """
 
-    nestkernel.llapi_enable_structural_plasticity()
+    """
+    nestkernel.llapi_enable_structural_plasticity(
+        bool(use_gaussian_kernel),
+        float(gaussian_kernel_sigma),
+        float(max_distance),
+    )
 
 
 def DisableStructuralPlasticity():

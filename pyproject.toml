@@ -20,7 +20,7 @@ authors = [
 maintainers = [
   { name = "Steffen Graber", email = "s.graber@fz-juelich.de" },
 ]
-requires-python = ">=3.9, <4.0"
+requires-python = ">=3.10, <4.0"
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Science/Research",
@@ -29,7 +29,6 @@ classifiers = [
   "Operating System :: MacOS",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
@@ -141,7 +140,6 @@ result = "{version}"
 [tool.scikit-build.cmake.define]
 with-optimize = "-O2"
 with-warning = "ON"
-with-python = "ON"
 with-boost = "ON"
 with-gsl = "ON"
 with-openmp = "ON"

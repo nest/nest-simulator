@@ -57,12 +57,6 @@
 /* Name of package */
 #define PACKAGE @PROJECT_NAME@
 
-/* tics per ms in simulation */
-#define CONFIG_TICS_PER_MS @tics_per_ms@
-
-/* tics per step in simulation */
-#define CONFIG_TICS_PER_STEP @tics_per_step@
-
 /* Is the GNU Science Library available (ver. >= 1.0)? */
 #cmakedefine HAVE_GSL 1
 
@@ -84,20 +78,11 @@
 /* define for STL vector capacity base unity */
 #cmakedefine HAVE_STL_VECTOR_BASE_CAPACITY_GREATER_ONE 1
 
-/* Tics per millisecond specified? */
-#cmakedefine HAVE_TICS_PER_MS 1
-
-/* Tics per step specified? */
-#cmakedefine HAVE_TICS_PER_STEP 1
-
 /* Is SIONlib available? */
 #cmakedefine HAVE_SIONLIB 1
 
 /* Is HDF5 available? */
 #cmakedefine HAVE_HDF5 1
-
-/* Is mpi4py available? */
-#cmakedefine HAVE_MPI4PY 1
 
 /* Do Random123 generators work? */
 #cmakedefine HAVE_RANDOM123 1

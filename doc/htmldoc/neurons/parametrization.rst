@@ -86,6 +86,17 @@ distribution.
 
 .. image:: ../static/img/NEST3_13_0.png
 
+.. _returning_random_param_values:
+
+Obtaining specific values from a parameter object
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Parameter objects in NEST are only converted to concrete values
+internally, after nodes are created and/or connections are defined.
+
+To check if a parameter is drawn from the expected distribution, or to
+generate example samples, use :py:meth:`GetValue()<nest.lib.hl_api_types.Parameter.GetValue>`.
+
 
 .. _spatial_ex:
 
@@ -281,7 +292,7 @@ Mathematical functions
 +============================+=============================================+
 | ::                         |                                             |
 |                            |                                             |
-|     nest.random.exp(x)     | | Calculates the exponential of a parameter |
+|     nest.math.exp(x)     | | Calculates the exponential of a parameter   |
 +----------------------------+---------------------------------------------+
 | ::                         |                                             |
 |                            |                                             |

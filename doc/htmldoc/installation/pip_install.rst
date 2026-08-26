@@ -6,7 +6,7 @@ Install NEST with ``pip``
 Prerequisites
 -------------
 
-- **Python**: 3.9 to 3.13
+- **Python**: :version:`python,wheel_min` to :version:`python,wheel_max`
 - **Operating System**: Linux, macOS
 - **Architecture**: x86_64 (64-bit)
 

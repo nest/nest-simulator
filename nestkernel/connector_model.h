@@ -206,18 +206,17 @@ public:
       c.get_secondary_event();
     };
 
-    static_assert(
-      is_primary xor has_get_secondary_event, "Non-primary connections have to provide get_secondary_event()" );
+    static_assert( ( is_primary and not has_get_secondary_event ) or ( not is_primary and has_get_secondary_event ),
+      "Primary connections shall not provide, while non-primary connections must provide get_secondary_event()" );
 
     if constexpr ( has_get_secondary_event )
     {
       return default_connection_.get_secondary_event();
     }
-    // Throw error for invalid runtime call on primary connections
-    UnexpectedEvent(
-      "Using secondary events on primary connections is not possible. Secondary connections must implement "
-      "get_secondary_event!" );
-    return nullptr;
+    else
+    {
+      throw UnexpectedEvent( "A non-primary event seems to have been sent via a primary connection." );
+    }
   }
 
   ConnectionT const&

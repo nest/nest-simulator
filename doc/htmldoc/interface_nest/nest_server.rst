@@ -409,7 +409,7 @@ look like this:
 .. code-block:: sh
 
     export NEST_SERVER_ENABLE_EXEC_CALL=true
-    export NEST_SERVER_MODULES="import nest;import numpy;import numpy as np"
+    export NEST_SERVER_MODULES="import nest; import numpy; import numpy as np"
     nest-server start
 
 After this, NumPy can be used from within scripts in the regular way:

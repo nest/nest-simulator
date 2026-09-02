@@ -81,16 +81,16 @@ NEST Server comes with a number of access restrictions that are meant to protect
 consideration, each of the restrictions can be disabled by setting a corresponding environment variable.
 
 * ``NEST_SERVER_DISABLE_AUTH``: By default, the NEST Server requires a NESTServerAuth tokens. Setting this variable to
-  ``1`` disables this restriction. A token is automatically created and printed to the console by NEST Server upon
+  ``true`` disables this restriction. A token is automatically created and printed to the console by NEST Server upon
   start-up. If needed, a custom token can be set using the environment variable  ``NEST_SERVER_ACCESS_TOKEN``
 * ``NEST_SERVER_CORS_ORIGINS``: By default, the NEST Server only allows requests from localhost (see
   `CORS <https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS>`_). Other hosts can be explicitly allowed by supplying them
   in the form http://host_or_ip:\* to this variable (By default: http://localhost:\*).
 * ``NEST_SERVER_ENABLE_EXEC_CALL``: By default, NEST Server only allows calls to its PyNEST-like API. If the use-case
-  requires the execution of scripts via the ``/exec`` route, this variable can be set to ``1``. PLEASE BE AWARE THAT
+  requires the execution of scripts via the ``/exec`` route, this variable can be set to ``true``. PLEASE BE AWARE THAT
   THIS OPENS YOUR COMPUTER TO REMOTE CODE EXECUTION.
 * ``NEST_SERVER_DISABLE_RESTRICTION``: By default, NEST Server runs all code passed to the ``/exec`` route through
-  RestrictedPython to sanitize it. To disable this mechanism, this variable can be set to ``1``.
+  RestrictedPython to sanitize it. To disable this mechanism, this variable can be set to ``true``.
 * ``NEST_SERVER_MODULES``: For increased security, code passed in this way only allows explictly whitelisted modules to
   be imported. To import modules, the variable can be set to a standard Python import line like this:
   ``NEST_SERVER_MODULES='import nest; import scipy as sp; from numpy import random'``
@@ -114,18 +114,20 @@ The generic invocation command line for the ``nest-server`` command looks as fol
 
 .. code-block:: text
 
-  nest-server <command> [-d] [-h <host>] [-o] [-p <port>]
+  nest-server {arguments} [-d] [-h <host>] [-o] [-p <port>]
 
-Possible commands are ``pid``, ``start``, ``stop``, or ``log``. The meaning of the other arguments is as follows:
+Possible arguments are ``log``, ``pid``, ``start``, ``stop``, or ``version``.
 
--d
-    Run NEST Server in the background (i.e., daemonize it)
--o
-    Print all outputs to the console
--h <host>
-    Use hostname/IP address <host> for the server instance [default: 127.0.0.1]
--p <port>
-    Use port <port> for opening the socket [default: 52425]
+The meaning of the options is as follows:
+
+-d | --daemon
+    run NEST Server in the background, i.e. daemonize the server process
+-h <HOST> | --host <HOST>
+    use hostname/IP address <HOST> for the server instance [default: 127.0.0.1]
+-o | outputs
+    print all outputs to the console
+-p <PORT> | --port <PORT>
+    use port <PORT> for opening the socket [default: 52425]
 
 Run with MPI
 ~~~~~~~~~~~~
@@ -137,7 +139,13 @@ from happening, we provide a special version of the NEST Server command for use 
 
 .. code-block:: text
 
-    nest-server-mpi -np N [--host HOST] [--port PORT]
+    nest-server-mpi start -n N [--host HOST] [--port PORT]
+
+replaces the former command:
+
+.. code-block:: text
+
+    mpirun -n N nest-server-mpi [--host HOST] [--port PORT]
 
 If run like this, the RESTful API of the NEST Server will only be served by the :hxt_ref:`MPI` process with rank 0
 (called the `master`), while all other N-1 ranks will start the NEST Server in `worker` mode. Upon receiving a request,
@@ -431,7 +439,7 @@ After this, NumPy can be used from within scripts in the regular way:
 
     .. code-block:: sh
 
-        export NEST_SERVER_DISABLE_RESTRICTION=1
+        export NEST_SERVER_DISABLE_RESTRICTION=false
         nest-server start
 
     Please be aware that running NEST Server like this bears a high risk of arbitrary remote code execution, and this

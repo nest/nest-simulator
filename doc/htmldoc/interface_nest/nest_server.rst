@@ -331,7 +331,7 @@ NEST Server responds to this by sending data in JSON format:
 
 .. code-block::
 
-  {"mpi":false,"nest":"3.10"}
+  {"mpi":false,"nest":"3.11"}
 
 You can retrieve data about the callable functions of NEST by running:
 

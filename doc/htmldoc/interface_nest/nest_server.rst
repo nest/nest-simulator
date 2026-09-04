@@ -139,7 +139,7 @@ from happening, we provide a special version of the NEST Server command for use 
 
 .. code-block:: text
 
-    nest-server-mpi start -n N [--host HOST] [--port PORT]
+    nest-server-mpi run -n N [--host HOST] [--port PORT]
 
 replaces the former command:
 

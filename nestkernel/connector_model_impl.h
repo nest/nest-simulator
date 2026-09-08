@@ -67,8 +67,8 @@ GenericConnectorModel< ConnectionT >::clone( std::string name, synindex syn_id )
   ConnectorModel* new_cm = new GenericConnectorModel( *this, name );  // calls copy construtor
   new_cm->set_syn_id( syn_id );
 
-  const bool is_primary = new_cm->has_property( ConnectionModelProperties::IS_PRIMARY );
-  if ( not is_primary )
+  constexpr bool is_primary = flag_is_set( ConnectionT::properties, nest::ConnectionModelProperties::IS_PRIMARY );
+  if constexpr ( not is_primary )
   {
     new_cm->get_secondary_event()->add_syn_id( syn_id );
   }

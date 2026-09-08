@@ -101,6 +101,9 @@ const std::string beta( "beta" );
 const std::string beta_1( "beta_1" );
 const std::string beta_2( "beta_2" );
 const std::string beta_Ca( "beta_Ca" );
+const std::string beta_sir( "beta_sir" );
+const std::string beta_sirs( "beta_sirs" );
+const std::string beta_sis( "beta_sis" );
 const std::string biological_time( "biological_time" );
 const std::string box( "box" );
 const std::string buffer_size( "buffer_size" );
@@ -205,6 +208,7 @@ const std::string epsilon( "epsilon" );
 const std::string equilibrate( "equilibrate" );
 const std::string error_signal( "error_signal" );
 const std::string eta( "eta" );
+const std::string eta_sirs( "eta_sirs" );
 const std::string events( "events" );
 const std::string extent( "extent" );
 
@@ -357,6 +361,9 @@ const std::string ms_per_tic( "ms_per_tic" );
 const std::string mu( "mu" );
 const std::string mu_minus( "mu_minus" );
 const std::string mu_plus( "mu_plus" );
+const std::string mu_sir( "mu_sir" );
+const std::string mu_sirs( "mu_sirs" );
+const std::string mu_sis( "mu_sis" );
 const std::string mult_coupling( "mult_coupling" );
 const std::string music_channel( "music_channel" );
 

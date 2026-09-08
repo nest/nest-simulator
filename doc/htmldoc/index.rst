@@ -75,6 +75,10 @@ Welcome to the NEST Simulator documentation!
                   :target: auto_examples/eprop_plasticity/index.html
 
                   Explore eligibility propagation plasticity
+      .. grid-item-card:: Discrete state neurons
+           :img-top: ../static/img/nest_logo-faded.png
+
+           * :doc:`Susceptible (S), Infected (I), Recovered (R) model of the spread of disease <../auto_examples/sir_neuron>`
 
        .. grid-item::
 

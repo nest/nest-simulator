@@ -82,8 +82,8 @@ def get_models_from_file(model_file):
     Connection) or from another model. The latter can only be detected
     if the base model has the same name as the file.
 
-    The rate and binary neurons are typedefs for specialized template
-    classes and multiple of such typedefs may be present in a file.
+    The rate, binary, and infection neurons are typedefs for specialized
+    template classes and multiple of such typedefs may be present in a file.
 
     Parameters
     ----------
@@ -112,6 +112,7 @@ def get_models_from_file(model_file):
         "public UrbanczikArchivingNode": "urbanczik",
         "public EpropArchivingNode": "neuron",
         "typedef binary_neuron": "binary",
+        "typedef infection_neuron": "neuron",
         "typedef rate_": "rate",
     }
 

@@ -20,6 +20,7 @@
 set(models_sources
     models.h ${PROJECT_BINARY_DIR}/models/models.cpp
     binary_neuron.h
+    infection_neuron.h
     weight_recorder.h weight_recorder.cpp # Required by CommonSynapseProperties
     cm_compartmentcurrents.h cm_compartmentcurrents.cpp
     cm_tree.h cm_tree.cpp

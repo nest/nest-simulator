@@ -4,6 +4,9 @@ corellospinmatrix_detector
 erfc_neuron
 ginzburg_neuron
 mcculloch_pitts_neuron
+sir_neuron
+sirs_neuron
+sis_neuron
 spin_detector
 spike_generator
 spike_recorder

@@ -620,8 +620,6 @@ Links to external resources
 
 * `reStructuredText Sphinx documentation <https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html>`_
 
-* `LaTeX math styling <http://www.ams.org/arc/styleguide/mit-2.pdf>`_
-
 * `Sphinx documentation on referencing Python objects
   <https://www.sphinx-doc.org/en/master/usage/restructuredtext/domains.html#cross-referencing-python-objects>`_
 

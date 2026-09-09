@@ -13,8 +13,7 @@ Please make sure you have:
 * Installed the required `dependencies <https://github.com/nest/nest-simulator/blob/master/environment.yml>`_
 * Viewed the :ref:`CMake options <cmake_options>`
 
-You can also check our `Mailing List Archive <https://www.nest-initiative.org/mailinglist/hyperkitty/list/
-users@nest-simulator.org/>`_ and `Stack Overflow <https://stackoverflow.com/questions/tagged/nest-simulator>`_
+You can also check our `Mailing List Archive <https://www.nest-simulator.org/mailinglist/>`_ and `Stack Overflow <https://stackoverflow.com/questions/tagged/nest-simulator>`_
 to see if your question has been resolved.
 
 1. CMAKE error says a <package> was not found or <package> is too old

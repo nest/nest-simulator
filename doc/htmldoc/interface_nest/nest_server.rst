@@ -426,8 +426,8 @@ After this, NumPy can be used from within scripts in the regular way:
 
     from nest_client import NESTClient
     nest = NESTClient()
-    response = nsc.exec_script("a = numpy.arange(10)", 'a')
-    print(response['data'][::2])                    # [0, 2, 4, 6, 8]
+    response = nsc.exec_script("a = np.arange(0, 10, 2)", 'a')
+    print(response['data'])                    # [0, 2, 4, 6, 8]
 
 .. danger::
 
@@ -439,7 +439,7 @@ After this, NumPy can be used from within scripts in the regular way:
 
     .. code-block:: sh
 
-        export NEST_SERVER_DISABLE_RESTRICTION=false
+        export NEST_SERVER_DISABLE_RESTRICTION=true
         nest-server start
 
     Please be aware that running NEST Server like this bears a high risk of arbitrary remote code execution, and this
@@ -465,18 +465,17 @@ using a JSON file as input for ``curl``:
         import nest\n
         # Reset kernel\n
         nest.ResetKernel()\n
-        # Create nodes\nparams = {'rate': 6500.}\n
+        # Create nodes\nparams = {'rate': 6500}\n
         pg = nest.Create('poisson_generator', 1, params)\n
         neurons = nest.Create('iaf_psc_alpha', 1000)\n
         sr = nest.Create('spike_recorder')\n
         # Connect nodes\n
-        nest.Connect(pg, neurons, syn_spec={'weight': 10.})\n
+        nest.Connect(pg, neurons, syn_spec={'weight': 10})\n
         nest.Connect(neurons[::10], sr)\n
         # Simulate\n
-        nest.Simulate(1000.0)\n
+        nest.Simulate(1000)\n
         # Get events\n
-        n_events = nest.GetStatus(sr, 'n_events')[0]\n
-        print('Number of events:', n_events)\n
+        print('Number of events:', sr.n_events)\n
       ",
       "return": "n_events"
     }

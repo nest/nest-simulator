@@ -104,9 +104,6 @@ nest::ConnectionManager::initialize( const bool adjust_number_of_threads_or_rng_
     register_conn_builder< SymmetricBernoulliBuilder >( "symmetric_pairwise_bernoulli" );
     register_conn_builder< FixedTotalNumberBuilder >( "fixed_total_number" );
     register_third_conn_builder< ThirdBernoulliWithPoolBuilder >( "third_factor_bernoulli_with_pool" );
-#ifdef HAVE_LIBNEUROSIM
-    register_conn_builder< ConnectionGeneratorBuilder >( "conngen" );
-#endif
 
     keep_source_table_ = true;
     connections_have_changed_ = false;

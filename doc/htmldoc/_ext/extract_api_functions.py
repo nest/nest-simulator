@@ -21,7 +21,6 @@
 import ast
 import glob
 import os
-import re
 
 from sphinx.application import Sphinx
 
@@ -33,31 +32,50 @@ the API documentation (``ref_material/pynest_api/``)
 """
 
 
+def referenced_name(node):
+    """The name a reference node spells, e.g. ``KernelAttribute`` for ``ll_api.KernelAttribute``."""
+
+    if isinstance(node, ast.Attribute):
+        return node.attr
+    return node.id if isinstance(node, ast.Name) else None
+
+
+def find_kernel_attributes(tree):
+    """
+    Get the names of the kernel attributes, which are declared as module-level
+    annotations of the form ``name: Annotated[type, KernelAttribute(...)]``; see
+    ``_install_kernel_attributes`` in ``pynest/nest/__init__.py``.
+    """
+    names = []
+
+    for node in ast.iter_child_nodes(tree):
+        if not isinstance(node, ast.AnnAssign) or not isinstance(node.target, ast.Name):
+            continue
+        annotation = node.annotation
+        if not isinstance(annotation, ast.Subscript) or referenced_name(annotation.value) != "Annotated":
+            continue
+        # The first subscript argument is the type, the rest is the metadata.
+        metadata = annotation.slice.elts[1:] if isinstance(annotation.slice, ast.Tuple) else []
+        if any(isinstance(item, ast.Call) and referenced_name(item.func) == "KernelAttribute" for item in metadata):
+            names.append(node.target.id)
+
+    return names
+
+
 def find_all_variables(file_path):
     """
     Get the names of all functions listed in ``__all__`` in each of the PyNEST
     API files, along with the kernel attributes found in ``__init__.py`` of
     ``pynest/nest/``.
     """
-    all_variables = None
-
-    if "pynest/nest/__init__" in file_path:
-        # Read the __init__.py file
-        with open(file_path, "r") as init_file:
-            file_content = init_file.read()
-
-        # Find the class definition
-        match = re.search(r"class\s+NestModule\(.*?\):", file_content, re.DOTALL)
-        if match:
-            # Find the variable assignments within the class
-            all_variables = re.findall(r"(\w+)\s*=\s*KernelAttribute", file_content)
-
     with open(file_path, "r") as file:
         try:
             tree = ast.parse(file.read())
         except SyntaxError:
             # Skip files with syntax errors
             return None
+
+    all_variables = find_kernel_attributes(tree) if "pynest/nest/__init__" in file_path else None
 
     for node in ast.iter_child_nodes(tree):
         if isinstance(node, ast.Assign) and len(node.targets) == 1:

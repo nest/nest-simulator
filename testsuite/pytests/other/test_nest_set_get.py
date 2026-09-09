@@ -44,7 +44,7 @@ def test_nest_get():
 
     kst = nest.get("keep_source_table")
     assert kst == nest.keep_source_table
-    assert kst == type(nest).keep_source_table._default
+    assert kst == type(nest).keep_source_table.default
 
 
 def test_nest_get_unknown_attr_raises():

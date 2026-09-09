@@ -36,21 +36,28 @@ from .hl_api_nodes import Create
 from .hl_api_simulation import GetKernelStatus, SetKernelStatus, Simulate
 from .hl_api_types import NodeCollection
 
-try:
-    import pandas as pd
 
-    have_pandas = True
-except ImportError:
-    have_pandas = False
+def _import_sonata_dependency(module_name):
+    """Import one of the optional third-party dependencies of `SonataNetwork`.
 
-try:
-    import h5py
+    They are imported here rather than at module level because `hl_api_sonata` is
+    imported by `nest` itself, and neither Pandas nor h5py should be the price of
+    `import nest` for the scripts that never build a SONATA network.
 
-    have_h5py = True
-except ImportError:
-    have_h5py = False
+    Raises
+    ------
+    ModuleNotFoundError
+        If the module is not installed.
+    """
 
-have_hdf5 = GetKernelStatus("build_info")["have_hdf5"]
+    import importlib
+
+    try:
+        return importlib.import_module(module_name)
+    except ImportError:
+        msg = f"'SonataNetwork' unavailable because '{module_name}' could not be loaded."
+        raise ModuleNotFoundError(msg) from None
+
 
 __all__ = ["SonataNetwork"]
 
@@ -104,12 +111,10 @@ class SonataNetwork:
     """
 
     def __init__(self, config, sim_config=None):
-        if not have_hdf5:
+        if not GetKernelStatus("build_info")["have_hdf5"]:
             raise ModuleNotFoundError("'SonataNetwork' unavailable because NEST was compiled without 'HDF5' support")
-        if not have_h5py:
-            raise ModuleNotFoundError("'SonataNetwork' unavailable because 'h5py' could not be loaded.")
-        if not have_pandas:
-            raise ModuleNotFoundError("'SonataNetwork' unavailable because 'pandas' could not be loaded.")
+        _import_sonata_dependency("h5py")
+        _import_sonata_dependency("pandas")
 
         self._node_collections = {}
         self._edges_maps = []
@@ -203,6 +208,8 @@ class SonataNetwork:
             for each population. The population names are keys.
         """
 
+        import pandas as pd
+
         # Iterate node config files
         for nodes_conf in self._conf["networks"]["nodes"]:
             csv_fn = nodes_conf["node_types_file"]
@@ -242,6 +249,8 @@ class SonataNetwork:
         csv_fn : str
             Name of current CSV file. Used for more informative error messages.
         """
+
+        import h5py
 
         node_types_map = self._create_node_type_parameter_map(nodes_df, csv_fn)
 
@@ -301,6 +310,8 @@ class SonataNetwork:
         nodes_conf : dict
             Config as dictionary specifying filenames
         """
+
+        import h5py
 
         with h5py.File(nodes_conf["nodes_file"], "r") as nodes_h5f:
             for pop_name in nodes_h5f["nodes"]:
@@ -417,6 +428,8 @@ class SonataNetwork:
             to create the connections. Default: ``2**20``.
         """
 
+        import h5py
+
         if not self._are_nodes_created:
             raise RuntimeError("The SONATA network nodes must be created before any connections can be made.")
 
@@ -496,6 +509,8 @@ class SonataNetwork:
         each edge CSV file. The associated edge HDF5 filename is included in
         the map as well.
         """
+
+        import pandas as pd
 
         # Iterate edge config files
         for edges_conf in self._conf["networks"]["edges"]:

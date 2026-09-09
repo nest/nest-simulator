@@ -33,15 +33,6 @@ from .hl_api_helper import is_iterable, stringify_path
 from .hl_api_parallel_computing import NumProcesses, Rank
 from .hl_api_types import NodeCollection
 
-try:
-    import matplotlib as mpl
-    import matplotlib.patches as mpatches
-    import matplotlib.path as mpath
-
-    HAVE_MPL = True
-except ImportError:
-    HAVE_MPL = False
-
 __all__ = [
     "CreateMask",
     "Displacement",
@@ -992,12 +983,30 @@ def SelectNodesByMask(layer, anchor, mask_obj):
     return nestkernel.llapi_select_nodes_by_mask(layer._datum, anchor, mask_datum)
 
 
+def _import_pyplot():
+    """Import `matplotlib.pyplot` on demand.
+
+    Importing Matplotlib when `nest` is imported would make every NEST script pay for
+    it, and would fix the backend before the user gets a chance to choose one.
+
+    Raises
+    ------
+    ImportError
+        If Matplotlib is not installed.
+    """
+
+    try:
+        import matplotlib.pyplot as plt
+    except ImportError:
+        raise ImportError("Matplotlib could not be imported") from None
+
+    return plt
+
+
 def _draw_extent(ax, xctr, yctr, xext, yext):
     """Draw extent and set aspect ration, limits"""
 
-    # import pyplot here and not at toplevel to avoid preventing users
-    # from changing matplotlib backend after importing nest
-    import matplotlib.pyplot as plt
+    plt = _import_pyplot()
 
     # thin gray line indicating extent
     llx, lly = xctr - xext / 2.0, yctr - yext / 2.0
@@ -1074,12 +1083,7 @@ def PlotLayer(layer, fig=None, nodecolor="b", nodesize=20):
             plt.show()
     """
 
-    # import pyplot here and not at toplevel to avoid preventing users
-    # from changing matplotlib backend after importing nest
-    import matplotlib.pyplot as plt
-
-    if not HAVE_MPL:
-        raise ImportError("Matplotlib could not be imported")
+    plt = _import_pyplot()
 
     if not isinstance(layer, NodeCollection):
         raise TypeError("layer must be a NodeCollection.")
@@ -1217,12 +1221,7 @@ def PlotTargets(
             plt.show()
     """
 
-    # import pyplot here and not at toplevel to avoid preventing users
-    # from changing matplotlib backend after importing nest
-    import matplotlib.pyplot as plt
-
-    if not HAVE_MPL:
-        raise ImportError("Matplotlib could not be imported")
+    plt = _import_pyplot()
 
     if not isinstance(src_nrn, NodeCollection) or len(src_nrn) != 1:
         raise TypeError("src_nrn must be a single element NodeCollection.")
@@ -1375,9 +1374,7 @@ def PlotSources(
             plt.show()
     """
 
-    # import pyplot here and not at toplevel to avoid preventing users
-    # from changing matplotlib backend after importing nest
-    import matplotlib.pyplot as plt
+    plt = _import_pyplot()
 
     if not isinstance(tgt_nrn, NodeCollection) or len(tgt_nrn) != 1:
         raise TypeError("tgt_nrn must be a single element NodeCollection.")
@@ -1451,10 +1448,11 @@ def PlotSources(
 def _create_mask_patches(mask, periodic, extent, source_pos, face_color="yellow"):
     """Create Matplotlib Patch objects representing the mask"""
 
-    # import pyplot here and not at toplevel to avoid preventing users
-    # from changing matplotlib backend after importing nest
-    import matplotlib as mtpl
-    import matplotlib.pyplot as plt
+    plt = _import_pyplot()
+
+    import matplotlib as mpl
+    import matplotlib.patches as mpatches
+    import matplotlib.path as mpath
 
     edge_color = "black"
     alpha = 0.2
@@ -1520,7 +1518,7 @@ def _create_mask_patches(mask, periodic, extent, source_pos, face_color="yellow"
 
         patch = plt.Rectangle(pos, width, height, fc=face_color, ec=edge_color, alpha=alpha, lw=line_width)
         # Need to rotate about center
-        trnsf = mtpl.transforms.Affine2D().rotate_deg_around(cntr[0], cntr[1], angle) + plt.gca().transData
+        trnsf = mpl.transforms.Affine2D().rotate_deg_around(cntr[0], cntr[1], angle) + plt.gca().transData
         patch.set_transform(trnsf)
         mask_patches.append(patch)
 
@@ -1530,7 +1528,7 @@ def _create_mask_patches(mask, periodic, extent, source_pos, face_color="yellow"
 
                 cntr = [pos[0] + width / 2, pos[1] + height / 2]
                 # Need to rotate about center
-                trnsf = mtpl.transforms.Affine2D().rotate_deg_around(cntr[0], cntr[1], angle) + plt.gca().transData
+                trnsf = mpl.transforms.Affine2D().rotate_deg_around(cntr[0], cntr[1], angle) + plt.gca().transData
                 patch.set_transform(trnsf)
                 mask_patches.append(patch)
     elif "elliptical" in mask:
@@ -1605,12 +1603,7 @@ def PlotProbabilityParameter(
         a new one is created.
     """
 
-    # import pyplot here and not at toplevel to avoid preventing users
-    # from changing matplotlib backend after importing nest
-    import matplotlib.pyplot as plt
-
-    if not HAVE_MPL:
-        raise ImportError("Matplotlib could not be imported")
+    plt = _import_pyplot()
 
     if parameter is None and mask is None:
         raise ValueError("At least one of parameter or mask must be specified")

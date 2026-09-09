@@ -30,21 +30,9 @@ from math import floor, log
 import numpy
 
 from .. import nestkernel_api as nestkernel
-from .hl_api_helper import (
-    get_parameters,
-    get_parameters_hierarchical_addressing,
-    is_iterable,
-    restructure_data,
-)
+from .hl_api_helper import get_parameters, get_parameters_hierarchical_addressing, is_iterable, restructure_data
 from .hl_api_parallel_computing import NumProcesses, Rank
 from .hl_api_simulation import GetKernelStatus
-
-try:
-    import pandas
-
-    HAVE_PANDAS = True
-except ImportError:
-    HAVE_PANDAS = False
 
 # A NumPy2 conformant implementation of NodeCollection.__array__() must have the signature
 # __array__(object, dtype=None, copy=None), where copy is passed on to numpy.array(..., copy=copy).
@@ -57,6 +45,28 @@ try:
     _ARRAY_COPY_DEFAULT = None
 except ValueError:
     _ARRAY_COPY_DEFAULT = True
+
+
+def _import_pandas():
+    """Import `pandas` on demand.
+
+    Importing it when `nest` is imported would make every NEST script pay for Pandas,
+    while only the ``output="pandas"`` branches of `NodeCollection.get()` and
+    `SynapseCollection.get()` need it.
+
+    Raises
+    ------
+    ImportError
+        If Pandas is not installed.
+    """
+
+    try:
+        import pandas
+    except ImportError:
+        raise ImportError("Pandas could not be imported") from None
+
+    return pandas
+
 
 __all__ = [
     "CollocatedSynapses",
@@ -392,8 +402,9 @@ class NodeCollection:
             output = ""
         elif "output" in kwargs:
             output = kwargs["output"]
-            if output == "pandas" and not HAVE_PANDAS:
-                raise ImportError("Pandas could not be imported")
+            if output == "pandas":
+                # Report a missing Pandas before doing any work.
+                _import_pandas()
         else:
             raise TypeError("Got unexpected keyword argument")
 
@@ -430,7 +441,7 @@ class NodeCollection:
             if len(self) == 1:
                 index = [index]
                 result = {key: [val] for key, val in result.items()}
-            result = pandas.DataFrame(result, index=index)
+            result = _import_pandas().DataFrame(result, index=index)
         elif output == "json":
             result = to_json(result)
 
@@ -865,8 +876,8 @@ class SynapseCollection:
         """
 
         pandas_output = output == "pandas"
-        if pandas_output and not HAVE_PANDAS:
-            raise ImportError("Pandas could not be imported")
+        if pandas_output:
+            pandas = _import_pandas()
 
         # Return empty dictionary if we have no connections
         # We also return if the network is empty after a ResetKernel.

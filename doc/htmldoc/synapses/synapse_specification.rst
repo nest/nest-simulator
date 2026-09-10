@@ -440,6 +440,15 @@ shows the setup and connection of such a model in more detail:
 
     nest.Connect(A, B, syn_spec={'receptor_type': 2})
 
+.. note::
+
+   Many neuron models do not use ``receptor_type`` to select between their excitatory and
+   inhibitory synapses. They use the **sign of the connection weight** instead, and require
+   ``receptor_type`` to be left at 0. Which mechanism applies is fixed by the neuron model
+   you connect to.
+
+   See :ref:`synapse_selection` for the mechanism each model uses.
+
 
 .. _synapse-types:
 

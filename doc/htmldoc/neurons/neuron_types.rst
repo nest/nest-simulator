@@ -315,6 +315,161 @@ inputs as currents or conductances.
 
 
 
+.. _synapse_selection:
+
+Selecting the target synapse
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Many neuron models provide more than one synapse, most commonly an excitatory and an
+inhibitory one with their own time constants (``tau_syn_ex`` and ``tau_syn_in``) and, for
+conductance-based models, their own reversal potentials (``E_ex`` and ``E_in``).
+How you direct an incoming spike to one synapse or the other is not the same for all
+models. It is fixed by the neuron model you connect to, and neither the synapse model nor
+the :py:func:`.Connect` call can change it.
+
+NEST models use one of the following three mechanisms.
+
+Sign of the weight
+^^^^^^^^^^^^^^^^^^
+
+Most models with an excitatory and an inhibitory synapse use the **sign of the connection
+weight** to choose between them. A positive weight targets the excitatory synapse, a
+negative weight the inhibitory one. Spike connections must use the default
+``receptor_type`` of 0. Requesting any other receptor raises an ``UnknownReceptorType``
+error when the connection is created.
+
+The one exception is :doc:`/models/iaf_tum_2000`, where ``receptor_type`` selects the input
+channel rather than the synapse. Connections from another ``iaf_tum_2000`` must use
+receptor 1, and the weight sign still chooses excitatory or inhibitory. Note also that a
+few models, such as :doc:`/models/iaf_psc_exp`, accept a non-zero ``receptor_type`` for
+*current* input from a generator. That is unrelated to how spikes are routed.
+
+.. code-block:: python
+
+    n = nest.Create("iaf_cond_exp")
+    pg_ex = nest.Create("poisson_generator", params={"rate": 80.0})
+    pg_in = nest.Create("poisson_generator", params={"rate": 80.0})
+
+    # positive weight -> excitatory synapse (E_ex, tau_syn_ex)
+    nest.Connect(pg_ex, n, syn_spec={"weight": 1.0, "delay": 1.0})
+
+    # negative weight -> inhibitory synapse (E_in, tau_syn_in)
+    nest.Connect(pg_in, n, syn_spec={"weight": -1.0, "delay": 1.0})
+
+What the sign controls differs between the two model classes:
+
+* In **current-based** models, the sign selects the time constant and also sets the
+  direction of the post-synaptic current. A negative weight is hyperpolarizing.
+
+* In **conductance-based** models, the sign selects the time constant and the reversal
+  potential, but only the *absolute value* of the weight sets the conductance amplitude.
+  Whether the input depolarizes or hyperpolarizes the neuron then follows from the
+  reversal potential relative to the membrane potential, not from the sign of the weight.
+
+.. note::
+
+   Describe your connections as having positive or negative weights, and do not rely on
+   the behavior of a weight of exactly zero. Models are not consistent about which synapse
+   a zero weight is routed to, though a zero-weight connection has no effect either way.
+
+.. dropdown:: Models that select the synapse by weight sign
+
+   Current-based:
+
+   * :doc:`/models/aeif_psc_alpha`
+   * :doc:`/models/aeif_psc_exp`
+   * :doc:`/models/amat2_psc_exp`
+   * :doc:`/models/gif_pop_psc_exp`
+   * :doc:`/models/gif_psc_exp`
+   * :doc:`/models/hh_psc_alpha`
+   * :doc:`/models/hh_psc_alpha_clopath`
+   * :doc:`/models/hh_psc_alpha_gap`
+   * :doc:`/models/iaf_psc_alpha`
+   * :doc:`/models/iaf_psc_alpha_ps`
+   * :doc:`/models/iaf_psc_exp`
+   * :doc:`/models/iaf_psc_exp_htum`
+   * :doc:`/models/iaf_psc_exp_ps`
+   * :doc:`/models/iaf_psc_exp_ps_lossless`
+   * :doc:`/models/iaf_tum_2000`
+   * :doc:`/models/mat2_psc_exp`
+
+   Conductance-based:
+
+   * :doc:`/models/aeif_cond_alpha`
+   * :doc:`/models/aeif_cond_alpha_astro`
+   * :doc:`/models/aeif_cond_exp`
+   * :doc:`/models/gif_cond_exp`
+   * :doc:`/models/hh_cond_beta_gap_traub`
+   * :doc:`/models/hh_cond_exp_traub`
+   * :doc:`/models/iaf_chxk_2008`
+   * :doc:`/models/iaf_cond_alpha`
+   * :doc:`/models/iaf_cond_beta`
+   * :doc:`/models/iaf_cond_exp`
+   * :doc:`/models/iaf_cond_exp_sfa_rr`
+
+Receptor type
+^^^^^^^^^^^^^
+
+Multisynapse, multi-compartment and multi-receptor models instead select the synapse by
+:ref:`receptor type <receptor-types>`. Each synapse or compartment has its own integer ID,
+which you pass as ``receptor_type`` in the ``syn_spec`` dictionary. The sign of the weight
+plays no part in the choice.
+
+.. code-block:: python
+
+    n = nest.Create("iaf_psc_exp_multisynapse", params={"tau_syn": [2.0, 10.0]})
+    pg = nest.Create("poisson_generator", params={"rate": 80.0})
+
+    nest.Connect(pg, n, syn_spec={"weight": 1.0, "delay": 1.0, "receptor_type": 2})
+
+For the current-based models in this group, a negative weight gives a hyperpolarizing
+current on the chosen receptor, as usual. For the conductance-based ones, a negative
+weight gives a negative conductance, which is not physically meaningful. These models do
+not check the sign, so use positive weights and let the reversal potential of the chosen
+receptor determine the effect.
+
+.. dropdown:: Models that select the synapse by receptor type
+
+   * :doc:`/models/gif_psc_exp_multisynapse`
+   * :doc:`/models/glif_cond`
+   * :doc:`/models/glif_psc`
+   * :doc:`/models/glif_psc_double_alpha`
+   * :doc:`/models/ht_neuron`
+   * :doc:`/models/iaf_bw_2001`
+   * :doc:`/models/iaf_bw_2001_exact`
+   * :doc:`/models/iaf_cond_alpha_mc`
+   * :doc:`/models/iaf_psc_alpha_multisynapse`
+   * :doc:`/models/iaf_psc_exp_multisynapse`
+   * :doc:`/models/pp_cond_exp_mc_urbanczik`
+
+Receptor type, with negative weights rejected
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The conductance-based multisynapse models and the compartmental model select the synapse
+by receptor type as above, but additionally reject negative weights with an error when the
+spike is delivered, rather than letting a negative conductance through.
+
+.. dropdown:: Models that reject negative weights
+
+   * :doc:`/models/aeif_cond_alpha_multisynapse`
+   * :doc:`/models/aeif_cond_beta_multisynapse`
+   * :doc:`/models/cm_default`
+   * :doc:`/models/gif_cond_exp_multisynapse`
+   * :doc:`/models/astrocyte_lr_1994`
+
+Models with a single synapse
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Models with delta-shaped post-synaptic responses, along with the e-prop and Izhikevich
+models, sum all input into one channel. There is no synapse to select. The sign of the
+weight still determines whether an input depolarizes or hyperpolarizes the neuron.
+
+.. warning::
+
+   :doc:`/models/iaf_chs_2007` has a single synapse and **silently discards** spikes
+   arriving with a negative weight. No error or warning is raised.
+
+
 Post-synaptic input responses
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

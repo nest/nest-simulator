@@ -24,17 +24,28 @@
 #ifndef STEP_CURRENT_GENERATOR_H
 #define STEP_CURRENT_GENERATOR_H
 
+#include <math.h>
 // C++ includes:
+#include <algorithm>
+#include <map>
+#include <string>
 #include <vector>
 
 // Includes from nestkernel:
 #include "connection.h"
 #include "device_node.h"
+#include "dictionary.h"
 #include "event.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
 #include "nest_types.h"
+#include "node.h"
+#include "recordables_map.h"
 #include "ring_buffer.h"
 #include "stimulation_device.h"
 #include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -272,6 +283,7 @@ step_current_generator::get_type() const
 {
   return StimulationDevice::Type::CURRENT_GENERATOR;
 }
+
 }  // namespace
 
 #endif /* #ifndef STEP_CURRENT_GENERATOR_H */

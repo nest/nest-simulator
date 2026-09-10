@@ -21,6 +21,14 @@
  */
 #include "cm_tree.h"
 
+#include <cstdio>
+#include <iostream>
+
+#include "dictionary.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
+
 
 nest::Compartment::Compartment( const long compartment_index, const long parent_index )
   : xx_( 0.0 )

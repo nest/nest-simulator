@@ -22,14 +22,16 @@
 
 #include "parrot_neuron_ps.h"
 
-// Includes from libnestutil:
-#include "numerics.h"
+#include <assert.h>
 
 // Includes from nestkernel:
-#include "event_delivery_manager_impl.h"
-#include "exceptions.h"
+#include "event_delivery_manager.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
+#include "simulation_manager.h"
+
+class Dictionary;
 
 
 namespace nest
@@ -80,7 +82,7 @@ parrot_neuron_ps::update( Time const& origin, long const from, long const to )
       SpikeEvent se;
       se.set_multiplicity( multiplicity );
       se.set_offset( ev_offset );
-      kernel().event_delivery_manager.send( *this, se, lag );
+      kernel::manager< EventDeliveryManager >.send( *this, se, lag );
 
       for ( unsigned long i = 0; i < multiplicity; ++i )
       {
@@ -117,7 +119,7 @@ parrot_neuron_ps::handle( SpikeEvent& e )
     const long Tdeliver = e.get_stamp().get_steps() + e.get_delay_steps() - 1;
 
     // parrot ignores weight of incoming connection, store multiplicity
-    B_.events_.add_spike( e.get_rel_delivery_steps( nest::kernel().simulation_manager.get_slice_origin() ),
+    B_.events_.add_spike( e.get_rel_delivery_steps( nest::kernel::manager< SimulationManager >.get_slice_origin() ),
       Tdeliver,
       e.get_offset(),
       static_cast< double >( e.get_multiplicity() ) );

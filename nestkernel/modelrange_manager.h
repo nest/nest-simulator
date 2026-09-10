@@ -28,10 +28,11 @@
 
 // Includes from libnestutil:
 #include "manager_interface.h"
-
 // Includes from nestkernel:
 #include "modelrange.h"
 #include "nest_types.h"
+
+class Dictionary;
 
 namespace nest
 {
@@ -86,33 +87,6 @@ private:
   size_t last_node_id_;
 };
 
-inline void
-nest::ModelRangeManager::set_status( const Dictionary& )
-{
-}
-
-inline void
-nest::ModelRangeManager::get_status( Dictionary& )
-{
-}
-
-inline bool
-nest::ModelRangeManager::is_in_range( size_t node_id ) const
-{
-  return ( node_id > 0 and node_id <= last_node_id_ and node_id >= first_node_id_ );
-}
-
-inline std::vector< modelrange >::const_iterator
-nest::ModelRangeManager::begin() const
-{
-  return modelranges_.begin();
-}
-
-inline std::vector< modelrange >::const_iterator
-nest::ModelRangeManager::end() const
-{
-  return modelranges_.end();
-}
 
 }  // namespace nest end
 

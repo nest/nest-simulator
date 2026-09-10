@@ -25,15 +25,19 @@
 
 // C++ includes:
 #include <deque>
+#include <string>
 #include <vector>
 
 // Includes from nestkernel:
 #include "connection.h"
 #include "event.h"
+#include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
 #include "random_generators.h"
 #include "stimulation_device.h"
+
+class Dictionary;
 
 namespace nest
 {

@@ -22,6 +22,14 @@
 
 #include "aeif_cond_beta_multisynapse.h"
 
+#include <algorithm>
+#include <assert.h>
+#include <cmath>
+#include <gsl/gsl_errno.h>
+#include <sstream>
+
+#include "simulation_manager.h"
+
 #ifdef HAVE_GSL
 
 // C++ includes:
@@ -30,10 +38,10 @@
 // Includes from libnestutil:
 #include "beta_normalization_factor.h"
 #include "dict_util.h"
-#include "numerics.h"
-
 // Includes from nestkernel:
+#include "event_delivery_manager.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
@@ -51,8 +59,7 @@ register_aeif_cond_beta_multisynapse( const std::string& name )
  * Recordables map
  * ---------------------------------------------------------------- */
 
-// Override the create() method with one call to
-// DynamicRecordablesMap::insert() for each quantity to be recorded.
+// Override the create() method with one call to DynamicRecordablesMap::insert() for each quantity to be recorded.
 template <>
 void
 DynamicRecordablesMap< aeif_cond_beta_multisynapse >::create( aeif_cond_beta_multisynapse& host )
@@ -553,7 +560,7 @@ aeif_cond_beta_multisynapse::update( Time const& origin, const long from, const 
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;
-        kernel().event_delivery_manager.send( *this, se, lag );
+        kernel::manager< EventDeliveryManager >.send( *this, se, lag );
       }
     }
 
@@ -600,7 +607,8 @@ aeif_cond_beta_multisynapse::handle( SpikeEvent& e )
   assert( ( e.get_rport() > 0 ) and ( ( size_t ) e.get_rport() <= P_.n_receptors() ) );
 
   B_.spikes_[ e.get_rport() - 1 ].add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
+    e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
+    e.get_weight() * e.get_multiplicity() );
 }
 
 void
@@ -612,7 +620,7 @@ aeif_cond_beta_multisynapse::handle( CurrentEvent& e )
   const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * I );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ), w * I );
 }
 
 void

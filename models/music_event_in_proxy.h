@@ -29,13 +29,18 @@
 #ifdef HAVE_MUSIC
 
 // C++ includes:
+#include <string>
 #include <vector>
 
 // Includes from nestkernel:
 #include "connection.h"
 #include "device_node.h"
 #include "event.h"
+#include "nest_time.h"
 #include "nest_types.h"
+#include "node.h"
+
+class Dictionary;
 
 namespace nest
 {

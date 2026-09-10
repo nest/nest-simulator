@@ -30,6 +30,12 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "parameter.h"
+#include "random_generators.h"
+
+namespace boost
+{
+class any;
+}  // namespace boost
 
 /**
  * Base class for parameters provided to connection routines.
@@ -45,18 +51,15 @@
 
 namespace nest
 {
+class Node;
 
 class ConnParameter
 {
 
 public:
-  ConnParameter()
-  {
-  }
+  ConnParameter();
 
-  virtual ~ConnParameter()
-  {
-  }
+  virtual ~ConnParameter();
 
   /**
    * Return parameter value.
@@ -71,41 +74,19 @@ public:
    */
   virtual double value_double( size_t, RngPtr, size_t, Node* ) const = 0;
   virtual long value_int( size_t, RngPtr, size_t, Node* ) const = 0;
-  virtual void
-  skip( size_t, size_t ) const
-  {
-  }
+
+  virtual void skip( size_t, size_t ) const;
   virtual bool is_array() const = 0;
-
-  virtual bool
-  is_scalar() const
-  {
-    return false;
-  }
-
-  virtual bool
-  provides_long() const
-  {
-    return false;
-  }
-
-  virtual void
-  reset() const
-  {
-    throw NotImplemented( "Symmetric connections require parameters that can be reset." );
-  }
+  virtual bool is_scalar() const;
+  virtual bool provides_long() const;
+  virtual void reset() const;
 
   /**
    * Returns number of values available.
    *
    * 0 indicates scalar/unlimited supply.
    */
-  virtual size_t
-  number_of_values() const
-  {
-    return 0;
-  }
-
+  virtual size_t number_of_values() const;
   /**
    * @param t parameter
    * type is established by casts to all acceptedpossibilities
@@ -124,39 +105,13 @@ public:
 class ScalarDoubleParameter : public ConnParameter
 {
 public:
-  ScalarDoubleParameter( double value, const size_t )
-    : value_( value )
-  {
-  }
+  ScalarDoubleParameter( double value, const size_t );
 
-  double
-  value_double( size_t, RngPtr, size_t, Node* ) const override
-  {
-    return value_;
-  }
-
-  long
-  value_int( size_t, RngPtr, size_t, Node* ) const override
-  {
-    throw KernelException( "ConnParameter calls value function with false return type." );
-  }
-
-  inline bool
-  is_array() const override
-  {
-    return false;
-  }
-
-  void
-  reset() const override
-  {
-  }
-
-  bool
-  is_scalar() const override
-  {
-    return true;
-  }
+  double value_double( size_t, RngPtr, size_t, Node* ) const override;
+  long value_int( size_t, RngPtr, size_t, Node* ) const override;
+  bool is_array() const override;
+  void reset() const override;
+  bool is_scalar() const override;
 
 private:
   double value_;
@@ -170,45 +125,14 @@ private:
 class ScalarIntegerParameter : public ConnParameter
 {
 public:
-  ScalarIntegerParameter( long value, const size_t )
-    : value_( value )
-  {
-  }
+  ScalarIntegerParameter( long value, const size_t );
 
-  double
-  value_double( size_t, RngPtr, size_t, Node* ) const override
-  {
-    return static_cast< double >( value_ );
-  }
-
-  long
-  value_int( size_t, RngPtr, size_t, Node* ) const override
-  {
-    return value_;
-  }
-
-  inline bool
-  is_array() const override
-  {
-    return false;
-  }
-
-  void
-  reset() const override
-  {
-  }
-
-  bool
-  is_scalar() const override
-  {
-    return true;
-  }
-
-  bool
-  provides_long() const override
-  {
-    return true;
-  }
+  double value_double( size_t, RngPtr, size_t, Node* ) const override;
+  long value_int( size_t, RngPtr, size_t, Node* ) const override;
+  bool is_array() const override;
+  void reset() const override;
+  bool is_scalar() const override;
+  bool provides_long() const override;
 
 private:
   long value_;
@@ -232,64 +156,16 @@ private:
 class ArrayDoubleParameter : public ConnParameter
 {
 public:
-  ArrayDoubleParameter( const std::vector< double >& values, const size_t nthreads )
-    : values_( values )
-    , next_( nthreads, values_.begin() )
-  {
-  }
+  ArrayDoubleParameter( const std::vector< double >& values, const size_t nthreads );
 
-  void
-  skip( size_t tid, size_t n_skip ) const override
-  {
-    if ( next_[ tid ] < values_.end() )
-    {
-      next_[ tid ] += n_skip;
-    }
-    else
-    {
-      throw KernelException( "Parameter values exhausted." );
-    }
-  }
+  void skip( size_t tid, size_t n_skip ) const override;
+  size_t number_of_values() const override;
 
-  size_t
-  number_of_values() const override
-  {
-    return values_.size();
-  }
+  double value_double( size_t tid, RngPtr, size_t, Node* ) const override;
+  long value_int( size_t, RngPtr, size_t, Node* ) const override;
 
-  double
-  value_double( size_t tid, RngPtr, size_t, Node* ) const override
-  {
-    if ( next_[ tid ] != values_.end() )
-    {
-      return *next_[ tid ]++;
-    }
-    else
-    {
-      throw KernelException( "Parameter values exhausted." );
-    }
-  }
-
-  long
-  value_int( size_t, RngPtr, size_t, Node* ) const override
-  {
-    throw KernelException( "ConnParameter calls value function with false return type." );
-  }
-
-  inline bool
-  is_array() const override
-  {
-    return true;
-  }
-
-  void
-  reset() const override
-  {
-    for ( std::vector< std::vector< double >::const_iterator >::iterator it = next_.begin(); it != next_.end(); ++it )
-    {
-      *it = values_.begin();
-    }
-  }
+  bool is_array() const override;
+  void reset() const override;
 
 private:
   const std::vector< double > values_;
@@ -313,77 +189,17 @@ private:
 class ArrayLongParameter : public ConnParameter
 {
 public:
-  ArrayLongParameter( const std::vector< long >& values, const size_t nthreads )
-    : values_( values )
-    , next_( nthreads, values_.begin() )
-  {
-  }
+  ArrayLongParameter( const std::vector< long >& values, const size_t nthreads );
 
-  void
-  skip( size_t tid, size_t n_skip ) const override
-  {
-    if ( next_[ tid ] < values_.end() )
-    {
-      next_[ tid ] += n_skip;
-    }
-    else
-    {
-      throw KernelException( "Parameter values exhausted." );
-    }
-  }
+  void skip( size_t tid, size_t n_skip ) const override;
+  size_t number_of_values() const override;
 
-  size_t
-  number_of_values() const override
-  {
-    return values_.size();
-  }
+  long value_int( size_t tid, RngPtr, size_t, Node* ) const override;
+  double value_double( size_t tid, RngPtr, size_t, Node* ) const override;
 
-  long
-  value_int( size_t tid, RngPtr, size_t, Node* ) const override
-  {
-    if ( next_[ tid ] != values_.end() )
-    {
-      return *next_[ tid ]++;
-    }
-    else
-    {
-      throw KernelException( "Parameter values exhausted." );
-    }
-  }
-
-  double
-  value_double( size_t tid, RngPtr, size_t, Node* ) const override
-  {
-    if ( next_[ tid ] != values_.end() )
-    {
-      return static_cast< double >( *next_[ tid ]++ );
-    }
-    else
-    {
-      throw KernelException( "Parameter values exhausted." );
-    }
-  }
-
-  inline bool
-  is_array() const override
-  {
-    return true;
-  }
-
-  bool
-  provides_long() const override
-  {
-    return true;
-  }
-
-  void
-  reset() const override
-  {
-    for ( std::vector< std::vector< long >::const_iterator >::iterator it = next_.begin(); it != next_.end(); ++it )
-    {
-      *it = values_.begin();
-    }
-  }
+  bool is_array() const override;
+  bool provides_long() const override;
+  void reset() const override;
 
 private:
   const std::vector< long > values_;
@@ -396,24 +212,10 @@ public:
   ParameterConnParameterWrapper( ParameterPTR, const size_t );
 
   double value_double( size_t target_thread, RngPtr rng, size_t snode_id, Node* target ) const override;
+  long value_int( size_t target_thread, RngPtr rng, size_t snode_id, Node* target ) const override;
 
-  long
-  value_int( size_t target_thread, RngPtr rng, size_t snode_id, Node* target ) const override
-  {
-    return value_double( target_thread, rng, snode_id, target );
-  }
-
-  inline bool
-  is_array() const override
-  {
-    return false;
-  }
-
-  bool
-  provides_long() const override
-  {
-    return parameter_->returns_int_only();
-  }
+  bool is_array() const override;
+  bool provides_long() const override;
 
 private:
   ParameterPTR parameter_;

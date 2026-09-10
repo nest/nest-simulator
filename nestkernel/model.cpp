@@ -22,15 +22,16 @@
 
 #include "model.h"
 
-// C++ includes:
-#include <algorithm>
+#include <assert.h>
 
 // Includes from libnestutil:
 #include "compose.hpp"
-
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "model_manager.h"
+#include "nest_names.h"
+#include "vp_manager.h"
 
 
 namespace nest
@@ -46,7 +47,7 @@ Model::Model( const std::string& name )
 void
 Model::set_threads()
 {
-  set_threads_( kernel().vp_manager.get_num_threads() );
+  set_threads_( kernel::manager< VPManager >.get_num_threads() );
 }
 
 void
@@ -127,7 +128,7 @@ Model::get_status()
   }
 
   d[ names::instantiations ] = tmp;
-  d[ names::type_id ] = kernel().model_manager.get_node_model( type_id_ )->get_name();
+  d[ names::type_id ] = kernel::manager< ModelManager >.get_node_model( type_id_ )->get_name();
 
   for ( size_t t = 0; t < tmp.size(); ++t )
   {
@@ -145,6 +146,15 @@ Model::get_status()
 
   d[ names::model ] = get_name();
   return d;
+}
+
+Node*
+Model::create( size_t t )
+{
+  assert( t < memory_.size() );
+  Node* n = create_();
+  memory_[ t ].emplace_back( n );
+  return n;
 }
 
 }  // namespace

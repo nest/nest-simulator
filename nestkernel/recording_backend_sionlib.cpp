@@ -33,10 +33,14 @@
 #include "compose.hpp"
 
 // Includes from nestkernel:
-#include "recording_device.h"
-#include "vp_manager_impl.h"
-
+#include "event.h"
+#include "io_manager.h"
+#include "logging.h"
+#include "logging_manager.h"
+#include "nest_names.h"
 #include "recording_backend_sionlib.h"
+#include "recording_device.h"
+#include "simulation_manager.h"
 
 const unsigned int nest::RecordingBackendSIONlib::SIONLIB_REC_BACKEND_VERSION = 2;
 const unsigned int nest::RecordingBackendSIONlib::DEV_NAME_BUFFERSIZE = 32;
@@ -58,7 +62,7 @@ nest::RecordingBackendSIONlib::~RecordingBackendSIONlib() throw()
 void
 nest::RecordingBackendSIONlib::initialize()
 {
-  device_map devices( kernel().vp_manager.get_num_threads() );
+  device_map devices( kernel::manager< VPManager >.get_num_threads() );
   devices_.swap( devices );
 }
 
@@ -146,7 +150,7 @@ nest::RecordingBackendSIONlib::open_files_()
     return;
   }
 
-  std::vector< std::exception_ptr > exceptions_raised( kernel().vp_manager.get_num_threads() );
+  std::vector< std::exception_ptr > exceptions_raised( kernel::manager< VPManager >.get_num_threads() );
 
 #pragma omp parallel
   {
@@ -165,11 +169,11 @@ nest::RecordingBackendSIONlib::open_files_()
     MPI_Comm local_comm = local_comm_;
 
     // This code is executed in a parallel region (opened above)!
-    const size_t tid = kernel().vp_manager.get_thread_id();
-    const size_t task = kernel().vp_manager.thread_to_vp( tid );
+    const size_t tid = kernel::manager< VPManager >.get_thread_id();
+    const size_t task = kernel::manager< VPManager >.thread_to_vp( tid );
     if ( not task )
     {
-      t_start_ = kernel().simulation_manager.get_time().get_ms();
+      t_start_ = kernel::manager< SimulationManager >.get_time().get_ms();
     }
 
     // set n_rec counters to zero in every device on every thread
@@ -194,7 +198,7 @@ nest::RecordingBackendSIONlib::open_files_()
       std::string filename = build_filename_();
 
       std::ifstream test( filename.c_str() );
-      if ( test.good() & not kernel().io_manager.overwrite_files() )
+      if ( test.good() & not kernel::manager< IOManager >.overwrite_files() )
       {
         std::string msg = String::compose(
           "The device file '%1' exists already and will not be overwritten. "
@@ -213,12 +217,12 @@ nest::RecordingBackendSIONlib::open_files_()
 #endif /* BG_MULTIFILE */
       sion_int32 fs_block_size = -1;
       sion_int64 sion_chunksize = P_.sion_chunksize_;
-      int rank = kernel().mpi_manager.get_rank();
+      int rank = kernel::manager< MPIManager >.get_rank();
 
       file.sid = sion_paropen_ompi( filename.c_str(),
         P_.sion_collective_ ? "bw,cmerge,collsize=-1" : "bw",
         &n_files,
-        kernel().mpi_manager.get_communicator(),
+        kernel::manager< MPIManager >.get_communicator(),
         &local_comm,
         &sion_chunksize,
         &fs_block_size,
@@ -264,8 +268,8 @@ nest::RecordingBackendSIONlib::close_files_()
 
 #pragma omp parallel
   {
-    const size_t tid = kernel().vp_manager.get_thread_id();
-    const size_t task = kernel().vp_manager.thread_to_vp( tid );
+    const size_t tid = kernel::manager< VPManager >.get_thread_id();
+    const size_t task = kernel::manager< VPManager >.thread_to_vp( tid );
 
     assert( ( files_.find( task ) != files_.end() ) and "initialize() was not called before calling cleanup()" );
 
@@ -298,7 +302,8 @@ nest::RecordingBackendSIONlib::close_files_()
 
         // accumulate number of recorded data points over all ranks
         unsigned long n_rec_total = 0;
-        MPI_Reduce( &n_rec, &n_rec_total, 1, MPI_UNSIGNED_LONG, MPI_SUM, 0, kernel().mpi_manager.get_communicator() );
+        MPI_Reduce(
+          &n_rec, &n_rec_total, 1, MPI_UNSIGNED_LONG, MPI_SUM, 0, kernel::manager< MPIManager >.get_communicator() );
         assert( sizeof( unsigned long ) <= sizeof( sion_uint64 ) );
         it->second.info.n_rec = static_cast< sion_uint64 >( n_rec_total );
       }
@@ -319,7 +324,7 @@ nest::RecordingBackendSIONlib::close_files_()
         sion_int64 info_pos;
       } data_end = { info_blk, info_pos };
 
-      double t_end = kernel().simulation_manager.get_time().get_ms();
+      double t_end = kernel::manager< SimulationManager >.get_time().get_ms();
       double resolution = Time::get_resolution().get_ms();
 
       sion_fwrite( &t_start_, sizeof( double ), 1, file.sid );
@@ -512,12 +517,12 @@ const std::string
 nest::RecordingBackendSIONlib::build_filename_() const
 {
   std::ostringstream basename;
-  const std::string& path = kernel().io_manager.get_data_path();
+  const std::string& path = kernel::manager< IOManager >.get_data_path();
   if ( not path.empty() )
   {
     basename << path << '/';
   }
-  basename << kernel().io_manager.get_data_prefix();
+  basename << kernel::manager< IOManager >.get_data_prefix();
 
   return basename.str() + P_.filename_;
 }
@@ -681,8 +686,8 @@ nest::RecordingBackendSIONlib::post_step_hook()
     return;
   }
 
-  const size_t tid = kernel().vp_manager.get_thread_id();
-  const size_t task = kernel().vp_manager.thread_to_vp( tid );
+  const size_t tid = kernel::manager< VPManager >.get_thread_id();
+  const size_t task = kernel::manager< VPManager >.thread_to_vp( tid );
 
   FileEntry& file = files_[ task ];
   SIONBuffer& buffer = file.buffer;
@@ -707,4 +712,16 @@ void
 nest::RecordingBackendSIONlib::get_device_status( const nest::RecordingDevice&, Dictionary& ) const
 {
   // nothing to do
+}
+
+size_t
+nest::RecordingBackendSIONlib::SIONBuffer::get_size()
+{
+  return ptr_;
+}
+
+size_t
+nest::RecordingBackendSIONlib::SIONBuffer::get_capacity()
+{
+  return max_size_;
 }

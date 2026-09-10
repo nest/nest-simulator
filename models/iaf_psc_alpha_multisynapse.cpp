@@ -22,17 +22,23 @@
 
 #include "iaf_psc_alpha_multisynapse.h"
 
+#include <assert.h>
 // C++ includes:
+#include <cmath>
 #include <limits>
+#include <sstream>
+#include <tuple>
 
 // Includes from libnestutil:
 #include "dict_util.h"
+#include "event_delivery_manager.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "iaf_propagator.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
 #include "numerics.h"
-#include "universal_data_logger_impl.h"
+#include "simulation_manager.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -46,8 +52,7 @@ register_iaf_psc_alpha_multisynapse( const std::string& name )
   register_node_model< iaf_psc_alpha_multisynapse >( name );
 }
 
-// Override the create() method with one call to RecordablesMap::insert_()
-// for each quantity to be recorded.
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 DynamicRecordablesMap< iaf_psc_alpha_multisynapse >::create( iaf_psc_alpha_multisynapse& host )
@@ -362,7 +367,7 @@ iaf_psc_alpha_multisynapse::update( Time const& origin, const long from, const l
 
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
       SpikeEvent se;
-      kernel().event_delivery_manager.send( *this, se, lag );
+      kernel::manager< EventDeliveryManager >.send( *this, se, lag );
     }
 
     // set new input current
@@ -391,7 +396,8 @@ iaf_psc_alpha_multisynapse::handle( SpikeEvent& e )
   assert( e.get_delay_steps() > 0 );
 
   B_.spikes_[ e.get_rport() - 1 ].add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
+    e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
+    e.get_weight() * e.get_multiplicity() );
 }
 
 void
@@ -403,7 +409,7 @@ iaf_psc_alpha_multisynapse::handle( CurrentEvent& e )
   const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * I );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ), w * I );
 }
 
 void

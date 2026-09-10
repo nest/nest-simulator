@@ -22,19 +22,33 @@
 
 #include "siegert_neuron.h"
 
+#include <gsl/gsl_math.h>
+#include <gsl/gsl_sf_dawson.h>
+#include <gsl/gsl_sf_erf.h>
+
+#include "connection_manager.h"
+#include "event_delivery_manager.h"
+#include "secondary_event.h"
+#include "secondary_event_impl.h"
+#include "simulation_manager.h"
+
+namespace nest
+{
+class DataLoggingRequest;
+}  // namespace nest
+
 #ifdef HAVE_GSL
 
 // C++ includes:
 #include <cmath>  // in case we need isnan() // fabs
-#include <cstdio>
 #include <string>
 
 // Includes from libnestutil:
 #include "dict_util.h"
 #include "numerics.h"
-
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
@@ -72,8 +86,7 @@ register_siegert_neuron( const std::string& name )
 
 RecordablesMap< siegert_neuron > siegert_neuron::recordablesMap_;
 
-// // Override the create() method with one call to RecordablesMap::insert_()
-// // for each quantity to be recorded.
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< siegert_neuron >::create()
@@ -188,7 +201,7 @@ nest::siegert_neuron::siegert_neuron()
   , B_( *this )
 {
   recordablesMap_.create();
-  Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
+  Node::set_node_uses_wfr( kernel::manager< SimulationManager >.use_wfr() );
   gsl_w_ = gsl_integration_workspace_alloc( 1000 );
 }
 
@@ -198,7 +211,7 @@ nest::siegert_neuron::siegert_neuron( const siegert_neuron& n )
   , S_( n.S_ )
   , B_( n.B_, *this )
 {
-  Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
+  Node::set_node_uses_wfr( kernel::manager< SimulationManager >.use_wfr() );
   gsl_w_ = gsl_integration_workspace_alloc( 1000 );
 }
 
@@ -227,7 +240,7 @@ nest::siegert_neuron::siegert( double mu, double sigma_square )
   // Effective shift of threshold and reset due to colored noise:
   // alpha = |zeta(1/2)|*sqrt(2) with zeta being the Riemann zeta
   // function (Fourcaud & Brunel, 2002)
-  const double alpha = 2.0652531522312172;
+  constexpr double alpha = 2.0652531522312172;
   double threshold_shift = alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
 
   // Scaled and shifted threshold and reset
@@ -236,15 +249,15 @@ nest::siegert_neuron::siegert( double mu, double sigma_square )
 
   // Prepare numerical integration
   double integral, result, error;
-  const size_t max_subintervals = 1000;
+  constexpr size_t max_subintervals = 1000;
   double erfcx_scale = 1.0;
   gsl_function F;
   F.function = &erfcx;
   F.params = &erfcx_scale;
   // Error tolerances for numerical integration, 1.49e-8 is approximately
   // machine precision for single-precision floats, i.e. 2^(-26).
-  const double err_abs = 0.0;
-  const double err_rel = 1.49e-8;
+  constexpr double err_abs = 0.0;
+  constexpr double err_rel = 1.49e-8;
 
   // Evaluate integral of exp( s^2 ) * ( 1 + erf( s ) ) from y_r to y_th
   // depending on the sign of y_th and y_r. Uses the scaled complementary
@@ -281,7 +294,7 @@ void
 nest::siegert_neuron::init_buffers_()
 {
   // resize buffers
-  const size_t buffer_size = kernel().connection_manager.get_min_delay();
+  const size_t buffer_size = kernel::manager< ConnectionManager >.get_min_delay();
   B_.drift_input_.resize( buffer_size, 0.0 );
   B_.diffusion_input_.resize( buffer_size, 0.0 );
   B_.last_y_values.resize( buffer_size, 0.0 );
@@ -309,8 +322,8 @@ nest::siegert_neuron::pre_run_hook()
 bool
 nest::siegert_neuron::update_( Time const& origin, const long from, const long to, const bool called_from_wfr_update )
 {
-  const size_t buffer_size = kernel().connection_manager.get_min_delay();
-  const double wfr_tol = kernel().simulation_manager.get_wfr_tol();
+  const size_t buffer_size = kernel::manager< ConnectionManager >.get_min_delay();
+  const double wfr_tol = kernel::manager< SimulationManager >.get_wfr_tol();
   bool wfr_tol_exceeded = false;
 
   // allocate memory to store rates to be sent by rate events
@@ -354,7 +367,7 @@ nest::siegert_neuron::update_( Time const& origin, const long from, const long t
   // Send diffusion-event
   DiffusionConnectionEvent rve;
   rve.set_coeffarray( new_rates );
-  kernel().event_delivery_manager.send_secondary( *this, rve );
+  kernel::manager< EventDeliveryManager >.send_secondary( *this, rve );
 
   // Reset variables
   std::vector< double >( buffer_size, 0.0 ).swap( B_.drift_input_ );

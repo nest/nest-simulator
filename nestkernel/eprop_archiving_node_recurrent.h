@@ -24,13 +24,10 @@
 #define EPROP_ARCHIVING_NODE_RECURRENT_H
 
 // models
-#include "eprop_archiving_node.h"
+#include "eprop_archiving_node_impl.h"
 
 // nestkernel
 #include "histentry.h"
-#include "nest_time.h"
-#include "nest_types.h"
-#include "node.h"
 
 namespace nest
 {
@@ -267,69 +264,6 @@ private:
    */
   static std::map< std::string, surrogate_gradient_function > surrogate_gradient_funcs_;
 };
-
-template < bool hist_shift_required >
-inline void
-EpropArchivingNodeRecurrent< hist_shift_required >::get_status( Dictionary& d ) const
-{
-  FlushEventMechanism::get_status( d );
-  IgnoreAndSpikeMechanism::get_status( d );
-
-  if constexpr ( not hist_shift_required )
-  {
-    d[ names::eprop_isi_trace_cutoff ] = eprop_isi_trace_cutoff_;
-  }
-}
-
-template < bool hist_shift_required >
-inline void
-EpropArchivingNodeRecurrent< hist_shift_required >::set_status( const Dictionary& d )
-{
-  FlushEventMechanism::set_status( d, this, hist_shift_required );
-  IgnoreAndSpikeMechanism::set_status( d, this );
-
-  if constexpr ( not hist_shift_required )
-  {
-    double eprop_isi_trace_cutoff_tmp = eprop_isi_trace_cutoff_;
-
-    update_value_param( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_tmp, this );
-
-    if ( eprop_isi_trace_cutoff_tmp < 0.0 )
-    {
-      throw BadProperty( "eprop_isi_trace_cutoff ≥ 0 required." );
-    }
-
-    eprop_isi_trace_cutoff_ = eprop_isi_trace_cutoff_tmp;
-  }
-}
-
-template < bool hist_shift_required >
-inline void
-EpropArchivingNodeRecurrent< hist_shift_required >::count_spike()
-{
-  ++n_spikes_;
-}
-
-template < bool hist_shift_required >
-inline void
-EpropArchivingNodeRecurrent< hist_shift_required >::reset_spike_count()
-{
-  n_spikes_ = 0;
-}
-
-template < bool hist_shift_required >
-long
-EpropArchivingNodeRecurrent< hist_shift_required >::model_dependent_history_shift_() const
-{
-  if constexpr ( hist_shift_required )
-  {
-    return get_shift();
-  }
-  else
-  {
-    return -delay_rec_out_;
-  }
-}
 
 }
 

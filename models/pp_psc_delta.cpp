@@ -27,16 +27,20 @@
 
 #include "pp_psc_delta.h"
 
+#include <assert.h>
+#include <cmath>
 
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "dict_util.h"
 #include "numerics.h"
-
 // Includes from nestkernel:
+#include "event_delivery_manager.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
+#include "simulation_manager.h"
 #include "universal_data_logger_impl.h"
 
 
@@ -54,8 +58,7 @@ register_pp_psc_delta( const std::string& name )
 
 RecordablesMap< pp_psc_delta > pp_psc_delta::recordablesMap_;
 
-// Override the create() method with one call to RecordablesMap::insert_()
-// for each quantity to be recorded.
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< pp_psc_delta >::create()
@@ -357,13 +360,11 @@ nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
 {
   for ( long lag = from; lag < to; ++lag )
   {
-
     S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P33_ * S_.y3_ + B_.spikes_.get_value( lag );
 
     double q_temp_ = 0;
     for ( unsigned int i = 0; i < S_.q_elems_.size(); i++ )
     {
-
       S_.q_elems_[ i ] = V_.Q33_[ i ] * S_.q_elems_[ i ];
 
       q_temp_ += S_.q_elems_[ i ];
@@ -426,7 +427,7 @@ nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
           // And send the spike event
           SpikeEvent se;
           se.set_multiplicity( n_spikes );
-          kernel().event_delivery_manager.send( *this, se, lag );
+          kernel::manager< EventDeliveryManager >.send( *this, se, lag );
 
           // set spike time for STDP to work,
           // see https://github.com/nest/nest-simulator/issues/77
@@ -465,8 +466,8 @@ nest::pp_psc_delta::handle( SpikeEvent& e )
   //     explicitly, since it depends on delay and offset within
   //     the update cycle.  The way it is done here works, but
   //     is clumsy and should be improved.
-  B_.spikes_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
+  B_.spikes_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
+    e.get_weight() * e.get_multiplicity() );
 }
 
 void
@@ -478,7 +479,7 @@ nest::pp_psc_delta::handle( CurrentEvent& e )
   const double w = e.get_weight();
 
   // Add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ), w * c );
 }
 
 void

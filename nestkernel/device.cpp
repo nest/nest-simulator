@@ -22,14 +22,11 @@
 
 #include "device.h"
 
-// C++ includes:
-#include <climits>
-#include <limits>
 
 // Includes from nestkernel:
+#include "dictionary.h"
 #include "exceptions.h"
 #include "nest_names.h"
-#include "node.h"
 
 
 /* ----------------------------------------------------------------
@@ -82,7 +79,7 @@ nest::Device::Parameters_::get( Dictionary& d ) const
 void
 nest::Device::Parameters_::update_( const Dictionary& d, const std::string& name, Time& value )
 {
-  // We cannot update the Time values directly, since updateValue()
+  // We cannot update the Time values directly, since update_value()
   // doesn't support Time objects. We thus read the value in ms into
   // a double first and then update the time object if a value was
   // given.
@@ -145,4 +142,65 @@ nest::Device::pre_run_hook()
   //  by adding time objects, all overflows will be handled gracefully
   V_.t_min_ = ( P_.origin_ + P_.start_ ).get_steps();
   V_.t_max_ = ( P_.origin_ + P_.stop_ ).get_steps();
+}
+
+
+long
+nest::Device::get_t_max_() const
+{
+  return V_.t_max_;
+}
+
+long
+nest::Device::get_t_min_() const
+{
+  return V_.t_min_;
+}
+
+nest::Time const&
+nest::Device::get_stop() const
+{
+  return P_.stop_;
+}
+
+nest::Time const&
+nest::Device::get_start() const
+{
+  return P_.start_;
+}
+
+nest::Time const&
+nest::Device::get_origin() const
+{
+  return P_.origin_;
+}
+
+void
+nest::Device::set_status( const Dictionary& d )
+{
+  Parameters_ ptmp = P_;  // temporary copy in case of errors
+  ptmp.set( d );          // throws if BadProperty
+
+  // if we get here, temporaries contain consistent set of properties
+  P_ = ptmp;
+}
+
+void
+nest::Device::get_status( Dictionary& d ) const
+{
+  P_.get( d );
+}
+
+void
+nest::Device::init_buffers()
+{
+}
+
+void
+nest::Device::init_state()
+{
+}
+
+nest::Device::~Device()
+{
 }

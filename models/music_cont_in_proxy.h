@@ -34,11 +34,14 @@
 // C++ includes:
 #include <vector>
 
+#include <string>
+
 // External includes:
 #include <music.hh>
 
 // Includes from nestkernel:
 #include "device_node.h"
+#include "nest_time.h"
 #include "nest_types.h"
 
 

@@ -20,6 +20,7 @@
  *
  */
 
+#include <cassert>
 #include <cmath>
 #include <cstdlib>
 #include <iostream>

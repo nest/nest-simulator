@@ -22,13 +22,19 @@
 
 #include "deprecation_warning.h"
 
-// Includes from nestkernel:
 #include "kernel_manager.h"
+#include "logging.h"
 #include "logging_manager.h"
 
 
 namespace nest
 {
+
+void
+DeprecationWarning::set_deprecated( std::string name )
+{
+  deprecated_functions_[ name ] = true;
+}
 
 void
 DeprecationWarning::deprecation_warning( std::string name )

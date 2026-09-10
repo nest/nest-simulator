@@ -22,18 +22,22 @@
 
 #include "gif_cond_exp.h"
 
-#ifdef HAVE_GSL
+#include <assert.h>
+#include <cmath>
+#include <gsl/gsl_errno.h>
 
-// C++ includes:
-#include <cstdio>
+#include "event_delivery_manager.h"
+#include "simulation_manager.h"
+
+#ifdef HAVE_GSL
 
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "dict_util.h"
 #include "numerics.h"
-
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
@@ -54,8 +58,7 @@ register_gif_cond_exp( const std::string& name )
 
 RecordablesMap< gif_cond_exp > gif_cond_exp::recordablesMap_;
 
-// Override the create() method with one call to RecordablesMap::insert_()
-// for each quantity to be recorded.
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< gif_cond_exp >::create()
@@ -468,7 +471,6 @@ nest::gif_cond_exp::update( Time const& origin, const long from, const long to )
 {
   for ( long lag = from; lag < to; ++lag )
   {
-
     // exponential decaying stc and sfa elements
     S_.stc_ = 0.0;
     for ( size_t i = 0; i < S_.stc_elems_.size(); i++ )
@@ -520,17 +522,14 @@ nest::gif_cond_exp::update( Time const& origin, const long from, const long to )
 
     if ( S_.r_ref_ == 0 )  // neuron is not in refractory period
     {
-
       const double lambda = P_.lambda_0_ * std::exp( ( S_.neuron_state_[ State_::V_M ] - S_.sfa_ ) / P_.Delta_V_ );
 
       if ( lambda > 0.0 )
       {
-
         // Draw random number and compare to prob to have a spike
         // hazard function is computed by 1 - exp(- lambda * dt)
         if ( V_.rng_->drand() < -numerics::expm1( -lambda * Time::get_resolution().get_ms() ) )
         {
-
           for ( size_t i = 0; i < S_.stc_elems_.size(); i++ )
           {
             S_.stc_elems_[ i ] += P_.q_stc_[ i ];
@@ -546,7 +545,7 @@ nest::gif_cond_exp::update( Time const& origin, const long from, const long to )
           // And send the spike event
           set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
           SpikeEvent se;
-          kernel().event_delivery_manager.send( *this, se, lag );
+          kernel::manager< EventDeliveryManager >.send( *this, se, lag );
         }
       }
     }
@@ -575,12 +574,12 @@ nest::gif_cond_exp::handle( SpikeEvent& e )
   //     is clumsy and should be improved.
   if ( e.get_weight() >= 0.0 )
   {
-    B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
   else
   {
-    B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() );
   }  // keep conductance positive
 }
@@ -594,7 +593,7 @@ nest::gif_cond_exp::handle( CurrentEvent& e )
   const double w = e.get_weight();
 
   // Add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ), w * c );
 }
 
 void

@@ -22,8 +22,16 @@
 
 #include "connection_creator.h"
 
+#include <string>
+
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "model_manager.h"
 #include "nest.h"
+#include "nest_names.h"
+#include "numerics.h"
 #include "spatial.h"
+#include "vp_manager.h"
 
 namespace nest
 {
@@ -100,7 +108,7 @@ ConnectionCreator::ConnectionCreator( const Dictionary& dict )
   {
     // If not, we have single synapses.
     param_dicts_.resize( 1 );
-    param_dicts_[ 0 ].resize( kernel().vp_manager.get_num_threads() );
+    param_dicts_[ 0 ].resize( kernel::manager< VPManager >.get_num_threads() );
     extract_params_( dict, param_dicts_[ 0 ] );
   }
 
@@ -110,9 +118,9 @@ ConnectionCreator::ConnectionCreator( const Dictionary& dict )
   // Set default synapse_model, weight and delay if not given explicitly
   if ( synapse_model_.empty() )
   {
-    synapse_model_ = { kernel().model_manager.get_synapse_model_id( "static_synapse" ) };
+    synapse_model_ = { kernel::manager< ModelManager >.get_synapse_model_id( "static_synapse" ) };
   }
-  Dictionary syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_[ 0 ] );
+  Dictionary syn_defaults = kernel::manager< ModelManager >.get_connector_defaults( synapse_model_[ 0 ] );
   if ( weight_.empty() )
   {
     weight_ = { create_parameter( syn_defaults[ names::weight ] ) };
@@ -168,10 +176,10 @@ ConnectionCreator::extract_params_( const Dictionary& dict, std::vector< Diction
                                                                   : std::string( "static_synapse" );
 
   // The following call will throw "UnknownSynapseType" if syn_name is not naming a known model
-  const size_t synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
+  const size_t synapse_model_id = kernel::manager< ModelManager >.get_synapse_model_id( syn_name );
   synapse_model_.push_back( synapse_model_id );
 
-  Dictionary syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );
+  Dictionary syn_defaults = kernel::manager< ModelManager >.get_connector_defaults( synapse_model_id );
   if ( dict.known( names::weight ) )
   {
     weight_.push_back( create_parameter( dict.at( names::weight ) ) );
@@ -198,7 +206,7 @@ ConnectionCreator::extract_params_( const Dictionary& dict, std::vector< Diction
   }
 
   Dictionary syn_dict;
-  // Using a lambda function here instead of updateValue because updateValue causes
+  // Using a lambda function here instead of update_value because update_value causes
   // problems when setting a value to a dictionary-entry in syn_dict.
   auto copy_long_if_known = [ &syn_dict, &dict ]( const std::string& name ) -> void
   {
@@ -210,10 +218,10 @@ ConnectionCreator::extract_params_( const Dictionary& dict, std::vector< Diction
   copy_long_if_known( names::synapse_label );
   copy_long_if_known( names::receptor_type );
 
-  params.resize( kernel().vp_manager.get_num_threads() );
+  params.resize( kernel::manager< VPManager >.get_num_threads() );
 #pragma omp parallel
   {
-    params.at( kernel().vp_manager.get_thread_id() ) = syn_dict;
+    params.at( kernel::manager< VPManager >.get_thread_id() ) = syn_dict;
   }
 }
 

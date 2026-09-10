@@ -31,9 +31,11 @@
 
 // Includes from nestkernel:
 #include "growth_curve_factory.h"
+#include "mask.h"
 #include "nest_time.h"
 #include "nest_types.h"
 #include "node_collection.h"
+#include "parameter.h"
 
 
 namespace nest
@@ -121,9 +123,12 @@ public:
   void update_structural_plasticity( SPBuilder* );
 
   /**
-   * Enable structural plasticity
+   * Enable structural plasticity.
+   *
+   * @param spatial_kernel  Weights candidates by their positions; zero excludes. Null: uniform matching.
+   * @param spatial_mask    Excludes candidates whose source-target displacement lies outside it.
    */
-  void enable_structural_plasticity();
+  void enable_structural_plasticity( ParameterPTR spatial_kernel = ParameterPTR(), MaskPTR spatial_mask = MaskPTR() );
 
   /**
    * Disable structural plasticity
@@ -133,6 +138,9 @@ public:
   bool is_structural_plasticity_enabled() const;
 
   double get_structural_plasticity_update_interval() const;
+
+  // Whether a spatial kernel or mask restricts the matching of vacant synaptic elements.
+  bool uses_spatial_matching() const;
 
   /**
    * Returns the minimum delay of all SP builders.
@@ -185,6 +193,49 @@ public:
   void global_shuffle( std::vector< size_t >& v );
   void global_shuffle( std::vector< size_t >& v, size_t n );
 
+  /**
+   * Match vacant pre- to post-synaptic elements using the configured spatial kernel and mask.
+   *
+   * Sequential weighted sampling without replacement, not a shuffle: each pre-synaptic element in
+   * turn draws a partner from those remaining. Elements with no admissible candidate stay unmatched.
+   *
+   * @param pre_ids Pre-synaptic neuron IDs; emptied by this call.
+   * @param post_ids Post-synaptic neuron IDs; matched entries are removed.
+   * @param pre_ids_results Matched pre-synaptic IDs.
+   * @param post_ids_results Matched post-synaptic IDs.
+   * @param allow_autapses Whether a neuron may connect to itself.
+   */
+  void match_vacant_elements_spatially( std::vector< size_t >& pre_ids,
+    std::vector< size_t >& post_ids,
+    std::vector< size_t >& pre_ids_results,
+    std::vector< size_t >& post_ids_results,
+    bool allow_autapses );
+
+  /**
+   * Gather global neuron positions and IDs from all nodes.
+   */
+  void gather_global_positions_and_ids();
+
+  /**
+   * Select an index at random, with probability proportional to the given weights.
+   *
+   * @param weights Non-negative, need not be normalised; at least one must be positive.
+   * @param rnd Random number drawn from [0, 1).
+   * @return Selected index.
+   */
+  size_t roulette_wheel_selection( const std::vector< double >& weights, double rnd );
+
+  /**
+   * Global list of neuron IDs used for structural plasticity computations.
+   */
+  std::vector< int > global_ids;
+
+  /**
+   * Global list of neuron positions used for spatial computations in
+   * structural plasticity.
+   */
+  std::vector< double > global_positions;
+
 private:
   /**
    * Time interval for structural plasticity update (creation/deletion of
@@ -197,6 +248,18 @@ private:
    * Off (False).
    */
   bool structural_plasticity_enabled_;
+
+  //! Optional spatial kernel weighting candidate partners; null means uniform matching.
+  ParameterPTR structural_plasticity_kernel_;
+
+  //! Optional spatial mask excluding candidate partners; null means no spatial restriction.
+  MaskPTR structural_plasticity_mask_;
+
+  /**
+   * Dimensionality of the neuron positions
+   */
+  int pos_dim;
+
   std::vector< SPBuilder* > sp_conn_builders_;
 
   /**
@@ -224,6 +287,12 @@ inline double
 SPManager::get_structural_plasticity_update_interval() const
 {
   return structural_plasticity_update_interval_;
+}
+
+inline bool
+SPManager::uses_spatial_matching() const
+{
+  return static_cast< bool >( structural_plasticity_kernel_ ) or static_cast< bool >( structural_plasticity_mask_ );
 }
 
 }  // namespace nest

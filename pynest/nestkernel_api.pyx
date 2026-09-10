@@ -334,8 +334,8 @@ def llapi_reset_kernel():
 def llapi_install_module( module_name ):
     install_module( pystr_to_string(module_name) )
 
-def llapi_enable_structural_plasticity():
-    enable_structural_plasticity()
+def llapi_enable_structural_plasticity(cbool use_gaussian_kernel, double gaussian_kernel_sigma, double max_distance):
+    enable_structural_plasticity(use_gaussian_kernel, gaussian_kernel_sigma, max_distance)
 
 
 def llapi_disable_structural_plasticity():

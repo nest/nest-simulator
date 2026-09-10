@@ -54,7 +54,11 @@ class TestStructuralPlasticityManager(unittest.TestCase):
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
                 nest.SetDefaults(syn_model, {"delay": 0.5})
-                syn_dict = {"synapse_model": syn_model, "pre_synaptic_element": "SE1", "post_synaptic_element": "SE2"}
+                syn_dict = {
+                    "synapse_model": syn_model,
+                    "pre_synaptic_element": "SE1",
+                    "post_synaptic_element": "SE2",
+                }
                 # For co-dependent properties, we use `set()` instead of kernel attributes
                 nest.set(min_delay=0.1, max_delay=1.0)
                 nest.structural_plasticity_synapses = {"syn1": syn_dict}
@@ -121,7 +125,11 @@ class TestStructuralPlasticityManager(unittest.TestCase):
         for syn_model in nest.synapse_models:
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
-                syn_dict = {"synapse_model": syn_model, "pre_synaptic_element": "SE1", "post_synaptic_element": "SE2"}
+                syn_dict = {
+                    "synapse_model": syn_model,
+                    "pre_synaptic_element": "SE1",
+                    "post_synaptic_element": "SE2",
+                }
                 nest.structural_plasticity_synapses = {"syn1": syn_dict}
                 neurons = nest.Create(
                     "iaf_psc_alpha",

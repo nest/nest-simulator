@@ -30,6 +30,7 @@
 // Includes from libnestutil:
 #include "dict_util.h"
 
+
 namespace nest
 {
 void
@@ -72,14 +73,14 @@ multimeter::send_test_event( Node& target, size_t receptor_type, synindex, bool 
   return p;
 }
 
-nest::multimeter::Parameters_::Parameters_()
+multimeter::Parameters_::Parameters_()
   : interval_( Time::ms( 1.0 ) )
   , offset_( Time::ms( 0. ) )
   , record_from_()
 {
 }
 
-nest::multimeter::Parameters_::Parameters_( const Parameters_& p )
+multimeter::Parameters_::Parameters_( const Parameters_& p )
   : interval_( p.interval_ )
   , offset_( p.offset_ )
   , record_from_( p.record_from_ )
@@ -87,8 +88,8 @@ nest::multimeter::Parameters_::Parameters_( const Parameters_& p )
   interval_.calibrate();
 }
 
-nest::multimeter::Parameters_&
-nest::multimeter::Parameters_::operator=( const Parameters_& p )
+multimeter::Parameters_&
+multimeter::Parameters_::operator=( const Parameters_& p )
 {
   interval_ = p.interval_;
   offset_ = p.offset_;
@@ -99,13 +100,13 @@ nest::multimeter::Parameters_::operator=( const Parameters_& p )
 }
 
 
-nest::multimeter::Buffers_::Buffers_()
+multimeter::Buffers_::Buffers_()
   : has_targets_( false )
 {
 }
 
 void
-nest::multimeter::Parameters_::get( Dictionary& d ) const
+multimeter::Parameters_::get( Dictionary& d ) const
 {
   d[ names::interval ] = interval_.get_ms();
   d[ names::offset ] = offset_.get_ms();
@@ -113,7 +114,7 @@ nest::multimeter::Parameters_::get( Dictionary& d ) const
 }
 
 void
-nest::multimeter::Parameters_::set( const Dictionary& d, const Buffers_& b, Node* node )
+multimeter::Parameters_::set( const Dictionary& d, const Buffers_& b, Node* node )
 {
   if ( b.has_targets_ and ( d.known( names::interval ) or d.known( names::offset ) or d.known( names::record_from ) ) )
   {

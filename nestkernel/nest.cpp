@@ -778,7 +778,7 @@ message( const VerbosityLevel level,
   const std::string& file,
   const size_t line )
 {
-  nest::kernel().logging_manager.publish_log( level, function, message, file, line );
+  kernel().logging_manager.publish_log( level, function, message, file, line );
 }
 
 }  // namespace nest

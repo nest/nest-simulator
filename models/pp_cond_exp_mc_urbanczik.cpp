@@ -40,11 +40,11 @@
 #include "universal_data_logger_impl.h"
 
 
-std::vector< std::string > nest::pp_cond_exp_mc_urbanczik::comp_names_( NCOMP );
-nest::RecordablesMap< nest::pp_cond_exp_mc_urbanczik > nest::pp_cond_exp_mc_urbanczik::recordablesMap_;
-
 namespace nest
 {
+std::vector< std::string > pp_cond_exp_mc_urbanczik::comp_names_( NCOMP );
+RecordablesMap< pp_cond_exp_mc_urbanczik > pp_cond_exp_mc_urbanczik::recordablesMap_;
+
 void
 register_pp_cond_exp_mc_urbanczik( const std::string& name )
 {
@@ -70,22 +70,21 @@ RecordablesMap< pp_cond_exp_mc_urbanczik >::create()
   insert_( "I_in.p",
     &pp_cond_exp_mc_urbanczik::get_y_elem_< pp_cond_exp_mc_urbanczik::State_::I_INH, pp_cond_exp_mc_urbanczik::DEND > );
 }
-}
 
 /* ----------------------------------------------------------------
  * Iteration function
  * ---------------------------------------------------------------- */
 
 extern "C" int
-nest::pp_cond_exp_mc_urbanczik_dynamics( double, const double y[], double f[], void* pnode )
+pp_cond_exp_mc_urbanczik_dynamics( double, const double y[], double f[], void* pnode )
 {
   // some shorthands
-  typedef nest::pp_cond_exp_mc_urbanczik N;
-  typedef nest::pp_cond_exp_mc_urbanczik::State_ S;
+  typedef pp_cond_exp_mc_urbanczik N;
+  typedef pp_cond_exp_mc_urbanczik::State_ S;
 
   // get access to node so we can work almost as in a member function
   assert( pnode );
-  const nest::pp_cond_exp_mc_urbanczik& node = *( reinterpret_cast< nest::pp_cond_exp_mc_urbanczik* >( pnode ) );
+  const pp_cond_exp_mc_urbanczik& node = *( reinterpret_cast< pp_cond_exp_mc_urbanczik* >( pnode ) );
 
   // computations written quite explicitly for clarity, assume compile
   // will optimized most stuff away ...
@@ -166,7 +165,7 @@ nest::pp_cond_exp_mc_urbanczik_dynamics( double, const double y[], double f[], v
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::pp_cond_exp_mc_urbanczik::Parameters_::Parameters_()
+pp_cond_exp_mc_urbanczik::Parameters_::Parameters_()
   : t_ref( 3.0 )  // ms
 {
   urbanczik_params.phi_max = 0.15;
@@ -198,7 +197,7 @@ nest::pp_cond_exp_mc_urbanczik::Parameters_::Parameters_()
   I_e[ DEND ] = 0.0;  // pA
 }
 
-nest::pp_cond_exp_mc_urbanczik::Parameters_::Parameters_( const Parameters_& p )
+pp_cond_exp_mc_urbanczik::Parameters_::Parameters_( const Parameters_& p )
   : t_ref( p.t_ref )
 {
   urbanczik_params.phi_max = p.urbanczik_params.phi_max;
@@ -220,8 +219,8 @@ nest::pp_cond_exp_mc_urbanczik::Parameters_::Parameters_( const Parameters_& p )
   }
 }
 
-nest::pp_cond_exp_mc_urbanczik::Parameters_&
-nest::pp_cond_exp_mc_urbanczik::Parameters_::operator=( const Parameters_& p )
+pp_cond_exp_mc_urbanczik::Parameters_&
+pp_cond_exp_mc_urbanczik::Parameters_::operator=( const Parameters_& p )
 {
   assert( this != &p );  // would be bad logical error in program
 
@@ -248,7 +247,7 @@ nest::pp_cond_exp_mc_urbanczik::Parameters_::operator=( const Parameters_& p )
 }
 
 
-nest::pp_cond_exp_mc_urbanczik::State_::State_( const Parameters_& p )
+pp_cond_exp_mc_urbanczik::State_::State_( const Parameters_& p )
   : r_( 0 )
 {
   // for simplicity, we first initialize all values to 0,
@@ -263,7 +262,7 @@ nest::pp_cond_exp_mc_urbanczik::State_::State_( const Parameters_& p )
   }
 }
 
-nest::pp_cond_exp_mc_urbanczik::State_::State_( const State_& s )
+pp_cond_exp_mc_urbanczik::State_::State_( const State_& s )
   : r_( s.r_ )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -272,8 +271,8 @@ nest::pp_cond_exp_mc_urbanczik::State_::State_( const State_& s )
   }
 }
 
-nest::pp_cond_exp_mc_urbanczik::State_&
-nest::pp_cond_exp_mc_urbanczik::State_::operator=( const State_& s )
+pp_cond_exp_mc_urbanczik::State_&
+pp_cond_exp_mc_urbanczik::State_::operator=( const State_& s )
 {
   r_ = s.r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -283,7 +282,7 @@ nest::pp_cond_exp_mc_urbanczik::State_::operator=( const State_& s )
   return *this;
 }
 
-nest::pp_cond_exp_mc_urbanczik::Buffers_::Buffers_( pp_cond_exp_mc_urbanczik& n )
+pp_cond_exp_mc_urbanczik::Buffers_::Buffers_( pp_cond_exp_mc_urbanczik& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -293,7 +292,7 @@ nest::pp_cond_exp_mc_urbanczik::Buffers_::Buffers_( pp_cond_exp_mc_urbanczik& n 
   // init_buffers_().
 }
 
-nest::pp_cond_exp_mc_urbanczik::Buffers_::Buffers_( const Buffers_&, pp_cond_exp_mc_urbanczik& n )
+pp_cond_exp_mc_urbanczik::Buffers_::Buffers_( const Buffers_&, pp_cond_exp_mc_urbanczik& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -308,7 +307,7 @@ nest::pp_cond_exp_mc_urbanczik::Buffers_::Buffers_( const Buffers_&, pp_cond_exp
  * ---------------------------------------------------------------- */
 
 void
-nest::pp_cond_exp_mc_urbanczik::Parameters_::get( Dictionary& d ) const
+pp_cond_exp_mc_urbanczik::Parameters_::get( Dictionary& d ) const
 {
   d[ names::t_ref ] = t_ref;
   d[ names::phi_max ] = urbanczik_params.phi_max;
@@ -338,7 +337,7 @@ nest::pp_cond_exp_mc_urbanczik::Parameters_::get( Dictionary& d ) const
 }
 
 void
-nest::pp_cond_exp_mc_urbanczik::Parameters_::set( const Dictionary& d )
+pp_cond_exp_mc_urbanczik::Parameters_::set( const Dictionary& d )
 {
   // allow setting the membrane potential
   d.update_value( names::t_ref, t_ref );
@@ -398,7 +397,7 @@ nest::pp_cond_exp_mc_urbanczik::Parameters_::set( const Dictionary& d )
 }
 
 void
-nest::pp_cond_exp_mc_urbanczik::State_::get( Dictionary& d ) const
+pp_cond_exp_mc_urbanczik::State_::get( Dictionary& d ) const
 {
   // we assume here that State_::get() always is called after
   // Parameters_::get(), so that the per-compartment dictionaries exist
@@ -412,7 +411,7 @@ nest::pp_cond_exp_mc_urbanczik::State_::get( Dictionary& d ) const
 }
 
 void
-nest::pp_cond_exp_mc_urbanczik::State_::set( const Dictionary& d, const Parameters_& )
+pp_cond_exp_mc_urbanczik::State_::set( const Dictionary& d, const Parameters_& )
 {
   // extract from sub-dictionaries
   for ( size_t n = 0; n < NCOMP; ++n )
@@ -430,7 +429,7 @@ nest::pp_cond_exp_mc_urbanczik::State_::set( const Dictionary& d, const Paramete
  * Default and copy constructor for node, and destructor
  * ---------------------------------------------------------------- */
 
-nest::pp_cond_exp_mc_urbanczik::pp_cond_exp_mc_urbanczik()
+pp_cond_exp_mc_urbanczik::pp_cond_exp_mc_urbanczik()
   : UrbanczikArchivingNode< pp_cond_exp_mc_urbanczik_parameters >()
   , P_()
   , S_( P_ )
@@ -445,7 +444,7 @@ nest::pp_cond_exp_mc_urbanczik::pp_cond_exp_mc_urbanczik()
   UrbanczikArchivingNode< pp_cond_exp_mc_urbanczik_parameters >::urbanczik_params = &P_.urbanczik_params;
 }
 
-nest::pp_cond_exp_mc_urbanczik::pp_cond_exp_mc_urbanczik( const pp_cond_exp_mc_urbanczik& n )
+pp_cond_exp_mc_urbanczik::pp_cond_exp_mc_urbanczik( const pp_cond_exp_mc_urbanczik& n )
   : UrbanczikArchivingNode< pp_cond_exp_mc_urbanczik_parameters >( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -454,7 +453,7 @@ nest::pp_cond_exp_mc_urbanczik::pp_cond_exp_mc_urbanczik( const pp_cond_exp_mc_u
   UrbanczikArchivingNode< pp_cond_exp_mc_urbanczik_parameters >::urbanczik_params = &P_.urbanczik_params;
 }
 
-nest::pp_cond_exp_mc_urbanczik::~pp_cond_exp_mc_urbanczik()
+pp_cond_exp_mc_urbanczik::~pp_cond_exp_mc_urbanczik()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
@@ -476,7 +475,7 @@ nest::pp_cond_exp_mc_urbanczik::~pp_cond_exp_mc_urbanczik()
  * ---------------------------------------------------------------- */
 
 void
-nest::pp_cond_exp_mc_urbanczik::init_buffers_()
+pp_cond_exp_mc_urbanczik::init_buffers_()
 {
   B_.spikes_.resize( NUM_SPIKE_RECEPTORS );
   for ( size_t n = 0; n < NUM_SPIKE_RECEPTORS; ++n )
@@ -534,7 +533,7 @@ nest::pp_cond_exp_mc_urbanczik::init_buffers_()
 }
 
 void
-nest::pp_cond_exp_mc_urbanczik::pre_run_hook()
+pp_cond_exp_mc_urbanczik::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -555,7 +554,7 @@ nest::pp_cond_exp_mc_urbanczik::pre_run_hook()
  * ---------------------------------------------------------------- */
 
 void
-nest::pp_cond_exp_mc_urbanczik::update( Time const& origin, const long from, const long to )
+pp_cond_exp_mc_urbanczik::update( Time const& origin, const long from, const long to )
 {
   for ( long lag = from; lag < to; ++lag )
   {
@@ -672,7 +671,7 @@ nest::pp_cond_exp_mc_urbanczik::update( Time const& origin, const long from, con
 }
 
 void
-nest::pp_cond_exp_mc_urbanczik::handle( SpikeEvent& e )
+pp_cond_exp_mc_urbanczik::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
   assert( e.get_rport() < 2 * NCOMP );
@@ -682,7 +681,7 @@ nest::pp_cond_exp_mc_urbanczik::handle( SpikeEvent& e )
 }
 
 void
-nest::pp_cond_exp_mc_urbanczik::handle( CurrentEvent& e )
+pp_cond_exp_mc_urbanczik::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
   // not 100% clean, should look at MIN, SUP
@@ -694,9 +693,11 @@ nest::pp_cond_exp_mc_urbanczik::handle( CurrentEvent& e )
 }
 
 void
-nest::pp_cond_exp_mc_urbanczik::handle( DataLoggingRequest& e )
+pp_cond_exp_mc_urbanczik::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
+
+}  // namespace nest
 
 #endif  // HAVE_GSL

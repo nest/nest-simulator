@@ -165,24 +165,24 @@ private:
   std::map< std::string, StimulationBackend* > stimulation_backends_;
 };
 
-}  // namespace nest
-
 inline const std::string&
-nest::IOManager::get_data_path() const
+IOManager::get_data_path() const
 {
   return data_path_;
 }
 
 inline const std::string&
-nest::IOManager::get_data_prefix() const
+IOManager::get_data_prefix() const
 {
   return data_prefix_;
 }
 
 inline bool
-nest::IOManager::overwrite_files() const
+IOManager::overwrite_files() const
 {
   return overwrite_files_;
 }
+
+}  // namespace nest
 
 #endif /* #ifndef IO_MANAGER_H */

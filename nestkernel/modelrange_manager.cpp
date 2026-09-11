@@ -110,8 +110,8 @@ ModelRangeManager::get_model_id( size_t node_id ) const
   return modelranges_[ range_idx ].get_model_id();
 }
 
-nest::Model*
-nest::ModelRangeManager::get_model_of_node_id( size_t node_id )
+Model*
+ModelRangeManager::get_model_of_node_id( size_t node_id )
 {
   return kernel().model_manager.get_node_model( get_model_id( node_id ) );
 }

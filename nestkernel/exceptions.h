@@ -34,10 +34,6 @@
 // Includes from thirdparty:
 #include "compose.hpp"
 
-// Include MPI for MPI error string
-#ifdef HAVE_MPI
-#include <mpi.h>
-#endif
 
 namespace nest
 {
@@ -1589,17 +1585,9 @@ class MPIErrorCode : public KernelException
 {
 private:
   std::string msg_;
-  std::string error_;
-  char errmsg_[ 2 * MPI_MAX_ERROR_STRING ];  // Multiply by two for extra safety
-  int len_;
 
 public:
-  explicit MPIErrorCode( const int error_code )
-  {
-    MPI_Error_string( error_code, errmsg_, &len_ );
-    error_.assign( errmsg_, len_ );
-    msg_ = String::compose( "MPI Error: %1", error_ );
-  }
+  explicit MPIErrorCode( const int error_code );
 
   const char*
   what() const noexcept override

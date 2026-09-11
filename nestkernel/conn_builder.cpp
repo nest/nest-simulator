@@ -909,7 +909,7 @@ nest::ThirdBernoulliWithPoolBuilder::third_connect( size_t primary_source_id, No
 
     if ( random_pool_ )
     {
-      rng->sample( sources_->begin(), sources_->end(), std::back_inserter( new_pool_it->second ), pool_size_ );
+      rng->stable_sample( sources_->begin(), sources_->end(), std::back_inserter( new_pool_it->second ), pool_size_ );
     }
     else
     {

@@ -94,12 +94,6 @@ nest::KernelManager::get_build_info_()
   build_info[ "have_music" ] = false;
 #endif
 
-#ifdef HAVE_LIBNEUROSIM
-  build_info[ "have_libneurosim" ] = true;
-#else
-  build_info[ "have_libneurosim" ] = false;
-#endif
-
 #ifdef HAVE_SIONLIB
   build_info[ "have_sionlib" ] = true;
 #else

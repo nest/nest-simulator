@@ -473,8 +473,27 @@ public:
 
   void set_receiver_node_id( size_t );
 
+  /**
+   * Return the connection label
+   */
+
+  long get_conn_label() const;
+
+  /**
+   * Set the connection label (conn_label).
+   */
+
+  void set_conn_label( long label );
+
 protected:
   size_t receiver_node_id_;  //!< node ID of receiver or 0.
+
+  /**
+   * Connection Label (conn_label)
+   *
+   * The label of the connection (if available).
+   */
+  long label_;
 };
 
 inline WeightRecorderEvent::WeightRecorderEvent()
@@ -1042,6 +1061,12 @@ Event::get_rport() const
   return rp_;
 }
 
+inline long
+WeightRecorderEvent::get_conn_label() const
+{
+  return label_;
+}
+
 inline void
 Event::set_port( size_t p )
 {
@@ -1052,6 +1077,12 @@ inline void
 Event::set_rport( size_t rp )
 {
   rp_ = rp;
+}
+
+inline void
+WeightRecorderEvent::set_conn_label( long label )
+{
+  label_ = label;
 }
 }
 

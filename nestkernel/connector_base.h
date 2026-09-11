@@ -148,6 +148,14 @@ public:
   virtual size_t get_target_node_id( const size_t tid, const unsigned int lcid ) const = 0;
 
   /**
+   * For a given lcid return the secondary-event source port of the connection.
+   *
+   * Only meaningful for secondary (continuous-data) connection types that
+   * expose several source ports; all other types return zero.
+   */
+  virtual size_t get_source_port( const size_t lcid ) const = 0;
+
+  /**
    * Send the event e to all connections of this Connector.
    */
   virtual void send_to_all( const size_t tid, const std::vector< ConnectorModel* >& cm, Event& e ) = 0;
@@ -375,6 +383,12 @@ public:
   get_target_node_id( const size_t tid, const unsigned int lcid ) const override
   {
     return C_[ lcid ].get_target( tid )->get_node_id();
+  }
+
+  size_t
+  get_source_port( const size_t lcid ) const override
+  {
+    return C_[ lcid ].get_source_port();
   }
 
   void

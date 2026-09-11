@@ -27,6 +27,8 @@
 // Includes from libnestutil
 #include "vector_util.h"
 
+const std::vector< size_t > nest::TargetTable::empty_secondary_send_buffer_pos_;
+
 void
 nest::TargetTable::initialize()
 {
@@ -38,7 +40,7 @@ nest::TargetTable::initialize()
   {
     const size_t tid = kernel().vp_manager.get_thread_id();
     targets_[ tid ] = std::vector< std::vector< Target > >();
-    secondary_send_buffer_pos_[ tid ] = std::vector< std::vector< std::vector< size_t > > >();
+    secondary_send_buffer_pos_[ tid ] = std::vector< std::vector< std::map< size_t, std::vector< size_t > > > >();
   }  // of omp parallel
 }
 
@@ -46,7 +48,8 @@ void
 nest::TargetTable::finalize()
 {
   std::vector< std::vector< std::vector< Target > > >().swap( targets_ );
-  std::vector< std::vector< std::vector< std::vector< size_t > > > >().swap( secondary_send_buffer_pos_ );
+  std::vector< std::vector< std::vector< std::map< size_t, std::vector< size_t > > > > >().swap(
+    secondary_send_buffer_pos_ );
 }
 
 void
@@ -70,15 +73,17 @@ nest::TargetTable::prepare( const size_t tid )
 void
 nest::TargetTable::compress_secondary_send_buffer_pos( const size_t tid )
 {
-  for ( std::vector< std::vector< std::vector< size_t > > >::iterator it = secondary_send_buffer_pos_[ tid ].begin();
-    it != secondary_send_buffer_pos_[ tid ].end();
-    ++it )
+  for ( auto& lid_entry : secondary_send_buffer_pos_[ tid ] )
   {
-    for ( std::vector< std::vector< size_t > >::iterator iit = it->begin(); iit != it->end(); ++iit )
+    for ( auto& syn_entry : lid_entry )
     {
-      std::sort( iit->begin(), iit->end() );
-      const std::vector< size_t >::iterator new_it = std::unique( iit->begin(), iit->end() );
-      iit->resize( std::distance( iit->begin(), new_it ) );
+      for ( auto& port_entry : syn_entry )
+      {
+        std::vector< size_t >& positions = port_entry.second;
+        std::sort( positions.begin(), positions.end() );
+        const std::vector< size_t >::iterator new_it = std::unique( positions.begin(), positions.end() );
+        positions.resize( std::distance( positions.begin(), new_it ) );
+      }
     }
   }
 }
@@ -103,8 +108,9 @@ nest::TargetTable::add_target( const size_t tid, const size_t target_rank, const
     const size_t send_buffer_pos = secondary_fields.get_recv_buffer_pos()
       + kernel().mpi_manager.get_send_displacement_secondary_events_in_int( target_rank );
     const synindex syn_id = secondary_fields.get_syn_id();
+    const size_t source_port = secondary_fields.get_source_port();
 
     assert( syn_id < secondary_send_buffer_pos_[ tid ][ lid ].size() );
-    secondary_send_buffer_pos_[ tid ][ lid ][ syn_id ].push_back( send_buffer_pos );
+    secondary_send_buffer_pos_[ tid ][ lid ][ syn_id ][ source_port ].push_back( send_buffer_pos );
   }
 }

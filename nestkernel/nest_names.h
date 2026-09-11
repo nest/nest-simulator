@@ -499,6 +499,7 @@ const std::string soma_curr( "soma_curr" );
 const std::string soma_exc( "soma_exc" );
 const std::string soma_inh( "soma_inh" );
 const std::string source( "source" );
+const std::string source_port( "source_port" );
 const std::string spherical( "spherical" );
 const std::string spike_buffer_grow_extra( "spike_buffer_grow_extra" );
 const std::string spike_buffer_resize_log( "spike_buffer_resize_log" );

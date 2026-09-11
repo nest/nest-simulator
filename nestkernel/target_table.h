@@ -60,13 +60,19 @@ private:
    * Stores MPI send buffer positions for secondary targets of local
    * neurons.
    *
-   * Four dimensional object:
+   * Structure:
    *   - first dim: threads
    *   - second dim: local neurons
    *   - third dim: synapse types
-   *   - fourth dim: MPI send buffer positions
+   *   - innermost: source port -> list of MPI send buffer positions
+   *
+   * The source-port map keeps the several waveforms a node emits through one
+   * synapse model routed independently. Single-port models use only port zero.
    */
-  std::vector< std::vector< std::vector< std::vector< size_t > > > > secondary_send_buffer_pos_;
+  std::vector< std::vector< std::vector< std::map< size_t, std::vector< size_t > > > > > secondary_send_buffer_pos_;
+
+  //! Returned for source ports with no registered targets.
+  static const std::vector< size_t > empty_secondary_send_buffer_pos_;
 
 public:
   /**
@@ -96,12 +102,14 @@ public:
   const std::vector< Target >& get_targets( const size_t tid, const size_t lid ) const;
 
   /**
-   * Returns all MPI send buffer positions of a neuron.
+   * Returns the MPI send buffer positions of a neuron for one source port.
    *
    * Used to fill MPI buffer in EventDeliveryManager.
    */
-  const std::vector< size_t >&
-  get_secondary_send_buffer_positions( const size_t tid, const size_t lid, const synindex syn_id ) const;
+  const std::vector< size_t >& get_secondary_send_buffer_positions( const size_t tid,
+    const size_t lid,
+    const synindex syn_id,
+    const size_t source_port ) const;
 
   /**
    * Clears all entries of targets_.
@@ -122,10 +130,19 @@ TargetTable::get_targets( const size_t tid, const size_t lid ) const
 }
 
 inline const std::vector< size_t >&
-TargetTable::get_secondary_send_buffer_positions( const size_t tid, const size_t lid, const synindex syn_id ) const
+TargetTable::get_secondary_send_buffer_positions( const size_t tid,
+  const size_t lid,
+  const synindex syn_id,
+  const size_t source_port ) const
 {
   assert( syn_id < secondary_send_buffer_pos_[ tid ][ lid ].size() );
-  return secondary_send_buffer_pos_[ tid ][ lid ][ syn_id ];
+  const auto& port_map = secondary_send_buffer_pos_[ tid ][ lid ][ syn_id ];
+  const auto it = port_map.find( source_port );
+  if ( it == port_map.end() )
+  {
+    return empty_secondary_send_buffer_pos_;
+  }
+  return it->second;
 }
 
 inline void

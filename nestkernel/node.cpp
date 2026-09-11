@@ -384,6 +384,20 @@ Node::sends_secondary_event( GapJunctionEvent& )
 }
 
 void
+Node::sends_secondary_event( GapJunctionEvent& ge, const size_t source_port )
+{
+  // Nodes exposing multiple gap-junction source ports override this method.
+  // The default supports only the single, backward-compatible port zero and
+  // delegates it to the one-argument form so that existing point neurons need
+  // no change.
+  if ( source_port != 0 )
+  {
+    throw UnknownSourcePort( source_port );
+  }
+  sends_secondary_event( ge );
+}
+
+void
 Node::handle( InstantaneousRateConnectionEvent& )
 {
   throw UnexpectedEvent( "The target node does not handle instantaneous rate input." );

@@ -36,6 +36,7 @@ eprop_learning_signal_connection
 erfc_neuron
 gamma_sup_generator
 gap_junction
+gap_junction_source_test
 gauss_rate
 gif_psc_exp
 gif_psc_exp_multisynapse

@@ -137,6 +137,20 @@ EventDeliveryManager::send_off_grid_remote( size_t tid, SpikeEvent& e, const lon
 inline void
 EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e )
 {
+  // Single-port form: route through source port zero and, additionally,
+  // deliver to devices exactly as before.
+  send_secondary( source, e, 0 );
+
+  if ( source.has_proxies() )
+  {
+    const size_t tid = kernel().vp_manager.get_thread_id();
+    kernel().connection_manager.send_to_devices( tid, source.get_node_id(), e );
+  }
+}
+
+inline void
+EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e, const size_t source_port )
+{
   const size_t tid = kernel().vp_manager.get_thread_id();
   const size_t source_node_id = source.get_node_id();
   const size_t lid = kernel().vp_manager.node_id_to_lid( source_node_id );
@@ -151,7 +165,7 @@ EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e )
     for ( const auto& syn_id : supported_syn_ids )
     {
       const std::vector< size_t >& positions =
-        kernel().connection_manager.get_secondary_send_buffer_positions( tid, lid, syn_id );
+        kernel().connection_manager.get_secondary_send_buffer_positions( tid, lid, syn_id, source_port );
 
       for ( size_t i = 0; i < positions.size(); ++i )
       {
@@ -159,7 +173,6 @@ EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e )
         e >> it;
       }
     }
-    kernel().connection_manager.send_to_devices( tid, source_node_id, e );
   }
   else
   {

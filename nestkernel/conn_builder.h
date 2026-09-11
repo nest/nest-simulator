@@ -288,6 +288,14 @@ private:
   void set_synapse_params( const Dictionary& syn_defaults, const Dictionary& syn_params, const size_t indx );
 
   /**
+   * Swaps the source_port and receptor_type synapse parameters for the reverse
+   * pass of a make_symmetric connection, so the reverse connection sends from
+   * the original target port and arrives at the original source port. Absent
+   * parameters default to port zero. No-op for synapse models that use neither.
+   */
+  void swap_source_port_and_receptor_type_();
+
+  /**
    * Set structural plasticity parameters (if provided)
    *
    * This function first checks if any of the given syn_specs contains

@@ -421,6 +421,19 @@ public:
   virtual void sends_secondary_event( GapJunctionEvent& ge );
 
   /**
+   * Required to check whether the source neuron may send a GapJunctionEvent
+   * through the given source port.
+   *
+   * This generalizes the one-argument form to nodes exposing several
+   * independently routed gap-junction source ports. The base class
+   * implementation accepts only the backward-compatible port zero, delegating
+   * it to the one-argument form, and rejects any other port.
+   * @ingroup event_interface
+   * @throws UnknownSourcePort
+   */
+  virtual void sends_secondary_event( GapJunctionEvent& ge, const size_t source_port );
+
+  /**
    * Required to check, if source neuron may send a SecondaryEvent.
    *
    * This base class implementation throws IllegalConnection

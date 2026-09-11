@@ -276,6 +276,9 @@ public:
 
   size_t get_target_node_id( const size_t tid, const synindex syn_id, const size_t lcid ) const;
 
+  //! Return the secondary-event source port of the connection at (tid, syn_id, lcid).
+  size_t get_source_port( const size_t tid, const synindex syn_id, const size_t lcid ) const;
+
   bool get_device_connected( size_t tid, size_t lcid ) const;
   /**
    * Triggered by volume transmitter in update.
@@ -423,8 +426,10 @@ public:
 
   void no_targets_to_process( const size_t tid );
 
-  const std::vector< size_t >&
-  get_secondary_send_buffer_positions( const size_t tid, const size_t lid, const synindex syn_id ) const;
+  const std::vector< size_t >& get_secondary_send_buffer_positions( const size_t tid,
+    const size_t lid,
+    const synindex syn_id,
+    const size_t source_port ) const;
 
   /**
    * Returns read position in MPI receive buffer for secondary connections.
@@ -644,7 +649,8 @@ private:
    */
   std::vector< std::vector< std::vector< size_t > > > secondary_recv_buffer_pos_;
 
-  std::map< size_t, size_t > buffer_pos_of_source_node_id_syn_id_;
+  //! Receive-buffer offset of each unique secondary source, keyed by (node, syn_id, source port).
+  std::map< SecondarySourceId, size_t > buffer_pos_of_secondary_source_;
 
   /**
    * A structure to hold the information about targets for each
@@ -845,9 +851,10 @@ ConnectionManager::get_next_target_data( const size_t tid,
 inline const std::vector< size_t >&
 ConnectionManager::get_secondary_send_buffer_positions( const size_t tid,
   const size_t lid,
-  const synindex syn_id ) const
+  const synindex syn_id,
+  const size_t source_port ) const
 {
-  return target_table_.get_secondary_send_buffer_positions( tid, lid, syn_id );
+  return target_table_.get_secondary_send_buffer_positions( tid, lid, syn_id, source_port );
 }
 
 inline size_t
@@ -898,6 +905,12 @@ inline size_t
 ConnectionManager::get_target_node_id( const size_t tid, const synindex syn_id, const size_t lcid ) const
 {
   return connections_[ tid ][ syn_id ]->get_target_node_id( tid, lcid );
+}
+
+inline size_t
+ConnectionManager::get_source_port( const size_t tid, const synindex syn_id, const size_t lcid ) const
+{
+  return connections_[ tid ][ syn_id ]->get_source_port( lcid );
 }
 
 inline bool

@@ -27,6 +27,7 @@
 #include "model_manager_impl.h"
 #include "nest_impl.h"
 
+
 namespace nest
 {
 void
@@ -64,19 +65,19 @@ nonlinearities_gauss_rate::set( const Dictionary& d, Node* node )
  */
 template <>
 void
-RecordablesMap< nest::gauss_rate_ipn >::create()
+RecordablesMap< gauss_rate_ipn >::create()
 {
   // use standard names wherever you can for consistency!
-  insert_( names::rate, &nest::gauss_rate_ipn::get_rate_ );
-  insert_( names::noise, &nest::gauss_rate_ipn::get_noise_ );
+  insert_( names::rate, &gauss_rate_ipn::get_rate_ );
+  insert_( names::noise, &gauss_rate_ipn::get_noise_ );
 }
 
 template <>
 void
-RecordablesMap< nest::rate_transformer_gauss >::create()
+RecordablesMap< rate_transformer_gauss >::create()
 {
   // use standard names wherever you can for consistency!
-  insert_( names::rate, &nest::rate_transformer_gauss::get_rate_ );
+  insert_( names::rate, &rate_transformer_gauss::get_rate_ );
 }
 
 }  // namespace nest

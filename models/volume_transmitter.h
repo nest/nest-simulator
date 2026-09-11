@@ -220,7 +220,7 @@ volume_transmitter::set_status( const Dictionary& d )
   P_ = ptmp;
 }
 
-inline const std::vector< nest::spikecounter >&
+inline const std::vector< spikecounter >&
 volume_transmitter::deliver_spikes()
 {
   return B_.spikecounter_;

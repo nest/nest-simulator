@@ -38,37 +38,40 @@
 
 #include "recording_backend_sionlib.h"
 
-const unsigned int nest::RecordingBackendSIONlib::SIONLIB_REC_BACKEND_VERSION = 2;
-const unsigned int nest::RecordingBackendSIONlib::DEV_NAME_BUFFERSIZE = 32;
-const unsigned int nest::RecordingBackendSIONlib::DEV_LABEL_BUFFERSIZE = 32;
-const unsigned int nest::RecordingBackendSIONlib::VALUE_NAME_BUFFERSIZE = 16;
-const unsigned int nest::RecordingBackendSIONlib::NEST_VERSION_BUFFERSIZE = 128;
 
-nest::RecordingBackendSIONlib::RecordingBackendSIONlib()
+namespace nest
+{
+const unsigned int RecordingBackendSIONlib::SIONLIB_REC_BACKEND_VERSION = 2;
+const unsigned int RecordingBackendSIONlib::DEV_NAME_BUFFERSIZE = 32;
+const unsigned int RecordingBackendSIONlib::DEV_LABEL_BUFFERSIZE = 32;
+const unsigned int RecordingBackendSIONlib::VALUE_NAME_BUFFERSIZE = 16;
+const unsigned int RecordingBackendSIONlib::NEST_VERSION_BUFFERSIZE = 128;
+
+RecordingBackendSIONlib::RecordingBackendSIONlib()
   : files_opened_( false )
   , num_enrolled_devices_( 0 )
 {
 }
 
-nest::RecordingBackendSIONlib::~RecordingBackendSIONlib() throw()
+RecordingBackendSIONlib::~RecordingBackendSIONlib() throw()
 {
   cleanup();
 }
 
 void
-nest::RecordingBackendSIONlib::initialize()
+RecordingBackendSIONlib::initialize()
 {
   device_map devices( kernel().vp_manager.get_num_threads() );
   devices_.swap( devices );
 }
 
 void
-nest::RecordingBackendSIONlib::finalize()
+RecordingBackendSIONlib::finalize()
 {
 }
 
 void
-nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device, const Dictionary& )
+RecordingBackendSIONlib::enroll( const RecordingDevice& device, const Dictionary& )
 {
   const size_t tid = device.get_thread();
   const size_t node_id = device.get_node_id();
@@ -95,7 +98,7 @@ nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device, const Dict
 }
 
 void
-nest::RecordingBackendSIONlib::disenroll( const RecordingDevice& device )
+RecordingBackendSIONlib::disenroll( const RecordingDevice& device )
 {
   const size_t tid = device.get_thread();
   const size_t node_id = device.get_node_id();
@@ -108,7 +111,7 @@ nest::RecordingBackendSIONlib::disenroll( const RecordingDevice& device )
 }
 
 void
-nest::RecordingBackendSIONlib::set_value_names( const RecordingDevice& device,
+RecordingBackendSIONlib::set_value_names( const RecordingDevice& device,
   const std::vector< std::string >& double_value_names,
   const std::vector< std::string >& long_value_names )
 {
@@ -134,12 +137,12 @@ nest::RecordingBackendSIONlib::set_value_names( const RecordingDevice& device,
 }
 
 void
-nest::RecordingBackendSIONlib::pre_run_hook()
+RecordingBackendSIONlib::pre_run_hook()
 {
 }
 
 void
-nest::RecordingBackendSIONlib::open_files_()
+RecordingBackendSIONlib::open_files_()
 {
   if ( files_opened_ or num_enrolled_devices_ == 0 )
   {
@@ -249,13 +252,13 @@ nest::RecordingBackendSIONlib::open_files_()
 }
 
 void
-nest::RecordingBackendSIONlib::cleanup()
+RecordingBackendSIONlib::cleanup()
 {
   close_files_();
 }
 
 void
-nest::RecordingBackendSIONlib::close_files_()
+RecordingBackendSIONlib::close_files_()
 {
   if ( not files_opened_ )
   {
@@ -415,7 +418,7 @@ nest::RecordingBackendSIONlib::close_files_()
 }
 
 void
-nest::RecordingBackendSIONlib::write( const RecordingDevice& device,
+RecordingBackendSIONlib::write( const RecordingDevice& device,
   const Event& event,
   const std::vector< double >& double_values,
   const std::vector< long >& long_values )
@@ -509,7 +512,7 @@ nest::RecordingBackendSIONlib::write( const RecordingDevice& device,
 }
 
 const std::string
-nest::RecordingBackendSIONlib::build_filename_() const
+RecordingBackendSIONlib::build_filename_() const
 {
   std::ostringstream basename;
   const std::string& path = kernel().io_manager.get_data_path();
@@ -526,14 +529,14 @@ nest::RecordingBackendSIONlib::build_filename_() const
  * Buffer
  * ---------------------------------------------------------------- */
 
-nest::RecordingBackendSIONlib::SIONBuffer::SIONBuffer()
+RecordingBackendSIONlib::SIONBuffer::SIONBuffer()
   : buffer_( nullptr )
   , ptr_( 0 )
   , max_size_( 0 )
 {
 }
 
-nest::RecordingBackendSIONlib::SIONBuffer::SIONBuffer( size_t size )
+RecordingBackendSIONlib::SIONBuffer::SIONBuffer( size_t size )
   : buffer_( nullptr )
   , ptr_( 0 )
   , max_size_( 0 )
@@ -541,7 +544,7 @@ nest::RecordingBackendSIONlib::SIONBuffer::SIONBuffer( size_t size )
   reserve( size );
 }
 
-nest::RecordingBackendSIONlib::SIONBuffer::~SIONBuffer()
+RecordingBackendSIONlib::SIONBuffer::~SIONBuffer()
 {
   if ( buffer_ )
   {
@@ -550,7 +553,7 @@ nest::RecordingBackendSIONlib::SIONBuffer::~SIONBuffer()
 }
 
 void
-nest::RecordingBackendSIONlib::SIONBuffer::reserve( size_t size )
+RecordingBackendSIONlib::SIONBuffer::reserve( size_t size )
 {
   char* new_buffer = new char[ size ];
 
@@ -565,7 +568,7 @@ nest::RecordingBackendSIONlib::SIONBuffer::reserve( size_t size )
 }
 
 void
-nest::RecordingBackendSIONlib::SIONBuffer::ensure_space( size_t size )
+RecordingBackendSIONlib::SIONBuffer::ensure_space( size_t size )
 {
   if ( get_free() < size )
   {
@@ -574,7 +577,7 @@ nest::RecordingBackendSIONlib::SIONBuffer::ensure_space( size_t size )
 }
 
 void
-nest::RecordingBackendSIONlib::SIONBuffer::write( const char* v, size_t n )
+RecordingBackendSIONlib::SIONBuffer::write( const char* v, size_t n )
 {
   if ( n <= get_free() )
   {
@@ -591,8 +594,8 @@ nest::RecordingBackendSIONlib::SIONBuffer::write( const char* v, size_t n )
 }
 
 template < typename T >
-nest::RecordingBackendSIONlib::SIONBuffer&
-nest::RecordingBackendSIONlib::SIONBuffer::operator<<( const T data )
+RecordingBackendSIONlib::SIONBuffer&
+RecordingBackendSIONlib::SIONBuffer::operator<<( const T data )
 {
   write( ( const char* ) &data, sizeof( T ) );
   return *this;
@@ -602,7 +605,7 @@ nest::RecordingBackendSIONlib::SIONBuffer::operator<<( const T data )
  * Parameter extraction and manipulation functions
  * ---------------------------------------------------------------- */
 
-nest::RecordingBackendSIONlib::Parameters_::Parameters_()
+RecordingBackendSIONlib::Parameters_::Parameters_()
   : filename_( "output.sion" )
   , sion_collective_( false )
   , sion_chunksize_( 1 << 18 )
@@ -612,7 +615,7 @@ nest::RecordingBackendSIONlib::Parameters_::Parameters_()
 }
 
 void
-nest::RecordingBackendSIONlib::Parameters_::get( const RecordingBackendSIONlib&, Dictionary& d ) const
+RecordingBackendSIONlib::Parameters_::get( const RecordingBackendSIONlib&, Dictionary& d ) const
 {
   d[ names::filename ] = filename_;
   d[ names::buffer_size ] = buffer_size_;
@@ -622,7 +625,7 @@ nest::RecordingBackendSIONlib::Parameters_::get( const RecordingBackendSIONlib&,
 }
 
 void
-nest::RecordingBackendSIONlib::Parameters_::set( const RecordingBackendSIONlib&, const Dictionary& d )
+RecordingBackendSIONlib::Parameters_::set( const RecordingBackendSIONlib&, const Dictionary& d )
 {
   d.update_value( names::filename, filename_ );
   d.update_value( names::buffer_size, buffer_size_ );
@@ -645,7 +648,7 @@ nest::RecordingBackendSIONlib::Parameters_::set( const RecordingBackendSIONlib&,
 }
 
 void
-nest::RecordingBackendSIONlib::set_status( const Dictionary& d )
+RecordingBackendSIONlib::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;  // temporary copy in case of errors
   ptmp.set( *this, d );   // throws if BadProperty
@@ -655,7 +658,7 @@ nest::RecordingBackendSIONlib::set_status( const Dictionary& d )
 }
 
 void
-nest::RecordingBackendSIONlib::get_status( Dictionary& d ) const
+RecordingBackendSIONlib::get_status( Dictionary& d ) const
 {
   P_.get( *this, d );
 
@@ -663,18 +666,18 @@ nest::RecordingBackendSIONlib::get_status( Dictionary& d ) const
 }
 
 void
-nest::RecordingBackendSIONlib::prepare()
+RecordingBackendSIONlib::prepare()
 {
   open_files_();
 }
 
 void
-nest::RecordingBackendSIONlib::post_run_hook()
+RecordingBackendSIONlib::post_run_hook()
 {
 }
 
 void
-nest::RecordingBackendSIONlib::post_step_hook()
+RecordingBackendSIONlib::post_step_hook()
 {
   if ( not files_opened_ or not P_.sion_collective_ )
   {
@@ -692,19 +695,21 @@ nest::RecordingBackendSIONlib::post_step_hook()
 }
 
 void
-nest::RecordingBackendSIONlib::check_device_status( const Dictionary& ) const
+RecordingBackendSIONlib::check_device_status( const Dictionary& ) const
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendSIONlib::get_device_defaults( Dictionary& ) const
+RecordingBackendSIONlib::get_device_defaults( Dictionary& ) const
 {
   // nothing to do
 }
 
 void
-nest::RecordingBackendSIONlib::get_device_status( const nest::RecordingDevice&, Dictionary& ) const
+RecordingBackendSIONlib::get_device_status( const RecordingDevice&, Dictionary& ) const
 {
   // nothing to do
 }
+
+}  // namespace nest

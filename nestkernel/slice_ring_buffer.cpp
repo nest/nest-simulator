@@ -26,13 +26,16 @@
 #include <cmath>
 #include <limits>
 
-nest::SliceRingBuffer::SliceRingBuffer()
+
+namespace nest
+{
+SliceRingBuffer::SliceRingBuffer()
   : refract_( std::numeric_limits< long >::max(), 0, 0 )
 {
 }
 
 void
-nest::SliceRingBuffer::resize()
+SliceRingBuffer::resize()
 {
   // We want to compute ceil( ( d_min + d_max ) / d_min ) = 1 + ceil( d_max / d_min )
   // and can do so safely without casting to double.
@@ -56,7 +59,7 @@ nest::SliceRingBuffer::resize()
 }
 
 void
-nest::SliceRingBuffer::clear()
+SliceRingBuffer::clear()
 {
   for ( auto& slot : queue_ )
   {
@@ -65,7 +68,7 @@ nest::SliceRingBuffer::clear()
 }
 
 void
-nest::SliceRingBuffer::prepare_delivery()
+SliceRingBuffer::prepare_delivery()
 {
   // vector to deliver from in this slice
   deliver_ = &( queue_[ kernel().event_delivery_manager.get_slice_modulo( 0 ) ] );
@@ -75,10 +78,12 @@ nest::SliceRingBuffer::prepare_delivery()
 }
 
 void
-nest::SliceRingBuffer::discard_events()
+SliceRingBuffer::discard_events()
 {
   // vector to deliver from in this slice
   deliver_ = &( queue_[ kernel().event_delivery_manager.get_slice_modulo( 0 ) ] );
 
   deliver_->clear();
 }
+
+}  // namespace nest

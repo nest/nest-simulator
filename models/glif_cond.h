@@ -212,18 +212,18 @@ public:
 
   ~glif_cond() override;
 
-  using nest::Node::handle;
-  using nest::Node::handles_test_event;
+  using Node::handle;
+  using Node::handles_test_event;
 
-  size_t send_test_event( nest::Node&, size_t, nest::synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  void handle( nest::SpikeEvent& ) override;
-  void handle( nest::CurrentEvent& ) override;
-  void handle( nest::DataLoggingRequest& ) override;
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  size_t handles_test_event( nest::SpikeEvent&, size_t ) override;
-  size_t handles_test_event( nest::CurrentEvent&, size_t ) override;
-  size_t handles_test_event( nest::DataLoggingRequest&, size_t ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
   void get_status( Dictionary& ) const override;
   void set_status( const Dictionary& ) override;
@@ -236,7 +236,7 @@ private:
   void pre_run_hook() override;
 
   //! Take neuron through given time interval
-  void update( nest::Time const&, const long, const long ) override;
+  void update( Time const&, const long, const long ) override;
 
   // make dynamics function quasi-member
   friend int glif_cond_dynamics( double, const double*, double*, void* );
@@ -337,8 +337,8 @@ private:
     Buffers_( glif_cond& );
     Buffers_( const Buffers_&, glif_cond& );
 
-    std::vector< nest::RingBuffer > spikes_;  //!< Buffer incoming spikes through delay, as sum
-    nest::RingBuffer currents_;               //!< Buffer incoming currents through delay,
+    std::vector< RingBuffer > spikes_;  //!< Buffer incoming spikes through delay, as sum
+    RingBuffer currents_;               //!< Buffer incoming currents through delay,
 
     //! Logger for all analog data
     DynamicUniversalDataLogger< glif_cond > logger_;
@@ -399,33 +399,33 @@ private:
   inline double
   get_state_element( size_t elem )
   {
-    if ( elem == nest::glif_cond::State_::V_M )
+    if ( elem == glif_cond::State_::V_M )
     {
       return S_.y_[ elem ] + P_.E_L_;
     }
-    else if ( elem == nest::glif_cond::State_::I )
+    else if ( elem == glif_cond::State_::I )
     {
       return B_.I_;
     }
-    else if ( elem == nest::glif_cond::State_::ASC_SUM )
+    else if ( elem == glif_cond::State_::ASC_SUM )
     {
       return S_.ASCurrents_sum_;
     }
-    else if ( elem == nest::glif_cond::State_::TH )
+    else if ( elem == glif_cond::State_::TH )
     {
       return S_.threshold_ + P_.E_L_;
     }
-    else if ( elem == nest::glif_cond::State_::TH_SPK )
+    else if ( elem == glif_cond::State_::TH_SPK )
     {
       return S_.threshold_spike_;
     }
-    else if ( elem == nest::glif_cond::State_::TH_VLT )
+    else if ( elem == glif_cond::State_::TH_VLT )
     {
       return S_.threshold_voltage_;
     }
     else
     {
-      return S_.y_[ elem - nest::glif_cond::State_::NUMBER_OF_RECORDABLES_ELEMENTS ];
+      return S_.y_[ elem - glif_cond::State_::NUMBER_OF_RECORDABLES_ELEMENTS ];
     }
   };
 
@@ -438,36 +438,36 @@ private:
 
 
 inline size_t
-nest::glif_cond::Parameters_::n_receptors_() const
+glif_cond::Parameters_::n_receptors_() const
 {
   return tau_syn_.size();
 }
 
 
 inline size_t
-nest::glif_cond::send_test_event( nest::Node& target, size_t receptor_type, nest::synindex, bool )
+glif_cond::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
-  nest::SpikeEvent e;
+  SpikeEvent e;
   e.set_sender( *this );
   return target.handles_test_event( e, receptor_type );
 }
 
 inline size_t
-nest::glif_cond::handles_test_event( nest::CurrentEvent&, size_t receptor_type )
+glif_cond::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
-    throw nest::UnknownReceptorType( receptor_type, get_name() );
+    throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
 }
 
 inline size_t
-nest::glif_cond::handles_test_event( nest::DataLoggingRequest& dlr, size_t receptor_type )
+glif_cond::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
-    throw nest::UnknownReceptorType( receptor_type, get_name() );
+    throw UnknownReceptorType( receptor_type, get_name() );
   }
 
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
@@ -483,7 +483,7 @@ glif_cond::get_status( Dictionary& d ) const
   // get information managed by parent class
   ArchivingNode::get_status( d );
 
-  d[ nest::names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void

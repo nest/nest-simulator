@@ -1,0 +1,706 @@
+# Registry of all PyNEST examples in pynest/examples/.
+#
+# This file is the single source of truth for PyNEST example metadata: which
+# files make up an example, which NEST models it demonstrates, and whether it is
+# exercised by automation.
+#
+# Read today by:
+#   - check_examples_registry.py : validates this registry against the files on disk
+#
+# Planned consumers (not yet implemented):
+#   - the downstream nest-simulator-examples workflows, to run examples and to
+#     convert them into Jupyter notebooks for EBRAINS
+#   - the Sphinx listexamples directive, to link model doc pages to examples
+#
+# Anything derivable from the repository itself is deliberately absent.  In
+# particular there is no field recording what changed since the last release:
+# git already knows, and a hand-maintained copy of it only goes stale.
+#
+# -- Required fields ----------------------------------------------------------
+#
+# name: str
+#   Unique identifier for the example.  Usually the entry-point file stem, but
+#   not always: several spatial/ files have generic stems that would collide,
+#   and a multi-file example is named for its directory rather than its main
+#   script.
+#
+# path: str
+#   The entry-point script, relative to pynest/examples/.  For a multi-file
+#   example this is the main script (e.g. run_simulation.py); its supporting
+#   modules go in helper_scripts.
+#
+# models: list[str]
+#   The NEST models the example demonstrates.  List the kernel model names only,
+#   never an example-local CopyModel alias.  Required unless the entry is
+#   skipped entirely (skip: all).
+#
+# -- Optional fields ----------------------------------------------------------
+#
+# skip: all | notebook
+#   Omit this field for a normal example: it is run in CI and converted to a
+#   notebook.  Set it when that is not possible:
+#     all       - neither run nor converted (missing optional library, special
+#                 MPI setup, or similar)
+#     notebook  - run in CI, but not converted (a benchmark, say, which is not
+#                 meaningful as a notebook)
+#   An entry with skip must explain itself in notes.
+#
+# notes: str
+#   Anything a reader needs to know.  Required whenever skip is set; also used
+#   on ordinary entries to record a caveat.
+#
+# helper_scripts: list[str]
+#   Supporting .py files the example imports, relative to pynest/examples/.
+#   Listing them here is what stops check_examples_registry.py from reporting
+#   them as unregistered examples in their own right.
+#
+# data_files: list[str]
+#   Data files or directories the example needs, relative to pynest/examples/.
+#
+# post_script: str
+#   A script to run after the main example, relative to pynest/examples/.
+#
+
+examples:
+- name: aeif_cond_beta_multisynapse
+  path: aeif_cond_beta_multisynapse.py
+  models:
+  - aeif_cond_beta_multisynapse
+  - spike_generator
+  - voltmeter
+- name: artificial_synchrony
+  path: artificial_synchrony.py
+  models:
+  - voltmeter
+- name: balancedneuron
+  path: balancedneuron.py
+  models:
+  - iaf_psc_alpha
+  - poisson_generator
+  - spike_recorder
+  - voltmeter
+- name: brette_gerstner_fig_2c
+  path: brette_gerstner_fig_2c.py
+  models:
+  - aeif_cond_alpha
+  - dc_generator
+  - voltmeter
+- name: brette_gerstner_fig_3d
+  path: brette_gerstner_fig_3d.py
+  models:
+  - aeif_cond_exp
+  - dc_generator
+  - voltmeter
+- name: BrodyHopfield
+  path: BrodyHopfield.py
+  models:
+  - ac_generator
+  - iaf_psc_alpha
+  - noise_generator
+  - spike_recorder
+- name: brunel_alpha_evolution_strategies
+  path: brunel_alpha_evolution_strategies.py
+  models:
+  - iaf_psc_alpha
+  - poisson_generator
+  - spike_recorder
+  - static_synapse
+- name: brunel_alpha_nest
+  path: brunel_alpha_nest.py
+  models:
+  - iaf_psc_alpha
+  - poisson_generator
+  - spike_recorder
+  - static_synapse
+- name: brunel_delta_nest
+  path: brunel_delta_nest.py
+  models:
+  - iaf_psc_delta
+  - poisson_generator
+  - spike_recorder
+  - static_synapse
+- name: brunel_exp_multisynapse_nest
+  path: brunel_exp_multisynapse_nest.py
+  models:
+  - iaf_psc_exp_multisynapse
+  - poisson_generator
+  - spike_recorder
+  - static_synapse
+- name: brunel_siegert_nest
+  path: brunel_siegert_nest.py
+  models:
+  - multimeter
+  - siegert_neuron
+- name: CampbellSiegert
+  path: CampbellSiegert.py
+  models:
+  - iaf_psc_alpha
+  - poisson_generator
+  - spike_recorder
+  - voltmeter
+- name: clopath_synapse_small_network
+  path: clopath_synapse_small_network.py
+  models:
+  - clopath_synapse
+  - parrot_neuron
+  - poisson_generator
+  - weight_recorder
+- name: clopath_synapse_spike_pairing
+  path: clopath_synapse_spike_pairing.py
+  models:
+  - aeif_psc_delta_clopath
+  - clopath_synapse
+  - parrot_neuron
+  - spike_generator
+  - weight_recorder
+- name: correlospinmatrix_detector_two_neuron
+  path: correlospinmatrix_detector_two_neuron.py
+  models:
+  - correlospinmatrix_detector
+  - ginzburg_neuron
+  - mcculloch_pitts_neuron
+- name: cross_check_mip_corrdet
+  path: cross_check_mip_corrdet.py
+  models:
+  - correlation_detector
+  - mip_generator
+  - parrot_neuron
+  - spike_recorder
+- name: evaluate_quantal_stp_synapse
+  path: evaluate_quantal_stp_synapse.py
+  models:
+  - iaf_psc_exp
+  - voltmeter
+- name: evaluate_tsodyks2_synapse
+  path: evaluate_tsodyks2_synapse.py
+  models:
+  - iaf_psc_exp
+  - voltmeter
+- name: gap_junctions_inhibitory_network
+  path: gap_junctions_inhibitory_network.py
+  models:
+  - hh_psc_alpha_gap
+  - poisson_generator
+  - spike_recorder
+- name: gap_junctions_two_neurons
+  path: gap_junctions_two_neurons.py
+  models:
+  - hh_psc_alpha_gap
+  - voltmeter
+- name: gif_cond_exp_multisynapse
+  path: gif_cond_exp_multisynapse.py
+  models:
+  - gif_cond_exp_multisynapse
+  - spike_generator
+- name: gif_pop_psc_exp
+  path: gif_pop_psc_exp.py
+  models:
+  - gif_pop_psc_exp
+  - gif_psc_exp
+  - multimeter
+  - spike_recorder
+  - step_current_generator
+- name: gif_population
+  path: gif_population.py
+  models:
+  - gif_psc_exp
+  - poisson_generator
+  - spike_recorder
+- name: glif_cond_neuron
+  path: glif_cond_neuron.py
+  models:
+  - glif_cond
+  - multimeter
+  - parrot_neuron
+  - poisson_generator
+  - spike_generator
+  - spike_recorder
+  - step_current_generator
+- name: glif_psc_double_alpha_neuron
+  path: glif_psc_double_alpha_neuron.py
+  models:
+  - glif_psc
+  - glif_psc_double_alpha
+  - multimeter
+  - spike_generator
+- name: glif_psc_neuron
+  path: glif_psc_neuron.py
+  models:
+  - glif_psc
+  - multimeter
+  - parrot_neuron
+  - poisson_generator
+  - spike_generator
+  - spike_recorder
+  - step_current_generator
+- name: hh_phaseplane
+  path: hh_phaseplane.py
+  models:
+  - hh_psc_alpha
+- name: hh_psc_alpha
+  path: hh_psc_alpha.py
+  models:
+  - hh_psc_alpha
+  - spike_recorder
+- name: hpc_benchmark
+  path: hpc_benchmark.py
+  models:
+  - iaf_psc_alpha
+  - poisson_generator
+  - spike_recorder
+  - static_synapse_hpc
+  skip: notebook
+  notes: Benchmark rather than a tutorial; not meaningful as a notebook
+- name: iaf_tum_2000_short_term_depression
+  path: iaf_tum_2000_short_term_depression.py
+  models:
+  - dc_generator
+  - iaf_tum_2000
+  - voltmeter
+- name: iaf_tum_2000_short_term_facilitation
+  path: iaf_tum_2000_short_term_facilitation.py
+  models:
+  - dc_generator
+  - iaf_tum_2000
+  - voltmeter
+- name: if_curve
+  path: if_curve.py
+  models:
+  - noise_generator
+  - spike_recorder
+- name: ignore_and_spike_mechanism
+  path: ignore_and_spike_mechanism.py
+  models:
+  - iaf_psc_delta
+  - spike_recorder
+- name: intrinsic_currents_spiking
+  path: intrinsic_currents_spiking.py
+  models:
+  - ht_neuron
+  - multimeter
+  - poisson_generator
+- name: intrinsic_currents_subthreshold
+  path: intrinsic_currents_subthreshold.py
+  models:
+  - dc_generator
+  - ht_neuron
+  - multimeter
+- name: lin_rate_ipn_network
+  path: lin_rate_ipn_network.py
+  models:
+  - multimeter
+- name: mc_neuron
+  path: mc_neuron.py
+  models:
+  - dc_generator
+  - iaf_cond_alpha_mc
+  - multimeter
+  - spike_generator
+- name: multimeter_file
+  path: multimeter_file.py
+  models:
+  - iaf_cond_alpha
+  - multimeter
+  - spike_generator
+- name: one_neuron
+  path: one_neuron.py
+  models:
+  - iaf_psc_alpha
+  - voltmeter
+- name: one_neuron_with_noise
+  path: one_neuron_with_noise.py
+  models:
+  - iaf_psc_alpha
+  - poisson_generator
+  - voltmeter
+- name: plot_weight_matrices
+  path: plot_weight_matrices.py
+  models:
+  - iaf_psc_alpha
+- name: precise_spiking
+  path: precise_spiking.py
+  models:
+  - dc_generator
+  - spike_recorder
+  - voltmeter
+- name: pulsepacket
+  path: pulsepacket.py
+  models:
+  - iaf_psc_alpha
+  - pulsepacket_generator
+  - voltmeter
+- name: rate_neuron_dm
+  path: rate_neuron_dm.py
+  models:
+  - lin_rate_ipn
+  - multimeter
+- name: recording_demo
+  path: recording_demo.py
+  models:
+  - iaf_psc_exp
+  - poisson_generator
+  - spike_recorder
+- name: repeated_stimulation
+  path: repeated_stimulation.py
+  models:
+  - poisson_generator
+  - spike_recorder
+- name: sensitivity_to_perturbation
+  path: sensitivity_to_perturbation.py
+  models:
+  - dc_generator
+  - poisson_generator
+  - spike_generator
+  - spike_recorder
+- name: sinusoidal_gamma_generator
+  path: sinusoidal_gamma_generator.py
+  models:
+  - multimeter
+  - parrot_neuron
+  - sinusoidal_gamma_generator
+  - spike_recorder
+- name: sinusoidal_poisson_generator
+  path: sinusoidal_poisson_generator.py
+  models:
+  - multimeter
+  - parrot_neuron
+  - sinusoidal_poisson_generator
+  - spike_recorder
+- name: store_restore_network
+  path: store_restore_network.py
+  models:
+  - poisson_generator
+  - spike_recorder
+  - static_synapse
+  - stdp_synapse_hom
+- name: structural_plasticity
+  path: structural_plasticity.py
+  models:
+  - iaf_psc_alpha
+  - poisson_generator
+  - static_synapse
+- name: synapsecollection
+  path: synapsecollection.py
+  models:
+  - iaf_psc_alpha
+  - iaf_psc_delta
+- name: testiaf
+  path: testiaf.py
+  models:
+  - iaf_psc_alpha
+  - spike_recorder
+  - voltmeter
+- name: twoneurons
+  path: twoneurons.py
+  models:
+  - iaf_psc_alpha
+  - voltmeter
+- name: urbanczik_synapse_example
+  path: urbanczik_synapse_example.py
+  models:
+  - multimeter
+  - parrot_neuron
+  - poisson_generator
+  - spike_generator
+  - spike_recorder
+  - urbanczik_synapse
+  - weight_recorder
+- name: vinit_example
+  path: vinit_example.py
+  models:
+  - iaf_cond_exp_sfa_rr
+  - voltmeter
+- name: wang_decision_making
+  path: wang_decision_making.py
+  models:
+  - inhomogeneous_poisson_generator
+  - poisson_generator
+  - spike_recorder
+- name: astrocyte_brunel_bernoulli
+  path: astrocytes/astrocyte_brunel_bernoulli.py
+  models:
+  - aeif_cond_alpha_astro
+  - astrocyte_lr_1994
+  - multimeter
+  - poisson_generator
+  - spike_recorder
+- name: astrocyte_brunel_fixed_indegree
+  path: astrocytes/astrocyte_brunel_fixed_indegree.py
+  models:
+  - aeif_cond_alpha_astro
+  - astrocyte_lr_1994
+  - multimeter
+  - poisson_generator
+  - spike_recorder
+- name: astrocyte_interaction
+  path: astrocytes/astrocyte_interaction.py
+  models:
+  - aeif_cond_alpha_astro
+  - astrocyte_lr_1994
+  - multimeter
+  - poisson_generator
+  - spike_recorder
+- name: astrocyte_single
+  path: astrocytes/astrocyte_single.py
+  models:
+  - aeif_cond_alpha_astro
+  - astrocyte_lr_1994
+  - multimeter
+  - poisson_generator
+  - spike_recorder
+- name: astrocyte_small_network
+  path: astrocytes/astrocyte_small_network.py
+  models:
+  - aeif_cond_alpha_astro
+  - astrocyte_lr_1994
+  - multimeter
+  - poisson_generator
+  - spike_recorder
+- name: brette_et_al_2007_benchmark
+  path: brette_et_al_2007/brette_et_al_2007_benchmark.py
+  models:
+  - poisson_generator
+  - spike_recorder
+  - static_synapse
+- name: coba
+  path: brette_et_al_2007/coba.py
+  models:
+  - iaf_cond_exp
+  - poisson_generator
+  - spike_recorder
+  - static_synapse
+- name: cuba
+  path: brette_et_al_2007/cuba.py
+  models:
+  - iaf_psc_exp
+  - poisson_generator
+  - spike_recorder
+  - static_synapse
+- name: cuba_ps
+  path: brette_et_al_2007/cuba_ps.py
+  models:
+  - iaf_psc_delta
+  - poisson_generator
+  - spike_recorder
+  - static_synapse
+- name: cuba_stdp
+  path: brette_et_al_2007/cuba_stdp.py
+  models:
+  - iaf_psc_exp
+  - poisson_generator
+  - spike_recorder
+  - static_synapse
+  - stdp_synapse
+- name: hh_coba
+  path: brette_et_al_2007/hh_coba.py
+  models:
+  - hh_cond_exp_traub
+  - poisson_generator
+  - spike_recorder
+  - static_synapse
+- name: receptors_and_current
+  path: compartmental_model/receptors_and_current.py
+  models:
+  - cm_default
+  - dc_generator
+  - multimeter
+  - spike_generator
+- name: two_comps
+  path: compartmental_model/two_comps.py
+  models:
+  - cm_default
+  - dc_generator
+  - multimeter
+  - spike_generator
+- name: eprop_supervised_classification_evidence_accumulation
+  path: eprop_plasticity/eprop_supervised_classification_evidence-accumulation_bsshslm_2020.py
+  models:
+  - eprop_iaf_adapt_bsshslm_2020
+  - eprop_iaf_bsshslm_2020
+  - eprop_readout
+  - eprop_readout_bsshslm_2020
+  - multimeter
+  - parrot_neuron
+  - spike_generator
+  - spike_recorder
+  - step_rate_generator
+  - weight_recorder
+- name: eprop_supervised_classification_neuromorphic_mnist
+  path: eprop_plasticity/eprop_supervised_classification_neuromorphic_mnist.py
+  models:
+  - eprop_iaf_adapt_bsshslm_2020
+  - eprop_iaf_bsshslm_2020
+  - eprop_readout
+  - eprop_readout_bsshslm_2020
+  - multimeter
+  - parrot_neuron
+  - spike_generator
+  - spike_recorder
+  - step_rate_generator
+  - weight_recorder
+  data_files:
+  - eprop_plasticity/NMNIST_pixels_blocklist.txt
+- name: eprop_supervised_regression_handwriting
+  path: eprop_plasticity/eprop_supervised_regression_handwriting_bsshslm_2020.py
+  models:
+  - eprop_iaf_adapt_bsshslm_2020
+  - eprop_iaf_bsshslm_2020
+  - eprop_readout
+  - eprop_readout_bsshslm_2020
+  - multimeter
+  - parrot_neuron
+  - spike_generator
+  - spike_recorder
+  - step_rate_generator
+  - weight_recorder
+  data_files:
+  - eprop_plasticity/chaos_handwriting.txt
+- name: eprop_supervised_regression_lemniscate
+  path: eprop_plasticity/eprop_supervised_regression_lemniscate_bsshslm_2020.py
+  models:
+  - eprop_iaf_adapt_bsshslm_2020
+  - eprop_iaf_bsshslm_2020
+  - eprop_readout
+  - eprop_readout_bsshslm_2020
+  - multimeter
+  - parrot_neuron
+  - spike_generator
+  - spike_recorder
+  - step_rate_generator
+  - weight_recorder
+- name: eprop_supervised_regression_sine_waves
+  path: eprop_plasticity/eprop_supervised_regression_sine-waves.py
+  models:
+  - eprop_iaf_adapt_bsshslm_2020
+  - eprop_iaf_bsshslm_2020
+  - eprop_readout
+  - eprop_readout_bsshslm_2020
+  - multimeter
+  - parrot_neuron
+  - spike_generator
+  - spike_recorder
+  - step_rate_generator
+  - weight_recorder
+- name: eprop_supervised_regression_sine_waves_bsshslm
+  path: eprop_plasticity/eprop_supervised_regression_sine-waves_bsshslm_2020.py
+  models:
+  - eprop_iaf_adapt_bsshslm_2020
+  - eprop_iaf_bsshslm_2020
+  - eprop_readout
+  - eprop_readout_bsshslm_2020
+  - multimeter
+  - parrot_neuron
+  - spike_generator
+  - spike_recorder
+  - step_rate_generator
+  - weight_recorder
+- name: spatial_conncomp
+  path: spatial/conncomp.py
+  models:
+  - iaf_psc_alpha
+- name: spatial_conncon_sources
+  path: spatial/conncon_sources.py
+  models:
+  - iaf_psc_alpha
+- name: spatial_conncon_targets
+  path: spatial/conncon_targets.py
+  models:
+  - iaf_psc_alpha
+- name: spatial_connex
+  path: spatial/connex.py
+  models:
+  - iaf_psc_alpha
+- name: spatial_connex_ew
+  path: spatial/connex_ew.py
+  models:
+  - iaf_psc_alpha
+- name: spatial_ctx_2n
+  path: spatial/ctx_2n.py
+  models:
+  - iaf_psc_alpha
+- name: spatial_gaussex
+  path: spatial/gaussex.py
+  models:
+  - iaf_psc_alpha
+- name: spatial_grid_iaf
+  path: spatial/grid_iaf.py
+  models:
+  - iaf_psc_alpha
+- name: spatial_grid_iaf_irr
+  path: spatial/grid_iaf_irr.py
+  models:
+  - iaf_psc_alpha
+- name: spatial_grid_iaf_oc
+  path: spatial/grid_iaf_oc.py
+  models:
+  - iaf_psc_alpha
+- name: spatial_nodes_source_target
+  path: spatial/nodes_source_target.py
+  models:
+  - iaf_psc_alpha
+- name: spatial_test_3d
+  path: spatial/test_3d.py
+  models:
+  - iaf_psc_alpha
+- name: spatial_test_3d_exp
+  path: spatial/test_3d_exp.py
+  models:
+  - iaf_psc_alpha
+- name: spatial_test_3d_gauss
+  path: spatial/test_3d_gauss.py
+  models:
+  - iaf_psc_alpha
+- name: EI_clustered_network
+  path: EI_clustered_network/run_simulation.py
+  models:
+  - iaf_psc_exp
+  - spike_recorder
+  - static_synapse
+  - step_current_generator
+  helper_scripts:
+  - EI_clustered_network/run_example.py
+  - EI_clustered_network/network.py
+  - EI_clustered_network/network_params.py
+  - EI_clustered_network/sim_params.py
+  - EI_clustered_network/stimulus_params.py
+  - EI_clustered_network/helper.py
+- name: pong
+  path: pong/run_simulations.py
+  models:
+  - dc_generator
+  - iaf_psc_exp
+  - noise_generator
+  - parrot_neuron
+  - poisson_generator
+  - spike_generator
+  - spike_recorder
+  - volume_transmitter
+  helper_scripts:
+  - pong/networks.py
+  - pong/pong.py
+  - pong/run_example.py
+  post_script: pong/generate_gif.py
+- name: sonata_network
+  path: sonata_example/sonata_network.py
+  models:
+  - spike_recorder
+  notes: Requires SONATA data files
+  data_files:
+  - sonata_example/300_pointneurons/
+- name: sudoku
+  path: sudoku/sudoku_solver.py
+  models:
+  - iaf_psc_exp
+  - poisson_generator
+  - spike_recorder
+  helper_scripts:
+  - sudoku/helpers_sudoku.py
+  - sudoku/sudoku_net.py
+  - sudoku/run_example.py
+  post_script: sudoku/plot_progress.py
+- name: music_cont_out_proxy
+  path: music_cont_out_proxy_example/nest_script.py
+  skip: all
+  notes: Requires MUSIC library and special MPI setup
+  helper_scripts:
+  - music_cont_out_proxy_example/receiver_script.py

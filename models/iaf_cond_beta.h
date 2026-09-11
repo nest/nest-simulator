@@ -112,17 +112,50 @@ The synaptic input current has an excitatory and an inhibitory component
 
 .. math::
 
-   I_{\text{syn}}(t) = I_{\text{syn, ex}}(t) + I_{\text{syn, in}}(t) \;,
+   I_{\text{syn}}(t) = I_{\text{syn, ex}}(t) + I_{\text{syn, in}}(t)
 
-where :math:`I_{\text{syn, X}}(t) = (V_{\text{m}}(t) - E_{\text{syn, X}}) \, g_{\text{X}}(t)` for
-:math:`\text{X} \in \{\text{ex}, \text{in}\}`. The synaptic conductances are beta-shaped
-(a difference of two exponentials),
+where
 
 .. math::
 
-   g_{\text{X}}(t) \propto e^{-\frac{t}{\tau_{\text{decay, X}}}} - e^{-\frac{t}{\tau_{\text{rise, X}}}} \;, \quad t \geq 0 \;,
+   I_{\text{syn, X}}(t) = (V_{\text{m}}(t) - E_{\text{syn, X}}) \sum_{j}  \sum_k g_{\text{j, X}}(t-t_j^k-d_j) \;,
 
-and are normalized such that each incoming spike of weight 1.0 produces a peak conductance of 1 nS.
+where :math:`j` indexes either excitatory (:math:`\text{X} = \text{ex}`)
+or inhibitory (:math:`\text{X} = \text{in}`) presynaptic neurons,
+:math:`k` indexes the spike times of neuron :math:`j`, and :math:`d_j`
+is the delay from neuron :math:`j`.
+
+The individual synaptic conductances are beta-shaped, that is, given by the difference of two
+exponentials with separate rise and decay time constants,
+
+.. math::
+
+   g_{\text{j, X}}(t) = w_{\text{j}} \,
+   \frac{ e^{-\frac{t}{\tau_{\text{decay, X}}}} - e^{-\frac{t}{\tau_{\text{rise, X}}}} }
+        { e^{-\frac{t_{\text{peak, X}}}{\tau_{\text{decay, X}}}} - e^{-\frac{t_{\text{peak, X}}}{\tau_{\text{rise, X}}}} }
+   \, \Theta(t)
+
+where :math:`\Theta(x)` is the Heaviside step function and
+
+.. math::
+
+   t_{\text{peak, X}} = \frac{ \tau_{\text{decay, X}} \, \tau_{\text{rise, X}} }
+                             { \tau_{\text{decay, X}} - \tau_{\text{rise, X}} }
+                        \ln \frac{ \tau_{\text{decay, X}} }{ \tau_{\text{rise, X}} }
+
+is the time at which the conductance attains its maximum. The conductances are normalized to
+unit peak, that is,
+
+.. math::
+
+   g_{\text{j, X}}(t = t_{\text{peak, X}}) = w_{\text{j}} \;,
+
+where :math:`w_{\text{j}}` is the weight of the connection from neuron :math:`j` (excitatory if
+:math:`w_{\text{j}} > 0` or inhibitory if :math:`w_{\text{j}} < 0`).
+
+For :math:`\tau_{\text{rise, X}} = \tau_{\text{decay, X}}`, which is the case for the default
+parameters, the beta function reduces to the alpha function of ``iaf_cond_alpha``, and the model
+uses that form.
 
 .. note::
 

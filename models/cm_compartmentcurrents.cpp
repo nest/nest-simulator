@@ -22,7 +22,9 @@
 #include "cm_compartmentcurrents.h"
 
 
-nest::Na::Na( double v_comp )
+namespace nest
+{
+Na::Na( double v_comp )
   // state variables
   : m_Na_( 0.0 )
   , h_Na_( 0.0 )
@@ -34,7 +36,7 @@ nest::Na::Na( double v_comp )
   // some default initialization
   init_statevars( v_comp );
 }
-nest::Na::Na( double v_comp, const Dictionary& channel_params )
+Na::Na( double v_comp, const Dictionary& channel_params )
   // state variables
   : m_Na_( 0.0 )
   , h_Na_( 0.0 )
@@ -57,7 +59,7 @@ nest::Na::Na( double v_comp, const Dictionary& channel_params )
 }
 
 void
-nest::Na::init_statevars( double v_init )
+Na::init_statevars( double v_init )
 {
   std::pair< double, double > sv( 0., 0. );
 
@@ -68,14 +70,14 @@ nest::Na::init_statevars( double v_init )
 }
 
 void
-nest::Na::append_recordables( std::map< std::string, double* >* recordables, const long compartment_idx )
+Na::append_recordables( std::map< std::string, double* >* recordables, const long compartment_idx )
 {
   ( *recordables )[ "m_Na_" + std::to_string( compartment_idx ) ] = &m_Na_;
   ( *recordables )[ "h_Na_" + std::to_string( compartment_idx ) ] = &h_Na_;
 }
 
 std::pair< double, double >
-nest::Na::compute_statevar_m( const double v_comp )
+Na::compute_statevar_m( const double v_comp )
 {
   /**
    * Channel rate equations from the following .mod file:
@@ -110,7 +112,7 @@ nest::Na::compute_statevar_m( const double v_comp )
 }
 
 std::pair< double, double >
-nest::Na::compute_statevar_h( const double v_comp )
+Na::compute_statevar_h( const double v_comp )
 {
   /**
    * Channel rate equations from the following .mod file:
@@ -147,7 +149,7 @@ nest::Na::compute_statevar_h( const double v_comp )
 }
 
 std::pair< double, double >
-nest::Na::f_numstep( const double v_comp )
+Na::f_numstep( const double v_comp )
 {
   const double dt = Time::get_resolution().get_ms();
   double g_val = 0., i_val = 0.;
@@ -186,7 +188,7 @@ nest::Na::f_numstep( const double v_comp )
 }
 
 
-nest::K::K( double v_comp )
+K::K( double v_comp )
   // state variables
   : n_K_( 0.0 )
   // parameters
@@ -197,7 +199,7 @@ nest::K::K( double v_comp )
   init_statevars( v_comp );
 }
 
-nest::K::K( double v_comp, const Dictionary& channel_params )
+K::K( double v_comp, const Dictionary& channel_params )
   // state variables
   : n_K_( 0.0 )
   // parameters
@@ -220,7 +222,7 @@ nest::K::K( double v_comp, const Dictionary& channel_params )
 }
 
 void
-nest::K::init_statevars( double v_init )
+K::init_statevars( double v_init )
 {
   std::pair< double, double > sv( 0., 0. );
   sv = compute_statevar_n( v_init );
@@ -228,13 +230,13 @@ nest::K::init_statevars( double v_init )
 }
 
 void
-nest::K::append_recordables( std::map< std::string, double* >* recordables, const long compartment_idx )
+K::append_recordables( std::map< std::string, double* >* recordables, const long compartment_idx )
 {
   ( *recordables )[ "n_K_" + std::to_string( compartment_idx ) ] = &n_K_;
 }
 
 std::pair< double, double >
-nest::K::compute_statevar_n( const double v_comp )
+K::compute_statevar_n( const double v_comp )
 {
   /**
    * Channel rate equations from the following .mod file:
@@ -270,7 +272,7 @@ nest::K::compute_statevar_n( const double v_comp )
 }
 
 std::pair< double, double >
-nest::K::f_numstep( const double v_comp )
+K::f_numstep( const double v_comp )
 {
   const double dt = Time::get_resolution().get_ms();
   double g_val = 0., i_val = 0.;
@@ -299,7 +301,7 @@ nest::K::f_numstep( const double v_comp )
 }
 
 
-nest::AMPA::AMPA( const long syn_index )
+AMPA::AMPA( const long syn_index )
   // initialization state variables
   : g_r_AMPA_( 0.0 )
   , g_d_AMPA_( 0.0 )
@@ -318,7 +320,7 @@ nest::AMPA::AMPA( const long syn_index )
   g_norm_ = 1. / ( -std::exp( -tp / tau_r_ ) + std::exp( -tp / tau_d_ ) );
 }
 
-nest::AMPA::AMPA( const long syn_index, const Dictionary& receptor_params )
+AMPA::AMPA( const long syn_index, const Dictionary& receptor_params )
   // initialization state variables
   : g_r_AMPA_( 0.0 )
   , g_d_AMPA_( 0.0 )
@@ -352,14 +354,14 @@ nest::AMPA::AMPA( const long syn_index, const Dictionary& receptor_params )
 }
 
 void
-nest::AMPA::append_recordables( std::map< std::string, double* >* recordables )
+AMPA::append_recordables( std::map< std::string, double* >* recordables )
 {
   ( *recordables )[ "g_r_AMPA_" + std::to_string( syn_idx ) ] = &g_r_AMPA_;
   ( *recordables )[ "g_d_AMPA_" + std::to_string( syn_idx ) ] = &g_d_AMPA_;
 }
 
 std::pair< double, double >
-nest::AMPA::f_numstep( const double v_comp, const long lag )
+AMPA::f_numstep( const double v_comp, const long lag )
 {
   // update conductance
   g_r_AMPA_ *= prop_r_;
@@ -386,7 +388,7 @@ nest::AMPA::f_numstep( const double v_comp, const long lag )
 }
 
 
-nest::GABA::GABA( const long syn_index )
+GABA::GABA( const long syn_index )
   // initialization state variables
   : g_r_GABA_( 0.0 )
   , g_d_GABA_( 0.0 )
@@ -405,7 +407,7 @@ nest::GABA::GABA( const long syn_index )
   g_norm_ = 1. / ( -std::exp( -tp / tau_r_ ) + std::exp( -tp / tau_d_ ) );
 }
 
-nest::GABA::GABA( const long syn_index, const Dictionary& receptor_params )
+GABA::GABA( const long syn_index, const Dictionary& receptor_params )
   // initialization state variables
   : g_r_GABA_( 0.0 )
   , g_d_GABA_( 0.0 )
@@ -439,14 +441,14 @@ nest::GABA::GABA( const long syn_index, const Dictionary& receptor_params )
 }
 
 void
-nest::GABA::append_recordables( std::map< std::string, double* >* recordables )
+GABA::append_recordables( std::map< std::string, double* >* recordables )
 {
   ( *recordables )[ "g_r_GABA_" + std::to_string( syn_idx ) ] = &g_r_GABA_;
   ( *recordables )[ "g_d_GABA_" + std::to_string( syn_idx ) ] = &g_d_GABA_;
 }
 
 std::pair< double, double >
-nest::GABA::f_numstep( const double v_comp, const long lag )
+GABA::f_numstep( const double v_comp, const long lag )
 {
   // update conductance
   g_r_GABA_ *= prop_r_;
@@ -473,7 +475,7 @@ nest::GABA::f_numstep( const double v_comp, const long lag )
 }
 
 
-nest::NMDA::NMDA( const long syn_index )
+NMDA::NMDA( const long syn_index )
   // initialization state variables
   : g_r_NMDA_( 0.0 )
   , g_d_NMDA_( 0.0 )
@@ -492,7 +494,7 @@ nest::NMDA::NMDA( const long syn_index )
   g_norm_ = 1. / ( -std::exp( -tp / tau_r_ ) + std::exp( -tp / tau_d_ ) );
 }
 
-nest::NMDA::NMDA( const long syn_index, const Dictionary& receptor_params )
+NMDA::NMDA( const long syn_index, const Dictionary& receptor_params )
   // initialization state variables
   : g_r_NMDA_( 0.0 )
   , g_d_NMDA_( 0.0 )
@@ -526,14 +528,14 @@ nest::NMDA::NMDA( const long syn_index, const Dictionary& receptor_params )
 }
 
 void
-nest::NMDA::append_recordables( std::map< std::string, double* >* recordables )
+NMDA::append_recordables( std::map< std::string, double* >* recordables )
 {
   ( *recordables )[ "g_r_NMDA_" + std::to_string( syn_idx ) ] = &g_r_NMDA_;
   ( *recordables )[ "g_d_NMDA_" + std::to_string( syn_idx ) ] = &g_d_NMDA_;
 }
 
 std::pair< double, double >
-nest::NMDA::f_numstep( const double v_comp, const long lag )
+NMDA::f_numstep( const double v_comp, const long lag )
 {
   // update conductance
   g_r_NMDA_ *= prop_r_;
@@ -563,7 +565,7 @@ nest::NMDA::f_numstep( const double v_comp, const long lag )
 }
 
 
-nest::AMPA_NMDA::AMPA_NMDA( const long syn_index )
+AMPA_NMDA::AMPA_NMDA( const long syn_index )
   // initialization state variables
   : g_r_AN_AMPA_( 0.0 )
   , g_d_AN_AMPA_( 0.0 )
@@ -594,7 +596,7 @@ nest::AMPA_NMDA::AMPA_NMDA( const long syn_index )
   g_norm_NMDA_ = 1. / ( -std::exp( -tp / tau_r_NMDA_ ) + std::exp( -tp / tau_d_NMDA_ ) );
 }
 
-nest::AMPA_NMDA::AMPA_NMDA( const long syn_index, const Dictionary& receptor_params )
+AMPA_NMDA::AMPA_NMDA( const long syn_index, const Dictionary& receptor_params )
   // initialization state variables
   : g_r_AN_AMPA_( 0.0 )
   , g_d_AN_AMPA_( 0.0 )
@@ -652,7 +654,7 @@ nest::AMPA_NMDA::AMPA_NMDA( const long syn_index, const Dictionary& receptor_par
 }
 
 void
-nest::AMPA_NMDA::append_recordables( std::map< std::string, double* >* recordables )
+AMPA_NMDA::append_recordables( std::map< std::string, double* >* recordables )
 {
   ( *recordables )[ "g_r_AN_AMPA_" + std::to_string( syn_idx ) ] = &g_r_AN_AMPA_;
   ( *recordables )[ "g_d_AN_AMPA_" + std::to_string( syn_idx ) ] = &g_d_AN_AMPA_;
@@ -661,7 +663,7 @@ nest::AMPA_NMDA::append_recordables( std::map< std::string, double* >* recordabl
 }
 
 std::pair< double, double >
-nest::AMPA_NMDA::f_numstep( const double v_comp, const long lag )
+AMPA_NMDA::f_numstep( const double v_comp, const long lag )
 {
   // update conductance
   g_r_AN_AMPA_ *= prop_r_AMPA_;
@@ -699,14 +701,16 @@ nest::AMPA_NMDA::f_numstep( const double v_comp, const long lag )
 }
 
 
-nest::CompartmentCurrents::CompartmentCurrents( double v_comp )
+CompartmentCurrents::CompartmentCurrents( double v_comp )
   : Na_chan_( v_comp )
   , K_chan_( v_comp )
 {
 }
 
-nest::CompartmentCurrents::CompartmentCurrents( double v_comp, const Dictionary& channel_params )
+CompartmentCurrents::CompartmentCurrents( double v_comp, const Dictionary& channel_params )
   : Na_chan_( v_comp, channel_params )
   , K_chan_( v_comp, channel_params )
 {
 }
+
+}  // namespace nest

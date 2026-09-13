@@ -38,7 +38,8 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-namespace nest  // template specialization must be placed in namespace
+
+namespace nest
 {
 void
 register_aeif_cond_beta_multisynapse( const std::string& name )
@@ -100,11 +101,11 @@ aeif_cond_beta_multisynapse_dynamics( double, const double y[], double f[], void
   // y[] is the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
 
-  typedef nest::aeif_cond_beta_multisynapse::State_ S;
+  typedef aeif_cond_beta_multisynapse::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::aeif_cond_beta_multisynapse& node = *( reinterpret_cast< nest::aeif_cond_beta_multisynapse* >( pnode ) );
+  const aeif_cond_beta_multisynapse& node = *( reinterpret_cast< aeif_cond_beta_multisynapse* >( pnode ) );
 
   const bool is_refractory = node.S_.r_ > 0;
 

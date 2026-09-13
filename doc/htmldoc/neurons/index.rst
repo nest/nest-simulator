@@ -3,6 +3,8 @@
 All about neurons in NEST
 =========================
 
+.. meta::
+   :description: Complete guide to neuron models in NEST Simulator. Learn about iaf_psc_alpha, gif_neuron, hh_psc_alpha, and 60+ built-in models with parameters, equations, and usage examples.
 
 .. grid:: 1 1 3 3
    :gutter: 1

@@ -3,6 +3,9 @@
 Install and run NEST
 ====================
 
+.. meta::
+   :description: Install NEST Simulator with pip, conda, Docker, or from source. Complete installation guide for Linux, macOS, Windows, and HPC systems with troubleshooting tips.
+
 .. grid::
    :gutter: 1
 

@@ -37,9 +37,9 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
+
 namespace nest
 {
-
 void
 register_eprop_iaf_bsshslm_2020( const std::string& name )
 {

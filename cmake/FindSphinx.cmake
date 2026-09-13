@@ -13,7 +13,7 @@ if( Python_FOUND )
 endif()
 
 function(check_sphinx validator_result_var item)
-  execute_process(COMMAND "${item}" "--version" ERROR_VARIABLE _err)
+  execute_process(COMMAND "${item}" "--version" OUTPUT_QUIET ERROR_VARIABLE _err)
   if(_err)
     set(${validator_result_var} FALSE PARENT_SCOPE)
   endif()

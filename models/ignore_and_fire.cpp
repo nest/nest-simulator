@@ -37,10 +37,11 @@
 #include "numerics.h"
 #include "ring_buffer_impl.h"
 
-nest::RecordablesMap< nest::ignore_and_fire > nest::ignore_and_fire::recordablesMap_;
 
 namespace nest
 {
+RecordablesMap< ignore_and_fire > ignore_and_fire::recordablesMap_;
+
 void
 register_ignore_and_fire( const std::string& name )
 {
@@ -227,4 +228,4 @@ ignore_and_fire::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-}  // namespace
+}  // namespace nest

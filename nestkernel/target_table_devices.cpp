@@ -26,16 +26,19 @@
 #include "target_table_devices_impl.h"
 #include "vp_manager_impl.h"
 
-nest::TargetTableDevices::TargetTableDevices()
+
+namespace nest
+{
+TargetTableDevices::TargetTableDevices()
 {
 }
 
-nest::TargetTableDevices::~TargetTableDevices()
+TargetTableDevices::~TargetTableDevices()
 {
 }
 
 void
-nest::TargetTableDevices::initialize()
+TargetTableDevices::initialize()
 {
   const size_t num_threads = kernel().vp_manager.get_num_threads();
   target_to_devices_.resize( num_threads );
@@ -44,7 +47,7 @@ nest::TargetTableDevices::initialize()
 }
 
 void
-nest::TargetTableDevices::finalize()
+TargetTableDevices::finalize()
 {
   for ( size_t tid = 0; tid < target_to_devices_.size(); ++tid )
   {
@@ -74,7 +77,7 @@ nest::TargetTableDevices::finalize()
 }
 
 void
-nest::TargetTableDevices::resize_to_number_of_neurons()
+TargetTableDevices::resize_to_number_of_neurons()
 {
 #pragma omp parallel
   {
@@ -86,7 +89,7 @@ nest::TargetTableDevices::resize_to_number_of_neurons()
 }
 
 void
-nest::TargetTableDevices::resize_to_number_of_synapse_types()
+TargetTableDevices::resize_to_number_of_synapse_types()
 {
   kernel().vp_manager.assert_thread_parallel();
 
@@ -104,7 +107,7 @@ nest::TargetTableDevices::resize_to_number_of_synapse_types()
 }
 
 void
-nest::TargetTableDevices::get_connections_to_devices_( const size_t requested_source_node_id,
+TargetTableDevices::get_connections_to_devices_( const size_t requested_source_node_id,
   const size_t requested_target_node_id,
   const size_t tid,
   const synindex syn_id,
@@ -130,7 +133,7 @@ nest::TargetTableDevices::get_connections_to_devices_( const size_t requested_so
 }
 
 void
-nest::TargetTableDevices::get_connections_to_device_for_lid_( const size_t lid,
+TargetTableDevices::get_connections_to_device_for_lid_( const size_t lid,
   const size_t requested_target_node_id,
   const size_t tid,
   const synindex syn_id,
@@ -150,7 +153,7 @@ nest::TargetTableDevices::get_connections_to_device_for_lid_( const size_t lid,
 }
 
 void
-nest::TargetTableDevices::get_connections_from_devices_( const size_t requested_source_node_id,
+TargetTableDevices::get_connections_from_devices_( const size_t requested_source_node_id,
   const size_t requested_target_node_id,
   const size_t tid,
   const synindex syn_id,
@@ -181,7 +184,7 @@ nest::TargetTableDevices::get_connections_from_devices_( const size_t requested_
 }
 
 void
-nest::TargetTableDevices::get_connections( const size_t requested_source_node_id,
+TargetTableDevices::get_connections( const size_t requested_source_node_id,
   const size_t requested_target_node_id,
   const size_t tid,
   const synindex syn_id,
@@ -195,3 +198,5 @@ nest::TargetTableDevices::get_connections( const size_t requested_source_node_id
   get_connections_from_devices_(
     requested_source_node_id, requested_target_node_id, tid, syn_id, synapse_label, conns );
 }
+
+}  // namespace nest

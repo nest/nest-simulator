@@ -29,7 +29,7 @@ set( Fugaku ON CACHE BOOL "Enable Fugaku." FORCE )
 set( with-ltdl OFF CACHE BOOL "Find a ltdl library [default=ON]. To set a specific ltdl, set install path." FORCE )
 # we obviously want to do mpi on Fugaku
 set( with-mpi ON CACHE BOOL "Request compilation with MPI; optionally give directory with MPI installation." FORCE )
-set( static-libraries ON CACHE BOOL "Build static libraries." FORCE )
+set( with-static-linking ON CACHE BOOL "Build with static linking." FORCE )
 
 #
 # Library prefixes, suffixes, extra libs.

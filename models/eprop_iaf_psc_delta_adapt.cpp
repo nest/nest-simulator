@@ -37,9 +37,9 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
+
 namespace nest
 {
-
 void
 register_eprop_iaf_psc_delta_adapt( const std::string& name )
 {

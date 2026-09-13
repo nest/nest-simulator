@@ -30,7 +30,10 @@
 #include "kernel_manager.h"
 #include "nest_timeconverter.h"
 
-nest::DelayChecker::DelayChecker()
+
+namespace nest
+{
+DelayChecker::DelayChecker()
   : min_delay_( Time::pos_inf() )
   , max_delay_( Time::neg_inf() )
   , user_set_delay_extrema_( false )
@@ -38,7 +41,7 @@ nest::DelayChecker::DelayChecker()
 {
 }
 
-nest::DelayChecker::DelayChecker( const DelayChecker& cr )
+DelayChecker::DelayChecker( const DelayChecker& cr )
   : min_delay_( cr.min_delay_ )
   , max_delay_( cr.max_delay_ )
   , user_set_delay_extrema_( cr.user_set_delay_extrema_ )
@@ -49,7 +52,7 @@ nest::DelayChecker::DelayChecker( const DelayChecker& cr )
 }
 
 void
-nest::DelayChecker::calibrate( const TimeConverter& tc )
+DelayChecker::calibrate( const TimeConverter& tc )
 {
   // Calibrate will be called after a change in resolution, when there are no
   // network elements present.
@@ -69,7 +72,7 @@ nest::DelayChecker::calibrate( const TimeConverter& tc )
 }
 
 void
-nest::DelayChecker::set_min_max_delay_( const double min_d, const double max_d )
+DelayChecker::set_min_max_delay_( const double min_d, const double max_d )
 {
   // For the minimum delay, we always round down. The easiest way to do this,
   // is to round up and then subtract one step. The only remaining edge case
@@ -108,14 +111,14 @@ nest::DelayChecker::set_min_max_delay_( const double min_d, const double max_d )
 }
 
 void
-nest::DelayChecker::get_status( Dictionary& d ) const
+DelayChecker::get_status( Dictionary& d ) const
 {
   d[ names::min_delay ] = get_min_delay().get_ms();
   d[ names::max_delay ] = get_max_delay().get_ms();
 }
 
 void
-nest::DelayChecker::set_status( const Dictionary& d )
+DelayChecker::set_status( const Dictionary& d )
 {
   double min_d_tmp = 0.0;
   bool min_delay_updated = d.update_value( names::min_delay, min_d_tmp );
@@ -143,7 +146,7 @@ nest::DelayChecker::set_status( const Dictionary& d )
 }
 
 void
-nest::DelayChecker::assert_valid_delay_ms( double requested_new_delay )
+DelayChecker::assert_valid_delay_ms( double requested_new_delay )
 {
   const long new_delay = Time::delay_ms_to_steps( requested_new_delay );
   const double new_delay_ms = Time::delay_steps_to_ms( new_delay );
@@ -206,7 +209,7 @@ nest::DelayChecker::assert_valid_delay_ms( double requested_new_delay )
 }
 
 void
-nest::DelayChecker::assert_two_valid_delays_steps( long new_delay1, long new_delay2 )
+DelayChecker::assert_two_valid_delays_steps( long new_delay1, long new_delay2 )
 {
   const long ldelay = std::min( new_delay1, new_delay2 );
   const long hdelay = std::max( new_delay1, new_delay2 );
@@ -269,3 +272,5 @@ nest::DelayChecker::assert_two_valid_delays_steps( long new_delay1, long new_del
     }
   }
 }
+
+}  // namespace nest

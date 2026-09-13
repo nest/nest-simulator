@@ -25,8 +25,13 @@
 // Includes from nestkernel:
 #include "nest_impl.h"
 
+
+namespace nest
+{
 void
-nest::register_bernoulli_synapse( const std::string& name )
+register_bernoulli_synapse( const std::string& name )
 {
   register_connection_model< bernoulli_synapse >( name );
 }
+
+}  // namespace nest

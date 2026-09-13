@@ -33,8 +33,11 @@
 #include "kernel_manager.h"
 #include "nest_impl.h"
 
+
+namespace nest
+{
 void
-nest::register_music_cont_in_proxy( const std::string& name )
+register_music_cont_in_proxy( const std::string& name )
 {
   register_node_model< music_cont_in_proxy >( name );
 }
@@ -44,12 +47,12 @@ nest::register_music_cont_in_proxy( const std::string& name )
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::music_cont_in_proxy::Parameters_::Parameters_()
+music_cont_in_proxy::Parameters_::Parameters_()
   : port_name_( "cont_in" )
 {
 }
 
-nest::music_cont_in_proxy::State_::State_()
+music_cont_in_proxy::State_::State_()
   : published_( false )
   , port_width_( -1 )
 {
@@ -60,13 +63,13 @@ nest::music_cont_in_proxy::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::music_cont_in_proxy::Parameters_::get( Dictionary& d ) const
+music_cont_in_proxy::Parameters_::get( Dictionary& d ) const
 {
   d[ names::port_name ] = port_name_;
 }
 
 void
-nest::music_cont_in_proxy::Parameters_::set( const Dictionary& d, State_& s, Node* node )
+music_cont_in_proxy::Parameters_::set( const Dictionary& d, State_& s, Node* node )
 {
   if ( d.known( names::port_name ) and s.published_ )
   {
@@ -80,14 +83,14 @@ nest::music_cont_in_proxy::Parameters_::set( const Dictionary& d, State_& s, Nod
 }
 
 void
-nest::music_cont_in_proxy::State_::get( Dictionary& d ) const
+music_cont_in_proxy::State_::get( Dictionary& d ) const
 {
   d[ names::published ] = published_;
   d[ names::port_width ] = port_width_;
 }
 
 void
-nest::music_cont_in_proxy::State_::set( const Dictionary&, const Parameters_& )
+music_cont_in_proxy::State_::set( const Dictionary&, const Parameters_& )
 {
 }
 
@@ -96,14 +99,14 @@ nest::music_cont_in_proxy::State_::set( const Dictionary&, const Parameters_& )
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::music_cont_in_proxy::music_cont_in_proxy()
+music_cont_in_proxy::music_cont_in_proxy()
   : DeviceNode()
   , P_()
   , S_()
 {
 }
 
-nest::music_cont_in_proxy::music_cont_in_proxy( const music_cont_in_proxy& n )
+music_cont_in_proxy::music_cont_in_proxy( const music_cont_in_proxy& n )
   : DeviceNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -116,12 +119,12 @@ nest::music_cont_in_proxy::music_cont_in_proxy( const music_cont_in_proxy& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::music_cont_in_proxy::init_buffers_()
+music_cont_in_proxy::init_buffers_()
 {
 }
 
 void
-nest::music_cont_in_proxy::pre_run_hook()
+music_cont_in_proxy::pre_run_hook()
 {
   // only publish the port once
   if ( not S_.published_ )
@@ -158,7 +161,7 @@ nest::music_cont_in_proxy::pre_run_hook()
 }
 
 void
-nest::music_cont_in_proxy::get_status( Dictionary& d ) const
+music_cont_in_proxy::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
@@ -167,7 +170,7 @@ nest::music_cont_in_proxy::get_status( Dictionary& d ) const
 }
 
 void
-nest::music_cont_in_proxy::set_status( const Dictionary& d )
+music_cont_in_proxy::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;    // temporary copy in case of errors
   ptmp.set( d, S_, this );  // throws if BadProperty
@@ -179,5 +182,7 @@ nest::music_cont_in_proxy::set_status( const Dictionary& d )
   P_ = ptmp;
   S_ = stmp;
 }
+
+}  // namespace nest
 
 #endif

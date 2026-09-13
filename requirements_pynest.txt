@@ -16,7 +16,7 @@
 cython>=3.0.0
 numpy
 pandas
-scipy!=1.18.0
+scipy<1.18
 matplotlib
 mpi4py
 h5py
@@ -25,5 +25,4 @@ pre-commit
 isort
 notebook
 jupyterlab
-csa
 pydot

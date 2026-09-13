@@ -125,7 +125,6 @@ References
 :Authors: D Adams, N Gaiman
 """
 
-# flake8: noqa
 import nest  # [[ begin code section with imports]]
 import scipy
 
@@ -140,6 +139,13 @@ import scipy
 # The rate of the inhibitory Poisson generator is set later.
 # Note that we do not need to set parameters for the neuron and the
 # spike recorder, since they have satisfactory defaults.
+
+noise = nest.Create("poisson_generator", 2)
+voltmeter = nest.Create("voltmeter")
+n_ex = 20
+r_ex = 10
+n_in = 10
+r_in = 20
 
 nest.SetStatus(noise, [{"rate": n_ex * r_ex}, {"rate": n_in * r_in}])
 nest.SetStatus(voltmeter, {"withgid": True, "withtime": True})

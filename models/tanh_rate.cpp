@@ -27,6 +27,7 @@
 #include "model_manager_impl.h"
 #include "nest_impl.h"
 
+
 namespace nest
 {
 void

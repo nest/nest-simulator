@@ -25,9 +25,9 @@
 #include "stimulation_device.h"
 #include "kernel_manager.h"
 
+
 namespace nest
 {
-
 StimulationDevice::StimulationDevice()
   : DeviceNode()
   , Device()

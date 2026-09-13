@@ -167,10 +167,10 @@ nonlinearities_sigmoid_rate::mult_coupling_in( double )
   return 1.;
 }
 
-typedef rate_neuron_ipn< nest::nonlinearities_sigmoid_rate > sigmoid_rate_ipn;
+typedef rate_neuron_ipn< nonlinearities_sigmoid_rate > sigmoid_rate_ipn;
 void register_sigmoid_rate_ipn( const std::string& name );
 
-typedef rate_transformer_node< nest::nonlinearities_sigmoid_rate > rate_transformer_sigmoid;
+typedef rate_transformer_node< nonlinearities_sigmoid_rate > rate_transformer_sigmoid;
 void register_rate_transformer_sigmoid( const std::string& name );
 
 

@@ -35,12 +35,12 @@
 
 namespace nest
 {
-
 void
 register_spin_detector( const std::string& name )
 {
   register_node_model< spin_detector >( name );
 }
+
 
 spin_detector::spin_detector()
   : last_in_node_id_( 0 )

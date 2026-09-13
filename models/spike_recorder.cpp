@@ -35,7 +35,6 @@
 
 namespace nest
 {
-
 void
 register_spike_recorder( const std::string& name )
 {

@@ -42,14 +42,13 @@
 #include "universal_data_logger_impl.h"
 
 
+namespace nest
+{
 void
-nest::register_sinusoidal_gamma_generator( const std::string& name )
+register_sinusoidal_gamma_generator( const std::string& name )
 {
   register_node_model< sinusoidal_gamma_generator >( name );
 }
-
-namespace nest
-{
 
 RecordablesMap< sinusoidal_gamma_generator > sinusoidal_gamma_generator::recordablesMap_;
 
@@ -59,6 +58,7 @@ RecordablesMap< sinusoidal_gamma_generator >::create()
 {
   insert_( names::rate, &sinusoidal_gamma_generator::get_rate_ );
 }
+
 
 sinusoidal_gamma_generator::Parameters_::Parameters_()
   : om_( 0.0 )   // radian/ms

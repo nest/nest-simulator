@@ -35,15 +35,14 @@
 #include "model_manager_impl.h"
 #include "nest_impl.h"
 
-void
-nest::register_correlation_detector( const std::string& name )
-{
-  register_node_model< correlation_detector >( name );
-}
-
 
 namespace nest
 {
+void
+register_correlation_detector( const std::string& name )
+{
+  register_node_model< correlation_detector >( name );
+}
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -371,4 +370,4 @@ correlation_detector::calibrate_time( const TimeConverter& tc )
   P_.Tstop_ = tc.from_old_tics( P_.Tstop_.get_tics() );
 }
 
-}
+}  // namespace nest

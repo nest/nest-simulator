@@ -27,14 +27,15 @@
 #include "connector_model.h"
 #include "nest_impl.h"
 
+
+namespace nest
+{
 void
-nest::register_stdp_pl_synapse_hom( const std::string& name )
+register_stdp_pl_synapse_hom( const std::string& name )
 {
   register_connection_model< stdp_pl_synapse_hom >( name );
 }
 
-namespace nest
-{
 
 //
 // Implementation of class STDPPLHomCommonProperties.
@@ -80,4 +81,4 @@ STDPPLHomCommonProperties::set_status( const Dictionary& d, ConnectorModel& cm )
   d.update_value( names::mu, mu_ );
 }
 
-}  // of namespace nest
+}  // namespace nest

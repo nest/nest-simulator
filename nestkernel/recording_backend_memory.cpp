@@ -26,9 +26,9 @@
 
 #include "recording_backend_memory.h"
 
+
 namespace nest
 {
-
 RecordingBackendMemory::RecordingBackendMemory()
 {
 }

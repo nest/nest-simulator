@@ -343,32 +343,31 @@ get_vp_specific_rng( size_t tid )
   return kernel().random_manager.get_vp_specific_rng( tid );
 }
 
-}  // namespace nest
-
-inline nest::KernelManager&
-nest::KernelManager::get_kernel_manager()
+inline KernelManager&
+KernelManager::get_kernel_manager()
 {
   assert( kernel_manager_instance_ );
   return *kernel_manager_instance_;
 }
 
-inline nest::KernelManager&
-nest::kernel()
+inline KernelManager&
+kernel()
 {
   return KernelManager::get_kernel_manager();
 }
 
 inline bool
-nest::KernelManager::is_initialized() const
+KernelManager::is_initialized() const
 {
   return initialized_;
 }
 
 inline unsigned long
-nest::KernelManager::get_fingerprint() const
+KernelManager::get_fingerprint() const
 {
   return fingerprint_;
 }
 
+}  // namespace nest
 
 #endif /* KERNEL_MANAGER_H */

@@ -28,9 +28,9 @@
 
 #include "recording_backend_screen.h"
 
+
 namespace nest
 {
-
 void
 RecordingBackendScreen::initialize()
 {
@@ -124,7 +124,7 @@ RecordingBackendScreen::get_device_defaults( Dictionary& params ) const
 }
 
 void
-RecordingBackendScreen::get_device_status( const nest::RecordingDevice& device, Dictionary& d ) const
+RecordingBackendScreen::get_device_status( const RecordingDevice& device, Dictionary& d ) const
 {
   const size_t t = device.get_thread();
   const size_t node_id = device.get_node_id();
@@ -237,4 +237,4 @@ RecordingBackendScreen::DeviceData::restore_cout_()
   std::cout.precision( old_precision_ );
 }
 
-}
+}  // namespace nest

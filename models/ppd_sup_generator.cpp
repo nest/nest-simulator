@@ -34,15 +34,14 @@
 #include "kernel_manager.h"
 #include "nest_impl.h"
 
-void
-nest::register_ppd_sup_generator( const std::string& name )
-{
-  register_node_model< ppd_sup_generator >( name );
-}
-
 
 namespace nest
 {
+void
+register_ppd_sup_generator( const std::string& name )
+{
+  register_node_model< ppd_sup_generator >( name );
+}
 
 /* ----------------------------------------------------------------
  * Constructor of age distribution class

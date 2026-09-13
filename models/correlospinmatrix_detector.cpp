@@ -36,9 +36,9 @@
 #include "model_manager_impl.h"
 #include "nest_impl.h"
 
+
 namespace nest
 {
-
 void
 register_correlospinmatrix_detector( const std::string& name )
 {
@@ -494,4 +494,4 @@ correlospinmatrix_detector::calibrate_time( const TimeConverter& tc )
   S_.t_last_in_spike_ = tc.from_old_tics( S_.t_last_in_spike_.get_tics() );
 }
 
-}
+}  // namespace nest

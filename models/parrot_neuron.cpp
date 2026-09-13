@@ -116,4 +116,4 @@ parrot_neuron::handle( CorrectionSpikeEvent& )
 {
 }
 
-}  // namespace
+}  // namespace nest

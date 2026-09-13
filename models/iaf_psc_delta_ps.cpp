@@ -69,7 +69,7 @@ RecordablesMap< iaf_psc_delta_ps >::create()
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::iaf_psc_delta_ps::Parameters_::Parameters_()
+iaf_psc_delta_ps::Parameters_::Parameters_()
   : tau_m_( 10.0 )                                   // ms
   , c_m_( 250.0 )                                    // pF
   , t_ref_( 2.0 )                                    // ms
@@ -81,7 +81,7 @@ nest::iaf_psc_delta_ps::Parameters_::Parameters_()
 {
 }
 
-nest::iaf_psc_delta_ps::State_::State_()
+iaf_psc_delta_ps::State_::State_()
   : U_( 0.0 )  //  or U_ = U_reset_;
   , I_( 0. )
   , last_spike_step_( -1 )
@@ -96,7 +96,7 @@ nest::iaf_psc_delta_ps::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_psc_delta_ps::Parameters_::get( Dictionary& d ) const
+iaf_psc_delta_ps::Parameters_::get( Dictionary& d ) const
 {
   d[ names::E_L ] = E_L_;
   d[ names::I_e ] = I_e_;
@@ -109,7 +109,7 @@ nest::iaf_psc_delta_ps::Parameters_::get( Dictionary& d ) const
 }
 
 double
-nest::iaf_psc_delta_ps::Parameters_::set( const Dictionary& d, Node* node )
+iaf_psc_delta_ps::Parameters_::set( const Dictionary& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
@@ -174,7 +174,7 @@ nest::iaf_psc_delta_ps::Parameters_::set( const Dictionary& d, Node* node )
 }
 
 void
-nest::iaf_psc_delta_ps::State_::get( Dictionary& d, const Parameters_& p ) const
+iaf_psc_delta_ps::State_::get( Dictionary& d, const Parameters_& p ) const
 {
   d[ names::V_m ] = U_ + p.E_L_;  // Membrane potential
   d[ names::is_refractory ] = is_refractory_;
@@ -182,7 +182,7 @@ nest::iaf_psc_delta_ps::State_::get( Dictionary& d, const Parameters_& p ) const
 }
 
 void
-nest::iaf_psc_delta_ps::State_::set( const Dictionary& d, const Parameters_& p, double delta_EL, Node* node )
+iaf_psc_delta_ps::State_::set( const Dictionary& d, const Parameters_& p, double delta_EL, Node* node )
 {
   if ( update_value_param( d, names::V_m, U_, node ) )
   {
@@ -194,12 +194,12 @@ nest::iaf_psc_delta_ps::State_::set( const Dictionary& d, const Parameters_& p, 
   }
 }
 
-nest::iaf_psc_delta_ps::Buffers_::Buffers_( iaf_psc_delta_ps& n )
+iaf_psc_delta_ps::Buffers_::Buffers_( iaf_psc_delta_ps& n )
   : logger_( n )
 {
 }
 
-nest::iaf_psc_delta_ps::Buffers_::Buffers_( const Buffers_&, iaf_psc_delta_ps& n )
+iaf_psc_delta_ps::Buffers_::Buffers_( const Buffers_&, iaf_psc_delta_ps& n )
   : logger_( n )
 {
 }
@@ -208,7 +208,7 @@ nest::iaf_psc_delta_ps::Buffers_::Buffers_( const Buffers_&, iaf_psc_delta_ps& n
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::iaf_psc_delta_ps::iaf_psc_delta_ps()
+iaf_psc_delta_ps::iaf_psc_delta_ps()
   : ArchivingNode()
   , P_()
   , S_()
@@ -217,7 +217,7 @@ nest::iaf_psc_delta_ps::iaf_psc_delta_ps()
   recordablesMap_.create();
 }
 
-nest::iaf_psc_delta_ps::iaf_psc_delta_ps( const iaf_psc_delta_ps& n )
+iaf_psc_delta_ps::iaf_psc_delta_ps( const iaf_psc_delta_ps& n )
   : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -230,7 +230,7 @@ nest::iaf_psc_delta_ps::iaf_psc_delta_ps( const iaf_psc_delta_ps& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_psc_delta_ps::init_buffers_()
+iaf_psc_delta_ps::init_buffers_()
 {
   B_.events_.resize();
   B_.events_.clear();
@@ -447,7 +447,7 @@ iaf_psc_delta_ps::update( Time const& origin, const long from, const long to )
 }
 
 void
-nest::iaf_psc_delta_ps::propagate_( const double dt )
+iaf_psc_delta_ps::propagate_( const double dt )
 {
   assert( not S_.is_refractory_ );  // should not be called if neuron is
                                     // refractory
@@ -459,7 +459,7 @@ nest::iaf_psc_delta_ps::propagate_( const double dt )
 }
 
 void
-nest::iaf_psc_delta_ps::emit_spike_( Time const& origin, const long lag, const double offset_U )
+iaf_psc_delta_ps::emit_spike_( Time const& origin, const long lag, const double offset_U )
 {
   assert( S_.U_ >= P_.U_th_ );  // ensure we are superthreshold
 
@@ -483,7 +483,7 @@ nest::iaf_psc_delta_ps::emit_spike_( Time const& origin, const long lag, const d
 }
 
 void
-nest::iaf_psc_delta_ps::emit_instant_spike_( Time const& origin, const long lag, const double spike_offs )
+iaf_psc_delta_ps::emit_instant_spike_( Time const& origin, const long lag, const double spike_offs )
 {
   assert( S_.U_ >= P_.U_th_ );  // ensure we are superthreshold
 
@@ -532,9 +532,9 @@ iaf_psc_delta_ps::handle( CurrentEvent& e )
 
 
 void
-nest::iaf_psc_delta_ps::handle( DataLoggingRequest& e )
+iaf_psc_delta_ps::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
 
-}  // namespace
+}  // namespace nest

@@ -59,9 +59,9 @@
 #include "sonata_connector.h"
 #endif
 
-
 namespace nest
 {
+
 
 ConnectionManager::ConnectionManager()
   : connruledict_()
@@ -406,8 +406,8 @@ ConnectionManager::get_conn_builder( const std::string& name,
   return cb;
 }
 
-nest::ThirdOutBuilder*
-nest::ConnectionManager::get_third_conn_builder( const std::string& name,
+ThirdOutBuilder*
+ConnectionManager::get_third_conn_builder( const std::string& name,
   NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   ThirdInBuilder* third_in,
@@ -819,7 +819,7 @@ ConnectionManager::connect_arrays( const long* sources,
 }
 
 void
-nest::ConnectionManager::connect_sonata( [[maybe_unused]] const Dictionary& graph_specs,
+ConnectionManager::connect_sonata( [[maybe_unused]] const Dictionary& graph_specs,
   [[maybe_unused]] const long hyberslab_size )
 {
 #ifdef HAVE_HDF5
@@ -841,7 +841,7 @@ nest::ConnectionManager::connect_sonata( [[maybe_unused]] const Dictionary& grap
 }
 
 void
-nest::ConnectionManager::connect_tripartite( NodeCollectionPTR sources,
+ConnectionManager::connect_tripartite( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   NodeCollectionPTR third,
   const Dictionary& conn_spec,
@@ -908,7 +908,7 @@ nest::ConnectionManager::connect_tripartite( NodeCollectionPTR sources,
 
 
 void
-nest::ConnectionManager::connect_( Node& source,
+ConnectionManager::connect_( Node& source,
   Node& target,
   const size_t s_node_id,
   const size_t tid,
@@ -1256,7 +1256,7 @@ ConnectionManager::get_connections_( const size_t tid,
 }
 
 void
-nest::ConnectionManager::get_connections_to_targets_( const size_t tid,
+ConnectionManager::get_connections_to_targets_( const size_t tid,
   std::deque< ConnectionID >& conns_in_thread,
   NodeCollectionPTR,
   NodeCollectionPTR target,
@@ -1295,7 +1295,7 @@ nest::ConnectionManager::get_connections_to_targets_( const size_t tid,
 }
 
 void
-nest::ConnectionManager::get_connections_from_sources_( const size_t tid,
+ConnectionManager::get_connections_from_sources_( const size_t tid,
   std::deque< ConnectionID >& conns_in_thread,
   NodeCollectionPTR source,
   NodeCollectionPTR target,
@@ -1366,7 +1366,7 @@ nest::ConnectionManager::get_connections_from_sources_( const size_t tid,
 }
 
 void
-nest::ConnectionManager::get_connections( std::deque< ConnectionID >& connectome,
+ConnectionManager::get_connections( std::deque< ConnectionID >& connectome,
   NodeCollectionPTR source,
   NodeCollectionPTR target,
   synindex syn_id,
@@ -1828,7 +1828,7 @@ ConnectionManager::collect_compressed_spike_data( const size_t tid )
 }
 
 bool
-nest::ConnectionManager::fill_target_buffer( const size_t tid,
+ConnectionManager::fill_target_buffer( const size_t tid,
   const size_t rank_start,
   const size_t rank_end,
   std::vector< TargetData >& send_buffer_target_data,
@@ -1943,7 +1943,7 @@ nest::ConnectionManager::fill_target_buffer( const size_t tid,
 }
 
 void
-nest::ConnectionManager::initialize_iteration_state()
+ConnectionManager::initialize_iteration_state()
 {
   const size_t num_threads = kernel().vp_manager.get_num_threads();
   iteration_state_.clear();
@@ -1959,4 +1959,4 @@ nest::ConnectionManager::initialize_iteration_state()
   }
 }
 
-}
+}  // namespace nest

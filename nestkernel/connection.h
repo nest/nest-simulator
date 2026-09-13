@@ -73,7 +73,7 @@ class ConnTestDummyNodeBase : public Node
   {
   }
   void
-  update( const nest::Time&, const long, const long ) override
+  update( const Time&, long, long ) override
   {
   }
   void

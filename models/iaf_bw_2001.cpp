@@ -40,13 +40,14 @@
 #include <boost/math/special_functions/gamma.hpp>
 #include <typeinfo>
 
-/* ---------------------------------------------------------------------------
- * Recordables map
- * --------------------------------------------------------------------------- */
-nest::RecordablesMap< nest::iaf_bw_2001 > nest::iaf_bw_2001::recordablesMap_;
 
 namespace nest
 {
+/* ---------------------------------------------------------------------------
+ * Recordables map
+ * --------------------------------------------------------------------------- */
+RecordablesMap< iaf_bw_2001 > iaf_bw_2001::recordablesMap_;
+
 void
 register_iaf_bw_2001( const std::string& name )
 {
@@ -69,17 +70,16 @@ RecordablesMap< iaf_bw_2001 >::create()
   insert_( names::I_AMPA, &iaf_bw_2001::get_I_AMPA_ );
   insert_( names::I_GABA, &iaf_bw_2001::get_I_GABA_ );
 }
-}
 
 extern "C" inline int
-nest::iaf_bw_2001_dynamics( double, const double y[], double f[], void* pnode )
+iaf_bw_2001_dynamics( double, const double y[], double f[], void* pnode )
 {
   // a shorthand
-  typedef nest::iaf_bw_2001::State_ S;
+  typedef iaf_bw_2001::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  nest::iaf_bw_2001& node = *( reinterpret_cast< nest::iaf_bw_2001* >( pnode ) );
+  iaf_bw_2001& node = *( reinterpret_cast< iaf_bw_2001* >( pnode ) );
 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
@@ -106,7 +106,7 @@ nest::iaf_bw_2001_dynamics( double, const double y[], double f[], void* pnode )
  * Default constructors defining default parameters and state
  * --------------------------------------------------------------------------- */
 
-nest::iaf_bw_2001::Parameters_::Parameters_()
+iaf_bw_2001::Parameters_::Parameters_()
   : E_L( -70.0 )           // mV
   , E_ex( 0.0 )            // mV
   , E_in( -70.0 )          // mV
@@ -125,7 +125,7 @@ nest::iaf_bw_2001::Parameters_::Parameters_()
 {
 }
 
-nest::iaf_bw_2001::State_::State_( const Parameters_& p )
+iaf_bw_2001::State_::State_( const Parameters_& p )
   : r_( 0 )
 {
   y_[ V_m ] = p.E_L;  // initialize to reversal potential
@@ -138,7 +138,7 @@ nest::iaf_bw_2001::State_::State_( const Parameters_& p )
   I_GABA_ = 0.0;
 }
 
-nest::iaf_bw_2001::State_::State_( const State_& s )
+iaf_bw_2001::State_::State_( const State_& s )
   : r_( s.r_ )
 {
   y_[ V_m ] = s.y_[ V_m ];
@@ -151,7 +151,7 @@ nest::iaf_bw_2001::State_::State_( const State_& s )
   I_GABA_ = s.I_GABA_;
 }
 
-nest::iaf_bw_2001::Buffers_::Buffers_( iaf_bw_2001& n )
+iaf_bw_2001::Buffers_::Buffers_( iaf_bw_2001& n )
   : logger_( n )
   , spikes_()
   , s_( nullptr )
@@ -163,7 +163,7 @@ nest::iaf_bw_2001::Buffers_::Buffers_( iaf_bw_2001& n )
   // Initialization of the remaining members is deferred to init_buffers_().
 }
 
-nest::iaf_bw_2001::Buffers_::Buffers_( const Buffers_&, iaf_bw_2001& n )
+iaf_bw_2001::Buffers_::Buffers_( const Buffers_&, iaf_bw_2001& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -177,7 +177,7 @@ nest::iaf_bw_2001::Buffers_::Buffers_( const Buffers_&, iaf_bw_2001& n )
  * --------------------------------------------------------------------------- */
 
 void
-nest::iaf_bw_2001::Parameters_::get( Dictionary& d ) const
+iaf_bw_2001::Parameters_::get( Dictionary& d ) const
 {
   d[ names::E_L ] = E_L;
   d[ names::E_ex ] = E_ex;
@@ -197,7 +197,7 @@ nest::iaf_bw_2001::Parameters_::get( Dictionary& d ) const
 }
 
 void
-nest::iaf_bw_2001::Parameters_::set( const Dictionary& d, Node* node )
+iaf_bw_2001::Parameters_::set( const Dictionary& d, Node* node )
 {
   // allow setting the membrane potential
   update_value_param( d, names::E_L, E_L, node );
@@ -247,7 +247,7 @@ nest::iaf_bw_2001::Parameters_::set( const Dictionary& d, Node* node )
 }
 
 void
-nest::iaf_bw_2001::State_::get( Dictionary& d ) const
+iaf_bw_2001::State_::get( Dictionary& d ) const
 {
   d[ names::V_m ] = y_[ V_m ];  // Membrane potential
   d[ names::s_AMPA ] = y_[ s_AMPA ];
@@ -259,7 +259,7 @@ nest::iaf_bw_2001::State_::get( Dictionary& d ) const
 }
 
 void
-nest::iaf_bw_2001::State_::set( const Dictionary& d, const Parameters_&, Node* node )
+iaf_bw_2001::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
   update_value_param( d, names::V_m, y_[ V_m ], node );
   update_value_param( d, names::s_AMPA, y_[ s_AMPA ], node );
@@ -271,7 +271,7 @@ nest::iaf_bw_2001::State_::set( const Dictionary& d, const Parameters_&, Node* n
  * Default constructor for node
  * --------------------------------------------------------------------------- */
 
-nest::iaf_bw_2001::iaf_bw_2001()
+iaf_bw_2001::iaf_bw_2001()
   : ArchivingNode()
   , P_()
   , S_( P_ )
@@ -284,7 +284,7 @@ nest::iaf_bw_2001::iaf_bw_2001()
  * Copy constructor for node
  * --------------------------------------------------------------------------- */
 
-nest::iaf_bw_2001::iaf_bw_2001( const iaf_bw_2001& n_ )
+iaf_bw_2001::iaf_bw_2001( const iaf_bw_2001& n_ )
   : ArchivingNode( n_ )
   , P_( n_.P_ )
   , S_( n_.S_ )
@@ -296,7 +296,7 @@ nest::iaf_bw_2001::iaf_bw_2001( const iaf_bw_2001& n_ )
  * Destructor for node
  * --------------------------------------------------------------------------- */
 
-nest::iaf_bw_2001::~iaf_bw_2001()
+iaf_bw_2001::~iaf_bw_2001()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
 
@@ -321,12 +321,12 @@ nest::iaf_bw_2001::~iaf_bw_2001()
  * --------------------------------------------------------------------------- */
 
 void
-nest::iaf_bw_2001::init_state_()
+iaf_bw_2001::init_state_()
 {
 }
 
 void
-nest::iaf_bw_2001::init_buffers_()
+iaf_bw_2001::init_buffers_()
 {
   B_.spikes_.resize( 3 );
   for ( auto& sb : B_.spikes_ )
@@ -377,7 +377,7 @@ nest::iaf_bw_2001::init_buffers_()
 }
 
 void
-nest::iaf_bw_2001::pre_run_hook()
+iaf_bw_2001::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -399,7 +399,7 @@ nest::iaf_bw_2001::pre_run_hook()
  * --------------------------------------------------------------------------- */
 
 void
-nest::iaf_bw_2001::update( Time const& origin, const long from, const long to )
+iaf_bw_2001::update( Time const& origin, const long from, const long to )
 {
   std::vector< double > s_vals( kernel().connection_manager.get_min_delay(), 0.0 );
   for ( long lag = from; lag < to; ++lag )
@@ -481,13 +481,13 @@ nest::iaf_bw_2001::update( Time const& origin, const long from, const long to )
 // Do not move this function as inline to h-file. It depends on
 // universal_data_logger_impl.h being included here.
 void
-nest::iaf_bw_2001::handle( DataLoggingRequest& e )
+iaf_bw_2001::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
 
 void
-nest::iaf_bw_2001::handle( SpikeEvent& e )
+iaf_bw_2001::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -506,13 +506,15 @@ nest::iaf_bw_2001::handle( SpikeEvent& e )
 }
 
 void
-nest::iaf_bw_2001::handle( CurrentEvent& e )
+iaf_bw_2001::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
   B_.currents_.add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
 }
+
+}  // namespace nest
 
 #endif  // HAVE_BOOST
 #endif  // HAVE_GSL

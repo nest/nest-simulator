@@ -33,9 +33,9 @@
 #include "nest_impl.h"
 #include "node_collection.h"
 
+
 namespace nest
 {
-
 void
 register_weight_recorder( const std::string& name )
 {

@@ -37,12 +37,12 @@
 
 namespace nest
 {
-
 void
 register_volume_transmitter( const std::string& name )
 {
   register_node_model< volume_transmitter >( name );
 }
+
 
 /* ----------------------------------------------------------------
  * Default constructor defining default parameters
@@ -146,4 +146,4 @@ volume_transmitter::handle( SpikeEvent& e )
     static_cast< double >( e.get_multiplicity() ) );
 }
 
-}
+}  // namespace nest

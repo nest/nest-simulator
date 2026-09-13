@@ -36,7 +36,6 @@
 
 namespace nest
 {
-
 const unsigned int RecordingBackendASCII::ASCII_REC_BACKEND_VERSION = 2;
 
 RecordingBackendASCII::RecordingBackendASCII()
@@ -212,7 +211,7 @@ RecordingBackendASCII::get_device_defaults( Dictionary& params ) const
 }
 
 void
-RecordingBackendASCII::get_device_status( const nest::RecordingDevice& device, Dictionary& d ) const
+RecordingBackendASCII::get_device_status( const RecordingDevice& device, Dictionary& d ) const
 {
   const size_t t = device.get_thread();
   const size_t node_id = device.get_node_id();

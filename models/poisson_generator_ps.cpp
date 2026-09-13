@@ -34,15 +34,14 @@
 // Includes from libnestutil:
 #include "dict_util.h"
 
-void
-nest::register_poisson_generator_ps( const std::string& name )
-{
-  register_node_model< poisson_generator_ps >( name );
-}
-
 
 namespace nest
 {
+void
+register_poisson_generator_ps( const std::string& name )
+{
+  register_node_model< poisson_generator_ps >( name );
+}
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter

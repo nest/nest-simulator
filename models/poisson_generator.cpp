@@ -31,9 +31,9 @@
 // Includes from libnestutil:
 #include "dict_util.h"
 
+
 namespace nest
 {
-
 void
 register_poisson_generator( const std::string& name )
 {
@@ -176,4 +176,4 @@ poisson_generator::set_data_from_stimulation_backend( std::vector< double >& inp
   P_ = ptmp;
 }
 
-}
+}  // namespace nest

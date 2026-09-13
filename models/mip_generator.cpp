@@ -32,15 +32,15 @@
 #include "kernel_manager.h"
 #include "nest_impl.h"
 
+
+namespace nest
+{
 void
-nest::register_mip_generator( const std::string& name )
+register_mip_generator( const std::string& name )
 {
   register_node_model< mip_generator >( name );
 }
 
-
-namespace nest
-{
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter

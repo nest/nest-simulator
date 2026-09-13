@@ -35,15 +35,14 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-void
-nest::register_inhomogeneous_poisson_generator( const std::string& name )
-{
-  register_node_model< inhomogeneous_poisson_generator >( name );
-}
-
 
 namespace nest
 {
+void
+register_inhomogeneous_poisson_generator( const std::string& name )
+{
+  register_node_model< inhomogeneous_poisson_generator >( name );
+}
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter

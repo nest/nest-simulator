@@ -31,8 +31,11 @@
 #include "target_table_devices.h"
 #include "vp_manager_impl.h"
 
+namespace nest
+{
+
 inline void
-nest::TargetTableDevices::add_connection_to_device( Node& source,
+TargetTableDevices::add_connection_to_device( Node& source,
   Node& target,
   const size_t source_node_id,
   const size_t tid,
@@ -51,7 +54,7 @@ nest::TargetTableDevices::add_connection_to_device( Node& source,
 }
 
 inline void
-nest::TargetTableDevices::add_connection_from_device( Node& source,
+TargetTableDevices::add_connection_from_device( Node& source,
   Node& target,
   const size_t tid,
   const synindex syn_id,
@@ -74,7 +77,7 @@ nest::TargetTableDevices::add_connection_from_device( Node& source,
 }
 
 inline void
-nest::TargetTableDevices::send_to_device( const size_t tid,
+TargetTableDevices::send_to_device( const size_t tid,
   const size_t source_node_id,
   Event& e,
   const std::vector< ConnectorModel* >& cm )
@@ -92,7 +95,7 @@ nest::TargetTableDevices::send_to_device( const size_t tid,
 }
 
 inline void
-nest::TargetTableDevices::send_to_device( const size_t tid,
+TargetTableDevices::send_to_device( const size_t tid,
   const size_t source_node_id,
   SecondaryEvent& e,
   const std::vector< ConnectorModel* >& cm )
@@ -108,7 +111,7 @@ nest::TargetTableDevices::send_to_device( const size_t tid,
 }
 
 inline void
-nest::TargetTableDevices::get_synapse_status_to_device( const size_t tid,
+TargetTableDevices::get_synapse_status_to_device( const size_t tid,
   const size_t source_node_id,
   const synindex syn_id,
   Dictionary& dict,
@@ -122,7 +125,7 @@ nest::TargetTableDevices::get_synapse_status_to_device( const size_t tid,
 }
 
 inline void
-nest::TargetTableDevices::set_synapse_status_to_device( const size_t tid,
+TargetTableDevices::set_synapse_status_to_device( const size_t tid,
   const size_t source_node_id,
   const synindex syn_id,
   ConnectorModel& cm,
@@ -135,5 +138,7 @@ nest::TargetTableDevices::set_synapse_status_to_device( const size_t tid,
     target_to_devices_[ tid ][ lid ][ syn_id ]->set_synapse_status( lcid, dict, cm );
   }
 }
+
+}  // namespace nest
 
 #endif /* TARGET_TABLE_DEVICES_IMPL_H */

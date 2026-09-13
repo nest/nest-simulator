@@ -35,12 +35,12 @@
 
 namespace nest
 {
-
 void
 register_spike_dilutor( const std::string& name )
 {
   register_node_model< spike_dilutor >( name );
 }
+
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter

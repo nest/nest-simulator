@@ -32,15 +32,13 @@
 #include "dict_util.h"
 
 
+namespace nest
+{
 void
-nest::register_spike_generator( const std::string& name )
+register_spike_generator( const std::string& name )
 {
   register_node_model< spike_generator >( name );
 }
-
-
-namespace nest
-{
 
 /* ----------------------------------------------------------------
  * Default constructor defining default parameters

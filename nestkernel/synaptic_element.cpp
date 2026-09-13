@@ -27,12 +27,14 @@
 #include "kernel_manager.h"
 
 
+namespace nest
+{
 /* ----------------------------------------------------------------
  * SynapticElement
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::SynapticElement::SynapticElement()
+SynapticElement::SynapticElement()
   : z_( 0.0 )
   , z_t_( 0.0 )
   , z_connected_( 0 )
@@ -43,7 +45,7 @@ nest::SynapticElement::SynapticElement()
 {
 }
 
-nest::SynapticElement::SynapticElement( const SynapticElement& se )
+SynapticElement::SynapticElement( const SynapticElement& se )
   : z_( se.z_ )
   , z_t_( se.z_t_ )
   , z_connected_( se.z_connected_ )
@@ -58,8 +60,8 @@ nest::SynapticElement::SynapticElement( const SynapticElement& se )
   growth_curve_->set( nc_parameters );
 }
 
-nest::SynapticElement&
-nest::SynapticElement::operator=( const SynapticElement& other )
+SynapticElement&
+SynapticElement::operator=( const SynapticElement& other )
 {
   if ( this != &other )
   {
@@ -87,7 +89,7 @@ nest::SynapticElement::operator=( const SynapticElement& other )
  * get function to store current values in dictionary
  * ---------------------------------------------------------------- */
 void
-nest::SynapticElement::get( Dictionary& d ) const
+SynapticElement::get( Dictionary& d ) const
 {
   // Store current values in the dictionary
   d[ names::growth_rate ] = growth_rate_;
@@ -104,7 +106,7 @@ nest::SynapticElement::get( Dictionary& d ) const
  * set function to store dictionary values in the SynaticElement
  * ---------------------------------------------------------------- */
 void
-nest::SynapticElement::set( const Dictionary& d )
+SynapticElement::set( const Dictionary& d )
 {
   double new_tau_vacant = tau_vacant_;
 
@@ -136,7 +138,7 @@ nest::SynapticElement::set( const Dictionary& d )
  * Update the number of element at the time t (in ms)
  * ---------------------------------------------------------------- */
 void
-nest::SynapticElement::update( double t, double t_minus, double Ca_minus, double tau_Ca )
+SynapticElement::update( double t, double t_minus, double Ca_minus, double tau_Ca )
 {
   if ( z_t_ != t_minus )
   {
@@ -147,3 +149,5 @@ nest::SynapticElement::update( double t, double t_minus, double Ca_minus, double
   z_ = growth_curve_->update( t, t_minus, Ca_minus, z_, tau_Ca, growth_rate_ );
   z_t_ = t;
 }
+
+}  // namespace nest

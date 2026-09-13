@@ -175,16 +175,14 @@ private:
   Variables_ V_;
 };
 
-}  // namespace
-
 inline void
-nest::Device::get_status( Dictionary& d ) const
+Device::get_status( Dictionary& d ) const
 {
   P_.get( d );
 }
 
 inline void
-nest::Device::set_status( const Dictionary& d )
+Device::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;  // temporary copy in case of errors
   ptmp.set( d );          // throws if BadProperty
@@ -193,34 +191,36 @@ nest::Device::set_status( const Dictionary& d )
   P_ = ptmp;
 }
 
-inline nest::Time const&
-nest::Device::get_origin() const
+inline Time const&
+Device::get_origin() const
 {
   return P_.origin_;
 }
 
-inline nest::Time const&
-nest::Device::get_start() const
+inline Time const&
+Device::get_start() const
 {
   return P_.start_;
 }
 
-inline nest::Time const&
-nest::Device::get_stop() const
+inline Time const&
+Device::get_stop() const
 {
   return P_.stop_;
 }
 
 inline long
-nest::Device::get_t_min_() const
+Device::get_t_min_() const
 {
   return V_.t_min_;
 }
 
 inline long
-nest::Device::get_t_max_() const
+Device::get_t_max_() const
 {
   return V_.t_max_;
 }
+
+}  // namespace nest
 
 #endif /* DEVICE_H */

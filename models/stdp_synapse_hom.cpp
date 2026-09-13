@@ -28,14 +28,14 @@
 #include "nest_impl.h"
 
 
+namespace nest
+{
 void
-nest::register_stdp_synapse_hom( const std::string& name )
+register_stdp_synapse_hom( const std::string& name )
 {
   register_connection_model< stdp_synapse_hom >( name );
 }
 
-namespace nest
-{
 
 STDPHomCommonProperties::STDPHomCommonProperties()
   : CommonSynapseProperties()
@@ -74,4 +74,4 @@ STDPHomCommonProperties::set_status( const Dictionary& d, ConnectorModel& cm )
   d.update_value( names::Wmax, Wmax_ );
 }
 
-}  // of namespace nest
+}  // namespace nest

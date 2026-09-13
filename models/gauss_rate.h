@@ -169,10 +169,10 @@ nonlinearities_gauss_rate::mult_coupling_in( double )
   return 1.;
 }
 
-typedef rate_neuron_ipn< nest::nonlinearities_gauss_rate > gauss_rate_ipn;
+typedef rate_neuron_ipn< nonlinearities_gauss_rate > gauss_rate_ipn;
 void register_gauss_rate_ipn( const std::string& name );
 
-typedef rate_transformer_node< nest::nonlinearities_gauss_rate > rate_transformer_gauss;
+typedef rate_transformer_node< nonlinearities_gauss_rate > rate_transformer_gauss;
 void register_rate_transformer_gauss( const std::string& name );
 
 

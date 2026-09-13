@@ -36,14 +36,14 @@
 #include "regula_falsi.h"
 
 
+namespace nest
+{
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::iaf_psc_exp_ps_lossless > nest::iaf_psc_exp_ps_lossless::recordablesMap_;
+RecordablesMap< iaf_psc_exp_ps_lossless > iaf_psc_exp_ps_lossless::recordablesMap_;
 
-namespace nest
-{
 void
 register_iaf_psc_exp_ps_lossless( const std::string& name )
 {
@@ -62,13 +62,12 @@ RecordablesMap< iaf_psc_exp_ps_lossless >::create()
   insert_( names::I_syn_ex, &iaf_psc_exp_ps_lossless::get_I_syn_ex_ );
   insert_( names::I_syn_in, &iaf_psc_exp_ps_lossless::get_I_syn_in_ );
 }
-}
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::iaf_psc_exp_ps_lossless::Parameters_::Parameters_()
+iaf_psc_exp_ps_lossless::Parameters_::Parameters_()
   : tau_m_( 10.0 )                                        // ms
   , tau_ex_( 2.0 )                                        // ms
   , tau_in_( 2.0 )                                        // ms
@@ -82,7 +81,7 @@ nest::iaf_psc_exp_ps_lossless::Parameters_::Parameters_()
 {
 }
 
-nest::iaf_psc_exp_ps_lossless::State_::State_()
+iaf_psc_exp_ps_lossless::State_::State_()
   : y0_( 0.0 )
   , I_syn_ex_( 0.0 )
   , I_syn_in_( 0.0 )
@@ -93,12 +92,12 @@ nest::iaf_psc_exp_ps_lossless::State_::State_()
 {
 }
 
-nest::iaf_psc_exp_ps_lossless::Buffers_::Buffers_( iaf_psc_exp_ps_lossless& n )
+iaf_psc_exp_ps_lossless::Buffers_::Buffers_( iaf_psc_exp_ps_lossless& n )
   : logger_( n )
 {
 }
 
-nest::iaf_psc_exp_ps_lossless::Buffers_::Buffers_( const Buffers_&, iaf_psc_exp_ps_lossless& n )
+iaf_psc_exp_ps_lossless::Buffers_::Buffers_( const Buffers_&, iaf_psc_exp_ps_lossless& n )
   : logger_( n )
 {
 }
@@ -107,7 +106,7 @@ nest::iaf_psc_exp_ps_lossless::Buffers_::Buffers_( const Buffers_&, iaf_psc_exp_
  * Parameter and state extractions and manipulation functions
  * ---------------------------------------------------------------- */
 void
-nest::iaf_psc_exp_ps_lossless::Parameters_::get( Dictionary& d ) const
+iaf_psc_exp_ps_lossless::Parameters_::get( Dictionary& d ) const
 {
   d[ names::E_L ] = E_L_;
   d[ names::I_e ] = I_e_;
@@ -122,7 +121,7 @@ nest::iaf_psc_exp_ps_lossless::Parameters_::get( Dictionary& d ) const
 }
 
 double
-nest::iaf_psc_exp_ps_lossless::Parameters_::set( const Dictionary& d, Node* node )
+iaf_psc_exp_ps_lossless::Parameters_::set( const Dictionary& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
@@ -208,7 +207,7 @@ nest::iaf_psc_exp_ps_lossless::Parameters_::set( const Dictionary& d, Node* node
 }
 
 void
-nest::iaf_psc_exp_ps_lossless::State_::get( Dictionary& d, const Parameters_& p ) const
+iaf_psc_exp_ps_lossless::State_::get( Dictionary& d, const Parameters_& p ) const
 {
   d[ names::V_m ] = y2_ + p.E_L_;  // Membrane potential
   d[ names::is_refractory ] = is_refractory_;
@@ -220,7 +219,7 @@ nest::iaf_psc_exp_ps_lossless::State_::get( Dictionary& d, const Parameters_& p 
 }
 
 void
-nest::iaf_psc_exp_ps_lossless::State_::set( const Dictionary& d, const Parameters_& p, double delta_EL, Node* node )
+iaf_psc_exp_ps_lossless::State_::set( const Dictionary& d, const Parameters_& p, double delta_EL, Node* node )
 {
   if ( update_value_param( d, names::V_m, y2_, node ) )
   {
@@ -239,7 +238,7 @@ nest::iaf_psc_exp_ps_lossless::State_::set( const Dictionary& d, const Parameter
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::iaf_psc_exp_ps_lossless::iaf_psc_exp_ps_lossless()
+iaf_psc_exp_ps_lossless::iaf_psc_exp_ps_lossless()
   : ArchivingNode()
   , P_()
   , S_()
@@ -248,7 +247,7 @@ nest::iaf_psc_exp_ps_lossless::iaf_psc_exp_ps_lossless()
   recordablesMap_.create();
 }
 
-nest::iaf_psc_exp_ps_lossless::iaf_psc_exp_ps_lossless( const iaf_psc_exp_ps_lossless& n )
+iaf_psc_exp_ps_lossless::iaf_psc_exp_ps_lossless( const iaf_psc_exp_ps_lossless& n )
   : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -261,7 +260,7 @@ nest::iaf_psc_exp_ps_lossless::iaf_psc_exp_ps_lossless( const iaf_psc_exp_ps_los
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_psc_exp_ps_lossless::init_buffers_()
+iaf_psc_exp_ps_lossless::init_buffers_()
 {
   B_.events_.resize();
   B_.events_.clear();
@@ -270,7 +269,7 @@ nest::iaf_psc_exp_ps_lossless::init_buffers_()
 }
 
 void
-nest::iaf_psc_exp_ps_lossless::pre_run_hook()
+iaf_psc_exp_ps_lossless::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -314,7 +313,7 @@ nest::iaf_psc_exp_ps_lossless::pre_run_hook()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_psc_exp_ps_lossless::update( const Time& origin, const long from, const long to )
+iaf_psc_exp_ps_lossless::update( const Time& origin, const long from, const long to )
 {
   // at start of slice, tell input queue to prepare for delivery
   if ( from == 0 )
@@ -471,7 +470,7 @@ nest::iaf_psc_exp_ps_lossless::update( const Time& origin, const long from, cons
 
 // function handles exact spike times
 void
-nest::iaf_psc_exp_ps_lossless::handle( SpikeEvent& e )
+iaf_psc_exp_ps_lossless::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -481,14 +480,14 @@ nest::iaf_psc_exp_ps_lossless::handle( SpikeEvent& e )
   */
   const long Tdeliver = e.get_stamp().get_steps() + e.get_delay_steps() - 1;
 
-  B_.events_.add_spike( e.get_rel_delivery_steps( nest::kernel().simulation_manager.get_slice_origin() ),
+  B_.events_.add_spike( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     Tdeliver,
     e.get_offset(),
     e.get_weight() * e.get_multiplicity() );
 }
 
 void
-nest::iaf_psc_exp_ps_lossless::handle( CurrentEvent& e )
+iaf_psc_exp_ps_lossless::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -496,11 +495,11 @@ nest::iaf_psc_exp_ps_lossless::handle( CurrentEvent& e )
   const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( nest::kernel().simulation_manager.get_slice_origin() ), w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void
-nest::iaf_psc_exp_ps_lossless::handle( DataLoggingRequest& e )
+iaf_psc_exp_ps_lossless::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
@@ -508,7 +507,7 @@ nest::iaf_psc_exp_ps_lossless::handle( DataLoggingRequest& e )
 // auxiliary functions ---------------------------------------------
 
 void
-nest::iaf_psc_exp_ps_lossless::propagate_( const double dt )
+iaf_psc_exp_ps_lossless::propagate_( const double dt )
 {
   // dt == 0 may occur if two spikes arrive simultaneously;
   // propagate_() shall not be called then; see #368.
@@ -533,7 +532,7 @@ nest::iaf_psc_exp_ps_lossless::propagate_( const double dt )
 }
 
 void
-nest::iaf_psc_exp_ps_lossless::emit_spike_( const Time& origin, const long lag, const double t0, const double dt )
+iaf_psc_exp_ps_lossless::emit_spike_( const Time& origin, const long lag, const double t0, const double dt )
 {
   // dt == 0 may occur if two spikes arrive simultaneously;
   // emit_spike_() shall not be called then; see #368.
@@ -558,7 +557,7 @@ nest::iaf_psc_exp_ps_lossless::emit_spike_( const Time& origin, const long lag, 
 }
 
 void
-nest::iaf_psc_exp_ps_lossless::emit_instant_spike_( const Time& origin, const long lag, const double spike_offs )
+iaf_psc_exp_ps_lossless::emit_instant_spike_( const Time& origin, const long lag, const double spike_offs )
 {
   assert( S_.y2_ >= P_.U_th_ );  // ensure we are superthreshold
 
@@ -579,7 +578,7 @@ nest::iaf_psc_exp_ps_lossless::emit_instant_spike_( const Time& origin, const lo
 }
 
 double
-nest::iaf_psc_exp_ps_lossless::threshold_distance( double t_step ) const
+iaf_psc_exp_ps_lossless::threshold_distance( double t_step ) const
 {
   const double P20 = -P_.tau_m_ / P_.c_m_ * numerics::expm1( -t_step / P_.tau_m_ );
 
@@ -593,7 +592,7 @@ nest::iaf_psc_exp_ps_lossless::threshold_distance( double t_step ) const
 }
 
 double
-nest::iaf_psc_exp_ps_lossless::is_spike_( const double dt )
+iaf_psc_exp_ps_lossless::is_spike_( const double dt )
 {
   // dt == 0 may occur if two spikes arrive simultaneously;
   // is_spike_() shall not be called then; see #368.
@@ -648,3 +647,5 @@ nest::iaf_psc_exp_ps_lossless::is_spike_( const double dt )
       * std::log( V_.b1_ * I_0 / ( V_.a2_ * I_e - V_.a1_ * I_0 - V_.a4_ * V_0 ) );
   }
 }
+
+}  // namespace nest

@@ -34,13 +34,14 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-/* ---------------------------------------------------------------------------
- * Recordables map
- * --------------------------------------------------------------------------- */
-nest::RecordablesMap< nest::iaf_bw_2001_exact > nest::iaf_bw_2001_exact::recordablesMap_;
 
 namespace nest
 {
+/* ---------------------------------------------------------------------------
+ * Recordables map
+ * --------------------------------------------------------------------------- */
+RecordablesMap< iaf_bw_2001_exact > iaf_bw_2001_exact::recordablesMap_;
+
 void
 register_iaf_bw_2001_exact( const std::string& name )
 {
@@ -63,12 +64,11 @@ RecordablesMap< iaf_bw_2001_exact >::create()
   insert_( names::I_AMPA, &iaf_bw_2001_exact::get_I_AMPA_ );
   insert_( names::I_GABA, &iaf_bw_2001_exact::get_I_GABA_ );
 }
-}
 /* ---------------------------------------------------------------------------
  * Default constructors defining default parameters and state
  * --------------------------------------------------------------------------- */
 
-nest::iaf_bw_2001_exact::Parameters_::Parameters_()
+iaf_bw_2001_exact::Parameters_::Parameters_()
   : E_L( -70.0 )           // mV
   , E_ex( 0.0 )            // mV
   , E_in( -70.0 )          // mV
@@ -87,7 +87,7 @@ nest::iaf_bw_2001_exact::Parameters_::Parameters_()
 {
 }
 
-nest::iaf_bw_2001_exact::State_::State_( const Parameters_& p )
+iaf_bw_2001_exact::State_::State_( const Parameters_& p )
   : state_vec_size( 0 )
   , ode_state_( nullptr )
   , num_ports_( SynapseTypes::GABA )  // only AMPA/GABA for now, add NMDA later
@@ -103,7 +103,7 @@ nest::iaf_bw_2001_exact::State_::State_( const Parameters_& p )
   state_vec_size = s_NMDA_base;
 }
 
-nest::iaf_bw_2001_exact::State_::State_( const State_& s )
+iaf_bw_2001_exact::State_::State_( const State_& s )
   : state_vec_size( s.state_vec_size )
   , ode_state_( nullptr )
   , num_ports_( s.num_ports_ )
@@ -120,7 +120,7 @@ nest::iaf_bw_2001_exact::State_::State_( const State_& s )
   ode_state_[ s_GABA ] = s.ode_state_[ s_GABA ];
 }
 
-nest::iaf_bw_2001_exact::Buffers_::Buffers_( iaf_bw_2001_exact& n )
+iaf_bw_2001_exact::Buffers_::Buffers_( iaf_bw_2001_exact& n )
   : logger_( n )
   , spikes_()
   , weights_()
@@ -133,7 +133,7 @@ nest::iaf_bw_2001_exact::Buffers_::Buffers_( iaf_bw_2001_exact& n )
   // Initialization of the remaining members is deferred to init_buffers_().
 }
 
-nest::iaf_bw_2001_exact::Buffers_::Buffers_( const Buffers_&, iaf_bw_2001_exact& n )
+iaf_bw_2001_exact::Buffers_::Buffers_( const Buffers_&, iaf_bw_2001_exact& n )
   : logger_( n )
   , spikes_()
   , weights_()
@@ -151,7 +151,7 @@ nest::iaf_bw_2001_exact::Buffers_::Buffers_( const Buffers_&, iaf_bw_2001_exact&
  * --------------------------------------------------------------------------- */
 
 void
-nest::iaf_bw_2001_exact::Parameters_::get( Dictionary& d ) const
+iaf_bw_2001_exact::Parameters_::get( Dictionary& d ) const
 {
   d[ names::E_L ] = E_L;
   d[ names::E_ex ] = E_ex;
@@ -171,7 +171,7 @@ nest::iaf_bw_2001_exact::Parameters_::get( Dictionary& d ) const
 }
 
 void
-nest::iaf_bw_2001_exact::Parameters_::set( const Dictionary& d, Node* node )
+iaf_bw_2001_exact::Parameters_::set( const Dictionary& d, Node* node )
 {
   // allow setting the membrane potential
   update_value_param( d, names::V_th, V_th, node );
@@ -221,7 +221,7 @@ nest::iaf_bw_2001_exact::Parameters_::set( const Dictionary& d, Node* node )
 }
 
 void
-nest::iaf_bw_2001_exact::State_::get( Dictionary& d ) const
+iaf_bw_2001_exact::State_::get( Dictionary& d ) const
 {
   d[ names::V_m ] = ode_state_[ V_m ];  // Membrane potential
   d[ names::s_AMPA ] = ode_state_[ s_AMPA ];
@@ -229,7 +229,7 @@ nest::iaf_bw_2001_exact::State_::get( Dictionary& d ) const
 }
 
 void
-nest::iaf_bw_2001_exact::State_::set( const Dictionary& d, const Parameters_&, Node* node )
+iaf_bw_2001_exact::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
   update_value_param( d, names::V_m, ode_state_[ V_m ], node );
   update_value_param( d, names::s_AMPA, ode_state_[ s_AMPA ], node );
@@ -240,7 +240,7 @@ nest::iaf_bw_2001_exact::State_::set( const Dictionary& d, const Parameters_&, N
  * Default constructor for node
  * --------------------------------------------------------------------------- */
 
-nest::iaf_bw_2001_exact::iaf_bw_2001_exact()
+iaf_bw_2001_exact::iaf_bw_2001_exact()
   : ArchivingNode()
   , P_()
   , S_( P_ )
@@ -253,7 +253,7 @@ nest::iaf_bw_2001_exact::iaf_bw_2001_exact()
  * Copy constructor for node
  * --------------------------------------------------------------------------- */
 
-nest::iaf_bw_2001_exact::iaf_bw_2001_exact( const iaf_bw_2001_exact& n_ )
+iaf_bw_2001_exact::iaf_bw_2001_exact( const iaf_bw_2001_exact& n_ )
   : ArchivingNode( n_ )
   , P_( n_.P_ )
   , S_( n_.S_ )
@@ -265,7 +265,7 @@ nest::iaf_bw_2001_exact::iaf_bw_2001_exact( const iaf_bw_2001_exact& n_ )
  * Destructor for node
  * --------------------------------------------------------------------------- */
 
-nest::iaf_bw_2001_exact::~iaf_bw_2001_exact()
+iaf_bw_2001_exact::~iaf_bw_2001_exact()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
 
@@ -295,7 +295,7 @@ nest::iaf_bw_2001_exact::~iaf_bw_2001_exact()
  * --------------------------------------------------------------------------- */
 
 void
-nest::iaf_bw_2001_exact::init_state_()
+iaf_bw_2001_exact::init_state_()
 {
   assert( S_.state_vec_size == State_::s_NMDA_base );
 
@@ -318,7 +318,7 @@ nest::iaf_bw_2001_exact::init_state_()
 }
 
 void
-nest::iaf_bw_2001_exact::init_buffers_()
+iaf_bw_2001_exact::init_buffers_()
 {
   B_.spikes_.resize( S_.num_ports_ );
 
@@ -372,7 +372,7 @@ nest::iaf_bw_2001_exact::init_buffers_()
 }
 
 void
-nest::iaf_bw_2001_exact::pre_run_hook()
+iaf_bw_2001_exact::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -387,14 +387,14 @@ nest::iaf_bw_2001_exact::pre_run_hook()
  * --------------------------------------------------------------------------- */
 
 extern "C" inline int
-nest::iaf_bw_2001_exact_dynamics( double, const double ode_state[], double f[], void* pnode )
+iaf_bw_2001_exact_dynamics( double, const double ode_state[], double f[], void* pnode )
 {
   // a shorthand
-  typedef nest::iaf_bw_2001_exact::State_ State_;
+  typedef iaf_bw_2001_exact::State_ State_;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  nest::iaf_bw_2001_exact& node = *( reinterpret_cast< nest::iaf_bw_2001_exact* >( pnode ) );
+  iaf_bw_2001_exact& node = *( reinterpret_cast< iaf_bw_2001_exact* >( pnode ) );
 
   // ode_state[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.ode_state[].
@@ -431,7 +431,7 @@ nest::iaf_bw_2001_exact_dynamics( double, const double ode_state[], double f[], 
 }
 
 void
-nest::iaf_bw_2001_exact::update( Time const& origin, const long from, const long to )
+iaf_bw_2001_exact::update( Time const& origin, const long from, const long to )
 {
   for ( long lag = from; lag < to; ++lag )
   {
@@ -511,13 +511,13 @@ nest::iaf_bw_2001_exact::update( Time const& origin, const long from, const long
 // Do not move this function as inline to h-file. It depends on
 // universal_data_logger_impl.h being included here.
 void
-nest::iaf_bw_2001_exact::handle( DataLoggingRequest& e )
+iaf_bw_2001_exact::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
 
 void
-nest::iaf_bw_2001_exact::handle( SpikeEvent& e )
+iaf_bw_2001_exact::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
   assert( e.get_rport() <= B_.spikes_.size() );
@@ -549,12 +549,14 @@ nest::iaf_bw_2001_exact::handle( SpikeEvent& e )
 }
 
 void
-nest::iaf_bw_2001_exact::handle( CurrentEvent& e )
+iaf_bw_2001_exact::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
   B_.currents_.add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
 }
+
+}  // namespace nest
 
 #endif  // HAVE_GSL

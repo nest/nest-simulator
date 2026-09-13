@@ -29,7 +29,6 @@ This is necessary for NEST's multithreading capabilities to work correctly on ma
 
    .. code-block:: bash
 
-      export CFLAGS="$CFLAGS -I/<YOUR-LIBOMP-PATH>/include"
       export CXXFLAGS="$CXXFLAGS -I/<YOUR-LIBOMP-PATH>/include"
       export LDFLAGS="$LDFLAGS -Wl,-rpath,/<YOUR-LIBOMP-PATH>/lib -L/<YOUR-HOMEBREW-PATH>/opt/libomp/lib -lomp"
 

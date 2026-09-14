@@ -36,6 +36,13 @@ The parametrisation matters more than its size. A correction entry only has to b
 on to the next spike on the same connection while two of them are in flight together, i.e.
 while the presynaptic inter-spike interval is shorter than ``axonal - dendritic``; the
 short-interval cases below are the ones that exercise that hand-off.
+
+The cases are run against every neuron model that drives the correction mechanism, because
+the buffer lives in the neuron: a model which never clears it, or clears it at the wrong
+lag, leaves stale entries that only show up as a wrong weight. The ``axonal == dendritic``
+case is deliberately among them -- it is the boundary at which a connection starts counting
+as predominantly axonal, so the neuron maintains the buffer, yet no correction can ever be
+required, and both halves of that have to hold at once.
 """
 
 from math import exp
@@ -54,6 +61,10 @@ INITIAL_WEIGHT = 0.5
 TAU_MINUS = 33.7
 SYNAPSE_PARAMS = {"lambda": 0.1, "alpha": 0.1, "mu": 0.4, "tau_plus": 20.0}
 EPS = 1e-6
+
+# The neuron models which support synapses with predominantly axonal delay; see
+# Node::supports_axonal_delay_corrections().
+SUPPORTED_NEURONS = ["iaf_psc_alpha", "iaf_psc_exp", "iaf_psc_delta"]
 
 
 def _facilitate(weight, kplus):
@@ -92,7 +103,7 @@ def _causal_weight(pre_spikes, post_spikes, axonal_delay, dendritic_delay):
     return weight
 
 
-def _simulate(axonal_delay, dendritic_delay, pre_interval, num_threads):
+def _simulate(axonal_delay, dendritic_delay, pre_interval, num_threads, neuron_model="iaf_psc_alpha"):
     """Drive prescribed spike trains through an all-to-all ax-delay projection."""
     nest.ResetKernel()
     nest.set(resolution=RESOLUTION, local_num_threads=num_threads)
@@ -104,7 +115,7 @@ def _simulate(axonal_delay, dendritic_delay, pre_interval, num_threads):
     # parrot_neuron repeats its input exactly, so the presynaptic spike times are prescribed;
     # the postsynaptic times are whatever the neurons produce and are read back below.
     pre = nest.Create("parrot_neuron", N_PRE)
-    post = nest.Create("iaf_psc_alpha", N_POST, params={"tau_minus": TAU_MINUS, "t_ref": 0.0})
+    post = nest.Create(neuron_model, N_POST, params={"tau_minus": TAU_MINUS, "t_ref": 0.0})
     pre_gen = nest.Create("spike_generator", N_PRE, params=[{"spike_times": t} for t in pre_drive])
     post_gen = nest.Create("spike_generator", N_POST, params=[{"spike_times": t} for t in post_drive])
 
@@ -136,7 +147,22 @@ def _simulate(axonal_delay, dendritic_delay, pre_interval, num_threads):
 
     senders = recorder.events["senders"]
     times = recorder.events["times"]
-    trains = {node: np.sort(times[senders == node]) for node in pre.tolist() + post.tolist()}
+    recorded = {node: np.sort(times[senders == node]) for node in pre.tolist() + post.tolist()}
+
+    # Under MPI a spike_recorder only ever sees senders local to its own rank, and the
+    # presynaptic side of a connection generally is not: a connection lives on the rank of its
+    # target. The presynaptic times are prescribed, though -- parrot_neuron repeats its input
+    # exactly, one drive delay later -- so take them from the drive rather than the recorder,
+    # and check that against the recorder wherever the rank did see them, so "repeats exactly"
+    # stays tested rather than assumed.
+    trains = {}
+    for node, drive in zip(pre.tolist(), pre_drive):
+        trains[node] = np.round(drive + DRIVE_DELAY, 10)
+        if len(recorded[node]) > 0:
+            assert recorded[node] == pytest.approx(trains[node]), f"parrot {node} did not repeat its input"
+    # Targets are local by construction, so their recorded trains are complete.
+    for node in post.tolist():
+        trains[node] = recorded[node]
 
     return nest.GetConnections(synapse_model="stdp_pl_synapse_hom_ax_delay"), trains
 
@@ -155,9 +181,12 @@ def _simulate(axonal_delay, dendritic_delay, pre_interval, num_threads):
 # The 4-thread case needs a build with multithreading support; NEST raises on
 # local_num_threads > 1 without it.
 @pytest.mark.parametrize("num_threads", [1, pytest.param(4, marks=pytest.mark.skipif_missing_threads)])
-def test_corrected_weights_match_causal_reference(axonal_delay, dendritic_delay, pre_interval, num_threads):
+@pytest.mark.parametrize("neuron_model", SUPPORTED_NEURONS)
+def test_corrected_weights_match_causal_reference(
+    axonal_delay, dendritic_delay, pre_interval, num_threads, neuron_model
+):
     """Every synapse must end on the weight an implementation that never misses a spike computes."""
-    connections, trains = _simulate(axonal_delay, dendritic_delay, pre_interval, num_threads)
+    connections, trains = _simulate(axonal_delay, dendritic_delay, pre_interval, num_threads, neuron_model)
 
     sources = connections.source
     targets = connections.target
@@ -178,14 +207,18 @@ def test_corrected_weights_match_causal_reference(axonal_delay, dendritic_delay,
         )
 
 
-def test_corrections_actually_fire():
+@pytest.mark.parametrize("neuron_model", SUPPORTED_NEURONS)
+def test_corrections_actually_fire(neuron_model):
     """Guard the guard: the parametrisation above has to enter the correction path at all.
 
     At ``axonal_delay <= dendritic_delay`` no correction is ever required, so a test that
-    only ever ran such a case would pass without exercising anything.
+    only ever ran such a case would pass without exercising anything. Equality is the
+    interesting half: a spike is handed to the synapse no earlier than the slice in which
+    it was emitted, so at ``axonal == dendritic`` the whole postsynaptic history the synapse
+    needs is already there and the count has to be exactly zero, not merely small.
     """
-    _simulate(axonal_delay=2.0, dendritic_delay=0.5, pre_interval=0.7, num_threads=1)
+    _simulate(axonal_delay=2.0, dendritic_delay=0.5, pre_interval=0.7, num_threads=1, neuron_model=neuron_model)
     assert nest.kernel_status["num_corrections"] > 0
 
-    _simulate(axonal_delay=1.5, dendritic_delay=1.5, pre_interval=0.7, num_threads=1)
+    _simulate(axonal_delay=1.5, dendritic_delay=1.5, pre_interval=0.7, num_threads=1, neuron_model=neuron_model)
     assert nest.kernel_status["num_corrections"] == 0

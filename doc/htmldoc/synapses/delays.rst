@@ -27,6 +27,16 @@ When using ``stdp_pl_synapse_hom_ax_delay``:
   ``dendritic_delay: 1.0``  and ``axonal_delay: 0.0``.
 - If only axonal delay is provided and no dendritic delay, the dendritic delay is assumed to be 0 and vice-versa.
 
+.. warning::
+
+   Each delay is rounded to the simulation resolution **separately**, so a split which does not land on
+   the resolution grid silently changes the *total* delay. At a resolution of 0.1 ms, an even split of a
+   1.5 ms total delay has to be given as ``axonal_delay: 0.75, dendritic_delay: 0.75``, and both halves
+   round up to 0.8 ms -- the connection ends up with a total delay of 1.6 ms, not 1.5 ms. This matters
+   whenever a sweep varies the split while holding the total fixed: choose a total delay with an even
+   number of resolution steps, and keep every delay on the grid. Read the delays back with
+   ``nest.GetConnections().delay`` if in doubt.
+
 
 Use of ``axonal_delay`` and ``dendritic_delay`` is the same as ``delay``:
 

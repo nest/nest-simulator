@@ -74,6 +74,9 @@ single_column_in = 3.348
 # And then we set up the simulation
 
 
+RESOLUTION = 0.1
+
+
 def run(T, axonal_delay, dendritic_delay, enable_stdp, use_ax_delay):
     # Enable or disable STDP
     if enable_stdp:
@@ -83,7 +86,7 @@ def run(T, axonal_delay, dendritic_delay, enable_stdp, use_ax_delay):
     # Reset the NEST kernel and set simulation parameters
     nest.ResetKernel()
     nest.local_num_threads = 8
-    nest.resolution = 0.1
+    nest.resolution = RESOLUTION
     nest.rng_seed = 42
     nest.set_verbosity("M_ERROR")
 
@@ -197,10 +200,17 @@ plt.show()
 # Measure number of corrections for increasing fractions of axonal delays
 
 
-ax_perc = np.arange(0.0, 1.01, 0.01, dtype=np.float32)
-num_corrections = np.empty(101, dtype=np.int32)
-for i, p in enumerate(ax_perc):
-    run(500.0, 5.0 * p, 5.0 * (1 - p), enable_stdp=False, use_ax_delay=True)
+# Both delays are rounded to the simulation resolution, each on its own, so a split which does
+# not land on that grid silently changes the total delay: an even split of a 1.5 ms total is
+# stored as 0.8 ms + 0.8 ms at a 0.1 ms resolution, i.e. 1.6 ms. Stepping the axonal delay by
+# whole resolution steps keeps the total at exactly 5 ms for every point of this sweep, so the
+# only thing varying along the curve is the split.
+total_delay = 5.0
+axonal_delays = np.round(np.arange(0.0, total_delay + 0.5 * RESOLUTION, RESOLUTION), 10)
+ax_perc = axonal_delays / total_delay
+num_corrections = np.empty(len(axonal_delays), dtype=np.int32)
+for i, axonal_delay in enumerate(axonal_delays):
+    run(500.0, axonal_delay, total_delay - axonal_delay, enable_stdp=False, use_ax_delay=True)
     num_corrections[i] = nest.kernel_status["num_corrections"]
 
 ##########################################################################

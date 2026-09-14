@@ -52,6 +52,7 @@ skip_models = [
     "ac_generator",  # generator device, does not support spike input
     "dc_generator",  # generator device, does not support spike input
     "noise_generator",  # generator device, does not support spike input
+    "ou_noise_generator",  # generator device, does not support spike input
     "step_current_generator",  # generator device, does not support spike input
     "step_rate_generator",  # generator device, does not support spike input
     "sinusoidal_poisson_generator",  # generator device, does not support spike input

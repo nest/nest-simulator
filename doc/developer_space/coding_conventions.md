@@ -48,7 +48,7 @@ Use the terms `not`, `and`, `or`  instead of `!`, `&&`, `||`.
 
 \code{.cpp}
 if ( not vec.empty() )  // preferred
-if ( !vec.empty() )     // avoid
+if ( !vec.empty() )     // forbidden
 \endcode
 
 No space before a semicolon: `return a + 3;`

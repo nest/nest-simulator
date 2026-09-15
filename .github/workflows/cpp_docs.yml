@@ -10,7 +10,6 @@ on:
       - '**/*.cpp'
       - '**/*.h'
       - 'doc/fulldoc.conf.in'
-      - 'doc/developer_space/static/css/doxygen-awesome.css'
       - 'doc/developer_space/**'
   # Contributors can manually trigger a preview build from the Actions tab
   workflow_dispatch:
@@ -62,7 +61,7 @@ jobs:
          run: |
            mkdir -p build
            cd build
-           cmake -Dwith-devdoc=ON -Dwith-python=OFF ..
+           cmake -Dwith-devdoc=ON ..
            sed -i "s|^PLANTUML_JAR_PATH.*|PLANTUML_JAR_PATH      = $GITHUB_WORKSPACE/plantuml.jar|" doc/fulldoc.conf
            GIT_HASH=$(git rev-parse --short HEAD)
            sed -i "s|^PROJECT_NUMBER.*|PROJECT_NUMBER         = main@${GIT_HASH}|" doc/fulldoc.conf

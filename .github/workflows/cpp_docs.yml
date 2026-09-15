@@ -164,7 +164,7 @@ jobs:
         run: |
           mkdir -p build
           cd build
-          cmake -Dwith-devdoc=ON -Dwith-python=OFF ..
+          cmake -Dwith-devdoc=ON ..
           sed -i "s|^PLANTUML_JAR_PATH.*|PLANTUML_JAR_PATH      = $GITHUB_WORKSPACE/plantuml.jar|" doc/fulldoc.conf
           GIT_HASH=$(git rev-parse --short HEAD)
           sed -i "s|^PROJECT_NUMBER.*|PROJECT_NUMBER         = main@${GIT_HASH}|" doc/fulldoc.conf

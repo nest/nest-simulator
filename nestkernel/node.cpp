@@ -213,6 +213,12 @@ Node::register_stdp_connection( double, double, double )
   throw IllegalConnection( "The target node does not support STDP synapses." );
 }
 
+bool
+Node::supports_axonal_delay_corrections() const
+{
+  return false;
+}
+
 void
 Node::register_eprop_connection()
 {

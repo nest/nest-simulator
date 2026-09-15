@@ -237,11 +237,9 @@ public:
 
     if ( get_axonal_delay_ms() >= get_dendritic_delay_ms() )
     {
-      // Predominantly axonal delays require the target to drive the correction mechanism from its
-      // update() and on spike emission, which only some models do.  Reject the rest here instead of
-      // silently computing wrong weights for them.
-      const AxonalDelayArchivingNode* const ax_delay_target = dynamic_cast< AxonalDelayArchivingNode* >( &t );
-      if ( not ax_delay_target or not ax_delay_target->supports_axonal_delay_corrections() )
+      // Reject targets which cannot drive the correction mechanism, instead of silently computing wrong
+      // weights for them.
+      if ( not t.supports_axonal_delay_corrections() )
       {
         throw IllegalConnection(
           "Target model does not support synapses with predominantly axonal delay, i.e., with an axonal "

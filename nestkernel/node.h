@@ -480,6 +480,15 @@ public:
   virtual void register_stdp_connection( double, double, double );
 
   /**
+   * Whether this model implements everything needed to be the target of a synapse with predominantly axonal
+   * delay; see AxonalDelayArchivingNode for what that entails.
+   *
+   * Declared here so the connection-time check can ask any target without a dynamic_cast. A model overriding
+   * this to return true must derive from AxonalDelayArchivingNode, which the correction path static_casts to.
+   */
+  virtual bool supports_axonal_delay_corrections() const;
+
+  /**
    * Registers an eprop connection.
    *
    * @throws IllegalConnection

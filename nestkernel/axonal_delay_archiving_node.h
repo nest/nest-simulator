@@ -69,11 +69,12 @@ public:
    * delay; see the class documentation for what that entails.
    *
    * Deriving from AxonalDelayArchivingNode provides the buffer, but the correction mechanism only works if
-   * the model also drives it from update() and on spike emission. Models which do not are rejected at
-   * connection time instead of silently producing wrong weights.
+   * the model also drives it from update() and on spike emission, so deriving alone still answers false.
+   * Models which do drive it override this to return true; the rest are rejected at connection time instead
+   * of silently producing wrong weights.
    */
-  virtual bool
-  supports_axonal_delay_corrections() const
+  bool
+  supports_axonal_delay_corrections() const override
   {
     return false;
   }

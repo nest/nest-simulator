@@ -952,9 +952,6 @@ ConnectionManager::connect_( Node& source,
 
   increase_connection_count( tid, syn_id );
 
-  // As for the connection-type flags below, the per-thread indicator keeps the shared flag off the hot path: it is
-  // written at most once per thread instead of on every connection, which would be both a data race and a
-  // cache line shared by all threads.
   if ( check_axonal_delays_[ tid ].is_false() and axonal_delay > 0. )
   {
 #pragma omp atomic write

@@ -363,10 +363,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     connection.set_status( p, *this );
   }
 
-  // Only a delay that was actually given for this connection needs to be checked here.  A connection which kept
-  // the model default is covered by used_default_delay(), which checks that default once per connector model.
-  // Checking it again for every connection costs tens of nanoseconds per synapse and showed up as a large network
-  // construction regression at the connection counts this kernel is built for.
+  // Checking a delay the connection did not set would re-check the model default on every connection.
   if ( default_delay_used )
   {
     used_default_delay();

@@ -12,12 +12,10 @@ consistent and readable.
 - **Braces:** Always use braces around blocks. Opening brace on its own line.
 - **Blank lines:** One blank line between member function definitions in a
   `.cpp` file. Two blank lines between free functions.
-- Formatting is enforced by `clang-format`. Run it before committing:
-  ```
-  clang-format -i <file>
-  ```
-  The configuration is in `.clang-format` at the repository root.
-  Commit formatting changes separately from logic changes.
+- Formatting is enforced by `clang-format`. It is part of the `pre-commit hooks`. Make sure
+  to set up pre-commit to ensure correct formatting. For more information see
+  the [required development tools](https://nest-simulator.readthedocs.io/en/stable/contribute/guidelines/coding_guidelines_check.html)
+
 
 ### Control structures
 
@@ -46,7 +44,7 @@ default:
 
 Binary operators surrounded by one space: `a + b`.
 Unary operators: no space between operator and operand: `-a`.
-Use `not` instead of `!` — the negation operator is easily overlooked:
+Use the terms `not`, `and`, `or`  instead of `!`, `&&`, `||`.
 
 \code{.cpp}
 if ( not vec.empty() )  // preferred

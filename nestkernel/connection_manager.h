@@ -710,8 +710,11 @@ private:
   //! simulate.
   bool connections_have_changed_;
 
-  //! True if any connection uses axonal delays on given thread.
-  std::vector< bool > have_nonzero_axonal_delays_;
+  //! True if any connection created on any thread uses a nonzero axonal delay.
+  bool have_nonzero_axonal_delays_;
+
+  //! Per-thread indicator whether have_nonzero_axonal_delays_ has already been set from this thread.
+  PerThreadBoolIndicator check_axonal_delays_;
 
   //! true if GetConnections has been called.
   bool get_connections_has_been_called_;
@@ -868,8 +871,7 @@ ConnectionManager::connections_have_changed() const
 inline bool
 ConnectionManager::have_nonzero_axonal_delays() const
 {
-  return std::any_of(
-    have_nonzero_axonal_delays_.cbegin(), have_nonzero_axonal_delays_.cend(), []( const bool b ) { return b; } );
+  return have_nonzero_axonal_delays_;
 }
 
 inline void

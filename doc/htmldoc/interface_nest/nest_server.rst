@@ -162,7 +162,7 @@ Basic usage
 ~~~~~~~~~~~
 
 To give you an idea of the usage, the following table shows a comparison of a typical simulation once for PyNEST and
-once using the NEST Client.
+once using the NEST Client identical except the import part:
 
 .. list-table::
 
@@ -176,46 +176,45 @@ once using the NEST Client.
             nest.ResetKernel()
 
             # Create nodes
-            params = {"rate": 6500.}
+            params = {"rate": 6500}
             pg = nest.Create("poisson_generator", 1, params)
             neurons = nest.Create("iaf_psc_alpha", 1000)
             sr = nest.Create("spike_recorder")
 
             # Connect nodes
-            nest.Connect(pg, neurons, syn_spec={'weight': 10.})
+            nest.Connect(pg, neurons, syn_spec={'weight': 10})
             nest.Connect(neurons[::10], sr)
 
             # Simulate
-            nest.Simulate(1000.0)
+            nest.Simulate(1000)
 
             # Get events
-            n_events = nest.GetStatus(sr, 'n_events')[0]
+            n_events = nest.GetStatus(sr, 'n_events')
             print('Number of events:', n_events)
 
       - .. code-block:: Python
 
             from nest_client import NESTClient
-            nsc = NESTClient()
+            nest = NESTClient()
 
             # Reset the kernel
-            nsc.ResetKernel()
+            nest.ResetKernel()
 
             # Create nodes
-            params = {"rate": 6500.}
-            pg = nsc.Create("poisson_generator", 1, params)
-            neurons = nsc.Create("iaf_psc_alpha", 1000)
-            sr = nsc.Create("spike_recorder")
+            params = {"rate": 6500}
+            pg = nest.Create("poisson_generator", 1, params)
+            neurons = nest.Create("iaf_psc_alpha", 1000)
+            sr = nest.Create("spike_recorder")
 
             # Connect nodes
-            nsc.Connect(pg, neurons, syn_spec={'weight': 10.})
-            nsc.Connect(neurons[::10], sr)
+            nest.Connect(pg, neurons, syn_spec={'weight': 10})
+            nest.Connect(neurons[::10], sr)
 
             # Simulate
-            nsc.Simulate(1000.0)
+            nest.Simulate(1000)
 
             # Get events
-            n_events = nsc.GetStatus(sr, 'n_events')[0]
-            print('Number of events:', n_events)
+            print('Number of events:', sr.n_events)
 
 Run scripts
 ~~~~~~~~~~~
@@ -227,14 +226,14 @@ the Server using the ``exec_script`` function:
 .. code-block:: Python
 
     from nest_client import NESTClient
-    nsc = NESTClient()
+    nest = NESTClient()
 
     script = "print('Hello world!')"
-    response = nsc.exec_script(script)
+    response = nest.exec_script(script)
     print(response['stdout'])          # 'Hello world!'
 
     script = "models=nest.node_models"
-    response = nsc.exec_script(script, return_vars='models')
+    response = nest.exec_script(script, return_vars='models')
     models = response['data']
     print(models)                      # the list of models
 
@@ -244,9 +243,9 @@ sent to the NEST Server for execution using the ``from_file`` function provided 
 .. code-block:: Python
 
     from nest_client import NESTClient
-    nsc = NESTClient()
+    nest = NESTClient()
 
-    response = nsc.from_file('simulation_script.py', return_vars='n_events')
+    response = nest.from_file('simulation_script.py', return_vars='n_events')
     n_events = response['data']
 
     print('Number of events:', n_events)
@@ -405,6 +404,7 @@ look like this:
 
 .. code-block:: sh
 
+    export NEST_SERVER_ENABLE_EXEC_CALL=true
     export NEST_SERVER_MODULES="nest,numpy"
     nest-server start
 
@@ -414,7 +414,7 @@ After this, NumPy can be used from within scripts in the regular way:
 
     from nest_client import NESTClient
     nest = NESTClient()
-    response = nsc.exec_script("a = numpy.arange(10)", 'a')
+    response = nest.exec_script("a = numpy.arange(10)", 'a')
     print(response['data'][::2])                    # [0, 2, 4, 6, 8]
 
 .. danger::

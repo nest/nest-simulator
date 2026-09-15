@@ -101,12 +101,17 @@ public:
   music_event_in_proxy( const music_event_in_proxy& );
 
   bool
-  has_proxies() const
+  has_proxies() const override
   {
     return false;
   }
   bool
-  one_node_per_process() const
+  one_node_per_process() const override
+  {
+    return true;
+  }
+  bool
+  local_receiver() const override
   {
     return true;
   }

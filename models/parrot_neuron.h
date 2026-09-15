@@ -118,7 +118,9 @@ public:
   SignalType receives_signal() const override;
 
   void handle( SpikeEvent& ) override;
+  void handle( CorrectionSpikeEvent& ) override;
   size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CorrectionSpikeEvent&, size_t ) override;
 
   void get_status( Dictionary& ) const override;
   void set_status( const Dictionary& ) override;
@@ -156,6 +158,21 @@ parrot_neuron::send_test_event( Node& target, size_t receptor_type, synindex, bo
 
 inline size_t
 parrot_neuron::handles_test_event( SpikeEvent&, size_t receptor_type )
+{
+  // Allow connections to port 0 (spikes to be repeated)
+  // and port 1 (spikes to be ignored).
+  if ( receptor_type == 0 or receptor_type == 1 )
+  {
+    return receptor_type;
+  }
+  else
+  {
+    throw UnknownReceptorType( receptor_type, get_name() );
+  }
+}
+
+inline size_t
+parrot_neuron::handles_test_event( CorrectionSpikeEvent&, size_t receptor_type )
 {
   // Allow connections to port 0 (spikes to be repeated)
   // and port 1 (spikes to be ignored).

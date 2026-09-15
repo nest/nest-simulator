@@ -38,6 +38,8 @@ ConnectionCreator::ConnectionCreator( const Dictionary& dict )
   , synapse_model_()
   , weight_()
   , delay_()
+  , dendritic_delay_()
+  , axonal_delay_()
 {
   std::string connection_type;
 
@@ -117,9 +119,48 @@ ConnectionCreator::ConnectionCreator( const Dictionary& dict )
   {
     weight_ = { create_parameter( syn_defaults[ names::weight ] ) };
   }
+
+  // In case the synapse type uses split axonal and dendritic delays, the synapse default dict will contain values for
+  // the dendritic delay, the axonal delay, and also the total delay. But we only want to use the delay value if we are
+  // not explicitly using axonal and dendritic delays, so we only set the delay here if those are not provided.
+  bool axonal_or_dendritic_delay_set = false;
+  if ( dendritic_delay_.empty() )
+  {
+    if ( not syn_defaults.get< bool >( names::has_delay ) or not syn_defaults.known( names::dendritic_delay ) )
+    {
+      dendritic_delay_ = { create_parameter( numerics::nan ) };
+    }
+    else
+    {
+      dendritic_delay_ = { create_parameter( ( *syn_defaults )[ names::dendritic_delay ] ) };
+      axonal_or_dendritic_delay_set = true;
+    }
+  }
+  else
+  {
+    axonal_or_dendritic_delay_set = true;
+  }
+  if ( axonal_delay_.empty() )
+  {
+    if ( not syn_defaults.get< bool >( names::has_delay ) or not syn_defaults.known( names::axonal_delay ) )
+    {
+      axonal_delay_ = { create_parameter( numerics::nan ) };
+    }
+    else
+    {
+      axonal_delay_ = { create_parameter( ( *syn_defaults )[ names::axonal_delay ] ) };
+      axonal_or_dendritic_delay_set = true;
+    }
+  }
+  else
+  {
+    axonal_or_dendritic_delay_set = true;
+  }
+
   if ( delay_.empty() )
   {
-    if ( not syn_defaults.get< bool >( names::has_delay ) )
+    if ( not syn_defaults.get< bool >( names::has_delay ) or not syn_defaults.known( names::delay )
+      or axonal_or_dendritic_delay_set )
     {
       delay_ = { create_parameter( numerics::nan ) };
     }
@@ -184,10 +225,52 @@ ConnectionCreator::extract_params_( const Dictionary& dict, std::vector< Diction
   if ( dict.known( names::delay ) )
   {
     delay_.push_back( create_parameter( dict.at( names::delay ) ) );
+    dendritic_delay_.push_back( create_parameter( numerics::nan ) );
+    axonal_delay_.push_back( create_parameter( numerics::nan ) );
   }
   else
   {
-    if ( not syn_defaults.get< bool >( names::has_delay ) )
+    // In case the synapse type uses split axonal and dendritic delays, the synapse default dict will contain values for
+    // the dendritic delay, the axonal delay, and also the total delay. But we only want to use the delay value if we
+    // are not explicitly using axonal and dendritic delays, so we only set the delay here if those are not provided.
+    bool axonal_or_dendritic_delay_set = false;
+    if ( dict.known( names::dendritic_delay ) )
+    {
+      dendritic_delay_.push_back( create_parameter( dict.at( names::dendritic_delay ) ) );
+      axonal_or_dendritic_delay_set = true;
+    }
+    else
+    {
+      if ( not syn_defaults.get< bool >( names::has_delay ) or not syn_defaults.known( names::dendritic_delay ) )
+      {
+        dendritic_delay_.push_back( create_parameter( numerics::nan ) );
+      }
+      else
+      {
+        dendritic_delay_.push_back( create_parameter( syn_defaults.at( names::dendritic_delay ) ) );
+        axonal_or_dendritic_delay_set = true;
+      }
+    }
+    if ( dict.known( names::axonal_delay ) )
+    {
+      axonal_delay_.push_back( create_parameter( dict.at( names::axonal_delay ) ) );
+      axonal_or_dendritic_delay_set = true;
+    }
+    else
+    {
+      if ( not syn_defaults.get< bool >( names::has_delay ) or not syn_defaults.known( names::axonal_delay ) )
+      {
+        axonal_delay_.push_back( create_parameter( numerics::nan ) );
+      }
+      else
+      {
+        axonal_delay_.push_back( create_parameter( syn_defaults.at( names::axonal_delay ) ) );
+        axonal_or_dendritic_delay_set = true;
+      }
+    }
+
+    if ( not syn_defaults.get< bool >( names::has_delay ) or not syn_defaults.known( names::delay )
+      or axonal_or_dendritic_delay_set )
     {
       delay_.push_back( create_parameter( numerics::nan ) );
     }

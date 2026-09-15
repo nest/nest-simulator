@@ -26,6 +26,8 @@
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
 
+#include "nest_names.h"
+
 namespace nest
 {
 

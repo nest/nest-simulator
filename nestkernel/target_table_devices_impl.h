@@ -50,7 +50,7 @@ TargetTableDevices::add_connection_to_device( Node& source,
 
   kernel()
     .model_manager.get_connection_model( syn_id, tid )
-    .add_connection( source, target, target_to_devices_[ tid ][ lid ], syn_id, p, d, w );
+    .add_connection( source, target, target_to_devices_[ tid ][ lid ], syn_id, p, d, numerics::nan, numerics::nan, w );
 }
 
 inline void
@@ -69,7 +69,8 @@ TargetTableDevices::add_connection_from_device( Node& source,
 
   kernel()
     .model_manager.get_connection_model( syn_id, tid )
-    .add_connection( source, target, target_from_devices_[ tid ][ ldid ], syn_id, p, d, w );
+    .add_connection(
+      source, target, target_from_devices_[ tid ][ ldid ], syn_id, p, d, numerics::nan, numerics::nan, w );
 
   // store node ID of sending device
   sending_devices_node_ids_[ tid ][ ldid ] = source.get_node_id();

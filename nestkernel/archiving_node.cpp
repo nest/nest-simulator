@@ -32,7 +32,7 @@ namespace nest
 // member functions for ArchivingNode
 
 ArchivingNode::ArchivingNode()
-  : StructuralPlasticityNode()
+  : AxonalDelayArchivingNode()
   , IgnoreAndSpikeMechanism()
   , n_incoming_( 0 )
   , Kminus_( 0.0 )
@@ -48,7 +48,7 @@ ArchivingNode::ArchivingNode()
 }
 
 ArchivingNode::ArchivingNode( const ArchivingNode& n )
-  : StructuralPlasticityNode( n )
+  : AxonalDelayArchivingNode( n )
   , IgnoreAndSpikeMechanism( n )
   , n_incoming_( n.n_incoming_ )
   , Kminus_( n.Kminus_ )
@@ -64,12 +64,16 @@ ArchivingNode::ArchivingNode( const ArchivingNode& n )
 }
 
 void
-ArchivingNode::register_stdp_connection( double t_first_read, double delay )
+ArchivingNode::register_stdp_connection( const double t_first_read,
+  const double dendritic_delay,
+  const double axonal_delay )
 {
   // Mark all entries in the deque, which we will not read in future as read by
   // this input, so that we safely increment the incoming number of
   // connections afterwards without leaving spikes in the history.
   // For details see bug #218. MH 08-04-22
+
+  register_axonal_delay_connection( dendritic_delay, axonal_delay );
 
   for ( std::deque< histentry >::iterator runner = history_.begin();
     runner != history_.end() and ( t_first_read - runner->t_ > -1.0 * kernel().connection_manager.get_stdp_eps() );
@@ -80,7 +84,7 @@ ArchivingNode::register_stdp_connection( double t_first_read, double delay )
 
   n_incoming_++;
 
-  max_delay_ = std::max( delay, max_delay_ );
+  max_delay_ = std::max( dendritic_delay + axonal_delay, max_delay_ );
 }
 
 double
@@ -93,8 +97,7 @@ ArchivingNode::get_K_value( double t )
     return trace_;
   }
 
-  // search for the latest post spike in the history buffer that came strictly
-  // before `t`
+  // search for the latest post spike in the history buffer that came strictly before `t`
   int i = history_.size() - 1;
   while ( i >= 0 )
   {
@@ -214,6 +217,14 @@ ArchivingNode::set_spiketime( Time const& t_sp, double offset )
   {
     last_spike_ = t_sp_ms;
   }
+
+  // Corrections reach synapses which have not read this spike from the history, so they have to be
+  // accounted for in the same way a regular read is.
+  const size_t num_corrections = correct_synapses_stdp_ax_delay_( t_sp );
+  if ( num_corrections > 0 )
+  {
+    history_.back().access_counter_ += num_corrections;
+  }
 }
 
 void
@@ -273,6 +284,5 @@ ArchivingNode::clear_history()
   Kminus_triplet_ = 0.0;
   history_.clear();
 }
-
 
 }  // of namespace nest

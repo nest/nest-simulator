@@ -35,6 +35,10 @@ class TestDisconnect(unittest.TestCase):
             "stdp_dopamine_synapse_lbl",
             "stdp_dopamine_synapse_hpc",
             "stdp_dopamine_synapse_hpc_lbl",
+            "stdp_pl_synapse_hom_ax_delay",
+            "stdp_pl_synapse_hom_ax_delay_lbl",
+            "stdp_pl_synapse_hom_ax_delay_hpc",
+            "stdp_pl_synapse_hom_ax_delay_hpc_lbl",
             "gap_junction",
             "gap_junction_lbl",
             "diffusion_connection",
@@ -66,7 +70,6 @@ class TestDisconnect(unittest.TestCase):
         for syn_model in nest.synapse_models:
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
-                nest.CopyModel("static_synapse", "my_static_synapse")
                 nest.SetDefaults(syn_model, {"delay": 0.5})
                 syn_dict = {"synapse_model": syn_model, "pre_synaptic_element": "SE1", "post_synaptic_element": "SE2"}
                 # For co-dependent properties, we use `set()` instead of kernel attributes
@@ -113,7 +116,6 @@ class TestDisconnect(unittest.TestCase):
         for syn_model in nest.synapse_models:
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
-                nest.CopyModel("static_synapse", "my_static_synapse")
                 nest.SetDefaults(syn_model, {"delay": 0.5})
                 syn_dict = {"synapse_model": syn_model, "pre_synaptic_element": "SE1", "post_synaptic_element": "SE2"}
                 # For co-dependent properties, we use `set()` instead of kernel attributes
@@ -160,7 +162,6 @@ class TestDisconnect(unittest.TestCase):
         for syn_model in nest.synapse_models:
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
-                nest.CopyModel("static_synapse", "my_static_synapse")
                 neurons = nest.Create("iaf_psc_alpha", 10)
                 syn_dict = {"synapse_model": syn_model}
                 nest.Connect(neurons, neurons, "all_to_all", syn_dict)

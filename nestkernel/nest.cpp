@@ -455,12 +455,15 @@ connect_arrays( const long* sources,
   const long* targets,
   const double* weights,
   const double* delays,
+  const double* dendritic_delay,
+  const double* axonal_delays,
   const std::vector< std::string >& p_keys,
   const double* p_values,
   size_t n,
   const std::string& syn_model )
 {
-  kernel().connection_manager.connect_arrays( sources, targets, weights, delays, p_keys, p_values, n, syn_model );
+  kernel().connection_manager.connect_arrays(
+    sources, targets, weights, delays, dendritic_delay, axonal_delays, p_keys, p_values, n, syn_model );
 }
 
 void

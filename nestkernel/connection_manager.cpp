@@ -25,9 +25,9 @@
 // C++ includes:
 #include <algorithm>
 #include <cassert>
-#include <cmath>
 #include <iomanip>
 #include <limits>
+#include <numeric>
 #include <set>
 #include <vector>
 
@@ -72,6 +72,8 @@ ConnectionManager::ConnectionManager()
   , max_delay_( 1 )
   , keep_source_table_( true )
   , connections_have_changed_( false )
+  , have_nonzero_axonal_delays_( false )
+  , check_axonal_delays_()
   , get_connections_has_been_called_( false )
   , use_compressed_spikes_( true )
   , has_primary_connections_( false )
@@ -79,6 +81,7 @@ ConnectionManager::ConnectionManager()
   , secondary_connections_exist_( false )
   , check_secondary_connections_()
   , stdp_eps_( 1.0e-6 )
+  , num_corrections_()
 {
 }
 
@@ -121,6 +124,9 @@ ConnectionManager::initialize( const bool adjust_number_of_threads_or_rng_only )
   connections_.resize( num_threads );
   secondary_recv_buffer_pos_.resize( num_threads );
   compressed_spike_data_.resize( 0 );
+  have_nonzero_axonal_delays_ = false;
+  check_axonal_delays_.initialize( num_threads, false );
+  num_corrections_.assign( num_threads, 0 );
 
   has_primary_connections_ = false;
   check_primary_connections_.initialize( num_threads, false );
@@ -159,6 +165,7 @@ ConnectionManager::finalize( const bool adjust_number_of_threads_or_rng_only )
   std::vector< std::vector< ConnectorBase* > >().swap( connections_ );
   std::vector< std::vector< std::vector< size_t > > >().swap( secondary_recv_buffer_pos_ );
   compressed_spike_data_.clear();
+  num_corrections_.clear();
 
   if ( not adjust_number_of_threads_or_rng_only )
   {
@@ -220,6 +227,9 @@ ConnectionManager::get_status( Dictionary& dict )
   dict[ names::num_connections ] = static_cast< long >( n );
   dict[ names::keep_source_table ] = keep_source_table_;
   dict[ names::use_compressed_spikes ] = use_compressed_spikes_;
+
+  dict[ names::num_corrections ] =
+    static_cast< long >( std::accumulate( num_corrections_.begin(), num_corrections_.end(), size_t( 0 ) ) );
 
   sw_construction_connect.get_status( dict, names::time_construction_connect, names::time_construction_connect_cpu );
 
@@ -502,9 +512,9 @@ ConnectionManager::update_delay_extrema_()
     max_delay_ = std::max( max_delay_, kernel().sp_manager.builder_max_delay() );
   }
 
-  // If the user explicitly set min/max_delay, this happend on all MPI ranks,
+  // If the user explicitly set min/max_delay, this happened on all MPI ranks,
   // so all ranks are up to date already. Also, once the user has set min/max_delay
-  // explicitly, Connect() cannot induce new extrema. Thuse, we only need to communicate
+  // explicitly, Connect() cannot induce new extrema. Thus, we only need to communicate
   // with other ranks if the user has not set the extrema and connections may have
   // been created.
   if ( not kernel().connection_manager.get_user_set_delay_extrema()
@@ -535,6 +545,8 @@ ConnectionManager::connect( const size_t snode_id,
   const synindex syn_id,
   const Dictionary& params,
   const double delay,
+  const double dendritic_delay,
+  const double axonal_delay,
   const double weight )
 {
   kernel().model_manager.assert_valid_syn_id( syn_id, kernel().vp_manager.get_thread_id() );
@@ -546,7 +558,7 @@ ConnectionManager::connect( const size_t snode_id,
   switch ( connection_type )
   {
   case CONNECT:
-    connect_( *source, *target, snode_id, target_thread, syn_id, params, delay, weight );
+    connect_( *source, *target, snode_id, target_thread, syn_id, params, delay, dendritic_delay, axonal_delay, weight );
     break;
   case CONNECT_FROM_DEVICE:
     connect_from_device_( *source, *target, target_thread, syn_id, params, delay, weight );
@@ -606,6 +618,8 @@ ConnectionManager::connect_arrays( const long* sources,
   const long* targets,
   const double* weights,
   const double* delays,
+  const double* dendritic_delays,
+  const double* axonal_delays,
   const std::vector< std::string >& p_keys,
   const double* p_values,
   size_t n,
@@ -665,7 +679,10 @@ ConnectionManager::connect_arrays( const long* sources,
   }
 
   // Increments pointers to weight and delay, if they are specified.
-  auto increment_wd = [ weights, delays ]( decltype( weights ) & w, decltype( delays ) & d )
+  auto increment_wd = [ weights, delays, dendritic_delays, axonal_delays ]( decltype( weights ) & w,
+                        decltype( delays ) & d,
+                        decltype( dendritic_delays ) & dend,
+                        decltype( axonal_delays ) & axonal )
   {
     if ( weights )
     {
@@ -674,6 +691,14 @@ ConnectionManager::connect_arrays( const long* sources,
     if ( delays )
     {
       ++d;
+    }
+    if ( dendritic_delays )
+    {
+      ++dend;
+    }
+    if ( axonal_delays )
+    {
+      ++axonal;
     }
   };
 
@@ -692,8 +717,12 @@ ConnectionManager::connect_arrays( const long* sources,
       auto t = targets;
       auto w = weights;
       auto d = delays;
+      auto dend = dendritic_delays;
+      auto axonal = axonal_delays;
       double weight_buffer = numerics::nan;
       double delay_buffer = numerics::nan;
+      double dendritic_delay_buffer = numerics::nan;
+      double axonal_delay_buffer = numerics::nan;
       int index_counter = 0;  // Index of the current connection, for connection parameters
 
       for ( ; s != sources + n; ++s, ++t, ++index_counter )
@@ -709,7 +738,7 @@ ConnectionManager::connect_arrays( const long* sources,
         auto target_node = kernel().node_manager.get_node_or_proxy( *t, tid );
         if ( target_node->is_proxy() )
         {
-          increment_wd( w, d );
+          increment_wd( w, d, dend, axonal );
           continue;
         }
 
@@ -722,6 +751,14 @@ ConnectionManager::connect_arrays( const long* sources,
         if ( delays )
         {
           delay_buffer = *d;
+        }
+        if ( dendritic_delays )
+        {
+          dendritic_delay_buffer = *dend;
+        }
+        if ( axonal_delays )
+        {
+          axonal_delay_buffer = *axonal;
         }
 
         // Store the key-value pair of each parameter in the Dictionary.
@@ -751,9 +788,17 @@ ConnectionManager::connect_arrays( const long* sources,
           }
         }
 
-        connect( *s, target_node, tid, synapse_model_id, param_dicts[ tid ], delay_buffer, weight_buffer );
+        connect( *s,
+          target_node,
+          tid,
+          synapse_model_id,
+          param_dicts[ tid ],
+          delay_buffer,
+          dendritic_delay_buffer,
+          axonal_delay_buffer,
+          weight_buffer );
 
-        increment_wd( w, d );
+        increment_wd( w, d, dend, axonal );
       }
     }
     catch ( ... )
@@ -872,6 +917,8 @@ ConnectionManager::connect_( Node& source,
   const synindex syn_id,
   const Dictionary& params,
   const double delay,
+  const double dendritic_delay,
+  const double axonal_delay,
   const double weight )
 {
   ConnectorModel& conn_model = kernel().model_manager.get_connection_model( syn_id, tid );
@@ -899,10 +946,18 @@ ConnectionManager::connect_( Node& source,
   }
 
   const bool is_primary = conn_model.has_property( ConnectionModelProperties::IS_PRIMARY );
-  conn_model.add_connection( source, target, connections_[ tid ], syn_id, params, delay, weight );
+  conn_model.add_connection(
+    source, target, connections_[ tid ], syn_id, params, delay, dendritic_delay, axonal_delay, weight );
   source_table_.add_source( tid, syn_id, s_node_id, is_primary );
 
   increase_connection_count( tid, syn_id );
+
+  if ( check_axonal_delays_[ tid ].is_false() and axonal_delay > 0. )
+  {
+#pragma omp atomic write
+    have_nonzero_axonal_delays_ = true;
+    check_axonal_delays_.set_true( tid );
+  }
 
   // We do not check has_primary_connections_ and secondary_connections_exist_
   // directly as this led to worse performance on the supercomputer Piz Daint.
@@ -1603,7 +1658,7 @@ ConnectionManager::connection_required( Node*& source, Node*& target, size_t tid
 void
 ConnectionManager::set_stdp_eps( const double stdp_eps )
 {
-  if ( not( stdp_eps < Time::get_resolution().get_ms() ) )
+  if ( stdp_eps >= Time::get_resolution().get_ms() )
   {
     throw KernelException(
       "The epsilon used for spike-time comparison in STDP must be less "

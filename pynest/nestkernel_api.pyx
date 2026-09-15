@@ -860,7 +860,7 @@ def llapi_set_connection_status(object conns, object params):
         raise TypeError('params must be a dict or a list of dicts')
 
 
-def llapi_connect_arrays(sources, targets, weights, delays, synapse_model, syn_param_keys, syn_param_values):
+def llapi_connect_arrays(sources, targets, weights, delays, dendritic_delays, axonal_delays, synapse_model, syn_param_keys, syn_param_values):
     """Calls connect_arrays function, passing pointers to the NumPy arrays"""
 
     if not (isinstance(sources, numpy.ndarray) and sources.ndim == 1) or not numpy.issubdtype(sources.dtype, numpy.integer):
@@ -869,7 +869,11 @@ def llapi_connect_arrays(sources, targets, weights, delays, synapse_model, syn_p
         raise TypeError('targets must be a 1-dimensional NumPy array of integers')
     if weights is not None and not (isinstance(weights, numpy.ndarray) and weights.ndim == 1):
         raise TypeError('weights must be a 1-dimensional NumPy array')
-    if delays is not None and  not (isinstance(delays, numpy.ndarray) and delays.ndim == 1):
+    if delays is not None and not (isinstance(delays, numpy.ndarray) and delays.ndim == 1):
+        raise TypeError('delays must be a 1-dimensional NumPy array')
+    if dendritic_delays is not None and  not (isinstance(dendritic_delays, numpy.ndarray) and dendritic_delays.ndim == 1):
+        raise TypeError('delays must be a 1-dimensional NumPy array')
+    if axonal_delays is not None and  not (isinstance(axonal_delays, numpy.ndarray) and axonal_delays.ndim == 1):
         raise TypeError('delays must be a 1-dimensional NumPy array')
     if syn_param_keys is not None and not ((isinstance(syn_param_keys, numpy.ndarray) and syn_param_keys.ndim == 1) and
                                             numpy.issubdtype(syn_param_keys.dtype, numpy.str_)):
@@ -885,6 +889,12 @@ def llapi_connect_arrays(sources, targets, weights, delays, synapse_model, syn_p
     if delays is not None:
         if not len(sources) == len(delays):
             raise ValueError('delays must be an array of the same length as sources and targets.')
+    if dendritic_delays is not None:
+        if not len(sources) == len(dendritic_delays):
+            raise ValueError('dendritic_delays must be an array of the same length as sources and targets.')
+    if axonal_delays is not None:
+        if not len(sources) == len(axonal_delays):
+            raise ValueError('axonal_delays must be an array of the same length as sources and targets.')
     if syn_param_values is not None:
         if not len(syn_param_keys) == syn_param_values.shape[0]:
             raise ValueError('syn_param_values must be a matrix with one array per key in syn_param_keys.')
@@ -910,6 +920,18 @@ def llapi_connect_arrays(sources, targets, weights, delays, synapse_model, syn_p
         delays_mv = numpy.ascontiguousarray(delays, dtype=numpy.double)
         delays_ptr = &delays_mv[0]
 
+    cdef const double[::1] dendritic_delays_mv
+    cdef const double* dendritic_delays_ptr = NULL
+    if dendritic_delays is not None:
+        dendritic_delays_mv = numpy.ascontiguousarray(dendritic_delays, dtype=numpy.double)
+        dendritic_delays_ptr = &dendritic_delays_mv[0]
+
+    cdef const double[::1] axonal_delays_mv
+    cdef const double* axonal_delays_ptr = NULL
+    if axonal_delays is not None:
+        axonal_delays_mv = numpy.ascontiguousarray(axonal_delays, dtype=numpy.double)
+        axonal_delays_ptr = &axonal_delays_mv[0]
+
     # Storing parameter keys in a vector of strings
     cdef vector[std_string] param_keys_ptr
     if syn_param_keys is not None:
@@ -924,7 +946,7 @@ def llapi_connect_arrays(sources, targets, weights, delays, synapse_model, syn_p
 
     cdef string syn_model_string = synapse_model.encode('UTF-8')
 
-    connect_arrays( sources_ptr, targets_ptr, weights_ptr, delays_ptr, param_keys_ptr, param_values_ptr, len(sources), syn_model_string )
+    connect_arrays( sources_ptr, targets_ptr, weights_ptr, delays_ptr, dendritic_delays_ptr, axonal_delays_ptr, param_keys_ptr, param_values_ptr, len(sources), syn_model_string )
 
 def llapi_message( severity, function, msg, fname, lineno ):
     cdef string function_str = function.encode('UTF-8')

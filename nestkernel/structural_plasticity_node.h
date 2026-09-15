@@ -70,8 +70,7 @@ public:
   int get_synaptic_elements_vacant( std::string n ) const override;
 
   /**
-   * Get the number of synaptic element of type n which are currently
-   * connected
+   * Get the number of synaptic element of type n which are currently connected
    */
   int get_synaptic_elements_connected( std::string n ) const override;
 
@@ -87,8 +86,7 @@ public:
   void update_synaptic_elements( double t ) override;
 
   /**
-   * Delete a certain portion of the vacant synaptic elements which are not
-   * in use
+   * Delete a certain portion of the vacant synaptic elements which are not in use
    */
   void decay_synaptic_elements_vacant() override;
 

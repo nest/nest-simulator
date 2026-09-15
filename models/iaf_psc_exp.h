@@ -257,10 +257,20 @@ public:
   size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
   void handle( SpikeEvent& ) override;
+  //! This model drives the retrospective correction mechanism from update() and on spike emission,
+  //! so it can be the target of a synapse with predominantly axonal delay.
+  bool
+  supports_axonal_delay_corrections() const override
+  {
+    return true;
+  }
+
+  void handle( CorrectionSpikeEvent& ) override;
   void handle( CurrentEvent& ) override;
   void handle( DataLoggingRequest& ) override;
 
   size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CorrectionSpikeEvent&, size_t ) override;
   size_t handles_test_event( CurrentEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
@@ -466,6 +476,16 @@ iaf_psc_exp::send_test_event( Node& target, size_t receptor_type, synindex, bool
 
 inline size_t
 iaf_psc_exp::handles_test_event( SpikeEvent&, size_t receptor_type )
+{
+  if ( receptor_type != 0 )
+  {
+    throw UnknownReceptorType( receptor_type, get_name() );
+  }
+  return 0;
+}
+
+inline size_t
+iaf_psc_exp::handles_test_event( CorrectionSpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

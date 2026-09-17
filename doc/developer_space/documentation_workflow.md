@@ -78,13 +78,11 @@ Additional documentation for developers and contributors can be found on
 [Read the Docs](https://nest-simulator.readthedocs.io/en/stable/contribute/index.html),
 including reviewer guidelines, git workflows etc.
 
-### Modify the output of Doxygen
+### Doxygen configuration and styling
 
-If you want to change the output for Doxygen, you can modify the `doc/fulldoc.conf.in` file. This contains all the settings
-for Doxygen, including which INPUT files are rendered, the diagrams that get built etc.
-
-For the visual style and display rendered on GitHub Pages,
-you can modify the `doc/developer_space/static/css/doxygen-awesome.css` file.
+The Doxygen settings, such as which directories are listed in `INPUT` and which
+diagrams are generated, are in `doc/fulldoc.conf.in`. The styling of the pages on
+GitHub Pages comes from `doc/developer_space/static/css/doxygen-awesome.css`.
 
 ## Documentation deployment
 
@@ -98,9 +96,8 @@ Note that these docs are re-built when a pull-request is merged into branch **ma
 any of the following files were modified:
 
 - any C++ file (`*.cpp`, `*.h`),
-- the Doxygen config file (`doc/fulldoc.conf.in`),
-- the Doxygen CSS file (`doc/developer_space/static/css/doxygen-awesome.css`), or
-- any file under `doc/developer_space/` (including these markdown pages),
+- the Doxygen config file (`doc/fulldoc.conf.in`), or
+- any file under `doc/developer_space/` (including these markdown pages).
 
 
 This means the docs can change at any time, as developers actively work on **main**.
@@ -128,7 +125,7 @@ the docs built from your branch, trigger the workflow manually from **your fork'
 
 1. Install Doxygen and Graphviz.
 
-   Linux:
+   Ubuntu/Debian:
    ```bash
    sudo apt install doxygen graphviz
    ```
@@ -153,10 +150,16 @@ the docs built from your branch, trigger the workflow manually from **your fork'
 
    a. Install a Java runtime (needed to run PlantUML):
 
+      Ubuntu/Debian:
       ```bash
-      sudo apt install default-jre-headless   # Linux
-      brew install openjdk                     # macOS
+      sudo apt install default-jre-headless
       ```
+
+      macOS:
+      ```bash
+      brew install openjdk
+      ```
+      Then run the symlink command shown by `brew info openjdk`, so that `java` is found.
 
    b. Download the PlantUML jar, using the same version as CI:
 
@@ -177,10 +180,16 @@ the docs built from your branch, trigger the workflow manually from **your fork'
    make docs
    ```
 
-6. Open the docs in a browser:
+6. Open the docs in a browser.
 
    The output is written to `<build>/doc/doxygen/html/`. From the build directory:
+
+   Linux:
    ```bash
-   xdg-open doc/doxygen/html/index.html   # Linux
-   open doc/doxygen/html/index.html        # macOS
+   xdg-open doc/doxygen/html/index.html
+   ```
+
+   macOS:
+   ```bash
+   open doc/doxygen/html/index.html
    ```

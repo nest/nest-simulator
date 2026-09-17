@@ -19,8 +19,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  PLANTUML_JAR_URL: https://github.com/plantuml/plantuml/releases/download/v1.2023.10/plantuml.jar
-  PLANTUML_SHA256: ee06454723028763dd8280459e8fd8f31fcd85b1ae8d9ab0e32122243c098c3b
+  PLANTUML_JAR_URL: https://github.com/plantuml/plantuml/releases/download/v1.2026.8/plantuml.jar
+  PLANTUML_SHA256: 5e1ecfa8ecd32c90b03bbf3b1eb6f020943f98ab0fcf4032be31a0002ee2c462
 
 permissions: {}
 

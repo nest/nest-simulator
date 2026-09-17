@@ -12,9 +12,6 @@ Here is all documentation pertaining to contributing to NEST.
    `developer space <https://nest.github.io/nest-simulator/index.html>`_
 
 
-.. _contribute:
-
-
 NEST draws its strength from the many people that use and improve it. We
 are happy to consider your contributions (e.g., new models, bug or
 documentation fixes) for addition to the official version of NEST.
@@ -55,7 +52,7 @@ Contribute code or docs to the NEST project
        * Adding **neuron or synapses models** to NEST? Consider :doc:`NESTML <nestml:index>`:
          a modeling language supporting neuron and synapse specification, based on the syntax of Python.
        * Modifying or adding **C++ code**? See `our developer space <https://nest.github.io/nest-simulator/index.html>`_
-       * For making changes to the **PyNEST APIs**, see our :ref:`pyapi_template`
+       * For making changes to the **PyNEST API**, see our :ref:`pyapi_template`
        * Writing an **extension module**? See :doc:`extmod:index`
 
     .. grid-item-card:: Contribute documentation

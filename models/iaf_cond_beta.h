@@ -91,11 +91,11 @@ The membrane potential evolves according to
 where the synaptic input current :math:`I_{\text{syn}}(t)` is discussed below and :math:`I_\text{e}` is
 a constant input current set as a model parameter.
 
-A spike is emitted at time step :math:`t^*=t_{k+1}` if
+A spike is emitted at time step :math:`t^*=t^{k+1}` if
 
 .. math::
 
-   V_\text{m}(t_k) < V_{th} \quad\text{and}\quad V_\text{m}(t_{k+1})\geq V_\text{th} \;.
+   V_\text{m}(t_k) < V_{th} \quad\text{and}\quad V_\text{m}(t^{k+1})\geq V_\text{th} \;.
 
 Subsequently,
 

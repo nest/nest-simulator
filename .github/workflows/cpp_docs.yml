@@ -51,7 +51,7 @@ jobs:
        - name: Install dependencies
          run: |
            sudo apt-get update
-           sudo apt-get install -y graphviz cmake build-essential default-jre-headless doxygen
+           sudo apt-get install -y graphviz cmake build-essential default-jre-headless doxygen cython3
            if [ "${{ steps.cache-deps.outputs.cache-hit }}" != "true" ]; then
              wget -q "$PLANTUML_JAR_URL" -O "$GITHUB_WORKSPACE/plantuml.jar"
              echo "$PLANTUML_SHA256  $GITHUB_WORKSPACE/plantuml.jar" | sha256sum -c
@@ -61,7 +61,10 @@ jobs:
          run: |
            mkdir -p build
            cd build
-           cmake -Dwith-devdoc=ON ..
+           # Only fulldoc.conf is needed: nothing is built or installed, so the
+           # prefix is a placeholder and optional libraries are disabled.
+           cmake -Dwith-devdoc=ON -Dwith-gsl=OFF -Dwith-ltdl=OFF -Dwith-boost=OFF \
+             -DCMAKE_INSTALL_PREFIX="$GITHUB_WORKSPACE/install" ..
            sed -i "s|^PLANTUML_JAR_PATH.*|PLANTUML_JAR_PATH      = $GITHUB_WORKSPACE/plantuml.jar|" doc/fulldoc.conf
            GIT_HASH=$(git rev-parse --short HEAD)
            sed -i "s|^PROJECT_NUMBER.*|PROJECT_NUMBER         = main@${GIT_HASH}|" doc/fulldoc.conf
@@ -154,7 +157,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y graphviz cmake build-essential default-jre-headless doxygen
+          sudo apt-get install -y graphviz cmake build-essential default-jre-headless doxygen cython3
           if [ "${{ steps.cache-deps.outputs.cache-hit }}" != "true" ]; then
             wget -q "$PLANTUML_JAR_URL" -O "$GITHUB_WORKSPACE/plantuml.jar"
             echo "$PLANTUML_SHA256  $GITHUB_WORKSPACE/plantuml.jar" | sha256sum -c
@@ -164,7 +167,10 @@ jobs:
         run: |
           mkdir -p build
           cd build
-          cmake -Dwith-devdoc=ON ..
+          # Only fulldoc.conf is needed: nothing is built or installed, so the
+          # prefix is a placeholder and optional libraries are disabled.
+          cmake -Dwith-devdoc=ON -Dwith-gsl=OFF -Dwith-ltdl=OFF -Dwith-boost=OFF \
+            -DCMAKE_INSTALL_PREFIX="$GITHUB_WORKSPACE/install" ..
           sed -i "s|^PLANTUML_JAR_PATH.*|PLANTUML_JAR_PATH      = $GITHUB_WORKSPACE/plantuml.jar|" doc/fulldoc.conf
           GIT_HASH=$(git rev-parse --short HEAD)
           sed -i "s|^PROJECT_NUMBER.*|PROJECT_NUMBER         = main@${GIT_HASH}|" doc/fulldoc.conf

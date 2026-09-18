@@ -57,6 +57,7 @@ namespace nest
  */
 extern "C" int hh_psc_alpha_dynamics( double, const double*, double*, void* );
 
+// clang-format off
 /* BeginUserDocs: neuron, Hodgkin-Huxley, current-based, soft threshold
 
 Short description
@@ -142,6 +143,7 @@ Examples using this model
 .. listexamples:: hh_psc_alpha
 
 EndUserDocs */
+// clang-format on
 
 void register_hh_psc_alpha( const std::string& name );
 

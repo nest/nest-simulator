@@ -72,7 +72,7 @@ nest.Simulate(1000.0)  # ms
 - [SONATA Format](https://nest-simulator.readthedocs.io/en/latest/nest_sonata/nest_sonata_guide.html) - Network data interchange
 - [MUSIC Interface](https://nest-simulator.readthedocs.io/en/latest/interface_nest/using_nest_with_music.html) - Multi-simulator coupling
 - [HPC Benchmarking](https://nest-simulator.readthedocs.io/en/latest/hpc/benchmarking.html) - Performance measurement
-- [Contributing to NEST](https://nest-simulator.readthedocs.io/en/latest/developer_space/index.html) - Development guidelines, workflows, and how to contribute
+- [Contributing to NEST](https://nest-simulator.readthedocs.io/en/latest/contribute/index.html) - Development guidelines, workflows, and how to contribute
 - [Developer Installation](https://nest-simulator.readthedocs.io/en/latest/installation/developer.html) - Build from source for development
 
 ### Reference

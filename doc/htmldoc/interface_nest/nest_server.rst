@@ -162,7 +162,7 @@ Basic usage
 ~~~~~~~~~~~
 
 To give you an idea of the usage, the following table shows a comparison of a typical simulation once for PyNEST and
-once using the NEST Client identical except the import part:
+once using the NEST Client identical except for the `import` statement:
 
 .. list-table::
 

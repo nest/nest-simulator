@@ -509,7 +509,8 @@ private:
   /**
    * Update delay extrema to current values.
    *
-   * @note This entails MPI communication.
+   * @note This entails MPI communication if connections have been created
+   * since the last exchange of delay extrema across ranks.
    */
   void update_delay_extrema_();
 
@@ -676,6 +677,16 @@ private:
   long min_delay_;  //!< Value of the smallest delay in the network.
 
   long max_delay_;  //!< Value of the largest delay in the network in steps.
+
+  //! Smallest delay across all ranks at the last exchange, in steps.
+  long global_min_delay_;
+
+  //! Largest delay across all ranks at the last exchange, in steps.
+  long global_max_delay_;
+
+  //! True if connections have been created since the last exchange of delay
+  //! extrema across ranks.
+  bool local_delay_extrema_changed_;
 
   //! Whether to keep source table after connection setup is complete.
   bool keep_source_table_;

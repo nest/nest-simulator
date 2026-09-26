@@ -1191,7 +1191,7 @@ ConnectionManager::get_connections( std::vector< std::deque< ConnectionID > >& c
 
     if ( conns_in_thread.size() > 0 )
     {
-#pragma omp critical
+#pragma omp critical( get_connections )
       {
         connectome.push_back( std::move( conns_in_thread ) );
       }

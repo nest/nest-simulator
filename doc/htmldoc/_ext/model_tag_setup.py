@@ -19,12 +19,22 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Render NEST model user documentation into reStructuredText.
+"""Render the user documentation in NEST's C++ headers into reStructuredText.
 
-Model documentation is written inside ``BeginUserDocs``/``EndUserDocs`` blocks in the
-C++ headers under ``models/`` and ``nestkernel/``. This extension
+User documentation is written inside ``BeginUserDocs``/``EndUserDocs`` blocks in the
+C++ headers of every directory listed in `HEADER_DIRS`. These are
+
+* ``models/``: neuron, synapse and device models, and
+* ``nestkernel/``: kernel components that users configure directly, such as the
+  recording and stimulation backends (``recording_backend_*.h``,
+  ``stimulation_backend_mpi.h``), ``recording_device.h``, ``stimulation_device.h`` and
+  ``growth_curve.h``.
+
+This extension
 
 * extracts each block and writes it as a standalone page under ``doc/htmldoc/models/``,
+  whichever directory the header comes from, so a kernel page is referenced like a
+  model page, for example ``/models/recording_backend_memory``,
 * collects the block tags so ``models/index`` can offer a tag filter, and
 * renders the pages that use those tags as Jinja templates.
 
@@ -55,7 +65,9 @@ EN_DASH = "–"
 #: Characters reStructuredText accepts as section adornment.
 ADORNMENTS = frozenset("!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~")
 
-#: Directories, relative to the repository root, that are searched for headers.
+#: Directories, relative to the repository root, whose headers are searched for user
+#: documentation. Only the top level of each directory is searched. Adding a directory
+#: here is enough to publish its blocks; its pages are also written to ``models/``.
 HEADER_DIRS = ("models", "nestkernel")
 
 #: Tag that keeps a model out of the tag filter but leaves it in the toctree.
@@ -154,7 +166,10 @@ def render_userdoc(body: str, stem: str, *, heading: str = SHORT_DESCRIPTION) ->
 
 @lru_cache(maxsize=None)
 def _collect_userdocs(srcdir: str) -> tuple[UserDoc, ...]:
-    """Read every header below the repository root once and return its documentation.
+    """Read the headers in each of `HEADER_DIRS` once and return their documentation.
+
+    Only ``*.h`` files at the top level of each directory are read, not subdirectories.
+    Only the first ``BeginUserDocs`` block of a header is used.
 
     Parameters
     ----------
@@ -184,7 +199,10 @@ def _collect_userdocs(srcdir: str) -> tuple[UserDoc, ...]:
 
 
 def create_rst_files(app: Any, config: Any) -> None:
-    """Write one reST page per documented model into the ``models`` source directory.
+    """Write one reST page per documented header into the ``models`` source directory.
+
+    Headers from every one of `HEADER_DIRS` go to ``models``, so kernel components such
+    as the recording backends sit next to the models they are used with.
 
     A block that cannot be rendered is reported as a build warning and written with the
     model name as its title, so that the page stays valid for the toctree and the

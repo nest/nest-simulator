@@ -41,7 +41,7 @@ Recording devices can fundamentally be subdivided into two groups:
 .. _recording_backends:
 
 What values can I record?
-+++++++++++++++++++++++++
+-------------------------
 
 This depends on neuron or synapse model specified.
 
@@ -73,7 +73,7 @@ Check out the following examples to see how the recorders are used:
 
 
 Where does data end up?
-+++++++++++++++++++++++
+-----------------------
 
 After a recording device has collected or sampled data, the data is
 handed to a dedicated *recording backend*, set for each recorder.
@@ -115,7 +115,7 @@ For example:
 
 
 Each recording backend may provide a specific set of parameters
-(explained in the backend documentation below) that will be included
+(explained in the backend documentation linked below) that will be included
 in the model status dictionary once the backend is set. This means
 that these parameters can only be reviewed and changed *after* the
 backend has been selected. In particular, recording-device specific
@@ -159,15 +159,15 @@ Such global parameters can be set using :py:func:`.SetDefaults`
    >>> nest.SetDefaults("sionlib", {"buffer_size": 512})
 
 Built-in backends
-+++++++++++++++++
+-----------------
 
 Following is a list of built-in recording backends that come with
 NEST. Please note that the availability of some of them depends on the
 compile-time configuration for NEST. See the backend documentation for
 details.
 
-.. include:: ../models/recording_backend_memory.rst
-.. include:: ../models/recording_backend_ascii.rst
-.. include:: ../models/recording_backend_screen.rst
-.. include:: ../models/recording_backend_sionlib.rst
-.. include:: ../models/recording_backend_mpi.rst
+.. toctree::
+   :maxdepth: 1
+   :glob:
+
+   /models/recording_backend_*

@@ -577,10 +577,6 @@ an author writes start one level down and use ``+++`` for their first level:
    Description
    +++++++++++
 
-Keeping to ``+++`` matters because these pages are also pulled into other pages
-with ``.. include::``, which only nests correctly when every model page uses the
-same character at that level.
-
 "Double quotes"
 ~~~~~~~~~~~~~~~
 

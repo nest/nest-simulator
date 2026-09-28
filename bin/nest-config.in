@@ -20,7 +20,7 @@ Known values for OPTION are:
   --compiler-version    Print the compiler version used to compile NEST
   --python-executable   print full path to Python interpreter used
   --python-version      print Python version string for interpreter
-  --static-libraries    print "ON" if configured for static libraries, "OFF" otherwise
+  --static-linking      print "ON" if configured for static linking, "OFF" otherwise
   --docdir              print the relative path (to prefix) to the installed documentation
   --datadir             print the relative path (to prefix) to the installed data
   --libdir              print the relative path (to prefix) to the installed libraries
@@ -87,8 +87,8 @@ while test $# -gt 0; do
         echo "@Python_VERSION@"
         ;;
 
-    --static-libraries)
-        echo "@static-libraries@"
+    --static-linking)
+        echo "@NEST_WITH_STATIC_LINKING@"
         ;;
     --docdir)
         echo "@CMAKE_INSTALL_DOCDIR@"

@@ -232,7 +232,7 @@ GenericModel< ElementT >::sends_secondary_event( SICEvent& sic )
 }
 
 template < typename ElementT >
-inline nest::SignalType
+inline SignalType
 GenericModel< ElementT >::sends_signal() const
 {
   return proto_.sends_signal();

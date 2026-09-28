@@ -41,14 +41,14 @@
 #include "universal_data_logger_impl.h"
 
 
+namespace nest
+{
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::iaf_cond_beta > nest::iaf_cond_beta::recordablesMap_;
+RecordablesMap< iaf_cond_beta > iaf_cond_beta::recordablesMap_;
 
-namespace nest  // template specialization must be placed in namespace
-{
 void
 register_iaf_cond_beta( const std::string& name )
 {
@@ -70,21 +70,20 @@ RecordablesMap< iaf_cond_beta >::create()
 
   insert_( names::t_ref_remaining, &iaf_cond_beta::get_r_ );
 }
-}
 
 /* ----------------------------------------------------------------
  * Iteration function
  * ---------------------------------------------------------------- */
 
 extern "C" inline int
-nest::iaf_cond_beta_dynamics( double, const double y[], double f[], void* pnode )
+iaf_cond_beta_dynamics( double, const double y[], double f[], void* pnode )
 {
   // a shorthand
-  typedef nest::iaf_cond_beta::State_ S;
+  typedef iaf_cond_beta::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::iaf_cond_beta& node = *( reinterpret_cast< nest::iaf_cond_beta* >( pnode ) );
+  const iaf_cond_beta& node = *( reinterpret_cast< iaf_cond_beta* >( pnode ) );
 
   const bool is_refractory = node.S_.r > 0;
 
@@ -120,7 +119,7 @@ nest::iaf_cond_beta_dynamics( double, const double y[], double f[], void* pnode 
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::iaf_cond_beta::Parameters_::Parameters_()
+iaf_cond_beta::Parameters_::Parameters_()
   : V_th( -55.0 )        // mV
   , V_reset( -60.0 )     // mV
   , t_ref( 2.0 )         // ms
@@ -137,7 +136,7 @@ nest::iaf_cond_beta::Parameters_::Parameters_()
 {
 }
 
-nest::iaf_cond_beta::State_::State_( const Parameters_& p )
+iaf_cond_beta::State_::State_( const Parameters_& p )
   : r( 0 )
 {
   y[ V_M ] = p.E_L;  // initialize to reversal potential
@@ -147,7 +146,7 @@ nest::iaf_cond_beta::State_::State_( const Parameters_& p )
   }
 }
 
-nest::iaf_cond_beta::State_::State_( const State_& s )
+iaf_cond_beta::State_::State_( const State_& s )
   : r( s.r )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -156,8 +155,8 @@ nest::iaf_cond_beta::State_::State_( const State_& s )
   }
 }
 
-nest::iaf_cond_beta::State_&
-nest::iaf_cond_beta::State_::operator=( const State_& s )
+iaf_cond_beta::State_&
+iaf_cond_beta::State_::operator=( const State_& s )
 {
   r = s.r;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -167,7 +166,7 @@ nest::iaf_cond_beta::State_::operator=( const State_& s )
   return *this;
 }
 
-nest::iaf_cond_beta::Buffers_::Buffers_( iaf_cond_beta& n )
+iaf_cond_beta::Buffers_::Buffers_( iaf_cond_beta& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -177,7 +176,7 @@ nest::iaf_cond_beta::Buffers_::Buffers_( iaf_cond_beta& n )
   // init_buffers_().
 }
 
-nest::iaf_cond_beta::Buffers_::Buffers_( const Buffers_&, iaf_cond_beta& n )
+iaf_cond_beta::Buffers_::Buffers_( const Buffers_&, iaf_cond_beta& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -192,7 +191,7 @@ nest::iaf_cond_beta::Buffers_::Buffers_( const Buffers_&, iaf_cond_beta& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_cond_beta::Parameters_::get( Dictionary& d ) const
+iaf_cond_beta::Parameters_::get( Dictionary& d ) const
 {
   d[ names::V_th ] = V_th;
   d[ names::V_reset ] = V_reset;
@@ -210,7 +209,7 @@ nest::iaf_cond_beta::Parameters_::get( Dictionary& d ) const
 }
 
 void
-nest::iaf_cond_beta::Parameters_::set( const Dictionary& d, Node* node )
+iaf_cond_beta::Parameters_::set( const Dictionary& d, Node* node )
 {
   // allow setting the membrane potential
   update_value_param( d, names::V_th, V_th, node );
@@ -249,7 +248,7 @@ nest::iaf_cond_beta::Parameters_::set( const Dictionary& d, Node* node )
 }
 
 void
-nest::iaf_cond_beta::State_::get( Dictionary& d ) const
+iaf_cond_beta::State_::get( Dictionary& d ) const
 {
   d[ names::V_m ] = y[ V_M ];  // Membrane potential
   d[ names::g_ex ] = y[ G_EXC ];
@@ -259,7 +258,7 @@ nest::iaf_cond_beta::State_::get( Dictionary& d ) const
 }
 
 void
-nest::iaf_cond_beta::State_::set( const Dictionary& d, const Parameters_&, Node* node )
+iaf_cond_beta::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
   update_value_param( d, names::V_m, y[ V_M ], node );
   update_value_param( d, names::g_ex, y[ G_EXC ], node );
@@ -273,7 +272,7 @@ nest::iaf_cond_beta::State_::set( const Dictionary& d, const Parameters_&, Node*
  * Default and copy constructor for node, and destructor
  * ---------------------------------------------------------------- */
 
-nest::iaf_cond_beta::iaf_cond_beta()
+iaf_cond_beta::iaf_cond_beta()
   : ArchivingNode()
   , P_()
   , S_( P_ )
@@ -282,7 +281,7 @@ nest::iaf_cond_beta::iaf_cond_beta()
   recordablesMap_.create();
 }
 
-nest::iaf_cond_beta::iaf_cond_beta( const iaf_cond_beta& n )
+iaf_cond_beta::iaf_cond_beta( const iaf_cond_beta& n )
   : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -290,7 +289,7 @@ nest::iaf_cond_beta::iaf_cond_beta( const iaf_cond_beta& n )
 {
 }
 
-nest::iaf_cond_beta::~iaf_cond_beta()
+iaf_cond_beta::~iaf_cond_beta()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
@@ -312,7 +311,7 @@ nest::iaf_cond_beta::~iaf_cond_beta()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_cond_beta::init_buffers_()
+iaf_cond_beta::init_buffers_()
 {
   ArchivingNode::clear_history();
 
@@ -361,19 +360,19 @@ nest::iaf_cond_beta::init_buffers_()
 }
 
 double
-nest::iaf_cond_beta::get_normalisation_factor( double tau_rise, double tau_decay )
+iaf_cond_beta::get_normalisation_factor( double tau_rise, double tau_decay )
 {
-  return nest::beta_normalization_factor( tau_rise, tau_decay );
+  return beta_normalization_factor( tau_rise, tau_decay );
 }
 
 void
-nest::iaf_cond_beta::pre_run_hook()
+iaf_cond_beta::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
-  V_.PSConInit_E = nest::iaf_cond_beta::get_normalisation_factor( P_.tau_rise_ex, P_.tau_decay_ex );
-  V_.PSConInit_I = nest::iaf_cond_beta::get_normalisation_factor( P_.tau_rise_in, P_.tau_decay_in );
+  V_.PSConInit_E = iaf_cond_beta::get_normalisation_factor( P_.tau_rise_ex, P_.tau_decay_ex );
+  V_.PSConInit_I = iaf_cond_beta::get_normalisation_factor( P_.tau_rise_in, P_.tau_decay_in );
   V_.RefractoryCounts = Time( Time::ms( P_.t_ref ) ).get_steps();
 
   // since t_ref >= 0, this can only fail in error
@@ -385,7 +384,7 @@ nest::iaf_cond_beta::pre_run_hook()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_cond_beta::update( Time const& origin, const long from, const long to )
+iaf_cond_beta::update( Time const& origin, const long from, const long to )
 {
   for ( long lag = from; lag < to; ++lag )
   {
@@ -453,7 +452,7 @@ nest::iaf_cond_beta::update( Time const& origin, const long from, const long to 
 }
 
 void
-nest::iaf_cond_beta::handle( SpikeEvent& e )
+iaf_cond_beta::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -470,7 +469,7 @@ nest::iaf_cond_beta::handle( SpikeEvent& e )
 }
 
 void
-nest::iaf_cond_beta::handle( CurrentEvent& e )
+iaf_cond_beta::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -480,9 +479,11 @@ nest::iaf_cond_beta::handle( CurrentEvent& e )
 }
 
 void
-nest::iaf_cond_beta::handle( DataLoggingRequest& e )
+iaf_cond_beta::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
+
+}  // namespace nest
 
 #endif  // HAVE_GSL

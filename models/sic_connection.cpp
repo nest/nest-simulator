@@ -25,8 +25,13 @@
 // Includes from nestkernel:
 #include "nest_impl.h"
 
+
+namespace nest
+{
 void
-nest::register_sic_connection( const std::string& name )
+register_sic_connection( const std::string& name )
 {
   register_connection_model< sic_connection >( name );
 }
+
+}  // namespace nest

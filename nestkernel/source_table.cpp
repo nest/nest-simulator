@@ -32,16 +32,19 @@
 #include "stopwatch_impl.h"
 #include "vp_manager_impl.h"
 
-nest::SourceTable::SourceTable()
+
+namespace nest
+{
+SourceTable::SourceTable()
 {
 }
 
-nest::SourceTable::~SourceTable()
+SourceTable::~SourceTable()
 {
 }
 
 void
-nest::SourceTable::initialize()
+SourceTable::initialize()
 {
   assert( sizeof( Source ) == 8 );
   const size_t num_threads = kernel().vp_manager.get_num_threads();
@@ -62,7 +65,7 @@ nest::SourceTable::initialize()
 }
 
 void
-nest::SourceTable::finalize()
+SourceTable::finalize()
 {
   for ( size_t tid = 0; tid < static_cast< size_t >( sources_.size() ); ++tid )
   {
@@ -81,19 +84,19 @@ nest::SourceTable::finalize()
 }
 
 bool
-nest::SourceTable::is_cleared() const
+SourceTable::is_cleared() const
 {
   return is_cleared_.all_true();
 }
 
-std::vector< BlockVector< nest::Source > >&
-nest::SourceTable::get_thread_local_sources( const size_t tid )
+std::vector< BlockVector< Source > >&
+SourceTable::get_thread_local_sources( const size_t tid )
 {
   return sources_[ tid ];
 }
 
-nest::SourceTablePosition
-nest::SourceTable::find_maximal_position() const
+SourceTablePosition
+SourceTable::find_maximal_position() const
 {
   SourceTablePosition max_position( -1, -1, -1 );
   for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
@@ -107,7 +110,7 @@ nest::SourceTable::find_maximal_position() const
 }
 
 void
-nest::SourceTable::clean( const size_t tid )
+SourceTable::clean( const size_t tid )
 {
   // Find maximal position in source table among threads to make sure
   // unprocessed entries are not removed. Given this maximal position,
@@ -153,7 +156,7 @@ nest::SourceTable::clean( const size_t tid )
 }
 
 size_t
-nest::SourceTable::get_node_id( const size_t tid, const synindex syn_id, const size_t lcid ) const
+SourceTable::get_node_id( const size_t tid, const synindex syn_id, const size_t lcid ) const
 {
   if ( not kernel().connection_manager.get_keep_source_table() )
   {
@@ -163,7 +166,7 @@ nest::SourceTable::get_node_id( const size_t tid, const synindex syn_id, const s
 }
 
 size_t
-nest::SourceTable::find_first_source( const size_t tid, const synindex syn_id, const size_t snode_id ) const
+SourceTable::find_first_source( const size_t tid, const synindex syn_id, const size_t snode_id ) const
 {
   const auto source_begin = sources_[ tid ][ syn_id ].begin();
   const auto source_end = sources_[ tid ][ syn_id ].end();
@@ -193,7 +196,7 @@ nest::SourceTable::find_first_source( const size_t tid, const synindex syn_id, c
 }
 
 size_t
-nest::SourceTable::remove_disabled_sources( const size_t tid, const synindex syn_id )
+SourceTable::remove_disabled_sources( const size_t tid, const synindex syn_id )
 {
   assert( kernel().connection_manager.use_compressed_spikes() );
 
@@ -228,7 +231,7 @@ nest::SourceTable::remove_disabled_sources( const size_t tid, const synindex syn
 }
 
 void
-nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const size_t tid,
+SourceTable::compute_buffer_pos_for_unique_secondary_sources( const size_t tid,
   std::map< size_t, size_t >& buffer_pos_of_source_node_id_syn_id )
 {
   // set of unique sources & synapse types, required to determine
@@ -301,16 +304,14 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const size_t
 }
 
 void
-nest::SourceTable::resize_sources()
+SourceTable::resize_sources()
 {
   kernel().vp_manager.assert_thread_parallel();
   sources_.at( kernel().vp_manager.get_thread_id() ).resize( kernel().model_manager.get_num_connection_models() );
 }
 
 bool
-nest::SourceTable::source_should_be_processed_( const size_t rank_start,
-  const size_t rank_end,
-  const Source& source ) const
+SourceTable::source_should_be_processed_( const size_t rank_start, const size_t rank_end, const Source& source ) const
 {
   const size_t source_rank = kernel().mpi_manager.get_process_id_of_node_id( source.get_node_id() );
 
@@ -321,7 +322,7 @@ nest::SourceTable::source_should_be_processed_( const size_t rank_start,
 }
 
 bool
-nest::SourceTable::next_entry_has_same_source_( const SourceTablePosition& current_position,
+SourceTable::next_entry_has_same_source_( const SourceTablePosition& current_position,
   const Source& current_source ) const
 {
   assert( not current_position.is_invalid() );
@@ -334,7 +335,7 @@ nest::SourceTable::next_entry_has_same_source_( const SourceTablePosition& curre
 }
 
 bool
-nest::SourceTable::previous_entry_has_same_source_( const SourceTablePosition& current_position,
+SourceTable::previous_entry_has_same_source_( const SourceTablePosition& current_position,
   const Source& current_source ) const
 {
   assert( not current_position.is_invalid() );
@@ -348,7 +349,7 @@ nest::SourceTable::previous_entry_has_same_source_( const SourceTablePosition& c
 }
 
 bool
-nest::SourceTable::populate_target_data_fields_( const SourceTablePosition& current_position,
+SourceTable::populate_target_data_fields_( const SourceTablePosition& current_position,
   const Source& current_source,
   const size_t source_rank,
   TargetData& next_target_data ) const
@@ -393,7 +394,7 @@ nest::SourceTable::populate_target_data_fields_( const SourceTablePosition& curr
 }
 
 bool
-nest::SourceTable::get_next_target_data( const size_t tid,
+SourceTable::get_next_target_data( const size_t tid,
   const size_t rank_start,
   const size_t rank_end,
   size_t& source_rank,
@@ -461,7 +462,7 @@ nest::SourceTable::get_next_target_data( const size_t tid,
 }
 
 void
-nest::SourceTable::resize_compressible_sources()
+SourceTable::resize_compressible_sources()
 {
   for ( size_t tid = 0; tid < static_cast< size_t >( compressible_sources_.size() ); ++tid )
   {
@@ -472,7 +473,7 @@ nest::SourceTable::resize_compressible_sources()
 }
 
 void
-nest::SourceTable::collect_compressible_sources( const size_t tid )
+SourceTable::collect_compressible_sources( const size_t tid )
 {
   for ( synindex syn_id = 0; syn_id < sources_[ tid ].size(); ++syn_id )
   {
@@ -502,7 +503,7 @@ nest::SourceTable::collect_compressible_sources( const size_t tid )
 }
 
 void
-nest::SourceTable::dump_sources() const
+SourceTable::dump_sources() const
 {
   FULL_LOGGING_ONLY( for ( size_t tid = 0; tid < sources_.size(); ++tid ) {
     for ( size_t syn_id = 0; syn_id < sources_[ tid ].size(); ++syn_id )
@@ -523,7 +524,7 @@ nest::SourceTable::dump_sources() const
 
 
 void
-nest::SourceTable::dump_compressible_sources() const
+SourceTable::dump_compressible_sources() const
 {
   FULL_LOGGING_ONLY( for ( size_t tid = 0; tid < compressible_sources_.size(); ++tid ) {
     for ( size_t syn_id = 0; syn_id < compressible_sources_[ tid ].size(); ++syn_id )
@@ -542,8 +543,7 @@ nest::SourceTable::dump_compressible_sources() const
 }
 
 void
-nest::SourceTable::fill_compressed_spike_data(
-  std::vector< std::vector< std::vector< SpikeData > > >& compressed_spike_data )
+SourceTable::fill_compressed_spike_data( std::vector< std::vector< std::vector< SpikeData > > >& compressed_spike_data )
 {
   const size_t num_synapse_models = kernel().model_manager.get_num_connection_models();
   compressed_spike_data.clear();
@@ -594,7 +594,7 @@ nest::SourceTable::fill_compressed_spike_data(
 
 // Argument name only needed if full logging is activated. Macro-protect to avoid unused argument warning.
 void
-nest::SourceTable::dump_compressed_spike_data(
+SourceTable::dump_compressed_spike_data(
   const std::vector< std::vector< std::vector< SpikeData > > >& FULL_LOGGING_ONLY( compressed_spike_data ) ) const
 {
   FULL_LOGGING_ONLY(
@@ -626,3 +626,5 @@ nest::SourceTable::dump_compressed_spike_data(
       }
     } )
 }
+
+}  // namespace nest

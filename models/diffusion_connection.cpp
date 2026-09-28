@@ -25,8 +25,13 @@
 // Includes from nestkernel:
 #include "nest_impl.h"
 
+
+namespace nest
+{
 void
-nest::register_diffusion_connection( const std::string& name )
+register_diffusion_connection( const std::string& name )
 {
   register_connection_model< diffusion_connection >( name );
 }
+
+}  // namespace nest

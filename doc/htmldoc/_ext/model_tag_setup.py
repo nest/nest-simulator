@@ -121,7 +121,6 @@ def render_userdoc(body: str, stem: str, *, heading: str = SHORT_DESCRIPTION) ->
         Model name, used as the first half of the title.
     heading : str
         Title of the section that supplies the short description.
-
     Returns
     -------
     str
@@ -238,7 +237,6 @@ def get_model_tags(app: Any, env: Any, docname: str) -> None:
 
 def prepare_model_dict(app: Any) -> dict[str, list[str]]:
     """Map each generated page to the tags of its documentation block.
-
     A model tagged ``NOINDEX`` keeps its entry, but with no tags: it stays in the
     toctree while staying out of the tag filter.
 

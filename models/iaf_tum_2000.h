@@ -386,7 +386,7 @@ private:
 
 
 inline size_t
-nest::iaf_tum_2000::send_test_event( Node& target, size_t receptor_type, synindex, bool )
+iaf_tum_2000::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   if ( target.get_model_id() != this->get_model_id() and target.is_off_grid() )
   {

@@ -1037,7 +1037,7 @@ EventDeliveryManager::collocate_target_data_buffers_compressed_( const size_t ti
 
 
 void
-nest::EventDeliveryManager::set_complete_marker_target_data_( const AssignedRanks& assigned_ranks,
+EventDeliveryManager::set_complete_marker_target_data_( const AssignedRanks& assigned_ranks,
   const TargetSendBufferPosition& send_buffer_position )
 {
   for ( size_t rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
@@ -1048,7 +1048,7 @@ nest::EventDeliveryManager::set_complete_marker_target_data_( const AssignedRank
 }
 
 bool
-nest::EventDeliveryManager::distribute_target_data_buffers_( const size_t tid )
+EventDeliveryManager::distribute_target_data_buffers_( const size_t tid )
 {
   bool are_others_completed = true;
   const unsigned int send_recv_count_target_data_per_rank =

@@ -22,7 +22,10 @@
 
 #include "histentry.h"
 
-nest::histentry::histentry( double t, double Kminus, double Kminus_triplet, size_t access_counter )
+
+namespace nest
+{
+histentry::histentry( double t, double Kminus, double Kminus_triplet, size_t access_counter )
   : t_( t )
   , Kminus_( Kminus )
   , Kminus_triplet_( Kminus_triplet )
@@ -30,19 +33,19 @@ nest::histentry::histentry( double t, double Kminus, double Kminus_triplet, size
 {
 }
 
-nest::histentry_extended::histentry_extended( double t, double dw, size_t access_counter )
+histentry_extended::histentry_extended( double t, double dw, size_t access_counter )
   : t_( t )
   , dw_( dw )
   , access_counter_( access_counter )
 {
 }
 
-nest::HistEntryEprop::HistEntryEprop( long t )
+HistEntryEprop::HistEntryEprop( long t )
   : t_( t )
 {
 }
 
-nest::HistEntryEpropRecurrent::HistEntryEpropRecurrent( long t,
+HistEntryEpropRecurrent::HistEntryEpropRecurrent( long t,
   double surrogate_gradient,
   double learning_signal,
   double firing_rate_reg )
@@ -53,20 +56,22 @@ nest::HistEntryEpropRecurrent::HistEntryEpropRecurrent( long t,
 {
 }
 
-nest::HistEntryEpropReadout::HistEntryEpropReadout( long t, double error_signal )
+HistEntryEpropReadout::HistEntryEpropReadout( long t, double error_signal )
   : HistEntryEprop( t )
   , error_signal_( error_signal )
 {
 }
 
-nest::HistEntryEpropUpdate::HistEntryEpropUpdate( long t, size_t access_counter )
+HistEntryEpropUpdate::HistEntryEpropUpdate( long t, size_t access_counter )
   : HistEntryEprop( t )
   , access_counter_( access_counter )
 {
 }
 
-nest::HistEntryEpropFiringRateReg::HistEntryEpropFiringRateReg( long t, double firing_rate_reg )
+HistEntryEpropFiringRateReg::HistEntryEpropFiringRateReg( long t, double firing_rate_reg )
   : HistEntryEprop( t )
   , firing_rate_reg_( firing_rate_reg )
 {
 }
+
+}  // namespace nest

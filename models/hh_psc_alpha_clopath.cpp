@@ -40,10 +40,10 @@
 #include "universal_data_logger_impl.h"
 
 
-nest::RecordablesMap< nest::hh_psc_alpha_clopath > nest::hh_psc_alpha_clopath::recordablesMap_;
-
 namespace nest
 {
+RecordablesMap< hh_psc_alpha_clopath > hh_psc_alpha_clopath::recordablesMap_;
+
 void
 register_hh_psc_alpha_clopath( const std::string& name )
 {
@@ -72,11 +72,11 @@ extern "C" int
 hh_psc_alpha_clopath_dynamics( double, const double y[], double f[], void* pnode )
 {
   // a shorthand
-  typedef nest::hh_psc_alpha_clopath::State_ S;
+  typedef hh_psc_alpha_clopath::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::hh_psc_alpha_clopath& node = *( reinterpret_cast< nest::hh_psc_alpha_clopath* >( pnode ) );
+  const hh_psc_alpha_clopath& node = *( reinterpret_cast< hh_psc_alpha_clopath* >( pnode ) );
 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
@@ -129,13 +129,12 @@ hh_psc_alpha_clopath_dynamics( double, const double y[], double f[], void* pnode
 
   return GSL_SUCCESS;
 }
-}
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::hh_psc_alpha_clopath::Parameters_::Parameters_()
+hh_psc_alpha_clopath::Parameters_::Parameters_()
   : t_ref_( 2.0 )            // ms
   , g_Na( 12000.0 )          // nS
   , g_K( 3600.0 )            // nS
@@ -153,7 +152,7 @@ nest::hh_psc_alpha_clopath::Parameters_::Parameters_()
 {
 }
 
-nest::hh_psc_alpha_clopath::State_::State_( const Parameters_& )
+hh_psc_alpha_clopath::State_::State_( const Parameters_& )
   : r_( 0 )
 {
   y_[ 0 ] = -65;  // p.E_L;
@@ -175,7 +174,7 @@ nest::hh_psc_alpha_clopath::State_::State_( const Parameters_& )
   y_[ HH_M ] = alpha_m / ( alpha_m + beta_m );
 }
 
-nest::hh_psc_alpha_clopath::State_::State_( const State_& s )
+hh_psc_alpha_clopath::State_::State_( const State_& s )
   : r_( s.r_ )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -184,8 +183,8 @@ nest::hh_psc_alpha_clopath::State_::State_( const State_& s )
   }
 }
 
-nest::hh_psc_alpha_clopath::State_&
-nest::hh_psc_alpha_clopath::State_::operator=( const State_& s )
+hh_psc_alpha_clopath::State_&
+hh_psc_alpha_clopath::State_::operator=( const State_& s )
 {
   r_ = s.r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -200,7 +199,7 @@ nest::hh_psc_alpha_clopath::State_::operator=( const State_& s )
  * ---------------------------------------------------------------- */
 
 void
-nest::hh_psc_alpha_clopath::Parameters_::get( Dictionary& d ) const
+hh_psc_alpha_clopath::Parameters_::get( Dictionary& d ) const
 {
   d[ names::t_ref ] = t_ref_;
   d[ names::g_Na ] = g_Na;
@@ -219,7 +218,7 @@ nest::hh_psc_alpha_clopath::Parameters_::get( Dictionary& d ) const
 }
 
 void
-nest::hh_psc_alpha_clopath::Parameters_::set( const Dictionary& d, Node* node )
+hh_psc_alpha_clopath::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::t_ref, t_ref_, node );
   update_value_param( d, names::C_m, C_m, node );
@@ -256,7 +255,7 @@ nest::hh_psc_alpha_clopath::Parameters_::set( const Dictionary& d, Node* node )
 }
 
 void
-nest::hh_psc_alpha_clopath::State_::get( Dictionary& d ) const
+hh_psc_alpha_clopath::State_::get( Dictionary& d ) const
 {
   d[ names::V_m ] = y_[ V_M ];
   d[ names::Act_m ] = y_[ HH_M ];
@@ -268,7 +267,7 @@ nest::hh_psc_alpha_clopath::State_::get( Dictionary& d ) const
 }
 
 void
-nest::hh_psc_alpha_clopath::State_::set( const Dictionary& d, Node* node )
+hh_psc_alpha_clopath::State_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::V_m, y_[ V_M ], node );
   update_value_param( d, names::Act_m, y_[ HH_M ], node );
@@ -283,7 +282,7 @@ nest::hh_psc_alpha_clopath::State_::set( const Dictionary& d, Node* node )
   }
 }
 
-nest::hh_psc_alpha_clopath::Buffers_::Buffers_( hh_psc_alpha_clopath& n )
+hh_psc_alpha_clopath::Buffers_::Buffers_( hh_psc_alpha_clopath& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -293,7 +292,7 @@ nest::hh_psc_alpha_clopath::Buffers_::Buffers_( hh_psc_alpha_clopath& n )
   // init_buffers_().
 }
 
-nest::hh_psc_alpha_clopath::Buffers_::Buffers_( const Buffers_&, hh_psc_alpha_clopath& n )
+hh_psc_alpha_clopath::Buffers_::Buffers_( const Buffers_&, hh_psc_alpha_clopath& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -307,7 +306,7 @@ nest::hh_psc_alpha_clopath::Buffers_::Buffers_( const Buffers_&, hh_psc_alpha_cl
  * Default and copy constructor for node, and destructor
  * ---------------------------------------------------------------- */
 
-nest::hh_psc_alpha_clopath::hh_psc_alpha_clopath()
+hh_psc_alpha_clopath::hh_psc_alpha_clopath()
   : ClopathArchivingNode()
   , P_()
   , S_( P_ )
@@ -316,7 +315,7 @@ nest::hh_psc_alpha_clopath::hh_psc_alpha_clopath()
   recordablesMap_.create();
 }
 
-nest::hh_psc_alpha_clopath::hh_psc_alpha_clopath( const hh_psc_alpha_clopath& n )
+hh_psc_alpha_clopath::hh_psc_alpha_clopath( const hh_psc_alpha_clopath& n )
   : ClopathArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -324,7 +323,7 @@ nest::hh_psc_alpha_clopath::hh_psc_alpha_clopath( const hh_psc_alpha_clopath& n 
 {
 }
 
-nest::hh_psc_alpha_clopath::~hh_psc_alpha_clopath()
+hh_psc_alpha_clopath::~hh_psc_alpha_clopath()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
@@ -346,7 +345,7 @@ nest::hh_psc_alpha_clopath::~hh_psc_alpha_clopath()
  * ---------------------------------------------------------------- */
 
 void
-nest::hh_psc_alpha_clopath::init_buffers_()
+hh_psc_alpha_clopath::init_buffers_()
 {
   B_.spike_exc_.clear();  // includes resize
   B_.spike_inh_.clear();  // includes resize
@@ -396,7 +395,7 @@ nest::hh_psc_alpha_clopath::init_buffers_()
 }
 
 void
-nest::hh_psc_alpha_clopath::pre_run_hook()
+hh_psc_alpha_clopath::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -413,7 +412,7 @@ nest::hh_psc_alpha_clopath::pre_run_hook()
  * ---------------------------------------------------------------- */
 
 void
-nest::hh_psc_alpha_clopath::update( Time const& origin, const long from, const long to )
+hh_psc_alpha_clopath::update( Time const& origin, const long from, const long to )
 {
   for ( long lag = from; lag < to; ++lag )
   {
@@ -484,7 +483,7 @@ nest::hh_psc_alpha_clopath::update( Time const& origin, const long from, const l
 }
 
 void
-nest::hh_psc_alpha_clopath::handle( SpikeEvent& e )
+hh_psc_alpha_clopath::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -501,7 +500,7 @@ nest::hh_psc_alpha_clopath::handle( SpikeEvent& e )
 }
 
 void
-nest::hh_psc_alpha_clopath::handle( CurrentEvent& e )
+hh_psc_alpha_clopath::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -513,9 +512,11 @@ nest::hh_psc_alpha_clopath::handle( CurrentEvent& e )
 }
 
 void
-nest::hh_psc_alpha_clopath::handle( DataLoggingRequest& e )
+hh_psc_alpha_clopath::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
+
+}  // namespace nest
 
 #endif  // HAVE_GSL

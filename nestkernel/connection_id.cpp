@@ -58,15 +58,15 @@ ConnectionID::get_dict() const
   Dictionary dict;
 
   // The node ID of the presynaptic node
-  dict[ nest::names::source ] = source_node_id_;
+  dict[ names::source ] = source_node_id_;
   // The node ID of the postsynaptic node
-  dict[ nest::names::target ] = target_node_id_;
+  dict[ names::target ] = target_node_id_;
   // The id of the synapse model
-  dict[ nest::names::synapse_modelid ] = synapse_modelid_;
+  dict[ names::synapse_modelid ] = synapse_modelid_;
   // The thread of the postsynaptic node
-  dict[ nest::names::target_thread ] = target_thread_;
+  dict[ names::target_thread ] = target_thread_;
   // The index in the list
-  dict[ nest::names::port ] = port_;
+  dict[ names::port ] = port_;
 
   return dict;
 }

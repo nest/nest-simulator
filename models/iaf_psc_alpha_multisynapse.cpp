@@ -34,12 +34,13 @@
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
 
+
+namespace nest
+{
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
 
-namespace nest
-{
 void
 register_iaf_psc_alpha_multisynapse( const std::string& name )
 {
@@ -452,4 +453,4 @@ iaf_psc_alpha_multisynapse::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-}  // namespace
+}  // namespace nest

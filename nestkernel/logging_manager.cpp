@@ -33,19 +33,21 @@
 #include "compose.hpp"
 
 
-nest::LoggingManager::LoggingManager()
+namespace nest
+{
+LoggingManager::LoggingManager()
   : client_callbacks_()
   , logging_level_( VerbosityLevel::INFO )
   , dict_miss_is_error_( true )
 {
 }
 
-nest::LoggingManager::~LoggingManager()
+LoggingManager::~LoggingManager()
 {
 }
 
 void
-nest::LoggingManager::initialize( const bool adjust_number_of_threads_or_rng_only )
+LoggingManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
   if ( not adjust_number_of_threads_or_rng_only )
   {
@@ -54,19 +56,19 @@ nest::LoggingManager::initialize( const bool adjust_number_of_threads_or_rng_onl
 }
 
 void
-nest::LoggingManager::finalize( const bool )
+LoggingManager::finalize( const bool )
 {
 }
 
 void
-nest::LoggingManager::set_status( const Dictionary& dict )
+LoggingManager::set_status( const Dictionary& dict )
 {
   dict.update_value( names::dict_miss_is_error, dict_miss_is_error_ );
   dict.update_value( names::verbosity, logging_level_ );  // safe, because entry must be VerbosityLevel
 }
 
 void
-nest::LoggingManager::get_status( Dictionary& dict )
+LoggingManager::get_status( Dictionary& dict )
 {
   dict[ names::dict_miss_is_error ] = dict_miss_is_error_;
   dict[ names::verbosity ] = logging_level_;
@@ -74,7 +76,7 @@ nest::LoggingManager::get_status( Dictionary& dict )
 
 
 void
-nest::LoggingManager::register_logging_client( const deliver_logging_event_ptr callback )
+LoggingManager::register_logging_client( const deliver_logging_event_ptr callback )
 {
   assert( callback );
 
@@ -82,7 +84,7 @@ nest::LoggingManager::register_logging_client( const deliver_logging_event_ptr c
 }
 
 void
-nest::LoggingManager::deliver_logging_event_( const LoggingEvent& event ) const
+LoggingManager::deliver_logging_event_( const LoggingEvent& event ) const
 {
   if ( client_callbacks_.empty() )
   {
@@ -95,7 +97,7 @@ nest::LoggingManager::deliver_logging_event_( const LoggingEvent& event ) const
 }
 
 void
-nest::LoggingManager::default_logging_callback_( const LoggingEvent& event ) const
+LoggingManager::default_logging_callback_( const LoggingEvent& event ) const
 {
   std::ostream* out;
 
@@ -112,7 +114,7 @@ nest::LoggingManager::default_logging_callback_( const LoggingEvent& event ) con
 }
 
 void
-nest::LoggingManager::publish_log( const VerbosityLevel s,
+LoggingManager::publish_log( const VerbosityLevel s,
   const std::string& fctn,
   const std::string& msg,
   const std::string& file,
@@ -127,3 +129,5 @@ nest::LoggingManager::publish_log( const VerbosityLevel s,
     }
   }
 }
+
+}  // namespace nest

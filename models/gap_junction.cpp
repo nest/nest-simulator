@@ -25,8 +25,13 @@
 // Includes from nestkernel:
 #include "nest_impl.h"
 
+
+namespace nest
+{
 void
-nest::register_gap_junction( const std::string& name )
+register_gap_junction( const std::string& name )
 {
   register_connection_model< gap_junction >( name );
 }
+
+}  // namespace nest

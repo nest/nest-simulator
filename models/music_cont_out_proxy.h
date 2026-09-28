@@ -218,13 +218,13 @@ private:
 };
 
 inline SignalType
-nest::music_cont_out_proxy::sends_signal() const
+music_cont_out_proxy::sends_signal() const
 {
   return ALL;
 }
 
 inline void
-nest::music_cont_out_proxy::calibrate_time( const TimeConverter& tc )
+music_cont_out_proxy::calibrate_time( const TimeConverter& tc )
 {
   P_.interval_ = tc.from_old_tics( P_.interval_.get_tics() );
 }

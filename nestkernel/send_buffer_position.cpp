@@ -25,7 +25,10 @@
 
 #include "send_buffer_position.h"
 
-nest::SendBufferPosition::SendBufferPosition()
+
+namespace nest
+{
+SendBufferPosition::SendBufferPosition()
   : begin_( kernel().mpi_manager.get_num_processes(), 0 )
   , end_( kernel().mpi_manager.get_num_processes(), 0 )
   , idx_( kernel().mpi_manager.get_num_processes(), 0 )
@@ -40,3 +43,5 @@ nest::SendBufferPosition::SendBufferPosition()
     idx_[ rank ] = begin_[ rank ];
   }
 }
+
+}  // namespace nest

@@ -26,15 +26,15 @@
 #include "connector_model.h"
 #include "nest_impl.h"
 
+
+namespace nest
+{
 void
-nest::register_tsodyks_synapse_hom( const std::string& name )
+register_tsodyks_synapse_hom( const std::string& name )
 {
   register_connection_model< tsodyks_synapse_hom >( name );
 }
 
-
-namespace nest
-{
 
 //
 // Implementation of class TsodyksHomCommonProperties.
@@ -90,4 +90,4 @@ TsodyksHomCommonProperties::set_status( const Dictionary& d, ConnectorModel& cm 
   }
 }
 
-}  // of namespace nest
+}  // namespace nest

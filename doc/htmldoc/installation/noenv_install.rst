@@ -85,10 +85,6 @@ We will refer to the full path of this directory by <nest_install_dir>.
 
    ``<nest_install_dir>`` should be an absolute path
 
-.. note::
-
-   Python bindings are enabled by default. Add the configuration option ``-Dwith-python=OFF`` to disable them.
-
 * Compile and install NEST:
 
 .. code-block:: sh

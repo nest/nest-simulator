@@ -31,8 +31,11 @@
 #include "nest_time.h"
 #include "node.h"
 
+namespace nest
+{
+
 template < typename HostNode >
-nest::DynamicUniversalDataLogger< HostNode >::DynamicUniversalDataLogger( HostNode& host )
+DynamicUniversalDataLogger< HostNode >::DynamicUniversalDataLogger( HostNode& host )
   : host_( host )
   , data_loggers_()
 {
@@ -40,7 +43,7 @@ nest::DynamicUniversalDataLogger< HostNode >::DynamicUniversalDataLogger( HostNo
 
 template < typename HostNode >
 void
-nest::DynamicUniversalDataLogger< HostNode >::reset()
+DynamicUniversalDataLogger< HostNode >::reset()
 {
   for ( DLiter_ it = data_loggers_.begin(); it != data_loggers_.end(); ++it )
   {
@@ -50,7 +53,7 @@ nest::DynamicUniversalDataLogger< HostNode >::reset()
 
 template < typename HostNode >
 void
-nest::DynamicUniversalDataLogger< HostNode >::init()
+DynamicUniversalDataLogger< HostNode >::init()
 {
   for ( DLiter_ it = data_loggers_.begin(); it != data_loggers_.end(); ++it )
   {
@@ -60,7 +63,7 @@ nest::DynamicUniversalDataLogger< HostNode >::init()
 
 template < typename HostNode >
 void
-nest::DynamicUniversalDataLogger< HostNode >::record_data( long step )
+DynamicUniversalDataLogger< HostNode >::record_data( long step )
 {
   for ( DLiter_ it = data_loggers_.begin(); it != data_loggers_.end(); ++it )
   {
@@ -70,7 +73,7 @@ nest::DynamicUniversalDataLogger< HostNode >::record_data( long step )
 
 template < typename HostNode >
 void
-nest::DynamicUniversalDataLogger< HostNode >::handle( const DataLoggingRequest& dlr )
+DynamicUniversalDataLogger< HostNode >::handle( const DataLoggingRequest& dlr )
 {
   const size_t rport = dlr.get_rport();
   assert( rport >= 1 );
@@ -80,7 +83,7 @@ nest::DynamicUniversalDataLogger< HostNode >::handle( const DataLoggingRequest& 
 
 template < typename HostNode >
 void
-nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::reset()
+DynamicUniversalDataLogger< HostNode >::DataLogger_::reset()
 {
   data_.clear();
   next_rec_step_ = -1;  // flag as uninitialized
@@ -88,7 +91,7 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::reset()
 
 template < typename HostNode >
 void
-nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::init()
+DynamicUniversalDataLogger< HostNode >::DataLogger_::init()
 {
   if ( num_vars_ < 1 )
   {
@@ -139,7 +142,7 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::init()
 
 template < typename HostNode >
 void
-nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::record_data( const HostNode&, long step )
+DynamicUniversalDataLogger< HostNode >::DataLogger_::record_data( const HostNode&, long step )
 {
   if ( num_vars_ < 1 or step < next_rec_step_ )
   {
@@ -181,7 +184,7 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::record_data( const Ho
 
 template < typename HostNode >
 void
-nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host, const DataLoggingRequest& request )
+DynamicUniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host, const DataLoggingRequest& request )
 {
   if ( num_vars_ < 1 )
   {
@@ -232,7 +235,7 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& hos
 }
 
 template < typename HostNode >
-nest::UniversalDataLogger< HostNode >::UniversalDataLogger( HostNode& host )
+UniversalDataLogger< HostNode >::UniversalDataLogger( HostNode& host )
   : host_( host )
   , data_loggers_()
 {
@@ -240,7 +243,7 @@ nest::UniversalDataLogger< HostNode >::UniversalDataLogger( HostNode& host )
 
 template < typename HostNode >
 void
-nest::UniversalDataLogger< HostNode >::reset()
+UniversalDataLogger< HostNode >::reset()
 {
   for ( DLiter_ it = data_loggers_.begin(); it != data_loggers_.end(); ++it )
   {
@@ -250,7 +253,7 @@ nest::UniversalDataLogger< HostNode >::reset()
 
 template < typename HostNode >
 void
-nest::UniversalDataLogger< HostNode >::init()
+UniversalDataLogger< HostNode >::init()
 {
   for ( DLiter_ it = data_loggers_.begin(); it != data_loggers_.end(); ++it )
   {
@@ -260,7 +263,7 @@ nest::UniversalDataLogger< HostNode >::init()
 
 template < typename HostNode >
 void
-nest::UniversalDataLogger< HostNode >::record_data( long step )
+UniversalDataLogger< HostNode >::record_data( long step )
 {
   for ( DLiter_ it = data_loggers_.begin(); it != data_loggers_.end(); ++it )
   {
@@ -270,7 +273,7 @@ nest::UniversalDataLogger< HostNode >::record_data( long step )
 
 template < typename HostNode >
 void
-nest::UniversalDataLogger< HostNode >::handle( const DataLoggingRequest& dlr )
+UniversalDataLogger< HostNode >::handle( const DataLoggingRequest& dlr )
 {
   const size_t rport = dlr.get_rport();
   assert( rport >= 1 );
@@ -280,7 +283,7 @@ nest::UniversalDataLogger< HostNode >::handle( const DataLoggingRequest& dlr )
 
 template < typename HostNode >
 void
-nest::UniversalDataLogger< HostNode >::DataLogger_::reset()
+UniversalDataLogger< HostNode >::DataLogger_::reset()
 {
   data_.clear();
   next_rec_step_ = -1;  // flag as uninitialized
@@ -288,7 +291,7 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::reset()
 
 template < typename HostNode >
 void
-nest::UniversalDataLogger< HostNode >::DataLogger_::init()
+UniversalDataLogger< HostNode >::DataLogger_::init()
 {
   if ( num_vars_ < 1 )
   {
@@ -340,7 +343,7 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::init()
 
 template < typename HostNode >
 void
-nest::UniversalDataLogger< HostNode >::DataLogger_::record_data( const HostNode& host, long step )
+UniversalDataLogger< HostNode >::DataLogger_::record_data( const HostNode& host, long step )
 {
   if ( num_vars_ < 1 or step < next_rec_step_ )
   {
@@ -382,7 +385,7 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::record_data( const HostNode&
 
 template < typename HostNode >
 void
-nest::UniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host, const DataLoggingRequest& request )
+UniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host, const DataLoggingRequest& request )
 {
   if ( num_vars_ < 1 )
   {
@@ -432,5 +435,7 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host, cons
   // send it off
   kernel().event_delivery_manager.send_to_node( reply );
 }
+
+}  // namespace nest
 
 #endif /* #ifndef UNIVERSAL_DATA_LOGGER_IMPL_H */

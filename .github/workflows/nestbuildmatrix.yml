@@ -408,9 +408,27 @@ jobs:
         run: |
           flake8 .
 
+  no-python-in-kernel:
+    # Ensure that no code compiled into libnestkernel (nestkernel/, models/,
+    # libnestutil/, thirdparty/) includes Python.h, which would introduce an
+    # unwanted Python dependency into the kernel library.
+    runs-on: "ubuntu-22.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+
+      - name: "Check for Python.h dependencies in kernel/library code..."
+        run: |
+          ! grep -rn \
+              --include='*.h' --include='*.h.in' --include='*.cpp' --include='*.hpp' \
+              '#include[[:space:]]*[<"]Python\.h[>"]' \
+              nestkernel/ models/ libnestutil/ thirdparty/
+
   sphinx-rtd:
     # as close as possible to the Readthedocs setup (system install cmake, pip install -r doc/requirements.txt)
-    runs-on: "ubuntu-22.04"
+    runs-on: "ubuntu-24.04"
     needs: [pydocstyle, rstcheck, vale]
     steps:
       - name: Harden Runner
@@ -429,7 +447,7 @@ jobs:
         with:
           # Using 3.8 because Read the docs does not work with higher versions.
           # See also: https://github.com/nest/nest-simulator/pull/2744
-          python-version: "3.10"
+          python-version: "3.12"
 
       - name: "Install dependencies"
         run: |
@@ -442,7 +460,9 @@ jobs:
         run: |
           mkdir -pv build
           cd build
-          cmake -Dwith-userdoc=ON -DCMAKE_INSTALL_PREFIX=../install ..
+          #  with-gsl and ltdl defaults to ON,
+          # which would make the configure step fail.
+          cmake -Dwith-userdoc=ON -Dwith-ltdl=OFF -Dwith-gsl=OFF -Dwith-boost=OFF -DCMAKE_INSTALL_PREFIX=../install ..
           make docs |& tee sphinx-output.log
 
       - name: Upload artifacts
@@ -488,7 +508,7 @@ jobs:
           conda activate conda/
           mkdir -pv build
           cd build
-          cmake -DCMAKE_INSTALL_PREFIX=../install ..
+          cmake -Dwith-boost=OFF -Dwith-ltdl=OFF -DCMAKE_INSTALL_PREFIX=../install ..
           make html |& tee sphinx-output.log
 
       - name: Upload artifacts
@@ -501,7 +521,7 @@ jobs:
   build_linux:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
-    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, isort, black, flake8, shellcheck, pre-commit-hooks, cppcheck, no-crlf]
+    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, isort, black, flake8, shellcheck, pre-commit-hooks, cppcheck, no-crlf, no-python-in-kernel]
     env:
       CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
       NEST_VPATH: "build"
@@ -514,13 +534,13 @@ jobs:
         cpp_compiler: ["gcc"]
 
         # available use flags (all default to "OFF"):
-        # openmp, mpi, python, gsl, ltdl, boost, sionlib, optimize, warning, userdoc, music, readline
+        # openmp, mpi, gsl, ltdl, boost, sionlib, optimize, warning, userdoc, music, readline
         use:
-          - "python, optimize, warning"
-          - "python, boost, optimize, warning"
-          - "openmp, python, gsl, ltdl, boost, optimize, warning"
-          - "mpi, python, gsl, ltdl, boost, optimize, warning"
-          - "openmp, mpi, python, gsl, ltdl, boost, hdf5, sionlib, optimize, warning, music, detailed-timers, threaded-timers, mpi-sync-timer"
+          - "optimize, warning"
+          - "boost, optimize, warning"
+          - "openmp, gsl, ltdl, boost, optimize, warning"
+          - "mpi, gsl, ltdl, boost, optimize, warning"
+          - "openmp, mpi, gsl, ltdl, boost, hdf5, sionlib, optimize, warning, music, detailed-timers, threaded-timers, mpi-sync-timer"
 
     steps:
       - name: Harden Runner
@@ -702,12 +722,13 @@ jobs:
               -Dwith-boost=${{ contains(matrix.use, 'boost') && 'ON' || 'OFF' }} \
               -Dwith-openmp=${{ contains(matrix.use, 'openmp') && 'ON' || 'OFF' }} \
               -Dwith-mpi=${{ contains(matrix.use, 'mpi') && 'ON' || 'OFF' }} \
-              -Dwith-python=${{ contains(matrix.use, 'python') && 'ON' || 'OFF' }} \
               -Dwith-gsl=${{ contains(matrix.use, 'gsl') && 'ON' || 'OFF' }} \
               -Dwith-ltdl=${{ contains(matrix.use, 'ltdl') && 'ON' || 'OFF' }} \
               -Dwith-hdf5=${{ contains(matrix.use, 'hdf5') && 'ON' || 'OFF' }} \
-              -Dwith-sionlib=${{ contains(matrix.use, 'sionlib') && '$HOME/.cache/sionlib.install' || 'OFF' }} \
-              -Dwith-music=${{ contains(matrix.use, 'music') && '$HOME/.cache/music.install' || 'OFF' }} \
+              -Dwith-sionlib=${{ contains(matrix.use, 'sionlib') && 'ON' || 'OFF' }} \
+              -DSIONlib_ROOT=$HOME/.cache/sionlib.install \
+              -Dwith-music=${{ contains(matrix.use, 'music') && 'ON' || 'OFF' }} \
+              -DMusic_ROOT=$HOME/.cache/music.install \
               -Dwith-threaded-timers=${{ contains(matrix.use, 'threaded-timers') && 'ON' || 'OFF' }} \
               -Dwith-detailed-timers=${{ contains(matrix.use, 'detailed-timers') && 'ON' || 'OFF' }} \
               -Dwith-mpi-sync-timer=${{ contains(matrix.use, 'mpi-sync-timer') && 'ON' || 'OFF' }} \
@@ -759,7 +780,7 @@ jobs:
   build_macos:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
-    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, isort, black, flake8, shellcheck, pre-commit-hooks, cppcheck, no-crlf]
+    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, isort, black, flake8, shellcheck, pre-commit-hooks, cppcheck, no-crlf, no-python-in-kernel]
     env:
       CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
       NEST_VPATH: "build"
@@ -772,9 +793,9 @@ jobs:
         cpp_compiler: ["clang"]
 
         # available use flags (all default to "OFF"):
-        # openmp, mpi, python, gsl, ltdl, boost, hdf5, sionlib, optimize, warning, userdoc, music
+        # openmp, mpi, gsl, ltdl, boost, hdf5, sionlib, optimize, warning, userdoc, music
         use:
-          - "openmp, mpi, python, gsl, ltdl, boost, hdf5, optimize, warning"
+          - "openmp, mpi, gsl, ltdl, boost, hdf5, optimize, warning"
 
     steps:
       - name: Harden Runner
@@ -830,14 +851,15 @@ jobs:
               -Dwith-optimize=${{ contains(matrix.use, 'optimize') && 'ON' || 'OFF' }} \
               -Dwith-warning=${{ contains(matrix.use, 'warning') && 'ON' || 'OFF' }} \
               -Dwith-boost=${{ contains(matrix.use, 'boost') && 'ON' || 'OFF' }} \
-              -Dwith-openmp=${{ contains(matrix.use, 'openmp') && '$(brew --prefix libomp)' || 'OFF' }} \
+              -Dwith-openmp=${{ contains(matrix.use, 'openmp') && 'ON' || 'OFF' }} \
               -Dwith-mpi=${{ contains(matrix.use, 'mpi') && 'ON' || 'OFF' }} \
-              -Dwith-python=${{ contains(matrix.use, 'python') && 'ON' || 'OFF' }} \
               -Dwith-gsl=${{ contains(matrix.use, 'gsl') && 'ON' || 'OFF' }} \
               -Dwith-ltdl=${{ contains(matrix.use, 'ltdl') && 'ON' || 'OFF' }} \
               -Dwith-hdf5=${{ contains(matrix.use, 'hdf5') && 'ON' || 'OFF' }} \
-              -Dwith-sionlib=${{ contains(matrix.use, 'sionlib') && '$HOME/.cache/sionlib.install' || 'OFF' }} \
-              -Dwith-music=${{ contains(matrix.use, 'music') && '$HOME/.cache/music.install' || 'OFF' }} \
+              -Dwith-sionlib=${{ contains(matrix.use, 'sionlib') && 'ON' || 'OFF' }} \
+              -DSIONlib_ROOT=$HOME/.cache/sionlib.install \
+              -Dwith-music=${{ contains(matrix.use, 'music') && 'ON' || 'OFF' }} \
+              -DMusic_ROOT=$HOME/.cache/music.install \
               ..
 
       - name: "Add GCC problem matcher"

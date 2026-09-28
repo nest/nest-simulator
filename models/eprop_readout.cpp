@@ -36,9 +36,9 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
+
 namespace nest
 {
-
 void
 register_eprop_readout( const std::string& name )
 {

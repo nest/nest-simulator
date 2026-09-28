@@ -43,10 +43,10 @@
 #include "universal_data_logger_impl.h"
 
 
-#ifdef HAVE_GSL
-
 namespace nest
 {
+#ifdef HAVE_GSL
+
 void
 register_gif_pop_psc_exp( const std::string& name )
 {
@@ -78,7 +78,7 @@ RecordablesMap< gif_pop_psc_exp >::create()
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::gif_pop_psc_exp::Parameters_::Parameters_()
+gif_pop_psc_exp::Parameters_::Parameters_()
   : N_( 100 )           // 1
   , tau_m_( 20. )       // ms
   , c_m_( 250. )        // pF
@@ -100,7 +100,7 @@ nest::gif_pop_psc_exp::Parameters_::Parameters_()
   q_sfa_.push_back( 0.5 );      // mV
 }
 
-nest::gif_pop_psc_exp::State_::State_()
+gif_pop_psc_exp::State_::State_()
   : y0_( 0.0 )
   , I_syn_ex_( 0.0 )
   , I_syn_in_( 0.0 )
@@ -117,7 +117,7 @@ nest::gif_pop_psc_exp::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::gif_pop_psc_exp::Parameters_::get( Dictionary& d ) const
+gif_pop_psc_exp::Parameters_::get( Dictionary& d ) const
 {
   d[ names::N ] = N_;
   d[ names::tau_m ] = tau_m_;
@@ -138,7 +138,7 @@ nest::gif_pop_psc_exp::Parameters_::get( Dictionary& d ) const
 }
 
 void
-nest::gif_pop_psc_exp::Parameters_::set( const Dictionary& d, Node* node )
+gif_pop_psc_exp::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::N, N_, node );
   update_value_param( d, names::tau_m, tau_m_, node );
@@ -213,7 +213,7 @@ nest::gif_pop_psc_exp::Parameters_::set( const Dictionary& d, Node* node )
 }
 
 void
-nest::gif_pop_psc_exp::State_::get( Dictionary& d, const Parameters_& ) const
+gif_pop_psc_exp::State_::get( Dictionary& d, const Parameters_& ) const
 {
   d[ names::V_m ] = V_m_;            // Filtered version of input
   d[ names::n_events ] = n_spikes_;  // Number of generated spikes
@@ -224,7 +224,7 @@ nest::gif_pop_psc_exp::State_::get( Dictionary& d, const Parameters_& ) const
 }
 
 void
-nest::gif_pop_psc_exp::State_::set( const Dictionary& d, const Parameters_&, Node* node )
+gif_pop_psc_exp::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
   update_value_param( d, names::V_m, V_m_, node );
   update_value_param( d, names::I_syn_ex, I_syn_ex_, node );
@@ -232,12 +232,12 @@ nest::gif_pop_psc_exp::State_::set( const Dictionary& d, const Parameters_&, Nod
   initialized_ = false;  // vectors of the state should be initialized with new parameter set.
 }
 
-nest::gif_pop_psc_exp::Buffers_::Buffers_( gif_pop_psc_exp& n )
+gif_pop_psc_exp::Buffers_::Buffers_( gif_pop_psc_exp& n )
   : logger_( n )
 {
 }
 
-nest::gif_pop_psc_exp::Buffers_::Buffers_( const Buffers_&, gif_pop_psc_exp& n )
+gif_pop_psc_exp::Buffers_::Buffers_( const Buffers_&, gif_pop_psc_exp& n )
   : logger_( n )
 {
 }
@@ -246,7 +246,7 @@ nest::gif_pop_psc_exp::Buffers_::Buffers_( const Buffers_&, gif_pop_psc_exp& n )
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::gif_pop_psc_exp::gif_pop_psc_exp()
+gif_pop_psc_exp::gif_pop_psc_exp()
   : Node()
   , P_()
   , S_()
@@ -255,7 +255,7 @@ nest::gif_pop_psc_exp::gif_pop_psc_exp()
   recordablesMap_.create();
 }
 
-nest::gif_pop_psc_exp::gif_pop_psc_exp( const gif_pop_psc_exp& n )
+gif_pop_psc_exp::gif_pop_psc_exp( const gif_pop_psc_exp& n )
   : Node( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -268,7 +268,7 @@ nest::gif_pop_psc_exp::gif_pop_psc_exp( const gif_pop_psc_exp& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::gif_pop_psc_exp::init_buffers_()
+gif_pop_psc_exp::init_buffers_()
 {
   B_.ex_spikes_.clear();  //!< includes resize
   B_.in_spikes_.clear();
@@ -278,7 +278,7 @@ nest::gif_pop_psc_exp::init_buffers_()
 
 
 void
-nest::gif_pop_psc_exp::pre_run_hook()
+gif_pop_psc_exp::pre_run_hook()
 {
   if ( P_.tau_sfa_.size() == 0 )
   {
@@ -380,14 +380,14 @@ nest::gif_pop_psc_exp::pre_run_hook()
 
 
 inline double
-nest::gif_pop_psc_exp::escrate( const double x )
+gif_pop_psc_exp::escrate( const double x )
 {
   return P_.lambda_0_ * std::exp( x / P_.Delta_V_ );
 }
 
 
 inline long
-nest::gif_pop_psc_exp::draw_poisson( const double n_expect_ )
+gif_pop_psc_exp::draw_poisson( const double n_expect_ )
 {
   // Draw Poisson random number of spikes
   // If n_expect_ is too large, the random numbers might get bad. So we use
@@ -434,7 +434,7 @@ nest::gif_pop_psc_exp::draw_poisson( const double n_expect_ )
 
 
 inline long
-nest::gif_pop_psc_exp::draw_binomial( const double n_expect_ )
+gif_pop_psc_exp::draw_binomial( const double n_expect_ )
 {
   double p_bino_ = n_expect_ / P_.N_;
   if ( p_bino_ >= 1. )
@@ -455,7 +455,7 @@ nest::gif_pop_psc_exp::draw_binomial( const double n_expect_ )
 
 
 inline double
-nest::gif_pop_psc_exp::adaptation_kernel( const int k )
+gif_pop_psc_exp::adaptation_kernel( const int k )
 {
   // this function computes the value of the sum of exponentials adaptation
   // kernel at a time lag given by k time steps.
@@ -471,7 +471,7 @@ nest::gif_pop_psc_exp::adaptation_kernel( const int k )
 
 
 inline int
-nest::gif_pop_psc_exp::get_history_size()
+gif_pop_psc_exp::get_history_size()
 {
   // This function automatically determines a suitable history kernel size,
   // see Schwalger et al. (2017), Eq. (86) and Fig 11, Procedure GetHistoryLength.
@@ -492,7 +492,7 @@ nest::gif_pop_psc_exp::get_history_size()
 
 
 void
-nest::gif_pop_psc_exp::update( Time const& origin, const long from, const long to )
+gif_pop_psc_exp::update( Time const& origin, const long from, const long to )
 {
   for ( long lag = from; lag < to; ++lag )
   {
@@ -666,7 +666,7 @@ gif_pop_psc_exp::handle( SpikeEvent& e )
 }
 
 void
-nest::gif_pop_psc_exp::handle( CurrentEvent& e )
+gif_pop_psc_exp::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -678,11 +678,11 @@ nest::gif_pop_psc_exp::handle( CurrentEvent& e )
 }
 
 void
-nest::gif_pop_psc_exp::handle( DataLoggingRequest& e )
+gif_pop_psc_exp::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
 
-}  // namespace
-
 #endif /* HAVE_GSL */
+
+}  // namespace nest

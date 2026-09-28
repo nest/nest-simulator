@@ -25,8 +25,13 @@
 // Includes from nestkernel:
 #include "nest_impl.h"
 
+
+namespace nest
+{
 void
-nest::register_tsodyks2_synapse( const std::string& name )
+register_tsodyks2_synapse( const std::string& name )
 {
   register_connection_model< tsodyks2_synapse >( name );
 }
+
+}  // namespace nest

@@ -19,9 +19,8 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 import ast
-import glob
-import os
 import re
+from pathlib import Path
 
 from sphinx.application import Sphinx
 
@@ -33,7 +32,7 @@ the API documentation (``ref_material/pynest_api/``)
 """
 
 
-def find_all_variables(file_path):
+def find_all_variables(file_path, is_package_root=False):
     """
     Get the names of all functions listed in ``__all__`` in each of the PyNEST
     API files, along with the kernel attributes found in ``__init__.py`` of
@@ -41,23 +40,20 @@ def find_all_variables(file_path):
     """
     all_variables = None
 
-    if "pynest/nest/__init__" in file_path:
-        # Read the __init__.py file
-        with open(file_path, "r") as init_file:
-            file_content = init_file.read()
+    file_content = file_path.read_text(encoding="utf-8")
 
+    if is_package_root:
         # Find the class definition
         match = re.search(r"class\s+NestModule\(.*?\):", file_content, re.DOTALL)
         if match:
             # Find the variable assignments within the class
             all_variables = re.findall(r"(\w+)\s*=\s*KernelAttribute", file_content)
 
-    with open(file_path, "r") as file:
-        try:
-            tree = ast.parse(file.read())
-        except SyntaxError:
-            # Skip files with syntax errors
-            return None
+    try:
+        tree = ast.parse(file_content)
+    except SyntaxError:
+        # Skip files with syntax errors
+        return None
 
     for node in ast.iter_child_nodes(tree):
         if isinstance(node, ast.Assign) and len(node.targets) == 1:
@@ -75,36 +71,39 @@ def find_all_variables(file_path):
     return all_variables
 
 
-def process_directory(directory):
+def process_directory(package_dir):
     """
     Get the PyNEST API filenames and set the keys to the base name
     """
     api_dict = {}
     api_exception_list = ["raster_plot", "visualization", "voltage_trace"]
-    files = glob.glob(directory + "**/*.py", recursive=True)
 
     api_name = None
-    for file in files:
+    for file_path in sorted(package_dir.rglob("*.py")):
+        # Module location relative to ``pynest/nest/``, e.g. ``lib/hl_api_nodes.py``.
+        # Matching on this instead of on the absolute path keeps the result
+        # independent of where the repository happens to be checked out.
+        relative = file_path.relative_to(package_dir)
+
         # ignoring the low level api and connection_helpers and helper modules
-        if "helper" in file or "ll_api" in file:
+        if "helper" in relative.name or "ll_api" in relative.name:
             continue
 
         # get the NestModule for the kernel attributes
-        if "pynest/nest/__init__" in file:
+        is_package_root = relative == Path("__init__.py")
+        if is_package_root:
             api_name = "nest.NestModule"
 
-        parts = file.split(os.path.sep)
-        nest_index = parts.index("nest")
-        module_name = os.path.splitext(parts[-1])[0]
+        module_name = relative.stem
         # only get high level API modules
-        if "hl_" in file:
-            module_path = ".".join(parts[nest_index + 1 : -1])
+        if "hl_" in relative.name:
+            module_path = ".".join(relative.parent.parts)
             api_name = f"nest.{module_path}.{module_name}"
         for item in api_exception_list:
-            if item in file:
+            if item in relative.name:
                 api_name = f"nest.{module_name}"
 
-        all_variables = find_all_variables(file)
+        all_variables = find_all_variables(file_path, is_package_root)
         if all_variables and api_name:
             api_dict[api_name] = all_variables
 
@@ -112,12 +111,13 @@ def process_directory(directory):
 
 
 def get_pynest_list(app, env, docname):
-    directory = "../../pynest/nest/"
+    # ``app.srcdir`` is ``<repo>/doc/htmldoc``, so its second parent is the repo root.
+    package_dir = app.srcdir.parents[1] / "pynest" / "nest"
 
     if not hasattr(env, "pynest_dict"):
         env.pynest_dict = {}
 
-    env.pynest_dict = process_directory(directory)
+    env.pynest_dict = process_directory(package_dir)
 
 
 def api_customizer(app, docname, source):

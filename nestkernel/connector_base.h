@@ -462,7 +462,7 @@ public:
   void
   sort_connections( BlockVector< Source >& sources ) override
   {
-    nest::sort( sources, C_ );
+    sort( sources, C_ );
   }
 
   void

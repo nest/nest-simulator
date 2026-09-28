@@ -168,13 +168,13 @@ nonlinearities_threshold_lin_rate::mult_coupling_in( double )
   return 1.;
 }
 
-typedef rate_neuron_ipn< nest::nonlinearities_threshold_lin_rate > threshold_lin_rate_ipn;
+typedef rate_neuron_ipn< nonlinearities_threshold_lin_rate > threshold_lin_rate_ipn;
 void register_threshold_lin_rate_ipn( const std::string& name );
 
-typedef rate_neuron_opn< nest::nonlinearities_threshold_lin_rate > threshold_lin_rate_opn;
+typedef rate_neuron_opn< nonlinearities_threshold_lin_rate > threshold_lin_rate_opn;
 void register_threshold_lin_rate_opn( const std::string& name );
 
-typedef rate_transformer_node< nest::nonlinearities_threshold_lin_rate > rate_transformer_threshold_lin;
+typedef rate_transformer_node< nonlinearities_threshold_lin_rate > rate_transformer_threshold_lin;
 void register_rate_transformer_threshold_lin( const std::string& name );
 
 

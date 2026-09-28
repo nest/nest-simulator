@@ -25,14 +25,15 @@
 // Includes from nestkernel:
 #include "nest_impl.h"
 
+
+namespace nest
+{
 void
-nest::register_jonke_synapse( const std::string& name )
+register_jonke_synapse( const std::string& name )
 {
   register_connection_model< jonke_synapse >( name );
 }
 
-namespace nest
-{
 
 JonkeCommonProperties::JonkeCommonProperties()
   : CommonSynapseProperties()
@@ -74,5 +75,4 @@ JonkeCommonProperties::set_status( const Dictionary& d, ConnectorModel& cm )
   d.update_value( names::Wmax, Wmax_ );
 }
 
-
-}
+}  // namespace nest

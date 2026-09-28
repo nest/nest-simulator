@@ -45,10 +45,10 @@
 #include "universal_data_logger_impl.h"
 
 
-nest::RecordablesMap< nest::hh_cond_beta_gap_traub > nest::hh_cond_beta_gap_traub::recordablesMap_;
-
 namespace nest
 {
+RecordablesMap< hh_cond_beta_gap_traub > hh_cond_beta_gap_traub::recordablesMap_;
+
 void
 register_hh_cond_beta_gap_traub( const std::string& name )
 {
@@ -74,11 +74,11 @@ extern "C" int
 hh_cond_beta_gap_traub_dynamics( double time, const double y[], double f[], void* pnode )
 {
   // a shorthand
-  typedef nest::hh_cond_beta_gap_traub::State_ S;
+  typedef hh_cond_beta_gap_traub::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::hh_cond_beta_gap_traub& node = *( reinterpret_cast< nest::hh_cond_beta_gap_traub* >( pnode ) );
+  const hh_cond_beta_gap_traub& node = *( reinterpret_cast< hh_cond_beta_gap_traub* >( pnode ) );
 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
@@ -160,7 +160,7 @@ hh_cond_beta_gap_traub_dynamics( double time, const double y[], double f[], void
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::hh_cond_beta_gap_traub::Parameters_::Parameters_()
+hh_cond_beta_gap_traub::Parameters_::Parameters_()
   : g_Na( 20000.0 )       // Sodium Conductance                      (nS)
   , g_K( 6000.0 )         // Potassium Conductance                   (nS)
   , g_L( 10.0 )           // Leak Conductance                        (nS)
@@ -180,7 +180,7 @@ nest::hh_cond_beta_gap_traub::Parameters_::Parameters_()
 {
 }
 
-nest::hh_cond_beta_gap_traub::State_::State_( const Parameters_& p )
+hh_cond_beta_gap_traub::State_::State_( const Parameters_& p )
   : r_( 0 )
 {
   y_[ 0 ] = p.E_L;
@@ -202,7 +202,7 @@ nest::hh_cond_beta_gap_traub::State_::State_( const Parameters_& p )
   y_[ HH_M ] = alpha_m / ( alpha_m + beta_m );
 }
 
-nest::hh_cond_beta_gap_traub::State_::State_( const State_& s )
+hh_cond_beta_gap_traub::State_::State_( const State_& s )
   : r_( s.r_ )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -211,8 +211,8 @@ nest::hh_cond_beta_gap_traub::State_::State_( const State_& s )
   }
 }
 
-nest::hh_cond_beta_gap_traub::State_&
-nest::hh_cond_beta_gap_traub::State_::operator=( const State_& s )
+hh_cond_beta_gap_traub::State_&
+hh_cond_beta_gap_traub::State_::operator=( const State_& s )
 {
   r_ = s.r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -227,7 +227,7 @@ nest::hh_cond_beta_gap_traub::State_::operator=( const State_& s )
  * ---------------------------------------------------------------- */
 
 void
-nest::hh_cond_beta_gap_traub::Parameters_::get( Dictionary& d ) const
+hh_cond_beta_gap_traub::Parameters_::get( Dictionary& d ) const
 {
   d[ names::g_Na ] = g_Na;
   d[ names::g_K ] = g_K;
@@ -248,7 +248,7 @@ nest::hh_cond_beta_gap_traub::Parameters_::get( Dictionary& d ) const
 }
 
 void
-nest::hh_cond_beta_gap_traub::Parameters_::set( const Dictionary& d, Node* node )
+hh_cond_beta_gap_traub::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::g_Na, g_Na, node );
   update_value_param( d, names::g_K, g_K, node );
@@ -289,7 +289,7 @@ nest::hh_cond_beta_gap_traub::Parameters_::set( const Dictionary& d, Node* node 
 }
 
 void
-nest::hh_cond_beta_gap_traub::State_::get( Dictionary& d ) const
+hh_cond_beta_gap_traub::State_::get( Dictionary& d ) const
 {
   d[ names::V_m ] = y_[ V_M ];  // Membrane potential
   d[ names::Act_m ] = y_[ HH_M ];
@@ -298,7 +298,7 @@ nest::hh_cond_beta_gap_traub::State_::get( Dictionary& d ) const
 }
 
 void
-nest::hh_cond_beta_gap_traub::State_::set( const Dictionary& d, const Parameters_&, Node* node )
+hh_cond_beta_gap_traub::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
   update_value_param( d, names::V_m, y_[ V_M ], node );
   update_value_param( d, names::Act_m, y_[ HH_M ], node );
@@ -310,7 +310,7 @@ nest::hh_cond_beta_gap_traub::State_::set( const Dictionary& d, const Parameters
   }
 }
 
-nest::hh_cond_beta_gap_traub::Buffers_::Buffers_( hh_cond_beta_gap_traub& n )
+hh_cond_beta_gap_traub::Buffers_::Buffers_( hh_cond_beta_gap_traub& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -320,7 +320,7 @@ nest::hh_cond_beta_gap_traub::Buffers_::Buffers_( hh_cond_beta_gap_traub& n )
   // init_buffers_().
 }
 
-nest::hh_cond_beta_gap_traub::Buffers_::Buffers_( const Buffers_&, hh_cond_beta_gap_traub& n )
+hh_cond_beta_gap_traub::Buffers_::Buffers_( const Buffers_&, hh_cond_beta_gap_traub& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -334,7 +334,7 @@ nest::hh_cond_beta_gap_traub::Buffers_::Buffers_( const Buffers_&, hh_cond_beta_
  * Default and copy constructor for node, and destructor
  * ---------------------------------------------------------------- */
 
-nest::hh_cond_beta_gap_traub::hh_cond_beta_gap_traub()
+hh_cond_beta_gap_traub::hh_cond_beta_gap_traub()
   : ArchivingNode()
   , P_()
   , S_( P_ )
@@ -344,7 +344,7 @@ nest::hh_cond_beta_gap_traub::hh_cond_beta_gap_traub()
   Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
 }
 
-nest::hh_cond_beta_gap_traub::hh_cond_beta_gap_traub( const hh_cond_beta_gap_traub& n )
+hh_cond_beta_gap_traub::hh_cond_beta_gap_traub( const hh_cond_beta_gap_traub& n )
   : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -353,7 +353,7 @@ nest::hh_cond_beta_gap_traub::hh_cond_beta_gap_traub( const hh_cond_beta_gap_tra
   Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
 }
 
-nest::hh_cond_beta_gap_traub::~hh_cond_beta_gap_traub()
+hh_cond_beta_gap_traub::~hh_cond_beta_gap_traub()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
@@ -375,7 +375,7 @@ nest::hh_cond_beta_gap_traub::~hh_cond_beta_gap_traub()
  * ---------------------------------------------------------------- */
 
 void
-nest::hh_cond_beta_gap_traub::init_buffers_()
+hh_cond_beta_gap_traub::init_buffers_()
 {
   B_.spike_exc_.clear();  // includes resize
   B_.spike_inh_.clear();  // includes resize
@@ -443,19 +443,19 @@ nest::hh_cond_beta_gap_traub::init_buffers_()
 }
 
 double
-nest::hh_cond_beta_gap_traub::get_normalisation_factor( double tau_rise, double tau_decay )
+hh_cond_beta_gap_traub::get_normalisation_factor( double tau_rise, double tau_decay )
 {
-  return nest::beta_normalization_factor( tau_rise, tau_decay );
+  return beta_normalization_factor( tau_rise, tau_decay );
 }
 
 void
-nest::hh_cond_beta_gap_traub::pre_run_hook()
+hh_cond_beta_gap_traub::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
-  V_.PSConInit_E = nest::hh_cond_beta_gap_traub::get_normalisation_factor( P_.tau_rise_ex, P_.tau_decay_ex );
-  V_.PSConInit_I = nest::hh_cond_beta_gap_traub::get_normalisation_factor( P_.tau_rise_in, P_.tau_decay_in );
+  V_.PSConInit_E = hh_cond_beta_gap_traub::get_normalisation_factor( P_.tau_rise_ex, P_.tau_decay_ex );
+  V_.PSConInit_I = hh_cond_beta_gap_traub::get_normalisation_factor( P_.tau_rise_in, P_.tau_decay_in );
 
   V_.refractory_counts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
   V_.U_old_ = S_.y_[ State_::V_M ];
@@ -469,10 +469,7 @@ nest::hh_cond_beta_gap_traub::pre_run_hook()
  * ---------------------------------------------------------------- */
 
 bool
-nest::hh_cond_beta_gap_traub::update_( Time const& origin,
-  const long from,
-  const long to,
-  const bool called_from_wfr_update )
+hh_cond_beta_gap_traub::update_( Time const& origin, const long from, const long to, const bool called_from_wfr_update )
 {
   const size_t interpolation_order = kernel().simulation_manager.get_wfr_interpolation_order();
   const double wfr_tol = kernel().simulation_manager.get_wfr_tol();
@@ -629,7 +626,7 @@ nest::hh_cond_beta_gap_traub::update_( Time const& origin,
 }
 
 void
-nest::hh_cond_beta_gap_traub::handle( SpikeEvent& e )
+hh_cond_beta_gap_traub::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -648,7 +645,7 @@ nest::hh_cond_beta_gap_traub::handle( SpikeEvent& e )
 }
 
 void
-nest::hh_cond_beta_gap_traub::handle( CurrentEvent& e )
+hh_cond_beta_gap_traub::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -660,13 +657,13 @@ nest::hh_cond_beta_gap_traub::handle( CurrentEvent& e )
 }
 
 void
-nest::hh_cond_beta_gap_traub::handle( DataLoggingRequest& e )
+hh_cond_beta_gap_traub::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
 
 void
-nest::hh_cond_beta_gap_traub::handle( GapJunctionEvent& e )
+hh_cond_beta_gap_traub::handle( GapJunctionEvent& e )
 {
   const double weight = e.get_weight();
 

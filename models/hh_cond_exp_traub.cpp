@@ -42,10 +42,10 @@
 #include "universal_data_logger_impl.h"
 
 
-nest::RecordablesMap< nest::hh_cond_exp_traub > nest::hh_cond_exp_traub::recordablesMap_;
-
 namespace nest
 {
+RecordablesMap< hh_cond_exp_traub > hh_cond_exp_traub::recordablesMap_;
+
 void
 register_hh_cond_exp_traub( const std::string& name )
 {
@@ -71,11 +71,11 @@ extern "C" int
 hh_cond_exp_traub_dynamics( double, const double y[], double f[], void* pnode )
 {
   // a shorthand
-  typedef nest::hh_cond_exp_traub::State_ S;
+  typedef hh_cond_exp_traub::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::hh_cond_exp_traub& node = *( reinterpret_cast< nest::hh_cond_exp_traub* >( pnode ) );
+  const hh_cond_exp_traub& node = *( reinterpret_cast< hh_cond_exp_traub* >( pnode ) );
 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
@@ -121,7 +121,7 @@ hh_cond_exp_traub_dynamics( double, const double y[], double f[], void* pnode )
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::hh_cond_exp_traub::Parameters_::Parameters_()
+hh_cond_exp_traub::Parameters_::Parameters_()
   : g_Na( 20000.0 )  // Sodium Conductance (nS)
   , g_K( 6000.0 )    // K Conductance      (nS)
   , g_L( 10.0 )      // Leak Conductance   (nS)
@@ -139,7 +139,7 @@ nest::hh_cond_exp_traub::Parameters_::Parameters_()
 {
 }
 
-nest::hh_cond_exp_traub::State_::State_( const Parameters_& p )
+hh_cond_exp_traub::State_::State_( const Parameters_& p )
   : r_( 0 )
 {
   y_[ 0 ] = p.E_L;
@@ -161,7 +161,7 @@ nest::hh_cond_exp_traub::State_::State_( const Parameters_& p )
   y_[ HH_M ] = alpha_m / ( alpha_m + beta_m );
 }
 
-nest::hh_cond_exp_traub::State_::State_( const State_& s )
+hh_cond_exp_traub::State_::State_( const State_& s )
   : r_( s.r_ )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -170,8 +170,8 @@ nest::hh_cond_exp_traub::State_::State_( const State_& s )
   }
 }
 
-nest::hh_cond_exp_traub::State_&
-nest::hh_cond_exp_traub::State_::operator=( const State_& s )
+hh_cond_exp_traub::State_&
+hh_cond_exp_traub::State_::operator=( const State_& s )
 {
   r_ = s.r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -186,7 +186,7 @@ nest::hh_cond_exp_traub::State_::operator=( const State_& s )
  * ---------------------------------------------------------------- */
 
 void
-nest::hh_cond_exp_traub::Parameters_::get( Dictionary& d ) const
+hh_cond_exp_traub::Parameters_::get( Dictionary& d ) const
 {
   d[ names::g_Na ] = g_Na;
   d[ names::g_K ] = g_K;
@@ -205,7 +205,7 @@ nest::hh_cond_exp_traub::Parameters_::get( Dictionary& d ) const
 }
 
 void
-nest::hh_cond_exp_traub::Parameters_::set( const Dictionary& d, Node* node )
+hh_cond_exp_traub::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::g_Na, g_Na, node );
   update_value_param( d, names::g_K, g_K, node );
@@ -239,7 +239,7 @@ nest::hh_cond_exp_traub::Parameters_::set( const Dictionary& d, Node* node )
 }
 
 void
-nest::hh_cond_exp_traub::State_::get( Dictionary& d ) const
+hh_cond_exp_traub::State_::get( Dictionary& d ) const
 {
   d[ names::V_m ] = y_[ V_M ];  // Membrane potential
   d[ names::Act_m ] = y_[ HH_M ];
@@ -248,7 +248,7 @@ nest::hh_cond_exp_traub::State_::get( Dictionary& d ) const
 }
 
 void
-nest::hh_cond_exp_traub::State_::set( const Dictionary& d, const Parameters_&, Node* node )
+hh_cond_exp_traub::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
   update_value_param( d, names::V_m, y_[ V_M ], node );
   update_value_param( d, names::Act_m, y_[ HH_M ], node );
@@ -260,7 +260,7 @@ nest::hh_cond_exp_traub::State_::set( const Dictionary& d, const Parameters_&, N
   }
 }
 
-nest::hh_cond_exp_traub::Buffers_::Buffers_( hh_cond_exp_traub& n )
+hh_cond_exp_traub::Buffers_::Buffers_( hh_cond_exp_traub& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -270,7 +270,7 @@ nest::hh_cond_exp_traub::Buffers_::Buffers_( hh_cond_exp_traub& n )
   // init_buffers_().
 }
 
-nest::hh_cond_exp_traub::Buffers_::Buffers_( const Buffers_&, hh_cond_exp_traub& n )
+hh_cond_exp_traub::Buffers_::Buffers_( const Buffers_&, hh_cond_exp_traub& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -284,7 +284,7 @@ nest::hh_cond_exp_traub::Buffers_::Buffers_( const Buffers_&, hh_cond_exp_traub&
  * Default and copy constructor for node, and destructor
  * ---------------------------------------------------------------- */
 
-nest::hh_cond_exp_traub::hh_cond_exp_traub()
+hh_cond_exp_traub::hh_cond_exp_traub()
   : ArchivingNode()
   , P_()
   , S_( P_ )
@@ -293,7 +293,7 @@ nest::hh_cond_exp_traub::hh_cond_exp_traub()
   recordablesMap_.create();
 }
 
-nest::hh_cond_exp_traub::hh_cond_exp_traub( const hh_cond_exp_traub& n )
+hh_cond_exp_traub::hh_cond_exp_traub( const hh_cond_exp_traub& n )
   : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -301,7 +301,7 @@ nest::hh_cond_exp_traub::hh_cond_exp_traub( const hh_cond_exp_traub& n )
 {
 }
 
-nest::hh_cond_exp_traub::~hh_cond_exp_traub()
+hh_cond_exp_traub::~hh_cond_exp_traub()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
@@ -323,7 +323,7 @@ nest::hh_cond_exp_traub::~hh_cond_exp_traub()
  * ---------------------------------------------------------------- */
 
 void
-nest::hh_cond_exp_traub::init_buffers_()
+hh_cond_exp_traub::init_buffers_()
 {
   B_.spike_exc_.clear();  // includes resize
   B_.spike_inh_.clear();  // includes resize
@@ -371,7 +371,7 @@ nest::hh_cond_exp_traub::init_buffers_()
 }
 
 void
-nest::hh_cond_exp_traub::pre_run_hook()
+hh_cond_exp_traub::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -383,7 +383,7 @@ nest::hh_cond_exp_traub::pre_run_hook()
  * Update and spike handling functions
  * ---------------------------------------------------------------- */
 void
-nest::hh_cond_exp_traub::update( Time const& origin, const long from, const long to )
+hh_cond_exp_traub::update( Time const& origin, const long from, const long to )
 {
   for ( long lag = from; lag < to; ++lag )
   {
@@ -437,7 +437,7 @@ nest::hh_cond_exp_traub::update( Time const& origin, const long from, const long
 }
 
 void
-nest::hh_cond_exp_traub::handle( SpikeEvent& e )
+hh_cond_exp_traub::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -456,7 +456,7 @@ nest::hh_cond_exp_traub::handle( SpikeEvent& e )
 }
 
 void
-nest::hh_cond_exp_traub::handle( CurrentEvent& e )
+hh_cond_exp_traub::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -468,7 +468,7 @@ nest::hh_cond_exp_traub::handle( CurrentEvent& e )
 }
 
 void
-nest::hh_cond_exp_traub::handle( DataLoggingRequest& e )
+hh_cond_exp_traub::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }

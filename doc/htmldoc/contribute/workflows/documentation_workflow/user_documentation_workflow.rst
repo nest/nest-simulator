@@ -166,7 +166,8 @@ If you want to edit Model docs, PyNEST API files, or PyNEST examples, you will n
    * - Type of documentation
      - Source location
    * - Model docs
-     - ``nest-simulator/models/*.h`` in the section `BeginUserDocs`
+     - ``nest-simulator/models/*.h`` and ``nest-simulator/nestkernel/*.h``,
+       in the section `BeginUserDocs`
    * - PyNEST API
      - ``nest-simulator/pynest/nest/**/*.py``
    * - PyNEST examples

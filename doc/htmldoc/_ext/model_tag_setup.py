@@ -19,363 +19,321 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+"""Render the user documentation in NEST's C++ headers into reStructuredText.
+
+User documentation is written inside ``BeginUserDocs``/``EndUserDocs`` blocks in the
+C++ headers of every directory listed in `HEADER_DIRS`. These are
+
+* ``models/``: neuron, synapse and device models, and
+* ``nestkernel/``: kernel components that users configure directly, such as the
+  recording and stimulation backends (``recording_backend_*.h``,
+  ``stimulation_backend_mpi.h``), ``recording_device.h``, ``stimulation_device.h`` and
+  ``growth_curve.h``.
+
+This extension
+
+* extracts each block and writes it as a standalone page under ``doc/htmldoc/models/``,
+  whichever directory the header comes from, so a kernel page is referenced like a
+  model page, for example ``/models/recording_backend_memory``,
+* collects the block tags so ``models/index`` can offer a tag filter, and
+* renders the pages that use those tags as Jinja templates.
+
+Every block begins with a ``Short description`` section whose single paragraph names the
+model. That paragraph becomes the page title; the remainder of the block is copied
+through unchanged.
+"""
+
+from __future__ import annotations
+
 import json
-import logging
 import re
+from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
-from pprint import pformat
+from typing import Any, Sequence
 
-log = logging.getLogger(__name__)
-log.setLevel(level=logging.WARNING)
-# The following function is used in two other functions, in two separate Sphinx events
+from sphinx.util import logging
 
+logger = logging.getLogger(__name__)
 
-def extract_model_text(app):
-    """
-    Function to extract user documentation from header files.
+#: Section whose contents become the title of a generated page.
+SHORT_DESCRIPTION = "Short description"
 
-    This function searches for documentation blocks in header files located in
-    the "models" and "nestkernel" directories, under the Sphinx source
-    directory. The documentation blocks are identified by markers
-    "BeginUserDocs" and "EndUserDocs".
+#: Separates the model name from its short description in a page title.
+EN_DASH = "–"
 
-    Yields
-    ------
+#: Characters reStructuredText accepts as section adornment.
+ADORNMENTS = frozenset("!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~")
 
-    tuple: A tuple containing the match object and the file path for each file
-           where documentation is found.
+#: Directories, relative to the repository root, whose headers are searched for user
+#: documentation. Only the top level of each directory is searched. Adding a directory
+#: here is enough to publish its blocks; its pages are also written to ``models/``.
+HEADER_DIRS = ("models", "nestkernel")
 
-    Note
-    ----
-    The documentation block format is expected to be:
+#: Tag that keeps a model out of the tag filter but leaves it in the toctree.
+NOINDEX = "NOINDEX"
 
-    BeginUserDocs: [tags]
-    Documentation text
-    EndUserDocs
-    """
-    # ``app.srcdir`` is ``<repo>/doc/htmldoc``, so its second parent is the repo root.
-    repo_root = app.srcdir.parents[1]
-    model_paths = sorted((repo_root / "models").glob("*.h"))
-    nestkernel_paths = sorted((repo_root / "nestkernel").glob("*.h"))
-    file_paths = model_paths + nestkernel_paths
+#: Pages rendered as Jinja templates against the collected model and tag data.
+TEMPLATE_PAGES = frozenset({"models/index", "neurons/index", "synapses/index", "devices/index", "neurons/neuron_types"})
 
-    userdoc_re = re.compile(
-        r"""
-    BeginUserDocs:\s*            # Match 'BeginUserDocs:' followed by any whitespace
-    (?P<tags>(?:[\w -]+(?:,\s*)?)+) # Match tags (terms, spaces, commas, hyphens)
-    \n\n                          # Match two newlines
-    (?P<doc>.*?)                 # Capture the document text non-greedily
-    (?=EndUserDocs)              # Positive lookahead for 'EndUserDocs'
-    """,
-        re.VERBOSE | re.DOTALL,
-    )
-
-    for file_path in file_paths:
-        match = userdoc_re.search(file_path.read_text(encoding="utf-8"))
-        if not match:
-            log.info("No user documentation found in %s", str(file_path))
-            continue
-        yield match, file_path
+#: A ``BeginUserDocs`` block: a tag line, a blank line, then the documentation itself.
+USERDOC_RE = re.compile(r"BeginUserDocs:[ \t]*(?P<tags>.*?)\n\n(?P<doc>.*?)(?=EndUserDocs)", re.DOTALL)
 
 
-# The following block of functions are called at Sphinx core event config-inited
+class UserDocError(ValueError):
+    """Raised when a user documentation block is not shaped as expected."""
 
 
-def create_rst_files(app, config):
-    """
-    Generates reStructuredText (RST) files from header files containing user documentation.
+@dataclass(frozen=True)
+class UserDoc:
+    """One ``BeginUserDocs`` block extracted from a C++ header."""
 
-    This function creates an output directory if it does not exist and processes header
-    files located in predefined directories. It extracts user documentation blocks from
-    the files, optionally modifies the documentation, and writes the resulting text to
-    RST files.
+    path: Path
+    tags: tuple[str, ...]
+    body: str
 
-    Parameters
-    ----------
-    app : Sphinx application object
-        The Sphinx application instance, used to access the application's configuration.
-    config : Sphinx config object
-        The configuration object for the Sphinx application.
-
-    """
-
-    outdir = app.srcdir / "models"
-    if not outdir.exists():
-        log.info("creating output directory %s", outdir)
-        outdir.mkdir()
-    outnames = []
-    for match, file_path in extract_model_text(app):
-        doc = match.group("doc")
-        filename = file_path.name
-        outname = filename.replace(".h", ".rst")
-        try:
-            doc = rewrite_short_description(doc, filename)
-        except ValueError as e:
-            log.warning("Documentation added unfixed: %s", e)
-        write_rst_files(doc, outdir, outname)
+    @property
+    def stem(self) -> str:
+        """Model name, taken from the header file name."""
+        return self.path.stem
 
 
-def rewrite_short_description(doc, filename, short_description="Short description"):
-    """
-    Modify a given text by replacing the first section named as given in
-    `short_description` by the filename and content of that section.
+# The following functions turn a documentation block into a reST page.
+
+
+def _skip_blank(lines: Sequence[str], index: int) -> int:
+    """Return the index of the first non-blank line at or after `index`."""
+    while index < len(lines) and not lines[index].strip():
+        index += 1
+    return index
+
+
+def _take_paragraph(lines: Sequence[str], index: int) -> tuple[list[str], int]:
+    """Collect stripped lines up to the next blank one, with the index that follows."""
+    paragraph = []
+    while index < len(lines) and lines[index].strip():
+        paragraph.append(lines[index].strip())
+        index += 1
+    return paragraph, index
+
+
+def render_userdoc(body: str, stem: str, *, heading: str = SHORT_DESCRIPTION) -> str:
+    """Render one extracted documentation block as a standalone reST document.
+
+    The block's `heading` section holds a single paragraph naming the model, which
+    becomes the document title. Everything after that paragraph is copied through
+    verbatim. Since the paragraph ends at the first blank line, section markup further
+    down cannot be drawn into the title, whatever adornment characters it uses.
 
     Parameters
     ----------
-    doc : str
-      restructured text with all sections
-    filename : str, path
-      name that is inserted in the replaced title (and used for useful error
-      messages).
-    short_description : str
-      title of the section that is to be rewritten to the document title
-
+    body : str
+        Documentation block as extracted from the header.
+    stem : str
+        Model name, used as the first half of the title.
+    heading : str
+        Title of the section that supplies the short description.
     Returns
     -------
     str
-        original parameter doc with short_description section replaced
+        reStructuredText with the `heading` section replaced by a document title.
+
+    Raises
+    ------
+    UserDocError
+        If the block does not begin with a non-empty, underlined `heading` section.
     """
+    lines = body.split("\n")
+    found = lines[0].strip() if lines else ""
+    if len(lines) < 2 or found != heading:
+        raise UserDocError(f"user documentation must start with a {heading!r} section, found {found!r}")
 
-    titles = getTitles(doc)
-    if not titles:
-        raise ValueError("No sections found in '%s'!" % filename)
-    name = Path(filename).stem
-    for title, nexttitle in zip(titles, titles[1:] + [None]):
-        if title.group(1) != short_description:
-            continue
-        secstart = title.end()
-        secend = len(doc) + 1  # last section ends at end of document
-        if nexttitle:
-            secend = nexttitle.start()
-        sdesc = doc[secstart:secend].strip().replace("\n", " ")
-        fixed_title = "%s – %s" % (name, sdesc)
-        return doc[: title.start()] + fixed_title + "\n" + "=" * len(fixed_title) + "\n\n" + doc[secend:]
-    raise ValueError("No section '%s' found in %s!" % (short_description, filename))
+    underline = lines[1].rstrip()
+    if len(underline) < 3 or len(set(underline)) != 1 or underline[0] not in ADORNMENTS:
+        raise UserDocError(f"{heading!r} is not underlined by a section adornment, found {underline!r}")
+
+    paragraph, index = _take_paragraph(lines, _skip_blank(lines, 2))
+    if not paragraph:
+        raise UserDocError(f"the {heading!r} section is empty")
+
+    title = f"{stem} {EN_DASH} {' '.join(paragraph)}"
+    return "\n".join([title, "=" * len(title), "", *lines[_skip_blank(lines, index) :]])
 
 
-def getTitles(text):
-    """
-    extract all sections from the given RST file
+# The following functions read the headers. The result is cached because both the
+# config-inited and the env-before-read-docs handler need it.
+
+
+@lru_cache(maxsize=None)
+def _collect_userdocs(srcdir: str) -> tuple[UserDoc, ...]:
+    """Read the headers in each of `HEADER_DIRS` once and return their documentation.
+
+    Only ``*.h`` files at the top level of each directory are read, not subdirectories.
+    Only the first ``BeginUserDocs`` block of a header is used.
 
     Parameters
     ----------
-
-    text : str
-      restructuredtext user documentation
+    srcdir : str
+        Sphinx source directory, two levels below the repository root.
 
     Returns
     -------
-
-    list
-      elements are the section title re.match objects
+    tuple of UserDoc
+        One entry per header that carries a documentation block, sorted by file name so
+        that the generated toctree and tag data are reproducible.
     """
-    titlechar = r"\+"
-    title_re = re.compile(r"^(?P<title>.+)\n(?P<underline>" + titlechar + r"+)$", re.MULTILINE)
-    titles = []
-    # extract all titles
-    for match in title_re.finditer(text):
-        log.debug("MATCH from %s to %s: %s", match.start(), match.end(), pformat(match.groupdict()))
-        if len(match.group("title")) != len(match.group("underline")):
-            log.warning(
-                "Length of section title '%s' (%d) does not match length of underline (%d)",
-                match.group("title"),
-                len(match.group("title")),
-                len(match.group("underline")),
-            )
-        titles.append(match)
-    return titles
+    root = Path(srcdir).parents[1]
+    userdocs = []
+    for directory in HEADER_DIRS:
+        for path in sorted((root / directory).glob("*.h")):
+            match = USERDOC_RE.search(path.read_text(encoding="utf-8"))
+            if match is None:
+                logger.debug("no user documentation in %s", path)
+                continue
+            tags = tuple(tag.strip() for tag in match["tags"].split(",") if tag.strip())
+            userdocs.append(UserDoc(path=path, tags=tags, body=match["doc"]))
+    return tuple(userdocs)
 
 
-def write_rst_files(doc, outdir, outname):
-    """
-    Write raw rst to a file and generate a wrapper with index
-    """
-    (outdir / outname).write_text(doc, encoding="utf-8")
+# The following function is called at Sphinx core event config-inited.
 
 
-# The following block of functions are called at Sphinx core event
-# env-before-read-docs
+def create_rst_files(app: Any, config: Any) -> None:
+    """Write one reST page per documented header into the ``models`` source directory.
 
+    Headers from every one of `HEADER_DIRS` go to ``models``, so kernel components such
+    as the recording backends sit next to the models they are used with.
 
-def get_model_tags(app, env, docname):
-    """
-    Prepares the environment dictionaries by loading models, tags, and their combinations
-    from files, and writes this data to a JSON file for client-side use.
-
-    This function ensures that two dictionaries (`model_dict` and `tag_dict`) are
-    initialized in the environment if they don't already exist. It then populates `model_dict`
-    with model names extracted from the specified directory and uses these models to populate
-    `tag_dict` with tags.
+    A block that cannot be rendered is reported as a build warning and written with the
+    model name as its title, so that the page stays valid for the toctree and the
+    problem is visible rather than silent.
 
     Parameters
     ----------
     app
-        Sphinx application object
+        Sphinx application object.
+    config
+        Sphinx config object; unused, required by the event signature.
+    """
+    outdir = Path(app.srcdir) / "models"
+    outdir.mkdir(parents=True, exist_ok=True)
+    for userdoc in _collect_userdocs(str(app.srcdir)):
+        try:
+            text = render_userdoc(userdoc.body, userdoc.stem)
+        except UserDocError as error:
+            logger.warning("%s", error, location=str(userdoc.path))
+            text = "\n".join([userdoc.stem, "=" * len(userdoc.stem), "", userdoc.body])
+        (outdir / f"{userdoc.stem}.rst").write_text(text, encoding="utf-8")
+
+
+# The following functions are called at Sphinx core event env-before-read-docs.
+
+
+def get_model_tags(app: Any, env: Any, docname: str) -> None:
+    """Store model and tag data on the build environment and export it as JSON.
+
+    Parameters
+    ----------
+    app
+        Sphinx application object.
     env
-        The build environment object of Sphinx, which stores shared data between the builders
+        Sphinx build environment, which carries the data to the template renderer.
     docname : str
-        The name of the document being processed.
+        Name of the document being processed; unused, required by the event signature.
 
     Note
     ----
-
-    Writes to `static/data/filter_model.json` which is used client-side.
+    Writes ``static/data/filter_model.json``, which is loaded client-side.
     """
-
-    # Initialize necessary dictionaries if not already present
-    if not hasattr(env, "tag_dict"):
-        env.tag_dict = {}
-
-    if not hasattr(env, "model_dict"):
-        env.model_dict = {}
-
-    # Extract models and tags, and find tag-to-model relationships
     env.model_dict = prepare_model_dict(app)
     env.tag_dict = find_models_in_tag_combinations(env.model_dict)
 
-    json_output = app.srcdir / "static" / "data" / "filter_model.json"
-    json_output.parent.mkdir(exist_ok=True, parents=True)
-    # Write the JSON output directly to a file used for dynamically loading data client-side
+    json_output = Path(app.srcdir, "static", "data", "filter_model.json")
+    json_output.parent.mkdir(parents=True, exist_ok=True)
     json_output.write_text(json.dumps(env.tag_dict, indent=2), encoding="utf-8")
 
 
-def prepare_model_dict(app):
-    """
-    Extracts user documentation tags from header files and organizes them into a dictionary.
+def prepare_model_dict(app: Any) -> dict[str, list[str]]:
+    """Map each generated page to the tags of its documentation block.
+    A model tagged ``NOINDEX`` keeps its entry, but with no tags: it stays in the
+    toctree while staying out of the tag filter.
 
-    This function iterates through the header files found by `extract_model_text()`, extracts
-    the tags from each file, and creates a dictionary where the keys are the filenames (with
-    the ".h" extension replaced by ".html") and the values are lists of tags.
-
-    The tags are expected to be comma-separated and will be stripped of whitespace. Tags
-    that are empty after stripping are excluded from the list.
+    Parameters
+    ----------
+    app
+        Sphinx application object.
 
     Returns
     -------
-
     dict
-        A dictionary with filenames as keys and lists of tags as values.
+        Page file names mapped to their list of tags.
 
     Example
     -------
-
-    If a header file named "example.h" contains the following documentation block:
-
-        BeginUserDocs: neuron, adaptive threshold, integrate-and-fire
-        ...
-        EndUserDocs
-
-    The resulting dictionary will have an entry:
-        {
-            "example.html": ["neuron", "adaptive_threshold", "integrate-and-fire"]
-        }
+    A header ``example.h`` beginning with ``BeginUserDocs: neuron, integrate-and-fire``
+    yields ``{"example.html": ["neuron", "integrate-and-fire"]}``.
     """
-    models_dict = {}
-
-    for match, file_path in extract_model_text(app):
-        filename = file_path.name
-        formatted_path = filename.replace(".h", ".html")
-
-        # Initialize with no tags for the file
-        models_dict[formatted_path] = []
-
-        tags = [t.strip() for t in match.group("tags").split(",")]
-        if "NOINDEX" in tags:
-            continue
-        # Strip whitespace from each tag, replace spaces with underscores, and filter out empty strings
-        tags = [tag.strip() for tag in tags if tag.strip()]
-        models_dict[formatted_path] = tags
-
-    return models_dict
+    return {
+        f"{userdoc.stem}.html": [] if NOINDEX in userdoc.tags else list(userdoc.tags)
+        for userdoc in _collect_userdocs(str(app.srcdir))
+    }
 
 
-def find_models_in_tag_combinations(models_dict):
-    """
-    Processes a dictionary mapping models to tags to create a list of tag-model combinations.
-
-    This function reverses a dictionary that maps models to a list of tags, creating a new
-    mapping from tags to models. It then creates a structured list of dictionaries, each
-    containing information about a tag and the associated models.
+def find_models_in_tag_combinations(models_dict: dict[str, list[str]]) -> list[dict[str, Any]]:
+    """Invert a model-to-tags mapping into a list of tags with their models.
 
     Parameters
     ----------
-
-    models_dict : dict[str, list[str]]
-        A dictionary where keys are model identifiers and values are lists of tags.
+    models_dict : dict
+        Model identifiers mapped to their lists of tags.
 
     Returns
     -------
-
-    result_list : list[dict]
-        A list of dictionaries, each containing the tag, associated models, and the count of models.
-
+    list of dict
+        One entry per tag, holding the tag, its models, and how many there are.
     """
-    # Reverse the models_dict to map tags to models
-    model_to_tags = {}
+    model_to_tags: dict[str, set[str]] = {}
     for model, tags in models_dict.items():
         for tag in tags:
-            if tag not in model_to_tags:
-                model_to_tags[tag] = set()
-            model_to_tags[tag].add(model)
+            model_to_tags.setdefault(tag, set()).add(model)
 
-    result_list = []
-
-    for tag, models in model_to_tags.items():
-        if isinstance(models, set):
-            models = list(models)  # Convert set to list for JSON serialization
-
-        tag_info = {"tag": tag, "models": models, "count": len(models)}  # Number of models
-        result_list.append(tag_info)
-
-    return result_list
+    return [
+        {"tag": tag, "models": sorted(models), "count": len(models)} for tag, models in sorted(model_to_tags.items())
+    ]
 
 
-# The following function is called at Sphinx core even source read
+# The following function is called at Sphinx core event source-read.
 
 
-def template_renderer(app, docname, source):
-    """
-    Modifies the source content for specified templates by rendering them with model and tag data.
-
-    Checks if the document being processed is one of the specified templates. If it is,
-    it retrieves the models and  tags from the environment and
-    uses this data to render the template content.
+def template_renderer(app: Any, docname: str, source: list[str]) -> None:
+    """Render the pages that present model and tag data as Jinja templates.
 
     Parameters
     ----------
-
     app
-        Sphinx application object
+        Sphinx application object.
     docname : str
-        The name of the document being processed, used to determine if the
-        current document matches one of the specified templates.
+        Name of the document being processed.
     source : list
-        A list containing the source content of the document; modified in-place
-        and used to inject the rendered content.
+        Single-element list holding the document source, modified in place.
     """
+    if docname not in TEMPLATE_PAGES:
+        return
+
     env = app.builder.env
-    template_files = ["models/index", "neurons/index", "synapses/index", "devices/index", "neurons/neuron_types"]
-
-    # Render the document if it matches one of the specified templates
-    if any(docname == template_file for template_file in template_files):
-        html_context = {"tag_dict": env.tag_dict, "model_dict": env.model_dict}
-        src = source[0]
-        rendered = app.builder.templates.render_string(src, html_context)
-        source[0] = rendered
+    html_context = {"tag_dict": env.tag_dict, "model_dict": env.model_dict}
+    source[0] = app.builder.templates.render_string(source[0], html_context)
 
 
-def setup(app):
-    """
-    Configures application hooks for the Sphinx documentation builder.
-
-    This function connects other functions to run during separte Sphinx events
-    """
+def setup(app: Any) -> dict[str, Any]:
+    """Connect the handlers above to the Sphinx events that drive them."""
     app.connect("config-inited", create_rst_files)
     app.connect("env-before-read-docs", get_model_tags)
     app.connect("source-read", template_renderer)
 
     return {
-        "version": "0.1",
+        "version": "0.2",
+        "env_version": 1,
         "parallel_read_safe": True,
         "parallel_write_safe": True,
     }

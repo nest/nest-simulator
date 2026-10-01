@@ -815,17 +815,21 @@ def llapi_dimension_parameter(object list_of_pos_params):
 
 def llapi_get_connections(object params):
     cdef Dictionary params_Dictionary = pydict_to_Dictionary(params)
-    cdef std_deque[ConnectionID] connections
+    cdef std_vector[std_deque[ConnectionID]] connections
 
     connections = get_connections(params_Dictionary)
 
     cdef connections_list = []
-    cdef std_deque[ConnectionID].iterator it = connections.begin()
-    while it != connections.end():
-        obj = ConnectionObject()
-        obj._set_connection_id(deref(it))
-        connections_list.append(obj)
-        inc(it)
+    cdef std_vector[std_deque[ConnectionID]].iterator vd_it = connections.begin()
+    cdef std_deque[ConnectionID].iterator it
+    while vd_it != connections.end():
+        it = deref(vd_it).begin()
+        while it != deref(vd_it).end():
+            obj = ConnectionObject()
+            obj._set_connection_id(deref(it))
+            connections_list.append(obj)
+            inc(it)
+        inc(vd_it)
 
     return nest.SynapseCollection(connections_list)
 

@@ -297,7 +297,7 @@ div[role="main"] .md-source {
 }
 /* add admonition warning / info (?) */
 .md-nav__extra_link{
-  color: var(--nest-orange);
+  display: none;
 }
 div.admonition .md-typeset a > code {
 	color: white;

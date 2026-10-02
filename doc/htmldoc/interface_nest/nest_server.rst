@@ -42,12 +42,12 @@ write your own client using one of the recipes provided in the :ref:`section on 
 backend. It supports server instances running either locally or remotely. More details about how to configure and run
 this setup can be found in the documentation of NEST Desktop.
 
-Last but not least, the latest version of the `HBP Neurorobotic Platform <https://neurorobotics.net/>`_ use the NEST
-Server to run the neuronal simulation as part of closed-loop robotic experiments. As it has rather specific requirements
-on the client side, it uses a custom client for the NEST Server instead of the generic one shipped with NEST.
+Last but not least, a version of the `HBP Neurorobotic Platform <https://neurorobotics.net/>`_ use the NEST Server to
+run the neuronal simulation as part of closed-loop robotic experiments. As it has rather specific requirements on the
+client side, it uses a custom client for the NEST Server instead of the generic one shipped with NEST.
 
 If you yourself have an interesting situation in which you use NEST Server and would like to have it listed here, feel
-free to `drop us a line <https://github.com/nest/nest-simulator/issues>`_.
+free to `drop us a line <https://github.com/nest/nest-server/issues>`_.
 
 Install and run NEST Server
 ---------------------------
@@ -55,9 +55,13 @@ Install and run NEST Server
 NEST Server is included in all source code distributions of NEST and consequently, also available in derived packages,
 our virtual machine, and Docker images.
 
-For native installations, the requirements can be simply installed via ``pip``::
+For native installations, the package can be simply installed via ``pip``::
 
-  pip3 install Flask Flask-Cors gunicorn RestrictedPython
+  pip install nest-server
+
+or in a virtual environment in case you prefer using ``uv``::
+
+  uv pip install nest-server
 
 or by installing the full NEST development environment in case you prefer using ``mamba``::
 
@@ -77,16 +81,16 @@ NEST Server comes with a number of access restrictions that are meant to protect
 consideration, each of the restrictions can be disabled by setting a corresponding environment variable.
 
 * ``NEST_SERVER_DISABLE_AUTH``: By default, the NEST Server requires a NESTServerAuth tokens. Setting this variable to
-  ``1`` disables this restriction. A token is automatically created and printed to the console by NEST Server upon
+  ``true`` disables this restriction. A token is automatically created and printed to the console by NEST Server upon
   start-up. If needed, a custom token can be set using the environment variable  ``NEST_SERVER_ACCESS_TOKEN``
 * ``NEST_SERVER_CORS_ORIGINS``: By default, the NEST Server only allows requests from localhost (see
   `CORS <https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS>`_). Other hosts can be explicitly allowed by supplying them
   in the form http://host_or_ip:\* to this variable (By default: http://localhost:\*).
 * ``NEST_SERVER_ENABLE_EXEC_CALL``: By default, NEST Server only allows calls to its PyNEST-like API. If the use-case
-  requires the execution of scripts via the ``/exec`` route, this variable can be set to ``1``. PLEASE BE AWARE THAT
+  requires the execution of scripts via the ``/exec`` route, this variable can be set to ``true``. PLEASE BE AWARE THAT
   THIS OPENS YOUR COMPUTER TO REMOTE CODE EXECUTION.
 * ``NEST_SERVER_DISABLE_RESTRICTION``: By default, NEST Server runs all code passed to the ``/exec`` route through
-  RestrictedPython to sanitize it. To disable this mechanism, this variable can be set to ``1``.
+  RestrictedPython to sanitize it. To disable this mechanism, this variable can be set to ``true``.
 * ``NEST_SERVER_MODULES``: For increased security, code passed in this way only allows explictly whitelisted modules to
   be imported. To import modules, the variable can be set to a standard Python import line like this:
   ``NEST_SERVER_MODULES='import nest; import scipy as sp; from numpy import random'``
@@ -104,24 +108,26 @@ or supplied to the execution command line for running the Docker container:
 
 .. code-block:: text
 
-  docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -p 52425:52425 nest/nest-simulator:dev nest-server start
+  docker run -it --rm -e NEST_CONTAINER_MODE="nest-server" -p 52425:52425 nest/nest-simulator:dev
 
 The generic invocation command line for the ``nest-server`` command looks as follows:
 
 .. code-block:: text
 
-  nest-server <command> [-d] [-h <host>] [-o] [-p <port>]
+  nest-server {arguments} [-d] [-h <host>] [-o] [-p <port>]
 
-Possible commands are ``start``, ``stop``, ``status``, or ``log``. The meaning of the other arguments is as follows:
+Possible arguments are ``log``, ``pid``, ``start``, ``stop``, or ``version``.
 
--d
-    Run NEST Server in the background (i.e., daemonize it)
--o
-    Print all outputs to the console
--h <host>
-    Use hostname/IP address <host> for the server instance [default: 127.0.0.1]
--p <port>
-    Use port <port> for opening the socket [default: 52425]
+The meaning of the options is as follows:
+
+-d | --daemon
+    run NEST Server in the background, i.e. daemonize the server process
+-h <HOST> | --host <HOST>
+    use hostname/IP address <HOST> for the server instance [default: 127.0.0.1]
+-o | outputs
+    print all outputs to the console
+-p <PORT> | --port <PORT>
+    use port <PORT> for opening the socket [default: 52425]
 
 Run with MPI
 ~~~~~~~~~~~~
@@ -133,7 +139,13 @@ from happening, we provide a special version of the NEST Server command for use 
 
 .. code-block:: text
 
-    mpirun -np N nest-server-mpi [--host HOST] [--port PORT]
+    nest-server-mpi start -n N [--host HOST] [--port PORT]
+
+replaces the former command:
+
+.. code-block:: text
+
+    mpirun -n N nest-server-mpi [--host HOST] [--port PORT]
 
 If run like this, the RESTful API of the NEST Server will only be served by the :hxt_ref:`MPI` process with rank 0
 (called the `master`), while all other N-1 ranks will start the NEST Server in `worker` mode. Upon receiving a request,
@@ -151,8 +163,8 @@ The NEST Client
 
 The easiest way to interact with the NEST Server is the `NEST Client` provided in
 `<https://github.com/nest/nest-client/>`_. It can be used either by directly starting a Python session in a clone of
-that repository, or by installing it by running ``python3 setup.py install`` therein. NEST itself does not have to be
-installed in order to use the NEST Client.
+that repository, or by installing it by running ``pip install nest-client`` therein. NEST Server itself does not have
+to be installed in order to use the NEST Client.
 
 Using a dynamic function mapping mechanism, the NEST Client supports the same functions as PyNEST does. However, instead
 of directly executing calls in NEST, it forwards them together with their arguments to the NEST Server, which in turn
@@ -320,7 +332,7 @@ NEST Server responds to this by sending data in JSON format:
 
 .. code-block::
 
-  {"mpi":false,"nest":"3.2"}
+  {"mpi":false,"nest":"3.11"}
 
 You can retrieve data about the callable functions of NEST by running:
 
@@ -405,7 +417,7 @@ look like this:
 
 .. code-block:: sh
 
-    export NEST_SERVER_MODULES="nest,numpy"
+    export NEST_SERVER_MODULES="import nest; import numpy; import numpy as np"
     nest-server start
 
 After this, NumPy can be used from within scripts in the regular way:
@@ -414,8 +426,8 @@ After this, NumPy can be used from within scripts in the regular way:
 
     from nest_client import NESTClient
     nest = NESTClient()
-    response = nsc.exec_script("a = numpy.arange(10)", 'a')
-    print(response['data'][::2])                    # [0, 2, 4, 6, 8]
+    response = nsc.exec_script("a = np.arange(0, 10, 2)", 'a')
+    print(response['data'])                    # [0, 2, 4, 6, 8]
 
 .. danger::
 
@@ -427,7 +439,7 @@ After this, NumPy can be used from within scripts in the regular way:
 
     .. code-block:: sh
 
-        export NEST_SERVER_RESTRICTION_OFF=true
+        export NEST_SERVER_DISABLE_RESTRICTION=true
         nest-server start
 
     Please be aware that running NEST Server like this bears a high risk of arbitrary remote code execution, and this
@@ -453,18 +465,17 @@ using a JSON file as input for ``curl``:
         import nest\n
         # Reset kernel\n
         nest.ResetKernel()\n
-        # Create nodes\nparams = {'rate': 6500.}\n
+        # Create nodes\nparams = {'rate': 6500}\n
         pg = nest.Create('poisson_generator', 1, params)\n
         neurons = nest.Create('iaf_psc_alpha', 1000)\n
         sr = nest.Create('spike_recorder')\n
         # Connect nodes\n
-        nest.Connect(pg, neurons, syn_spec={'weight': 10.})\n
+        nest.Connect(pg, neurons, syn_spec={'weight': 10})\n
         nest.Connect(neurons[::10], sr)\n
         # Simulate\n
-        nest.Simulate(1000.0)\n
+        nest.Simulate(1000)\n
         # Get events\n
-        n_events = nest.GetStatus(sr, 'n_events')[0]\n
-        print('Number of events:', n_events)\n
+        print('Number of events:', sr.n_events)\n
       ",
       "return": "n_events"
     }
@@ -619,15 +630,15 @@ Now, we can send API requests to NEST Server using the ``nest-server-api`` funct
 
     # Create nodes
     nest-server-api Create '{"model": "iaf_psc_alpha", "n": 2}'
-    nest-server-api Create '{"model": "poisson_generator", "params": {"rate": 6500.0}}'
+    nest-server-api Create '{"model": "poisson_generator", "params": {"rate": 6500}}'
     nest-server-api Create '{"model": "spike_recorder"}'
 
     # Connect nodes
-    nest-server-api Connect '{"pre": [3], "post": [1,2], "syn_spec": {"weight": 10.0}}'
+    nest-server-api Connect '{"pre": [3], "post": [1,2], "syn_spec": {"weight": 10}}'
     nest-server-api Connect '{"pre": [1,2], "post": [4]}'
 
     # Simulate
-    nest-server-api Simulate '{"t": 1000.0}'
+    nest-server-api Simulate '{"t": 1000}'
 
     # Get events
     nest-server-api GetStatus '{"nodes": [4], "keys": "n_events"}'

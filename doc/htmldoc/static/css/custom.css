@@ -296,8 +296,9 @@ div[role="main"] .md-source {
    background-color: black;
 }
 /* add admonition warning / info (?) */
+/* Hides 'show sources link */
 .md-nav__extra_link{
-  color: var(--nest-orange);
+  display: none;
 }
 div.admonition .md-typeset a > code {
 	color: white;

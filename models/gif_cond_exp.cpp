@@ -121,7 +121,7 @@ gif_cond_exp::Parameters_::Parameters_()
   , t_ref_( 4.0 )       // ms
   , c_m_( 80.0 )        // pF
   , tau_stc_()          // ms
-  , q_stc_()            // nA
+  , q_stc_()            // pA
   , tau_sfa_()          // ms
   , q_sfa_()            // mV
   , I_e_( 0.0 )         // pA

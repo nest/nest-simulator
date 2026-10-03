@@ -263,7 +263,7 @@ jobs:
             python -m pip install --index-url https://test.pypi.org/simple/ \
               --extra-index-url https://pypi.org/simple nest-simulator
           fi
-          python -c "import nest; print('NEST import successful:', nest.nest.help())"
+          python -c "import nest; print('NEST import successful:', nest.help())"
           python -c "
           import nest
           import time

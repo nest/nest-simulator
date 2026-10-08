@@ -261,8 +261,7 @@ form to transfer your copyright to the NEST initiative and send it to *info [at]
 
    This workflow shows you how to create **user-level documentation**
    for NEST. For the **developer documentation**, please refer to our
-   :ref:`Developer documentation workflow
-   <devdoc_workflow>`.
+   `Developer documentation workflow <https://nest.github.io/nest-simulator/devdoc_workflow.html>`_
 
 
 Read the Docs

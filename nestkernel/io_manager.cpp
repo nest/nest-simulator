@@ -84,17 +84,14 @@ IOManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 #endif
 
     Dictionary dict;
-    // The properties data_path and data_prefix can be set via environment variables
+    // The properties data_path and data_prefix can be set via environment variables.
+    // Always set both keys (falling back to an empty string) so that ResetKernel()
+    // actually clears a previously set data_path/data_prefix instead of leaving the
+    // old value in place when the environment variables are not set.
     char* data_path = std::getenv( "NEST_DATA_PATH" );
-    if ( data_path )
-    {
-      dict[ names::data_path ] = std::string( data_path );
-    }
+    dict[ names::data_path ] = std::string( data_path ? data_path : "" );
     char* data_prefix = std::getenv( "NEST_DATA_PREFIX" );
-    if ( data_prefix )
-    {
-      dict[ names::data_prefix ] = std::string( data_prefix );
-    }
+    dict[ names::data_prefix ] = std::string( data_prefix ? data_prefix : "" );
 
     set_data_path_prefix_( dict );
 
@@ -145,30 +142,41 @@ IOManager::set_data_path_prefix_( const Dictionary& dict )
   std::string tmp;
   if ( dict.update_value( names::data_path, tmp ) )
   {
-    DIR* testdir = opendir( tmp.c_str() );
-    if ( testdir )
+    // An empty string means "no path override" (e.g. after ResetKernel()); it is
+    // not a directory to validate, so accept it directly instead of trying (and
+    // failing) to opendir() it, which would otherwise log a spurious error on
+    // every reset.
+    if ( tmp.empty() )
     {
-      data_path_ = tmp;     // absolute path & directory exists
-      closedir( testdir );  // we only opened it to check it exists
+      data_path_ = tmp;
     }
     else
     {
-      std::string msg;
-
-      switch ( errno )
+      DIR* testdir = opendir( tmp.c_str() );
+      if ( testdir )
       {
-      case ENOTDIR:
-        msg = String::compose( "'%1' is not a directory.", tmp );
-        break;
-      case ENOENT:
-        msg = String::compose( "Directory '%1' does not exist.", tmp );
-        break;
-      default:
-        msg = String::compose( "Errno %1 received when trying to open '%2'", errno, tmp );
-        break;
+        data_path_ = tmp;     // absolute path & directory exists
+        closedir( testdir );  // we only opened it to check it exists
       }
+      else
+      {
+        std::string msg;
 
-      LOG( VerbosityLevel::ERROR, "SetStatus", "Variable data_path not set: " + msg );
+        switch ( errno )
+        {
+        case ENOTDIR:
+          msg = String::compose( "'%1' is not a directory.", tmp );
+          break;
+        case ENOENT:
+          msg = String::compose( "Directory '%1' does not exist.", tmp );
+          break;
+        default:
+          msg = String::compose( "Errno %1 received when trying to open '%2'", errno, tmp );
+          break;
+        }
+
+        LOG( VerbosityLevel::ERROR, "SetStatus", "Variable data_path not set: " + msg );
+      }
     }
   }
 

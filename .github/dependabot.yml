@@ -8,7 +8,7 @@ updates:
   - package-ecosystem: pip
     # Scan the repo root so Dependabot follows the `-r` includes in
     # requirements.txt (requirements_pynest.txt, requirements_testing.txt,
-    # doc/requirements.txt, requirements_nest_server.txt) as one set.
+    # doc/requirements.txt) as one set.
     directory: /
     schedule:
       interval: daily

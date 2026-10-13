@@ -151,7 +151,7 @@ gainfunction_erfc::operator()( RngPtr rng, double h )
   return rng->drand() < 0.5 * erfc( -( h - theta_ ) / ( sqrt( 2. ) * sigma_ ) );
 }
 
-typedef binary_neuron< nest::gainfunction_erfc > erfc_neuron;
+typedef binary_neuron< gainfunction_erfc > erfc_neuron;
 void register_erfc_neuron( const std::string& name );
 
 

@@ -109,14 +109,14 @@ public:
 Short helper functions for solving the matrix equation. Can hopefully be inlined
 */
 inline void
-nest::Compartment::gather_input( const std::pair< double, double >& in )
+Compartment::gather_input( const std::pair< double, double >& in )
 {
   xx_ += in.first;
   yy_ += in.second;
 }
 
 inline std::pair< double, double >
-nest::Compartment::io()
+Compartment::io()
 {
   // include inputs from child compartments
   gg -= xx_;
@@ -130,7 +130,7 @@ nest::Compartment::io()
 }
 
 inline double
-nest::Compartment::calc_v( const double v_in )
+Compartment::calc_v( const double v_in )
 {
   // reset recursion variables
   xx_ = 0.0;

@@ -22,13 +22,16 @@
 
 #include "ring_buffer.h"
 
-nest::RingBuffer::RingBuffer()
+
+namespace nest
+{
+RingBuffer::RingBuffer()
   : buffer_( kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay(), 0.0 )
 {
 }
 
 void
-nest::RingBuffer::resize()
+RingBuffer::resize()
 {
   size_t size = kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
   if ( buffer_.size() != size )
@@ -38,7 +41,7 @@ nest::RingBuffer::resize()
 }
 
 void
-nest::RingBuffer::clear()
+RingBuffer::clear()
 {
   resize();  // does nothing if size is fine
   // clear all elements
@@ -46,13 +49,13 @@ nest::RingBuffer::clear()
 }
 
 
-nest::MultRBuffer::MultRBuffer()
+MultRBuffer::MultRBuffer()
   : buffer_( kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay(), 0.0 )
 {
 }
 
 void
-nest::MultRBuffer::resize()
+MultRBuffer::resize()
 {
   size_t size = kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
   if ( buffer_.size() != size )
@@ -62,20 +65,20 @@ nest::MultRBuffer::resize()
 }
 
 void
-nest::MultRBuffer::clear()
+MultRBuffer::clear()
 {
   // clear all elements
   buffer_.assign( buffer_.size(), 0.0 );
 }
 
 
-nest::ListRingBuffer::ListRingBuffer()
+ListRingBuffer::ListRingBuffer()
   : buffer_( kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay() )
 {
 }
 
 void
-nest::ListRingBuffer::resize()
+ListRingBuffer::resize()
 {
   size_t size = kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
   if ( buffer_.size() != size )
@@ -85,7 +88,7 @@ nest::ListRingBuffer::resize()
 }
 
 void
-nest::ListRingBuffer::clear()
+ListRingBuffer::clear()
 {
   resize();  // does nothing if size is fine
   // clear all elements
@@ -94,3 +97,5 @@ nest::ListRingBuffer::clear()
     buffer_[ i ].clear();
   }
 }
+
+}  // namespace nest

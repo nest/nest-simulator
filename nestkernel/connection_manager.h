@@ -244,10 +244,13 @@ public:
    * searched.
    * The function then iterates all entries in source and collects the
    * connection IDs to all neurons in target.
+   *
+   * @returns Vector of deques, each containing connections from one thread. May have fewer entries than threads if some
+   * threads have no connections.
    */
-  std::deque< ConnectionID > get_connections( const Dictionary& params );
+  std::vector< std::deque< ConnectionID > > get_connections( const Dictionary& params );
 
-  void get_connections( std::deque< ConnectionID >& connectome,
+  void get_connections( std::vector< std::deque< ConnectionID > >& connectome,
     NodeCollectionPTR source,
     NodeCollectionPTR target,
     synindex syn_id,
@@ -469,19 +472,19 @@ private:
 
   //! See get_connections()
   void get_connections_( const size_t tid,
-    std::deque< ConnectionID >& connectome,
+    std::deque< ConnectionID >& conns_in_thread,
     NodeCollectionPTR source,
     NodeCollectionPTR target,
     synindex syn_id,
     long synapse_label ) const;
   void get_connections_to_targets_( const size_t tid,
-    std::deque< ConnectionID >& connectome,
+    std::deque< ConnectionID >& conns_in_thread,
     NodeCollectionPTR source,
     NodeCollectionPTR target,
     synindex syn_id,
     long synapse_label ) const;
   void get_connections_from_sources_( const size_t tid,
-    std::deque< ConnectionID >& connectome,
+    std::deque< ConnectionID >& conns_in_thread,
     NodeCollectionPTR source,
     NodeCollectionPTR target,
     synindex syn_id,
@@ -496,15 +499,6 @@ private:
    * Removes disabled connections (of structural plasticity)
    */
   void remove_disabled_connections_( const size_t tid );
-
-  /**
-   * Splits a TokenArray of node IDs to two vectors containing node IDs of neurons and
-   * node IDs of devices.
-   */
-  void split_to_neuron_device_vectors_( const size_t tid,
-    NodeCollectionPTR nodecollection,
-    std::vector< size_t >& neuron_node_ids,
-    std::vector< size_t >& device_node_ids ) const;
 
   /**
    * Update delay extrema to current values.

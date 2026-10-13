@@ -72,7 +72,7 @@ AbstractLayer::create_layer( const Dictionary& layer_dict )
       length = pos.size();
       num_dimensions = pos[ 0 ].size();
     }
-    else if ( std::holds_alternative< std::shared_ptr< nest::Parameter > >( positions ) )
+    else if ( std::holds_alternative< std::shared_ptr< Parameter > >( positions ) )
     {
       auto pd = layer_dict.get< ParameterPTR >( names::positions );
       auto pos = dynamic_cast< DimensionParameter* >( pd.get() );

@@ -15,7 +15,7 @@
 # separate sections below so you can remove them if you would like a
 # leaner environment.
 #
-# NOTE: libneurosim, MUSIC and SIONLib are not included in this environment.
+# NOTE: MUSIC and SIONLib are not included in this environment.
 #
 # To create an environment from this file, run
 #

@@ -25,8 +25,13 @@
 // Includes from nestkernel:
 #include "nest_impl.h"
 
+
+namespace nest
+{
 void
-nest::register_stdp_nn_symm_synapse( const std::string& name )
+register_stdp_nn_symm_synapse( const std::string& name )
 {
   register_connection_model< stdp_nn_symm_synapse >( name );
 }
+
+}  // namespace nest

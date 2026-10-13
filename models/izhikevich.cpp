@@ -37,14 +37,14 @@
 #include "universal_data_logger_impl.h"
 
 
+namespace nest
+{
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::izhikevich > nest::izhikevich::recordablesMap_;
+RecordablesMap< izhikevich > izhikevich::recordablesMap_;
 
-namespace nest
-{
 void
 register_izhikevich( const std::string& name )
 {
@@ -61,13 +61,12 @@ RecordablesMap< izhikevich >::create()
   insert_( names::V_m, &izhikevich::get_V_m_ );
   insert_( names::U_m, &izhikevich::get_U_m_ );
 }
-}
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::izhikevich::Parameters_::Parameters_()
+izhikevich::Parameters_::Parameters_()
   : a_( 0.02 )                                       // a
   , b_( 0.2 )                                        // b
   , c_( -65.0 )                                      // c without unit
@@ -79,7 +78,7 @@ nest::izhikevich::Parameters_::Parameters_()
 {
 }
 
-nest::izhikevich::State_::State_()
+izhikevich::State_::State_()
   : v_( -65.0 )        // membrane potential
   , u_( 0.2 * -65.0 )  // membrane recovery variable (b * V_m_init)
   , I_( 0.0 )          // input current
@@ -91,7 +90,7 @@ nest::izhikevich::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::izhikevich::Parameters_::get( Dictionary& d ) const
+izhikevich::Parameters_::get( Dictionary& d ) const
 {
   d[ names::I_e ] = I_e_;
   d[ names::V_th ] = V_th_;  // threshold value
@@ -104,7 +103,7 @@ nest::izhikevich::Parameters_::get( Dictionary& d ) const
 }
 
 void
-nest::izhikevich::Parameters_::set( const Dictionary& d, Node* node )
+izhikevich::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::V_th, V_th_, node );
   update_value_param( d, names::V_min, V_min_, node );
@@ -124,25 +123,25 @@ nest::izhikevich::Parameters_::set( const Dictionary& d, Node* node )
 }
 
 void
-nest::izhikevich::State_::get( Dictionary& d, const Parameters_& ) const
+izhikevich::State_::get( Dictionary& d, const Parameters_& ) const
 {
   d[ names::U_m ] = u_;  // Membrane potential recovery variable
   d[ names::V_m ] = v_;  // Membrane potential
 }
 
 void
-nest::izhikevich::State_::set( const Dictionary& d, const Parameters_&, Node* node )
+izhikevich::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
   update_value_param( d, names::U_m, u_, node );
   update_value_param( d, names::V_m, v_, node );
 }
 
-nest::izhikevich::Buffers_::Buffers_( izhikevich& n )
+izhikevich::Buffers_::Buffers_( izhikevich& n )
   : logger_( n )
 {
 }
 
-nest::izhikevich::Buffers_::Buffers_( const Buffers_&, izhikevich& n )
+izhikevich::Buffers_::Buffers_( const Buffers_&, izhikevich& n )
   : logger_( n )
 {
 }
@@ -151,7 +150,7 @@ nest::izhikevich::Buffers_::Buffers_( const Buffers_&, izhikevich& n )
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::izhikevich::izhikevich()
+izhikevich::izhikevich()
   : ArchivingNode()
   , P_()
   , S_()
@@ -160,7 +159,7 @@ nest::izhikevich::izhikevich()
   recordablesMap_.create();
 }
 
-nest::izhikevich::izhikevich( const izhikevich& n )
+izhikevich::izhikevich( const izhikevich& n )
   : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -173,7 +172,7 @@ nest::izhikevich::izhikevich( const izhikevich& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::izhikevich::init_buffers_()
+izhikevich::init_buffers_()
 {
   B_.spikes_.clear();    // includes resize
   B_.currents_.clear();  // includes resize
@@ -182,7 +181,7 @@ nest::izhikevich::init_buffers_()
 }
 
 void
-nest::izhikevich::pre_run_hook()
+izhikevich::pre_run_hook()
 {
   B_.logger_.init();
 }
@@ -192,7 +191,7 @@ nest::izhikevich::pre_run_hook()
  */
 
 void
-nest::izhikevich::update( Time const& origin, const long from, const long to )
+izhikevich::update( Time const& origin, const long from, const long to )
 {
   const double h = Time::get_resolution().get_ms();
   double v_old, u_old;
@@ -244,7 +243,7 @@ nest::izhikevich::update( Time const& origin, const long from, const long to )
 }
 
 void
-nest::izhikevich::handle( SpikeEvent& e )
+izhikevich::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
   B_.spikes_.add_value(
@@ -252,7 +251,7 @@ nest::izhikevich::handle( SpikeEvent& e )
 }
 
 void
-nest::izhikevich::handle( CurrentEvent& e )
+izhikevich::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -262,7 +261,9 @@ nest::izhikevich::handle( CurrentEvent& e )
 }
 
 void
-nest::izhikevich::handle( DataLoggingRequest& e )
+izhikevich::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
+
+}  // namespace nest

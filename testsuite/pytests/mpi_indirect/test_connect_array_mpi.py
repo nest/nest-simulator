@@ -69,6 +69,8 @@ def test_issue_connect_array_mpi(connspec):
         sg, tg = np.meshgrid(gids[: connspec["indegree"]], gids)
     elif connspec["rule"] == "fixed_outdegree":
         sg, tg = np.meshgrid(gids[: connspec["outdegree"]], gids)
+    else:
+        raise NotImplementedError("unknown connection rule")
 
     weights = gids_to_weights(sg, tg)
     delays = gids_to_delays(sg, tg)

@@ -35,8 +35,11 @@
 #include "kernel_manager.h"
 #include "nest_impl.h"
 
+
+namespace nest
+{
 void
-nest::register_music_message_in_proxy( const std::string& name )
+register_music_message_in_proxy( const std::string& name )
 {
   register_node_model< music_message_in_proxy >( name );
 }
@@ -45,13 +48,13 @@ nest::register_music_message_in_proxy( const std::string& name )
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::music_message_in_proxy::Parameters_::Parameters_()
+music_message_in_proxy::Parameters_::Parameters_()
   : port_name_( "message_in" )
   , acceptable_latency_( 0.0 )
 {
 }
 
-nest::music_message_in_proxy::State_::State_()
+music_message_in_proxy::State_::State_()
   : published_( false )
   , port_width_( -1 )
 {
@@ -63,14 +66,14 @@ nest::music_message_in_proxy::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::music_message_in_proxy::Parameters_::get( Dictionary& d ) const
+music_message_in_proxy::Parameters_::get( Dictionary& d ) const
 {
   d[ names::port_name ] = port_name_;
   d[ names::acceptable_latency ] = acceptable_latency_;
 }
 
 void
-nest::music_message_in_proxy::Parameters_::set( const Dictionary& d, State_& s, Node* node )
+music_message_in_proxy::Parameters_::set( const Dictionary& d, State_& s, Node* node )
 {
   if ( not s.published_ )
   {
@@ -80,14 +83,14 @@ nest::music_message_in_proxy::Parameters_::set( const Dictionary& d, State_& s, 
 }
 
 void
-nest::music_message_in_proxy::State_::get( Dictionary& d ) const
+music_message_in_proxy::State_::get( Dictionary& d ) const
 {
   d[ names::published ] = published_;
   d[ names::port_width ] = port_width_;
 }
 
 void
-nest::music_message_in_proxy::State_::set( const Dictionary&, const Parameters_&, Node* )
+music_message_in_proxy::State_::set( const Dictionary&, const Parameters_&, Node* )
 {
 }
 
@@ -96,14 +99,14 @@ nest::music_message_in_proxy::State_::set( const Dictionary&, const Parameters_&
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::music_message_in_proxy::music_message_in_proxy()
+music_message_in_proxy::music_message_in_proxy()
   : DeviceNode()
   , P_()
   , S_()
 {
 }
 
-nest::music_message_in_proxy::music_message_in_proxy( const music_message_in_proxy& n )
+music_message_in_proxy::music_message_in_proxy( const music_message_in_proxy& n )
   : DeviceNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -116,12 +119,12 @@ nest::music_message_in_proxy::music_message_in_proxy( const music_message_in_pro
  * ---------------------------------------------------------------- */
 
 void
-nest::music_message_in_proxy::init_buffers_()
+music_message_in_proxy::init_buffers_()
 {
 }
 
 void
-nest::music_message_in_proxy::pre_run_hook()
+music_message_in_proxy::pre_run_hook()
 {
   // only publish the port once,
   if ( not S_.published_ )
@@ -161,5 +164,7 @@ nest::music_message_in_proxy::pre_run_hook()
     LOG( VerbosityLevel::INFO, "music_message_in_proxy::pre_run_hook()", msg.c_str() );
   }
 }
+
+}  // namespace nest
 
 #endif

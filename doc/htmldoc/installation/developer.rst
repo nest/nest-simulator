@@ -6,7 +6,7 @@ Install NEST from source
 
 .. note::
 
-    Please see our :ref:`development workflows and guidelines <developer_space>`, if you need
+    Please see our :ref:`development workflows and guidelines <contribute>`, if you need
     a refresher in git or need to review the coding or documentation guidelines.
 
 

@@ -31,7 +31,7 @@ namespace nest
 
 // member functions for ClopathArchivingNode
 
-nest::ClopathArchivingNode::ClopathArchivingNode()
+ClopathArchivingNode::ClopathArchivingNode()
   : ArchivingNode()
   , A_LTD_( 14.0e-5 )
   , A_LTP_( 8.0e-5 )
@@ -45,7 +45,7 @@ nest::ClopathArchivingNode::ClopathArchivingNode()
 {
 }
 
-nest::ClopathArchivingNode::ClopathArchivingNode( const ClopathArchivingNode& n )
+ClopathArchivingNode::ClopathArchivingNode( const ClopathArchivingNode& n )
   : ArchivingNode( n )
   , A_LTD_( n.A_LTD_ )
   , A_LTP_( n.A_LTP_ )
@@ -60,7 +60,7 @@ nest::ClopathArchivingNode::ClopathArchivingNode( const ClopathArchivingNode& n 
 }
 
 void
-nest::ClopathArchivingNode::init_clopath_buffers()
+ClopathArchivingNode::init_clopath_buffers()
 {
   delayed_u_bars_idx_ = 0;
   delay_u_bars_steps_ = Time::delay_ms_to_steps( delay_u_bars_ ) + 1;
@@ -74,7 +74,7 @@ nest::ClopathArchivingNode::init_clopath_buffers()
 }
 
 void
-nest::ClopathArchivingNode::get_status( Dictionary& d ) const
+ClopathArchivingNode::get_status( Dictionary& d ) const
 {
   ArchivingNode::get_status( d );
 
@@ -88,7 +88,7 @@ nest::ClopathArchivingNode::get_status( Dictionary& d ) const
 }
 
 void
-nest::ClopathArchivingNode::set_status( const Dictionary& d )
+ClopathArchivingNode::set_status( const Dictionary& d )
 {
   ArchivingNode::set_status( d );
 
@@ -123,7 +123,7 @@ nest::ClopathArchivingNode::set_status( const Dictionary& d )
 }
 
 double
-nest::ClopathArchivingNode::get_LTD_value( double t )
+ClopathArchivingNode::get_LTD_value( double t )
 {
   std::vector< histentry_extended >::iterator runner;
   if ( ltd_history_.empty() or t < 0.0 )
@@ -148,7 +148,7 @@ nest::ClopathArchivingNode::get_LTD_value( double t )
 }
 
 void
-nest::ClopathArchivingNode::get_LTP_history( double t1,
+ClopathArchivingNode::get_LTP_history( double t1,
   double t2,
   std::deque< histentry_extended >::iterator* start,
   std::deque< histentry_extended >::iterator* finish )
@@ -181,7 +181,7 @@ nest::ClopathArchivingNode::get_LTP_history( double t1,
 }
 
 void
-nest::ClopathArchivingNode::write_clopath_history( Time const& t_sp,
+ClopathArchivingNode::write_clopath_history( Time const& t_sp,
   double u,
   double u_bar_plus,
   double u_bar_minus,
@@ -214,7 +214,7 @@ nest::ClopathArchivingNode::write_clopath_history( Time const& t_sp,
 }
 
 void
-nest::ClopathArchivingNode::write_LTD_history( const double t_ltd_ms, double u_bar_minus, double u_bar_bar )
+ClopathArchivingNode::write_LTD_history( const double t_ltd_ms, double u_bar_minus, double u_bar_bar )
 {
   if ( n_incoming_ )
   {
@@ -226,7 +226,7 @@ nest::ClopathArchivingNode::write_LTD_history( const double t_ltd_ms, double u_b
 }
 
 void
-nest::ClopathArchivingNode::write_LTP_history( const double t_ltp_ms, double u, double u_bar_plus )
+ClopathArchivingNode::write_LTP_history( const double t_ltp_ms, double u, double u_bar_plus )
 {
   if ( n_incoming_ )
   {

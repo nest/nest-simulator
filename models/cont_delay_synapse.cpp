@@ -26,8 +26,13 @@
 // Includes from nestkernel:
 #include "nest_impl.h"
 
+
+namespace nest
+{
 void
-nest::register_cont_delay_synapse( const std::string& name )
+register_cont_delay_synapse( const std::string& name )
 {
   register_connection_model< cont_delay_synapse >( name );
 }
+
+}  // namespace nest

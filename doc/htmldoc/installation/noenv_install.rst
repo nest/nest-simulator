@@ -37,6 +37,7 @@ further adjust settings for your system.
     python3-mpi4py \
     python3-pip \
     python3-pytest \
+    python3-pytest-cov \
     python3-pytest-timeout \
     python3-pytest-xdist \
     python3-pandas \
@@ -83,10 +84,6 @@ We will refer to the full path of this directory by <nest_install_dir>.
 .. note::
 
    ``<nest_install_dir>`` should be an absolute path
-
-.. note::
-
-   Python bindings are enabled by default. Add the configuration option ``-Dwith-python=OFF`` to disable them.
 
 * Compile and install NEST:
 

@@ -139,7 +139,7 @@ class TestAeifCondBetaMultisynapse:
         ts = vm.events["times"]
         Vms = vm.events["V_m"]
 
-        if False:
+        if False:  # pylint: disable=using-constant-test
             # plot timeseries as a sanity check
             import matplotlib.pyplot as plt
 
@@ -170,7 +170,7 @@ class TestAeifCondBetaMultisynapse:
             V_m_summed += Vtheor
             Vtheor += Vrest
 
-            if False:
+            if False:  # pylint: disable=using-constant-test
                 ax[i + 1].plot(ts, Vtheor)
 
                 for _ax in ax:
@@ -178,7 +178,7 @@ class TestAeifCondBetaMultisynapse:
 
         V_m_summed += Vrest
 
-        if False:
+        if False:  # pylint: disable=using-constant-test
             ax[0].plot(ts, V_m_summed, label="summed")
 
             ax[-1].semilogy(ts, np.abs(Vms - V_m_summed), label="error")
@@ -398,7 +398,7 @@ class TestAeifCondBetaMultisynapse:
 
             theo_g = beta_function(t, weight[i], tau_rise[i], tau_decay[i], t0)
 
-            if False:
+            if False:  # pylint: disable=using-constant-test
                 # plot timeseries as a sanity check
                 import matplotlib.pyplot as plt
 

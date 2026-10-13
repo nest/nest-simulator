@@ -27,6 +27,7 @@
 #include "model_manager_impl.h"
 #include "nest_impl.h"
 
+
 namespace nest
 {
 void
@@ -60,19 +61,19 @@ nonlinearities_sigmoid_rate_gg_1998::set( const Dictionary& d, Node* node )
  */
 template <>
 void
-RecordablesMap< nest::sigmoid_rate_gg_1998_ipn >::create()
+RecordablesMap< sigmoid_rate_gg_1998_ipn >::create()
 {
   // use standard names wherever you can for consistency!
-  insert_( names::rate, &nest::sigmoid_rate_gg_1998_ipn::get_rate_ );
-  insert_( names::noise, &nest::sigmoid_rate_gg_1998_ipn::get_noise_ );
+  insert_( names::rate, &sigmoid_rate_gg_1998_ipn::get_rate_ );
+  insert_( names::noise, &sigmoid_rate_gg_1998_ipn::get_noise_ );
 }
 
 template <>
 void
-RecordablesMap< nest::rate_transformer_sigmoid_gg_1998 >::create()
+RecordablesMap< rate_transformer_sigmoid_gg_1998 >::create()
 {
   // use standard names wherever you can for consistency!
-  insert_( names::rate, &nest::rate_transformer_sigmoid_gg_1998::get_rate_ );
+  insert_( names::rate, &rate_transformer_sigmoid_gg_1998::get_rate_ );
 }
 
 }  // namespace nest

@@ -25,8 +25,13 @@
 // nestkernel
 #include "nest_impl.h"
 
+
+namespace nest
+{
 void
-nest::register_eprop_learning_signal_connection_bsshslm_2020( const std::string& name )
+register_eprop_learning_signal_connection_bsshslm_2020( const std::string& name )
 {
   register_connection_model< eprop_learning_signal_connection_bsshslm_2020 >( name );
 }
+
+}  // namespace nest

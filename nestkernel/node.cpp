@@ -496,13 +496,13 @@ Node::get_K_values( double, double&, double&, double& )
 }
 
 void
-nest::Node::get_history( double, double, std::deque< histentry >::iterator*, std::deque< histentry >::iterator* )
+Node::get_history( double, double, std::deque< histentry >::iterator*, std::deque< histentry >::iterator* )
 {
   throw UnexpectedEvent();
 }
 
 void
-nest::Node::get_LTP_history( double,
+Node::get_LTP_history( double,
   double,
   std::deque< histentry_extended >::iterator*,
   std::deque< histentry_extended >::iterator* )
@@ -511,7 +511,7 @@ nest::Node::get_LTP_history( double,
 }
 
 void
-nest::Node::get_urbanczik_history( double,
+Node::get_urbanczik_history( double,
   double,
   std::deque< histentry_extended >::iterator*,
   std::deque< histentry_extended >::iterator*,
@@ -521,43 +521,43 @@ nest::Node::get_urbanczik_history( double,
 }
 
 double
-nest::Node::get_C_m( int )
+Node::get_C_m( int )
 {
   throw UnexpectedEvent();
 }
 
 double
-nest::Node::get_g_L( int )
+Node::get_g_L( int )
 {
   throw UnexpectedEvent();
 }
 
 double
-nest::Node::get_tau_L( int )
+Node::get_tau_L( int )
 {
   throw UnexpectedEvent();
 }
 
 double
-nest::Node::get_tau_s( int )
+Node::get_tau_s( int )
 {
   throw UnexpectedEvent();
 }
 
 double
-nest::Node::get_tau_syn_ex( int )
+Node::get_tau_syn_ex( int )
 {
   throw UnexpectedEvent();
 }
 
 double
-nest::Node::get_tau_syn_in( int )
+Node::get_tau_syn_in( int )
 {
   throw UnexpectedEvent();
 }
 
 void
-nest::Node::compute_gradient( const long,
+Node::compute_gradient( const long,
   const long,
   double&,
   double&,
@@ -577,7 +577,7 @@ nest::Node::compute_gradient( const long,
 }
 
 double
-nest::Node::compute_gradient( std::vector< long >&, const long, const long, const double, const bool )
+Node::compute_gradient( std::vector< long >&, const long, const long, const double, const bool )
 {
   throw IllegalConnection( "The target node does not support compute_gradient()." );
 }

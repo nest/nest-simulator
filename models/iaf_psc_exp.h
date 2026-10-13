@@ -457,7 +457,7 @@ private:
 
 
 inline size_t
-nest::iaf_psc_exp::send_test_event( Node& target, size_t receptor_type, synindex, bool )
+iaf_psc_exp::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

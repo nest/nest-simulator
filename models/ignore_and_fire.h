@@ -247,7 +247,7 @@ private:
 };
 
 inline size_t
-nest::ignore_and_fire::send_test_event( Node& target, size_t receptor_type, synindex, bool )
+ignore_and_fire::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

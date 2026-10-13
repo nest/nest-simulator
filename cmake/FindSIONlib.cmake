@@ -115,7 +115,7 @@ if ( NOT SIONLIB_CONFIG STREQUAL "SIONLIB_CONFIG-NOTFOUND" )
             NAMES ${lib_name}
             HINTS ${SIONLIB_ROOT_DIR}/lib
             )
-        if ( NOT FULL_${lib_name} STREQUAL "FULL_${lib_name}-NOTFOUND" )
+        if ( NOT "${FULL_${lib_name}}" STREQUAL "FULL_${lib_name}-NOTFOUND" )
           set( SIONLIB_LIBRARIES ${SIONLIB_LIBRARIES} ${FULL_${lib_name}} CACHE INTERNAL "sionlib" )
         else ()
           printWarning( "Cannot find SIONlib library '${lib_name}'." )

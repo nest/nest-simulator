@@ -87,29 +87,29 @@ private:
 };
 
 inline void
-nest::ModelRangeManager::set_status( const Dictionary& )
+ModelRangeManager::set_status( const Dictionary& )
 {
 }
 
 inline void
-nest::ModelRangeManager::get_status( Dictionary& )
+ModelRangeManager::get_status( Dictionary& )
 {
 }
 
 inline bool
-nest::ModelRangeManager::is_in_range( size_t node_id ) const
+ModelRangeManager::is_in_range( size_t node_id ) const
 {
   return ( node_id > 0 and node_id <= last_node_id_ and node_id >= first_node_id_ );
 }
 
 inline std::vector< modelrange >::const_iterator
-nest::ModelRangeManager::begin() const
+ModelRangeManager::begin() const
 {
   return modelranges_.begin();
 }
 
 inline std::vector< modelrange >::const_iterator
-nest::ModelRangeManager::end() const
+ModelRangeManager::end() const
 {
   return modelranges_.end();
 }

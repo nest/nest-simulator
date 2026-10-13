@@ -132,7 +132,7 @@ operator^=( Enum& lhs, Enum rhs )
 }
 
 template < typename Enum >
-bool
+bool constexpr
 flag_is_set( const Enum en, const Enum flag )
 {
   using underlying = typename std::underlying_type< Enum >::type;

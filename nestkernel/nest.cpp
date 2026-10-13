@@ -469,7 +469,7 @@ connect_sonata( const Dictionary& graph_specs, const long hyperslab_size )
   kernel().connection_manager.connect_sonata( graph_specs, hyperslab_size );
 }
 
-std::deque< ConnectionID >
+std::vector< std::deque< ConnectionID > >
 get_connections( const Dictionary& dict )
 {
   dict.init_access_flags();

@@ -166,7 +166,8 @@ If you want to edit Model docs, PyNEST API files, or PyNEST examples, you will n
    * - Type of documentation
      - Source location
    * - Model docs
-     - ``nest-simulator/models/*.h`` in the section `BeginUserDocs`
+     - ``nest-simulator/models/*.h`` and ``nest-simulator/nestkernel/*.h``,
+       in the section `BeginUserDocs`
    * - PyNEST API
      - ``nest-simulator/pynest/nest/**/*.py``
    * - PyNEST examples
@@ -261,8 +262,7 @@ form to transfer your copyright to the NEST initiative and send it to *info [at]
 
    This workflow shows you how to create **user-level documentation**
    for NEST. For the **developer documentation**, please refer to our
-   :ref:`Developer documentation workflow
-   <devdoc_workflow>`.
+   `Developer documentation workflow <https://nest.github.io/nest-simulator/devdoc_workflow.html>`_
 
 
 Read the Docs

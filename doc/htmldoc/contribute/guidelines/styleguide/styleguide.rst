@@ -563,6 +563,20 @@ In general, we try to follow the pattern:
 * Third heading: ``~~~``
 * Fourth heading: ``^^^``
 
+Model documentation inside ``BeginUserDocs`` blocks is the exception. There the
+page title is generated from the ``Short description`` section, so the sections
+an author writes start one level down and use ``+++`` for their first level:
+
+.. code-block:: rst
+
+   Short description
+   +++++++++++++++++
+
+   Conductance based integrate-and-fire neuron model
+
+   Description
+   +++++++++++
+
 "Double quotes"
 ~~~~~~~~~~~~~~~
 

@@ -169,7 +169,7 @@ void connect_arrays( const long* sources,
 
 void connect_sonata( const Dictionary& graph_specs, const long hyperslab_size );
 
-std::deque< ConnectionID > get_connections( const Dictionary& dict );
+std::vector< std::deque< ConnectionID > > get_connections( const Dictionary& dict );
 
 void disconnect( const std::deque< ConnectionID >& conns );
 

@@ -43,6 +43,7 @@
 #include "event.h"
 #include "nest_names.h"
 #include "node.h"
+#include "node_collection.h"
 #include "source.h"
 #include "source_table.h"
 #include "spikecounter.h"
@@ -104,12 +105,14 @@ public:
     std::deque< ConnectionID >& conns ) const = 0;
 
   /**
-   * Add ConnectionID with given source_node_id and lcid to conns. If
-   * target_neuron_node_ids is given, only add connection if
-   * target_neuron_node_ids contains the node ID of the target of the connection.
+   * Add Connections with given source_node_id and lcid to conns. If target is given, only add connection if
+   * target contains the node ID of the target of the connection.
+   *
+   * @note target must be passed as const& to NodeCollectionPTR, because otherwise reference counting on
+   * the shared_ptr in a thread-parallel context will lead to significant thread contention.
    */
   virtual void get_connection_with_specified_targets( const size_t source_node_id,
-    const std::vector< size_t >& target_neuron_node_ids,
+    const NodeCollectionPTR& target,
     const size_t tid,
     const size_t lcid,
     const long synapse_label,
@@ -291,7 +294,7 @@ public:
       if ( synapse_label == UNLABELED_CONNECTION or C_[ lcid ].get_label() == synapse_label )
       {
         const size_t current_target_node_id = C_[ lcid ].get_target( tid )->get_node_id();
-        if ( current_target_node_id == target_node_id or target_node_id == 0 )
+        if ( target_node_id == 0 or target_node_id == current_target_node_id )
         {
           conns.push_back( ConnectionID( source_node_id, current_target_node_id, tid, syn_id_, lcid ) );
         }
@@ -301,7 +304,7 @@ public:
 
   void
   get_connection_with_specified_targets( const size_t source_node_id,
-    const std::vector< size_t >& target_neuron_node_ids,
+    const NodeCollectionPTR& target,
     const size_t tid,
     const size_t lcid,
     const long synapse_label,
@@ -312,8 +315,7 @@ public:
       if ( synapse_label == UNLABELED_CONNECTION or C_[ lcid ].get_label() == synapse_label )
       {
         const size_t current_target_node_id = C_[ lcid ].get_target( tid )->get_node_id();
-        if ( std::find( target_neuron_node_ids.begin(), target_neuron_node_ids.end(), current_target_node_id )
-          != target_neuron_node_ids.end() )
+        if ( target->contains( current_target_node_id ) )
         {
           conns.push_back( ConnectionID( source_node_id, current_target_node_id, tid, syn_id_, lcid ) );
         }

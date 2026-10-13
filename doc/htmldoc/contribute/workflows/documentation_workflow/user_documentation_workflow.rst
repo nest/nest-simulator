@@ -241,12 +241,13 @@ bottom of the PR conversation tab:
     :width: 50%
     :align: center
 
-The URL for PR previews has the following format ``https://nest-simulator--<pr-number>.org.readthedocs.build/en/<pr-number>/index.html``
+Click **Details** next to the Read the Docs check to open the preview. Preview URLs follow the pattern
+``nest-simulator--<pr-number>.org.readthedocs.build/en/<pr-number>/``.
 
 Reviewers will be assigned and go through your changes.
 
 If you are a first time contributor, we ask that you fill out the
-:download:`NEST Contributor Agreement <https://nest-simulator.readthedocs.io/en/latest/_downloads/9b65adbdacba6bfed66e68c62af4e308/NEST_Contributor_Agreement.pdf>`
+:download:`NEST Contributor Agreement </contribute/static/NEST_Contributor_Agreement.pdf>`
 form to transfer your copyright to the NEST initiative and send it to *info [at] nest-initiative.org*.
 
 .. tip::

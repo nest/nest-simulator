@@ -52,7 +52,33 @@ host_request_interval = "500ms"
 ###
 # Exclude URLs from checking (supports regex)
 # GNU is included here because it very frequently hits rate limits, even with very conservative internal/retry values and lychee's cache enabled
-exclude = [".git/.*", "http://www.gnu.org/licenses/", "https://www.gnu.org/licenses/", "http://www.gnu.org/licenses/gpl-2.0.html", "https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html"]
+#
+# The second group are hosts whose pages exist but which reject automated
+# requests from CI runners (bot protection, typically 403). Lychee >= 0.24
+# supports per-host headers via a `[hosts."<host>"]` table, which may allow
+# re-enabling some of these in future.
+#
+# The third group are not links: credentialed git remotes in the push workflows.
+exclude = [
+    ".git/.*",
+    "http://www.gnu.org/licenses/",
+    "https://www.gnu.org/licenses/",
+    "http://www.gnu.org/licenses/gpl-2.0.html",
+    "https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html",
+
+    "^https://www\\.flaticon\\.com/",
+    "^https://(www\\.)?merriam-webster\\.com/",
+    "^https?://(www\\.)?ams\\.org/",
+    "^https://www\\.openmp\\.org/",
+    "^https://en\\.cppreference\\.com/",
+    "^https://(stackoverflow\\.com|math\\.stackexchange\\.com)/",
+    "^https://github\\.com/signup",
+    "^https://pure\\.mpg\\.de/",
+    "^https://www\\.jneurosci\\.org/",
+    "^https?://www\\.scholarpedia\\.org/",
+
+    "^https://ghpusher",
+]
 
 # Exclude input paths from checking (supports glob).
 # The Sphinx/Jinja2 HTML templates contain unrendered `{{ pathto(...) }}`

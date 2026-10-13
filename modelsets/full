@@ -89,6 +89,7 @@ music_rate_in_proxy
 music_rate_out_proxy
 music_message_in_proxy
 noise_generator
+ou_noise_generator
 parrot_neuron
 parrot_neuron_ps
 inhomogeneous_poisson_generator

@@ -25,8 +25,9 @@ timeout = 20
 # Maximum number of allowed redirects -- set to 0 because redirect itself typically means "found"!
 max_redirects = 0
 
-# Maximum number of retries per request -- default is 3 but this can cause random errors to occur during the check
-max_retries = 10
+# Maximum number of retries per request -- default is 3 but this can cause random errors to occur during the check.
+# Retries back off between attempts, so a high value makes every timeout or 5xx very slow.
+max_retries = 5
 
 # Comma-separated list of accepted status codes for valid links.
 # Omit to accept all response types.
@@ -51,14 +52,52 @@ host_request_interval = "500ms"
 ### Exclusions
 ###
 # Exclude URLs from checking (supports regex)
-# GNU is included here because it very frequently hits rate limits, even with very conservative internal/retry values and lychee's cache enabled
-exclude = [".git/.*", "http://www.gnu.org/licenses/", "https://www.gnu.org/licenses/", "http://www.gnu.org/licenses/gpl-2.0.html", "https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html"]
+# GNU (all of gnu.org) is included here because it very frequently hits rate limits or times out, even with very conservative internal/retry values and lychee's cache enabled
+#
+# The second group are hosts whose pages exist but which reject automated
+# requests from CI runners (bot protection, typically 403). Lychee >= 0.24
+# supports per-host headers via a `[hosts."<host>"]` table, which may allow
+# re-enabling some of these in future.
+#
+# The third group are not links: credentialed git remotes in the push workflows.
+#
+# The fourth group are index pages that Doxygen generates at build time; the
+# devdoc markdown links to them, but they do not exist in the source tree.
+exclude = [
+    ".git/.*",
+    "^https?://(www\\.)?gnu\\.org/",
+
+    "^https://www\\.flaticon\\.com/",
+    "^https://(www\\.)?merriam-webster\\.com/",
+    "^https?://(www\\.)?ams\\.org/",
+    "^https://www\\.openmp\\.org/",
+    "^https://en\\.cppreference\\.com/",
+    "^https://(stackoverflow\\.com|math\\.stackexchange\\.com)/",
+    "^https://github\\.com/signup",
+    "^https://pure\\.mpg\\.de/",
+    "^https://www\\.jneurosci\\.org/",
+    "^https?://www\\.scholarpedia\\.org/",
+    "^https://inkscape\\.org/",
+
+    "^https://ghpusher",
+
+    "^file://.*/doc/developer_space/(annotated|namespaces|files)\\.html$",
+]
+
+# Rewrite URLs before checking (regex, `$n` refers to capture groups).
+# github.com throttles file views ("blob" pages) from CI runners with 503s.
+# raw.githubusercontent.com serves the same file and still 404s if the file
+# or branch is gone, so check that instead.
+remap = [
+    "^https://github\\.com/([^/]+)/([^/]+)/blob/(.+)$ https://raw.githubusercontent.com/$1/$2/$3",
+]
 
 # Exclude input paths from checking (supports glob).
 # The Sphinx/Jinja2 HTML templates contain unrendered `{{ pathto(...) }}`
 # expressions that are only resolved at doc build time. Checking the raw
 # template source reports these as broken local files, so skip it.
-exclude_path = ["doc/htmldoc/templates"]
+# This file is skipped too: lychee would read the regexes above as URLs.
+exclude_path = ["doc/htmldoc/templates", "lychee\\.toml$"]
 
 # Exclude URLs contained in a file from checking
 # If a file named `.lycheeignore` exists in the current working directory,

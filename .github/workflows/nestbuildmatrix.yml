@@ -441,7 +441,7 @@ jobs:
 
   sphinx-rtd:
     # as close as possible to the Readthedocs setup (system install cmake, pip install -r doc/requirements.txt)
-    runs-on: "ubuntu-22.04"
+    runs-on: "ubuntu-24.04"
     needs: [link_checker, pydocstyle, rstcheck, vale]
     steps:
       - name: Harden Runner

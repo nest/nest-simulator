@@ -2,7 +2,7 @@ name: Mirror to JSC
 
 on:
   push:
-    branches: [ master ]
+    branches: [main]
 
 jobs:
   sync_to_jsc:

@@ -14,7 +14,7 @@ consistent and readable.
   `.cpp` file. Two blank lines between free functions.
 - Formatting is enforced by `clang-format`. It is part of the `pre-commit hooks`. Make sure
   to set up pre-commit to ensure correct formatting. For more information see
-  the [required development tools](https://nest-simulator.readthedocs.io/en/stable/contribute/guidelines/coding_guidelines_check.html)
+  the [required development tools](https://nest-simulator.readthedocs.io/en/latest/contribute/guidelines/coding_guidelines_check.html)
 
 
 ### Control structures

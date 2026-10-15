@@ -107,7 +107,7 @@ For bug reports, feature requests, documentation improvements, or other issues,
 you can create a [GitHub issue](https://github.com/nest/nest-simulator/issues/new/choose),
 
 For working with NEST code and documentation, you can find guidelines for contributions
-[in our documentation](https://nest-simulator.org/documentation/contribute/index.html)
+[in our documentation](https://nest-simulator.org/documentation/)
 
 ### Developer docs
 

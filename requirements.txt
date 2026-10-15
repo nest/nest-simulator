@@ -3,7 +3,8 @@
 # This file specifies the required Python packages for those who would
 # like to compile NEST or build NEST documentation themselves.
 # If you just want to execute NEST, you should install NEST
-# directly as described in https://www.nest-simulator.org/installation.
+# directly as described in
+# https://nest-simulator.readthedocs.io/en/stable/installation/index.html.
 #
 # Note that this file only specifies the required Python packages and
 # not the entire software stack needed to build and work with NEST Simulator.

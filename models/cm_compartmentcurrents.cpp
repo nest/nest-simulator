@@ -81,7 +81,7 @@ Na::compute_statevar_m( const double v_comp )
 {
   /**
    * Channel rate equations from the following .mod file:
-   * https://senselab.med.yale.edu/ModelDB/ShowModel?model=140828&file=/Branco_2010/mod.files/na.mod#tabs-2
+   * https://modeldb.science/140828
    */
   // auxiliary variables
   double v_comp_plus_35 = v_comp + 35.013;
@@ -116,7 +116,7 @@ Na::compute_statevar_h( const double v_comp )
 {
   /**
    * Channel rate equations from the following .mod file:
-   * https://senselab.med.yale.edu/ModelDB/ShowModel?model=140828&file=/Branco_2010/mod.files/na.mod#tabs-2
+   * https://modeldb.science/140828?tab=2&file=Branco_2010/mod.files/na.mod
    */
   double v_comp_plus_50 = v_comp + 50.013;
   double v_comp_plus_75 = v_comp + 75.013;
@@ -240,7 +240,7 @@ K::compute_statevar_n( const double v_comp )
 {
   /**
    * Channel rate equations from the following .mod file:
-   * https://senselab.med.yale.edu/ModelDB/ShowModel?model=140828&file=/Branco_2010/mod.files/kv.mod#tabs-2
+   * https://modeldb.science/140828
    */
   // auxiliary variables
   double v_comp_minus_25 = v_comp - 25.;

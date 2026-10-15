@@ -91,7 +91,7 @@ For general citations, please use
 
 
 If you need help or would like to discuss an idea or issue,
-join our [maling list](https://nest-simulator.org/documentation/developer_space/guidelines/mailing_list_guidelines.html),
+join our [mailing list](https://nest-simulator.org/mailinglist),
 where we encourage active participation from our developers and users to share their knowledge and experience with NEST.
 
 

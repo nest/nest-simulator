@@ -107,7 +107,12 @@ For bug reports, feature requests, documentation improvements, or other issues,
 you can create a [GitHub issue](https://github.com/nest/nest-simulator/issues/new/choose),
 
 For working with NEST code and documentation, you can find guidelines for contributions
-[in our documentation](https://nest-simulator.org/documentation/developer_space/index.html#contribute-to-nest)
+[in our documentation](https://nest-simulator.org/documentation/contribute/index.html)
+
+### Developer docs
+
+If you want to view the developer documentation for the C++ source code, plus additional developer-related
+docs, check out our [developer space](https://nest.github.io/nest-simulator).
 
 
 ## Publications

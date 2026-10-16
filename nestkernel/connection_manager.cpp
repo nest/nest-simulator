@@ -70,6 +70,9 @@ ConnectionManager::ConnectionManager()
   , thirdconnbuilder_factories_()
   , min_delay_( 1 )
   , max_delay_( 1 )
+  , global_min_delay_( Time::pos_inf().get_steps() )
+  , global_max_delay_( Time::neg_inf().get_steps() )
+  , local_delay_extrema_changed_( false )
   , keep_source_table_( true )
   , connections_have_changed_( false )
   , get_connections_has_been_called_( false )
@@ -114,6 +117,9 @@ ConnectionManager::initialize( const bool adjust_number_of_threads_or_rng_only )
     use_compressed_spikes_ = true;
     stdp_eps_ = 1.0e-6;
     min_delay_ = max_delay_ = 1;
+    global_min_delay_ = Time::pos_inf().get_steps();
+    global_max_delay_ = Time::neg_inf().get_steps();
+    local_delay_extrema_changed_ = false;
     sw_construction_connect.reset();
   }
 
@@ -494,31 +500,49 @@ ConnectionManager::update_delay_extrema_()
   min_delay_ = get_min_delay_time_().get_steps();
   max_delay_ = get_max_delay_time_().get_steps();
 
-  if ( not get_user_set_delay_extrema() )
+  const bool user_set_delay_extrema = get_user_set_delay_extrema();
+
+  // If the user explicitly set min/max_delay, this happend on all MPI ranks,
+  // so all ranks are up to date already. Also, once the user has set min/max_delay
+  // explicitly, Connect() cannot induce new extrema. Otherwise, the delay checkers
+  // only know the delays of local connections, so the extrema must be combined
+  // across ranks.
+  if ( not user_set_delay_extrema and kernel().mpi_manager.get_num_processes() > 1 )
+  {
+    // Communicate only if connections have been created since the last exchange.
+    // The flag is not reset by updates of the connection infrastructure, so it
+    // stays set until the new local extrema have been exchanged.
+    if ( local_delay_extrema_changed_ )
+    {
+      std::vector< long > min_delays( kernel().mpi_manager.get_num_processes() );
+      min_delays[ kernel().mpi_manager.get_rank() ] = min_delay_;
+      kernel().mpi_manager.communicate( min_delays );
+      min_delay_ = *std::min_element( min_delays.begin(), min_delays.end() );
+
+      std::vector< long > max_delays( kernel().mpi_manager.get_num_processes() );
+      max_delays[ kernel().mpi_manager.get_rank() ] = max_delay_;
+      kernel().mpi_manager.communicate( max_delays );
+      max_delay_ = *std::max_element( max_delays.begin(), max_delays.end() );
+
+      local_delay_extrema_changed_ = false;
+    }
+
+    // Without an exchange, the local values must not replace the global ones.
+    // Local connections are unchanged since the last exchange, so any other change
+    // of the local extrema (e.g., by SetDefaults) happened on all ranks alike, and
+    // combining with the last global extrema gives the same result on every rank.
+    min_delay_ = std::min( min_delay_, global_min_delay_ );
+    max_delay_ = std::max( max_delay_, global_max_delay_ );
+    global_min_delay_ = min_delay_;
+    global_max_delay_ = max_delay_;
+  }
+
+  if ( not user_set_delay_extrema )
   {
     // If no min/max_delay is set explicitly, then the default delay used by the
     // SPBuilders have to be respected for min/max_delay.
     min_delay_ = std::min( min_delay_, kernel().sp_manager.builder_min_delay() );
     max_delay_ = std::max( max_delay_, kernel().sp_manager.builder_max_delay() );
-  }
-
-  // If the user explicitly set min/max_delay, this happend on all MPI ranks,
-  // so all ranks are up to date already. Also, once the user has set min/max_delay
-  // explicitly, Connect() cannot induce new extrema. Thuse, we only need to communicate
-  // with other ranks if the user has not set the extrema and connections may have
-  // been created.
-  if ( not kernel().connection_manager.get_user_set_delay_extrema()
-    and kernel().connection_manager.connections_have_changed() and kernel().mpi_manager.get_num_processes() > 1 )
-  {
-    std::vector< long > min_delays( kernel().mpi_manager.get_num_processes() );
-    min_delays[ kernel().mpi_manager.get_rank() ] = min_delay_;
-    kernel().mpi_manager.communicate( min_delays );
-    min_delay_ = *std::min_element( min_delays.begin(), min_delays.end() );
-
-    std::vector< long > max_delays( kernel().mpi_manager.get_num_processes() );
-    max_delays[ kernel().mpi_manager.get_rank() ] = max_delay_;
-    kernel().mpi_manager.communicate( max_delays );
-    max_delay_ = *std::max_element( max_delays.begin(), max_delays.end() );
   }
 
   if ( min_delay_ == Time::pos_inf().get_steps() )
@@ -1761,6 +1785,7 @@ ConnectionManager::set_connections_have_changed()
   }
 
   connections_have_changed_ = true;
+  local_delay_extrema_changed_ = true;
 }
 
 void

@@ -116,7 +116,7 @@ where
 
 .. math::
 
-   I_{\text{syn, X}}(t) = (V_{\text{m}}(t) - E_{\text{syn, X}}) \sum_{j}  \sum_k g_{\text{j, X}}(t-t_j^k-d_j) \;,
+   I_{\text{syn, X}}(t) = (V_{\text{m}}(t) - E_{\text{syn, X}}) \sum_{j} w_j \sum_k g_{\text{X}}(t-t_j^k-d_j) \;,
 
 where :math:`j` indexes either excitatory (:math:`\text{X} = \text{ex}`)
 or inhibitory (:math:`\text{X} = \text{in}`) presynaptic neurons,
@@ -127,17 +127,18 @@ The individual synaptic conductances are given by
 
 .. math::
 
-   g_{\text{j, X}}(t) = \frac{e}{\tau_{\text{syn, X}}} \, w_{\text{j}} \, t \, e^{-\frac{t}{\tau_{\text{syn, X}}}} \Theta(t)
+   g_{\text{X}}(t) = \frac{e}{\tau_{\text{syn, X}}} \,  t \, e^{-\frac{t}{\tau_{\text{syn, X}}}} \Theta(t)
 
 where :math:`\Theta(x)` is the Heaviside step function. The conductances are normalized to unit
 peak, that is,
 
 .. math::
 
-   g_{\text{j, X}}(t= \tau_{\text{syn, X}}) = w_{\text{j}} \;,
+   g_{\text{X}}(t= \tau_{\text{syn, X}}) = 1 \;,
 
-where :math:`w_{\text{j}}` is the weight of the connection from neuron :math:`j` (excitatory if
-:math:`w_{\text{j}} > 0` or inhibitory if :math:`w_{\text{j}} < 0`).
+as the connnection of the weight :math:`w_{j}`  from neuron :math:`j` (excitatory if
+:math:`w_{j} > 0` or inhibitory if :math:`w_{j} < 0`) is written explicitly in the equation for total
+synaptic current.
 
 .. note::
 

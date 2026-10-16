@@ -93,15 +93,44 @@ Synaptic input
 ..............
 
 The synaptic input current has an excitatory and an inhibitory component,
-:math:`I_{\text{syn}}(t) = I_{\text{syn, ex}}(t) + I_{\text{syn, in}}(t)`, where the individual
-post-synaptic currents (PSCs) are :math:`\alpha`-shaped,
+
+.. math::
+
+  I_{\text{syn}}(t) = I_{\text{syn, ex}}(t) + I_{\text{syn, in}}(t)
+
+where
+
+.. math::
+
+   I_{\text{syn, X}}(t) = \sum_{j} w_j \sum_k i_{\text{syn, X}}(t-t_j^k-d_j) \;,
+
+where :math:`j` indexes either excitatory (:math:`\text{X} = \text{ex}`)
+or inhibitory (:math:`\text{X} = \text{in}`) presynaptic neurons,
+:math:`k` indexes the spike times of neuron :math:`j`, and :math:`d_j`
+is the delay from neuron :math:`j`.
+
+The individual post-synaptic currents (PSCs) are given by
 
 .. math::
 
    i_{\text{syn, X}}(t) = \frac{e}{\tau_{\text{syn, X}}} t e^{-\frac{t}{\tau_{\text{syn, X}}}} \Theta(t) \;,
 
-with :math:`\Theta(x)` the Heaviside step function. The PSCs are normalized such that an event of
-weight 1.0 evokes a peak current of 1 pA at :math:`t = \tau_{\text{syn, X}}`.
+where :math:`\Theta(x)` is the Heaviside step function. The PSCs are normalized to unit maximum, that is,
+
+.. math::
+
+   i_{\text{syn, X}}(t= \tau_{\text{syn, X}}) = 1 \;.
+
+As a consequence, the total charge :math:`q` transferred by a single PSC depends
+on the synaptic time constant according to
+
+.. math::
+
+   q = \int_0^{\infty}  i_{\text{syn, X}}(t) dt = e \tau_{\text{syn, X}} \;.
+
+By default, :math:`V_\text{m}` is not bounded from below. To limit
+hyperpolarization to biophysically plausible values, set parameter
+:math:`V_{\text{min}}` as lower bound of :math:`V_\text{m}`.
 
 Precise implementation
 ......................

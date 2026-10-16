@@ -135,13 +135,15 @@ Each incoming spike evokes an :math:`\alpha`-shaped post-synaptic current
 
 for :math:`\text{X} \in \{\text{ex}, \text{in}\}`, with :math:`\Theta(x)` the Heaviside step function. The
 currents are normalized such that an event of weight 1.0 evokes a peak current of 1 pA at
-:math:`t = \tau_{\text{syn, X}}`. Each channel current is the sum of these single-spike responses over
+:math:`t = \tau_{\text{syn, X}}`.
+
+Each channel current is the sum of these single-spike responses over
 all presynaptic neurons :math:`j` and their spike times :math:`t_j^k`, weighted by the synaptic weights
-:math:`w_j`,
+:math:`w_j` and :math:`d_j` is the delay from neuron :math:`j`:
 
 .. math::
 
-   I_{\text{syn, X}}(t) = \sum_j w_j \sum_k i_{\text{syn, X}}(t - t_j^k) \;.
+   I_{\text{syn, X}}(t) = \sum_j w_j \sum_k i_{\text{syn, X}}(t - t_j^k-d_j) \;.
 
 Excitatory and inhibitory inputs are distinguished by the sign of the synaptic weight.
 

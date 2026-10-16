@@ -118,7 +118,7 @@ where
 
 .. math::
 
-   I_{\text{syn, X}}(t) = (V_{\text{m}}(t) - E_{\text{syn, X}}) \sum_{j}  \sum_k g_{\text{j, X}}(t-t_j^k-d_j) \;,
+   I_{\text{syn, X}}(t) = (V_{\text{m}}(t) - E_{\text{syn, X}}) \sum_{j} w_j \sum_k g_{\text{X}}(t-t_j^k-d_j) \;,
 
 where :math:`j` indexes either excitatory (:math:`\text{X} = \text{ex}`)
 or inhibitory (:math:`\text{X} = \text{in}`) presynaptic neurons,
@@ -130,7 +130,7 @@ exponentials with separate rise and decay time constants,
 
 .. math::
 
-   g_{\text{j, X}}(t) = w_{\text{j}} \,
+   g_{\text{X}}(t) =
    \frac{ e^{-\frac{t}{\tau_{\text{decay, X}}}} - e^{-\frac{t}{\tau_{\text{rise, X}}}} }
         { e^{-\frac{t_{\text{peak, X}}}{\tau_{\text{decay, X}}}} - e^{-\frac{t_{\text{peak, X}}}{\tau_{\text{rise, X}}}} }
    \, \Theta(t)
@@ -148,10 +148,11 @@ unit peak, that is,
 
 .. math::
 
-   g_{\text{j, X}}(t = t_{\text{peak, X}}) = w_{\text{j}} \;,
+   g_{\text{X}}(t = t_{\text{peak, X}}) = 1 \;,
 
-where :math:`w_{\text{j}}` is the weight of the connection from neuron :math:`j` (excitatory if
-:math:`w_{\text{j}} > 0` or inhibitory if :math:`w_{\text{j}} < 0`).
+as the weight of the connection :math:`w_{j}` from neuron :math:`j` (excitatory if
+:math:`w_{j} > 0` or inhibitory if :math:`w_{j} < 0`) is written explicitly in the equation for the total
+synaptic current.
 
 For :math:`\tau_{\text{rise, X}} = \tau_{\text{decay, X}}`, which is the case for the default
 parameters, the beta function reduces to the alpha function of ``iaf_cond_alpha``, and the model

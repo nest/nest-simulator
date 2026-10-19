@@ -16,7 +16,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
-
+# The following function was suggested by Mark Moll on the CMake mailing list
+# https://cmake.org/pipermail/cmake/2011-January/041666.html
 function(find_python_module module)
   string(TOUPPER ${module} module_upper)
 

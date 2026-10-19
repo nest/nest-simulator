@@ -76,8 +76,8 @@ configuration:
    section! ]]
 
 This model used here corresponds to the formulation presented in
-Sander et al. [1]_ and the bisection method developed in
-Gewaltig and Diesmann [2]_.
+Jones et al :footcite:p:`Tsodyks2000` and the bisection method developed in
+:footcite:p:`Urbanczik2014`.
 
 [[ See Also section - Include a couple of related examples, models,
    or functions. ]]
@@ -106,17 +106,8 @@ Time-averaged from the spiking simulation:
 
 References
 ----------
-    [[ Note the format of the reference. No bold nor italics is used. Last name
-       of author(s) followed by year, title in sentence case and full name of
-       journal followed by volume and page range. Include the doi if
-       applicable. ]]
 
-.. [1] Sander M., et al. (2011). Biology of the sauropod dinosaurs: The
-       evolution of gigantism. Biological Reviews. 86(1):117-155.
-       https://doi.org/10.111/j.1469-185x.2010.00137.x
-
-.. [2] Gewaltig M-O, Diesmann M (2007). NEST (Neural Simulation Tool).
-       Scholarpedia 2(4):1430.
+.. footbibliogrpahy::
 
 [[ Include your name in the author section, so we know who contributed.
   Author(s) should be comma separated with first name as initials followed

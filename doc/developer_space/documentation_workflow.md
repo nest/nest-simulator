@@ -8,7 +8,7 @@ changes with the correct Doxygen syntax (see \ref devdoc_coding_conventions "Cod
 
 ### Update PyNEST code
 
-For information on updating PyNEST, see [our Read the Docs contribution guide](https://nest-simulator.readthedocs.io/en/stable/contribute/index.html).
+For information on updating PyNEST, see [our Read the Docs contribution guide](https://nest-simulator.readthedocs.io/en/latest/contribute/index.html).
 
 ## Contribute to developer documentation
 
@@ -22,7 +22,7 @@ to contribute and improve these documents. The same rules for contributing other
 We have additional documentation that is more user-oriented on Read the Docs. Please ensure the changes you make
 to code are reflected in the appropriate documentation sections for either developer or users/contributors.
 
-All contribution guides can be found [here](https://nest-simulator.readthedocs.io/en/stable/contribute/index.html).
+All contribution guides can be found [here](https://nest-simulator.readthedocs.io/en/latest/contribute/index.html).
 
 #### Format of markdown files
 
@@ -75,7 +75,7 @@ Always qualify class and method names with their namespace; unqualified names
 are not resolved from markdown pages. Method links require trailing `()`.
 
 Additional documentation for developers and contributors can be found on
-[Read the Docs](https://nest-simulator.readthedocs.io/en/stable/contribute/index.html),
+[Read the Docs](https://nest-simulator.readthedocs.io/en/latest/contribute/index.html),
 including reviewer guidelines, git workflows etc.
 
 ### Doxygen configuration and styling

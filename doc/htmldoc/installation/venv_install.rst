@@ -42,7 +42,7 @@ Install from source in a ``venv`` environment
 
 .. code-block:: bash
 
-     pip install -r requirements.txt # installs all dependencies for PyNEST, testing, docs, and nest-server
+     pip install -r requirements.txt # installs all dependencies for PyNEST, testing and docs
 
 
 * Create a build directory:

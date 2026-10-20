@@ -182,8 +182,14 @@ def ResetKernel():
     * time
     * random generators
 
-    are reset. All dynamically loaded modules (via :py:func:`.Install()`) are unloaded.
+    are reset.
 
+    Additionally, all dynamically loaded modules (via :py:func:`.Install()`) are
+    unloaded. However, note that some systems do not unload dynamic library symbols
+    (see https://github.com/nest/nest-simulator/issues/3802); as a result of this,
+    it is recommended to always use unique names for models inside modules, or,
+    alternatively, use the ``-fno-gnu-unique`` flag when building NEST extension
+    modules.
     """
     nestkernel.llapi_reset_kernel()
 

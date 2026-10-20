@@ -110,24 +110,24 @@ or supplied to the execution command line for running the Docker container:
 
   docker run -it --rm -e NEST_CONTAINER_MODE="nest-server" -p 52425:52425 nest/nest-simulator:dev
 
-The generic invocation command line for the ``nest-server`` command looks as follows:
+The generic invocation command line for the ``nest-server start --help`` command looks as follows:
 
 .. code-block:: text
 
-  nest-server {arguments} [-d] [-h <host>] [-o] [-p <port>]
+    Usage: nest-server start [OPTIONS]
 
-Possible arguments are ``log``, ``pid``, ``start``, ``stop``, or ``version``.
-
-The meaning of the options is as follows:
-
--d | --daemon
-    run NEST Server in the background, i.e. daemonize the server process
--h <HOST> | --host <HOST>
-    use hostname/IP address <HOST> for the server instance [default: 127.0.0.1]
--o | outputs
-    print all outputs to the console
--p <PORT> | --port <PORT>
-    use port <PORT> for opening the socket [default: 52425]
+    Options:
+    -d, --daemon           run NEST Server in the background, i.e. daemonize the
+                            server process
+    -h, --host TEXT        use hostname/IP address for the server [default:
+                            127.0.0.1]
+    -p, --port INTEGER     use port for opening the socket [default: 52425]
+    -o, --outputs          print NEST outputs to the console
+    -t, --timeout INTEGER  workers silent for more than this many seconds are
+                            killed and restarted [default: 30]
+    -w, --workers INTEGER  the number of worker processes for handling requests
+                            [default: 1]
+    --help                 Show this message and exit.
 
 Run with MPI
 ~~~~~~~~~~~~

@@ -141,12 +141,6 @@ from happening, we provide a special version of the NEST Server command for use 
 
     nest-server-mpi start -n N [--host HOST] [--port PORT]
 
-replaces the former command:
-
-.. code-block:: text
-
-    mpirun -n N nest-server-mpi [--host HOST] [--port PORT]
-
 If run like this, the RESTful API of the NEST Server will only be served by the :hxt_ref:`MPI` process with rank 0
 (called the `master`), while all other N-1 ranks will start the NEST Server in `worker` mode. Upon receiving a request,
 the master relays all commands to the workers, which execute them, collect all result data, and send it back to the

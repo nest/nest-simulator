@@ -40,6 +40,7 @@
 #include "connection_id.h"
 #include "connection_label.h"
 #include "connector_model.h"
+#include "direct_spike_delivery.h"
 #include "event.h"
 #include "nest_names.h"
 #include "node.h"
@@ -224,6 +225,12 @@ class Connector : public ConnectorBase
 {
 private:
   BlockVector< ConnectionT > C_;
+
+  /**
+   * Input buffers of the targets, indexed by target index (only used for hpc connections with
+   * ConnectionT::supports_direct_delivery, see send_direct_()).
+   */
+  DirectSpikeTable direct_table_;
   const synindex syn_id_;
 
 public:
@@ -408,6 +415,15 @@ public:
     typename ConnectionT::CommonPropertiesType const& cp =
       static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties();
 
+    if constexpr ( ConnectionT::supports_direct_delivery )
+    {
+      size_t n_targets;
+      if ( send_direct_( tid, lcid, cp, e, n_targets ) )
+      {
+        return n_targets;
+      }
+    }
+
     size_t lcid_offset = 0;
 
     while ( true )
@@ -434,6 +450,24 @@ public:
 
     return 1 + lcid_offset;  // event was delivered to at least one target
   }
+
+  /**
+   * Deliver a spike to all targets of the segment starting at lcid by adding the weight directly to the
+   * input buffer of the target, bypassing Connection::send(), SpikeEvent::operator() and the virtual
+   * Node::handle( SpikeEvent& ). Targets whose model does not support this are served by the regular path.
+   * Has the same effect as the regular path, see Node::get_direct_spike_input() for the contract.
+   *
+   * Does nothing and returns false unless the kernel parameter direct_spike_delivery is set, the event is a
+   * plain SpikeEvent of multiplicity 1 and the connections have no weight recorder. Otherwise returns true and
+   * sets n_targets to the number of connections of the segment (the return value of send()).
+   *
+   * Implemented in connector_base_impl.h
+   */
+  bool send_direct_( const size_t tid,
+    const size_t lcid,
+    const typename ConnectionT::CommonPropertiesType& cp,
+    Event& e,
+    size_t& n_targets );
 
   // Implemented in connector_base_impl.h
   void

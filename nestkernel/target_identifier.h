@@ -132,6 +132,14 @@ public:
     }
   }
 
+  //! Thread-local index of the target node.
+  size_t
+  get_index() const
+  {
+    assert( target_ != invalid_targetindex );
+    return target_;
+  }
+
   Node*
   get_target_ptr( const size_t tid ) const
   {

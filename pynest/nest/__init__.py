@@ -195,6 +195,11 @@ class NestModule(types.ModuleType):
     total_num_virtual_procs = KernelAttribute("int", "The total number of virtual processes", default=1)
     local_num_threads = KernelAttribute("int", "The local number of threads", default=1)
     num_processes = KernelAttribute("int", "The number of MPI processes", readonly=True)
+    direct_spike_delivery = KernelAttribute(
+        "bool",
+        "Whether spikes of hpc static synapses are added directly to the input buffers of supporting target models",
+        default=False,
+    )
     off_grid_spiking = KernelAttribute(
         "bool",
         "Whether to transmit precise spike times in MPI communication",

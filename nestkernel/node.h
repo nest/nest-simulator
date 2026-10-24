@@ -34,6 +34,7 @@
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
 #include "deprecation_warning.h"
+#include "direct_spike_delivery.h"
 #include "event.h"
 #include "histentry.h"
 #include "nest_names.h"
@@ -570,6 +571,23 @@ public:
    * @ingroup event_interface
    */
   virtual void handle( SpikeEvent& e );
+
+  /**
+   * Describe the spike input buffer of this node for direct spike delivery.
+   *
+   * A node model may override this function to let hpc static synapses add the weight of a spike
+   * directly into its input buffer instead of going through handle( SpikeEvent& ). The model
+   * promises that handle( SpikeEvent& ) does nothing but
+   * `buffer[ slot( e.get_rel_delivery_steps( slice_origin ) ) ][ channel ] += e.get_weight()` with
+   * channel `excitatory_channel` for positive and `inhibitory_channel` otherwise (multiplicity 1),
+   * and that the buffer is not reallocated between two calls to prepare().
+   * Models that do not override this function (or any subclass overriding handle( SpikeEvent& ) without
+   * adapting this function) are served by the regular path.
+   *
+   * @see nestkernel/direct_spike_delivery.h
+   * @ingroup event_interface
+   */
+  virtual DirectSpikeInput get_direct_spike_input();
 
   /**
    * Handle incoming weight recording events.

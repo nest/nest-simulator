@@ -116,6 +116,13 @@ public:
   // Whether this connection type supports flush events.
   static constexpr bool supports_flush_event = false;
 
+  /**
+   * Whether Connector::send() may deliver spikes of this connection type directly into the input buffer
+   * of the target. Requires get_weight(), get_target_index() and an unconditional "add weight" effect.
+   * See nestkernel/direct_spike_delivery.h.
+   */
+  static constexpr bool supports_direct_delivery = false;
+
   Connection()
     : target_()
     , syn_id_delay_( 1.0 )
@@ -244,6 +251,13 @@ public:
   get_rport() const
   {
     return target_.get_rport();
+  }
+
+  //! Target identifier, e.g., to read the thread-local node index of an hpc connection.
+  const targetidentifierT&
+  get_target_identifier() const
+  {
+    return target_;
   }
 
   /**

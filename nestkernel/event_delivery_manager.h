@@ -24,6 +24,7 @@
 #define EVENT_DELIVERY_MANAGER_H
 
 // C++ includes:
+#include <atomic>
 #include <cassert>
 #include <limits>
 #include <vector>
@@ -171,6 +172,17 @@ public:
    * Return (T+d) mod max_delay.
    */
   long get_modulo( long d );
+
+  //! Data of the table of pre-computed modulos (see get_modulo()), valid until the next init_moduli().
+  const long* get_moduli_data() const;
+
+  //! Whether Connector::send() may deliver spikes directly into the input buffers of the targets.
+  bool get_direct_spike_delivery() const;
+
+  size_t get_direct_delivery_generation() const;
+
+  //! Called when input buffers may be reallocated (SimulationManager::prepare()).
+  void invalidate_direct_delivery_tables();
 
 
   /**
@@ -385,6 +397,12 @@ private:
   bool off_grid_spiking_;  //!< indicates whether spikes are not constrained to
                            //!< the grid
 
+  //! Deliver spikes of hpc static synapses directly into the input buffer of supporting targets.
+  bool direct_spike_delivery_;
+
+  //! Incremented whenever input buffers may have moved; invalidates the DirectSpikeTables of all Connectors.
+  std::atomic< size_t > direct_delivery_generation_;
+
   /**
    * Table of pre-computed modulos.
    *
@@ -502,6 +520,30 @@ inline void
 EventDeliveryManager::send_to_node( Event& e )
 {
   e();
+}
+
+inline const long*
+EventDeliveryManager::get_moduli_data() const
+{
+  return moduli_.data();
+}
+
+inline bool
+EventDeliveryManager::get_direct_spike_delivery() const
+{
+  return direct_spike_delivery_;
+}
+
+inline size_t
+EventDeliveryManager::get_direct_delivery_generation() const
+{
+  return direct_delivery_generation_.load( std::memory_order_relaxed );
+}
+
+inline void
+EventDeliveryManager::invalidate_direct_delivery_tables()
+{
+  direct_delivery_generation_.fetch_add( 1, std::memory_order_relaxed );
 }
 
 inline bool

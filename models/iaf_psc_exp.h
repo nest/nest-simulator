@@ -257,6 +257,7 @@ public:
   size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
   void handle( SpikeEvent& ) override;
+  DirectSpikeInput get_direct_spike_input() override;
   void handle( CurrentEvent& ) override;
   void handle( DataLoggingRequest& ) override;
 

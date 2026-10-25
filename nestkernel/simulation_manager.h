@@ -32,6 +32,7 @@
 // Includes from libnestutil:
 #include "manager_interface.h"
 #include "stopwatch.h"
+#include "tree_barrier.h"
 
 // Includes from nestkernel:
 #include "cycle_time_log.h"
@@ -213,6 +214,9 @@ private:
                                     //!< simulation must not be resumed
   bool print_time_;                 //!< Indicates whether time should be printed during
                                     //!< simulations (or not)
+  bool use_tree_barrier_;           //!< Use the spinning tree barrier instead of the OpenMP barriers in the update loop
+  size_t tree_barrier_fan_in_;      //!< Fan-in of the tree barrier (threads per group)
+  TreeBarrier tree_barrier_;
   bool use_wfr_;                    //!< Indicates wheter waveform relaxation is used
   double wfr_comm_interval_;        //!< Desired waveform relaxation communication
                                     //!< interval (in ms)

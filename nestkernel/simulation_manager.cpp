@@ -1074,10 +1074,22 @@ SimulationManager::update_()
 
         sw_update_.stop();
 
+        // Decided before the barrier, because the master thread changes to_step_ in advance_time_() while other threads
+        // may still be on their way out of the barrier.
+        const bool collocate_in_groups = to_step_ == kernel().connection_manager.get_min_delay()
+          and kernel().connection_manager.has_primary_connections() and kernel().event_delivery_manager.use_group_collocation();
+
         // parallel section ends, wait until all threads are done -> synchronize
         kernel().get_omp_synchronization_simulation_stopwatch().start();
 #pragma omp barrier
         kernel().get_omp_synchronization_simulation_stopwatch().stop();
+
+        // Collocation by several threads: the first thread of every group of threads collocates its group, all groups in
+        // parallel, instead of the master thread alone (see EventDeliveryManager::use_group_collocation()).
+        if ( collocate_in_groups )
+        {
+          kernel().event_delivery_manager.collocate_groups( tid );
+        }
 
         // the following block is executed by the master thread only
         // the other threads are enforced to wait at the end of the block

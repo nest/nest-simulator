@@ -24,6 +24,7 @@
 #define EVENT_DELIVERY_MANAGER_H
 
 // C++ includes:
+#include <atomic>
 #include <cassert>
 #include <limits>
 #include <vector>
@@ -204,6 +205,25 @@ public:
   void gather_spike_data();
 
   /**
+   * True if the spike registers are collocated by several threads in parallel.
+   *
+   * This is the case if the kernel parameter collocation_groups is larger than one, there is more than one thread and the
+   * spikes are on-grid. The threads are divided into groups of consecutive threads. After the first barrier of a cycle the first
+   * thread of every group copies the spike registers of its group into buffers of the group (one per target rank),
+   * all groups in parallel (collocate_groups()). With several MPI processes the master thread then concatenates the buffers of the
+   * groups, in the order of the groups, into the send buffer, which is what the collocation of a single thread would have produced;
+   * the MPI communication is unchanged. With a single MPI process (and compressed spikes) there is no communication at all: after the
+   * second barrier every thread delivers directly from the buffers of the groups.
+   */
+  bool use_group_collocation() const;
+
+  /**
+   * Collocation of the group of thread tid by its first thread (no operation for the other threads).
+   * Called by all threads between the two barriers of a cycle, if use_group_collocation() was true before the first barrier.
+   */
+  void collocate_groups( const size_t tid );
+
+  /**
    * Collocates presynaptic connection information, communicates via
    * MPI and creates presynaptic connection infrastructure.
    */
@@ -332,6 +352,15 @@ private:
   template < typename SpikeDataT >
   void deliver_events_( const size_t tid, const std::vector< SpikeDataT >& recv_buffer );
 
+  //! Delivers events directly from the buffers of the groups (single MPI process, see use_group_collocation()).
+  void deliver_events_from_groups_( const size_t tid );
+
+  //! Copies the buffers of the groups into the send buffer like collocate_spike_data_buffers_() does for the registers.
+  template < typename SpikeDataT >
+  void concatenate_group_buffers_( SendBufferPosition& send_buffer_position,
+    std::vector< SpikeDataT >& send_buffer,
+    std::vector< size_t >& num_spikes_per_rank );
+
   /**
    * Deletes all spikes from spike registers and resets spike
    * counters.
@@ -384,6 +413,15 @@ private:
 
   bool off_grid_spiking_;  //!< indicates whether spikes are not constrained to
                            //!< the grid
+
+  //! Number of groups of threads that collocate the spike registers in parallel (1: the master thread collocates alone).
+  size_t collocation_groups_;
+
+  //! [ group ][ target rank ] spikes collected by the first thread of the group (see use_group_collocation()).
+  std::vector< std::vector< std::vector< SpikeData > > > group_buffers_;
+
+  //! Number of groups that have finished their collocation in the current cycle (several MPI processes only).
+  std::atomic< size_t > groups_collocated_;
 
   /**
    * Table of pre-computed modulos.

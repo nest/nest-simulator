@@ -737,6 +737,22 @@ EventDeliveryManager::deliver_events_from_groups_( const size_t tid )
   SpikeEvent se_batch[ SPIKES_PER_BATCH ];
   size_t syn_id_batch[ SPIKES_PER_BATCH ];
   size_t lcid_batch[ SPIKES_PER_BATCH ];
+
+  // The buffers were written by the group leaders just before, so their cache lines are in the caches of other cores,
+  // possibly on another socket. Requesting all lines at once lets these transfers overlap; otherwise every batch waits
+  // for its line in turn. The buffers hold only the spikes of one cycle (a few cache lines).
+#if defined( __GNUC__ ) || defined( __clang__ )
+  for ( const auto& group : group_buffers_ )
+  {
+    const char* data = reinterpret_cast< const char* >( group[ 0 ].data() );
+    const size_t bytes = group[ 0 ].size() * sizeof( SpikeData );
+    for ( size_t offset = 0; offset < bytes; offset += 64 )
+    {
+      __builtin_prefetch( data + offset );
+    }
+  }
+#endif
+
   for ( const auto& group : group_buffers_ )
   {
     const std::vector< SpikeData >& buffer = group[ 0 ];  // single MPI process: target rank 0

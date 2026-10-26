@@ -9,7 +9,7 @@ Install from source in a mamba environment
    Mamba has the advantage of installing conda packages and
    environments more quickly and can be used as a complete drop-in replacement for conda.
 
-* Create a mamba environment from the `environment.yml <https://github.com/nest/nest-simulator/blob/master/environment.yml>`_ file.
+* Create a mamba environment from the `environment.yml <https://github.com/nest/nest-simulator/blob/main/environment.yml>`_ file.
   We recommend specifying a dedicated location (``-p <path/to/mamba/env>``) for your environment, for example, a new directory ``nest-mamba-env`` in your home directory or where you cloned the NEST repository.
 
 .. code-block:: sh

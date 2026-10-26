@@ -20,7 +20,7 @@ Platforms tested
 CI stages
 ---------
 
-The current CI implementation is defined in `.github/workflows/nestbuildmatrix.yml <https://github.com/nest/nest-simulator/blob/master/.github/workflows/nestbuildmatrix.yml>`_, which in turn calls several helper scripts in the `build_support <https://github.com/nest/nest-simulator/blob/master/build_support>`_ directory. As an end-user, it should not be necessary to understand or change these files; their functionality is described in detail below.
+The current CI implementation is defined in `.github/workflows/nestbuildmatrix.yml <https://github.com/nest/nest-simulator/blob/main/.github/workflows/nestbuildmatrix.yml>`_, which in turn calls several helper scripts in the `build_support <https://github.com/nest/nest-simulator/blob/main/build_support>`_ directory. As an end-user, it should not be necessary to understand or change these files; their functionality is described in detail below.
 
 #. Static checks
 
@@ -30,13 +30,13 @@ The current CI implementation is defined in `.github/workflows/nestbuildmatrix.y
 
    - cppcheck are used for more detailed semantic (but still static) code analysis.
 
-   - mypy, pylint, black and flake8 are used to statically check Python code. A few errors are intentionally ignored, defined in `tox.ini <https://github.com/nest/nest-simulator/blob/master/tox.ini>`_. Again, the maximum line length is 120 characters.
+   - mypy, pylint, black and flake8 are used to statically check Python code. A few errors are intentionally ignored, defined in `tox.ini <https://github.com/nest/nest-simulator/blob/main/tox.ini>`_. Again, the maximum line length is 120 characters.
 
    Errors that occurred in this stage are printed at the end of the log, including a list of affected files.
 
 #. Build of NEST Simulator
 
-   For details about the CI stages, please see the GitHub Actions workflow file https://github.com/nest/nest-simulator/blob/master/.github/workflows/nestbuildmatrix.yml.
+   For details about the CI stages, please see the GitHub Actions workflow file https://github.com/nest/nest-simulator/blob/main/.github/workflows/nestbuildmatrix.yml.
 
 #. Unit testing
 

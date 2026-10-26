@@ -80,13 +80,13 @@ Then ``git branch -a`` to show you all branches. You'll get something like:
 
 .. code::
 
-   * master
-   remotes/origin/master
+   * main
+   remotes/origin/main
 
-This tells you that you are currently on the ``master`` branch, and that you
-also have a ``remote`` connection to ``origin/master``. The ``master`` branch is the
+This tells you that you are currently on the ``main`` branch, and that you
+also have a ``remote`` connection to ``origin/main``. The ``main`` branch is the
 default branch and this is where code that has been reviewed and tested resides.
-``origin/master`` is just a copy of the ``master`` branch on your system on the ``remote``.
+``origin/main`` is just a copy of the ``main`` branch on your system on the ``remote``.
 
 What remote repository is ``remote/origin``? Try ``git remote -v`` to see the web
 address for the remote. It should point to your GitHub fork.
@@ -154,11 +154,11 @@ Making a new feature branch
 Before you make any changes, ensure that your local copy is up to date with the
 ``upstream`` repository.
 
-1. Go to (checkout) the default master branch
+1. Go to (checkout) the default main branch
 
    .. code::
 
-      git checkout master
+      git checkout main
 
 2. Download (fetch) changes from upstream
 
@@ -166,21 +166,21 @@ Before you make any changes, ensure that your local copy is up to date with the
 
       git fetch upstream
 
-3. Update your master branch - merge any changes that have been made upstream
+3. Update your main branch - merge any changes that have been made upstream
 
    .. code::
 
-      git merge upstream/master --ff-only
+      git merge upstream/main --ff-only
 
 4. Update the remote for your fork
 
    .. code::
 
-      git push origin master
+      git push origin main
 
 We suggest using the ``--ff-only`` flag since it ensures that a new
 commit is not created when you merge the changes from ``upstream`` into your
-``master`` branch. Using this minimises the occurrence of superfluous merge
+``main`` branch. Using this minimises the occurrence of superfluous merge
 commits in the commit history.
 
 Now that you have the latest version of the source code, create a new branch
@@ -188,9 +188,9 @@ for your work and check it out:
 
 .. code::
 
-   git checkout -b my-new-feature master
+   git checkout -b my-new-feature main
 
-This starts a new branch called ``my-new-feature`` from ``master``.
+This starts a new branch called ``my-new-feature`` from ``main``.
 
 
 It is extremely important to work on the latest available source code. If you
@@ -313,7 +313,7 @@ are then simplified to the following:
 
 It often happens that while you were working on your edits, new commits have
 been added to ``upstream`` that affect your work. In this case, you will need to
-reposition your commits on the new master. Please follow the
+reposition your commits on the new main. Please follow the
 `git rebase <https://git-scm.com/docs/git-rebase>`_ instructions.
 
 Next, we see how to create a pull request.

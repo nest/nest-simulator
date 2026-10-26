@@ -20,7 +20,7 @@ Platforms tested
 CI stages
 ---------
 
-The current CI implementation is defined in `.github/workflows/nestbuildmatrix.yml <https://github.com/nest/nest-simulator/blob/main/.github/workflows/nestbuildmatrix.yml>`_, which in turn calls several helper scripts in the `build_support <https://github.com/nest/nest-simulator/blob/main/build_support>`_ directory. As an end-user, it should not be necessary to understand or change these files; their functionality is described in detail below.
+The current CI implementation is defined in `.github/workflows/nestbuildmatrix.yml <https://github.com/nest/nest-simulator/blob/main/.github/workflows/nestbuildmatrix.yml>`_, which in turn calls several helper scripts in the `build_support <https://github.com/nest/nest-simulator/tree/main/build_support>`_ directory. As an end-user, it should not be necessary to understand or change these files; their functionality is described in detail below.
 
 #. Static checks
 

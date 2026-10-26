@@ -2,10 +2,10 @@ name: Mirror to Codebase Helmholtz Cloud
 
 on:
   push:
-    branches: [ master ]
+    branches: [main]
 
 jobs:
-  sync_to_jsc:
+  sync_to_hifis:
     runs-on: ubuntu-latest
     if: ${{ github.repository_owner == 'nest' }}
     steps:

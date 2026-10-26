@@ -26,7 +26,7 @@ Install NEST from source
 
 
 
-We have provided an `environment.yml <https://github.com/nest/nest-simulator/blob/master/environment.yml>`_
+We have provided an `environment.yml <https://github.com/nest/nest-simulator/blob/main/environment.yml>`_
 file that contains all possible packages needed for NEST development.
 
 .. grid:: 3

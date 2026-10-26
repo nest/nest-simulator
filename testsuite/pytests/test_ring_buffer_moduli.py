@@ -40,6 +40,7 @@ def run(parrot_model, min_delay, max_delay, chunks, spike_times):
     nest.ResetKernel()
     nest.set(resolution=RESOLUTION, local_num_threads=2)
     delays = np.round(np.arange(min_delay, max_delay + RESOLUTION / 2, RESOLUTION), 1)
+    nest.SetDefaults("static_synapse", {"delay": min_delay})  # the default delay must lie within the delay extrema
     nest.set(min_delay=min_delay, max_delay=max_delay)
     precise = parrot_model.endswith("_ps")
     sg = nest.Create("spike_generator", params={"spike_times": spike_times, "precise_times": precise})

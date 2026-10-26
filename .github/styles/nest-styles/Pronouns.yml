@@ -1,7 +1,7 @@
 ---
 extends: existence
 message: Avoid gender-specific language when not necessary.
-link: 'https://github.com/Homebrew/brew/blob/master/docs/Prose-Style-Guidelines.md#personal-pronouns'
+link: 'https://docs.brew.sh/Prose-Style-Guidelines#personal-pronouns'
 level: warning
 ignorecase: true
 tokens:

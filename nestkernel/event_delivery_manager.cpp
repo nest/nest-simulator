@@ -713,9 +713,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
         for ( size_t j = 0; j < SPIKES_PER_BATCH; ++j )
         {
           // find the spike-data entry for this thread
-          const std::vector< SpikeData >& compressed_spike_data =
-            kernel().connection_manager.get_compressed_spike_data( syn_id_batch[ j ], lcid_batch[ j ] );
-          lcid_batch[ j ] = compressed_spike_data[ tid ].get_lcid();
+          lcid_batch[ j ] = kernel().connection_manager.get_compressed_spike_data_lcid( tid, syn_id_batch[ j ], lcid_batch[ j ] );
         }
         for ( size_t j = 0; j < SPIKES_PER_BATCH; ++j )
         {
@@ -751,9 +749,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
       for ( size_t j = 0; j < num_remaining_entries; ++j )
       {
         // find the spike-data entry for this thread
-        const std::vector< SpikeData >& compressed_spike_data =
-          kernel().connection_manager.get_compressed_spike_data( syn_id_batch[ j ], lcid_batch[ j ] );
-        lcid_batch[ j ] = compressed_spike_data[ tid ].get_lcid();
+        lcid_batch[ j ] = kernel().connection_manager.get_compressed_spike_data_lcid( tid, syn_id_batch[ j ], lcid_batch[ j ] );
       }
       for ( size_t j = 0; j < num_remaining_entries; ++j )
       {

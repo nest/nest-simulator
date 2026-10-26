@@ -328,6 +328,18 @@ class NestModule(types.ModuleType):
         ),
         default=True,
     )
+    compressed_spike_data_copies = KernelAttribute(
+        "int",
+        (
+            "Number of copies of the compressed spike data (only used with"
+            + " use_compressed_spikes). The threads are divided into this many blocks"
+            + " of consecutive thread numbers; every block has its own copy, written by"
+            + " a thread of the block. If the threads of a block are pinned to one NUMA"
+            + " domain, e.g. one socket, the look-ups during spike delivery read local"
+            + " memory. A typical value is the number of NUMA domains used by the process."
+        ),
+        default=1,
+    )
     data_path = KernelAttribute(
         "str",
         "A path, where all data is written to, defaults to current directory",

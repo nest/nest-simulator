@@ -88,18 +88,10 @@ removed in NEST 3.11, including the `-Dwith-libneurosim` option for CMake.
   to use it on systems where ``std::expm1()`` is available.
 
 
-Migration of NEST Server
-------------------------
+NEST Server is now ships separately
+-------------------------------------
 
-The release of 3.11 delivers NEST Simulator without NEST Server.
+As of NEST 3.11, NEST Simulator no longer includes NEST Server in its source code or Python package.
+NEST Server is now available as a separate Python package from `pypi.org <https://pypi.org/project/nest-server/>`_ or as source code from https://github.com/nest/nest-server. 
 
-Since 3.10 release NEST Simulator can be installed via pip from
-`Python Package <https://pypi.org/project/nest-simulator>`_, it is not necessary
-that NEST Server is part of NEST Simulator code. Hence, the source code of NEST
-Server is migrated to own repository (https://github.com/nest/nest-server).
-
-The Python package of NEST Server will be re-activated on
-`pypi.org <https://pypi.org/project/nest-server/>`_. Still, you can install NEST
-Server via pip: `pip install nest-server`.
-
-NOTE: NEST Server v3.0+ will be compatible with NEST Simulator v3.11+.
+For more information, see https://github.com/nest/nest-server.

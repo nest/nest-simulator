@@ -117,15 +117,15 @@ The generic invocation command line for the ``nest-server start --help`` command
     Usage: nest-server start [OPTIONS]
 
     Options:
-    -d, --daemon           run NEST Server in the background, i.e. daemonize the
+    -d, --daemon           Run NEST Server in the background, i.e. daemonize the
                             server process
-    -h, --host TEXT        use hostname/IP address for the server [default:
+    -h, --host TEXT        Use hostname/IP address for the server [default:
                             127.0.0.1]
-    -p, --port INTEGER     use port for opening the socket [default: 52425]
-    -o, --outputs          print NEST outputs to the console
-    -t, --timeout INTEGER  workers silent for more than this many seconds are
+    -p, --port INTEGER     Use port for opening the socket [default: 52425]
+    -o, --outputs          Print NEST outputs to the console
+    -t, --timeout INTEGER  Workers silent for more than this many seconds are
                             killed and restarted [default: 30]
-    -w, --workers INTEGER  the number of worker processes for handling requests
+    -w, --workers INTEGER  The number of worker processes for handling requests
                             [default: 1]
     --help                 Show this message and exit.
 

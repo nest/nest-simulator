@@ -709,7 +709,7 @@ private:
 
   //! For each thread, store (syn_id, compressed_spike_data_map_::iterator) pair for next iteration while filling target
   //! buffers
-  std::vector< std::pair< size_t, std::map< size_t, CSDMapEntry >::const_iterator > > iteration_state_;
+  std::vector< std::pair< size_t, std::vector< std::pair< size_t, CSDMapEntry > >::const_iterator > > iteration_state_;
 };
 
 inline bool

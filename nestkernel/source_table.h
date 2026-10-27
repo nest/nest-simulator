@@ -177,10 +177,10 @@ private:
    * Data from this structure is transferred to the compressed_spike_data_
    * structure of ConnectionManager during construction of the
    * postsynaptic connection infrastructure. Arranged as a two
-   * dimensional vector (thread|synapse) with an inner map (source
-   * node id -> spike data).
+   * dimensional vector (thread|synapse) with an inner sorted vector of pairs
+   * (source node id, spike data).
    */
-  std::vector< std::vector< std::map< size_t, SpikeData > > > compressible_sources_;
+  std::vector< std::vector< std::vector< std::pair< size_t, SpikeData > > > > compressible_sources_;
 
   /**
    * A structure to temporarily store locations of "unpacked spikes"
@@ -190,9 +190,16 @@ private:
    * Data from this structure is transferred to the
    * presynaptic side during construction of the presynaptic
    * connection infrastructure. Arranged as a one-dimensional vector
-   * over synapse ids with an inner map (source node id -> (source_index+target_thread).
+   * over synapse ids with an inner sorted vector of pairs
+   * (source node id, (source_index+target_thread)).
    */
-  std::vector< std::map< size_t, CSDMapEntry > > compressed_spike_data_map_;
+  std::vector< std::vector< std::pair< size_t, CSDMapEntry > > > compressed_spike_data_map_;
+
+  //! Per-(first_thread, block) counts/offsets of new unique sources during parallel merge.
+  std::vector< std::vector< size_t > > merge_new_source_counts_;
+
+  //! Per-block counts/offsets of unique sources in compressed_spike_data_map_ during parallel merge.
+  std::vector< size_t > merge_block_unique_counts_;
 
 public:
   SourceTable();
@@ -347,10 +354,11 @@ public:
 
   void resize_compressible_sources();
 
-  // creates maps of sources with more than one thread-local target
+  // creates sorted vectors of sources with thread-local targets
   void collect_compressible_sources( const size_t tid );
-  // fills the compressed_spike_data structure in ConnectionManager
-  void fill_compressed_spike_data( std::vector< std::vector< std::vector< SpikeData > > >& compressed_spike_data );
+  // fills the compressed_spike_data structure in ConnectionManager in parallel across threads
+  void fill_compressed_spike_data( const size_t tid,
+    std::vector< std::vector< std::vector< SpikeData > > >& compressed_spike_data );
 
   void clear_compressed_spike_data_map();
 
@@ -528,6 +536,7 @@ SourceTable::clear_compressed_spike_data_map()
   for ( auto& source_index_map : compressed_spike_data_map_ )
   {
     source_index_map.clear();
+    source_index_map.shrink_to_fit();
   }
 }
 

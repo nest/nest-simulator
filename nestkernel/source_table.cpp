@@ -81,6 +81,8 @@ SourceTable::finalize()
   saved_positions_.clear();
   compressible_sources_.clear();
   compressed_spike_data_map_.clear();
+  merge_new_source_counts_.clear();
+  merge_block_unique_counts_.clear();
 }
 
 bool
@@ -468,7 +470,7 @@ SourceTable::resize_compressible_sources()
   {
     compressible_sources_[ tid ].clear();
     compressible_sources_[ tid ].resize(
-      kernel().model_manager.get_num_connection_models(), std::map< size_t, SpikeData >() );
+      kernel().model_manager.get_num_connection_models(), std::vector< std::pair< size_t, SpikeData > >() );
   }
 }
 
@@ -479,12 +481,12 @@ SourceTable::collect_compressible_sources( const size_t tid )
   {
     size_t lcid = 0;
     auto& syn_sources = sources_[ tid ][ syn_id ];
+    auto& syn_compressible = compressible_sources_[ tid ][ syn_id ];
     while ( lcid < syn_sources.size() )
     {
       const size_t old_source_node_id = syn_sources[ lcid ].get_node_id();
-      const std::pair< size_t, SpikeData > source_node_id_to_spike_data =
-        std::make_pair( old_source_node_id, SpikeData( tid, syn_id, lcid, 0 ) );
-      compressible_sources_[ tid ][ syn_id ].insert( source_node_id_to_spike_data );
+      assert( syn_compressible.empty() or syn_compressible.back().first < old_source_node_id );
+      syn_compressible.emplace_back( old_source_node_id, SpikeData( tid, syn_id, lcid, 0 ) );
 
       // For all subsequent connections with same source, set "has more targets" on preceding connection.
       // Requires sorted connections.
@@ -542,53 +544,212 @@ SourceTable::dump_compressible_sources() const
   } )
 }
 
+#ifndef NEST_COMPRESSED_MERGE_MAX_DIRECT_SPAN
+#define NEST_COMPRESSED_MERGE_MAX_DIRECT_SPAN 4194304
+#endif
+
 void
-SourceTable::fill_compressed_spike_data( std::vector< std::vector< std::vector< SpikeData > > >& compressed_spike_data )
+SourceTable::fill_compressed_spike_data( const size_t tid,
+  std::vector< std::vector< std::vector< SpikeData > > >& compressed_spike_data )
 {
+  const size_t num_threads = compressible_sources_.size();
   const size_t num_synapse_models = kernel().model_manager.get_num_connection_models();
-  compressed_spike_data.clear();
-  compressed_spike_data.resize( num_synapse_models );
-  compressed_spike_data_map_.clear();
-  compressed_spike_data_map_.resize( num_synapse_models, std::map< size_t, CSDMapEntry >() );
 
-  // For each synapse type, and for each source neuron with at least one local target,
-  // store in compressed_spike_data one SpikeData entry for each local thread that
-  // owns a local target. In compressed_spike_data_map_ store index into compressed_spike_data[syn_id]
-  // where data for a given source is stored.
-
-  // TODO: I believe that at this point compressible_sources_ is ordered by source gid.
-  //       Maybe one can exploit that to avoid searching with find() below.
-  for ( synindex syn_id = 0; syn_id < kernel().model_manager.get_num_connection_models(); ++syn_id )
+#pragma omp single
   {
-    for ( size_t target_thread = 0; target_thread < static_cast< size_t >( compressible_sources_.size() );
-      ++target_thread )
+    compressed_spike_data.clear();
+    compressed_spike_data.resize( num_synapse_models );
+    compressed_spike_data_map_.clear();
+    compressed_spike_data_map_.resize( num_synapse_models );
+    merge_new_source_counts_.assign( num_threads, std::vector< size_t >( num_threads, 0 ) );
+    merge_block_unique_counts_.assign( num_threads, 0 );
+  }  // of omp single; implicit barrier
+
+  using CompressibleSourceVec = std::vector< std::pair< size_t, SpikeData > >;
+  using CSIt = CompressibleSourceVec::const_iterator;
+
+  std::vector< CSIt > slice_begin( num_threads );
+  std::vector< CSIt > slice_end( num_threads );
+  std::vector< size_t > offset_state;
+  std::vector< size_t > unique_gids;
+
+  for ( synindex syn_id = 0; syn_id < num_synapse_models; ++syn_id )
+  {
+    bool has_sources = false;
+    size_t min_gid = invalid_index;
+    size_t max_gid = 0;
+
+    for ( size_t t = 0; t < num_threads; ++t )
     {
-      for ( const auto& connection : compressible_sources_[ target_thread ][ syn_id ] )
+      const auto& vec = compressible_sources_[ t ][ syn_id ];
+      if ( not vec.empty() )
       {
-        const auto source_gid = connection.first;
-
-        if ( compressed_spike_data_map_[ syn_id ].find( source_gid ) == compressed_spike_data_map_[ syn_id ].end() )
+        if ( not has_sources or vec.front().first < min_gid )
         {
-          // Set up entry for new source
-          const auto new_source_index = compressed_spike_data[ syn_id ].size();
-
-          compressed_spike_data[ syn_id ].emplace_back( kernel().vp_manager.get_num_threads(),
-            SpikeData( invalid_targetindex, invalid_synindex, invalid_lcid, 0 ) );
-
-          compressed_spike_data_map_[ syn_id ].insert(
-            std::make_pair( source_gid, CSDMapEntry( new_source_index, target_thread ) ) );
+          min_gid = vec.front().first;
         }
+        if ( not has_sources or vec.back().first > max_gid )
+        {
+          max_gid = vec.back().first;
+        }
+        has_sources = true;
+      }
+    }
 
-        const auto source_index = compressed_spike_data_map_[ syn_id ].find( source_gid )->second.get_source_index();
+    if ( not has_sources )
+    {
+      continue;
+    }
 
-        assert( compressed_spike_data[ syn_id ][ source_index ][ target_thread ].get_lcid() == invalid_lcid );
+    const size_t span = max_gid - min_gid + 1;
+    const size_t chunk = ( span + num_threads - 1 ) / num_threads;
+    const size_t offset_begin = std::min( span, tid * chunk );
+    const size_t offset_end = std::min( span, offset_begin + chunk );
+    const size_t gid_begin = min_gid + offset_begin;
+    const size_t gid_end = min_gid + offset_end;
+    const size_t block_span = gid_end - gid_begin;
+    const bool active_block = block_span > 0;
 
-        compressed_spike_data[ syn_id ][ source_index ][ target_thread ] = connection.second;
-      }  // for connection
+    size_t slice_total_entries = 0;
+    for ( size_t t = 0; t < num_threads; ++t )
+    {
+      const auto& vec = compressible_sources_[ t ][ syn_id ];
+      if ( active_block )
+      {
+        slice_begin[ t ] = std::lower_bound( vec.begin(),
+          vec.end(),
+          gid_begin,
+          []( const std::pair< size_t, SpikeData >& a, const size_t b_gid ) { return a.first < b_gid; } );
+        slice_end[ t ] = std::lower_bound( slice_begin[ t ],
+          vec.end(),
+          gid_end,
+          []( const std::pair< size_t, SpikeData >& a, const size_t b_gid ) { return a.first < b_gid; } );
+        slice_total_entries += static_cast< size_t >( slice_end[ t ] - slice_begin[ t ] );
+      }
+      else
+      {
+        slice_begin[ t ] = vec.end();
+        slice_end[ t ] = vec.end();
+      }
+    }
 
-      compressible_sources_[ target_thread ][ syn_id ].clear();
+    // Blocks up to this many node IDs are indexed directly; wider blocks fall back to a sorted list of the
+    // node IDs present. The limit can be lowered at build time to exercise the fallback in tests.
+    const bool use_direct_index = ( block_span <= NEST_COMPRESSED_MERGE_MAX_DIRECT_SPAN );
 
-    }  // for target_thread
+    size_t num_slots = 0;
+    if ( active_block and slice_total_entries > 0 )
+    {
+      if ( use_direct_index )
+      {
+        num_slots = block_span;
+      }
+      else
+      {
+        unique_gids.clear();
+        unique_gids.reserve( slice_total_entries );
+        for ( size_t t = 0; t < num_threads; ++t )
+        {
+          for ( auto it = slice_begin[ t ]; it != slice_end[ t ]; ++it )
+          {
+            unique_gids.push_back( it->first );
+          }
+        }
+        std::sort( unique_gids.begin(), unique_gids.end() );
+        unique_gids.erase( std::unique( unique_gids.begin(), unique_gids.end() ), unique_gids.end() );
+        num_slots = unique_gids.size();
+      }
+    }
+
+    offset_state.assign( num_slots, invalid_index );
+
+    size_t block_unique = 0;
+    for ( size_t t = 0; t < num_threads; ++t )
+    {
+      size_t new_on_t = 0;
+      for ( auto it = slice_begin[ t ]; it != slice_end[ t ]; ++it )
+      {
+        const size_t slot = use_direct_index
+          ? ( it->first - gid_begin )
+          : static_cast< size_t >(
+              std::lower_bound( unique_gids.begin(), unique_gids.end(), it->first ) - unique_gids.begin() );
+        if ( offset_state[ slot ] == invalid_index )
+        {
+          offset_state[ slot ] = t;
+          ++new_on_t;
+        }
+      }
+      merge_new_source_counts_[ t ][ tid ] = new_on_t;
+      block_unique += new_on_t;
+    }
+    merge_block_unique_counts_[ tid ] = block_unique;
+
+    kernel().get_omp_synchronization_construction_stopwatch().start();
+#pragma omp barrier
+    kernel().get_omp_synchronization_construction_stopwatch().stop();
+
+#pragma omp single
+    {
+      size_t total_unique_sources = 0;
+      for ( size_t t = 0; t < num_threads; ++t )
+      {
+        for ( size_t b = 0; b < num_threads; ++b )
+        {
+          const size_t c = merge_new_source_counts_[ t ][ b ];
+          merge_new_source_counts_[ t ][ b ] = total_unique_sources;
+          total_unique_sources += c;
+        }
+      }
+
+      size_t map_offset = 0;
+      for ( size_t b = 0; b < num_threads; ++b )
+      {
+        const size_t c = merge_block_unique_counts_[ b ];
+        merge_block_unique_counts_[ b ] = map_offset;
+        map_offset += c;
+      }
+
+      compressed_spike_data[ syn_id ].resize( total_unique_sources );
+      compressed_spike_data_map_[ syn_id ].resize( total_unique_sources, std::make_pair( 0, CSDMapEntry( 0, 0 ) ) );
+    }  // of omp single; implicit barrier
+
+    size_t map_pos = merge_block_unique_counts_[ tid ];
+    const SpikeData default_spike_data( invalid_targetindex, invalid_synindex, invalid_lcid, 0 );
+
+    for ( size_t slot = 0; slot < num_slots; ++slot )
+    {
+      const size_t first_thread = offset_state[ slot ];
+      if ( first_thread != invalid_index )
+      {
+        const size_t source_gid = use_direct_index ? ( gid_begin + slot ) : unique_gids[ slot ];
+        const size_t source_index = merge_new_source_counts_[ first_thread ][ tid ]++;
+        offset_state[ slot ] = source_index;
+        compressed_spike_data_map_[ syn_id ][ map_pos++ ] =
+          std::make_pair( source_gid, CSDMapEntry( source_index, first_thread ) );
+        compressed_spike_data[ syn_id ][ source_index ].assign( num_threads, default_spike_data );
+      }
+    }
+
+    for ( size_t t = 0; t < num_threads; ++t )
+    {
+      for ( auto it = slice_begin[ t ]; it != slice_end[ t ]; ++it )
+      {
+        const size_t slot = use_direct_index
+          ? ( it->first - gid_begin )
+          : static_cast< size_t >(
+              std::lower_bound( unique_gids.begin(), unique_gids.end(), it->first ) - unique_gids.begin() );
+        const size_t source_index = offset_state[ slot ];
+        assert( compressed_spike_data[ syn_id ][ source_index ][ t ].get_lcid() == invalid_lcid );
+        compressed_spike_data[ syn_id ][ source_index ][ t ] = it->second;
+      }
+    }
+
+    kernel().get_omp_synchronization_construction_stopwatch().start();
+#pragma omp barrier
+    kernel().get_omp_synchronization_construction_stopwatch().stop();
+
+    compressible_sources_[ tid ][ syn_id ].clear();
+    compressible_sources_[ tid ][ syn_id ].shrink_to_fit();
   }  // for syn_id
 }
 

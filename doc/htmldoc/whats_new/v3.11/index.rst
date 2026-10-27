@@ -92,6 +92,6 @@ NEST Server is now ships separately
 -------------------------------------
 
 As of NEST 3.11, NEST Simulator no longer includes NEST Server in its source code or Python package.
-NEST Server is now available as a separate Python package from `pypi.org <https://pypi.org/project/nest-server/>`_ or as source code from https://github.com/nest/nest-server. 
+NEST Server is now available as a separate Python package from `pypi.org <https://pypi.org/project/nest-server/>`_ or as source code from https://github.com/nest/nest-server.
 
 For more information, see https://github.com/nest/nest-server.

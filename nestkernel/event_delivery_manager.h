@@ -24,7 +24,6 @@
 #define EVENT_DELIVERY_MANAGER_H
 
 // C++ includes:
-#include <atomic>
 #include <cassert>
 #include <limits>
 #include <vector>
@@ -178,11 +177,6 @@ public:
 
   //! Whether Connector::send() may deliver spikes directly into the input buffers of the targets.
   bool get_direct_spike_delivery() const;
-
-  size_t get_direct_delivery_generation() const;
-
-  //! Called when input buffers may be reallocated (SimulationManager::prepare()).
-  void invalidate_direct_delivery_tables();
 
 
   /**
@@ -400,9 +394,6 @@ private:
   //! Deliver spikes of hpc static synapses directly into the input buffer of supporting targets.
   bool direct_spike_delivery_;
 
-  //! Incremented whenever input buffers may have moved; invalidates the DirectSpikeTables of all Connectors.
-  std::atomic< size_t > direct_delivery_generation_;
-
   /**
    * Table of pre-computed modulos.
    *
@@ -532,18 +523,6 @@ inline bool
 EventDeliveryManager::get_direct_spike_delivery() const
 {
   return direct_spike_delivery_;
-}
-
-inline size_t
-EventDeliveryManager::get_direct_delivery_generation() const
-{
-  return direct_delivery_generation_.load( std::memory_order_relaxed );
-}
-
-inline void
-EventDeliveryManager::invalidate_direct_delivery_tables()
-{
-  direct_delivery_generation_.fetch_add( 1, std::memory_order_relaxed );
 }
 
 inline bool

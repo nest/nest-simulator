@@ -117,8 +117,9 @@ public:
   static constexpr bool supports_flush_event = false;
 
   /**
-   * Whether Connector::send() may deliver spikes of this connection type directly into the input buffer
-   * of the target. Requires get_weight(), get_target_index() and an unconditional "add weight" effect.
+   * Whether spikes of this connection type may be delivered directly into the input buffer of the target.
+   *
+   * Requires get_weight(), get_target_index() and an unconditional "add weight" effect of send().
    * See nestkernel/direct_spike_delivery.h.
    */
   static constexpr bool supports_direct_delivery = false;

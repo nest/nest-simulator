@@ -34,7 +34,8 @@ namespace nest
 {
 
 /**
- * Spinning barrier for the threads of the update loop: a combining tree for the arrival and one global flag for the release.
+ * Spinning barrier for the threads of the update loop: a combining tree for the arrival and one global flag for the
+ * release.
  *
  * The threads are divided into groups of fan_in consecutive thread numbers, the groups into groups of groups, and so
  * on. A thread increments the counter of its group; the last thread of a group continues with the counter of the
@@ -147,6 +148,6 @@ private:
   Padded global_sense_;
 };
 
-} // namespace nest
+}  // namespace nest
 
 #endif /* TREE_BARRIER_H */

@@ -72,7 +72,8 @@ def build_and_run(
     nest.Connect(mm, neurons[:10])
     nest.Simulate(200.0)
     if extra_nodes:
-        # new nodes and connections between two calls to Simulate: input buffers are prepared again, tables must be rebuilt
+        # new nodes and connections between two calls to Simulate:
+        # input buffers are prepared again, tables must be rebuilt
         new = nest.Create(target_model, 20, params={"I_e": 300.0})
         nest.Connect(
             neurons[:n_ex],

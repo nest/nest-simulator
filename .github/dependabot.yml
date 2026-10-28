@@ -4,6 +4,9 @@ updates:
     directory: /
     schedule:
       interval: daily
+    # Dependabot treats each subpath of an action repo as a separate dependency, so ungrouped it bumps e.g.
+    # codeql-action/init without codeql-action/analyze.
+    # Grouping ensures all actions are upgraded together, in a single PR.
     groups:
       codeql-actions:
         patterns:

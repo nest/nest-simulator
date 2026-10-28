@@ -220,6 +220,7 @@ public:
 
   /**
    * Collocation of the group of thread tid by its first thread (no operation for the other threads).
+   *
    * Called by all threads between the two barriers of a cycle, if use_group_collocation() was true before the first
    * barrier.
    */
@@ -416,14 +417,18 @@ private:
   bool off_grid_spiking_;  //!< indicates whether spikes are not constrained to
                            //!< the grid
 
-  //! Number of groups of threads that collocate the spike registers in parallel (1: the master thread collocates
-  //! alone).
+  //! Number of groups of threads that collocate the spike registers in parallel (1: master thread alone).
   size_t collocation_groups_;
 
   //! [ group ][ target rank ] spikes collected by the first thread of the group (see use_group_collocation()).
   std::vector< std::vector< std::vector< SpikeData > > > group_buffers_;
 
-  //! Number of groups that have finished their collocation in the current cycle (several MPI processes only).
+  /**
+   * Number of groups that have finished their collocation in the current cycle (several MPI processes only).
+   *
+   * Atomic, because the first threads of all groups increment it concurrently while the master thread spins on it in
+   * gather_spike_data() before the MPI exchange; release and acquire make the group buffers visible to the master.
+   */
   std::atomic< size_t > groups_collocated_;
 
   /**

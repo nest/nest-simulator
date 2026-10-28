@@ -34,15 +34,15 @@ namespace nest
 {
 
 /**
- * Spinning barrier for the threads of the update loop: a combining tree for the arrival and one global flag for the
- * release.
+ * Spinning barrier for the threads of the update loop.
  *
- * The threads are divided into groups of fan_in consecutive thread numbers, the groups into groups of groups, and so
- * on. A thread increments the counter of its group; the last thread of a group continues with the counter of the
- * next level; the last thread of the root flips the global sense flag on which all other threads are spinning.
- * If consecutive thread numbers are pinned to neighbouring cores (e.g. OMP_PROC_BIND=close), the counters of the
- * lowest level are shared within a core complex or socket, so that the cache lines which every arriving thread has to
- * modify do not travel across the chip, in contrast to a central counter. All state is padded to cache lines.
+ * A combining tree serves the arrival of the threads and one global flag their release. The threads are divided into
+ * groups of fan_in consecutive thread numbers, the groups into groups of groups, and so on. A thread increments the
+ * counter of its group; the last thread of a group continues with the counter of the next level; the last thread of the
+ * root flips the global sense flag on which all other threads are spinning. If consecutive thread numbers are pinned to
+ * neighbouring cores (e.g. OMP_PROC_BIND=close), the counters of the lowest level are shared within a core complex or
+ * socket, so that the cache lines which every arriving thread has to modify do not travel across the chip, in contrast
+ * to a central counter. All state is padded to cache lines.
  *
  * Every thread of the team must call wait() with its own thread number for every barrier. The barrier is meant for
  * teams that are not oversubscribed; after a number of spins a waiting thread yields the processor.
@@ -50,6 +50,18 @@ namespace nest
 class TreeBarrier
 {
 public:
+  //! Barrier for no threads; initialize() prepares it for use.
+  TreeBarrier()
+    : num_threads_( 0 )
+    , fan_in_( 8 )
+    , level_nodes_()
+    , level_offset_()
+    , counters_()
+    , local_sense_()
+    , global_sense_()
+  {
+  }
+
   //! Prepare the barrier for num_threads threads; not thread safe.
   void
   initialize( const size_t num_threads, const size_t fan_in )
@@ -124,9 +136,20 @@ public:
   }
 
 private:
+  /**
+   * Counter or flag of the barrier on a cache line of its own.
+   *
+   * Atomic, because several threads modify it concurrently (counters) or one thread writes it while the others
+   * spin on it (flags); its own cache line keeps the spinning threads from invalidating the lines of other counters.
+   */
   struct alignas( 64 ) Padded
   {
-    std::atomic< int > value { 0 };
+    Padded()
+      : value( 0 )
+    {
+    }
+
+    std::atomic< int > value;
   };
 
   static inline void
@@ -139,8 +162,8 @@ private:
 #endif
   }
 
-  size_t num_threads_ = 0;
-  size_t fan_in_ = 8;
+  size_t num_threads_;
+  size_t fan_in_;
   std::vector< size_t > level_nodes_;   //!< number of groups per level
   std::vector< size_t > level_offset_;  //!< index of the first counter of the level
   std::vector< Padded > counters_;

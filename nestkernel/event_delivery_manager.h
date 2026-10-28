@@ -406,7 +406,7 @@ private:
   std::vector< long > slice_moduli_;
 
   //! Number of entries of a ring buffer, min_delay + max_delay (the valid offsets d are 0, ..., num_moduli_ - 1).
-  long num_moduli_ = 0;
+  long num_moduli_;
 
   /**
    * Offsets into the modulo tables, the only part that changes when the network clock advances.
@@ -416,11 +416,17 @@ private:
    */
   struct alignas( 64 ) CycleOffsets
   {
-    long moduli_offset = 0;
-    long slice_moduli_offset = 0;
+    CycleOffsets()
+      : moduli_offset( 0 )
+      , slice_moduli_offset( 0 )
+    {
+    }
+
+    long moduli_offset;
+    long slice_moduli_offset;
   };
   CycleOffsets offsets_;
-  long slice_moduli_period_ = 1;  //!< min_delay * nbuff, period of the slice-based modulos
+  long slice_moduli_period_;  //!< min_delay * nbuff, period of the slice-based modulos
 
   /**
    * Register of emitted spikes.

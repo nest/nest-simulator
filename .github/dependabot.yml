@@ -4,6 +4,10 @@ updates:
     directory: /
     schedule:
       interval: daily
+    groups:
+      codeql-actions:
+        patterns:
+          - "github/codeql-action/*"
 
   - package-ecosystem: pip
     # Scan the repo root so Dependabot follows the `-r` includes in

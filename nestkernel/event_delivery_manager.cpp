@@ -155,7 +155,8 @@ EventDeliveryManager::set_status( const Dictionary& dict )
     {
       throw BadProperty( "collocation_groups >= 1 required." );
     }
-    if ( static_cast< size_t >( groups ) != collocation_groups_ and kernel().simulation_manager.get_slice_origin().get_steps() > 0 )
+    if ( static_cast< size_t >( groups ) != collocation_groups_
+      and kernel().simulation_manager.get_slice_origin().get_steps() > 0 )
     {
       // spikes that are still in the group buffers or in the receive buffers would be lost
       throw BadProperty( "collocation_groups can only be changed before the first call of Simulate." );
@@ -243,8 +244,10 @@ EventDeliveryManager::configure_spike_data_buffers()
   configure_spike_register();
 
   // buffers for the collocation by several threads (allocated here, not in the parallel region)
-  const size_t num_groups = std::max< size_t >( 1, std::min( collocation_groups_, kernel().vp_manager.get_num_threads() ) );
-  group_buffers_.assign( num_groups, std::vector< std::vector< SpikeData > >( kernel().mpi_manager.get_num_processes() ) );
+  const size_t num_groups =
+    std::max< size_t >( 1, std::min( collocation_groups_, kernel().vp_manager.get_num_threads() ) );
+  group_buffers_.assign(
+    num_groups, std::vector< std::vector< SpikeData > >( kernel().mpi_manager.get_num_processes() ) );
 
   send_buffer_spike_data_.clear();
   send_buffer_off_grid_spike_data_.clear();

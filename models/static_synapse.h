@@ -73,9 +73,10 @@ class static_synapse : public Connection< targetidentifierT >
 
 public:
   /**
-   * Connections of this type may be delivered by Connector::send() directly into the input
-   * buffer of the target, see nestkernel/direct_spike_delivery.h. Only for targets identified
-   * by a thread-local index (hpc synapses), because the table of input buffers is indexed by it.
+   * Whether spikes of this connection type may be delivered directly into the input buffer of the target.
+   *
+   * Only for targets identified by a thread-local index (hpc synapses), because the table of input
+   * buffers is indexed by it. See nestkernel/direct_spike_delivery.h.
    */
   static constexpr bool supports_direct_delivery = std::is_same< targetidentifierT, TargetIdentifierIndex >::value;
 

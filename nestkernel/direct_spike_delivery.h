@@ -26,80 +26,130 @@
 
 // C++ includes:
 #include <cstddef>
-#include <cstdint>
 #include <vector>
 
 namespace nest
 {
 
 /**
- * Description of the spike input buffer of a node, see Node::get_direct_spike_input().
+ * Address of the spike input buffer of a node, see Node::get_direct_spike_input().
  *
  * The buffer is a ring of slots; slot s starts at `slot0 + stride * s` and holds one double per
- * input channel. A spike with weight w is added to channel `excitatory_channel` if w > 0 and to
- * `inhibitory_channel` otherwise.
+ * input channel. A spike with weight w is added to the excitatory channel if w > 0 and to the
+ * inhibitory channel otherwise. A default-constructed address describes a node that does not
+ * support direct delivery; its spikes take the regular path through handle( SpikeEvent& ).
  */
-struct DirectSpikeInput
+class DirectSpikeInputAddr
 {
-  double* slot0 = nullptr;  //!< first double of slot 0; nullptr if the node does not support direct delivery
-  uint32_t stride = 0;      //!< doubles per slot; 0 marks a table entry that has not been resolved yet
-  uint8_t excitatory_channel = 0;
-  uint8_t inhibitory_channel = 0;
+public:
+  //! Address of a node that does not support direct delivery.
+  DirectSpikeInputAddr()
+    : slot0_( nullptr )
+    , stride_( 0 )
+    , excitatory_channel_( 0 )
+    , inhibitory_channel_( 0 )
+  {
+  }
+
+  /**
+   * Address of the input buffer `buffer` of a node.
+   *
+   * BufferT provides slot_data() and slot_stride, as MultiChannelInputBuffer does. The address is
+   * valid until the buffer is resized, that is until the next call to prepare().
+   */
+  template < typename BufferT >
+  DirectSpikeInputAddr( BufferT& buffer,
+    const unsigned char excitatory_channel,
+    const unsigned char inhibitory_channel )
+    : slot0_( buffer.slot_data() )
+    , stride_( BufferT::slot_stride )
+    , excitatory_channel_( excitatory_channel )
+    , inhibitory_channel_( inhibitory_channel )
+  {
+    static_assert( BufferT::slot_stride < 256, "stride must fit into an unsigned char" );
+  }
+
+  //! Whether spikes can be added directly to the buffer.
+  bool
+  is_supported() const
+  {
+    return slot0_ != nullptr;
+  }
+
+  //! Add weight w to the channel of its sign in the given slot of the ring.
+  void
+  add( const long slot, const double w ) const
+  {
+    slot0_[ stride_ * slot + ( w > 0 ? excitatory_channel_ : inhibitory_channel_ ) ] += w;
+  }
+
+private:
+  double* slot0_;                     //!< first double of slot 0; nullptr if direct delivery is not supported
+  unsigned char stride_;              //!< doubles per slot
+  unsigned char excitatory_channel_;  //!< channel for spikes with positive weight
+  unsigned char inhibitory_channel_;  //!< channel for spikes with weight <= 0
 };
 
 /**
- * Table of the spike input buffers of the targets of one Connector, indexed by the thread-local
- * node index stored in hpc connections (TargetIdentifierIndex).
+ * Table of the input-buffer addresses of the targets of one Connector.
  *
- * Entries are resolved lazily, on the first spike delivered to a target after the table was
- * invalidated. The table only has as many entries as the largest target index seen, i.e., it is
- * proportional to the number of nodes on the thread, not to the number of connections.
- * It is owned by a Connector and therefore only accessed by a single thread.
+ * The table is indexed by the thread-local node index stored in hpc connections
+ * (TargetIdentifierIndex). Entries are resolved lazily, on the first spike delivered to a target
+ * after the table was cleared. The table only has as many entries as the largest target index
+ * seen, i.e., it is proportional to the number of nodes on the thread, not to the number of
+ * connections. It is owned by a Connector and therefore only accessed by a single thread.
  *
- * All entries are discarded when the generation counter of the EventDeliveryManager changes, which
- * happens in SimulationManager::prepare(), the only place where input buffers may be reallocated.
+ * SimulationManager::prepare() clears all tables (ConnectionManager::clear_direct_spike_tables()),
+ * because prepare() is the only place where input buffers may be reallocated.
  */
 class DirectSpikeTable
 {
 public:
-  //! Discard all entries if the generation has changed.
+  //! Discard all entries; the memory is kept for the next simulation.
   void
-  validate( const size_t generation )
+  clear()
   {
-    if ( generation != generation_ )
-    {
-      entries_.assign( entries_.size(), DirectSpikeInput() );
-      generation_ = generation;
-    }
+    entries_.clear();
   }
 
   /**
-   * Entry for the target with thread-local index idx. `node_of` is called to obtain the node if the
-   * entry is not yet resolved, it returns the node, whose get_direct_spike_input() is queried.
+   * Address of the input buffer of the target of connection `conn`.
+   *
+   * Resolves the entry if needed: the target node is only accessed on the first spike to it.
    */
-  template < typename NodeOf >
-  const DirectSpikeInput&
-  get( const size_t idx, NodeOf&& node_of )
+  template < typename ConnectionT >
+  const DirectSpikeInputAddr&
+  get( const ConnectionT& conn, const size_t tid )
   {
+    const size_t idx = conn.get_target_index();
     if ( idx >= entries_.size() )
     {
       entries_.resize( idx + 1 );
     }
-    DirectSpikeInput& entry = entries_[ idx ];
-    if ( entry.stride == 0 )
+    Entry& entry = entries_[ idx ];
+    if ( not entry.resolved )
     {
-      entry = node_of()->get_direct_spike_input();
-      if ( entry.slot0 == nullptr )
-      {
-        entry.stride = 1;  // resolved: node uses the regular path
-      }
+      entry.addr = conn.get_target( tid )->get_direct_spike_input();
+      entry.resolved = true;
     }
-    return entry;
+    return entry.addr;
   }
 
 private:
-  std::vector< DirectSpikeInput > entries_;
-  size_t generation_ = static_cast< size_t >( -1 );
+  //! Address of one target and whether it has been resolved since the last clear().
+  struct Entry
+  {
+    Entry()
+      : addr()
+      , resolved( false )
+    {
+    }
+
+    DirectSpikeInputAddr addr;
+    bool resolved;
+  };
+
+  std::vector< Entry > entries_;
 };
 
 }  // namespace nest

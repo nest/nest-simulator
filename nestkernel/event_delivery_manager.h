@@ -396,10 +396,11 @@ private:
    * Table of pre-computed slice-based modulos.
    *
    * This table is used to map time steps, given as offset from now, to slice-based ring-buffer bins. There are
-   * nbuff = ceil( ( min_delay + max_delay ) / min_delay ) bins in a slice-based ring buffer, one per slice. The value for
-   * the step T + d is ( ( T + d ) / min_delay ) mod nbuff, which is periodic in T with the period p = min_delay * nbuff.
-   * The table holds ( i / min_delay ) mod nbuff for i = 0, ..., p + min_delay + max_delay - 1 and does not change during
-   * a simulation; the bin of offset d is slice_moduli_[ slice_moduli_offset_ + d ], with slice_moduli_offset_ = T mod p.
+   * nbuff = ceil( ( min_delay + max_delay ) / min_delay ) bins in a slice-based ring buffer, one per slice. The value
+   * for the step T + d is ( ( T + d ) / min_delay ) mod nbuff, which is periodic in T with the period
+   * p = min_delay * nbuff. The table holds ( i / min_delay ) mod nbuff for i = 0, ..., p + min_delay + max_delay - 1
+   * and does not change during a simulation; the bin of offset d is slice_moduli_[ slice_moduli_offset_ + d ], with
+   * slice_moduli_offset_ = T mod p.
    * @see SliceRingBuffer
    */
   std::vector< long > slice_moduli_;

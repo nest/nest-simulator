@@ -461,8 +461,10 @@ public:
   Stopwatch< StopwatchGranularity::Normal, StopwatchParallelism::MasterOnly > sw_construction_connect;
 
   /**
-   * Return the local connection index (lcid) of the first target on thread tid of the source with index idx in the
-   * compressed spike data of synapse type syn_id, or invalid_lcid if the source has no target on this thread.
+   * Local connection index (lcid) of the first target on thread tid of a source in the compressed spike data.
+   *
+   * The source has index idx in the compressed spike data of synapse type syn_id. Returns invalid_lcid if the source
+   * has no target on this thread.
    */
   size_t get_compressed_spike_data_lcid( const size_t tid, const synindex syn_id, const size_t idx ) const;
 

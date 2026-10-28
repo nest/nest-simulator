@@ -1818,7 +1818,8 @@ ConnectionManager::collect_compressed_spike_data( const size_t tid )
         compressed_spike_data_column_of_.resize( num_threads );
         for ( size_t t = 0; t < num_threads; ++t )
         {
-          // block b consists of the threads [ ceil( b * num_threads / blocks ), ceil( ( b + 1 ) * num_threads / blocks ) )
+          // block b consists of the threads [ lo, hi ) with lo = ceil( b * num_threads / blocks )
+          // and hi = ceil( ( b + 1 ) * num_threads / blocks )
           const size_t b = t * blocks / num_threads;
           compressed_spike_data_block_of_[ t ] = b;
           compressed_spike_data_column_of_[ t ] = t - ( b * num_threads + blocks - 1 ) / blocks;

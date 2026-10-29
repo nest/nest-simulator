@@ -40,7 +40,7 @@ namespace nest
  * groups of fan_in consecutive thread numbers, the groups into groups of groups, and so on. A thread increments the
  * counter of its group; the last thread of a group continues with the counter of the next level; the last thread of the
  * root flips the global sense flag on which all other threads are spinning. If consecutive thread numbers are pinned to
- * neighbouring cores (e.g. OMP_PROC_BIND=close), the counters of the lowest level are shared within a core complex or
+ * neighboring cores (e.g. OMP_PROC_BIND=close), the counters of the lowest level are shared within a core complex or
  * socket, so that the cache lines which every arriving thread has to modify do not travel across the chip, in contrast
  * to a central counter. All state is padded to cache lines.
  *

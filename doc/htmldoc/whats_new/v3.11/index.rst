@@ -83,3 +83,15 @@ ConnectionGenerator and support for libneurosim removed
 ``ConnectionGenerator`` and the support for ``libneurosim``, which depended on it has been broken
 since the transition to NEST 3 without causing any user complaints. Remaining code is therefore
 removed in NEST 3.11, including the `-Dwith-libneurosim` option for CMake.
+  especially when using precise-spiking neurons. The old code is still
+  available; undefine ``HAVE_EXPM1`` in ``<build_dir>/libnestutil/config.h``
+  to use it on systems where ``std::expm1()`` is available.
+
+
+NEST Server is now ships separately
+-------------------------------------
+
+As of NEST 3.11, NEST Simulator no longer includes NEST Server in its source code or Python package.
+NEST Server is now available as a separate Python package from `pypi.org <https://pypi.org/project/nest-server/>`_ or as source code from https://github.com/nest/nest-server.
+
+For more information, see https://github.com/nest/nest-server.

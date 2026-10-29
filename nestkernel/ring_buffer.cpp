@@ -29,7 +29,9 @@
 #include "kernel_manager.h"
 #include "ring_buffer.h"
 
-nest::RingBuffer::RingBuffer()
+namespace nest
+{
+RingBuffer::RingBuffer()
   : buffer_(
       kernel::manager< ConnectionManager >.get_min_delay() + kernel::manager< ConnectionManager >.get_max_delay(),
       0.0 )
@@ -37,7 +39,7 @@ nest::RingBuffer::RingBuffer()
 }
 
 void
-nest::RingBuffer::resize()
+RingBuffer::resize()
 {
   size_t size =
     kernel::manager< ConnectionManager >.get_min_delay() + kernel::manager< ConnectionManager >.get_max_delay();
@@ -48,7 +50,7 @@ nest::RingBuffer::resize()
 }
 
 void
-nest::RingBuffer::clear()
+RingBuffer::clear()
 {
   resize();  // does nothing if size is fine
   // clear all elements
@@ -56,7 +58,7 @@ nest::RingBuffer::clear()
 }
 
 
-nest::MultRBuffer::MultRBuffer()
+MultRBuffer::MultRBuffer()
   : buffer_(
       kernel::manager< ConnectionManager >.get_min_delay() + kernel::manager< ConnectionManager >.get_max_delay(),
       0.0 )
@@ -64,7 +66,7 @@ nest::MultRBuffer::MultRBuffer()
 }
 
 void
-nest::MultRBuffer::resize()
+MultRBuffer::resize()
 {
   size_t size =
     kernel::manager< ConnectionManager >.get_min_delay() + kernel::manager< ConnectionManager >.get_max_delay();
@@ -75,21 +77,21 @@ nest::MultRBuffer::resize()
 }
 
 void
-nest::MultRBuffer::clear()
+MultRBuffer::clear()
 {
   // clear all elements
   buffer_.assign( buffer_.size(), 0.0 );
 }
 
 
-nest::ListRingBuffer::ListRingBuffer()
+ListRingBuffer::ListRingBuffer()
   : buffer_(
       kernel::manager< ConnectionManager >.get_min_delay() + kernel::manager< ConnectionManager >.get_max_delay() )
 {
 }
 
 void
-nest::ListRingBuffer::resize()
+ListRingBuffer::resize()
 {
   size_t size =
     kernel::manager< ConnectionManager >.get_min_delay() + kernel::manager< ConnectionManager >.get_max_delay();
@@ -100,7 +102,7 @@ nest::ListRingBuffer::resize()
 }
 
 void
-nest::ListRingBuffer::clear()
+ListRingBuffer::clear()
 {
   resize();  // does nothing if size is fine
   // clear all elements
@@ -112,19 +114,19 @@ nest::ListRingBuffer::clear()
 
 
 void
-nest::RingBuffer::add_value( const long offs, const double v )
+RingBuffer::add_value( const long offs, const double v )
 {
   buffer_[ get_index_( offs ) ] += v;
 }
 
 void
-nest::RingBuffer::set_value( const long offs, const double v )
+RingBuffer::set_value( const long offs, const double v )
 {
   buffer_[ get_index_( offs ) ] = v;
 }
 
 double
-nest::RingBuffer::get_value( const long offs )
+RingBuffer::get_value( const long offs )
 {
   assert( 0 <= offs and static_cast< size_t >( offs ) < buffer_.size() );
   assert( offs < kernel::manager< ConnectionManager >.get_min_delay() );
@@ -138,7 +140,7 @@ nest::RingBuffer::get_value( const long offs )
 }
 
 double
-nest::RingBuffer::get_value_wfr_update( const long offs )
+RingBuffer::get_value_wfr_update( const long offs )
 {
   assert( 0 <= offs and static_cast< size_t >( offs ) < buffer_.size() );
   assert( offs < kernel::manager< ConnectionManager >.get_min_delay() );
@@ -151,7 +153,7 @@ nest::RingBuffer::get_value_wfr_update( const long offs )
 }
 
 size_t
-nest::RingBuffer::get_index_( const long d ) const
+RingBuffer::get_index_( const long d ) const
 {
   const long idx = kernel::manager< EventDeliveryManager >.get_modulo( d );
   assert( 0 <= idx );
@@ -161,14 +163,14 @@ nest::RingBuffer::get_index_( const long d ) const
 
 
 void
-nest::MultRBuffer::add_value( const long offs, const double v )
+MultRBuffer::add_value( const long offs, const double v )
 {
   assert( 0 <= offs and static_cast< size_t >( offs ) < buffer_.size() );
   buffer_[ get_index_( offs ) ] *= v;
 }
 
 double
-nest::MultRBuffer::get_value( const long offs )
+MultRBuffer::get_value( const long offs )
 {
   assert( 0 <= offs and static_cast< size_t >( offs ) < buffer_.size() );
   assert( offs < kernel::manager< ConnectionManager >.get_min_delay() );
@@ -182,7 +184,7 @@ nest::MultRBuffer::get_value( const long offs )
 }
 
 size_t
-nest::MultRBuffer::get_index_( const long d ) const
+MultRBuffer::get_index_( const long d ) const
 {
   const long idx = kernel::manager< EventDeliveryManager >.get_modulo( d );
   assert( 0 <= idx and static_cast< size_t >( idx ) < buffer_.size() );
@@ -190,13 +192,13 @@ nest::MultRBuffer::get_index_( const long d ) const
 }
 
 void
-nest::ListRingBuffer::append_value( const long offs, const double v )
+ListRingBuffer::append_value( const long offs, const double v )
 {
   buffer_[ get_index_( offs ) ].push_back( v );
 }
 
 std::list< double >&
-nest::ListRingBuffer::get_list( const long offs )
+ListRingBuffer::get_list( const long offs )
 {
   assert( 0 <= offs and static_cast< size_t >( offs ) < buffer_.size() );
   assert( offs < kernel::manager< ConnectionManager >.get_min_delay() );
@@ -208,10 +210,12 @@ nest::ListRingBuffer::get_list( const long offs )
 }
 
 size_t
-nest::ListRingBuffer::get_index_( const long d ) const
+ListRingBuffer::get_index_( const long d ) const
 {
   const long idx = kernel::manager< EventDeliveryManager >.get_modulo( d );
   assert( 0 <= idx );
   assert( static_cast< size_t >( idx ) < buffer_.size() );
   return idx;
 }
+
+}  // namespace nest

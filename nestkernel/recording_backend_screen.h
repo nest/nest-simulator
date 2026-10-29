@@ -41,7 +41,7 @@ Short description
 Recording backend `screen` - Write data to the terminal
 
 Description
-~~~~~~~~~~~
++++++++++++
 
 When initially conceiving and debugging simulations, it can be useful
 to check recordings in a more ad hoc fashion. The recording backend
@@ -67,7 +67,7 @@ floating point offset in ms from the next grid point.
    down the simulation.
 
 Parameter summary
-~~~~~~~~~~~~~~~~~
++++++++++++++++++
 
 precision
    controls the number of decimal places used to write decimal numbers

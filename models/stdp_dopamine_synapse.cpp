@@ -31,14 +31,14 @@
 #include "node_collection.h"
 #include "node_manager.h"
 
+namespace nest
+{
 void
-nest::register_stdp_dopamine_synapse( const std::string& name )
+register_stdp_dopamine_synapse( const std::string& name )
 {
   register_connection_model< stdp_dopamine_synapse >( name );
 }
 
-namespace nest
-{
 //
 // Implementation of class STDPDopaCommonProperties.
 //
@@ -107,4 +107,4 @@ STDPDopaCommonProperties::set_status( const Dictionary& d, ConnectorModel& cm )
   d.update_value( names::tau_plus, tau_plus_ );
 }
 
-}  // of namespace nest
+}  // namespace nest

@@ -24,6 +24,7 @@
 #define CONNECTOR_BASE_IMPL_H
 
 #include "connector_base.h"
+#include "node_collection.h"
 
 #include <algorithm>
 #include <cassert>
@@ -130,7 +131,7 @@ Connector< ConnectionT >::get_connection( const size_t source_node_id,
 template < typename ConnectionT >
 void
 Connector< ConnectionT >::get_connection_with_specified_targets( const size_t source_node_id,
-  const std::vector< size_t >& target_neuron_node_ids,
+  const NodeCollectionPTR& target,
   const size_t tid,
   const size_t lcid,
   const long synapse_label,
@@ -141,8 +142,7 @@ Connector< ConnectionT >::get_connection_with_specified_targets( const size_t so
     if ( synapse_label == UNLABELED_CONNECTION or C_[ lcid ].get_label() == synapse_label )
     {
       const size_t current_target_node_id = C_[ lcid ].get_target( tid )->get_node_id();
-      if ( std::find( target_neuron_node_ids.begin(), target_neuron_node_ids.end(), current_target_node_id )
-        != target_neuron_node_ids.end() )
+      if ( target->contains( current_target_node_id ) )
       {
         conns.push_back( ConnectionID( source_node_id, current_target_node_id, tid, syn_id_, lcid ) );
       }

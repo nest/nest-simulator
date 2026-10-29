@@ -765,9 +765,27 @@ public:
   /**
    * Returns whether the NodeCollection contains any nodes with proxies or not.
    *
-   * @return true if any nodes in the NodeCollection has proxies, false otherwise.
+   * @return true if any nodes in the NodeCollection have proxies, false otherwise.
    */
   virtual bool has_proxies() const = 0;
+
+  /**
+   * Returns true if all elements connect as neurons.
+   *
+   * This includes neurons with proxies and devices such as the volume transmitter.
+   *
+   * @note There are nodes that neither connect as neurons nor devices.
+   */
+  virtual bool all_connect_as_neurons() const = 0;
+
+  /**
+   * Returns true if all elements connect as devices.
+   *
+   * This includes most devices, but not globally receiving devices, e.g., the volume transmitter.
+   *
+   * @note There are nodes that neither connect as neurons nor devices.
+   */
+  virtual bool all_connect_as_devices() const = 0;
 
   /**
    * Collect metadata into dictionary.
@@ -809,6 +827,7 @@ private:
   size_t model_id_;                     //!< Model ID of the node IDs
   NodeCollectionMetadataPTR metadata_;  //!< Pointer to the metadata of the node IDs
   bool nodes_have_no_proxies_;          //!< Whether the primitive contains devices or not
+  bool nodes_are_local_receivers_;      //!< Whether the primitive contains local receivers
 
   /**
    * Raise an error if the model IDs of all nodes in the primitive are not the same as the expected model id.
@@ -902,6 +921,8 @@ public:
   long get_nc_index( const size_t ) const override;
 
   bool has_proxies() const override;
+  bool all_connect_as_neurons() const override;
+  bool all_connect_as_devices() const override;
 
   /**
    * Checks if node IDs in another primitive is a continuation of node IDs in this
@@ -1102,6 +1123,8 @@ public:
   long get_nc_index( const size_t ) const override;
 
   bool has_proxies() const override;
+  bool all_connect_as_neurons() const override;
+  bool all_connect_as_devices() const override;
 };
 
 }  // namespace nest

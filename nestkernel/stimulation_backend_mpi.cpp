@@ -41,19 +41,22 @@
 #include "stimulation_device.h"
 #include "vp_manager.h"
 
-nest::StimulationBackendMPI::StimulationBackendMPI()
+
+namespace nest
+{
+StimulationBackendMPI::StimulationBackendMPI()
   : enrolled_( false )
   , prepared_( false )
 {
 }
 
-nest::StimulationBackendMPI::~StimulationBackendMPI() noexcept
+StimulationBackendMPI::~StimulationBackendMPI() noexcept
 {
 }
 
 
 void
-nest::StimulationBackendMPI::initialize()
+StimulationBackendMPI::initialize()
 {
   auto nthreads = kernel::manager< VPManager >.get_num_threads();
   device_map devices( nthreads );
@@ -61,7 +64,7 @@ nest::StimulationBackendMPI::initialize()
 }
 
 void
-nest::StimulationBackendMPI::finalize()
+StimulationBackendMPI::finalize()
 {
   // clear vector of map
   for ( auto& it_device : devices_ )
@@ -73,7 +76,7 @@ nest::StimulationBackendMPI::finalize()
 }
 
 void
-nest::StimulationBackendMPI::enroll( nest::StimulationDevice& device, const Dictionary& params )
+StimulationBackendMPI::enroll( StimulationDevice& device, const Dictionary& params )
 {
   size_t tid = device.get_thread();
   size_t node_id = device.get_node_id();
@@ -96,7 +99,7 @@ nest::StimulationBackendMPI::enroll( nest::StimulationDevice& device, const Dict
 
 
 void
-nest::StimulationBackendMPI::disenroll( nest::StimulationDevice& device )
+StimulationBackendMPI::disenroll( StimulationDevice& device )
 {
   size_t tid = device.get_thread();
   size_t node_id = device.get_node_id();
@@ -110,7 +113,7 @@ nest::StimulationBackendMPI::disenroll( nest::StimulationDevice& device )
 }
 
 void
-nest::StimulationBackendMPI::prepare()
+StimulationBackendMPI::prepare()
 {
   if ( not enrolled_ )
   {
@@ -217,7 +220,7 @@ nest::StimulationBackendMPI::prepare()
 }
 
 void
-nest::StimulationBackendMPI::pre_run_hook()
+StimulationBackendMPI::pre_run_hook()
 {
   // create the variable which will contain the receiving data from the communication
   std::vector< std::pair< int*, double* > > data( commMap_.size() );
@@ -255,7 +258,7 @@ nest::StimulationBackendMPI::pre_run_hook()
 }
 
 void
-nest::StimulationBackendMPI::post_run_hook()
+StimulationBackendMPI::post_run_hook()
 {
 #pragma omp master
   {
@@ -270,7 +273,7 @@ nest::StimulationBackendMPI::post_run_hook()
 }
 
 void
-nest::StimulationBackendMPI::cleanup()
+StimulationBackendMPI::cleanup()
 {
 // Disconnect all the MPI connection and send information about this disconnection
 // Clean all the elements in the map and disconnect MPI message
@@ -298,7 +301,7 @@ nest::StimulationBackendMPI::cleanup()
 }
 
 void
-nest::StimulationBackendMPI::get_port( nest::StimulationDevice* device, std::string* port_name )
+StimulationBackendMPI::get_port( StimulationDevice* device, std::string* port_name )
 {
   const std::string& label = device->get_label();
   // The MPI address can be provided by two different means.
@@ -318,7 +321,7 @@ nest::StimulationBackendMPI::get_port( nest::StimulationDevice* device, std::str
 }
 
 void
-nest::StimulationBackendMPI::get_port( const size_t index_node, const std::string& label, std::string* port_name )
+StimulationBackendMPI::get_port( const size_t index_node, const std::string& label, std::string* port_name )
 {
   // path of the file : path+label+id+.txt
   // (file contains only one line with name of the port)
@@ -357,7 +360,7 @@ nest::StimulationBackendMPI::get_port( const size_t index_node, const std::strin
 }
 
 std::pair< int*, double* >
-nest::StimulationBackendMPI::receive_spike_train( const MPI_Comm& comm, std::vector< int >& devices_id )
+StimulationBackendMPI::receive_spike_train( const MPI_Comm& comm, std::vector< int >& devices_id )
 {
   // Send size of the list id
   int size_list = { int( devices_id.size() ) };
@@ -382,7 +385,7 @@ nest::StimulationBackendMPI::receive_spike_train( const MPI_Comm& comm, std::vec
 }
 
 void
-nest::StimulationBackendMPI::update_device( int* array_index,
+StimulationBackendMPI::update_device( int* array_index,
   std::vector< int >& devices_id,
   std::pair< int*, double* > data )
 {
@@ -427,7 +430,7 @@ nest::StimulationBackendMPI::update_device( int* array_index,
 }
 
 void
-nest::StimulationBackendMPI::clean_memory_input_data( std::vector< std::pair< int*, double* > >& data )
+StimulationBackendMPI::clean_memory_input_data( std::vector< std::pair< int*, double* > >& data )
 {
   // for all the pairs of data, free the memory of data and the array with the size
   for ( auto pair_data : data )
@@ -446,3 +449,5 @@ nest::StimulationBackendMPI::clean_memory_input_data( std::vector< std::pair< in
     }
   }
 }
+
+}  // namespace nest

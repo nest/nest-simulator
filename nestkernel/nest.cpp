@@ -487,7 +487,7 @@ connect_sonata( const Dictionary& graph_specs, const long hyperslab_size )
   kernel::manager< ConnectionManager >.connect_sonata( graph_specs, hyperslab_size );
 }
 
-std::deque< ConnectionID >
+std::vector< std::deque< ConnectionID > >
 get_connections( const Dictionary& dict )
 {
   dict.init_access_flags();
@@ -796,7 +796,7 @@ message( const VerbosityLevel level,
   const std::string& file,
   const size_t line )
 {
-  nest::kernel::manager< nest::LoggingManager >.publish_log( level, function, message, file, line );
+  kernel::manager< LoggingManager >.publish_log( level, function, message, file, line );
 }
 
 }  // namespace nest

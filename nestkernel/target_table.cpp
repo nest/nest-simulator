@@ -36,8 +36,11 @@
 #include "target_data.h"
 #include "vector_util.h"
 
+
+namespace nest
+{
 void
-nest::TargetTable::initialize()
+TargetTable::initialize()
 {
   const size_t num_threads = kernel::manager< VPManager >.get_num_threads();
   targets_.resize( num_threads );
@@ -52,14 +55,14 @@ nest::TargetTable::initialize()
 }
 
 void
-nest::TargetTable::finalize()
+TargetTable::finalize()
 {
   std::vector< std::vector< std::vector< Target > > >().swap( targets_ );
   std::vector< std::vector< std::vector< std::vector< size_t > > > >().swap( secondary_send_buffer_pos_ );
 }
 
 void
-nest::TargetTable::prepare( const size_t tid )
+TargetTable::prepare( const size_t tid )
 {
   // add one to max_num_local_nodes to avoid possible overflow in case
   // of rounding errors
@@ -77,7 +80,7 @@ nest::TargetTable::prepare( const size_t tid )
 }
 
 void
-nest::TargetTable::compress_secondary_send_buffer_pos( const size_t tid )
+TargetTable::compress_secondary_send_buffer_pos( const size_t tid )
 {
   for ( std::vector< std::vector< std::vector< size_t > > >::iterator it = secondary_send_buffer_pos_[ tid ].begin();
     it != secondary_send_buffer_pos_[ tid ].end();
@@ -93,7 +96,7 @@ nest::TargetTable::compress_secondary_send_buffer_pos( const size_t tid )
 }
 
 void
-nest::TargetTable::add_target( const size_t tid, const size_t target_rank, const TargetData& target_data )
+TargetTable::add_target( const size_t tid, const size_t target_rank, const TargetData& target_data )
 {
   const size_t lid = target_data.get_source_lid();
 
@@ -139,3 +142,5 @@ nest::TargetTable::clear( const size_t tid )
   targets_[ tid ].clear();
   secondary_send_buffer_pos_[ tid ].clear();
 }
+
+}  // namespace nest

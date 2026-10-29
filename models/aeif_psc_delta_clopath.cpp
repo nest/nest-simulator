@@ -45,14 +45,14 @@
 #include "universal_data_logger_impl.h"
 
 
+namespace nest
+{
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::aeif_psc_delta_clopath > nest::aeif_psc_delta_clopath::recordablesMap_;
+RecordablesMap< aeif_psc_delta_clopath > aeif_psc_delta_clopath::recordablesMap_;
 
-namespace nest
-{
 void
 register_aeif_psc_delta_clopath( const std::string& name )
 {
@@ -77,18 +77,17 @@ RecordablesMap< aeif_psc_delta_clopath >::create()
   insert_( names::u_bar_minus, &aeif_psc_delta_clopath::get_y_elem_< aeif_psc_delta_clopath::State_::U_BAR_MINUS > );
   insert_( names::u_bar_bar, &aeif_psc_delta_clopath::get_y_elem_< aeif_psc_delta_clopath::State_::U_BAR_BAR > );
 }
-}
 
 
 extern "C" int
-nest::aeif_psc_delta_clopath_dynamics( double, const double y[], double f[], void* pnode )
+aeif_psc_delta_clopath_dynamics( double, const double y[], double f[], void* pnode )
 {
   // a shorthand
-  typedef nest::aeif_psc_delta_clopath::State_ S;
+  typedef aeif_psc_delta_clopath::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::aeif_psc_delta_clopath& node = *( reinterpret_cast< nest::aeif_psc_delta_clopath* >( pnode ) );
+  const aeif_psc_delta_clopath& node = *( reinterpret_cast< aeif_psc_delta_clopath* >( pnode ) );
 
   const bool is_refractory = node.S_.r_ > 0;
   const bool is_clamped = node.S_.clamp_r_ > 0;
@@ -139,7 +138,7 @@ nest::aeif_psc_delta_clopath_dynamics( double, const double y[], double f[], voi
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::aeif_psc_delta_clopath::Parameters_::Parameters_()
+aeif_psc_delta_clopath::Parameters_::Parameters_()
   : V_peak_( 33.0 )          // mV
   , V_reset_( -60.0 )        // mV
   , t_ref_( 0.0 )            // ms
@@ -165,7 +164,7 @@ nest::aeif_psc_delta_clopath::Parameters_::Parameters_()
 {
 }
 
-nest::aeif_psc_delta_clopath::State_::State_( const Parameters_& p )
+aeif_psc_delta_clopath::State_::State_( const Parameters_& p )
   : r_( 0 )
   , clamp_r_( 0 )
 {
@@ -180,7 +179,7 @@ nest::aeif_psc_delta_clopath::State_::State_( const Parameters_& p )
   y_[ U_BAR_BAR ] = p.E_L;
 }
 
-nest::aeif_psc_delta_clopath::State_::State_( const State_& s )
+aeif_psc_delta_clopath::State_::State_( const State_& s )
   : r_( s.r_ )
   , clamp_r_( s.clamp_r_ )
 {
@@ -190,8 +189,8 @@ nest::aeif_psc_delta_clopath::State_::State_( const State_& s )
   }
 }
 
-nest::aeif_psc_delta_clopath::State_&
-nest::aeif_psc_delta_clopath::State_::operator=( const State_& s )
+aeif_psc_delta_clopath::State_&
+aeif_psc_delta_clopath::State_::operator=( const State_& s )
 {
   r_ = s.r_;
   clamp_r_ = s.clamp_r_;
@@ -207,7 +206,7 @@ nest::aeif_psc_delta_clopath::State_::operator=( const State_& s )
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_psc_delta_clopath::Parameters_::get( Dictionary& d ) const
+aeif_psc_delta_clopath::Parameters_::get( Dictionary& d ) const
 {
   d[ names::C_m ] = C_m;
   d[ names::V_th_max ] = V_th_max;
@@ -234,7 +233,7 @@ nest::aeif_psc_delta_clopath::Parameters_::get( Dictionary& d ) const
 }
 
 void
-nest::aeif_psc_delta_clopath::Parameters_::set( const Dictionary& d, Node* node )
+aeif_psc_delta_clopath::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::V_th_max, V_th_max, node );
   update_value_param( d, names::V_th_rest, V_th_rest, node );
@@ -326,7 +325,7 @@ nest::aeif_psc_delta_clopath::Parameters_::set( const Dictionary& d, Node* node 
 }
 
 void
-nest::aeif_psc_delta_clopath::State_::get( Dictionary& d ) const
+aeif_psc_delta_clopath::State_::get( Dictionary& d ) const
 {
   d[ names::V_m ] = y_[ V_M ];
   d[ names::w ] = y_[ W ];
@@ -336,7 +335,7 @@ nest::aeif_psc_delta_clopath::State_::get( Dictionary& d ) const
 }
 
 void
-nest::aeif_psc_delta_clopath::State_::set( const Dictionary& d, const Parameters_&, Node* node )
+aeif_psc_delta_clopath::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
   update_value_param( d, names::V_m, y_[ V_M ], node );
   update_value_param( d, names::w, y_[ W ], node );
@@ -345,7 +344,7 @@ nest::aeif_psc_delta_clopath::State_::set( const Dictionary& d, const Parameters
   update_value_param( d, names::u_bar_bar, y_[ U_BAR_BAR ], node );
 }
 
-nest::aeif_psc_delta_clopath::Buffers_::Buffers_( aeif_psc_delta_clopath& n )
+aeif_psc_delta_clopath::Buffers_::Buffers_( aeif_psc_delta_clopath& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -355,7 +354,7 @@ nest::aeif_psc_delta_clopath::Buffers_::Buffers_( aeif_psc_delta_clopath& n )
   // init_buffers_().
 }
 
-nest::aeif_psc_delta_clopath::Buffers_::Buffers_( const Buffers_&, aeif_psc_delta_clopath& n )
+aeif_psc_delta_clopath::Buffers_::Buffers_( const Buffers_&, aeif_psc_delta_clopath& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -369,7 +368,7 @@ nest::aeif_psc_delta_clopath::Buffers_::Buffers_( const Buffers_&, aeif_psc_delt
  * Default and copy constructor for node, and destructor
  * ---------------------------------------------------------------- */
 
-nest::aeif_psc_delta_clopath::aeif_psc_delta_clopath()
+aeif_psc_delta_clopath::aeif_psc_delta_clopath()
   : ClopathArchivingNode()
   , P_()
   , S_( P_ )
@@ -378,7 +377,7 @@ nest::aeif_psc_delta_clopath::aeif_psc_delta_clopath()
   recordablesMap_.create();
 }
 
-nest::aeif_psc_delta_clopath::aeif_psc_delta_clopath( const aeif_psc_delta_clopath& n )
+aeif_psc_delta_clopath::aeif_psc_delta_clopath( const aeif_psc_delta_clopath& n )
   : ClopathArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -386,7 +385,7 @@ nest::aeif_psc_delta_clopath::aeif_psc_delta_clopath( const aeif_psc_delta_clopa
 {
 }
 
-nest::aeif_psc_delta_clopath::~aeif_psc_delta_clopath()
+aeif_psc_delta_clopath::~aeif_psc_delta_clopath()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
@@ -408,7 +407,7 @@ nest::aeif_psc_delta_clopath::~aeif_psc_delta_clopath()
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_psc_delta_clopath::init_buffers_()
+aeif_psc_delta_clopath::init_buffers_()
 {
   B_.spikes_.clear();    // includes resize
   B_.currents_.clear();  // includes resize
@@ -458,7 +457,7 @@ nest::aeif_psc_delta_clopath::init_buffers_()
 }
 
 void
-nest::aeif_psc_delta_clopath::pre_run_hook()
+aeif_psc_delta_clopath::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -476,7 +475,7 @@ nest::aeif_psc_delta_clopath::pre_run_hook()
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const long to )
+aeif_psc_delta_clopath::update( const Time& origin, const long from, const long to )
 {
   assert( State_::V_M == 0 );
 
@@ -599,7 +598,7 @@ nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const
 }
 
 void
-nest::aeif_psc_delta_clopath::handle( SpikeEvent& e )
+aeif_psc_delta_clopath::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -608,7 +607,7 @@ nest::aeif_psc_delta_clopath::handle( SpikeEvent& e )
 }
 
 void
-nest::aeif_psc_delta_clopath::handle( CurrentEvent& e )
+aeif_psc_delta_clopath::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -620,9 +619,11 @@ nest::aeif_psc_delta_clopath::handle( CurrentEvent& e )
 }
 
 void
-nest::aeif_psc_delta_clopath::handle( DataLoggingRequest& e )
+aeif_psc_delta_clopath::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
+
+}  // namespace nest
 
 #endif  // HAVE_GSL

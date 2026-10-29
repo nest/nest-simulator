@@ -30,6 +30,7 @@
 #include "exceptions.h"
 #include "nest_names.h"
 
+
 namespace nest
 {
 WeightOptimizerCommonProperties::WeightOptimizerCommonProperties()

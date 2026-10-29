@@ -55,6 +55,7 @@ public:
   Model* clone( const std::string& ) const override;
 
   bool has_proxies() override;
+  bool local_receiver() override;
   bool one_node_per_process() override;
   bool is_off_grid() override;
   void calibrate_time( const TimeConverter& tc ) override;

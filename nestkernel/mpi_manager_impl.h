@@ -122,7 +122,7 @@ struct MPI_Type
 
 template < typename T >
 void
-nest::MPIManager::communicate_Allgatherv( std::vector< T >& send_buffer,
+MPIManager::communicate_Allgatherv( std::vector< T >& send_buffer,
   std::vector< T >& recv_buffer,
   std::vector< int >& displacements,
   std::vector< int >& recv_counts )

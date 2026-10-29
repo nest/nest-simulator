@@ -29,6 +29,7 @@
 #include "nest_impl.h"
 #include "nest_names.h"
 
+
 namespace nest
 {
 class Node;
@@ -57,11 +58,11 @@ gainfunction_erfc::set( const Dictionary& d, Node* node )
 // Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
-RecordablesMap< nest::erfc_neuron >::create()
+RecordablesMap< erfc_neuron >::create()
 {
   // use standard names wherever you can for consistency!
-  insert_( names::S, &nest::erfc_neuron::get_output_state__ );
-  insert_( names::h, &nest::erfc_neuron::get_input__ );
+  insert_( names::S, &erfc_neuron::get_output_state__ );
+  insert_( names::h, &erfc_neuron::get_input__ );
 }
 
 }  // namespace nest

@@ -563,6 +563,20 @@ In general, we try to follow the pattern:
 * Third heading: ``~~~``
 * Fourth heading: ``^^^``
 
+Model documentation inside ``BeginUserDocs`` blocks is the exception. There the
+page title is generated from the ``Short description`` section, so the sections
+an author writes start one level down and use ``+++`` for their first level:
+
+.. code-block:: rst
+
+   Short description
+   +++++++++++++++++
+
+   Conductance based integrate-and-fire neuron model
+
+   Description
+   +++++++++++
+
 "Double quotes"
 ~~~~~~~~~~~~~~~
 
@@ -619,8 +633,6 @@ Links to external resources
 * `reStructuredText docutils documentation <https://docutils.sourceforge.io/rst.html#id24>`_
 
 * `reStructuredText Sphinx documentation <https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html>`_
-
-* `LaTeX math styling <http://www.ams.org/arc/styleguide/mit-2.pdf>`_
 
 * `Sphinx documentation on referencing Python objects
   <https://www.sphinx-doc.org/en/master/usage/restructuredtext/domains.html#cross-referencing-python-objects>`_

@@ -42,10 +42,10 @@
 #include "simulation_manager.h"
 
 
-nest::RecordablesMap< nest::iaf_psc_alpha > nest::iaf_psc_alpha::recordablesMap_;
-
 namespace nest
 {
+RecordablesMap< iaf_psc_alpha > iaf_psc_alpha::recordablesMap_;
+
 void
 register_iaf_psc_alpha( const std::string& name )
 {
@@ -406,4 +406,4 @@ iaf_psc_alpha::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-}  // namespace
+}  // namespace nest

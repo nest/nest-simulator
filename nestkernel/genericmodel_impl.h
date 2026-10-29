@@ -77,6 +77,13 @@ GenericModel< ElementT >::has_proxies()
 
 template < typename ElementT >
 inline bool
+GenericModel< ElementT >::local_receiver()
+{
+  return proto_.local_receiver();
+}
+
+template < typename ElementT >
+inline bool
 GenericModel< ElementT >::one_node_per_process()
 {
   return proto_.one_node_per_process();

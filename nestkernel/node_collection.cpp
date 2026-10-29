@@ -435,6 +435,7 @@ NodeCollectionPrimitive::NodeCollectionPrimitive( size_t first,
   , model_id_( model_id )
   , metadata_( meta )
   , nodes_have_no_proxies_( not kernel::manager< ModelManager >.get_node_model( model_id_ )->has_proxies() )
+  , nodes_are_local_receivers_( kernel::manager< ModelManager >.get_node_model( model_id_ )->local_receiver() )
 {
   assert( first_ <= last_ );
   assert_consistent_model_ids_( model_id_ );
@@ -446,6 +447,7 @@ NodeCollectionPrimitive::NodeCollectionPrimitive( size_t first, size_t last, siz
   , model_id_( model_id )
   , metadata_( nullptr )
   , nodes_have_no_proxies_( not kernel::manager< ModelManager >.get_node_model( model_id_ )->has_proxies() )
+  , nodes_are_local_receivers_( kernel::manager< ModelManager >.get_node_model( model_id_ )->local_receiver() )
 {
   assert( first_ <= last_ );
 }
@@ -470,7 +472,9 @@ NodeCollectionPrimitive::NodeCollectionPrimitive( size_t first, size_t last )
     }
   }
   model_id_ = first_model_id;
-  nodes_have_no_proxies_ = not kernel::manager< ModelManager >.get_node_model( model_id_ )->has_proxies();
+  const auto& model = kernel::manager< ModelManager >.get_node_model( model_id_ );
+  nodes_have_no_proxies_ = not model->has_proxies();
+  nodes_are_local_receivers_ = model->local_receiver();
 }
 
 NodeCollectionPrimitive::NodeCollectionPrimitive()
@@ -479,6 +483,7 @@ NodeCollectionPrimitive::NodeCollectionPrimitive()
   , model_id_( invalid_index )
   , metadata_( nullptr )
   , nodes_have_no_proxies_( false )
+  , nodes_are_local_receivers_( false )
 {
 }
 
@@ -1352,6 +1357,20 @@ NodeCollectionComposite::has_proxies() const
     parts_.begin(), parts_.end(), []( const NodeCollectionPrimitive& prim ) { return prim.has_proxies(); } );
 }
 
+bool
+NodeCollectionComposite::all_connect_as_neurons() const
+{
+  return std::all_of(
+    parts_.begin(), parts_.end(), []( const NodeCollectionPrimitive& prim ) { return prim.all_connect_as_neurons(); } );
+}
+
+bool
+NodeCollectionComposite::all_connect_as_devices() const
+{
+  return std::all_of(
+    parts_.begin(), parts_.end(), []( const NodeCollectionPrimitive& prim ) { return prim.all_connect_as_devices(); } );
+}
+
 std::ostream&
 NodeCollectionComposite::print_me( std::ostream& out ) const
 {
@@ -1523,6 +1542,18 @@ bool
 NodeCollectionPrimitive::has_proxies() const
 {
   return not nodes_have_no_proxies_;
+}
+
+bool
+NodeCollectionPrimitive::all_connect_as_neurons() const
+{
+  return not nodes_have_no_proxies_ or not nodes_are_local_receivers_;
+}
+
+bool
+NodeCollectionPrimitive::all_connect_as_devices() const
+{
+  return not all_connect_as_neurons();
 }
 
 long

@@ -68,7 +68,7 @@ public:
   /**
    * Register a new node to a specific channel on this port.
    */
-  void register_channel( int channel, nest::Node* mp );
+  void register_channel( int channel, Node* mp );
 
   /**
    * Publish the MUSIC port.
@@ -93,7 +93,7 @@ private:
 
   int port_width_;  //!< the width of the MUSIC port
   //! Maps channel number to music_rate_in_proxy
-  std::vector< nest::Node* > channelmap_;
+  std::vector< Node* > channelmap_;
 };
 
 }  // namespace nest

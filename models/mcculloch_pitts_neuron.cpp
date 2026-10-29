@@ -29,6 +29,7 @@
 #include "nest_impl.h"
 #include "nest_names.h"
 
+
 namespace nest
 {
 class Node;
@@ -55,11 +56,11 @@ gainfunction_mcculloch_pitts::set( const Dictionary& d, Node* node )
 // Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
-RecordablesMap< nest::mcculloch_pitts_neuron >::create()
+RecordablesMap< mcculloch_pitts_neuron >::create()
 {
   // use standard names wherever you can for consistency!
-  insert_( names::S, &nest::mcculloch_pitts_neuron::get_output_state__ );
-  insert_( names::h, &nest::mcculloch_pitts_neuron::get_input__ );
+  insert_( names::S, &mcculloch_pitts_neuron::get_output_state__ );
+  insert_( names::h, &mcculloch_pitts_neuron::get_input__ );
 }
 
 }  // namespace nest

@@ -70,17 +70,16 @@ RecordablesMap< gif_cond_exp >::create()
   insert_( names::g_ex, &gif_cond_exp::get_y_elem_< gif_cond_exp::State_::G_EXC > );
   insert_( names::g_in, &gif_cond_exp::get_y_elem_< gif_cond_exp::State_::G_INH > );
 }
-}  // namespace
 
 extern "C" int
-nest::gif_cond_exp_dynamics( double, const double y[], double f[], void* pnode )
+gif_cond_exp_dynamics( double, const double y[], double f[], void* pnode )
 {
   // a shorthand
-  typedef nest::gif_cond_exp::State_ S;
+  typedef gif_cond_exp::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::gif_cond_exp& node = *( reinterpret_cast< nest::gif_cond_exp* >( pnode ) );
+  const gif_cond_exp& node = *( reinterpret_cast< gif_cond_exp* >( pnode ) );
 
   const bool is_refractory = node.S_.r_ref_ > 0;
 
@@ -111,7 +110,7 @@ nest::gif_cond_exp_dynamics( double, const double y[], double f[], void* pnode )
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::gif_cond_exp::Parameters_::Parameters_()
+gif_cond_exp::Parameters_::Parameters_()
   : g_L_( 4.0 )         // nS
   , E_L_( -70.0 )       // mV
   , V_reset_( -55.0 )   // mV
@@ -133,7 +132,7 @@ nest::gif_cond_exp::Parameters_::Parameters_()
 {
 }
 
-nest::gif_cond_exp::State_::State_( const Parameters_& p )
+gif_cond_exp::State_::State_( const Parameters_& p )
   : I_stim_( 0.0 )
   , sfa_( 0.0 )
   , stc_( 0.0 )
@@ -145,7 +144,7 @@ nest::gif_cond_exp::State_::State_( const Parameters_& p )
   neuron_state_[ G_EXC ] = neuron_state_[ G_INH ] = 0;
 }
 
-nest::gif_cond_exp::State_::State_( const State_& s )
+gif_cond_exp::State_::State_( const State_& s )
   : I_stim_( s.I_stim_ )
   , sfa_( s.sfa_ )
   , stc_( s.stc_ )
@@ -170,8 +169,8 @@ nest::gif_cond_exp::State_::State_( const State_& s )
   }
 }
 
-nest::gif_cond_exp::State_&
-nest::gif_cond_exp::State_::operator=( const State_& s )
+gif_cond_exp::State_&
+gif_cond_exp::State_::operator=( const State_& s )
 {
   I_stim_ = s.I_stim_;
   sfa_ = s.sfa_;
@@ -201,7 +200,7 @@ nest::gif_cond_exp::State_::operator=( const State_& s )
  * ---------------------------------------------------------------- */
 
 void
-nest::gif_cond_exp::Parameters_::get( Dictionary& d ) const
+gif_cond_exp::Parameters_::get( Dictionary& d ) const
 {
   d[ names::I_e ] = I_e_;
   d[ names::E_L ] = E_L_;
@@ -224,7 +223,7 @@ nest::gif_cond_exp::Parameters_::get( Dictionary& d ) const
 }
 
 void
-nest::gif_cond_exp::Parameters_::set( const Dictionary& d, Node* node )
+gif_cond_exp::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::I_e, I_e_, node );
   update_value_param( d, names::E_L, E_L_, node );
@@ -311,7 +310,7 @@ nest::gif_cond_exp::Parameters_::set( const Dictionary& d, Node* node )
 }
 
 void
-nest::gif_cond_exp::State_::get( Dictionary& d, const Parameters_& ) const
+gif_cond_exp::State_::get( Dictionary& d, const Parameters_& ) const
 {
   d[ names::V_m ] = neuron_state_[ V_M ];  // Membrane potential
   d[ names::g_ex ] = neuron_state_[ G_EXC ];
@@ -321,14 +320,14 @@ nest::gif_cond_exp::State_::get( Dictionary& d, const Parameters_& ) const
 }
 
 void
-nest::gif_cond_exp::State_::set( const Dictionary& d, const Parameters_&, Node* node )
+gif_cond_exp::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
   update_value_param( d, names::V_m, neuron_state_[ V_M ], node );
   update_value_param( d, names::g_ex, neuron_state_[ G_EXC ], node );
   update_value_param( d, names::g_in, neuron_state_[ G_INH ], node );
 }
 
-nest::gif_cond_exp::Buffers_::Buffers_( gif_cond_exp& n )
+gif_cond_exp::Buffers_::Buffers_( gif_cond_exp& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -338,7 +337,7 @@ nest::gif_cond_exp::Buffers_::Buffers_( gif_cond_exp& n )
   // init_buffers_().
 }
 
-nest::gif_cond_exp::Buffers_::Buffers_( const Buffers_&, gif_cond_exp& n )
+gif_cond_exp::Buffers_::Buffers_( const Buffers_&, gif_cond_exp& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -352,7 +351,7 @@ nest::gif_cond_exp::Buffers_::Buffers_( const Buffers_&, gif_cond_exp& n )
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::gif_cond_exp::gif_cond_exp()
+gif_cond_exp::gif_cond_exp()
   : ArchivingNode()
   , P_()
   , S_( P_ )
@@ -361,7 +360,7 @@ nest::gif_cond_exp::gif_cond_exp()
   recordablesMap_.create();
 }
 
-nest::gif_cond_exp::gif_cond_exp( const gif_cond_exp& n )
+gif_cond_exp::gif_cond_exp( const gif_cond_exp& n )
   : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -369,7 +368,7 @@ nest::gif_cond_exp::gif_cond_exp( const gif_cond_exp& n )
 {
 }
 
-nest::gif_cond_exp::~gif_cond_exp()
+gif_cond_exp::~gif_cond_exp()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
@@ -391,7 +390,7 @@ nest::gif_cond_exp::~gif_cond_exp()
  * ---------------------------------------------------------------- */
 
 void
-nest::gif_cond_exp::init_buffers_()
+gif_cond_exp::init_buffers_()
 {
   B_.spike_exc_.clear();  // includes resize
   B_.spike_inh_.clear();  // includes resize
@@ -436,7 +435,7 @@ nest::gif_cond_exp::init_buffers_()
 }
 
 void
-nest::gif_cond_exp::pre_run_hook()
+gif_cond_exp::pre_run_hook()
 {
   B_.logger_.init();
 
@@ -467,7 +466,7 @@ nest::gif_cond_exp::pre_run_hook()
  */
 
 void
-nest::gif_cond_exp::update( Time const& origin, const long from, const long to )
+gif_cond_exp::update( Time const& origin, const long from, const long to )
 {
   for ( long lag = from; lag < to; ++lag )
   {
@@ -564,7 +563,7 @@ nest::gif_cond_exp::update( Time const& origin, const long from, const long to )
 }
 
 void
-nest::gif_cond_exp::handle( SpikeEvent& e )
+gif_cond_exp::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -585,7 +584,7 @@ nest::gif_cond_exp::handle( SpikeEvent& e )
 }
 
 void
-nest::gif_cond_exp::handle( CurrentEvent& e )
+gif_cond_exp::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -597,9 +596,11 @@ nest::gif_cond_exp::handle( CurrentEvent& e )
 }
 
 void
-nest::gif_cond_exp::handle( DataLoggingRequest& e )
+gif_cond_exp::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
+
+}  // namespace nest
 
 #endif  // HAVE_GSL

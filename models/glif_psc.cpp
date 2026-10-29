@@ -38,7 +38,7 @@
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
 
-using namespace nest;
+
 
 namespace nest
 {
@@ -592,5 +592,6 @@ glif_psc::update( Time const& origin, const long from, const long to )
     v_old = S_.U_;
   }
 }
+
 
 }  // namespace nest

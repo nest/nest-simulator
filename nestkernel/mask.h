@@ -403,19 +403,19 @@ public:
     if ( major_axis_ <= 0 or minor_axis_ <= 0 or polar_axis_ <= 0 )
     {
       throw BadProperty(
-        "nest::EllipseMask<D>: "
+        "EllipseMask<D>: "
         "All axis > 0 required." );
     }
     if ( major_axis_ < minor_axis_ )
     {
       throw BadProperty(
-        "nest::EllipseMask<D>: "
+        "EllipseMask<D>: "
         "major_axis greater than minor_axis required." );
     }
     if ( D == 2 and not( polar_angle_ == 0.0 ) )
     {
       throw BadProperty(
-        "nest::EllipseMask<D>: "
+        "EllipseMask<D>: "
         "polar_angle not defined in 2D." );
     }
 

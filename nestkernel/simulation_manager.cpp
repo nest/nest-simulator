@@ -64,7 +64,9 @@
 #include "vp_manager.h"
 
 
-nest::SimulationManager::SimulationManager()
+namespace nest
+{
+SimulationManager::SimulationManager()
   : clock_( Time::tic( 0L ) )
   , slice_( 0L )
   , to_do_( 0L )
@@ -92,7 +94,7 @@ nest::SimulationManager::SimulationManager()
 }
 
 void
-nest::SimulationManager::initialize( const bool adjust_number_of_threads_or_rng_only )
+SimulationManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
   sw_omp_synchronization_construction_.reset();
   sw_omp_synchronization_simulation_.reset();
@@ -140,19 +142,19 @@ nest::SimulationManager::initialize( const bool adjust_number_of_threads_or_rng_
 }
 
 void
-nest::SimulationManager::finalize( const bool )
+SimulationManager::finalize( const bool )
 {
 }
 
 void
-nest::SimulationManager::reset_timers_for_preparation()
+SimulationManager::reset_timers_for_preparation()
 {
   sw_communicate_prepare_.reset();
   sw_gather_target_data_.reset();
 }
 
 void
-nest::SimulationManager::reset_timers_for_dynamics()
+SimulationManager::reset_timers_for_dynamics()
 {
   sw_simulate_.reset();
   sw_gather_spike_data_.reset();
@@ -163,7 +165,7 @@ nest::SimulationManager::reset_timers_for_dynamics()
 }
 
 void
-nest::SimulationManager::set_status( const Dictionary& d )
+SimulationManager::set_status( const Dictionary& d )
 {
   // Create an instance of time converter here to capture the current
   // representation of time objects: TICS_PER_MS and TICS_PER_STEP
@@ -254,10 +256,10 @@ nest::SimulationManager::set_status( const Dictionary& d )
       }
       else
       {
-        const double old_res = nest::Time::get_resolution().get_ms();
-        const tic_t old_tpms = nest::Time::get_resolution().get_tics_per_ms();
+        const double old_res = Time::get_resolution().get_ms();
+        const tic_t old_tpms = Time::get_resolution().get_tics_per_ms();
 
-        nest::Time::set_resolution( tics_per_ms, resd );
+        Time::set_resolution( tics_per_ms, resd );
         // adjust to new resolution
         clock_.calibrate();
         // adjust delays in the connection system to new resolution
@@ -293,7 +295,7 @@ nest::SimulationManager::set_status( const Dictionary& d )
       }
       else
       {
-        const double old_res = nest::Time::get_resolution().get_ms();
+        const double old_res = Time::get_resolution().get_ms();
 
         Time::set_resolution( resd );
         clock_.calibrate();  // adjust to new resolution
@@ -482,7 +484,7 @@ nest::SimulationManager::set_status( const Dictionary& d )
 }
 
 void
-nest::SimulationManager::get_status( Dictionary& d )
+SimulationManager::get_status( Dictionary& d )
 {
   d[ names::ms_per_tic ] = Time::get_ms_per_tic();
   d[ names::tics_per_ms ] = Time::get_tics_per_ms();
@@ -537,7 +539,7 @@ nest::SimulationManager::get_status( Dictionary& d )
 }
 
 void
-nest::SimulationManager::prepare()
+SimulationManager::prepare()
 {
   assert( kernel::manager< KernelManager >.is_initialized() );
 
@@ -607,7 +609,7 @@ nest::SimulationManager::prepare()
 }
 
 void
-nest::SimulationManager::assert_valid_simtime( Time const& t )
+SimulationManager::assert_valid_simtime( Time const& t )
 {
   if ( t == Time::ms( 0.0 ) )
   {
@@ -648,7 +650,7 @@ nest::SimulationManager::assert_valid_simtime( Time const& t )
 }
 
 void
-nest::SimulationManager::run( Time const& t )
+SimulationManager::run( Time const& t )
 {
   assert_valid_simtime( t );
 
@@ -708,7 +710,7 @@ nest::SimulationManager::run( Time const& t )
 }
 
 void
-nest::SimulationManager::cleanup()
+SimulationManager::cleanup()
 {
   if ( not prepared_ )
   {
@@ -728,7 +730,7 @@ nest::SimulationManager::cleanup()
 }
 
 void
-nest::SimulationManager::call_update_()
+SimulationManager::call_update_()
 {
   assert( kernel::manager< KernelManager >.is_initialized() and not inconsistent_state_ );
 
@@ -784,7 +786,7 @@ nest::SimulationManager::call_update_()
 }
 
 void
-nest::SimulationManager::update_connection_infrastructure( const size_t tid )
+SimulationManager::update_connection_infrastructure( const size_t tid )
 {
   get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
@@ -870,13 +872,13 @@ nest::SimulationManager::update_connection_infrastructure( const size_t tid )
 }
 
 bool
-nest::SimulationManager::wfr_update_( Node* n )
+SimulationManager::wfr_update_( Node* n )
 {
   return ( n->wfr_update( clock_, from_step_, to_step_ ) );
 }
 
 void
-nest::SimulationManager::update_()
+SimulationManager::update_()
 {
   // to store done values of the different threads
   std::vector< bool > done;
@@ -1228,7 +1230,7 @@ nest::SimulationManager::update_()
 }
 
 void
-nest::SimulationManager::advance_time_()
+SimulationManager::advance_time_()
 {
   // time now advanced time by the duration of the previous step
   to_do_ -= to_step_ - from_step_;
@@ -1262,7 +1264,7 @@ nest::SimulationManager::advance_time_()
 }
 
 void
-nest::SimulationManager::print_progress_()
+SimulationManager::print_progress_()
 {
   double rt_factor = 0.0;
 
@@ -1293,3 +1295,5 @@ nest::SimulationManager::get_previous_slice_origin() const
 {
   return clock_ - Time::step( kernel::manager< ConnectionManager >.get_min_delay() );
 }
+
+}  // namespace nest

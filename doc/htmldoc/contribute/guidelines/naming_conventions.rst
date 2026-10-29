@@ -83,6 +83,6 @@ Common suffixes (subscripts)
 +----------------------------------+-------------+
 
 References
----------
+----------
 
 .. footbibliography::

@@ -35,8 +35,10 @@ namespace nest
 class Node;
 }  // namespace nest
 
-nest::ConnParameter*
-nest::ConnParameter::create( const any_type& value, const size_t nthreads )
+namespace nest
+{
+ConnParameter*
+ConnParameter::create( const any_type& value, const size_t nthreads )
 {
   // single double
   if ( std::holds_alternative< double >( value ) )
@@ -57,7 +59,7 @@ nest::ConnParameter::create( const any_type& value, const size_t nthreads )
   }
 
   // Parameter
-  if ( std::holds_alternative< std::shared_ptr< nest::Parameter > >( value ) )
+  if ( std::holds_alternative< std::shared_ptr< Parameter > >( value ) )
   {
     return new ParameterConnParameterWrapper( std::get< ParameterPTR >( value ), nthreads );
   }
@@ -72,13 +74,13 @@ nest::ConnParameter::create( const any_type& value, const size_t nthreads )
 }
 
 
-nest::ParameterConnParameterWrapper::ParameterConnParameterWrapper( ParameterPTR p, const size_t )
+ParameterConnParameterWrapper::ParameterConnParameterWrapper( ParameterPTR p, const size_t )
   : parameter_( p )
 {
 }
 
 double
-nest::ParameterConnParameterWrapper::value_double( size_t, RngPtr rng, size_t, Node* target ) const
+ParameterConnParameterWrapper::value_double( size_t, RngPtr rng, size_t, Node* target ) const
 {
   return parameter_->value( rng, target );
 }
@@ -171,9 +173,6 @@ nest::ArrayLongParameter::reset() const
     *it = values_.begin();
   }
 }
-namespace nest
-{
-
 // ---- Base class: defaulted specials & defaults ----
 ConnParameter::ConnParameter()
 {

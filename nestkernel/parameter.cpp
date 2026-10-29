@@ -121,6 +121,10 @@ NormalParameter::value( RngPtr rng, Node* node )
     return mean_;
   }
 
+  // This assertion addresses #3228. For top performance, it can be deactivated by NDEBUG.
+  assert( normal_dists_.size() == kernel::manager< VPManager >.get_num_threads()
+    and "NormalParameter was created before number of threads were set." );
+
   const auto tid = node
     ? kernel::manager< VPManager >.vp_to_thread( kernel::manager< VPManager >.node_id_to_vp( node->get_node_id() ) )
     : kernel::manager< VPManager >.get_thread_id();
@@ -161,6 +165,10 @@ LognormalParameter::value( RngPtr rng, Node* node )
   {
     return std::exp( mean_ );
   }
+
+  // This assertion addresses #3228. For top performance, it can be deactivated by NDEBUG.
+  assert( lognormal_dists_.size() == kernel::manager< VPManager >.get_num_threads()
+    and "LognormalParameter was created before number of threads were set." );
 
   const auto tid = node
     ? kernel::manager< VPManager >.vp_to_thread( kernel::manager< VPManager >.node_id_to_vp( node->get_node_id() ) )

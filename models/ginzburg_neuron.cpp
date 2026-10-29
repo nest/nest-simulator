@@ -29,6 +29,7 @@
 #include "nest_impl.h"
 #include "nest_names.h"
 
+
 namespace nest
 {
 class Node;
@@ -61,11 +62,11 @@ gainfunction_ginzburg::set( const Dictionary& d, Node* node )
 // Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
-RecordablesMap< nest::ginzburg_neuron >::create()
+RecordablesMap< ginzburg_neuron >::create()
 {
   // use standard names wherever you can for consistency!
-  insert_( names::S, &nest::ginzburg_neuron::get_output_state__ );
-  insert_( names::h, &nest::ginzburg_neuron::get_input__ );
+  insert_( names::S, &ginzburg_neuron::get_output_state__ );
+  insert_( names::h, &ginzburg_neuron::get_input__ );
 }
 
 }  // namespace nest

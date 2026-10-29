@@ -372,4 +372,4 @@ TargetTableDevices::set_synapse_status_to_device( const size_t tid,
   }
 }
 
-}
+}  // namespace nest

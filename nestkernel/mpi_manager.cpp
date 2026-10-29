@@ -43,7 +43,6 @@
 
 namespace nest
 {
-
 #ifdef HAVE_MPI
 
 template <>

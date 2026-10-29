@@ -43,7 +43,6 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-using namespace nest;
 
 namespace nest
 {
@@ -56,7 +55,7 @@ register_glif_cond( const std::string& name )
 // Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
-DynamicRecordablesMap< nest::glif_cond >::create( glif_cond& host )
+DynamicRecordablesMap< glif_cond >::create( glif_cond& host )
 {
   insert( names::V_m, host.get_data_access_functor( glif_cond::State_::V_M ) );
   insert( names::I, host.get_data_access_functor( glif_cond::State_::I ) );
@@ -91,20 +90,19 @@ glif_cond::get_data_access_functor( size_t elem )
 {
   return DataAccessFunctor< glif_cond >( *this, elem );
 }
-}
 
 /* ----------------------------------------------------------------
  * Iteration function
  * ---------------------------------------------------------------- */
 extern "C" inline int
-nest::glif_cond_dynamics( double, const double y[], double f[], void* pnode )
+glif_cond_dynamics( double, const double y[], double f[], void* pnode )
 {
   // a shorthand
-  typedef nest::glif_cond::State_ S;
+  typedef glif_cond::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::glif_cond& node = *( reinterpret_cast< nest::glif_cond* >( pnode ) );
+  const glif_cond& node = *( reinterpret_cast< glif_cond* >( pnode ) );
 
   const bool is_refractory = node.S_.refractory_steps_ > 0;
 
@@ -148,7 +146,7 @@ nest::glif_cond_dynamics( double, const double y[], double f[], void* pnode )
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::glif_cond::Parameters_::Parameters_()
+glif_cond::Parameters_::Parameters_()
   : G_( 9.43 )                // in nS
   , E_L_( -78.85 )            // in mV
   , th_inf_( -51.68 - E_L_ )  // in mv, rel to E_L_, - 51.68 - E_L_, i.e., 27.17
@@ -174,7 +172,7 @@ nest::glif_cond::Parameters_::Parameters_()
 {
 }
 
-nest::glif_cond::State_::State_( const Parameters_& p )
+glif_cond::State_::State_( const Parameters_& p )
   : threshold_( p.th_inf_ )     // in mV
   , threshold_spike_( 0.0 )     // in mV
   , threshold_voltage_( 0.0 )   // in mV
@@ -196,7 +194,7 @@ nest::glif_cond::State_::State_( const Parameters_& p )
  * ---------------------------------------------------------------- */
 
 void
-nest::glif_cond::Parameters_::get( Dictionary& d ) const
+glif_cond::Parameters_::get( Dictionary& d ) const
 {
   d[ names::V_th ] = th_inf_ + E_L_;
   d[ names::g_m ] = G_;
@@ -226,7 +224,7 @@ nest::glif_cond::Parameters_::get( Dictionary& d ) const
 }
 
 double
-nest::glif_cond::Parameters_::set( const Dictionary& d, Node* node )
+glif_cond::Parameters_::set( const Dictionary& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
@@ -394,7 +392,7 @@ nest::glif_cond::Parameters_::set( const Dictionary& d, Node* node )
 }
 
 void
-nest::glif_cond::State_::get( Dictionary& d, const Parameters_& p ) const
+glif_cond::State_::get( Dictionary& d, const Parameters_& p ) const
 {
   d[ names::V_m ] = y_[ V_M ] + p.E_L_;
   d[ names::ASCurrents ] = ASCurrents_;
@@ -417,7 +415,7 @@ nest::glif_cond::State_::get( Dictionary& d, const Parameters_& p ) const
 }
 
 void
-nest::glif_cond::State_::set( const Dictionary& d, const Parameters_& p, double delta_EL, Node* node )
+glif_cond::State_::set( const Dictionary& d, const Parameters_& p, double delta_EL, Node* node )
 {
   if ( update_value_param( d, names::V_m, y_[ V_M ], node ) )
   {
@@ -455,7 +453,7 @@ nest::glif_cond::State_::set( const Dictionary& d, const Parameters_& p, double 
   }
 }
 
-nest::glif_cond::Buffers_::Buffers_( glif_cond& n )
+glif_cond::Buffers_::Buffers_( glif_cond& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -466,7 +464,7 @@ nest::glif_cond::Buffers_::Buffers_( glif_cond& n )
 {
 }
 
-nest::glif_cond::Buffers_::Buffers_( const Buffers_& b, glif_cond& n )
+glif_cond::Buffers_::Buffers_( const Buffers_& b, glif_cond& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -482,7 +480,7 @@ nest::glif_cond::Buffers_::Buffers_( const Buffers_& b, glif_cond& n )
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::glif_cond::glif_cond()
+glif_cond::glif_cond()
   : ArchivingNode()
   , P_()
   , S_( P_ )
@@ -491,7 +489,7 @@ nest::glif_cond::glif_cond()
   recordablesMap_.create( *this );
 }
 
-nest::glif_cond::glif_cond( const glif_cond& n )
+glif_cond::glif_cond( const glif_cond& n )
   : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -500,7 +498,7 @@ nest::glif_cond::glif_cond( const glif_cond& n )
   recordablesMap_.create( *this );
 }
 
-nest::glif_cond::~glif_cond()
+glif_cond::~glif_cond()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
@@ -523,7 +521,7 @@ nest::glif_cond::~glif_cond()
  * ---------------------------------------------------------------- */
 
 void
-nest::glif_cond::init_buffers_()
+glif_cond::init_buffers_()
 {
   B_.spikes_.clear();    // includes resize
   B_.currents_.clear();  // include resize
@@ -551,7 +549,7 @@ nest::glif_cond::init_buffers_()
 }
 
 void
-nest::glif_cond::pre_run_hook()
+glif_cond::pre_run_hook()
 {
   B_.logger_.init();
 
@@ -622,7 +620,7 @@ nest::glif_cond::pre_run_hook()
  * ---------------------------------------------------------------- */
 
 void
-nest::glif_cond::update( Time const& origin, const long from, const long to )
+glif_cond::update( Time const& origin, const long from, const long to )
 {
   // initial values
   double v_old = S_.y_[ State_::V_M ];
@@ -769,7 +767,7 @@ nest::glif_cond::update( Time const& origin, const long from, const long to )
 }
 
 size_t
-nest::glif_cond::handles_test_event( SpikeEvent&, size_t receptor_type )
+glif_cond::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type <= 0 or receptor_type > P_.n_receptors_() )
   {
@@ -781,7 +779,7 @@ nest::glif_cond::handles_test_event( SpikeEvent&, size_t receptor_type )
 }
 
 void
-nest::glif_cond::handle( SpikeEvent& e )
+glif_cond::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -791,12 +789,14 @@ nest::glif_cond::handle( SpikeEvent& e )
 }
 
 void
-nest::glif_cond::handle( CurrentEvent& e )
+glif_cond::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
   B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
     e.get_weight() * e.get_current() );
 }
+
+}  // namespace nest
 
 #endif  // HAVE_GSL

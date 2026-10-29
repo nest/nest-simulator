@@ -5,7 +5,7 @@ Required development tools
 
 Here, we list required tools for NEST development and explain their usage. The
 tools are mostly for formatting your code. Before you get started, please take
-a look at our :ref:`detailed guidelines for C++ coding in NEST <code_style_cpp>`.
+a look at our `detailed guidelines for C++ coding in NEST <https://nest.github.io/nest-simulator/devdoc_coding_conventions.html>`_.
 
 Development environment
 -----------------------

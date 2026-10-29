@@ -34,13 +34,16 @@
 #include "event_delivery_manager.h"
 #include "kernel_manager.h"
 
-nest::SliceRingBuffer::SliceRingBuffer()
+namespace nest
+{
+
+SliceRingBuffer::SliceRingBuffer()
   : refract_( std::numeric_limits< long >::max(), 0, 0 )
 {
 }
 
 void
-nest::SliceRingBuffer::resize()
+SliceRingBuffer::resize()
 {
   // We want to compute ceil( ( d_min + d_max ) / d_min ) = 1 + ceil( d_max / d_min )
   // and can do so safely without casting to double.
@@ -64,7 +67,7 @@ nest::SliceRingBuffer::resize()
 }
 
 void
-nest::SliceRingBuffer::clear()
+SliceRingBuffer::clear()
 {
   for ( auto& slot : queue_ )
   {
@@ -73,7 +76,7 @@ nest::SliceRingBuffer::clear()
 }
 
 void
-nest::SliceRingBuffer::prepare_delivery()
+SliceRingBuffer::prepare_delivery()
 {
   // vector to deliver from in this slice
   deliver_ = &( queue_[ kernel::manager< EventDeliveryManager >.get_slice_modulo( 0 ) ] );
@@ -83,7 +86,7 @@ nest::SliceRingBuffer::prepare_delivery()
 }
 
 void
-nest::SliceRingBuffer::discard_events()
+SliceRingBuffer::discard_events()
 {
   // vector to deliver from in this slice
   deliver_ = &( queue_[ kernel::manager< EventDeliveryManager >.get_slice_modulo( 0 ) ] );
@@ -91,24 +94,24 @@ nest::SliceRingBuffer::discard_events()
   deliver_->clear();
 }
 bool
-nest::SliceRingBuffer::SpikeInfo::operator>( const SpikeInfo& b ) const
+SliceRingBuffer::SpikeInfo::operator>( const SpikeInfo& b ) const
 {
   return stamp_ == b.stamp_ ? ps_offset_ < b.ps_offset_ : stamp_ > b.stamp_;
 }
 
 bool
-nest::SliceRingBuffer::SpikeInfo::operator<=( const SpikeInfo& b ) const
+SliceRingBuffer::SpikeInfo::operator<=( const SpikeInfo& b ) const
 {
   return not( *this > b );
 }
 
 bool
-nest::SliceRingBuffer::SpikeInfo::operator<( const SpikeInfo& b ) const
+SliceRingBuffer::SpikeInfo::operator<( const SpikeInfo& b ) const
 {
   return stamp_ == b.stamp_ ? ps_offset_ > b.ps_offset_ : stamp_ < b.stamp_;
 }
 
-nest::SliceRingBuffer::SpikeInfo::SpikeInfo( long stamp, double ps_offset, double weight )
+SliceRingBuffer::SpikeInfo::SpikeInfo( long stamp, double ps_offset, double weight )
   : stamp_( stamp )
   , ps_offset_( ps_offset )
   , weight_( weight )
@@ -116,7 +119,7 @@ nest::SliceRingBuffer::SpikeInfo::SpikeInfo( long stamp, double ps_offset, doubl
 }
 
 bool
-nest::SliceRingBuffer::get_next_spike( const long req_stamp,
+SliceRingBuffer::get_next_spike( const long req_stamp,
   bool accumulate_simultaneous,
   double& ps_offset,
   double& weight,
@@ -170,7 +173,7 @@ nest::SliceRingBuffer::get_next_spike( const long req_stamp,
 }
 
 void
-nest::SliceRingBuffer::add_refractory( const long stamp, const double ps_offset )
+SliceRingBuffer::add_refractory( const long stamp, const double ps_offset )
 {
   // We require that only one refractory-return pseudo-event is stored per
   // time step.
@@ -185,7 +188,7 @@ nest::SliceRingBuffer::add_refractory( const long stamp, const double ps_offset 
 }
 
 void
-nest::SliceRingBuffer::add_spike( const long rel_delivery,
+SliceRingBuffer::add_spike( const long rel_delivery,
   const long stamp,
   const double ps_offset,
   const double weight )
@@ -196,3 +199,5 @@ nest::SliceRingBuffer::add_spike( const long rel_delivery,
 
   queue_[ idx ].push_back( SpikeInfo( stamp, ps_offset, weight ) );
 }
+
+}  // namespace nest

@@ -38,6 +38,7 @@
 #include "logging.h"
 #include "logging_manager.h"
 
+
 namespace nest
 {
 void

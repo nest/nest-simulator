@@ -37,14 +37,14 @@
 #include "universal_data_logger_impl.h"
 
 
+namespace nest
+{
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::iaf_chs_2007 > nest::iaf_chs_2007::recordablesMap_;
+RecordablesMap< iaf_chs_2007 > iaf_chs_2007::recordablesMap_;
 
-namespace nest
-{
 void
 register_iaf_chs_2007( const std::string& name )
 {
@@ -59,13 +59,12 @@ RecordablesMap< iaf_chs_2007 >::create()
   // use standard names wherever you can for consistency!
   insert_( names::V_m, &iaf_chs_2007::get_V_m_ );
 }
-}
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::iaf_chs_2007::Parameters_::Parameters_()
+iaf_chs_2007::Parameters_::Parameters_()
   : tau_epsp_( 8.5 )    // in ms
   , tau_reset_( 15.4 )  // in ms
   , E_L_( 0.0 )         // normalized
@@ -80,7 +79,7 @@ nest::iaf_chs_2007::Parameters_::Parameters_()
 }
 
 
-nest::iaf_chs_2007::State_::State_()
+iaf_chs_2007::State_::State_()
   : i_syn_ex_( 0.0 )
   , V_syn_( 0.0 )
   , V_spike_( 0.0 )
@@ -93,7 +92,7 @@ nest::iaf_chs_2007::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_chs_2007::Parameters_::get( Dictionary& d ) const
+iaf_chs_2007::Parameters_::get( Dictionary& d ) const
 {
   d[ names::V_reset ] = U_reset_;
   d[ names::V_epsp ] = U_epsp_;
@@ -104,7 +103,7 @@ nest::iaf_chs_2007::Parameters_::get( Dictionary& d ) const
 }
 
 void
-nest::iaf_chs_2007::Parameters_::set( const Dictionary& d, State_& s, Node* node )
+iaf_chs_2007::Parameters_::set( const Dictionary& d, State_& s, Node* node )
 {
   update_value_param( d, names::V_reset, U_reset_, node );
   update_value_param( d, names::V_epsp, U_epsp_, node );
@@ -140,23 +139,23 @@ nest::iaf_chs_2007::Parameters_::set( const Dictionary& d, State_& s, Node* node
 }
 
 void
-nest::iaf_chs_2007::State_::get( Dictionary& d ) const
+iaf_chs_2007::State_::get( Dictionary& d ) const
 {
   d[ names::V_m ] = V_m_;  // Membrane potential
 }
 
 void
-nest::iaf_chs_2007::State_::set( Dictionary const& d, Node* node )
+iaf_chs_2007::State_::set( Dictionary const& d, Node* node )
 {
   update_value_param( d, names::V_m, V_m_, node );
 }
 
-nest::iaf_chs_2007::Buffers_::Buffers_( iaf_chs_2007& n )
+iaf_chs_2007::Buffers_::Buffers_( iaf_chs_2007& n )
   : logger_( n )
 {
 }
 
-nest::iaf_chs_2007::Buffers_::Buffers_( const Buffers_&, iaf_chs_2007& n )
+iaf_chs_2007::Buffers_::Buffers_( const Buffers_&, iaf_chs_2007& n )
   : logger_( n )
 {
 }
@@ -165,7 +164,7 @@ nest::iaf_chs_2007::Buffers_::Buffers_( const Buffers_&, iaf_chs_2007& n )
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::iaf_chs_2007::iaf_chs_2007()
+iaf_chs_2007::iaf_chs_2007()
   : ArchivingNode()
   , P_()
   , S_()
@@ -174,7 +173,7 @@ nest::iaf_chs_2007::iaf_chs_2007()
   recordablesMap_.create();
 }
 
-nest::iaf_chs_2007::iaf_chs_2007( const iaf_chs_2007& n )
+iaf_chs_2007::iaf_chs_2007( const iaf_chs_2007& n )
   : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -187,7 +186,7 @@ nest::iaf_chs_2007::iaf_chs_2007( const iaf_chs_2007& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_chs_2007::init_buffers_()
+iaf_chs_2007::init_buffers_()
 {
   B_.spikes_ex_.clear();  // includes resize
   B_.currents_.clear();   // includes resize
@@ -196,7 +195,7 @@ nest::iaf_chs_2007::init_buffers_()
 }
 
 void
-nest::iaf_chs_2007::pre_run_hook()
+iaf_chs_2007::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -222,7 +221,7 @@ nest::iaf_chs_2007::pre_run_hook()
 }
 
 void
-nest::iaf_chs_2007::update( const Time& origin, const long from, const long to )
+iaf_chs_2007::update( const Time& origin, const long from, const long to )
 {
   // evolve from timestep 'from' to timestep 'to' with steps of h each
   for ( long lag = from; lag < to; ++lag )
@@ -262,7 +261,7 @@ nest::iaf_chs_2007::update( const Time& origin, const long from, const long to )
 }
 
 void
-nest::iaf_chs_2007::handle( SpikeEvent& e )
+iaf_chs_2007::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -274,7 +273,9 @@ nest::iaf_chs_2007::handle( SpikeEvent& e )
 }
 
 void
-nest::iaf_chs_2007::handle( DataLoggingRequest& e )
+iaf_chs_2007::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
+
+}  // namespace nest

@@ -170,6 +170,6 @@ private:
   Variables_ V_;
 };
 
-}  // namespace
+}  // namespace nest
 
 #endif /* DEVICE_H */

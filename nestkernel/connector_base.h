@@ -41,6 +41,7 @@
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
 #include "connection_id.h"
+#include "node_collection.h"
 #include "source.h"
 #include "source_table.h"
 #include "spikecounter.h"
@@ -114,12 +115,14 @@ public:
     std::deque< ConnectionID >& conns ) const = 0;
 
   /**
-   * Add ConnectionID with given source_node_id and lcid to conns. If
-   * target_neuron_node_ids is given, only add connection if
-   * target_neuron_node_ids contains the node ID of the target of the connection.
+   * Add Connections with given source_node_id and lcid to conns. If target is given, only add connection if
+   * target contains the node ID of the target of the connection.
+   *
+   * @note target must be passed as const& to NodeCollectionPTR, because otherwise reference counting on
+   * the shared_ptr in a thread-parallel context will lead to significant thread contention.
    */
   virtual void get_connection_with_specified_targets( const size_t source_node_id,
-    const std::vector< size_t >& target_neuron_node_ids,
+    const NodeCollectionPTR& target,
     const size_t tid,
     const size_t lcid,
     const long synapse_label,
@@ -260,7 +263,7 @@ public:
     std::deque< ConnectionID >& conns ) const override;
 
   void get_connection_with_specified_targets( size_t source_node_id,
-    const std::vector< size_t >& target_neuron_node_ids,
+    const NodeCollectionPTR& target,
     size_t tid,
     size_t lcid,
     long synapse_label,

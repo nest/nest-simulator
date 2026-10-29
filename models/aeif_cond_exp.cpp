@@ -45,14 +45,14 @@
 #include "universal_data_logger_impl.h"
 
 
+namespace nest
+{
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::aeif_cond_exp > nest::aeif_cond_exp::recordablesMap_;
+RecordablesMap< aeif_cond_exp > aeif_cond_exp::recordablesMap_;
 
-namespace nest
-{
 void
 register_aeif_cond_exp( const std::string& name )
 {
@@ -74,18 +74,17 @@ RecordablesMap< aeif_cond_exp >::create()
   insert_( names::g_in, &aeif_cond_exp::get_y_elem_< aeif_cond_exp::State_::G_INH > );
   insert_( names::w, &aeif_cond_exp::get_y_elem_< aeif_cond_exp::State_::W > );
 }
-}
 
 
 extern "C" int
-nest::aeif_cond_exp_dynamics( double, const double y[], double f[], void* pnode )
+aeif_cond_exp_dynamics( double, const double y[], double f[], void* pnode )
 {
   // a shorthand
-  typedef nest::aeif_cond_exp::State_ S;
+  typedef aeif_cond_exp::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::aeif_cond_exp& node = *( reinterpret_cast< nest::aeif_cond_exp* >( pnode ) );
+  const aeif_cond_exp& node = *( reinterpret_cast< aeif_cond_exp* >( pnode ) );
 
   const bool is_refractory = node.S_.r_ > 0;
 
@@ -131,7 +130,7 @@ nest::aeif_cond_exp_dynamics( double, const double y[], double f[], void* pnode 
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::aeif_cond_exp::Parameters_::Parameters_()
+aeif_cond_exp::Parameters_::Parameters_()
   : V_peak_( 0.0 )     // mV
   , V_reset_( -60.0 )  // mV
   , t_ref_( 0.0 )      // ms
@@ -152,7 +151,7 @@ nest::aeif_cond_exp::Parameters_::Parameters_()
 {
 }
 
-nest::aeif_cond_exp::State_::State_( const Parameters_& p )
+aeif_cond_exp::State_::State_( const Parameters_& p )
   : r_( 0 )
 {
   y_[ 0 ] = p.E_L;
@@ -162,7 +161,7 @@ nest::aeif_cond_exp::State_::State_( const Parameters_& p )
   }
 }
 
-nest::aeif_cond_exp::State_::State_( const State_& s )
+aeif_cond_exp::State_::State_( const State_& s )
   : r_( s.r_ )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -171,8 +170,8 @@ nest::aeif_cond_exp::State_::State_( const State_& s )
   }
 }
 
-nest::aeif_cond_exp::State_&
-nest::aeif_cond_exp::State_::operator=( const State_& s )
+aeif_cond_exp::State_&
+aeif_cond_exp::State_::operator=( const State_& s )
 {
   r_ = s.r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -187,7 +186,7 @@ nest::aeif_cond_exp::State_::operator=( const State_& s )
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_cond_exp::Parameters_::get( Dictionary& d ) const
+aeif_cond_exp::Parameters_::get( Dictionary& d ) const
 {
   d[ names::C_m ] = C_m;
   d[ names::V_th ] = V_th;
@@ -209,7 +208,7 @@ nest::aeif_cond_exp::Parameters_::get( Dictionary& d ) const
 }
 
 void
-nest::aeif_cond_exp::Parameters_::set( const Dictionary& d, Node* node )
+aeif_cond_exp::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::V_th, V_th, node );
   update_value_param( d, names::V_peak, V_peak_, node );
@@ -285,7 +284,7 @@ nest::aeif_cond_exp::Parameters_::set( const Dictionary& d, Node* node )
 }
 
 void
-nest::aeif_cond_exp::State_::get( Dictionary& d ) const
+aeif_cond_exp::State_::get( Dictionary& d ) const
 {
   d[ names::V_m ] = y_[ V_M ];
   d[ names::g_ex ] = y_[ G_EXC ];
@@ -294,7 +293,7 @@ nest::aeif_cond_exp::State_::get( Dictionary& d ) const
 }
 
 void
-nest::aeif_cond_exp::State_::set( const Dictionary& d, const Parameters_&, Node* node )
+aeif_cond_exp::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
   update_value_param( d, names::V_m, y_[ V_M ], node );
   update_value_param( d, names::g_ex, y_[ G_EXC ], node );
@@ -306,7 +305,7 @@ nest::aeif_cond_exp::State_::set( const Dictionary& d, const Parameters_&, Node*
   }
 }
 
-nest::aeif_cond_exp::Buffers_::Buffers_( aeif_cond_exp& n )
+aeif_cond_exp::Buffers_::Buffers_( aeif_cond_exp& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -316,7 +315,7 @@ nest::aeif_cond_exp::Buffers_::Buffers_( aeif_cond_exp& n )
   // init_buffers_().
 }
 
-nest::aeif_cond_exp::Buffers_::Buffers_( const Buffers_&, aeif_cond_exp& n )
+aeif_cond_exp::Buffers_::Buffers_( const Buffers_&, aeif_cond_exp& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -330,7 +329,7 @@ nest::aeif_cond_exp::Buffers_::Buffers_( const Buffers_&, aeif_cond_exp& n )
  * Default and copy constructor for node, and destructor
  * ---------------------------------------------------------------- */
 
-nest::aeif_cond_exp::aeif_cond_exp()
+aeif_cond_exp::aeif_cond_exp()
   : ArchivingNode()
   , P_()
   , S_( P_ )
@@ -339,7 +338,7 @@ nest::aeif_cond_exp::aeif_cond_exp()
   recordablesMap_.create();
 }
 
-nest::aeif_cond_exp::aeif_cond_exp( const aeif_cond_exp& n )
+aeif_cond_exp::aeif_cond_exp( const aeif_cond_exp& n )
   : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -347,7 +346,7 @@ nest::aeif_cond_exp::aeif_cond_exp( const aeif_cond_exp& n )
 {
 }
 
-nest::aeif_cond_exp::~aeif_cond_exp()
+aeif_cond_exp::~aeif_cond_exp()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
@@ -369,7 +368,7 @@ nest::aeif_cond_exp::~aeif_cond_exp()
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_cond_exp::init_buffers_()
+aeif_cond_exp::init_buffers_()
 {
   B_.spike_exc_.clear();  // includes resize
   B_.spike_inh_.clear();  // includes resize
@@ -419,7 +418,7 @@ nest::aeif_cond_exp::init_buffers_()
 }
 
 void
-nest::aeif_cond_exp::pre_run_hook()
+aeif_cond_exp::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -442,7 +441,7 @@ nest::aeif_cond_exp::pre_run_hook()
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_cond_exp::update( const Time& origin, const long from, const long to )
+aeif_cond_exp::update( const Time& origin, const long from, const long to )
 {
   assert( State_::V_M == 0 );
 
@@ -525,7 +524,7 @@ nest::aeif_cond_exp::update( const Time& origin, const long from, const long to 
 }
 
 void
-nest::aeif_cond_exp::handle( SpikeEvent& e )
+aeif_cond_exp::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -542,7 +541,7 @@ nest::aeif_cond_exp::handle( SpikeEvent& e )
 }
 
 void
-nest::aeif_cond_exp::handle( CurrentEvent& e )
+aeif_cond_exp::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -553,9 +552,11 @@ nest::aeif_cond_exp::handle( CurrentEvent& e )
 }
 
 void
-nest::aeif_cond_exp::handle( DataLoggingRequest& e )
+aeif_cond_exp::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
+
+}  // namespace nest
 
 #endif  // HAVE_GSL

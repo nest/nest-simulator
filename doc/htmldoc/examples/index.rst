@@ -276,15 +276,6 @@ PyNEST examples
 
            :doc:`../auto_examples/brette_et_al_2007/index`
 
-
-.. grid:: 1 1 2 3
-
-    .. grid-item-card:: Connection set algebra
-           :img-top: ../static/img/nest_logo-faded.png
-
-           * :doc:`../auto_examples/csa_example`
-           * :doc:`../auto_examples/csa_spatial_example`
-
 .. toctree::
    :hidden:
 
@@ -350,8 +341,6 @@ PyNEST examples
    ../auto_examples/cross_check_mip_corrdet
    ../auto_examples/intrinsic_currents_spiking
    ../auto_examples/intrinsic_currents_subthreshold
-   ../auto_examples/csa_example
-   ../auto_examples/csa_spatial_example
    ../auto_examples/hpc_benchmark
    ../auto_examples/brette_et_al_2007/index
    ../auto_examples/astrocytes/index

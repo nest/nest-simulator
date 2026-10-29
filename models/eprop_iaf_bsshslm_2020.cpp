@@ -43,9 +43,9 @@
 #include "secondary_event_impl.h"
 #include "simulation_manager.h"
 
+
 namespace nest
 {
-
 void
 register_eprop_iaf_bsshslm_2020( const std::string& name )
 {

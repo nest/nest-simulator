@@ -30,6 +30,7 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "nest_types.h"
+
 // Includes from libnestutil
 #include "block_vector.h"
 
@@ -220,30 +221,22 @@ private:
   bool left_side_has_proxies_;
 };
 
-inline size_t
-SparseNodeArray::NodeEntry::get_node_id() const
+inline SparseNodeArray::const_iterator
+SparseNodeArray::begin() const
 {
-  assert( node_id_ > 0 );
-  return node_id_;
+  return nodes_.begin();
 }
 
-inline Node*
-SparseNodeArray::NodeEntry::get_node() const
+inline SparseNodeArray::const_iterator
+SparseNodeArray::end() const
 {
-  assert( node_ );
-  return node_;
-}
-
-inline bool
-SparseNodeArray::is_consistent_() const
-{
-  return nodes_.size() == 0 or global_max_node_id_ > 0;
+  return nodes_.end();
 }
 
 inline size_t
-SparseNodeArray::get_max_node_id() const
+SparseNodeArray::size() const
 {
-  return global_max_node_id_;
+  return nodes_.size();
 }
 
 inline Node*
@@ -254,24 +247,31 @@ SparseNodeArray::get_node_by_index( size_t idx ) const
 }
 
 inline size_t
-SparseNodeArray::size() const
+SparseNodeArray::get_max_node_id() const
 {
-  return nodes_.size();
+  return global_max_node_id_;
 }
 
-inline SparseNodeArray::const_iterator
-SparseNodeArray::end() const
+inline bool
+SparseNodeArray::is_consistent_() const
 {
-  return nodes_.end();
+  return nodes_.size() == 0 or global_max_node_id_ > 0;
 }
 
-inline SparseNodeArray::const_iterator
-SparseNodeArray::begin() const
+inline Node*
+SparseNodeArray::NodeEntry::get_node() const
 {
-  return nodes_.begin();
+  assert( node_ );
+  return node_;
+}
+
+inline size_t
+SparseNodeArray::NodeEntry::get_node_id() const
+{
+  assert( node_id_ > 0 );
+  return node_id_;
 }
 
 }  // namespace nest
-
 
 #endif /* SPARSE_NODE_ARRAY_H */

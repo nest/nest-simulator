@@ -43,8 +43,10 @@
 #include "nest_timeconverter.h"
 
 
+namespace nest
+{
 void
-nest::register_correlomatrix_detector( const std::string& name )
+register_correlomatrix_detector( const std::string& name )
 {
   register_node_model< correlomatrix_detector >( name );
 }
@@ -54,7 +56,7 @@ nest::register_correlomatrix_detector( const std::string& name )
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::correlomatrix_detector::Parameters_::Parameters_()
+correlomatrix_detector::Parameters_::Parameters_()
   : delta_tau_( get_default_delta_tau() )
   , tau_max_( 10 * delta_tau_ )
   , Tstart_( Time::ms( 0.0 ) )
@@ -63,7 +65,7 @@ nest::correlomatrix_detector::Parameters_::Parameters_()
 {
 }
 
-nest::correlomatrix_detector::Parameters_::Parameters_( const Parameters_& p )
+correlomatrix_detector::Parameters_::Parameters_( const Parameters_& p )
   : delta_tau_( p.delta_tau_ )
   , tau_max_( p.tau_max_ )
   , Tstart_( p.Tstart_ )
@@ -84,8 +86,8 @@ nest::correlomatrix_detector::Parameters_::Parameters_( const Parameters_& p )
   Tstop_.calibrate();
 }
 
-nest::correlomatrix_detector::Parameters_&
-nest::correlomatrix_detector::Parameters_::operator=( const Parameters_& p )
+correlomatrix_detector::Parameters_&
+correlomatrix_detector::Parameters_::operator=( const Parameters_& p )
 {
   delta_tau_ = p.delta_tau_;
   tau_max_ = p.tau_max_;
@@ -101,7 +103,7 @@ nest::correlomatrix_detector::Parameters_::operator=( const Parameters_& p )
   return *this;
 }
 
-nest::correlomatrix_detector::State_::State_()
+correlomatrix_detector::State_::State_()
   : n_events_( 1, 0 )
   , incoming_()
   , covariance_( 1, std::vector< std::vector< double > >( 1, std::vector< double >() ) )
@@ -115,7 +117,7 @@ nest::correlomatrix_detector::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::correlomatrix_detector::Parameters_::get( Dictionary& d ) const
+correlomatrix_detector::Parameters_::get( Dictionary& d ) const
 {
   d[ names::delta_tau ] = delta_tau_.get_ms();
   d[ names::tau_max ] = tau_max_.get_ms();
@@ -125,7 +127,7 @@ nest::correlomatrix_detector::Parameters_::get( Dictionary& d ) const
 }
 
 void
-nest::correlomatrix_detector::State_::get( Dictionary& d ) const
+correlomatrix_detector::State_::get( Dictionary& d ) const
 {
   d[ names::n_events ] = n_events_;
   d[ names::covariance ] = covariance_;
@@ -133,7 +135,7 @@ nest::correlomatrix_detector::State_::get( Dictionary& d ) const
 }
 
 bool
-nest::correlomatrix_detector::Parameters_::set( const Dictionary& d, const correlomatrix_detector& n, Node* node )
+correlomatrix_detector::Parameters_::set( const Dictionary& d, const correlomatrix_detector& n, Node* node )
 {
   bool reset = false;
   double t;
@@ -195,12 +197,12 @@ nest::correlomatrix_detector::Parameters_::set( const Dictionary& d, const corre
 }
 
 void
-nest::correlomatrix_detector::State_::set( const Dictionary&, const Parameters_&, bool, Node* )
+correlomatrix_detector::State_::set( const Dictionary&, const Parameters_&, bool, Node* )
 {
 }
 
 void
-nest::correlomatrix_detector::State_::reset( const Parameters_& p )
+correlomatrix_detector::State_::reset( const Parameters_& p )
 {
   n_events_.clear();
   n_events_.resize( p.N_channels_, 0 );
@@ -231,7 +233,7 @@ nest::correlomatrix_detector::State_::reset( const Parameters_& p )
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::correlomatrix_detector::correlomatrix_detector()
+correlomatrix_detector::correlomatrix_detector()
   : Node()
   , device_()
   , P_()
@@ -239,7 +241,7 @@ nest::correlomatrix_detector::correlomatrix_detector()
 {
 }
 
-nest::correlomatrix_detector::correlomatrix_detector( const correlomatrix_detector& n )
+correlomatrix_detector::correlomatrix_detector( const correlomatrix_detector& n )
   : Node( n )
   , device_( n.device_ )
   , P_( n.P_ )
@@ -253,20 +255,20 @@ nest::correlomatrix_detector::correlomatrix_detector( const correlomatrix_detect
  * ---------------------------------------------------------------- */
 
 void
-nest::correlomatrix_detector::init_state_()
+correlomatrix_detector::init_state_()
 {
   device_.init_state();
 }
 
 void
-nest::correlomatrix_detector::init_buffers_()
+correlomatrix_detector::init_buffers_()
 {
   device_.init_buffers();
   S_.reset( P_ );
 }
 
 void
-nest::correlomatrix_detector::pre_run_hook()
+correlomatrix_detector::pre_run_hook()
 {
   device_.pre_run_hook();
 }
@@ -277,12 +279,12 @@ nest::correlomatrix_detector::pre_run_hook()
  * ---------------------------------------------------------------- */
 
 void
-nest::correlomatrix_detector::update( Time const&, const long, const long )
+correlomatrix_detector::update( Time const&, const long, const long )
 {
 }
 
 void
-nest::correlomatrix_detector::handle( SpikeEvent& e )
+correlomatrix_detector::handle( SpikeEvent& e )
 {
   // The receiver port identifies the sending node in our
   // sender list.
@@ -387,7 +389,7 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
 }
 
 void
-nest::correlomatrix_detector::calibrate_time( const TimeConverter& tc )
+correlomatrix_detector::calibrate_time( const TimeConverter& tc )
 {
   if ( P_.delta_tau_.is_step() )
   {
@@ -405,3 +407,5 @@ nest::correlomatrix_detector::calibrate_time( const TimeConverter& tc )
   P_.Tstart_ = tc.from_old_tics( P_.Tstart_.get_tics() );
   P_.Tstop_ = tc.from_old_tics( P_.Tstop_.get_tics() );
 }
+
+}  // namespace nest

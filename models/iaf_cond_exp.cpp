@@ -40,14 +40,14 @@
 #include "nest_impl.h"
 
 
+namespace nest
+{
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::iaf_cond_exp > nest::iaf_cond_exp::recordablesMap_;
+RecordablesMap< iaf_cond_exp > iaf_cond_exp::recordablesMap_;
 
-namespace nest  // template specialization must be placed in namespace
-{
 void
 register_iaf_cond_exp( const std::string& name )
 {
@@ -64,17 +64,16 @@ RecordablesMap< iaf_cond_exp >::create()
   insert_( names::g_ex, &iaf_cond_exp::get_y_elem_< iaf_cond_exp::State_::G_EXC > );
   insert_( names::g_in, &iaf_cond_exp::get_y_elem_< iaf_cond_exp::State_::G_INH > );
 }
-}
 
 extern "C" inline int
-nest::iaf_cond_exp_dynamics( double, const double y[], double f[], void* pnode )
+iaf_cond_exp_dynamics( double, const double y[], double f[], void* pnode )
 {
   // a shorthand
-  typedef nest::iaf_cond_exp::State_ S;
+  typedef iaf_cond_exp::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::iaf_cond_exp& node = *( reinterpret_cast< nest::iaf_cond_exp* >( pnode ) );
+  const iaf_cond_exp& node = *( reinterpret_cast< iaf_cond_exp* >( pnode ) );
 
   const bool is_refractory = node.S_.r_ > 0;
 
@@ -105,7 +104,7 @@ nest::iaf_cond_exp_dynamics( double, const double y[], double f[], void* pnode )
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::iaf_cond_exp::Parameters_::Parameters_()
+iaf_cond_exp::Parameters_::Parameters_()
   : V_th_( -55.0 )     // mV
   , V_reset_( -60.0 )  // mV
   , t_ref_( 2.0 )      // ms
@@ -120,14 +119,14 @@ nest::iaf_cond_exp::Parameters_::Parameters_()
 {
 }
 
-nest::iaf_cond_exp::State_::State_( const Parameters_& p )
+iaf_cond_exp::State_::State_( const Parameters_& p )
   : r_( 0 )
 {
   y_[ V_M ] = p.E_L;
   y_[ G_EXC ] = y_[ G_INH ] = 0;
 }
 
-nest::iaf_cond_exp::State_::State_( const State_& s )
+iaf_cond_exp::State_::State_( const State_& s )
   : r_( s.r_ )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -136,8 +135,8 @@ nest::iaf_cond_exp::State_::State_( const State_& s )
   }
 }
 
-nest::iaf_cond_exp::State_&
-nest::iaf_cond_exp::State_::operator=( const State_& s )
+iaf_cond_exp::State_&
+iaf_cond_exp::State_::operator=( const State_& s )
 {
   r_ = s.r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -152,7 +151,7 @@ nest::iaf_cond_exp::State_::operator=( const State_& s )
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_cond_exp::Parameters_::get( Dictionary& d ) const
+iaf_cond_exp::Parameters_::get( Dictionary& d ) const
 {
   d[ names::V_th ] = V_th_;
   d[ names::V_reset ] = V_reset_;
@@ -168,7 +167,7 @@ nest::iaf_cond_exp::Parameters_::get( Dictionary& d ) const
 }
 
 void
-nest::iaf_cond_exp::Parameters_::set( const Dictionary& d, Node* node )
+iaf_cond_exp::Parameters_::set( const Dictionary& d, Node* node )
 {
   // allow setting the membrane potential
   update_value_param( d, names::V_th, V_th_, node );
@@ -205,7 +204,7 @@ nest::iaf_cond_exp::Parameters_::set( const Dictionary& d, Node* node )
 }
 
 void
-nest::iaf_cond_exp::State_::get( Dictionary& d ) const
+iaf_cond_exp::State_::get( Dictionary& d ) const
 {
   d[ names::V_m ] = y_[ V_M ];  // Membrane potential
   d[ names::g_ex ] = y_[ G_EXC ];
@@ -213,14 +212,14 @@ nest::iaf_cond_exp::State_::get( Dictionary& d ) const
 }
 
 void
-nest::iaf_cond_exp::State_::set( const Dictionary& d, const Parameters_&, Node* node )
+iaf_cond_exp::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
   update_value_param( d, names::V_m, y_[ V_M ], node );
   update_value_param( d, names::g_ex, y_[ G_EXC ], node );
   update_value_param( d, names::g_in, y_[ G_INH ], node );
 }
 
-nest::iaf_cond_exp::Buffers_::Buffers_( iaf_cond_exp& n )
+iaf_cond_exp::Buffers_::Buffers_( iaf_cond_exp& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -230,7 +229,7 @@ nest::iaf_cond_exp::Buffers_::Buffers_( iaf_cond_exp& n )
   // init_buffers_().
 }
 
-nest::iaf_cond_exp::Buffers_::Buffers_( const Buffers_&, iaf_cond_exp& n )
+iaf_cond_exp::Buffers_::Buffers_( const Buffers_&, iaf_cond_exp& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -244,7 +243,7 @@ nest::iaf_cond_exp::Buffers_::Buffers_( const Buffers_&, iaf_cond_exp& n )
  * Default and copy constructor for node, and destructor
  * ---------------------------------------------------------------- */
 
-nest::iaf_cond_exp::iaf_cond_exp()
+iaf_cond_exp::iaf_cond_exp()
   : ArchivingNode()
   , P_()
   , S_( P_ )
@@ -253,7 +252,7 @@ nest::iaf_cond_exp::iaf_cond_exp()
   recordablesMap_.create();
 }
 
-nest::iaf_cond_exp::iaf_cond_exp( const iaf_cond_exp& n )
+iaf_cond_exp::iaf_cond_exp( const iaf_cond_exp& n )
   : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -261,7 +260,7 @@ nest::iaf_cond_exp::iaf_cond_exp( const iaf_cond_exp& n )
 {
 }
 
-nest::iaf_cond_exp::~iaf_cond_exp()
+iaf_cond_exp::~iaf_cond_exp()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
@@ -283,7 +282,7 @@ nest::iaf_cond_exp::~iaf_cond_exp()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_cond_exp::init_buffers_()
+iaf_cond_exp::init_buffers_()
 {
   B_.spike_exc_.clear();  // includes resize
   B_.spike_inh_.clear();  // includes resize
@@ -331,7 +330,7 @@ nest::iaf_cond_exp::init_buffers_()
 }
 
 void
-nest::iaf_cond_exp::pre_run_hook()
+iaf_cond_exp::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -346,7 +345,7 @@ nest::iaf_cond_exp::pre_run_hook()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_cond_exp::update( Time const& origin, const long from, const long to )
+iaf_cond_exp::update( Time const& origin, const long from, const long to )
 {
   for ( long lag = from; lag < to; ++lag )
   {
@@ -411,7 +410,7 @@ nest::iaf_cond_exp::update( Time const& origin, const long from, const long to )
 }
 
 void
-nest::iaf_cond_exp::handle( SpikeEvent& e )
+iaf_cond_exp::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -428,7 +427,7 @@ nest::iaf_cond_exp::handle( SpikeEvent& e )
 }
 
 void
-nest::iaf_cond_exp::handle( CurrentEvent& e )
+iaf_cond_exp::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -439,9 +438,11 @@ nest::iaf_cond_exp::handle( CurrentEvent& e )
 }
 
 void
-nest::iaf_cond_exp::handle( DataLoggingRequest& e )
+iaf_cond_exp::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
+
+}  // namespace nest
 
 #endif  // HAVE_GSL

@@ -33,7 +33,7 @@
 namespace nest
 {
 
-nest::StructuralPlasticityNode::StructuralPlasticityNode()
+StructuralPlasticityNode::StructuralPlasticityNode()
   : Ca_t_( 0.0 )
   , Ca_minus_( 0.0 )
   , tau_Ca_( 10000.0 )
@@ -42,7 +42,7 @@ nest::StructuralPlasticityNode::StructuralPlasticityNode()
 {
 }
 
-nest::StructuralPlasticityNode::StructuralPlasticityNode( const StructuralPlasticityNode& n )
+StructuralPlasticityNode::StructuralPlasticityNode( const StructuralPlasticityNode& n )
   : Node( n )
   , Ca_t_( n.Ca_t_ )
   , Ca_minus_( n.Ca_minus_ )
@@ -53,7 +53,7 @@ nest::StructuralPlasticityNode::StructuralPlasticityNode( const StructuralPlasti
 }
 
 void
-nest::StructuralPlasticityNode::get_status( Dictionary& d ) const
+StructuralPlasticityNode::get_status( Dictionary& d ) const
 {
 
   d[ names::Ca ] = Ca_minus_;
@@ -73,7 +73,7 @@ nest::StructuralPlasticityNode::get_status( Dictionary& d ) const
 }
 
 void
-nest::StructuralPlasticityNode::set_status( const Dictionary& d )
+StructuralPlasticityNode::set_status( const Dictionary& d )
 {
   // We need to preserve values in case invalid values are set
   double new_Ca_ = Ca_minus_;
@@ -146,14 +146,14 @@ nest::StructuralPlasticityNode::set_status( const Dictionary& d )
 }
 
 void
-nest::StructuralPlasticityNode::clear_history()
+StructuralPlasticityNode::clear_history()
 {
   Ca_minus_ = 0.0;
   Ca_t_ = 0.0;
 }
 
 double
-nest::StructuralPlasticityNode::get_synaptic_elements( std::string n ) const
+StructuralPlasticityNode::get_synaptic_elements( std::string n ) const
 {
   std::map< std::string, SynapticElement >::const_iterator se_it;
   se_it = synaptic_elements_map_.find( n );
@@ -178,7 +178,7 @@ nest::StructuralPlasticityNode::get_synaptic_elements( std::string n ) const
 }
 
 int
-nest::StructuralPlasticityNode::get_synaptic_elements_vacant( std::string n ) const
+StructuralPlasticityNode::get_synaptic_elements_vacant( std::string n ) const
 {
   std::map< std::string, SynapticElement >::const_iterator se_it;
   se_it = synaptic_elements_map_.find( n );
@@ -194,7 +194,7 @@ nest::StructuralPlasticityNode::get_synaptic_elements_vacant( std::string n ) co
 }
 
 int
-nest::StructuralPlasticityNode::get_synaptic_elements_connected( std::string n ) const
+StructuralPlasticityNode::get_synaptic_elements_connected( std::string n ) const
 {
   std::map< std::string, SynapticElement >::const_iterator se_it;
   se_it = synaptic_elements_map_.find( n );
@@ -210,7 +210,7 @@ nest::StructuralPlasticityNode::get_synaptic_elements_connected( std::string n )
 }
 
 std::map< std::string, double >
-nest::StructuralPlasticityNode::get_synaptic_elements() const
+StructuralPlasticityNode::get_synaptic_elements() const
 {
   std::map< std::string, double > n_map;
 
@@ -224,7 +224,7 @@ nest::StructuralPlasticityNode::get_synaptic_elements() const
 }
 
 void
-nest::StructuralPlasticityNode::update_synaptic_elements( double t )
+StructuralPlasticityNode::update_synaptic_elements( double t )
 {
   assert( t >= Ca_t_ );
 
@@ -240,7 +240,7 @@ nest::StructuralPlasticityNode::update_synaptic_elements( double t )
 }
 
 void
-nest::StructuralPlasticityNode::decay_synaptic_elements_vacant()
+StructuralPlasticityNode::decay_synaptic_elements_vacant()
 {
   for ( std::map< std::string, SynapticElement >::iterator it = synaptic_elements_map_.begin();
     it != synaptic_elements_map_.end();
@@ -251,7 +251,7 @@ nest::StructuralPlasticityNode::decay_synaptic_elements_vacant()
 }
 
 void
-nest::StructuralPlasticityNode::connect_synaptic_element( std::string name, int n )
+StructuralPlasticityNode::connect_synaptic_element( std::string name, int n )
 {
   std::map< std::string, SynapticElement >::iterator se_it;
   se_it = synaptic_elements_map_.find( name );
@@ -263,7 +263,7 @@ nest::StructuralPlasticityNode::connect_synaptic_element( std::string name, int 
 }
 
 void
-nest::StructuralPlasticityNode::set_spiketime( Time const& t_sp, double offset )
+StructuralPlasticityNode::set_spiketime( Time const& t_sp, double offset )
 {
   const double t_sp_ms = t_sp.get_ms() - offset;
   update_synaptic_elements( t_sp_ms );

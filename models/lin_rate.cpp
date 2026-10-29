@@ -29,6 +29,7 @@
 #include "nest_impl.h"
 #include "nest_names.h"
 
+
 namespace nest
 {
 class Node;
@@ -75,29 +76,29 @@ nonlinearities_lin_rate::set( const Dictionary& d, Node* node )
 // Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
-RecordablesMap< nest::lin_rate_ipn >::create()
+RecordablesMap< lin_rate_ipn >::create()
 {
   // use standard names wherever you can for consistency!
-  insert_( names::rate, &nest::lin_rate_ipn::get_rate_ );
-  insert_( names::noise, &nest::lin_rate_ipn::get_noise_ );
+  insert_( names::rate, &lin_rate_ipn::get_rate_ );
+  insert_( names::noise, &lin_rate_ipn::get_noise_ );
 }
 
 template <>
 void
-RecordablesMap< nest::lin_rate_opn >::create()
+RecordablesMap< lin_rate_opn >::create()
 {
   // use standard names wherever you can for consistency!
-  insert_( names::rate, &nest::lin_rate_opn::get_rate_ );
-  insert_( names::noise, &nest::lin_rate_opn::get_noise_ );
-  insert_( names::noisy_rate, &nest::lin_rate_opn::get_noisy_rate_ );
+  insert_( names::rate, &lin_rate_opn::get_rate_ );
+  insert_( names::noise, &lin_rate_opn::get_noise_ );
+  insert_( names::noisy_rate, &lin_rate_opn::get_noisy_rate_ );
 }
 
 template <>
 void
-RecordablesMap< nest::rate_transformer_lin >::create()
+RecordablesMap< rate_transformer_lin >::create()
 {
   // use standard names wherever you can for consistency!
-  insert_( names::rate, &nest::rate_transformer_lin::get_rate_ );
+  insert_( names::rate, &rate_transformer_lin::get_rate_ );
 }
 
 }  // namespace nest

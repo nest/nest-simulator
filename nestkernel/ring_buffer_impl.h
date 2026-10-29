@@ -90,6 +90,6 @@ MultiChannelInputBuffer< num_channels >::clear()
   }
 }
 
-}
+}  // namespace nest
 
 #endif

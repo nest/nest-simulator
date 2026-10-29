@@ -45,9 +45,9 @@
 #include "simulation_manager.h"
 #include "weight_optimizer.h"
 
+
 namespace nest
 {
-
 void
 register_eprop_iaf_psc_delta( const std::string& name )
 {

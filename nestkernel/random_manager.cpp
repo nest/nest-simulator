@@ -49,28 +49,32 @@
 #endif
 
 
-const std::string nest::RandomManager::DEFAULT_RNG_TYPE_ = "mt19937_64";
-
-const std::uint32_t nest::RandomManager::DEFAULT_BASE_SEED_ = 143202461;
-
-const std::uint32_t nest::RandomManager::RANK_SYNCED_SEEDER_ = 0xc229212d;
-const std::uint32_t nest::RandomManager::THREAD_SYNCED_SEEDER_ = 0x37722d5e;
-const std::uint32_t nest::RandomManager::THREAD_SPECIFIC_SEEDER_ = 0xb84c9bae;
+namespace nest
+{
 
 
-nest::RandomManager::RandomManager()
+const std::string RandomManager::DEFAULT_RNG_TYPE_ = "mt19937_64";
+
+const std::uint32_t RandomManager::DEFAULT_BASE_SEED_ = 143202461;
+
+const std::uint32_t RandomManager::RANK_SYNCED_SEEDER_ = 0xc229212d;
+const std::uint32_t RandomManager::THREAD_SYNCED_SEEDER_ = 0x37722d5e;
+const std::uint32_t RandomManager::THREAD_SPECIFIC_SEEDER_ = 0xb84c9bae;
+
+
+RandomManager::RandomManager()
   : current_rng_type_( DEFAULT_RNG_TYPE_ )
   , base_seed_( DEFAULT_BASE_SEED_ )
   , rank_synced_rng_( nullptr )
 {
 }
 
-nest::RandomManager::~RandomManager()
+RandomManager::~RandomManager()
 {
 }
 
 void
-nest::RandomManager::initialize( const bool adjust_number_of_threads_or_rng_only )
+RandomManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
   if ( not adjust_number_of_threads_or_rng_only )
   {
@@ -107,7 +111,7 @@ nest::RandomManager::initialize( const bool adjust_number_of_threads_or_rng_only
 }
 
 void
-nest::RandomManager::finalize( const bool adjust_number_of_threads_or_rng_only )
+RandomManager::finalize( const bool adjust_number_of_threads_or_rng_only )
 {
   // Delete existing RNGs
   auto delete_rngs = []( std::vector< RngPtr >& rng_vec )
@@ -135,7 +139,7 @@ nest::RandomManager::finalize( const bool adjust_number_of_threads_or_rng_only )
 }
 
 void
-nest::RandomManager::get_status( Dictionary& d )
+RandomManager::get_status( Dictionary& d )
 {
   std::vector< std::string > rng_types;
   for ( auto rng = rng_types_.begin(); rng != rng_types_.end(); ++rng )
@@ -149,7 +153,7 @@ nest::RandomManager::get_status( Dictionary& d )
 }
 
 void
-nest::RandomManager::set_status( const Dictionary& d )
+RandomManager::set_status( const Dictionary& d )
 {
   long rng_seed;
   bool rng_seed_updated = d.update_value( names::rng_seed, rng_seed );
@@ -187,7 +191,7 @@ nest::RandomManager::set_status( const Dictionary& d )
 }
 
 void
-nest::RandomManager::check_rng_synchrony() const
+RandomManager::check_rng_synchrony() const
 {
   // Compare more than a single number to avoid false negatives
   const long NUM_ROUNDS = 5;
@@ -230,7 +234,7 @@ nest::RandomManager::check_rng_synchrony() const
 
 template < typename RNG_TYPE >
 void
-nest::RandomManager::register_rng_type( const std::string& name )
+RandomManager::register_rng_type( const std::string& name )
 {
   rng_types_.insert( std::make_pair( name, new RandomGeneratorFactory< RNG_TYPE >() ) );
 }
@@ -255,3 +259,5 @@ nest::RandomManager::get_vp_specific_rng( size_t tid ) const
   assert( tid < static_cast< size_t >( vp_specific_rngs_.size() ) );
   return vp_specific_rngs_[ tid ];
 }
+
+}  // namespace nest

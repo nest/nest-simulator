@@ -1,4 +1,4 @@
-#
+  #
 # detailed syntax defined in
 # https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions
 #
@@ -240,8 +240,8 @@ jobs:
         run: |
           ./build_support/check_forbidden_types.sh
 
-  lychee_IGNORED:
-    runs-on: "ubuntu-22.04"
+  link_checker:
+    runs-on: "ubuntu-24.04"
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
@@ -254,18 +254,31 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: "Install dependencies"
-        run: |
-          wget --progress=dot:mega 'https://github.com/lycheeverse/lychee/releases/download/v0.8.2/lychee-v0.8.2-x86_64-unknown-linux-gnu.tar.gz'
-          echo '12c27c9b6d551aea9178080d27de75ed26125b130722153399259432f723e606  lychee-v0.8.2-x86_64-unknown-linux-gnu.tar.gz' | sha256sum -c
-          tar -xzf 'lychee-v0.8.2-x86_64-unknown-linux-gnu.tar.gz'
+      - name: Restore Lychee Cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .lycheecache
+          key: lychee-cache-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            lychee-cache-${{ runner.os }}-
 
-      - name: "Run lychee..."
-        continue-on-error: true
-        run: "pwd; ls -l; ./lychee build_support/ doc/{*.txt,*.md,htmldoc} examples/ lib* models/ nest* pynest/ testsuite/ *.md"
-        # TODO: doc/auto_examples and doc/models need to be added here, but exists only after a `make html`
+      - name: Link Checker File Check
+        run: |
+          find . -path "./.git" -prune -o -path "./thirdparty" -prune -o -type f -exec sh -c 'file -b --mime-type "$0" | grep -q "^text/"' {} \; -print > lychee_files_list.txt    # find all ASCII type files
+          grep -q "\.md$" lychee_files_list.txt   # check that there is at least one markdown, etc. file in the list
+          grep -q "\.rst$" lychee_files_list.txt
+          grep -q "\.cpp$" lychee_files_list.txt
+          grep -q "\.h$" lychee_files_list.txt
+          echo "The following files will be link-checked by lychee:"
+          cat lychee_files_list.txt
+
+      - name: Link Checker
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          args: --cache --max-cache-age 1d --files-from lychee_files_list.txt
+          fail: true
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
   pydocstyle:
     runs-on: "ubuntu-22.04"
@@ -428,8 +441,8 @@ jobs:
 
   sphinx-rtd:
     # as close as possible to the Readthedocs setup (system install cmake, pip install -r doc/requirements.txt)
-    runs-on: "ubuntu-22.04"
-    needs: [pydocstyle, rstcheck, vale]
+    runs-on: "ubuntu-24.04"
+    needs: [link_checker, pydocstyle, rstcheck, vale]
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
@@ -447,7 +460,7 @@ jobs:
         with:
           # Using 3.8 because Read the docs does not work with higher versions.
           # See also: https://github.com/nest/nest-simulator/pull/2744
-          python-version: "3.10"
+          python-version: "3.12"
 
       - name: "Install dependencies"
         run: |
@@ -460,7 +473,9 @@ jobs:
         run: |
           mkdir -pv build
           cd build
-          cmake -Dwith-userdoc=ON -Dwith-boost=OFF -Dwith-ltdl=OFF -DCMAKE_INSTALL_PREFIX=../install ..
+          #  with-gsl and ltdl defaults to ON,
+          # which would make the configure step fail.
+          cmake -Dwith-userdoc=ON -Dwith-ltdl=OFF -Dwith-gsl=OFF -Dwith-boost=OFF -DCMAKE_INSTALL_PREFIX=../install ..
           make docs |& tee sphinx-output.log
 
       - name: Upload artifacts
@@ -558,7 +573,7 @@ jobs:
           python-version: "3.10"
 
       - name: "Restore apt cache"
-        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         env:
           cache-name: "apt-cache"
         with:
@@ -573,7 +588,7 @@ jobs:
 
       - name: "Install Linux system dependencies"
         run: |
-          # https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md
+          # https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2204-Readme.md
           sudo apt-get update
           sudo apt-get install \
                            ccache \
@@ -614,7 +629,7 @@ jobs:
         # source (hashed), compiler (mtime+size) and compile flags.
         env:
           cache-name: "ccache"
-        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: |
             $HOME/.ccache
@@ -630,7 +645,7 @@ jobs:
       - name: "Restore pip cache"
         env:
           cache-name: "pip-cache"
-        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: |
             /opt/hostedtoolcache/Python/**/site-packages/*
@@ -819,7 +834,7 @@ jobs:
       - name: "Restore pip cache"
         env:
           cache-name: "pip-cache"
-        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: |
             /opt/hostedtoolcache/Python/**/site-packages/*

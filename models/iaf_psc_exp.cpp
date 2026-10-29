@@ -36,14 +36,15 @@
 #include "ring_buffer_impl.h"
 #include "simulation_manager.h"
 
+
+namespace nest
+{
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::iaf_psc_exp > nest::iaf_psc_exp::recordablesMap_;
+RecordablesMap< iaf_psc_exp > iaf_psc_exp::recordablesMap_;
 
-namespace nest
-{
 void
 register_iaf_psc_exp( const std::string& name )
 {
@@ -60,13 +61,12 @@ RecordablesMap< iaf_psc_exp >::create()
   insert_( names::I_syn_ex, &iaf_psc_exp::get_I_syn_ex_ );
   insert_( names::I_syn_in, &iaf_psc_exp::get_I_syn_in_ );
 }
-}
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::iaf_psc_exp::Parameters_::Parameters_()
+iaf_psc_exp::Parameters_::Parameters_()
   : Tau_( 10.0 )              // in ms
   , C_( 250.0 )               // in pF
   , t_ref_( 2.0 )             // in ms
@@ -81,7 +81,7 @@ nest::iaf_psc_exp::Parameters_::Parameters_()
 {
 }
 
-nest::iaf_psc_exp::State_::State_()
+iaf_psc_exp::State_::State_()
   : i_0_( 0.0 )
   , i_1_( 0.0 )
   , i_syn_ex_( 0.0 )
@@ -96,7 +96,7 @@ nest::iaf_psc_exp::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_psc_exp::Parameters_::get( Dictionary& d ) const
+iaf_psc_exp::Parameters_::get( Dictionary& d ) const
 {
   d[ names::E_L ] = E_L_;  // resting potential
   d[ names::I_e ] = I_e_;
@@ -112,7 +112,7 @@ nest::iaf_psc_exp::Parameters_::get( Dictionary& d ) const
 }
 
 double
-nest::iaf_psc_exp::Parameters_::set( const Dictionary& d, Node* node )
+iaf_psc_exp::Parameters_::set( const Dictionary& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
@@ -177,13 +177,13 @@ nest::iaf_psc_exp::Parameters_::set( const Dictionary& d, Node* node )
 }
 
 void
-nest::iaf_psc_exp::State_::get( Dictionary& d, const Parameters_& p ) const
+iaf_psc_exp::State_::get( Dictionary& d, const Parameters_& p ) const
 {
   d[ names::V_m ] = V_m_ + p.E_L_;  // Membrane potential
 }
 
 void
-nest::iaf_psc_exp::State_::set( const Dictionary& d, const Parameters_& p, double delta_EL, Node* node )
+iaf_psc_exp::State_::set( const Dictionary& d, const Parameters_& p, double delta_EL, Node* node )
 {
   if ( update_value_param( d, names::V_m, V_m_, node ) )
   {
@@ -195,12 +195,12 @@ nest::iaf_psc_exp::State_::set( const Dictionary& d, const Parameters_& p, doubl
   }
 }
 
-nest::iaf_psc_exp::Buffers_::Buffers_( iaf_psc_exp& n )
+iaf_psc_exp::Buffers_::Buffers_( iaf_psc_exp& n )
   : logger_( n )
 {
 }
 
-nest::iaf_psc_exp::Buffers_::Buffers_( const Buffers_&, iaf_psc_exp& n )
+iaf_psc_exp::Buffers_::Buffers_( const Buffers_&, iaf_psc_exp& n )
   : logger_( n )
 {
 }
@@ -209,7 +209,7 @@ nest::iaf_psc_exp::Buffers_::Buffers_( const Buffers_&, iaf_psc_exp& n )
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::iaf_psc_exp::iaf_psc_exp()
+iaf_psc_exp::iaf_psc_exp()
   : ArchivingNode()
   , P_()
   , S_()
@@ -218,7 +218,7 @@ nest::iaf_psc_exp::iaf_psc_exp()
   recordablesMap_.create();
 }
 
-nest::iaf_psc_exp::iaf_psc_exp( const iaf_psc_exp& n )
+iaf_psc_exp::iaf_psc_exp( const iaf_psc_exp& n )
   : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -231,7 +231,7 @@ nest::iaf_psc_exp::iaf_psc_exp( const iaf_psc_exp& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_psc_exp::init_buffers_()
+iaf_psc_exp::init_buffers_()
 {
   B_.input_buffer_.clear();  // includes resize
   B_.logger_.reset();
@@ -239,7 +239,7 @@ nest::iaf_psc_exp::init_buffers_()
 }
 
 void
-nest::iaf_psc_exp::pre_run_hook()
+iaf_psc_exp::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -283,7 +283,7 @@ nest::iaf_psc_exp::pre_run_hook()
 }
 
 void
-nest::iaf_psc_exp::update( const Time& origin, const long from, const long to )
+iaf_psc_exp::update( const Time& origin, const long from, const long to )
 {
   const double h = Time::get_resolution().get_ms();
 
@@ -346,7 +346,7 @@ nest::iaf_psc_exp::update( const Time& origin, const long from, const long to )
 }
 
 void
-nest::iaf_psc_exp::handle( SpikeEvent& e )
+iaf_psc_exp::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -360,7 +360,7 @@ nest::iaf_psc_exp::handle( SpikeEvent& e )
 }
 
 void
-nest::iaf_psc_exp::handle( CurrentEvent& e )
+iaf_psc_exp::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -381,7 +381,9 @@ nest::iaf_psc_exp::handle( CurrentEvent& e )
 }
 
 void
-nest::iaf_psc_exp::handle( DataLoggingRequest& e )
+iaf_psc_exp::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
+
+}  // namespace nest

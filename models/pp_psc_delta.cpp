@@ -72,7 +72,7 @@ RecordablesMap< pp_psc_delta >::create()
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::pp_psc_delta::Parameters_::Parameters_()
+pp_psc_delta::Parameters_::Parameters_()
   : tau_m_( 10.0 )     // ms
   , c_m_( 250.0 )      // pF
   , dead_time_( 1.0 )  // ms
@@ -92,7 +92,7 @@ nest::pp_psc_delta::Parameters_::Parameters_()
   q_sfa_.clear();
 }
 
-nest::pp_psc_delta::State_::State_()
+pp_psc_delta::State_::State_()
   : y0_( 0.0 )
   , y3_( 0.0 )
   , q_( 0.0 )
@@ -107,7 +107,7 @@ nest::pp_psc_delta::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::pp_psc_delta::Parameters_::get( Dictionary& d ) const
+pp_psc_delta::Parameters_::get( Dictionary& d ) const
 {
   d[ names::I_e ] = I_e_;
   d[ names::C_m ] = c_m_;
@@ -143,7 +143,7 @@ nest::pp_psc_delta::Parameters_::get( Dictionary& d ) const
 }
 
 void
-nest::pp_psc_delta::Parameters_::set( const Dictionary& d, Node* node )
+pp_psc_delta::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::I_e, I_e_, node );
   update_value_param( d, names::C_m, c_m_, node );
@@ -223,14 +223,14 @@ nest::pp_psc_delta::Parameters_::set( const Dictionary& d, Node* node )
 }
 
 void
-nest::pp_psc_delta::State_::get( Dictionary& d, const Parameters_& ) const
+pp_psc_delta::State_::get( Dictionary& d, const Parameters_& ) const
 {
   d[ names::V_m ] = y3_;   // Membrane potential
   d[ names::E_sfa ] = q_;  // Adaptive threshold potential
 }
 
 void
-nest::pp_psc_delta::State_::set( const Dictionary& d, const Parameters_&, Node* node )
+pp_psc_delta::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
   update_value_param( d, names::V_m, y3_, node );
   update_value_param( d, names::E_sfa, q_, node );
@@ -238,12 +238,12 @@ nest::pp_psc_delta::State_::set( const Dictionary& d, const Parameters_&, Node* 
   initialized_ = false;
 }
 
-nest::pp_psc_delta::Buffers_::Buffers_( pp_psc_delta& n )
+pp_psc_delta::Buffers_::Buffers_( pp_psc_delta& n )
   : logger_( n )
 {
 }
 
-nest::pp_psc_delta::Buffers_::Buffers_( const Buffers_&, pp_psc_delta& n )
+pp_psc_delta::Buffers_::Buffers_( const Buffers_&, pp_psc_delta& n )
   : logger_( n )
 {
 }
@@ -252,7 +252,7 @@ nest::pp_psc_delta::Buffers_::Buffers_( const Buffers_&, pp_psc_delta& n )
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::pp_psc_delta::pp_psc_delta()
+pp_psc_delta::pp_psc_delta()
   : ArchivingNode()
   , P_()
   , S_()
@@ -261,7 +261,7 @@ nest::pp_psc_delta::pp_psc_delta()
   recordablesMap_.create();
 }
 
-nest::pp_psc_delta::pp_psc_delta( const pp_psc_delta& n )
+pp_psc_delta::pp_psc_delta( const pp_psc_delta& n )
   : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -274,13 +274,13 @@ nest::pp_psc_delta::pp_psc_delta( const pp_psc_delta& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::pp_psc_delta::init_state_()
+pp_psc_delta::init_state_()
 {
   S_.r_ = Time( Time::ms( P_.t_ref_remaining_ ) ).get_steps();
 }
 
 void
-nest::pp_psc_delta::init_buffers_()
+pp_psc_delta::init_buffers_()
 {
   B_.spikes_.clear();    //!< includes resize
   B_.currents_.clear();  //!< includes resize
@@ -289,7 +289,7 @@ nest::pp_psc_delta::init_buffers_()
 }
 
 void
-nest::pp_psc_delta::pre_run_hook()
+pp_psc_delta::pre_run_hook()
 {
   B_.logger_.init();
 
@@ -356,7 +356,7 @@ nest::pp_psc_delta::pre_run_hook()
  */
 
 void
-nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
+pp_psc_delta::update( Time const& origin, const long from, const long to )
 {
   for ( long lag = from; lag < to; ++lag )
   {
@@ -458,7 +458,7 @@ nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
 }
 
 void
-nest::pp_psc_delta::handle( SpikeEvent& e )
+pp_psc_delta::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -471,7 +471,7 @@ nest::pp_psc_delta::handle( SpikeEvent& e )
 }
 
 void
-nest::pp_psc_delta::handle( CurrentEvent& e )
+pp_psc_delta::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -483,9 +483,9 @@ nest::pp_psc_delta::handle( CurrentEvent& e )
 }
 
 void
-nest::pp_psc_delta::handle( DataLoggingRequest& e )
+pp_psc_delta::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
 
-}  // namespace
+}  // namespace nest

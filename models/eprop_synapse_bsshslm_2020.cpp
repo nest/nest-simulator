@@ -31,9 +31,9 @@
 #include "connection_manager.h"
 #include "nest_impl.h"
 
+
 namespace nest
 {
-
 void
 register_eprop_synapse_bsshslm_2020( const std::string& name )
 {

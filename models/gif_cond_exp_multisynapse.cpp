@@ -68,17 +68,16 @@ RecordablesMap< gif_cond_exp_multisynapse >::create()
   insert_( names::E_sfa, &gif_cond_exp_multisynapse::get_E_sfa_ );
   insert_( names::I_stc, &gif_cond_exp_multisynapse::get_I_stc_ );
 }
-}  // namespace
 
 extern "C" int
-nest::gif_cond_exp_multisynapse_dynamics( double, const double* y, double* f, void* pnode )
+gif_cond_exp_multisynapse_dynamics( double, const double* y, double* f, void* pnode )
 {
   // a shorthand
-  typedef nest::gif_cond_exp_multisynapse::State_ S;
+  typedef gif_cond_exp_multisynapse::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::gif_cond_exp_multisynapse& node = *( reinterpret_cast< nest::gif_cond_exp_multisynapse* >( pnode ) );
+  const gif_cond_exp_multisynapse& node = *( reinterpret_cast< gif_cond_exp_multisynapse* >( pnode ) );
 
   // The following code is verbose for the sake of clarity. We assume that a
   // good compiler will optimize the verbosity away ...
@@ -113,7 +112,7 @@ nest::gif_cond_exp_multisynapse_dynamics( double, const double* y, double* f, vo
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::gif_cond_exp_multisynapse::Parameters_::Parameters_()
+gif_cond_exp_multisynapse::Parameters_::Parameters_()
   : g_L_( 4.0 )         // nS
   , E_L_( -70.0 )       // mV
   , V_reset_( -55.0 )   // mV
@@ -134,7 +133,7 @@ nest::gif_cond_exp_multisynapse::Parameters_::Parameters_()
 {
 }
 
-nest::gif_cond_exp_multisynapse::State_::State_( const Parameters_& p )
+gif_cond_exp_multisynapse::State_::State_( const Parameters_& p )
   : y_( STATE_VEC_SIZE + NUM_STATE_ELEMENTS_PER_RECEPTOR, 0.0 )
   , I_stim_( 0.0 )
   , sfa_( 0.0 )
@@ -151,7 +150,7 @@ nest::gif_cond_exp_multisynapse::State_::State_( const Parameters_& p )
  * ---------------------------------------------------------------- */
 
 void
-nest::gif_cond_exp_multisynapse::Parameters_::get( Dictionary& d ) const
+gif_cond_exp_multisynapse::Parameters_::get( Dictionary& d ) const
 {
   d[ names::I_e ] = I_e_;
   d[ names::E_L ] = E_L_;
@@ -174,7 +173,7 @@ nest::gif_cond_exp_multisynapse::Parameters_::get( Dictionary& d ) const
 }
 
 void
-nest::gif_cond_exp_multisynapse::Parameters_::set( const Dictionary& d, Node* node )
+gif_cond_exp_multisynapse::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::I_e, I_e_, node );
   update_value_param( d, names::E_L, E_L_, node );
@@ -291,7 +290,7 @@ nest::gif_cond_exp_multisynapse::Parameters_::set( const Dictionary& d, Node* no
 }
 
 void
-nest::gif_cond_exp_multisynapse::State_::get( Dictionary& d, const Parameters_& ) const
+gif_cond_exp_multisynapse::State_::get( Dictionary& d, const Parameters_& ) const
 {
   d[ names::V_m ] = y_[ V_M ];  // Membrane potential
   d[ names::E_sfa ] = sfa_;     // Adaptive threshold potential
@@ -308,7 +307,7 @@ nest::gif_cond_exp_multisynapse::State_::get( Dictionary& d, const Parameters_& 
 }
 
 void
-nest::gif_cond_exp_multisynapse::State_::set( const Dictionary& d, const Parameters_& p, Node* node )
+gif_cond_exp_multisynapse::State_::set( const Dictionary& d, const Parameters_& p, Node* node )
 {
   update_value_param( d, names::V_m, y_[ V_M ], node );
   y_.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS + State_::NUM_STATE_ELEMENTS_PER_RECEPTOR * p.n_receptors(), 0.0 );
@@ -317,7 +316,7 @@ nest::gif_cond_exp_multisynapse::State_::set( const Dictionary& d, const Paramet
   stc_elems_.resize( p.tau_stc_.size(), 0.0 );
 }
 
-nest::gif_cond_exp_multisynapse::Buffers_::Buffers_( gif_cond_exp_multisynapse& n )
+gif_cond_exp_multisynapse::Buffers_::Buffers_( gif_cond_exp_multisynapse& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -329,7 +328,7 @@ nest::gif_cond_exp_multisynapse::Buffers_::Buffers_( gif_cond_exp_multisynapse& 
   // init_buffers_().
 }
 
-nest::gif_cond_exp_multisynapse::Buffers_::Buffers_( const Buffers_& b, gif_cond_exp_multisynapse& n )
+gif_cond_exp_multisynapse::Buffers_::Buffers_( const Buffers_& b, gif_cond_exp_multisynapse& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -345,7 +344,7 @@ nest::gif_cond_exp_multisynapse::Buffers_::Buffers_( const Buffers_& b, gif_cond
  * Default and copy constructor for node, and destructor
  * ---------------------------------------------------------------- */
 
-nest::gif_cond_exp_multisynapse::gif_cond_exp_multisynapse()
+gif_cond_exp_multisynapse::gif_cond_exp_multisynapse()
   : ArchivingNode()
   , P_()
   , S_( P_ )
@@ -354,7 +353,7 @@ nest::gif_cond_exp_multisynapse::gif_cond_exp_multisynapse()
   recordablesMap_.create();
 }
 
-nest::gif_cond_exp_multisynapse::gif_cond_exp_multisynapse( const gif_cond_exp_multisynapse& n )
+gif_cond_exp_multisynapse::gif_cond_exp_multisynapse( const gif_cond_exp_multisynapse& n )
   : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -362,7 +361,7 @@ nest::gif_cond_exp_multisynapse::gif_cond_exp_multisynapse( const gif_cond_exp_m
 {
 }
 
-nest::gif_cond_exp_multisynapse::~gif_cond_exp_multisynapse()
+gif_cond_exp_multisynapse::~gif_cond_exp_multisynapse()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
@@ -384,7 +383,7 @@ nest::gif_cond_exp_multisynapse::~gif_cond_exp_multisynapse()
  * ---------------------------------------------------------------- */
 
 void
-nest::gif_cond_exp_multisynapse::init_buffers_()
+gif_cond_exp_multisynapse::init_buffers_()
 {
   B_.spikes_.resize( P_.n_receptors() );
   for ( size_t i = 0; i < P_.n_receptors(); ++i )
@@ -435,7 +434,7 @@ nest::gif_cond_exp_multisynapse::init_buffers_()
 }
 
 void
-nest::gif_cond_exp_multisynapse::pre_run_hook()
+gif_cond_exp_multisynapse::pre_run_hook()
 {
   B_.sys_.dimension = S_.y_.size();
 
@@ -466,7 +465,7 @@ nest::gif_cond_exp_multisynapse::pre_run_hook()
  */
 
 void
-nest::gif_cond_exp_multisynapse::update( Time const& origin, const long from, const long to )
+gif_cond_exp_multisynapse::update( Time const& origin, const long from, const long to )
 {
   for ( long lag = from; lag < to; ++lag )
   {
@@ -567,7 +566,7 @@ nest::gif_cond_exp_multisynapse::update( Time const& origin, const long from, co
 }
 
 void
-nest::gif_cond_exp_multisynapse::handle( SpikeEvent& e )
+gif_cond_exp_multisynapse::handle( SpikeEvent& e )
 {
   if ( e.get_weight() < 0 )
   {
@@ -584,7 +583,7 @@ nest::gif_cond_exp_multisynapse::handle( SpikeEvent& e )
 }
 
 void
-nest::gif_cond_exp_multisynapse::handle( CurrentEvent& e )
+gif_cond_exp_multisynapse::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -596,9 +595,11 @@ nest::gif_cond_exp_multisynapse::handle( CurrentEvent& e )
 }
 
 void
-nest::gif_cond_exp_multisynapse::handle( DataLoggingRequest& e )
+gif_cond_exp_multisynapse::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
+
+}  // namespace nest
 
 #endif  // HAVE_GSL

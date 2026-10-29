@@ -42,8 +42,11 @@
 #include "nest_impl.h"
 #include "nest_names.h"
 
+
+namespace nest
+{
 void
-nest::register_music_event_out_proxy( const std::string& name )
+register_music_event_out_proxy( const std::string& name )
 {
   register_node_model< music_event_out_proxy >( name );
 }
@@ -52,12 +55,12 @@ nest::register_music_event_out_proxy( const std::string& name )
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::music_event_out_proxy::Parameters_::Parameters_()
+music_event_out_proxy::Parameters_::Parameters_()
   : port_name_( "event_out" )
 {
 }
 
-nest::music_event_out_proxy::State_::State_()
+music_event_out_proxy::State_::State_()
   : published_( false )
   , port_width_( -1 )
 {
@@ -68,13 +71,13 @@ nest::music_event_out_proxy::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::music_event_out_proxy::Parameters_::get( Dictionary& d ) const
+music_event_out_proxy::Parameters_::get( Dictionary& d ) const
 {
   d[ names::port_name ] = port_name_;
 }
 
 void
-nest::music_event_out_proxy::Parameters_::set( const Dictionary& d, State_& s )
+music_event_out_proxy::Parameters_::set( const Dictionary& d, State_& s )
 {
   // TODO: This is not possible, as P_ does not know about get_name()
   //  if(d.known(names::port_name) and s.published_)
@@ -87,14 +90,14 @@ nest::music_event_out_proxy::Parameters_::set( const Dictionary& d, State_& s )
 }
 
 void
-nest::music_event_out_proxy::State_::get( Dictionary& d ) const
+music_event_out_proxy::State_::get( Dictionary& d ) const
 {
   d[ names::published ] = published_;
   d[ names::port_width ] = port_width_;
 }
 
 void
-nest::music_event_out_proxy::State_::set( const Dictionary&, const Parameters_& )
+music_event_out_proxy::State_::set( const Dictionary&, const Parameters_& )
 {
 }
 
@@ -103,21 +106,21 @@ nest::music_event_out_proxy::State_::set( const Dictionary&, const Parameters_& 
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::music_event_out_proxy::music_event_out_proxy()
+music_event_out_proxy::music_event_out_proxy()
   : DeviceNode()
   , P_()
   , S_()
 {
 }
 
-nest::music_event_out_proxy::music_event_out_proxy( const music_event_out_proxy& n )
+music_event_out_proxy::music_event_out_proxy( const music_event_out_proxy& n )
   : DeviceNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
 {
 }
 
-nest::music_event_out_proxy::~music_event_out_proxy()
+music_event_out_proxy::~music_event_out_proxy()
 {
   if ( S_.published_ )
   {
@@ -127,12 +130,12 @@ nest::music_event_out_proxy::~music_event_out_proxy()
 }
 
 void
-nest::music_event_out_proxy::init_buffers_()
+music_event_out_proxy::init_buffers_()
 {
 }
 
 void
-nest::music_event_out_proxy::pre_run_hook()
+music_event_out_proxy::pre_run_hook()
 {
   // only publish the output port once,
   if ( not S_.published_ )
@@ -182,7 +185,7 @@ nest::music_event_out_proxy::pre_run_hook()
 }
 
 void
-nest::music_event_out_proxy::get_status( Dictionary& d ) const
+music_event_out_proxy::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
@@ -198,7 +201,7 @@ nest::music_event_out_proxy::get_status( Dictionary& d ) const
 }
 
 void
-nest::music_event_out_proxy::set_status( const Dictionary& d )
+music_event_out_proxy::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;  // temporary copy in case of errors
   ptmp.set( d, S_ );      // throws if BadProperty
@@ -212,7 +215,7 @@ nest::music_event_out_proxy::set_status( const Dictionary& d )
 }
 
 void
-nest::music_event_out_proxy::handle( SpikeEvent& e )
+music_event_out_proxy::handle( SpikeEvent& e )
 {
   assert( e.get_multiplicity() > 0 );
 
@@ -232,5 +235,7 @@ nest::music_event_out_proxy::handle( SpikeEvent& e )
   }
 #endif
 }
+
+}  // namespace nest
 
 #endif

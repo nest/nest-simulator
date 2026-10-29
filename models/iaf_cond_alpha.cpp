@@ -42,14 +42,14 @@
 #include "universal_data_logger_impl.h"
 
 
+namespace nest
+{
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::iaf_cond_alpha > nest::iaf_cond_alpha::recordablesMap_;
+RecordablesMap< iaf_cond_alpha > iaf_cond_alpha::recordablesMap_;
 
-namespace nest  // template specialization must be placed in namespace
-{
 void
 register_iaf_cond_alpha( const std::string& name )
 {
@@ -68,21 +68,20 @@ RecordablesMap< iaf_cond_alpha >::create()
 
   insert_( names::t_ref_remaining, &iaf_cond_alpha::get_r_ );
 }
-}
 
 /* ----------------------------------------------------------------
  * Iteration function
  * ---------------------------------------------------------------- */
 
 extern "C" inline int
-nest::iaf_cond_alpha_dynamics( double, const double y[], double f[], void* pnode )
+iaf_cond_alpha_dynamics( double, const double y[], double f[], void* pnode )
 {
   // a shorthand
-  typedef nest::iaf_cond_alpha::State_ S;
+  typedef iaf_cond_alpha::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::iaf_cond_alpha& node = *( reinterpret_cast< nest::iaf_cond_alpha* >( pnode ) );
+  const iaf_cond_alpha& node = *( reinterpret_cast< iaf_cond_alpha* >( pnode ) );
 
   const bool is_refractory = node.S_.r > 0;
 
@@ -118,7 +117,7 @@ nest::iaf_cond_alpha_dynamics( double, const double y[], double f[], void* pnode
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::iaf_cond_alpha::Parameters_::Parameters_()
+iaf_cond_alpha::Parameters_::Parameters_()
   : V_th( -55.0 )     // mV
   , V_reset( -60.0 )  // mV
   , t_ref( 2.0 )      // ms
@@ -133,7 +132,7 @@ nest::iaf_cond_alpha::Parameters_::Parameters_()
 {
 }
 
-nest::iaf_cond_alpha::State_::State_( const Parameters_& p )
+iaf_cond_alpha::State_::State_( const Parameters_& p )
   : r( 0 )
 {
   y[ V_M ] = p.E_L;  // initialize to reversal potential
@@ -143,7 +142,7 @@ nest::iaf_cond_alpha::State_::State_( const Parameters_& p )
   }
 }
 
-nest::iaf_cond_alpha::State_::State_( const State_& s )
+iaf_cond_alpha::State_::State_( const State_& s )
   : r( s.r )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -152,8 +151,8 @@ nest::iaf_cond_alpha::State_::State_( const State_& s )
   }
 }
 
-nest::iaf_cond_alpha::State_&
-nest::iaf_cond_alpha::State_::operator=( const State_& s )
+iaf_cond_alpha::State_&
+iaf_cond_alpha::State_::operator=( const State_& s )
 {
   r = s.r;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -163,7 +162,7 @@ nest::iaf_cond_alpha::State_::operator=( const State_& s )
   return *this;
 }
 
-nest::iaf_cond_alpha::Buffers_::Buffers_( iaf_cond_alpha& n )
+iaf_cond_alpha::Buffers_::Buffers_( iaf_cond_alpha& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -173,7 +172,7 @@ nest::iaf_cond_alpha::Buffers_::Buffers_( iaf_cond_alpha& n )
   // init_buffers_().
 }
 
-nest::iaf_cond_alpha::Buffers_::Buffers_( const Buffers_&, iaf_cond_alpha& n )
+iaf_cond_alpha::Buffers_::Buffers_( const Buffers_&, iaf_cond_alpha& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -188,7 +187,7 @@ nest::iaf_cond_alpha::Buffers_::Buffers_( const Buffers_&, iaf_cond_alpha& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_cond_alpha::Parameters_::get( Dictionary& d ) const
+iaf_cond_alpha::Parameters_::get( Dictionary& d ) const
 {
   d[ names::V_th ] = V_th;
   d[ names::V_reset ] = V_reset;
@@ -204,7 +203,7 @@ nest::iaf_cond_alpha::Parameters_::get( Dictionary& d ) const
 }
 
 void
-nest::iaf_cond_alpha::Parameters_::set( const Dictionary& d, Node* node )
+iaf_cond_alpha::Parameters_::set( const Dictionary& d, Node* node )
 {
   // allow setting the membrane potential
   update_value_param( d, names::V_th, V_th, node );
@@ -241,7 +240,7 @@ nest::iaf_cond_alpha::Parameters_::set( const Dictionary& d, Node* node )
 }
 
 void
-nest::iaf_cond_alpha::State_::get( Dictionary& d ) const
+iaf_cond_alpha::State_::get( Dictionary& d ) const
 {
   d[ names::V_m ] = y[ V_M ];  // Membrane potential
   d[ names::g_ex ] = y[ G_EXC ];
@@ -251,7 +250,7 @@ nest::iaf_cond_alpha::State_::get( Dictionary& d ) const
 }
 
 void
-nest::iaf_cond_alpha::State_::set( const Dictionary& d, const Parameters_&, Node* node )
+iaf_cond_alpha::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
   update_value_param( d, names::V_m, y[ V_M ], node );
   update_value_param( d, names::g_ex, y[ G_EXC ], node );
@@ -265,7 +264,7 @@ nest::iaf_cond_alpha::State_::set( const Dictionary& d, const Parameters_&, Node
  * Default and copy constructor for node, and destructor
  * ---------------------------------------------------------------- */
 
-nest::iaf_cond_alpha::iaf_cond_alpha()
+iaf_cond_alpha::iaf_cond_alpha()
   : ArchivingNode()
   , P_()
   , S_( P_ )
@@ -274,7 +273,7 @@ nest::iaf_cond_alpha::iaf_cond_alpha()
   recordablesMap_.create();
 }
 
-nest::iaf_cond_alpha::iaf_cond_alpha( const iaf_cond_alpha& n )
+iaf_cond_alpha::iaf_cond_alpha( const iaf_cond_alpha& n )
   : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -282,7 +281,7 @@ nest::iaf_cond_alpha::iaf_cond_alpha( const iaf_cond_alpha& n )
 {
 }
 
-nest::iaf_cond_alpha::~iaf_cond_alpha()
+iaf_cond_alpha::~iaf_cond_alpha()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
@@ -304,7 +303,7 @@ nest::iaf_cond_alpha::~iaf_cond_alpha()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_cond_alpha::init_buffers_()
+iaf_cond_alpha::init_buffers_()
 {
   ArchivingNode::clear_history();
 
@@ -353,7 +352,7 @@ nest::iaf_cond_alpha::init_buffers_()
 }
 
 void
-nest::iaf_cond_alpha::pre_run_hook()
+iaf_cond_alpha::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -371,7 +370,7 @@ nest::iaf_cond_alpha::pre_run_hook()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_cond_alpha::update( Time const& origin, const long from, const long to )
+iaf_cond_alpha::update( Time const& origin, const long from, const long to )
 {
   for ( long lag = from; lag < to; ++lag )
   {
@@ -438,7 +437,7 @@ nest::iaf_cond_alpha::update( Time const& origin, const long from, const long to
 }
 
 void
-nest::iaf_cond_alpha::handle( SpikeEvent& e )
+iaf_cond_alpha::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -455,7 +454,7 @@ nest::iaf_cond_alpha::handle( SpikeEvent& e )
 }
 
 void
-nest::iaf_cond_alpha::handle( CurrentEvent& e )
+iaf_cond_alpha::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -464,9 +463,11 @@ nest::iaf_cond_alpha::handle( CurrentEvent& e )
 }
 
 void
-nest::iaf_cond_alpha::handle( DataLoggingRequest& e )
+iaf_cond_alpha::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
+
+}  // namespace nest
 
 #endif  // HAVE_GSL

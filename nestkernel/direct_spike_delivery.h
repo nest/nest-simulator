@@ -38,6 +38,11 @@ namespace nest
  * input channel. A spike with weight w is added to the excitatory channel if w > 0 and to the
  * inhibitory channel otherwise. A default-constructed address describes a node that does not
  * support direct delivery; its spikes take the regular path through handle( SpikeEvent& ).
+ *
+ * @note The object must not grow beyond 16 bytes (checked by a static_assert below the class): it is the
+ * entry of DirectSpikeTable, which is read at a random position for every synaptic event. A separate
+ * flag next to it (24 bytes per entry) made PD14 about 1.4 % slower (measured 2026-10-29, 2 x 64 threads,
+ * Zen3); therefore the flag resolved_ of the table lives in the padding of this class.
  */
 class DirectSpikeInputAddr
 {
@@ -94,6 +99,9 @@ private:
   unsigned char inhibitory_channel_;  //!< channel for spikes with weight <= 0
   bool resolved_;                     //!< set by DirectSpikeTable when the entry has been filled since the last clear()
 };
+
+static_assert( sizeof( DirectSpikeInputAddr ) <= 16,
+  "DirectSpikeInputAddr is a table entry read for every event, keep it small" );
 
 /**
  * Table of the input-buffer addresses of the targets of one Connector.

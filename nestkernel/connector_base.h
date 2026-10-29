@@ -471,6 +471,12 @@ public:
    * plain SpikeEvent of multiplicity 1 and the connections have no weight recorder. Otherwise returns the
    * number of connections of the segment (the return value of send()), which is at least 1.
    *
+   * @note The loop over the segment advances the connection index unconditionally and uses
+   * source_has_more_targets() only as the loop condition. Do not derive the index from the flag (for
+   * example `lcid_offset += more_targets`): the address of the next connection would then depend on data of
+   * the current one, the loads of consecutive connections could no longer overlap, and PD14 became 1 to 2 %
+   * slower (measured 2026-10-29, 2 x 64 threads, Zen3).
+   *
    * Implemented in connector_base_impl.h
    */
   size_t

@@ -48,6 +48,7 @@ public:
     , stride_( 0 )
     , excitatory_channel_( 0 )
     , inhibitory_channel_( 0 )
+    , resolved_( false )
   {
   }
 
@@ -65,6 +66,7 @@ public:
     , stride_( BufferT::slot_stride )
     , excitatory_channel_( excitatory_channel )
     , inhibitory_channel_( inhibitory_channel )
+    , resolved_( false )
   {
     static_assert( BufferT::slot_stride < 256, "stride must fit into an unsigned char" );
   }
@@ -84,10 +86,13 @@ public:
   }
 
 private:
+  friend class DirectSpikeTable;
+
   double* slot0_;                     //!< first double of slot 0; nullptr if direct delivery is not supported
   unsigned char stride_;              //!< doubles per slot
   unsigned char excitatory_channel_;  //!< channel for spikes with positive weight
   unsigned char inhibitory_channel_;  //!< channel for spikes with weight <= 0
+  bool resolved_;                     //!< set by DirectSpikeTable when the entry has been filled since the last clear()
 };
 
 /**
@@ -126,30 +131,18 @@ public:
     {
       entries_.resize( idx + 1 );
     }
-    Entry& entry = entries_[ idx ];
-    if ( not entry.resolved )
+    DirectSpikeInputAddr& entry = entries_[ idx ];
+    if ( not entry.resolved_ )
     {
-      entry.addr = conn.get_target( tid )->get_direct_spike_input();
-      entry.resolved = true;
+      entry = conn.get_target( tid )->get_direct_spike_input();
+      entry.resolved_ = true;
     }
-    return entry.addr;
+    return entry;
   }
 
 private:
-  //! Address of one target and whether it has been resolved since the last clear().
-  struct Entry
-  {
-    Entry()
-      : addr()
-      , resolved( false )
-    {
-    }
-
-    DirectSpikeInputAddr addr;
-    bool resolved;
-  };
-
-  std::vector< Entry > entries_;
+  //! One entry per target; the flag resolved_ of an entry lives in the padding of the address (16 bytes in total).
+  std::vector< DirectSpikeInputAddr > entries_;
 };
 
 }  // namespace nest

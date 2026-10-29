@@ -55,12 +55,14 @@ Connector< ConnectionT >::send_direct_( const size_t tid,
   // as SpikeEvent::get_rel_delivery_steps(), without the delay
   const long rel0 = e.get_stamp().get_steps() - 1 - kernel().simulation_manager.get_slice_origin().get_steps();
 
-  size_t lcid_offset = 0;
+  // The index advances unconditionally and the flag only decides whether the loop continues: the address of the next
+  // connection must not depend on data of the current one, so that the loads of consecutive connections can overlap.
+  size_t i = lcid;
   bool more_targets;
   do
   {
-    assert( lcid + lcid_offset < C_.size() );
-    ConnectionT& conn = C_[ lcid + lcid_offset ];
+    assert( i < C_.size() );
+    ConnectionT& conn = C_[ i ];
     if ( not conn.is_disabled() )
     {
       const DirectSpikeInputAddr& addr = direct_table_.get( conn, tid );
@@ -70,15 +72,15 @@ Connector< ConnectionT >::send_direct_( const size_t tid,
       }
       else
       {
-        e.set_port( lcid + lcid_offset );
+        e.set_port( i );
         conn.send( e, tid, cp );
       }
     }
     more_targets = conn.source_has_more_targets();
-    lcid_offset += more_targets;
+    ++i;
   } while ( more_targets );
 
-  return 1 + lcid_offset;
+  return i - lcid;
 }
 
 template < typename ConnectionT >

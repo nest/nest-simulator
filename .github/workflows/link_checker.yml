@@ -1,6 +1,8 @@
 name: "Link Checker"
 
 on:
+  push:
+    branches: [separate_linkcheck]  # TEMPORARY: remove before merging
   schedule:
     - cron: "0 3 * * *"
   workflow_dispatch:

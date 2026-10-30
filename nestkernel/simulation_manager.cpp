@@ -58,6 +58,7 @@ SimulationManager::SimulationManager()
   , print_time_( false )
   , use_tree_barrier_( false )
   , tree_barrier_fan_in_( 8 )
+  , tree_barrier_( std::make_unique< TreeBarrier >() )
   , use_wfr_( true )
   , wfr_comm_interval_( 1.0 )
   , wfr_tol_( 0.0001 )
@@ -878,7 +879,7 @@ SimulationManager::update_()
 
   if ( use_tree_barrier_ )
   {
-    tree_barrier_.initialize( kernel().vp_manager.get_num_threads(), tree_barrier_fan_in_ );
+    tree_barrier_->initialize( kernel().vp_manager.get_num_threads(), tree_barrier_fan_in_ );
   }
 
 // parallel section begins
@@ -1099,7 +1100,7 @@ SimulationManager::update_()
         kernel().get_omp_synchronization_simulation_stopwatch().start();
         if ( use_tree_barrier_ )
         {
-          tree_barrier_.wait( tid );
+          tree_barrier_->wait( tid );
         }
         else
         {
@@ -1167,7 +1168,7 @@ SimulationManager::update_()
         // end of master section, all threads have to synchronize at this point
         if ( use_tree_barrier_ )
         {
-          tree_barrier_.wait( tid );
+          tree_barrier_->wait( tid );
         }
         else
         {

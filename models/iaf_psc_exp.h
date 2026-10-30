@@ -158,6 +158,9 @@ on the synaptic time constant according to
    the sum of excitatory synaptic input current and the contribution from
    receptor type 1 currents.
 
+Large networks that need neither stochastic spiking nor current input through ``receptor_type`` 1 can use
+:doc:`iaf_psc_exp_hpc </models/iaf_psc_exp_hpc>`, which gives identical results with less memory and work per neuron.
+
 For conversion between postsynaptic potentials (PSPs) and PSCs,
 please refer to the ``postsynaptic_potential_to_current`` function in
 `PyNEST Microcircuit: Helper Functions <https://github.com/INM-6/microcircuit-PD14-model/blob/main/PyNEST/src/microcircuit/helpers.py>`_.
@@ -213,7 +216,7 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 See also
 ++++++++
 
-iaf_cond_exp, iaf_psc_exp_ps
+iaf_cond_exp, iaf_psc_exp_ps, iaf_psc_exp_hpc
 
 Examples using this model
 +++++++++++++++++++++++++

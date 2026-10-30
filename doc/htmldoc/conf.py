@@ -74,9 +74,6 @@ bibtex_default_style = "unsrt"
 
 autodoc_mock_imports = [
     "nest.nestkernel_api",  # compiled binary
-    "flask",  # optional server dependencies not present during docs build
-    "flask_cors",
-    "RestrictedPython",
 ]
 # The `nest` module intentionally freezes its attribute namespace (see
 # pynest/nest/__init__.py `_setattr_error`) to catch public-API typos.

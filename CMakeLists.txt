@@ -83,6 +83,9 @@ option( with-intel-compiler-strict-math "Pass -fp-model strict when compiling wi
 set( with-libraries OFF CACHE STRING "Link additional libraries [default=OFF]. Give full path. Separate multiple libraries by ';'." )
 set( with-includes OFF CACHE STRING "Add additional include paths [default=OFF]. Give full path without '-I'. Separate multiple include paths by ';'." )
 set( with-defines OFF CACHE STRING "Additional defines, e.g. '-DXYZ=1' [default=OFF]. Separate multiple defines by ';'." )
+set( with-lto OFF CACHE STRING "Control link-time optimization (LTO) [default=OFF]." )
+set( with-pgo OFF CACHE STRING "Control profile-guided optimization (PGO) [default=OFF]. Set to GENERATE to build with profiling instrumentation and set to USE to use the profiling results in the final optimized build." )
+set( CMAKE_INSTALL_MESSAGE LAZY CACHE STRING "Verbosity of install process output [default=LAZY]." )
 
 # documentation build configuration
 option( with-userdoc "Build user documentation [default=OFF]." OFF )
@@ -121,8 +124,10 @@ include( CheckIncludesSymbols )
 include( ProcessOptions )
 include( CheckExtraCompilerFeatures )
 include( CheckUnknownOptions )
+include( TargetPropertyHelpers )
 include( ConfigureSummary )
 include( GetTriple )
+include( ExportModuleBuildConfig )
 
 # get triples arch-vendor-os
 get_host_triple( NEST_HOST_TRIPLE NEST_HOST_ARCH NEST_HOST_VENDOR NEST_HOST_OS )
@@ -161,6 +166,8 @@ nest_process_with_target_bits_split()
 nest_process_userdoc()
 nest_process_devdoc()
 nest_process_full_logging()
+nest_process_pgo()
+nest_process_lto()
 
 nest_process_models()
 
@@ -222,74 +229,11 @@ add_subdirectory( testsuite )
 add_subdirectory( pynest )
 
 ################################################################################
-##################           Summary of flags                 ##################
+##################   Build config for downstream modules      ##################
 ################################################################################
 
-# used in nest-config
-
-# all compiler flags
-if ( NOT CMAKE_BUILD_TYPE OR "${CMAKE_BUILD_TYPE}" STREQUAL "None" )
-  set( ALL_CXXFLAGS "${CMAKE_CXX_FLAGS}" )
-elseif ( "${CMAKE_BUILD_TYPE}" STREQUAL "Debug" )
-  set( ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}" )
-elseif ( "${CMAKE_BUILD_TYPE}" STREQUAL "Release" )
-  set( ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}" )
-elseif ( "${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo" )
-  set( ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELWITHDEBINFO}" )
-elseif ( "${CMAKE_BUILD_TYPE}" STREQUAL "MinSizeRel" )
-  set( ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_MINSIZEREL}" )
-else ()
-  printError( "Unknown build type: '${CMAKE_BUILD_TYPE}'" )
-endif ()
-if ( with-defines )
-  foreach ( def ${with-defines} )
-    set( ALL_CXXFLAGS "${def} ${ALL_CXXFLAGS}" )
-  endforeach ()
-endif ()
-# add sionlib defines
-foreach ( def ${SIONLIB_DEFINES} )
-    set( ALL_CXXFLAGS "${ALL_CXXFLAGS} ${def}" )
-endforeach ()
-
-# libraries required to link extension modules
-set( MODULE_LINK_LIBS
-  "${LTDL_LIBRARIES}"
-  "${GSL_LIBRARIES}"
-  "${MUSIC_LIBRARIES}"
-  "${MPI_CXX_LIBRARIES}"
-  "${OpenMP_CXX_LIBRARIES}"
-  "${SIONLIB_LIBRARIES}" )
-
-if ( with-libraries )
-  set( MODULE_LINK_LIBS "${MODULE_LINK_LIBS};${with-libraries}" )
-endif ()
-string( REPLACE ";" " " MODULE_LINK_LIBS "${MODULE_LINK_LIBS}" )
-
-# libraries requied to link NEST
-set( ALL_LIBS
-  "-lnest"
-  ${MODULE_LINK_LIBS} )
-
-
-# all includes
-if ( HAVE_BOOST )
-  get_target_property( _boost_inc Boost::headers INTERFACE_INCLUDE_DIRECTORIES )
-endif ()
-set( ALL_INCLUDES_tmp
-  "${CMAKE_INSTALL_FULL_INCLUDEDIR}/nest"
-  "${LTDL_INCLUDE_DIRS}"
-  "${GSL_INCLUDE_DIRS}"
-  "${MUSIC_INCLUDE_DIRS}"
-  "${OpenMP_CXX_INCLUDE_DIRS}"
-  "${MPI_CXX_INCLUDE_PATH}"
-  "${_boost_inc}" )
-set( ALL_INCLUDES "" )
-foreach ( INC ${ALL_INCLUDES_tmp} ${with-includes} )
-  if ( INC AND NOT INC STREQUAL "" )
-    set( ALL_INCLUDES "${ALL_INCLUDES} -I${INC}" )
-  endif ()
-endforeach ()
-set( ALL_INCLUDES "${ALL_INCLUDES} ${SIONLIB_INCLUDE}" )
+# Generates both bin/nest-config and the NESTSimulator CMake package.
+nest_export_module_build_config()
 
 ################################################################################
 ##################           File generation here             ##################
@@ -298,11 +242,6 @@ set( ALL_INCLUDES "${ALL_INCLUDES} ${SIONLIB_INCLUDE}" )
 configure_file(
     "${PROJECT_SOURCE_DIR}/libnestutil/config.h.in"
     "${PROJECT_BINARY_DIR}/libnestutil/config.h" @ONLY
-)
-
-configure_file(
-    "${PROJECT_SOURCE_DIR}/bin/nest-config.in"
-    "${PROJECT_BINARY_DIR}/bin/nest-config" @ONLY
 )
 
 configure_file(

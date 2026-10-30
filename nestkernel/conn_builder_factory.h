@@ -23,15 +23,20 @@
 #ifndef CONN_BUILDER_FACTORY_H
 #define CONN_BUILDER_FACTORY_H
 
-// C++ includes:
-#include <map>
+#include <vector>
 
 // Includes from nestkernel:
 #include "conn_builder.h"
+#include "node_collection.h"
+
+class Dictionary;
 
 
 namespace nest
 {
+class BipartiteConnBuilder;
+class ThirdInBuilder;
+class ThirdOutBuilder;
 
 /**
  * Generic factory class for bipartite ConnBuilder objects.
@@ -43,9 +48,7 @@ namespace nest
 class GenericBipartiteConnBuilderFactory
 {
 public:
-  virtual ~GenericBipartiteConnBuilderFactory()
-  {
-  }
+  virtual ~GenericBipartiteConnBuilderFactory();
 
   /**
    * Factory method for builders for bipartite connection rules (the default).
@@ -90,9 +93,7 @@ public:
 class GenericThirdConnBuilderFactory
 {
 public:
-  virtual ~GenericThirdConnBuilderFactory()
-  {
-  }
+  virtual ~GenericThirdConnBuilderFactory();
 
   /**
    * Factory method for builders for tripartite connection rules.

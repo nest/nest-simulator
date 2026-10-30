@@ -21,7 +21,6 @@ examples/example_logs/
 /libnestutil/config.h
 /librandom/randomtest
 /nest/nest
-/sli/sli
 
 # cmake artefacts
 CMakeCache.txt

@@ -23,11 +23,10 @@
 #ifndef SOURCE_H
 #define SOURCE_H
 
-// C++ include
-#include <cassert>
-
 // Includes from nestkernel:
 #include "nest_types.h"
+
+#include <cassert>
 
 namespace nest
 {
@@ -40,124 +39,93 @@ namespace nest
 class Source
 {
 private:
-  size_t node_id_ : NUM_BITS_NODE_ID;  //!< node ID of source
-  bool processed_ : 1;                 //!< whether this target has already been moved
-                                       //!< to the MPI buffer
-  bool primary_ : 1;                   //!< source of primary connection
-  bool disabled_ : 1;                  //!< connection has been disabled
+  uint64_t node_id_ : NUM_BITS_NODE_ID;  //!< node ID of source
+  bool processed_ : 1;                   //!< whether this target has already been moved
+                                         //!< to the MPI buffer
+  bool primary_ : 1;                     //!< source of primary connection
+  bool disabled_ : 1;                    //!< connection has been disabled
 
 public:
-  Source();
-  explicit Source( const size_t node_id, const bool primary );
+  Source()
+    : node_id_( 0 )
+    , processed_( false )
+    , primary_( true )
+    , disabled_( false )
+  {
+  }
 
-  /**
-   * Returns this Source's node ID.
-   */
-  size_t get_node_id() const;
+  explicit Source( const std::uint64_t node_id, const bool primary )
+    : node_id_( node_id )
+    , processed_( false )
+    , primary_( primary )
+    , disabled_( false )
+  {
+    assert( node_id <= MAX_NODE_ID );
+  }
 
-  void set_processed( const bool processed );
-  bool is_processed() const;
+  std::uint64_t
+  get_node_id() const
+  {
+    return node_id_;
+  }
 
-  /**
-   * Sets whether Source is primary.
-   */
-  void set_primary( const bool primary );
+  void
+  set_processed( const bool processed )
+  {
+    processed_ = processed;
+  }
 
-  /**
-   * Returns whether Source is primary.
-   */
-  bool is_primary() const;
+  bool
+  is_processed() const
+  {
+    return processed_;
+  }
 
-  /**
-   * Disables Source.
-   */
-  void disable();
+  void
+  set_primary( const bool primary )
+  {
+    primary_ = primary;
+  }
 
-  /**
-   * Returns whether Source is disabled.
-   */
-  bool is_disabled() const;
+  bool
+  is_primary() const
+  {
+    return primary_;
+  }
+
+  void
+  disable()
+  {
+    disabled_ = true;
+  }
+
+  [[gnu::visibility( "hidden" )]] bool
+  is_disabled() const
+  {
+    return disabled_;
+  }
 
   friend bool operator<( const Source& lhs, const Source& rhs );
   friend bool operator>( const Source& lhs, const Source& rhs );
   friend bool operator==( const Source& lhs, const Source& rhs );
 };
 
-inline Source::Source()
-  : node_id_( 0 )
-  , processed_( false )
-  , primary_( true )
-  , disabled_( false )
-{
-}
-
-inline Source::Source( const size_t node_id, const bool is_primary )
-  : node_id_( node_id )
-  , processed_( false )
-  , primary_( is_primary )
-  , disabled_( false )
-{
-  assert( node_id <= MAX_NODE_ID );
-}
-
-inline size_t
-Source::get_node_id() const
-{
-  return node_id_;
-}
-
-inline void
-Source::set_processed( const bool processed )
-{
-  processed_ = processed;
-}
-
-inline bool
-Source::is_processed() const
-{
-  return processed_;
-}
-
-inline void
-Source::set_primary( const bool primary )
-{
-  primary_ = primary;
-}
-
-inline bool
-Source::is_primary() const
-{
-  return primary_;
-}
-
-inline void
-Source::disable()
-{
-  disabled_ = true;
-}
-
-inline bool
-Source::is_disabled() const
-{
-  return disabled_;
-}
-
 inline bool
 operator<( const Source& lhs, const Source& rhs )
 {
-  return ( lhs.node_id_ < rhs.node_id_ );
+  return lhs.node_id_ < rhs.node_id_;
 }
 
 inline bool
 operator>( const Source& lhs, const Source& rhs )
 {
-  return operator<( rhs, lhs );
+  return rhs < lhs;
 }
 
 inline bool
 operator==( const Source& lhs, const Source& rhs )
 {
-  return ( lhs.node_id_ == rhs.node_id_ );
+  return lhs.node_id_ == rhs.node_id_;
 }
 
 }  // namespace nest

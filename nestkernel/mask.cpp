@@ -22,6 +22,12 @@
 
 #include "mask.h"
 
+#include <algorithm>
+#include <utility>
+
+#include "nest_names.h"
+#include "position_impl.h"
+
 // Explicit specializations behave as normal methods and must
 // be defined here to avoid duplicate symbols.
 
@@ -456,4 +462,46 @@ EllipseMask< 3 >::inside( const Box< 3 >& b ) const
 
   return true;
 }
+
+template <>
+std::string
+BoxMask< 2 >::get_name()
+{
+  return names::rectangular;
+}
+
+template <>
+std::string
+BoxMask< 3 >::get_name()
+{
+  return names::box;
+}
+
+template <>
+std::string
+BallMask< 2 >::get_name()
+{
+  return names::circular;
+}
+
+template <>
+std::string
+BallMask< 3 >::get_name()
+{
+  return names::spherical;
+}
+template <>
+std::string
+EllipseMask< 2 >::get_name()
+{
+  return names::elliptical;
+}
+
+template <>
+std::string
+EllipseMask< 3 >::get_name()
+{
+  return names::ellipsoidal;
+}
+
 }

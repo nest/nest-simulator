@@ -24,13 +24,10 @@
 #define EPROP_ARCHIVING_NODE_READOUT_H
 
 // models
-#include "eprop_archiving_node.h"
+#include "eprop_archiving_node_impl.h"
 
 // nestkernel
 #include "histentry.h"
-#include "nest_time.h"
-#include "nest_types.h"
-#include "node.h"
 
 namespace nest
 {
@@ -81,85 +78,6 @@ public:
 protected:
   long model_dependent_history_shift_() const override;
 };
-
-template < bool hist_shift_required >
-inline void
-EpropArchivingNodeReadout< hist_shift_required >::get_status( Dictionary& d ) const
-{
-  if constexpr ( not hist_shift_required )
-  {
-    d[ names::eprop_isi_trace_cutoff ] = eprop_isi_trace_cutoff_;
-  }
-}
-
-template < bool hist_shift_required >
-inline void
-EpropArchivingNodeReadout< hist_shift_required >::set_status( const Dictionary& d )
-{
-  if constexpr ( not hist_shift_required )
-  {
-    double eprop_isi_trace_cutoff_tmp = eprop_isi_trace_cutoff_;
-
-    update_value_param( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_tmp, this );
-
-    if ( eprop_isi_trace_cutoff_tmp < 0.0 )
-    {
-      throw BadProperty( "eprop_isi_trace_cutoff ≥ 0 required." );
-    }
-
-    eprop_isi_trace_cutoff_ = eprop_isi_trace_cutoff_tmp;
-  }
-}
-
-template < bool hist_shift_required >
-void
-EpropArchivingNodeReadout< hist_shift_required >::append_new_eprop_history_entry( long time_step )
-{
-  if ( eprop_indegree_ == 0 )
-  {
-    return;
-  }
-
-  if constexpr ( hist_shift_required )
-  {
-    time_step -= delay_out_norm_;
-  }
-
-  eprop_history_.emplace_back( time_step, 0.0 );
-}
-
-template < bool hist_shift_required >
-void
-EpropArchivingNodeReadout< hist_shift_required >::write_error_signal_to_history( long time_step,
-  const double error_signal )
-{
-  if ( eprop_indegree_ == 0 )
-  {
-    return;
-  }
-
-  if constexpr ( hist_shift_required )
-  {
-    time_step -= delay_out_norm_;
-  }
-
-  auto it_hist = get_eprop_history( time_step );
-  it_hist->error_signal_ = error_signal;
-}
-
-template < bool hist_shift_required >
-long
-EpropArchivingNodeReadout< hist_shift_required >::model_dependent_history_shift_() const
-{
-  if constexpr ( hist_shift_required )
-  {
-    return get_shift();
-  }
-  else
-  {
-    return -delay_rec_out_;
-  }
-}
 
 }
 

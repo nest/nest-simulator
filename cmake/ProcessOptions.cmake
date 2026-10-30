@@ -271,11 +271,10 @@ function( NEST_PROCESS_WITH_GSL )
   if ( with-gsl )
     find_package( GSL 1.11 REQUIRED QUIET )
     message( STATUS "Found GSL: ${GSL_LIBRARIES} (found version ${GSL_VERSION})" )
+    # HAVE_GSL: simple flag, no equivalent target property exists.
+    # GSL_VERSION: display-only (ConfigureSummary), single consumer.
     set( HAVE_GSL ON PARENT_SCOPE )
-    # export variables needed for nest-config generation
     set( GSL_VERSION "${GSL_VERSION}" PARENT_SCOPE )
-    set( GSL_LIBRARIES "${GSL_LIBRARIES}" PARENT_SCOPE )
-    set( GSL_INCLUDE_DIRS "${GSL_INCLUDE_DIRS}" PARENT_SCOPE )
     # consumers use GSL::gsl imported target; no global include_directories() needed
   endif ()
   # Provide a dummy GSL::gsl if GSL is disabled so unconditional
@@ -615,4 +614,82 @@ function( NEST_PROCESS_FULL_LOGGING )
     message( STATUS "Configuring full logging" )
   endif ()
   set( ENABLE_FULL_LOGGING ${with-full-logging} PARENT_SCOPE )
+endfunction()
+
+function( NEST_PROCESS_LTO )
+    set( WITH_LTO OFF PARENT_SCOPE )
+    if ( ${with-lto} STREQUAL "ON" )
+        set( WITH_LTO ON PARENT_SCOPE )
+
+        # enable link-time optimizations
+        include( CheckIPOSupported )
+        check_ipo_supported()
+        set( CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE )
+
+        if ( CMAKE_CXX_COMPILER_ID MATCHES "Clang" )
+            execute_process(
+                    COMMAND ${CMAKE_CXX_COMPILER} -print-prog-name=llvm-ar
+                    OUTPUT_VARIABLE LLVM_AR_PATH
+                    OUTPUT_STRIP_TRAILING_WHITESPACE
+            )
+
+            execute_process(
+                    COMMAND ${CMAKE_CXX_COMPILER} -print-prog-name=llvm-ranlib
+                    OUTPUT_VARIABLE LLVM_RANLIB_PATH
+                    OUTPUT_STRIP_TRAILING_WHITESPACE
+            )
+
+            # clang with LTO requires "llvm-ar" to be used instead of the standard "ar"
+            find_program( LLVM_AR NAMES ${LLVM_AR_PATH} llvm-ar )
+            find_program( LLVM_RANLIB NAMES ${LLVM_RANLIB_PATH} llvm-ranlib )
+
+            set( CMAKE_EXE_LINKER_FLAGS_INIT "-fuse-ld=lld" )
+            set( CMAKE_SHARED_LINKER_FLAGS_INIT "-fuse-ld=lld" )
+            set( CMAKE_MODULE_LINKER_FLAGS_INIT "-fuse-ld=lld" )
+
+            if ( LLVM_AR )
+                set( CMAKE_AR ${LLVM_AR} CACHE FILEPATH "Archiver" FORCE )
+            else ()
+                message( FATAL_ERROR "Clang with LTO requires llvm-ar" )
+            endif ()
+
+            if ( LLVM_RANLIB )
+                set( CMAKE_RANLIB ${LLVM_RANLIB} CACHE FILEPATH "Ranlib" FORCE )
+            else ()
+                message( FATAL_ERROR "Clang with LTO requires llvm-ranlib" )
+            endif ()
+        elseif ()
+            get_filename_component( GCC_BIN_DIR ${CMAKE_CXX_COMPILER} DIRECTORY )
+
+            find_program( GCC_AR NAMES gcc-ar HINTS ${GCC_BIN_DIR} )
+            find_program( GCC_RANLIB NAMES gcc-ranlib HINTS ${GCC_BIN_DIR} )
+
+            if ( GCC_AR )
+                set( CMAKE_AR ${GCC_AR} CACHE FILEPATH "Archiver" FORCE )
+            endif ()
+
+            if ( GCC_RANLIB )
+                set( CMAKE_RANLIB ${GCC_RANLIB} CACHE FILEPATH "Ranlib" FORCE )
+            endif ()
+        endif ()
+    endif ()
+endfunction()
+
+function( NEST_PROCESS_PGO )
+    # optional profile-guided optimization
+    if ( ${with-pgo} STREQUAL "OFF" )
+        set( PGO_MODE OFF PARENT_SCOPE )
+    else ()
+        if ( ${with-pgo} STREQUAL "GENERATE" )
+            message( STATUS "PGO: Instrumentation Build Enabled" )
+            set( PGO_MODE "GENERATE" PARENT_SCOPE )
+            add_compile_options( -fprofile-generate )
+            add_link_options( -fprofile-generate )
+        elseif ( ${with-pgo} STREQUAL "USE" )
+            message( STATUS "PGO: Optimized Build Enabled" )
+            set( PGO_MODE "USE" PARENT_SCOPE )
+            add_compile_options( -fprofile-use -fprofile-correction )
+            add_link_options( -fprofile-use -fprofile-correction )
+        endif ()
+    endif ()
 endfunction()

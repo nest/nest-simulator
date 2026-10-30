@@ -22,17 +22,22 @@
 
 #include "glif_psc.h"
 
-// C++ includes:
-#include <iostream>
-#include <limits>
+#include <cmath>
+#include <cstddef>
+#include <tuple>
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "exceptions.h"
 #include "iaf_propagator.h"
+// Includes from nestkernel:
+#include "event_delivery_manager.h"
+#include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
+#include "numerics.h"
 #include "universal_data_logger_impl.h"
+
 
 
 namespace nest
@@ -45,8 +50,7 @@ register_glif_psc( const std::string& name )
   register_node_model< glif_psc >( name );
 }
 
-// Override the create() method with one call to RecordablesMap::insert_()
-// for each quantity to be recorded.
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< glif_psc >::create()
@@ -467,7 +471,6 @@ glif_psc::update( Time const& origin, const long from, const long to )
 
   for ( long lag = from; lag < to; ++lag )
   {
-
     if ( S_.refractory_steps_ == 0 )
     {
       // neuron not refractory, integrate voltage and currents
@@ -556,7 +559,7 @@ glif_psc::update( Time const& origin, const long from, const long to )
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;
-        kernel().event_delivery_manager.send( *this, se, lag );
+        kernel::manager< EventDeliveryManager >.send( *this, se, lag );
       }
     }
     else
@@ -590,42 +593,5 @@ glif_psc::update( Time const& origin, const long from, const long to )
   }
 }
 
-size_t
-glif_psc::handles_test_event( SpikeEvent&, size_t receptor_type )
-{
-  if ( receptor_type <= 0 or receptor_type > P_.n_receptors_() )
-  {
-    throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
-  }
-
-  P_.has_connections_ = true;
-  return receptor_type;
-}
-
-void
-glif_psc::handle( SpikeEvent& e )
-{
-  assert( e.get_delay_steps() > 0 );
-
-  B_.spikes_[ e.get_rport() - 1 ].add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
-}
-
-void
-glif_psc::handle( CurrentEvent& e )
-{
-  assert( e.get_delay_steps() > 0 );
-
-  B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
-}
-
-// Do not move this function as inline to h-file. It depends on
-// universal_data_logger_impl.h being included here.
-void
-glif_psc::handle( DataLoggingRequest& e )
-{
-  B_.logger_.handle( e );  // the logger does this for us
-}
 
 }  // namespace nest

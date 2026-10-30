@@ -22,8 +22,7 @@
 
 #include "nest_time.h"
 
-// C++ includes:
-#include <string>
+#include <limits>
 
 // Includes from libnestutil:
 #include "numerics.h"
@@ -157,6 +156,30 @@ Time::reset_to_defaults()
 
   Range::MS_PER_STEP = Range::TICS_PER_STEP / Range::TICS_PER_MS;
   Range::STEPS_PER_MS = 1 / Range::MS_PER_STEP;
+}
+
+namespace nest
+{
+
+Time
+operator*( const long factor, const Time& t )
+{
+  const tic_t n = factor * t.tics;
+  // if no overflow:
+  if ( t.tics == 0 or n / t.tics == factor )
+  {
+    return Time::tic( n );  // check range
+  }
+  if ( ( t.tics > 0 and factor > 0 ) or ( t.tics < 0 and factor < 0 ) )
+  {
+    return Time( Time::LIM_POS_INF.tics );
+  }
+  else
+  {
+    return Time( Time::LIM_NEG_INF.tics );
+  }
+}
+
 }
 
 std::ostream&

@@ -23,11 +23,14 @@
 #ifndef DEVICE_H
 #define DEVICE_H
 
+#include <string>
 
+// Includes from libnestutil:
+#include "dictionary.h"
 // Includes from nestkernel:
 #include "nest_time.h"
-#include "nest_types.h"
-#include "node.h"
+
+class Dictionary;
 
 
 namespace nest
@@ -61,21 +64,13 @@ class Device
 public:
   Device();
   Device( const Device& n );
-  virtual ~Device()
-  {
-  }
+  virtual ~Device();
 
   /** Reset dynamic state to that of model. */
-  virtual void
-  init_state()
-  {
-  }
+  void init_state();
 
   /** Reset buffers. */
-  virtual void
-  init_buffers()
-  {
-  }
+  void init_buffers();
 
   /** Set internal variables before calls to SimulationManager::run() */
   virtual void pre_run_hook();
@@ -174,52 +169,6 @@ private:
   Parameters_ P_;
   Variables_ V_;
 };
-
-inline void
-Device::get_status( Dictionary& d ) const
-{
-  P_.get( d );
-}
-
-inline void
-Device::set_status( const Dictionary& d )
-{
-  Parameters_ ptmp = P_;  // temporary copy in case of errors
-  ptmp.set( d );          // throws if BadProperty
-
-  // if we get here, temporaries contain consistent set of properties
-  P_ = ptmp;
-}
-
-inline Time const&
-Device::get_origin() const
-{
-  return P_.origin_;
-}
-
-inline Time const&
-Device::get_start() const
-{
-  return P_.start_;
-}
-
-inline Time const&
-Device::get_stop() const
-{
-  return P_.stop_;
-}
-
-inline long
-Device::get_t_min_() const
-{
-  return V_.t_min_;
-}
-
-inline long
-Device::get_t_max_() const
-{
-  return V_.t_max_;
-}
 
 }  // namespace nest
 

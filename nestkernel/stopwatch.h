@@ -23,19 +23,16 @@
 #ifndef STOPWATCH_H
 #define STOPWATCH_H
 
-// C includes:
-#include <sys/time.h>
-
 // C++ includes:
+#include <cassert>
 #include <chrono>
 #include <iostream>
 #include <vector>
 
-// Includes from libnestutil:
-#include "dictionary.h"
-
 // Includes from nestkernel:
 #include "exceptions.h"
+
+class Dictionary;
 
 namespace nest
 {

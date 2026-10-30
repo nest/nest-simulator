@@ -23,16 +23,15 @@
 #ifndef UNIVERSAL_DATA_LOGGER_IMPL_H
 #define UNIVERSAL_DATA_LOGGER_IMPL_H
 
+#include "simulation_manager.h"
 #include "universal_data_logger.h"
-
-// Includes from nestkernel:
-#include "event_delivery_manager_impl.h"
-#include "kernel_manager.h"
-#include "nest_time.h"
-#include "node.h"
 
 namespace nest
 {
+
+
+
+
 
 template < typename HostNode >
 DynamicUniversalDataLogger< HostNode >::DynamicUniversalDataLogger( HostNode& host )
@@ -100,7 +99,7 @@ DynamicUniversalDataLogger< HostNode >::DataLogger_::init()
 
   // Next recording step is in current slice or beyond, indicates that
   // buffer is properly initialized.
-  if ( next_rec_step_ >= kernel().simulation_manager.get_slice_origin().get_steps() )
+  if ( next_rec_step_ >= kernel::manager< SimulationManager >.get_slice_origin().get_steps() )
   {
     return;
   }
@@ -117,14 +116,15 @@ DynamicUniversalDataLogger< HostNode >::DataLogger_::init()
   // left of update intervals, and we want time stamps at right end of
   // update interval to be multiples of recording interval. Need to add
   // +1 because the division result is rounded down.
-  next_rec_step_ = ( kernel().simulation_manager.get_time().get_steps() / rec_int_steps_ + 1 ) * rec_int_steps_ - 1;
+  next_rec_step_ =
+    ( kernel::manager< SimulationManager >.get_time().get_steps() / rec_int_steps_ + 1 ) * rec_int_steps_ - 1;
 
   // If offset is not 0, adjust next recording step to account for it by first setting next recording
   // step to be offset and then iterating until the variable is greater than current simulation time.
   if ( recording_offset_.get_steps() != 0 )
   {
     next_rec_step_ = recording_offset_.get_steps() - 1;  // shifted one to left
-    while ( next_rec_step_ <= kernel().simulation_manager.get_time().get_steps() )
+    while ( next_rec_step_ <= kernel::manager< SimulationManager >.get_time().get_steps() )
     {
       next_rec_step_ += rec_int_steps_;
     }
@@ -132,7 +132,7 @@ DynamicUniversalDataLogger< HostNode >::DataLogger_::init()
 
   // number of data points per slice
   const long recs_per_slice = static_cast< long >(
-    std::ceil( kernel().connection_manager.get_min_delay() / static_cast< double >( rec_int_steps_ ) ) );
+    std::ceil( kernel::manager< ConnectionManager >.get_min_delay() / static_cast< double >( rec_int_steps_ ) ) );
 
   data_.resize( 2, DataLoggingReply::Container( recs_per_slice, DataLoggingReply::Item( num_vars_ ) ) );
 
@@ -149,7 +149,7 @@ DynamicUniversalDataLogger< HostNode >::DataLogger_::record_data( const HostNode
     return;
   }
 
-  const size_t wt = kernel().event_delivery_manager.write_toggle();
+  const size_t wt = kernel::manager< EventDeliveryManager >.write_toggle();
 
   assert( wt < next_rec_.size() );
   assert( wt < data_.size() );
@@ -197,13 +197,13 @@ DynamicUniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host, con
   assert( data_.size() == 2 );
 
   // get read toggle and start and end of slice
-  const size_t rt = kernel().event_delivery_manager.read_toggle();
+  const size_t rt = kernel::manager< EventDeliveryManager >.read_toggle();
   assert( not data_[ rt ].empty() );
 
   // Check if we have valid data, i.e., data with time stamps within the
   // past time slice. This may not be the case if the node has been frozen.
   // In that case, we still reset the recording marker, to prepare for the next round.
-  if ( data_[ rt ][ 0 ].timestamp <= kernel().simulation_manager.get_previous_slice_origin() )
+  if ( data_[ rt ][ 0 ].timestamp <= kernel::manager< SimulationManager >.get_previous_slice_origin() )
   {
     next_rec_[ rt ] = 0;
     return;
@@ -231,7 +231,7 @@ DynamicUniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host, con
   reply.set_port( request.get_port() );
 
   // send it off
-  kernel().event_delivery_manager.send_to_node( reply );
+  kernel::manager< EventDeliveryManager >.send_to_node( reply );
 }
 
 template < typename HostNode >
@@ -301,7 +301,7 @@ UniversalDataLogger< HostNode >::DataLogger_::init()
 
   // Next recording step is in current slice or beyond, indicates that
   // buffer is properly initialized.
-  if ( next_rec_step_ >= kernel().simulation_manager.get_slice_origin().get_steps() )
+  if ( next_rec_step_ >= kernel::manager< SimulationManager >.get_slice_origin().get_steps() )
   {
     return;
   }
@@ -318,14 +318,15 @@ UniversalDataLogger< HostNode >::DataLogger_::init()
   // left of update intervals, and we want time stamps at right end of
   // update interval to be multiples of recording interval. Need to add
   // +1 because the division result is rounded down.
-  next_rec_step_ = ( kernel().simulation_manager.get_time().get_steps() / rec_int_steps_ + 1 ) * rec_int_steps_ - 1;
+  next_rec_step_ =
+    ( kernel::manager< SimulationManager >.get_time().get_steps() / rec_int_steps_ + 1 ) * rec_int_steps_ - 1;
 
   // If offset is not 0, adjust next recording step to account for it by first setting next recording
   // step to be offset and then iterating until the variable is greater than current simulation time.
   if ( recording_offset_.get_steps() != 0 )
   {
     next_rec_step_ = recording_offset_.get_steps() - 1;  // shifted one to left
-    while ( next_rec_step_ <= kernel().simulation_manager.get_time().get_steps() )
+    while ( next_rec_step_ <= kernel::manager< SimulationManager >.get_time().get_steps() )
     {
       next_rec_step_ += rec_int_steps_;
     }
@@ -333,7 +334,7 @@ UniversalDataLogger< HostNode >::DataLogger_::init()
 
   // number of data points per slice
   const long recs_per_slice = static_cast< long >(
-    std::ceil( kernel().connection_manager.get_min_delay() / static_cast< double >( rec_int_steps_ ) ) );
+    std::ceil( kernel::manager< ConnectionManager >.get_min_delay() / static_cast< double >( rec_int_steps_ ) ) );
 
   data_.resize( 2, DataLoggingReply::Container( recs_per_slice, DataLoggingReply::Item( num_vars_ ) ) );
 
@@ -350,7 +351,7 @@ UniversalDataLogger< HostNode >::DataLogger_::record_data( const HostNode& host,
     return;
   }
 
-  const size_t wt = kernel().event_delivery_manager.write_toggle();
+  const size_t wt = kernel::manager< EventDeliveryManager >.write_toggle();
 
   assert( wt < next_rec_.size() );
   assert( wt < data_.size() );
@@ -399,13 +400,13 @@ UniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host, const Data
   assert( data_.size() == 2 );
 
   // get read toggle and start and end of slice
-  const size_t rt = kernel().event_delivery_manager.read_toggle();
+  const size_t rt = kernel::manager< EventDeliveryManager >.read_toggle();
   assert( not data_[ rt ].empty() );
 
   // Check if we have valid data, i.e., data with time stamps within the
   // past time slice. This may not be the case if the node has been frozen.
   // In that case, we still reset the recording marker, to prepare for the next round.
-  if ( data_[ rt ][ 0 ].timestamp <= kernel().simulation_manager.get_previous_slice_origin() )
+  if ( data_[ rt ][ 0 ].timestamp <= kernel::manager< SimulationManager >.get_previous_slice_origin() )
   {
     next_rec_[ rt ] = 0;
     return;
@@ -433,7 +434,7 @@ UniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host, const Data
   reply.set_port( request.get_port() );
 
   // send it off
-  kernel().event_delivery_manager.send_to_node( reply );
+  kernel::manager< EventDeliveryManager >.send_to_node( reply );
 }
 
 }  // namespace nest

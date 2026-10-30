@@ -197,36 +197,24 @@ private:
   void advance_time_();    //!< Update time to next time step
   void print_progress_();  //!< TODO: Remove, replace by logging!
 
-  Time clock_;                  //!< SimulationManager clock, updated once per slice
-  long slice_;                  //!< current update slice
-  long to_do_;                  //!< number of pending steps
-  long to_do_total_;            //!< number of requested steps in current simulation
-  long from_step_;              //!< update clock_+from_step<=T<clock_+to_step_
-  long to_step_;                //!< update clock_+from_step<=T<clock_+to_step_
-  timeval t_slice_begin_;       //!< Wall-clock time at the begin of a time slice
-  timeval t_slice_end_;         //!< Wall-clock time at the end of time slice
-  long t_real_;                 //!< Accumulated wall-clock time spent simulating (in us)
-  bool prepared_;               //!< Indicates whether the SimulationManager is in a prepared
-                                //!< state
-  bool simulating_;             //!< true if simulation in progress
-  bool simulated_;              //!< indicates whether the SimulationManager has already been
-                                //!< simulated for sometime
-  bool inconsistent_state_;     //!< true after exception during update_
-                                //!< simulation must not be resumed
-  bool print_time_;             //!< Indicates whether time should be printed during
-                                //!< simulations (or not)
-  bool use_tree_barrier_;       //!< Use the spinning tree barrier instead of the OpenMP barriers in the update loop
-  size_t tree_barrier_fan_in_;  //!< Fan-in of the tree barrier (threads per group)
-  /**
-   * Spinning barrier of the update loop, used if use_tree_barrier_ is set.
-   *
-   * Held through a pointer on purpose: TreeBarrier contains a member aligned to a cache line, and as a direct member it
-   * would align SimulationManager to 64 bytes and move the managers that follow it in KernelManager by several cache
-   * lines. On the multi-area model this layout change alone made the simulation 1.4 % slower with the barrier switched
-   * off (more time waiting for the slowest thread); with the pointer the difference to NEST without the barrier was
-   * within the scatter between runs.
-   */
-  std::unique_ptr< TreeBarrier > tree_barrier_;
+  Time clock_;                      //!< SimulationManager clock, updated once per slice
+  long slice_;                      //!< current update slice
+  long to_do_;                      //!< number of pending steps
+  long to_do_total_;                //!< number of requested steps in current simulation
+  long from_step_;                  //!< update clock_+from_step<=T<clock_+to_step_
+  long to_step_;                    //!< update clock_+from_step<=T<clock_+to_step_
+  timeval t_slice_begin_;           //!< Wall-clock time at the begin of a time slice
+  timeval t_slice_end_;             //!< Wall-clock time at the end of time slice
+  long t_real_;                     //!< Accumulated wall-clock time spent simulating (in us)
+  bool prepared_;                   //!< Indicates whether the SimulationManager is in a prepared
+                                    //!< state
+  bool simulating_;                 //!< true if simulation in progress
+  bool simulated_;                  //!< indicates whether the SimulationManager has already been
+                                    //!< simulated for sometime
+  bool inconsistent_state_;         //!< true after exception during update_
+                                    //!< simulation must not be resumed
+  bool print_time_;                 //!< Indicates whether time should be printed during
+                                    //!< simulations (or not)
   bool use_wfr_;                    //!< Indicates wheter waveform relaxation is used
   double wfr_comm_interval_;        //!< Desired waveform relaxation communication
                                     //!< interval (in ms)
@@ -239,6 +227,31 @@ private:
                                     //!< than update_time_limit_ (seconds, default inf)
   double min_update_time_;          //!< shortest update time seen so far (seconds)
   double max_update_time_;          //!< longest update time seen so far (seconds)
+
+  //! Switch, fan-in and state of the spinning tree barrier of the update loop.
+  struct TreeBarrierControl
+  {
+    TreeBarrierControl()
+      : use( false )
+      , fan_in( 8 )
+      , barrier()
+    {
+    }
+
+    bool use;       //!< Use the tree barrier instead of the OpenMP barriers in the update loop
+    size_t fan_in;  //!< Fan-in of the tree barrier (threads per group)
+    TreeBarrier barrier;
+  };
+
+  /**
+   * Tree barrier of the update loop, held through a single pointer on purpose.
+   *
+   * The speed of large simulations depends on the layout of SimulationManager and of the managers that follow it in
+   * KernelManager. On the multi-area model (8 nodes, barrier switched off) adding the members of the tree barrier
+   * directly, or 64 unused bytes, made the simulation 0.8 to 2.3 % slower, whereas 8 additional bytes made no
+   * difference. All members of the tree barrier therefore live on the heap.
+   */
+  std::unique_ptr< TreeBarrierControl > tree_barrier_;
 
   // private stop watches for benchmarking purposes
   Stopwatch< StopwatchGranularity::Normal, StopwatchParallelism::MasterOnly > sw_simulate_;

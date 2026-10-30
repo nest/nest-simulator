@@ -36,9 +36,9 @@ import pytest
 RESOLUTION = 0.1
 
 
-def run(parrot_model, min_delay, max_delay, chunks, spike_times):
+def run(parrot_model, min_delay, max_delay, chunks, spike_times, threads):
     nest.ResetKernel()
-    nest.set(resolution=RESOLUTION, local_num_threads=2)
+    nest.set(resolution=RESOLUTION, local_num_threads=threads)
     delays = np.round(np.arange(min_delay, max_delay + RESOLUTION / 2, RESOLUTION), 1)
     nest.SetDefaults("static_synapse", {"delay": min_delay})  # the default delay must lie within the delay extrema
     nest.set(min_delay=min_delay, max_delay=max_delay)
@@ -63,7 +63,8 @@ def run(parrot_model, min_delay, max_delay, chunks, spike_times):
 @pytest.mark.parametrize("parrot_model", ["parrot_neuron", "parrot_neuron_ps"])
 @pytest.mark.parametrize("min_delay, max_delay", [(0.1, 0.1), (0.1, 2.0), (0.3, 1.0), (0.5, 1.7), (1.0, 3.0)])
 @pytest.mark.parametrize("chunks", [[20.0], [3.7, 0.1, 5.3, 10.9], [0.1] * 40 + [16.0]])
-def test_spikes_arrive_after_their_delay(parrot_model, min_delay, max_delay, chunks):
+@pytest.mark.parametrize("threads", [1, pytest.param(2, marks=pytest.mark.skipif_missing_threads)])
+def test_spikes_arrive_after_their_delay(parrot_model, min_delay, max_delay, chunks, threads):
     spike_times = [1.0, 2.3, 4.0, 7.7, 11.1]
-    expected, got = run(parrot_model, min_delay, max_delay, chunks, spike_times)
+    expected, got = run(parrot_model, min_delay, max_delay, chunks, spike_times, threads)
     assert got == expected

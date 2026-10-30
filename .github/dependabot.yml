@@ -4,11 +4,19 @@ updates:
     directory: /
     schedule:
       interval: daily
+    # Dependabot treats each subpath of an action repo as a separate dependency, so ungrouped it bumps e.g.
+    # codeql-action/init without codeql-action/analyze.
+    # Grouping ensures all actions are upgraded together, in a single PR.
+    groups:
+      codeql-actions:
+        patterns:
+          - "github/codeql-action"
+          - "github/codeql-action/*"
 
   - package-ecosystem: pip
     # Scan the repo root so Dependabot follows the `-r` includes in
     # requirements.txt (requirements_pynest.txt, requirements_testing.txt,
-    # doc/requirements.txt, requirements_nest_server.txt) as one set.
+    # doc/requirements.txt) as one set.
     directory: /
     schedule:
       interval: daily

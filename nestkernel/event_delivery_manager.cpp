@@ -45,6 +45,9 @@ namespace nest
 
 EventDeliveryManager::EventDeliveryManager()
   : off_grid_spiking_( false )
+  , collocation_groups_( 1 )
+  , group_buffers_()
+  , groups_collocated_( 0 )
   , moduli_()
   , slice_moduli_()
   , emitted_spikes_register_()
@@ -83,6 +86,7 @@ EventDeliveryManager::initialize( const bool adjust_number_of_threads_or_rng_onl
 
     // Ensures that ResetKernel resets off_grid_spiking_
     off_grid_spiking_ = false;
+    collocation_groups_ = 1;
     buffer_size_target_data_has_changed_ = false;
     send_recv_buffer_shrink_limit_ = 0.2;
     send_recv_buffer_shrink_spare_ = 0.1;
@@ -144,6 +148,22 @@ EventDeliveryManager::set_status( const Dictionary& dict )
 {
   dict.update_value( names::off_grid_spiking, off_grid_spiking_ );
 
+  long groups = collocation_groups_;
+  if ( dict.update_value( names::collocation_groups, groups ) )
+  {
+    if ( groups < 1 )
+    {
+      throw BadProperty( "collocation_groups >= 1 required." );
+    }
+    if ( static_cast< size_t >( groups ) != collocation_groups_
+      and kernel().simulation_manager.get_slice_origin().get_steps() > 0 )
+    {
+      // spikes that are still in the group buffers or in the receive buffers would be lost
+      throw BadProperty( "collocation_groups can only be changed before the first call of Simulate." );
+    }
+    collocation_groups_ = groups;
+  }
+
   double bsl = send_recv_buffer_shrink_limit_;
   if ( dict.update_value( names::spike_buffer_shrink_limit, bsl ) )
   {
@@ -179,6 +199,7 @@ void
 EventDeliveryManager::get_status( Dictionary& dict )
 {
   dict[ names::off_grid_spiking ] = off_grid_spiking_;
+  dict[ names::collocation_groups ] = static_cast< long >( collocation_groups_ );
   dict[ names::local_spike_counter ] = std::accumulate( local_spike_counter_.begin(), local_spike_counter_.end(), 0 );
   dict[ names::spike_buffer_shrink_limit ] = send_recv_buffer_shrink_limit_;
   dict[ names::spike_buffer_shrink_spare ] = send_recv_buffer_shrink_spare_;
@@ -221,6 +242,12 @@ EventDeliveryManager::configure_spike_data_buffers()
   assert( kernel().connection_manager.get_min_delay() != 0 );
 
   configure_spike_register();
+
+  // buffers for the collocation by several threads (allocated here, not in the parallel region)
+  const size_t num_groups =
+    std::max< size_t >( 1, std::min( collocation_groups_, kernel().vp_manager.get_num_threads() ) );
+  group_buffers_.assign(
+    num_groups, std::vector< std::vector< SpikeData > >( kernel().mpi_manager.get_num_processes() ) );
 
   send_buffer_spike_data_.clear();
   send_buffer_off_grid_spike_data_.clear();
@@ -350,9 +377,60 @@ EventDeliveryManager::deliver_secondary_events( const size_t tid, const bool cal
     tid, called_from_wfr_update, recv_buffer_secondary_events_ );
 }
 
+bool
+EventDeliveryManager::use_group_collocation() const
+{
+  return collocation_groups_ > 1 and kernel().vp_manager.get_num_threads() > 1 and not off_grid_spiking_
+    and ( kernel().mpi_manager.get_num_processes() > 1 or kernel().connection_manager.use_compressed_spikes() );
+}
+
+void
+EventDeliveryManager::collocate_groups( const size_t tid )
+{
+  const size_t num_threads = emitted_spikes_register_.size();
+  const size_t groups = group_buffers_.size();
+  // group g consists of the threads [ ceil( g * num_threads / groups ), ceil( ( g + 1 ) * num_threads / groups ) )
+  const size_t g = tid * groups / num_threads;
+  const size_t first = ( g * num_threads + groups - 1 ) / groups;
+  if ( tid != first )
+  {
+    return;
+  }
+  const size_t last = ( ( g + 1 ) * num_threads + groups - 1 ) / groups;
+  for ( auto& buffer : group_buffers_[ g ] )
+  {
+    buffer.clear();
+  }
+  for ( size_t t = first; t < last; ++t )
+  {
+    for ( const SpikeDataWithRank& e : *emitted_spikes_register_[ t ] )
+    {
+      group_buffers_[ g ][ e.rank ].push_back( e.spike_data );
+    }
+  }
+  if ( kernel().mpi_manager.get_num_processes() > 1 )
+  {
+    groups_collocated_.fetch_add( 1, std::memory_order_release );
+  }
+}
+
 void
 EventDeliveryManager::gather_spike_data()
 {
+  if ( use_group_collocation() )
+  {
+    if ( kernel().mpi_manager.get_num_processes() == 1 )
+    {
+      // no communication: every thread delivers directly from the buffers of the groups
+      return;
+    }
+    // wait for the other groups; the first thread of the first group is the master thread
+    while ( groups_collocated_.load( std::memory_order_acquire ) < group_buffers_.size() )
+    {
+    }
+    groups_collocated_.store( 0, std::memory_order_relaxed );
+  }
+
   if ( off_grid_spiking_ )
   {
     gather_spike_data_( send_buffer_off_grid_spike_data_, recv_buffer_off_grid_spike_data_ );
@@ -400,7 +478,14 @@ EventDeliveryManager::gather_spike_data_( std::vector< SpikeDataT >& send_buffer
     std::vector< size_t > num_spikes_per_rank( kernel().mpi_manager.get_num_processes(), 0 );
 
     // Collocate spikes to send buffer
-    collocate_spike_data_buffers_( send_buffer_position, emitted_spikes_register_, send_buffer, num_spikes_per_rank );
+    if ( use_group_collocation() )
+    {
+      concatenate_group_buffers_( send_buffer_position, send_buffer, num_spikes_per_rank );
+    }
+    else
+    {
+      collocate_spike_data_buffers_( send_buffer_position, emitted_spikes_register_, send_buffer, num_spikes_per_rank );
+    }
 
     if ( off_grid_spiking_ )
     {
@@ -498,6 +583,31 @@ EventDeliveryManager::collocate_spike_data_buffers_( SendBufferPosition& send_bu
 
 template < typename SpikeDataT >
 void
+EventDeliveryManager::concatenate_group_buffers_( SendBufferPosition& send_buffer_position,
+  std::vector< SpikeDataT >& send_buffer,
+  std::vector< size_t >& num_spikes_per_rank )
+{
+  // as in collocate_spike_data_buffers_(): all spikes are counted, only those that fit into the chunk are written
+  for ( const auto& group : group_buffers_ )
+  {
+    for ( size_t rank = 0; rank < group.size(); ++rank )
+    {
+      num_spikes_per_rank[ rank ] += group[ rank ].size();
+      for ( const SpikeData& spike_data : group[ rank ] )
+      {
+        if ( send_buffer_position.is_chunk_filled( rank ) )
+        {
+          break;
+        }
+        send_buffer[ send_buffer_position.idx( rank ) ] = spike_data;
+        send_buffer_position.increase( rank );
+      }
+    }
+  }
+}
+
+template < typename SpikeDataT >
+void
 EventDeliveryManager::set_end_marker_( const SendBufferPosition& send_buffer_position,
   std::vector< SpikeDataT >& send_buffer,
   size_t local_max_spikes_per_rank )
@@ -583,6 +693,13 @@ EventDeliveryManager::get_global_max_spikes_per_rank_( const SendBufferPosition&
 void
 EventDeliveryManager::deliver_events( const size_t tid )
 {
+  if ( use_group_collocation() and kernel().mpi_manager.get_num_processes() == 1 )
+  {
+    deliver_events_from_groups_( tid );
+    reset_spike_register_( tid );
+    return;
+  }
+
   if ( off_grid_spiking_ )
   {
     deliver_events_( tid, recv_buffer_off_grid_spike_data_ );
@@ -592,6 +709,95 @@ EventDeliveryManager::deliver_events( const size_t tid )
     deliver_events_( tid, recv_buffer_spike_data_ );
   }
   reset_spike_register_( tid );
+}
+
+void
+EventDeliveryManager::deliver_events_from_groups_( const size_t tid )
+{
+  // deliver only at beginning of time slice
+  if ( kernel().simulation_manager.get_from_step() > 0 )
+  {
+    return;
+  }
+
+  const std::vector< ConnectorModel* >& cm = kernel().model_manager.get_connection_models( tid );
+
+  // prepare Time objects for every possible time stamp within min_delay_
+  std::vector< Time > prepared_timestamps( kernel().connection_manager.get_min_delay() );
+  for ( size_t lag = 0; lag < static_cast< size_t >( kernel().connection_manager.get_min_delay() ); ++lag )
+  {
+    // Subtract min_delay because spikes were emitted in previous time slice and we use current clock.
+    prepared_timestamps[ lag ] =
+      kernel().simulation_manager.get_clock() + Time::step( lag + 1 - kernel().connection_manager.get_min_delay() );
+  }
+
+  // The buffers of the groups are delivered in the order of the groups, which is the order of the threads that emitted
+  // the spikes, as the collocation into a send buffer does. Hence the order of the events in the ring buffers, and the
+  // result, is the same as with the MPI buffers. As in deliver_events_(), the entries are processed in batches: the
+  // independent look-ups in the compressed spike data (a row of num_threads entries per spike, usually not in the
+  // cache) are issued together, then the events are sent.
+  constexpr size_t SPIKES_PER_BATCH = 8;
+  SpikeEvent se_batch[ SPIKES_PER_BATCH ];
+  size_t syn_id_batch[ SPIKES_PER_BATCH ];
+  size_t lcid_batch[ SPIKES_PER_BATCH ];
+
+  // The buffers were written by the group leaders just before, so their cache lines are in the caches of other cores,
+  // possibly on another socket. Requesting all lines at once lets these transfers overlap; otherwise every batch waits
+  // for its line in turn. The buffers hold only the spikes of one cycle (a few cache lines).
+#if defined( __GNUC__ ) || defined( __clang__ )
+  for ( const auto& group : group_buffers_ )
+  {
+    const char* data = reinterpret_cast< const char* >( group[ 0 ].data() );
+    const size_t bytes = group[ 0 ].size() * sizeof( SpikeData );
+    for ( size_t offset = 0; offset < bytes; offset += 64 )
+    {
+      __builtin_prefetch( data + offset );
+    }
+  }
+#endif
+
+  for ( const auto& group : group_buffers_ )
+  {
+    const std::vector< SpikeData >& buffer = group[ 0 ];  // single MPI process: target rank 0
+    const size_t num_entries = buffer.size();
+    for ( size_t start = 0; start < num_entries; start += SPIKES_PER_BATCH )
+    {
+      const size_t n = std::min( SPIKES_PER_BATCH, num_entries - start );
+      for ( size_t j = 0; j < n; ++j )
+      {
+        const SpikeData& spike_data = buffer[ start + j ];
+        se_batch[ j ].set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
+        se_batch[ j ].set_offset( spike_data.get_offset() );
+        se_batch[ j ].set_flush_event_flag( spike_data.is_flush_event() );
+        syn_id_batch[ j ] = spike_data.get_syn_id();
+        // for compressed spikes lcid holds the index in the compressed_spike_data structure
+        lcid_batch[ j ] = spike_data.get_lcid();
+      }
+      for ( size_t j = 0; j < n; ++j )
+      {
+        // find the spike-data entry for this thread
+        const std::vector< SpikeData >& compressed_spike_data =
+          kernel().connection_manager.get_compressed_spike_data( syn_id_batch[ j ], lcid_batch[ j ] );
+        lcid_batch[ j ] = compressed_spike_data[ tid ].get_lcid();
+      }
+      for ( size_t j = 0; j < n; ++j )
+      {
+        if ( lcid_batch[ j ] != invalid_lcid )
+        {
+          // non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
+          // only if needed, as this is computationally costly
+          se_batch[ j ].set_sender_node_id_info( tid, syn_id_batch[ j ], lcid_batch[ j ] );
+        }
+      }
+      for ( size_t j = 0; j < n; ++j )
+      {
+        if ( lcid_batch[ j ] != invalid_lcid )
+        {
+          kernel().connection_manager.send( tid, syn_id_batch[ j ], lcid_batch[ j ], cm, se_batch[ j ] );
+        }
+      }
+    }
+  }
 }
 
 template < typename SpikeDataT >

@@ -194,6 +194,14 @@ class NestModule(types.ModuleType):
     total_num_virtual_procs = KernelAttribute("int", "The total number of virtual processes", default=1)
     local_num_threads = KernelAttribute("int", "The local number of threads", default=1)
     num_processes = KernelAttribute("int", "The number of MPI processes", readonly=True)
+    collocation_groups = KernelAttribute(
+        "int",
+        (
+            "Number of groups of threads that collocate the spike registers in parallel; 1: the master thread "
+            "collocates alone. Can only be changed before the first call of Simulate"
+        ),
+        default=1,
+    )
     off_grid_spiking = KernelAttribute(
         "bool",
         "Whether to transmit precise spike times in MPI communication",

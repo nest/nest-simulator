@@ -47,6 +47,9 @@ EventDeliveryManager::EventDeliveryManager()
   : off_grid_spiking_( false )
   , moduli_()
   , slice_moduli_()
+  , num_moduli_( 0 )
+  , offsets_()
+  , slice_moduli_period_( 1 )
   , emitted_spikes_register_()
   , off_grid_emitted_spikes_register_()
   , send_buffer_secondary_events_()
@@ -259,47 +262,35 @@ EventDeliveryManager::init_moduli()
   // with given time stamps, relative to the beginning of the slice in which
   // the spikes are delivered from the queue, ie, the slice after the one
   // in which they were generated. The pertaining offsets are 0..max_delay-1.
-  moduli_.resize( min_delay + max_delay );
-
-  for ( long d = 0; d < min_delay + max_delay; ++d )
+  // The table covers two periods, so that offset + d never needs a wrap-around.
+  num_moduli_ = min_delay + max_delay;
+  moduli_.resize( 2 * num_moduli_ );
+  for ( long i = 0; i < 2 * num_moduli_; ++i )
   {
-    moduli_[ d ] = ( kernel().simulation_manager.get_clock().get_steps() + d ) % ( min_delay + max_delay );
+    moduli_[ i ] = i % num_moduli_;
   }
 
   // Slice-based ring-buffers have one bin per min_delay steps,
   // up to max_delay.  Time is counted as for normal ring buffers.
-  // The slice_moduli_ table maps time steps to these bins
-  const size_t nbuff = static_cast< size_t >( std::ceil( static_cast< double >( min_delay + max_delay ) / min_delay ) );
-  slice_moduli_.resize( min_delay + max_delay );
-  for ( long d = 0; d < min_delay + max_delay; ++d )
+  // The slice_moduli_ table maps time steps to these bins; it is periodic in the clock with period min_delay * nbuff.
+  const long nbuff = static_cast< long >( std::ceil( static_cast< double >( min_delay + max_delay ) / min_delay ) );
+  slice_moduli_period_ = min_delay * nbuff;
+  slice_moduli_.resize( slice_moduli_period_ + num_moduli_ );
+  for ( long i = 0; i < slice_moduli_period_ + num_moduli_; ++i )
   {
-    slice_moduli_[ d ] = ( ( kernel().simulation_manager.get_clock().get_steps() + d ) / min_delay ) % nbuff;
+    slice_moduli_[ i ] = ( i / min_delay ) % nbuff;
   }
+
+  update_moduli();
 }
 
 void
 EventDeliveryManager::update_moduli()
 {
-  long min_delay = kernel().connection_manager.get_min_delay();
-  long max_delay = kernel().connection_manager.get_max_delay();
-  assert( min_delay != 0 );
-  assert( max_delay != 0 );
-
-  /*
-   * Note that for updating the modulos, it is sufficient
-   * to rotate the buffer to the left.
-   */
-  assert( moduli_.size() == ( size_t ) ( min_delay + max_delay ) );
-  std::rotate( moduli_.begin(), moduli_.begin() + min_delay, moduli_.end() );
-
-  // For the slice-based ring buffer, we cannot rotate the table, but
-  // have to re-compute it, since max_delay_ may not be a multiple of
-  // min_delay_.  Reference time is the time at the beginning of the slice.
-  const size_t nbuff = static_cast< size_t >( std::ceil( static_cast< double >( min_delay + max_delay ) / min_delay ) );
-  for ( long d = 0; d < min_delay + max_delay; ++d )
-  {
-    slice_moduli_[ d ] = ( ( kernel().simulation_manager.get_clock().get_steps() + d ) / min_delay ) % nbuff;
-  }
+  assert( num_moduli_ > 0 );
+  const long steps = kernel().simulation_manager.get_clock().get_steps();
+  offsets_.moduli_offset = steps % num_moduli_;
+  offsets_.slice_moduli_offset = steps % slice_moduli_period_;
 }
 
 void

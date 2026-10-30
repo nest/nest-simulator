@@ -63,6 +63,10 @@ For the same parameters and the same input, ``iaf_psc_exp_hpc`` produces exactly
 synaptic currents and spikes as ``iaf_psc_exp`` with :math:`\delta = 0`. It needs less memory per neuron and less
 work per time step.
 
+As for the synapse models ending in ``_hpc``, the suffix marks a component that is optimized for performance rather
+than for the convenience of the researcher. ``iaf_psc_exp`` keeps the full functionality under the simple name based on
+its contents, for example for use in an educational context.
+
 Membrane potential evolution, spike emission, and refractoriness
 ................................................................
 

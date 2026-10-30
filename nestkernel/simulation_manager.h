@@ -27,6 +27,7 @@
 #include <sys/time.h>
 
 // C++ includes:
+#include <memory>
 #include <vector>
 
 // Includes from libnestutil:
@@ -216,7 +217,16 @@ private:
                                 //!< simulations (or not)
   bool use_tree_barrier_;       //!< Use the spinning tree barrier instead of the OpenMP barriers in the update loop
   size_t tree_barrier_fan_in_;  //!< Fan-in of the tree barrier (threads per group)
-  TreeBarrier tree_barrier_;
+  /**
+   * Spinning barrier of the update loop, used if use_tree_barrier_ is set.
+   *
+   * Held through a pointer on purpose: TreeBarrier contains a member aligned to a cache line, and as a direct member it
+   * would align SimulationManager to 64 bytes and move the managers that follow it in KernelManager by several cache
+   * lines. On the multi-area model this layout change alone made the simulation 1.4 % slower with the barrier switched
+   * off (more time waiting for the slowest thread); with the pointer the difference to NEST without the barrier was
+   * within the scatter between runs.
+   */
+  std::unique_ptr< TreeBarrier > tree_barrier_;
   bool use_wfr_;                    //!< Indicates wheter waveform relaxation is used
   double wfr_comm_interval_;        //!< Desired waveform relaxation communication
                                     //!< interval (in ms)

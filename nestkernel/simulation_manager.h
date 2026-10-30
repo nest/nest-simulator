@@ -27,11 +27,13 @@
 #include <sys/time.h>
 
 // C++ includes:
+#include <memory>
 #include <vector>
 
 // Includes from libnestutil:
 #include "manager_interface.h"
 #include "stopwatch.h"
+#include "tree_barrier.h"
 
 // Includes from nestkernel:
 #include "cycle_time_log.h"
@@ -225,6 +227,31 @@ private:
                                     //!< than update_time_limit_ (seconds, default inf)
   double min_update_time_;          //!< shortest update time seen so far (seconds)
   double max_update_time_;          //!< longest update time seen so far (seconds)
+
+  //! Switch, fan-in and state of the spinning tree barrier of the update loop.
+  struct TreeBarrierControl
+  {
+    TreeBarrierControl()
+      : use( false )
+      , fan_in( 8 )
+      , barrier()
+    {
+    }
+
+    bool use;       //!< Use the tree barrier instead of the OpenMP barriers in the update loop
+    size_t fan_in;  //!< Fan-in of the tree barrier (threads per group)
+    TreeBarrier barrier;
+  };
+
+  /**
+   * Tree barrier of the update loop, held through a single pointer on purpose.
+   *
+   * The speed of large simulations depends on the layout of SimulationManager and of the managers that follow it in
+   * KernelManager. On the multi-area model (8 nodes, barrier switched off) adding the members of the tree barrier
+   * directly, or 64 unused bytes, made the simulation 0.8 to 2.3 % slower, whereas 8 additional bytes made no
+   * difference. All members of the tree barrier therefore live on the heap.
+   */
+  std::unique_ptr< TreeBarrierControl > tree_barrier_;
 
   // private stop watches for benchmarking purposes
   Stopwatch< StopwatchGranularity::Normal, StopwatchParallelism::MasterOnly > sw_simulate_;

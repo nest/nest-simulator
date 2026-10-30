@@ -194,6 +194,16 @@ class NestModule(types.ModuleType):
     total_num_virtual_procs = KernelAttribute("int", "The total number of virtual processes", default=1)
     local_num_threads = KernelAttribute("int", "The local number of threads", default=1)
     num_processes = KernelAttribute("int", "The number of MPI processes", readonly=True)
+    tree_barrier = KernelAttribute(
+        "bool",
+        "Whether the threads synchronize in the update loop with a spinning tree barrier instead of OpenMP barriers",
+        default=False,
+    )
+    tree_barrier_fan_in = KernelAttribute(
+        "int",
+        "Number of consecutive threads that form a group of the tree barrier (a core complex or socket)",
+        default=8,
+    )
     off_grid_spiking = KernelAttribute(
         "bool",
         "Whether to transmit precise spike times in MPI communication",

@@ -545,6 +545,7 @@ SimulationManager::prepare()
 
   kernel().node_manager.update_thread_local_node_data();
   kernel().node_manager.prepare_nodes();
+  kernel().connection_manager.clear_direct_spike_tables();  // input buffers may have been reallocated
 
   // we have to do enter_runtime after prepare_nodes, since we use
   // calibrate to map the ports of MUSIC devices, which has to be done

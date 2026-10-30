@@ -40,6 +40,7 @@
 #include "connection_id.h"
 #include "connection_label.h"
 #include "connector_model.h"
+#include "direct_spike_delivery.h"
 #include "event.h"
 #include "nest_names.h"
 #include "node.h"
@@ -214,6 +215,13 @@ public:
    * Remove disabled connections from the connector.
    */
   virtual void remove_disabled_connections( const size_t first_disabled_index ) = 0;
+
+  /**
+   * Discard the input-buffer addresses of the targets used by direct spike delivery.
+   *
+   * Called by SimulationManager::prepare(), because input buffers may be reallocated there.
+   */
+  virtual void clear_direct_spike_table() = 0;
 };
 
 /**
@@ -224,6 +232,13 @@ class Connector : public ConnectorBase
 {
 private:
   BlockVector< ConnectionT > C_;
+
+  /**
+   * Input-buffer addresses of the targets, indexed by target index.
+   *
+   * Only used for hpc connections with ConnectionT::supports_direct_delivery, see send_direct_().
+   */
+  DirectSpikeTable direct_table_;
   const synindex syn_id_;
 
 public:
@@ -408,6 +423,15 @@ public:
     typename ConnectionT::CommonPropertiesType const& cp =
       static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties();
 
+    if constexpr ( ConnectionT::supports_direct_delivery )
+    {
+      const size_t n_targets = send_direct_( tid, lcid, cp, e );
+      if ( n_targets > 0 )
+      {
+        return n_targets;
+      }
+    }
+
     size_t lcid_offset = 0;
 
     while ( true )
@@ -433,6 +457,35 @@ public:
     }
 
     return 1 + lcid_offset;  // event was delivered to at least one target
+  }
+
+  /**
+   * Deliver a spike to the targets of the segment starting at lcid directly into their input buffers.
+   *
+   * Adds the weight directly to the input buffer of the target, bypassing Connection::send(),
+   * SpikeEvent::operator() and the virtual Node::handle( SpikeEvent& ). Targets whose model does not
+   * support this are served by the regular path. Has the same effect as the regular path, see
+   * Node::get_direct_spike_input() for the contract.
+   *
+   * Returns 0 and does nothing unless the kernel parameter direct_spike_delivery is set, the event is a
+   * plain SpikeEvent of multiplicity 1 and the connections have no weight recorder. Otherwise returns the
+   * number of connections of the segment (the return value of send()), which is at least 1.
+   *
+   * @note The loop over the segment advances the connection index unconditionally and uses
+   * source_has_more_targets() only as the loop condition. Do not derive the index from the flag (for
+   * example `lcid_offset += more_targets`): the address of the next connection would then depend on data of
+   * the current one, the loads of consecutive connections could no longer overlap, and PD14 became 1 to 2 %
+   * slower (measured 2026-10-29, 2 x 64 threads, Zen3).
+   *
+   * Implemented in connector_base_impl.h
+   */
+  size_t
+  send_direct_( const size_t tid, const size_t lcid, const typename ConnectionT::CommonPropertiesType& cp, Event& e );
+
+  void
+  clear_direct_spike_table() override
+  {
+    direct_table_.clear();
   }
 
   // Implemented in connector_base_impl.h

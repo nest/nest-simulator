@@ -460,7 +460,13 @@ public:
   // start and stop in high-level connect functions in nestmodule.cpp and nest.cpp
   Stopwatch< StopwatchGranularity::Normal, StopwatchParallelism::MasterOnly > sw_construction_connect;
 
-  const std::vector< SpikeData >& get_compressed_spike_data( const synindex syn_id, const size_t idx );
+  /**
+   * Local connection index (lcid) of the first target on thread tid of a source in the compressed spike data.
+   *
+   * The source has index idx in the compressed spike data of synapse type syn_id. Returns invalid_lcid if the source
+   * has no target on this thread.
+   */
+  size_t get_compressed_spike_data_lcid( const size_t tid, const synindex syn_id, const size_t idx ) const;
 
   //! Set iteration_state_ entries for all threads to beginning of compressed_spike_data_map_.
   void initialize_iteration_state();
@@ -629,8 +635,26 @@ private:
    * A structure to hold "unpacked" spikes on the postsynaptic side if
    * spike compression is enabled. Internally arranged in a 3d
    * structure: synapses|sources|target_threads
+   *
+   * With compressed_spike_data_copies_ > 1 this structure is only used while the copies are made and is empty
+   * afterwards.
    */
   std::vector< std::vector< std::vector< SpikeData > > > compressed_spike_data_;
+
+  /**
+   * Number of copies of the compressed spike data (kernel parameter compressed_spike_data_copies, default 1).
+   *
+   * The threads are divided into this many blocks of consecutive thread numbers. Every block has its own copy of the
+   * compressed spike data that contains only the columns of the threads of the block and is written by the first thread
+   * of the block. If the threads of a block run on the cores of one NUMA domain (e.g. one socket), the look-ups of the
+   * delivery read memory of their own domain, as with one MPI process per domain.
+   */
+  size_t compressed_spike_data_copies_;
+
+  //! The copies: [block][synapses][sources][threads of the block] (empty if compressed_spike_data_copies_ == 1).
+  std::vector< std::vector< std::vector< std::vector< SpikeData > > > > compressed_spike_data_blocks_;
+  std::vector< size_t > compressed_spike_data_block_of_;   //!< block of every thread
+  std::vector< size_t > compressed_spike_data_column_of_;  //!< column of every thread in the copy of its block
 
   /**
    * Stores absolute position in receive buffer of secondary events.
@@ -927,10 +951,16 @@ ConnectionManager::set_source_has_more_targets( const size_t tid,
   connections_[ tid ][ syn_id ]->set_source_has_more_targets( lcid, more_targets );
 }
 
-inline const std::vector< SpikeData >&
-ConnectionManager::get_compressed_spike_data( const synindex syn_id, const size_t idx )
+inline size_t
+ConnectionManager::get_compressed_spike_data_lcid( const size_t tid, const synindex syn_id, const size_t idx ) const
 {
-  return compressed_spike_data_[ syn_id ][ idx ];
+  if ( compressed_spike_data_blocks_.empty() )
+  {
+    return compressed_spike_data_[ syn_id ][ idx ][ tid ].get_lcid();
+  }
+  return compressed_spike_data_blocks_[ compressed_spike_data_block_of_[ tid ] ][ syn_id ][ idx ]
+                                      [ compressed_spike_data_column_of_[ tid ] ]
+                                        .get_lcid();
 }
 
 inline void

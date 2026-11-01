@@ -407,8 +407,21 @@ public:
   /**
    * Sets flag indicating whether connection information needs to be
    * communicated to false.
+   *
+   * Also resets the flag set by a change of compressed_spike_data_copies; both are reset once the connection
+   * infrastructure has been rebuilt.
    */
   void unset_connections_have_changed();
+
+  /**
+   * Whether the number of copies of the compressed spike data has changed since the connection infrastructure was
+   * built.
+   *
+   * The infrastructure, and with it the copies, has then to be rebuilt before the next simulation. This flag is
+   * separate from connections_have_changed(), because the latter also makes get_status() exchange the delay extrema
+   * between the MPI processes, so that a GetKernelStatus on a single process would leave the processes out of step.
+   */
+  bool compressed_spike_data_copies_changed() const;
 
   /**
    * Deletes TargetTable and resets processed flags of
@@ -651,6 +664,9 @@ private:
    */
   size_t compressed_spike_data_copies_;
 
+  //! Set when compressed_spike_data_copies_ changes, see compressed_spike_data_copies_changed().
+  bool compressed_spike_data_copies_changed_;
+
   //! The copies: [block][synapses][sources][threads of the block] (empty if compressed_spike_data_copies_ == 1).
   std::vector< std::vector< std::vector< std::vector< SpikeData > > > > compressed_spike_data_blocks_;
   std::vector< size_t > compressed_spike_data_block_of_;   //!< block of every thread
@@ -842,6 +858,12 @@ inline bool
 ConnectionManager::connections_have_changed() const
 {
   return connections_have_changed_;
+}
+
+inline bool
+ConnectionManager::compressed_spike_data_copies_changed() const
+{
+  return compressed_spike_data_copies_changed_;
 }
 
 inline void

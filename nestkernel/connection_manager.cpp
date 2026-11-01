@@ -75,6 +75,7 @@ ConnectionManager::ConnectionManager()
   , get_connections_has_been_called_( false )
   , use_compressed_spikes_( true )
   , compressed_spike_data_copies_( 1 )
+  , compressed_spike_data_copies_changed_( false )
   , has_primary_connections_( false )
   , check_primary_connections_()
   , secondary_connections_exist_( false )
@@ -114,6 +115,7 @@ ConnectionManager::initialize( const bool adjust_number_of_threads_or_rng_only )
     get_connections_has_been_called_ = false;
     use_compressed_spikes_ = true;
     compressed_spike_data_copies_ = 1;
+    compressed_spike_data_copies_changed_ = false;
     stdp_eps_ = 1.0e-6;
     min_delay_ = max_delay_ = 1;
     sw_construction_connect.reset();
@@ -209,8 +211,9 @@ ConnectionManager::set_status( const Dictionary& d )
     if ( static_cast< size_t >( copies ) != compressed_spike_data_copies_ )
     {
       compressed_spike_data_copies_ = copies;
-      // the copies are made when the connection infrastructure is built
-      connections_have_changed_ = true;
+      // the copies are made when the connection infrastructure is built; not connections_have_changed_, see
+      // compressed_spike_data_copies_changed()
+      compressed_spike_data_copies_changed_ = true;
     }
   }
 
@@ -1786,6 +1789,7 @@ void
 ConnectionManager::unset_connections_have_changed()
 {
   connections_have_changed_ = false;
+  compressed_spike_data_copies_changed_ = false;
 }
 
 

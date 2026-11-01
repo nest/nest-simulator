@@ -33,12 +33,16 @@ import pytest
 pytestmark = pytest.mark.skipif_missing_threads
 
 
-def build_and_run(copies, threads=4, compressed=True, change_between=None, synapse_model="static_synapse"):
+def build_and_run(
+    copies, threads=4, compressed=True, change_between=None, synapse_model="static_synapse", status_on_rank_0=False
+):
     nest.ResetKernel()
     nest.local_num_threads = threads
     nest.rng_seed = 321
     nest.use_compressed_spikes = compressed
     nest.compressed_spike_data_copies = copies
+    if status_on_rank_0:
+        nest.GetKernelStatus()  # on one process only, see test_kernel_status_on_one_process
 
     n_ex, n_in = 80, 20
     neurons = nest.Create("iaf_psc_exp", n_ex + n_in, params={"I_e": 300.0})
@@ -73,5 +77,20 @@ def test_identical_results(threads, copies):
     ref = build_and_run(1, threads)
     cpy = build_and_run(copies, threads)
     assert len(ref[0]) > 0
+    for a, b in zip(ref, cpy):
+        assert np.array_equal(a, b)
+
+
+@pytest.mark.parametrize("change_between", [None, 3])
+def test_kernel_status_on_one_process(change_between):
+    """
+    Setting the number of copies must not make GetKernelStatus a collective operation.
+
+    GetKernelStatus exchanges the delay extrema between the MPI processes if the connections have changed. If setting
+    the parameter marked the connections as changed, a call on one process only would leave the processes out of step,
+    and the simulation would hang.
+    """
+    ref = build_and_run(1, threads=2)
+    cpy = build_and_run(2, threads=2, change_between=change_between, status_on_rank_0=nest.Rank() == 0)
     for a, b in zip(ref, cpy):
         assert np.array_equal(a, b)

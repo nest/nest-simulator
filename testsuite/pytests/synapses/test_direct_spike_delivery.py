@@ -25,7 +25,7 @@ Test that direct spike delivery (kernel parameter ``direct_spike_delivery``) giv
 results as the regular delivery path.
 
 Direct delivery applies to static_synapse_hpc connections onto neuron models that support it
-(currently iaf_psc_exp); all other targets must be served by the regular path.
+(currently iaf_psc_exp and iaf_psc_alpha); all other targets must be served by the regular path.
 """
 
 import nest
@@ -105,20 +105,23 @@ def test_default_is_off_and_resets():
     assert nest.direct_spike_delivery is False
 
 
-def test_identical_to_regular_delivery():
-    ref = build_and_run(False)
+@pytest.mark.parametrize("target_model", ["iaf_psc_exp", "iaf_psc_alpha"])
+def test_identical_to_regular_delivery(target_model):
+    ref = build_and_run(False, target_model=target_model)
     assert len(ref[0]) > 0, "network must spike"
-    assert_identical(ref, build_and_run(True))
+    assert_identical(ref, build_and_run(True, target_model=target_model))
 
 
-def test_identical_with_nodes_added_between_simulations():
-    ref = build_and_run(False, extra_nodes=True)
-    assert_identical(ref, build_and_run(True, extra_nodes=True))
+@pytest.mark.parametrize("target_model", ["iaf_psc_exp", "iaf_psc_alpha"])
+def test_identical_with_nodes_added_between_simulations(target_model):
+    ref = build_and_run(False, target_model=target_model, extra_nodes=True)
+    assert_identical(ref, build_and_run(True, target_model=target_model, extra_nodes=True))
 
 
 def test_unsupported_target_model_uses_regular_path():
-    ref = build_and_run(False, target_model="iaf_psc_alpha")
-    assert_identical(ref, build_and_run(True, target_model="iaf_psc_alpha"))
+    ref = build_and_run(False, target_model="iaf_psc_delta")
+    assert len(ref[0]) > 0, "network must spike"
+    assert_identical(ref, build_and_run(True, target_model="iaf_psc_delta"))
 
 
 def test_weight_recorder_still_receives_events():

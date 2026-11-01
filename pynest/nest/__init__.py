@@ -336,6 +336,8 @@ class NestModule(types.ModuleType):
             + " a thread of the block. If the threads of a block are pinned to one NUMA"
             + " domain, e.g. one socket, the look-ups during spike delivery read local"
             + " memory. A typical value is the number of NUMA domains used by the process."
+            + " The copies are made when the connection infrastructure is built at the next"
+            + " simulation; the value can also be changed between simulations."
         ),
         default=1,
     )

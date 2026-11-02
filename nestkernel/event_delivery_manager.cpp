@@ -25,6 +25,11 @@
 // C++ includes:
 #include <algorithm>  // rotate
 #include <numeric>    // accumulate
+#include <thread>     // this_thread::yield
+
+#if defined( __x86_64__ ) or defined( _M_X64 )
+#include <immintrin.h>  // _mm_pause
+#endif
 
 // Includes from nestkernel:
 #include "connection_manager.h"
@@ -397,6 +402,14 @@ EventDeliveryManager::collocate_groups( const size_t tid )
     return;
   }
   const size_t last = ( ( g + 1 ) * num_threads + groups - 1 ) / groups;
+  if ( tid == 0 )
+  {
+    // Only the master thread records this stopwatch, and the master thread leads group 0,
+    // so this measures the collocation of group 0, not of all groups. With several MPI
+    // processes, the same stopwatch also measures the concatenation in gather_spike_data_;
+    // the time the master thread waits there for the other groups is not included.
+    sw_collocate_spike_data_.start();
+  }
   for ( auto& buffer : group_buffers_[ g ] )
   {
     buffer.clear();
@@ -407,6 +420,10 @@ EventDeliveryManager::collocate_groups( const size_t tid )
     {
       group_buffers_[ g ][ e.rank ].push_back( e.spike_data );
     }
+  }
+  if ( tid == 0 )
+  {
+    sw_collocate_spike_data_.stop();
   }
   if ( kernel().mpi_manager.get_num_processes() > 1 )
   {
@@ -425,8 +442,26 @@ EventDeliveryManager::gather_spike_data()
       return;
     }
     // wait for the other groups; the first thread of the first group is the master thread
+    unsigned int spins = 0;
     while ( groups_collocated_.load( std::memory_order_acquire ) < group_buffers_.size() )
     {
+      if ( spins < 100 )
+      {
+        // Pause briefly. This keeps the waiting thread from competing with the other
+        // hardware thread on the same core, but it does not give up the core.
+#if defined( __x86_64__ ) or defined( _M_X64 )
+        _mm_pause();
+#elif defined( __aarch64__ )
+        __asm__ __volatile__( "yield" );
+#endif
+        ++spins;
+      }
+      else
+      {
+        // Give the rest of the time slice back to the operating system. This is the
+        // only help when there are more threads than cores, as on CI runners.
+        std::this_thread::yield();
+      }
     }
     groups_collocated_.store( 0, std::memory_order_relaxed );
   }
@@ -587,6 +622,13 @@ EventDeliveryManager::concatenate_group_buffers_( SendBufferPosition& send_buffe
   std::vector< SpikeDataT >& send_buffer,
   std::vector< size_t >& num_spikes_per_rank )
 {
+  // At the moment, the master thread copies the buffers of all groups alone. The first thread
+  // of each group could instead write its spikes directly into the send buffer, at the positions
+  // that follow from the numbers of spikes of the groups before it, counted per target rank.
+  // That requires these numbers first, and it must keep the order of the groups. It must also
+  // keep the behaviour when a chunk is full: all spikes are counted, only those that fit are
+  // written, and the caller repeats the call with a larger send buffer.
+  //
   // as in collocate_spike_data_buffers_(): all spikes are counted, only those that fit into the chunk are written
   for ( const auto& group : group_buffers_ )
   {

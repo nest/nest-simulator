@@ -33,7 +33,7 @@ import pytest
 pytestmark = pytest.mark.skipif_missing_threads
 
 
-def build_and_run(groups, threads=4, two_simulations=True, synapse_model="static_synapse", record_all=True):
+def build_and_run(groups, threads=4, two_simulations=True, synapse_model="static_synapse", connect_between=False):
     nest.ResetKernel()
     nest.local_num_threads = threads
     nest.rng_seed = 321
@@ -60,6 +60,10 @@ def build_and_run(groups, threads=4, two_simulations=True, synapse_model="static
     )
     nest.Connect(neurons, rec)
     nest.Simulate(100.0)
+    if connect_between:
+        # Connect between two Simulate calls rebuilds the connection infrastructure.
+        # The spikes of the last cycle of the first call must still be delivered.
+        nest.Connect(neurons[:5], neurons[:5], syn_spec={"weight": 5.0, "delay": 1.0})
     if two_simulations:
         # spikes of the last cycle of the first call must be delivered at the start of the second call
         nest.Simulate(100.0)
@@ -96,3 +100,38 @@ def test_parameter():
     nest.Simulate(1.0)
     with pytest.raises(nest.NESTErrors.BadProperty):
         nest.collocation_groups = 3
+
+
+# Connect between the two Simulate calls rebuilds the connection infrastructure.
+# The spikes of the last cycle of the first call are in the group buffers at that
+# moment and must still be delivered, with the same result as without groups.
+def test_identical_results_connect_between_simulations():
+    ref = build_and_run(1, connect_between=True)
+    grp = build_and_run(2, connect_between=True)
+    assert np.array_equal(ref[0], grp[0]) and np.array_equal(ref[1], grp[1])
+
+
+# One Prepare call, then two Run calls, then Cleanup. The spikes of the last
+# cycle of the first Run call are in the group buffers at the start of the
+# second Run call, with no prepare step in between. The test checks only that
+# the result is the same as without groups.
+def test_identical_results_prepare_run_run_cleanup():
+    def run(groups):
+        nest.ResetKernel()
+        nest.local_num_threads = 4
+        nest.rng_seed = 321
+        nest.collocation_groups = groups
+        neurons = nest.Create("iaf_psc_exp", 100, params={"I_e": 400.0})
+        neurons.V_m = nest.random.uniform(-70.0, -55.0)
+        nest.Connect(neurons, neurons, {"rule": "fixed_indegree", "indegree": 10}, {"weight": 20.0, "delay": 1.0})
+        rec = nest.Create("spike_recorder")
+        nest.Connect(neurons, rec)
+        nest.Prepare()
+        nest.Run(50.0)
+        nest.Run(50.0)
+        nest.Cleanup()
+        return rec.events["senders"], rec.events["times"]
+
+    ref, grp = run(1), run(2)
+    assert len(ref[0]) > 0
+    assert np.array_equal(ref[0], grp[0]) and np.array_equal(ref[1], grp[1])

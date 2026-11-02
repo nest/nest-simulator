@@ -33,7 +33,7 @@ import pytest
 pytestmark = pytest.mark.skipif_missing_threads
 
 
-def build_and_run(groups, threads=4, two_simulations=True, synapse_model="static_synapse", record_all=True):
+def build_and_run(groups, threads=4, two_simulations=True, synapse_model="static_synapse", connect_between=False):
     nest.ResetKernel()
     nest.local_num_threads = threads
     nest.rng_seed = 321
@@ -60,6 +60,10 @@ def build_and_run(groups, threads=4, two_simulations=True, synapse_model="static
     )
     nest.Connect(neurons, rec)
     nest.Simulate(100.0)
+    if connect_between:
+        # Connect between two Simulate calls rebuilds the connection infrastructure.
+        # The spikes of the last cycle of the first call must still be delivered.
+        nest.Connect(neurons[:5], neurons[:5], syn_spec={"weight": 5.0, "delay": 1.0})
     if two_simulations:
         # spikes of the last cycle of the first call must be delivered at the start of the second call
         nest.Simulate(100.0)
@@ -71,6 +75,17 @@ def build_and_run(groups, threads=4, two_simulations=True, synapse_model="static
 def test_identical_results(threads, groups):
     ref = build_and_run(1, threads)
     grp = build_and_run(groups, threads)
+    assert len(ref[0]) > 0
+    for a, b in zip(ref, grp):
+        assert np.array_equal(a, b)
+
+
+# Connect between the two Simulate calls rebuilds the connection infrastructure.
+# The spikes of the last cycle of the first call are in the group buffers at that
+# moment and must still be delivered, with the same result as without groups.
+def test_identical_results_connect_between_simulations():
+    ref = build_and_run(1, connect_between=True)
+    grp = build_and_run(2, connect_between=True)
     assert len(ref[0]) > 0
     for a, b in zip(ref, grp):
         assert np.array_equal(a, b)

@@ -162,6 +162,13 @@ public:
    */
   virtual size_t send( const size_t tid, const size_t lcid, const std::vector< ConnectorModel* >& cm, Event& e ) = 0;
 
+  /**
+   * Prefetch the connection at position lcid into the cache.
+   *
+   * A hint for the processor without effect on the simulation; see EventDeliveryManager::deliver_events_prefetch_().
+   */
+  virtual void prefetch_connection( const size_t lcid ) const = 0;
+
   virtual void
   send_weight_event( const size_t tid, const unsigned int lcid, Event& e, const CommonSynapseProperties& cp ) = 0;
 
@@ -395,6 +402,12 @@ public:
       assert( not C_[ lcid ].is_disabled() );
       C_[ lcid ].send( e, tid, cp );
     }
+  }
+
+  void
+  prefetch_connection( const size_t lcid ) const override
+  {
+    __builtin_prefetch( &C_[ lcid ] );
   }
 
   size_t

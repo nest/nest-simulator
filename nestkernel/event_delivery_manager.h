@@ -333,6 +333,30 @@ private:
   void deliver_events_( const size_t tid, const std::vector< SpikeDataT >& recv_buffer );
 
   /**
+   * Deliver the compressed spikes in recv_buffer with software prefetching (spike_delivery_prefetch_).
+   *
+   * Same as deliver_events_() for compressed spikes, but the full batches of every rank are delivered by
+   * deliver_batches_prefetch_(). A separate function, so that deliver_events_() is compiled from unchanged source.
+   */
+  template < typename SpikeDataT >
+  void deliver_events_prefetch_( const size_t tid, const std::vector< SpikeDataT >& recv_buffer );
+
+  /**
+   * Deliver the full batches of compressed-spike entries of one rank with software prefetching.
+   *
+   * The batches are delivered in the same order and with the same operations as in deliver_events_(), so the results
+   * are identical. In addition, the memory that later batches will need is prefetched: the header and the entry of
+   * the compressed spike data four and three batches ahead, and the first connection of every entry with a target on
+   * the thread two batches ahead, where the look-up of the compressed spike data is done.
+   */
+  template < typename SpikeDataT >
+  void deliver_batches_prefetch_( const size_t tid,
+    const SpikeDataT* const entries,
+    const size_t num_batches,
+    const std::vector< Time >& prepared_timestamps,
+    const std::vector< ConnectorModel* >& cm );
+
+  /**
    * Deletes all spikes from spike registers and resets spike
    * counters.
    */
@@ -384,6 +408,15 @@ private:
 
   bool off_grid_spiking_;  //!< indicates whether spikes are not constrained to
                            //!< the grid
+
+  /**
+   * Software prefetching in the delivery of compressed spikes (kernel parameter spike_delivery_prefetch, default
+   * false).
+   *
+   * See deliver_events_prefetch_(). Kept next to off_grid_spiking_ so that it occupies padding and the size of the
+   * manager does not change.
+   */
+  bool spike_delivery_prefetch_;
 
   /**
    * Table of pre-computed modulos.

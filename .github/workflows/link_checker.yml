@@ -12,24 +12,23 @@ permissions:
 
 jobs:
   link_checker:
+     if: github.repository_owner == "nest"
     runs-on: "ubuntu-24.04"
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
         with:
           egress-policy: audit
           disable-telemetry: true
 
       - name: "Checkout repository content"
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-        with:
-          fetch-depth: 0
 
       - name: Restore Lychee Cache
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .lycheecache
-          key: lychee-cache-${{ runner.os }}-${{ github.sha }}
+          key: lychee-cache-${{ runner.os }}-${{ github.run_id }} 
           restore-keys: |
             lychee-cache-${{ runner.os }}-
 
@@ -46,7 +45,7 @@ jobs:
       - name: Link Checker
         uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
         with:
-          args: --cache --max-cache-age 1d --files-from lychee_files_list.txt
+          args: --cache --max-cache-age 1d --cache-exclude-status '400..=599' --files-from lychee_files_list.txt
           fail: true
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

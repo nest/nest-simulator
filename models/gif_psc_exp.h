@@ -151,7 +151,7 @@ The following parameters can be set in the status dictionary.
 =========  ========== ====================================================
 **Spike adaptation and firing intensity parameters**
 --------------------------------------------------------------------------
-q_stc      list of nA   Values added to spike-triggered currents (stc)
+q_stc      list of pA   Values added to spike-triggered currents (stc)
                         after each spike emission
 tau_stc    list of ms   Time constants of stc variables
 q_sfa      list of mV   Values added to spike-frequency adaptation

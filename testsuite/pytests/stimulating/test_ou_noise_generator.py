@@ -223,15 +223,7 @@ def _run_ou_with_on_off(
     nest.Connect(mm, ou, syn_spec={"weight": 1.0})
 
     for k in range(n_sections):
-        ou.set(
-            {
-                "origin": float(k * section_ms),
-                "mean": mean,
-                "std": std,
-                "tau": tau,
-                "dt": dt,
-            }
-        )
+        ou.origin = k * section_ms
         nest.Simulate(section_ms)
 
     ev = mm.get("events")

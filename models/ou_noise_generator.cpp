@@ -22,6 +22,9 @@
 
 #include "ou_noise_generator.h"
 
+// C++ includes:
+#include <numeric>
+
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "dict_util.h"
@@ -274,17 +277,15 @@ nest::ou_noise_generator::update( Time const& origin, const long from, const lon
   {
     const long now = start + offs;
 
-    // Update OU process state if next update is due
-    S_.I_avg_ = 0.0;
-
-    // Skip sending events while generator is inactiv
+    // No output current while generator is inactive
     if ( not StimulationDevice::is_active( Time::step( now ) ) )
     {
+      S_.I_avg_ = 0.0;
       B_.logger_.record_data( origin.get_steps() + offs );
       continue;
     }
 
-    // record values
+    // Update OU process state if next update is due
     if ( now >= B_.next_step_ )
     {
       double prop = V_.prop_;
@@ -314,12 +315,8 @@ nest::ou_noise_generator::update( Time const& origin, const long from, const lon
     }
 
     // record average of currents over all targets
-    for ( double& amp : B_.amps_ )
-    {
-      S_.I_avg_ += amp;
-    }
-
-    S_.I_avg_ /= std::max( 1, int( B_.amps_.size() ) );
+    const double I_sum = std::accumulate( B_.amps_.begin(), B_.amps_.end(), 0.0 );
+    S_.I_avg_ = B_.amps_.empty() ? 0.0 : I_sum / B_.amps_.size();
     B_.logger_.record_data( origin.get_steps() + offs );
 
     DSCurrentEvent ce;

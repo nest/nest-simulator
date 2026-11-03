@@ -212,7 +212,7 @@ nest::ou_noise_generator::pre_run_hook()
 
   V_.prop_ = std::exp( -h / P_.tau_ );
   V_.noise_amp_ = P_.std_ * std::sqrt( -std::expm1( -2.0 * h / P_.tau_ ) );
-  V_.mean_weight_ = 1.0 - V_.prop_;
+  V_.mean_weight_ = -std::expm1( -h / P_.tau_ );
   V_.mean_incr_ = P_.mean_ * V_.mean_weight_;
 
   if ( B_.amps_.size() < P_.num_targets_ )

@@ -304,7 +304,7 @@ nest::ou_noise_generator::update( Time const& origin, const long from, const lon
         mean_incr = -P_.mean_ * std::expm1( -step_ms / P_.tau_ );
       }
 
-      // jump OU state forward by step_ms
+      // Advance OU state to now
       for ( double& amp : B_.amps_ )
       {
         amp = mean_incr + prop * amp + noise_amp * V_.normal_dist_( get_vp_specific_rng( get_thread() ) );

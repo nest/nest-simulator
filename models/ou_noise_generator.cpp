@@ -269,7 +269,6 @@ nest::ou_noise_generator::update( Time const& origin, const long from, const lon
 {
   const long start = origin.get_steps();
   const double res_ms = Time::get_resolution().get_ms();
-  const double ou_dt_ms = P_.dt_.get_ms();
 
   for ( long offs = from; offs < to; ++offs )
   {
@@ -288,27 +287,20 @@ nest::ou_noise_generator::update( Time const& origin, const long from, const lon
     // record values
     if ( now >= B_.next_step_ )
     {
-      // time since last OU update
-      double step_ms = ou_dt_ms;
-
-      if ( B_.next_step_ > 0 )
-      {
-        const long last_update_step = B_.next_step_ - V_.dt_steps_;
-        const long gap_steps = now - last_update_step;
-        step_ms = gap_steps * res_ms;
-      }
-
       double prop = V_.prop_;
       double noise_amp = V_.noise_amp_;
       double mean_incr = V_.mean_incr_;
 
-      // if the gap differs from OU update, recompute OU coefficients
-      if ( std::fabs( step_ms - ou_dt_ms ) > 1e-12 )
+      // if updates were missed during inactivity, recompute OU coefficients for the elapsed time
+      if ( B_.next_step_ > 0 and now > B_.next_step_ )
       {
-        const double exp_fac = std::exp( -step_ms / P_.tau_ );
-        prop = exp_fac;
+        const long last_update_step = B_.next_step_ - V_.dt_steps_;
+        const long gap_steps = now - last_update_step;
+        const double step_ms = gap_steps * res_ms;
+
+        prop = std::exp( -step_ms / P_.tau_ );
         noise_amp = P_.std_ * std::sqrt( -std::expm1( -2.0 * step_ms / P_.tau_ ) );
-        mean_incr = P_.mean_ * ( 1.0 - exp_fac );
+        mean_incr = -P_.mean_ * std::expm1( -step_ms / P_.tau_ );
       }
 
       // jump OU state forward by step_ms

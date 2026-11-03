@@ -13,7 +13,7 @@ permissions:
 jobs:
   link_checker:
     runs-on: "ubuntu-24.04"
-    if: ${{ github.repository_owner == 'nest' }}
+    # if: ${{ github.repository_owner == 'nest' }}
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3

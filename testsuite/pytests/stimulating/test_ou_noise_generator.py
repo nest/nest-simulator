@@ -245,8 +245,8 @@ def _run_ou_with_on_off(
 def test_ou_noise_generator_zero_output_when_inactive(prepare_kernel):
     """
     When the generator is outside [start, stop), the recorded currents
-    must be zero (up to numerical tolerance), while inside the
-    active window the OU process must exhibit non-zero variance.
+    must be exactly zero, while inside the active window the OU process
+    must exhibit non-zero variance.
     """
     mean, std, tau, dt = 0.0, 10.0, 100.0, 1.0
     start_on, stop_on = 200.0, 500.0
@@ -274,9 +274,7 @@ def test_ou_noise_generator_zero_output_when_inactive(prepare_kernel):
 
     # OFF samples should be exactly zero
     off_vals = currents[off_mask]
-    assert np.allclose(
-        off_vals, 0.0, atol=1e-12
-    ), f"Inactive samples are not zero-gated (max |I_off| = {np.max(np.abs(off_vals))})."
+    assert np.all(off_vals == 0.0), "Inactive samples are not exactly zero."
 
     # ON samples must show variance.
     on_vals = currents[on_mask]

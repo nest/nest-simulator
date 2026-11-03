@@ -280,7 +280,7 @@ def test_ou_noise_generator_zero_output_when_inactive(prepare_kernel):
 
     # ON samples must show variance.
     on_vals = currents[on_mask]
-    assert np.std(on_vals) > 0.0, "Active-window output has zero variance;"
+    assert np.std(on_vals) > 0.0, "Active-window output has zero variance."
 
 
 def test_ou_noise_generator_jump_continuity_across_gaps(prepare_kernel):

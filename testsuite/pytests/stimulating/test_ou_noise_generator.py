@@ -74,7 +74,7 @@ def test_ou_noise_mean_and_variance(prepare_kernel, tau, dt):
     nest.Connect(mm, oung, syn_spec={"weight": 1})
     nest.Simulate(simtime)
 
-    current = np.asarray(mm.get("events")["I"], float)[burn_in_start(dt, tau) :]
+    current = np.asarray(mm.get("events")["I"], float)[burn_in_start(dt, tau):]
 
     # samples correlate over tau, so only len*dt/(2*tau) are independent
     n_eff = len(current) * dt / (2.0 * tau)

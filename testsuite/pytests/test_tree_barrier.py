@@ -64,7 +64,7 @@ def build_and_run(tree, threads, fan_in=8):
     return ev["senders"], ev["times"], neurons.V_m
 
 
-@pytest.mark.parametrize("threads, fan_in", [(1, 8), (2, 2), (3, 2), (5, 4), (8, 8), (9, 3), (16, 4)])
+@pytest.mark.parametrize("threads, fan_in", [(1, 8), (2, 2), (2, 16), (3, 2), (5, 4), (8, 8), (9, 3), (16, 4)])
 def test_identical_results(threads, fan_in):
     ref = build_and_run(False, threads)
     tree = build_and_run(True, threads, fan_in)
@@ -79,3 +79,30 @@ def test_parameters():
     assert nest.tree_barrier_fan_in == 8
     with pytest.raises(nest.NESTErrors.BadProperty):
         nest.tree_barrier_fan_in = 1
+
+
+# Switching tree_barrier on between two Simulate calls, without ResetKernel,
+# must give the same results as using the OpenMP barriers throughout.
+def test_switching_between_simulations():
+    def run(switch):
+        nest.ResetKernel()
+        nest.local_num_threads = 4
+        nest.rng_seed = 321
+        nest.tree_barrier = False
+        neurons = nest.Create("iaf_psc_exp", 100, params={"I_e": 300.0})
+        neurons.V_m = nest.random.uniform(-70.0, -55.0)
+        noise = nest.Create("poisson_generator", params={"rate": 8000.0})
+        rec = nest.Create("spike_recorder")
+        nest.Connect(noise, neurons, syn_spec={"weight": 15.0, "delay": 1.0})
+        nest.Connect(neurons, neurons, {"rule": "fixed_indegree", "indegree": 20}, {"weight": 20.0, "delay": 1.0})
+        nest.Connect(neurons, rec)
+        nest.Simulate(100.0)
+        if switch:
+            nest.tree_barrier = True
+        nest.Simulate(100.0)
+        return rec.events["senders"], rec.events["times"]
+
+    ref = run(False)
+    switched = run(True)
+    assert len(ref[0]) > 100
+    assert np.array_equal(ref[0], switched[0]) and np.array_equal(ref[1], switched[1])

@@ -878,6 +878,8 @@ SimulationManager::update_()
   const bool use_tree_barrier = tree_barrier_->use;
   if ( use_tree_barrier )
   {
+    // Prepared again for every run, so that a changed thread count or fan-in takes effect and
+    // no state of an earlier run is carried over. This costs a few allocations per run, not per cycle.
     tree_barrier_->barrier.initialize( kernel().vp_manager.get_num_threads(), tree_barrier_->fan_in );
   }
 

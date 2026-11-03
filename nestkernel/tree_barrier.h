@@ -141,6 +141,8 @@ private:
    *
    * Atomic, because several threads modify it concurrently (counters) or one thread writes it while the others
    * spin on it (flags); its own cache line keeps the spinning threads from invalidating the lines of other counters.
+   * The 64 bytes are the cache line size of the server processors NEST is run on; on a processor with larger
+   * cache lines, two counters could share a line and the padding would not separate them.
    */
   struct alignas( 64 ) Padded
   {

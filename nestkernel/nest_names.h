@@ -625,8 +625,6 @@ const std::string thread_local_id( "thread_local_id" );
 const std::string threshold( "threshold" );
 const std::string threshold_spike( "threshold_spike" );
 const std::string threshold_voltage( "threshold_voltage" );
-const std::string tree_barrier( "tree_barrier" );
-const std::string tree_barrier_fan_in( "tree_barrier_fan_in" );
 const std::string tics_per_ms( "tics_per_ms" );
 const std::string tics_per_step( "tics_per_step" );
 const std::string time_collocate_spike_data( "time_collocate_spike_data" );
@@ -665,6 +663,8 @@ const std::string time_update_cpu( "time_update_cpu" );
 const std::string times( "times" );
 const std::string to_do( "to_do" );
 const std::string total_num_virtual_procs( "total_num_virtual_procs" );
+const std::string tree_barrier( "tree_barrier" );
+const std::string tree_barrier_fan_in( "tree_barrier_fan_in" );
 const std::string type( "type" );
 const std::string type_id( "type_id" );
 

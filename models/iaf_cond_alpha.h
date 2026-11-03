@@ -161,8 +161,8 @@ The following parameters can be set in the status dictionary.
 ``E_ex``        0 mV               :math:`E_\text{ex}`             Excitatory reversal potential
 ``E_in``        -85 mV             :math:`E_\text{in}`             Inhibitory reversal potential
 ``g_L``         16.6667 nS         :math:`g_\text{L}`              Leak conductance
-``tau_syn_ex``  0.2 ms             :math:`\tau_{\text{syn, ex}}`   Rise time of the excitatory synaptic alpha function
-``tau_syn_in``  2.0 ms             :math:`\tau_{\text{syn, in}}`   Rise time of the inhibitory synaptic alpha function
+``tau_syn_ex``  0.2 ms             :math:`\tau_{\text{syn, ex}}`   Rise time of the excitatory synaptic conductance
+``tau_syn_in``  2.0 ms             :math:`\tau_{\text{syn, in}}`   Rise time of the inhibitory synaptic conductance
 ``I_e``         0 pA               :math:`I_\text{e}`              Constant input current
 =============== ================== =============================== ========================================================================
 

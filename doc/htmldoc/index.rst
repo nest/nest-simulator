@@ -162,10 +162,10 @@ How NEST works --- The Big Picture
    :glob:
 
    Contact us <community>
-   Contribute <developer_space/index>
+   Contribute <contribute/index>
    What's new? <whats_new/index>
    NEST Homepage <https://nest-simulator.org>
-   Acknowledgments <https://github.com/nest/nest-simulator/blob/master/ACKNOWLEDGMENTS.md>
+   Acknowledgments <https://github.com/nest/nest-simulator/blob/main/ACKNOWLEDGMENTS.md>
 
 .. toctree::
    :caption: RELATED PROJECTS

@@ -74,9 +74,6 @@ bibtex_default_style = "unsrt"
 
 autodoc_mock_imports = [
     "nest.nestkernel_api",  # compiled binary
-    "flask",  # optional server dependencies not present during docs build
-    "flask_cors",
-    "RestrictedPython",
 ]
 # The `nest` module intentionally freezes its attribute namespace (see
 # pynest/nest/__init__.py `_setattr_error`) to catch public-API typos.
@@ -93,10 +90,10 @@ templates_path = ["templates"]
 plantuml = "java -jar /tmp/plantuml.jar"
 plantuml_output_format = "svg_img"
 sphinx_gallery_conf = {
-    # path to your examples scripts
-    "examples_dirs": "../../pynest/examples",
-    # path where to save gallery generated examples
-    "gallery_dirs": "auto_examples",
+    # paths to the gallery source scripts (examples and the PyNEST tutorial)
+    "examples_dirs": ["../../pynest/examples", "tutorials/pynest_tutorial"],
+    # paths where the generated galleries are written (parallel to examples_dirs)
+    "gallery_dirs": ["auto_examples", "auto_pynest_tutorial"],
     "plot_gallery": "False",
     "download_all_examples": False,
     "copyfile_regex": r".*\.rst|.*\.png|.*\.svg|Snakefile|.*\.txt",
@@ -142,6 +139,8 @@ exclude_patterns = [
     "Thumbs.db",
     "auto_examples/**.ipynb",
     "auto_examples/index.rst",
+    "auto_pynest_tutorial/**.ipynb",
+    "auto_pynest_tutorial/index.rst",
     "nest_by_example",
 ]
 

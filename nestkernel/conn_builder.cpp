@@ -39,7 +39,9 @@
 #include <algorithm>
 
 
-nest::ConnBuilder::ConnBuilder( const std::string& primary_rule,
+namespace nest
+{
+ConnBuilder::ConnBuilder( const std::string& primary_rule,
   NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const Dictionary& conn_spec,
@@ -55,7 +57,7 @@ nest::ConnBuilder::ConnBuilder( const std::string& primary_rule,
 {
 }
 
-nest::ConnBuilder::ConnBuilder( const std::string& primary_rule,
+ConnBuilder::ConnBuilder( const std::string& primary_rule,
   const std::string& third_rule,
   NodeCollectionPTR sources,
   NodeCollectionPTR targets,
@@ -83,7 +85,7 @@ nest::ConnBuilder::ConnBuilder( const std::string& primary_rule,
 {
 }
 
-nest::ConnBuilder::~ConnBuilder()
+ConnBuilder::~ConnBuilder()
 {
   delete primary_builder_;
   delete third_in_builder_;
@@ -91,7 +93,7 @@ nest::ConnBuilder::~ConnBuilder()
 }
 
 void
-nest::ConnBuilder::connect()
+ConnBuilder::connect()
 {
   primary_builder_->connect();  // triggers third_out_builder_
   if ( third_in_builder_ )
@@ -101,7 +103,7 @@ nest::ConnBuilder::connect()
 }
 
 void
-nest::ConnBuilder::disconnect()
+ConnBuilder::disconnect()
 {
   if ( third_out_builder_ )
   {
@@ -111,7 +113,7 @@ nest::ConnBuilder::disconnect()
 }
 
 
-nest::BipartiteConnBuilder::BipartiteConnBuilder( NodeCollectionPTR sources,
+BipartiteConnBuilder::BipartiteConnBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   ThirdOutBuilder* third_out,
   const Dictionary& conn_spec,
@@ -196,7 +198,7 @@ nest::BipartiteConnBuilder::BipartiteConnBuilder( NodeCollectionPTR sources,
   }
 }
 
-nest::BipartiteConnBuilder::~BipartiteConnBuilder()
+BipartiteConnBuilder::~BipartiteConnBuilder()
 {
   for ( auto weight : weights_ )
   {
@@ -218,7 +220,7 @@ nest::BipartiteConnBuilder::~BipartiteConnBuilder()
 }
 
 bool
-nest::BipartiteConnBuilder::change_connected_synaptic_elements( size_t snode_id,
+BipartiteConnBuilder::change_connected_synaptic_elements( size_t snode_id,
   size_t tnode_id,
   const size_t tid,
   int update )
@@ -264,7 +266,7 @@ nest::BipartiteConnBuilder::change_connected_synaptic_elements( size_t snode_id,
 }
 
 void
-nest::BipartiteConnBuilder::connect()
+BipartiteConnBuilder::connect()
 {
   // We test here, and not in the ConnBuilder constructor, so the derived
   // classes are fully constructed when the test is executed
@@ -330,7 +332,7 @@ nest::BipartiteConnBuilder::connect()
 }
 
 void
-nest::BipartiteConnBuilder::disconnect()
+BipartiteConnBuilder::disconnect()
 {
   if ( use_structural_plasticity_ )
   {
@@ -352,7 +354,7 @@ nest::BipartiteConnBuilder::disconnect()
 }
 
 void
-nest::BipartiteConnBuilder::update_param_dict_( size_t snode_id,
+BipartiteConnBuilder::update_param_dict_( size_t snode_id,
   Node& target,
   size_t target_thread,
   RngPtr rng,
@@ -376,7 +378,7 @@ nest::BipartiteConnBuilder::update_param_dict_( size_t snode_id,
 }
 
 void
-nest::BipartiteConnBuilder::single_connect_( size_t snode_id, Node& target, size_t target_thread, RngPtr rng )
+BipartiteConnBuilder::single_connect_( size_t snode_id, Node& target, size_t target_thread, RngPtr rng )
 {
   if ( this->requires_proxies() and not target.has_proxies() )
   {
@@ -436,7 +438,7 @@ nest::BipartiteConnBuilder::single_connect_( size_t snode_id, Node& target, size
 }
 
 void
-nest::BipartiteConnBuilder::set_synaptic_element_names( const std::string& pre_name, const std::string& post_name )
+BipartiteConnBuilder::set_synaptic_element_names( const std::string& pre_name, const std::string& post_name )
 {
   if ( pre_name.empty() or post_name.empty() )
   {
@@ -450,7 +452,7 @@ nest::BipartiteConnBuilder::set_synaptic_element_names( const std::string& pre_n
 }
 
 bool
-nest::BipartiteConnBuilder::all_parameters_scalar_() const
+BipartiteConnBuilder::all_parameters_scalar_() const
 {
   bool all_scalar = true;
 
@@ -482,14 +484,14 @@ nest::BipartiteConnBuilder::all_parameters_scalar_() const
 }
 
 bool
-nest::BipartiteConnBuilder::loop_over_targets_() const
+BipartiteConnBuilder::loop_over_targets_() const
 {
   return targets_->size() < kernel().node_manager.size() or not targets_->is_range()
     or parameters_requiring_skipping_.size() > 0;
 }
 
 void
-nest::BipartiteConnBuilder::set_synapse_model_( const Dictionary& syn_params, size_t synapse_indx )
+BipartiteConnBuilder::set_synapse_model_( const Dictionary& syn_params, size_t synapse_indx )
 {
   const std::string syn_name = syn_params.known( names::synapse_model )
     ? syn_params.get< std::string >( names::synapse_model )
@@ -505,7 +507,7 @@ nest::BipartiteConnBuilder::set_synapse_model_( const Dictionary& syn_params, si
 }
 
 void
-nest::BipartiteConnBuilder::set_default_weight_or_delay_( const Dictionary& syn_params, size_t synapse_indx )
+BipartiteConnBuilder::set_default_weight_or_delay_( const Dictionary& syn_params, size_t synapse_indx )
 {
   Dictionary syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
 
@@ -540,7 +542,7 @@ nest::BipartiteConnBuilder::set_default_weight_or_delay_( const Dictionary& syn_
 }
 
 void
-nest::BipartiteConnBuilder::set_synapse_params( const Dictionary& syn_defaults,
+BipartiteConnBuilder::set_synapse_params( const Dictionary& syn_defaults,
   const Dictionary& syn_params,
   size_t synapse_indx )
 {
@@ -580,7 +582,7 @@ nest::BipartiteConnBuilder::set_synapse_params( const Dictionary& syn_defaults,
 }
 
 void
-nest::BipartiteConnBuilder::set_structural_plasticity_parameters( const std::vector< Dictionary >& syn_specs )
+BipartiteConnBuilder::set_structural_plasticity_parameters( const std::vector< Dictionary >& syn_specs )
 {
   // We must check here if any syn_spec provided contains sp-related parameters
   bool have_structural_plasticity_parameters = false;
@@ -620,7 +622,7 @@ nest::BipartiteConnBuilder::set_structural_plasticity_parameters( const std::vec
 }
 
 void
-nest::BipartiteConnBuilder::reset_weights_()
+BipartiteConnBuilder::reset_weights_()
 {
   for ( auto weight : weights_ )
   {
@@ -632,7 +634,7 @@ nest::BipartiteConnBuilder::reset_weights_()
 }
 
 void
-nest::BipartiteConnBuilder::reset_delays_()
+BipartiteConnBuilder::reset_delays_()
 {
   for ( auto delay : delays_ )
   {
@@ -643,7 +645,7 @@ nest::BipartiteConnBuilder::reset_delays_()
   }
 }
 
-nest::ThirdInBuilder::ThirdInBuilder( NodeCollectionPTR sources,
+ThirdInBuilder::ThirdInBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR third,
   const Dictionary& third_conn_spec,
   const std::vector< Dictionary >& syn_specs )
@@ -659,7 +661,7 @@ nest::ThirdInBuilder::ThirdInBuilder( NodeCollectionPTR sources,
   }
 }
 
-nest::ThirdInBuilder::~ThirdInBuilder()
+ThirdInBuilder::~ThirdInBuilder()
 {
 #pragma omp parallel
   {
@@ -670,7 +672,7 @@ nest::ThirdInBuilder::~ThirdInBuilder()
 }
 
 void
-nest::ThirdInBuilder::register_connection( size_t primary_source_id, size_t third_node_id )
+ThirdInBuilder::register_connection( size_t primary_source_id, size_t third_node_id )
 {
   const size_t tid = kernel().vp_manager.get_thread_id();
   const auto third_node_rank =
@@ -680,7 +682,7 @@ nest::ThirdInBuilder::register_connection( size_t primary_source_id, size_t thir
 }
 
 void
-nest::ThirdInBuilder::connect_()
+ThirdInBuilder::connect_()
 {
   kernel().vp_manager.assert_single_threaded();
 
@@ -772,7 +774,7 @@ nest::ThirdInBuilder::connect_()
   }
 }
 
-nest::ThirdOutBuilder::ThirdOutBuilder( const NodeCollectionPTR third,
+ThirdOutBuilder::ThirdOutBuilder( const NodeCollectionPTR third,
   const NodeCollectionPTR targets,
   ThirdInBuilder* third_in,
   const Dictionary& third_conn_spec,
@@ -782,7 +784,7 @@ nest::ThirdOutBuilder::ThirdOutBuilder( const NodeCollectionPTR third,
 {
 }
 
-nest::ThirdBernoulliWithPoolBuilder::ThirdBernoulliWithPoolBuilder( const NodeCollectionPTR third,
+ThirdBernoulliWithPoolBuilder::ThirdBernoulliWithPoolBuilder( const NodeCollectionPTR third,
   const NodeCollectionPTR targets,
   ThirdInBuilder* third_in,
   const Dictionary& conn_spec,
@@ -863,7 +865,7 @@ nest::ThirdBernoulliWithPoolBuilder::ThirdBernoulliWithPoolBuilder( const NodeCo
   }
 }
 
-nest::ThirdBernoulliWithPoolBuilder::~ThirdBernoulliWithPoolBuilder()
+ThirdBernoulliWithPoolBuilder::~ThirdBernoulliWithPoolBuilder()
 {
 #pragma omp parallel
   {
@@ -887,7 +889,7 @@ nest::ThirdBernoulliWithPoolBuilder::~ThirdBernoulliWithPoolBuilder()
 }
 
 void
-nest::ThirdBernoulliWithPoolBuilder::third_connect( size_t primary_source_id, Node& primary_target )
+ThirdBernoulliWithPoolBuilder::third_connect( size_t primary_source_id, Node& primary_target )
 {
   // We assume target is on this thread
   const size_t tid = kernel().vp_manager.get_thread_id();
@@ -931,7 +933,7 @@ nest::ThirdBernoulliWithPoolBuilder::third_connect( size_t primary_source_id, No
 
 
 size_t
-nest::ThirdBernoulliWithPoolBuilder::get_first_pool_index_( const size_t target_index ) const
+ThirdBernoulliWithPoolBuilder::get_first_pool_index_( const size_t target_index ) const
 {
   if ( pool_size_ > 1 )
   {
@@ -942,7 +944,7 @@ nest::ThirdBernoulliWithPoolBuilder::get_first_pool_index_( const size_t target_
 }
 
 
-nest::OneToOneBuilder::OneToOneBuilder( const NodeCollectionPTR sources,
+OneToOneBuilder::OneToOneBuilder( const NodeCollectionPTR sources,
   const NodeCollectionPTR targets,
   ThirdOutBuilder* third_out,
   const Dictionary& conn_spec,
@@ -957,7 +959,7 @@ nest::OneToOneBuilder::OneToOneBuilder( const NodeCollectionPTR sources,
 }
 
 void
-nest::OneToOneBuilder::connect_()
+OneToOneBuilder::connect_()
 {
 
 #pragma omp parallel
@@ -1035,7 +1037,7 @@ nest::OneToOneBuilder::connect_()
 }
 
 void
-nest::OneToOneBuilder::disconnect_()
+OneToOneBuilder::disconnect_()
 {
 
 #pragma omp parallel
@@ -1082,7 +1084,7 @@ nest::OneToOneBuilder::disconnect_()
 }
 
 void
-nest::OneToOneBuilder::sp_connect_()
+OneToOneBuilder::sp_connect_()
 {
 
 #pragma omp parallel
@@ -1128,7 +1130,7 @@ nest::OneToOneBuilder::sp_connect_()
 }
 
 void
-nest::OneToOneBuilder::sp_disconnect_()
+OneToOneBuilder::sp_disconnect_()
 {
 
 #pragma omp parallel
@@ -1167,7 +1169,7 @@ nest::OneToOneBuilder::sp_disconnect_()
 }
 
 void
-nest::AllToAllBuilder::connect_()
+AllToAllBuilder::connect_()
 {
 
 #pragma omp parallel
@@ -1222,7 +1224,7 @@ nest::AllToAllBuilder::connect_()
 }
 
 void
-nest::AllToAllBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, size_t tnode_id, bool skip )
+AllToAllBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, size_t tnode_id, bool skip )
 {
   const size_t target_thread = target->get_thread();
 
@@ -1255,7 +1257,7 @@ nest::AllToAllBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, 
 }
 
 void
-nest::AllToAllBuilder::sp_connect_()
+AllToAllBuilder::sp_connect_()
 {
 #pragma omp parallel
   {
@@ -1300,7 +1302,7 @@ nest::AllToAllBuilder::sp_connect_()
 }
 
 void
-nest::AllToAllBuilder::disconnect_()
+AllToAllBuilder::disconnect_()
 {
 
 #pragma omp parallel
@@ -1349,7 +1351,7 @@ nest::AllToAllBuilder::disconnect_()
 }
 
 void
-nest::AllToAllBuilder::sp_disconnect_()
+AllToAllBuilder::sp_disconnect_()
 {
 #pragma omp parallel
   {
@@ -1387,7 +1389,7 @@ nest::AllToAllBuilder::sp_disconnect_()
   }
 }
 
-nest::FixedInDegreeBuilder::FixedInDegreeBuilder( NodeCollectionPTR sources,
+FixedInDegreeBuilder::FixedInDegreeBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   ThirdOutBuilder* third_out,
   const Dictionary& conn_spec,
@@ -1401,7 +1403,7 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( NodeCollectionPTR sources,
     throw BadProperty( "Source array must not be empty." );
   }
   auto indegree = conn_spec.at( names::indegree );
-  if ( std::holds_alternative< std::shared_ptr< nest::Parameter > >( indegree ) )
+  if ( std::holds_alternative< std::shared_ptr< Parameter > >( indegree ) )
   {
     indegree_ = std::get< ParameterPTR >( indegree );
     // TODO: Checks of parameter range
@@ -1445,7 +1447,7 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( NodeCollectionPTR sources,
 }
 
 void
-nest::FixedInDegreeBuilder::connect_()
+FixedInDegreeBuilder::connect_()
 {
 
 #pragma omp parallel
@@ -1505,7 +1507,7 @@ nest::FixedInDegreeBuilder::connect_()
 }
 
 void
-nest::FixedInDegreeBuilder::inner_connect_( const int tid,
+FixedInDegreeBuilder::inner_connect_( const int tid,
   RngPtr rng,
   Node* target,
   size_t tnode_id,
@@ -1552,7 +1554,7 @@ nest::FixedInDegreeBuilder::inner_connect_( const int tid,
   }
 }
 
-nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
+FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   ThirdOutBuilder* third_out,
   const Dictionary& conn_spec,
@@ -1566,7 +1568,7 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
     throw BadProperty( "Target array must not be empty." );
   }
   auto outdegree = conn_spec.at( names::outdegree );
-  if ( std::holds_alternative< std::shared_ptr< nest::Parameter > >( outdegree ) )
+  if ( std::holds_alternative< std::shared_ptr< Parameter > >( outdegree ) )
   {
     outdegree_ = std::get< ParameterPTR >( outdegree );
     // TODO: Checks of parameter range
@@ -1610,7 +1612,7 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
 }
 
 void
-nest::FixedOutDegreeBuilder::connect_()
+FixedOutDegreeBuilder::connect_()
 {
   // get global rng that is tested for synchronization for all threads
   RngPtr grng = get_rank_synced_rng();
@@ -1681,7 +1683,7 @@ nest::FixedOutDegreeBuilder::connect_()
   }
 }
 
-nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder( NodeCollectionPTR sources,
+FixedTotalNumberBuilder::FixedTotalNumberBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   ThirdOutBuilder* third_out,
   const Dictionary& conn_spec,
@@ -1718,7 +1720,7 @@ nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder( NodeCollectionPTR source
 }
 
 void
-nest::FixedTotalNumberBuilder::connect_()
+FixedTotalNumberBuilder::connect_()
 {
   const int M = kernel().vp_manager.get_num_virtual_processes();
   const long size_sources = sources_->size();
@@ -1851,7 +1853,7 @@ nest::FixedTotalNumberBuilder::connect_()
 }
 
 
-nest::BernoulliBuilder::BernoulliBuilder( NodeCollectionPTR sources,
+BernoulliBuilder::BernoulliBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   ThirdOutBuilder* third_out,
   const Dictionary& conn_spec,
@@ -1859,7 +1861,7 @@ nest::BernoulliBuilder::BernoulliBuilder( NodeCollectionPTR sources,
   : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
 {
   auto p = conn_spec.at( names::p );
-  if ( std::holds_alternative< std::shared_ptr< nest::Parameter > >( p ) )
+  if ( std::holds_alternative< std::shared_ptr< Parameter > >( p ) )
   {
     p_ = std::get< ParameterPTR >( p );
     // TODO: Checks of parameter range
@@ -1878,7 +1880,7 @@ nest::BernoulliBuilder::BernoulliBuilder( NodeCollectionPTR sources,
 
 
 void
-nest::BernoulliBuilder::connect_()
+BernoulliBuilder::connect_()
 {
 #pragma omp parallel
   {
@@ -1934,7 +1936,7 @@ nest::BernoulliBuilder::connect_()
 }
 
 void
-nest::BernoulliBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, size_t tnode_id )
+BernoulliBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, size_t tnode_id )
 {
   const size_t target_thread = target->get_thread();
 
@@ -1966,7 +1968,7 @@ nest::BernoulliBuilder::inner_connect_( const int tid, RngPtr rng, Node* target,
 }
 
 
-nest::PoissonBuilder::PoissonBuilder( NodeCollectionPTR sources,
+PoissonBuilder::PoissonBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   ThirdOutBuilder* third_out,
   const Dictionary& conn_spec,
@@ -1975,7 +1977,7 @@ nest::PoissonBuilder::PoissonBuilder( NodeCollectionPTR sources,
 {
 
   auto p = conn_spec.at( names::pairwise_avg_num_conns );
-  if ( std::holds_alternative< std::shared_ptr< nest::Parameter > >( p ) )
+  if ( std::holds_alternative< std::shared_ptr< Parameter > >( p ) )
   {
     pairwise_avg_num_conns_ = std::get< ParameterPTR >( p );
   }
@@ -1997,7 +1999,7 @@ nest::PoissonBuilder::PoissonBuilder( NodeCollectionPTR sources,
 }
 
 void
-nest::PoissonBuilder::connect_()
+PoissonBuilder::connect_()
 {
 #pragma omp parallel
   {
@@ -2050,7 +2052,7 @@ nest::PoissonBuilder::connect_()
 }
 
 void
-nest::PoissonBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, size_t tnode_id )
+PoissonBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, size_t tnode_id )
 {
   const size_t target_thread = target->get_thread();
 
@@ -2084,7 +2086,7 @@ nest::PoissonBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, s
   }
 }
 
-nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder( NodeCollectionPTR sources,
+SymmetricBernoulliBuilder::SymmetricBernoulliBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   ThirdOutBuilder* third_out,
   const Dictionary& conn_spec,
@@ -2118,7 +2120,7 @@ nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder( NodeCollectionPTR so
 
 
 void
-nest::SymmetricBernoulliBuilder::connect_()
+SymmetricBernoulliBuilder::connect_()
 {
 #pragma omp parallel
   {
@@ -2211,7 +2213,7 @@ nest::SymmetricBernoulliBuilder::connect_()
 }
 
 
-nest::SPBuilder::SPBuilder( NodeCollectionPTR sources,
+SPBuilder::SPBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   ThirdOutBuilder* third_out,
   const Dictionary& conn_spec,
@@ -2226,7 +2228,7 @@ nest::SPBuilder::SPBuilder( NodeCollectionPTR sources,
 }
 
 void
-nest::SPBuilder::update_delay( long& d ) const
+SPBuilder::update_delay( long& d ) const
 {
   if ( get_default_delay() )
   {
@@ -2237,7 +2239,7 @@ nest::SPBuilder::update_delay( long& d ) const
 }
 
 void
-nest::SPBuilder::sp_connect( const std::vector< size_t >& sources, const std::vector< size_t >& targets )
+SPBuilder::sp_connect( const std::vector< size_t >& sources, const std::vector< size_t >& targets )
 {
   connect_( sources, targets );
 
@@ -2252,7 +2254,7 @@ nest::SPBuilder::sp_connect( const std::vector< size_t >& sources, const std::ve
 }
 
 void
-nest::SPBuilder::connect_()
+SPBuilder::connect_()
 {
   throw NotImplemented( "Connection without structural plasticity is not possible for this connection builder." );
 }
@@ -2261,13 +2263,13 @@ nest::SPBuilder::connect_()
  * In charge of dynamically creating the new synapses
  */
 void
-nest::SPBuilder::connect_( NodeCollectionPTR, NodeCollectionPTR )
+SPBuilder::connect_( NodeCollectionPTR, NodeCollectionPTR )
 {
   throw NotImplemented( "Connection without structural plasticity is not possible for this connection builder." );
 }
 
 void
-nest::SPBuilder::connect_( const std::vector< size_t >& sources, const std::vector< size_t >& targets )
+SPBuilder::connect_( const std::vector< size_t >& sources, const std::vector< size_t >& targets )
 {
   // Code copied and adapted from OneToOneBuilder::connect_()
   // make sure that target and source population have the same size
@@ -2313,3 +2315,5 @@ nest::SPBuilder::connect_( const std::vector< size_t >& sources, const std::vect
     }
   }
 }
+
+}  // namespace nest

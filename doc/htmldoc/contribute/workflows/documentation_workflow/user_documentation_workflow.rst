@@ -166,7 +166,8 @@ If you want to edit Model docs, PyNEST API files, or PyNEST examples, you will n
    * - Type of documentation
      - Source location
    * - Model docs
-     - ``nest-simulator/models/*.h`` in the section `BeginUserDocs`
+     - ``nest-simulator/models/*.h`` and ``nest-simulator/nestkernel/*.h``,
+       in the section `BeginUserDocs`
    * - PyNEST API
      - ``nest-simulator/pynest/nest/**/*.py``
    * - PyNEST examples
@@ -241,12 +242,13 @@ bottom of the PR conversation tab:
     :width: 50%
     :align: center
 
-The URL for PR previews has the following format ``https://nest-simulator--<pr-number>.org.readthedocs.build/en/<pr-number>/index.html``
+Click **Details** next to the Read the Docs check to open the preview. Preview URLs follow the pattern
+``nest-simulator--<pr-number>.org.readthedocs.build/en/<pr-number>/``.
 
 Reviewers will be assigned and go through your changes.
 
 If you are a first time contributor, we ask that you fill out the
-:download:`NEST Contributor Agreement <https://nest-simulator.readthedocs.io/en/latest/_downloads/9b65adbdacba6bfed66e68c62af4e308/NEST_Contributor_Agreement.pdf>`
+:download:`NEST Contributor Agreement </contribute/static/NEST_Contributor_Agreement.pdf>`
 form to transfer your copyright to the NEST initiative and send it to *info [at] nest-initiative.org*.
 
 .. tip::
@@ -260,8 +262,7 @@ form to transfer your copyright to the NEST initiative and send it to *info [at]
 
    This workflow shows you how to create **user-level documentation**
    for NEST. For the **developer documentation**, please refer to our
-   :ref:`Developer documentation workflow
-   <devdoc_workflow>`.
+   `Developer documentation workflow <https://nest.github.io/nest-simulator/devdoc_workflow.html>`_
 
 
 Read the Docs

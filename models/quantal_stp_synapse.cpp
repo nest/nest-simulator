@@ -26,8 +26,13 @@
 // Includes from nestkernel:
 #include "nest_impl.h"
 
+
+namespace nest
+{
 void
-nest::register_quantal_stp_synapse( const std::string& name )
+register_quantal_stp_synapse( const std::string& name )
 {
   register_connection_model< quantal_stp_synapse >( name );
 }
+
+}  // namespace nest

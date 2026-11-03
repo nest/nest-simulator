@@ -228,7 +228,7 @@ documentation on Python debugging in VS Code, see the
 Homebrew
 ^^^^^^^^
 
-1. Follow the install instructions for Homebrew (`short <http://brew.sh/>`_) or `long <https://github.com/Homebrew/brew/blob/master/docs/Installation.md>`_)
+1. Follow the install instructions for Homebrew (`short <http://brew.sh/>`_) or `long <https://docs.brew.sh/Installation>`_)
 2. Open up the Terminal and execute the following lines:
 
    .. code-block:: sh

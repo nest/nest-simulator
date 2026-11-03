@@ -9,4 +9,4 @@ Select the documentation workflow you would like to view:
     :maxdepth: 1
 
     User-level documentation<user_documentation_workflow>
-    Developer documentation<developer_documentation_workflow>
+    Developer documentation (C++) <https://nest.github.io/nest-simulator/index.html>

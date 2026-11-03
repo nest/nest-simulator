@@ -296,8 +296,9 @@ div[role="main"] .md-source {
    background-color: black;
 }
 /* add admonition warning / info (?) */
+/* Hides 'show sources link */
 .md-nav__extra_link{
-  color: var(--nest-orange);
+  display: none;
 }
 div.admonition .md-typeset a > code {
 	color: white;
@@ -390,12 +391,6 @@ width: 85%;
 .sd-container, .sd-container-fluid, .sd-container-lg, .sd-container-md, .sd-container-sm, .sd-container-xl {
 	padding-left: 0;
 	padding-right: 0;
-}
-.scbs-carousel-control-next-icon{
-  background-image: url('../img/arrow_right.svg')
-}
-.scbs-carousel-control-prev-icon{
-  background-image: url('../img/arrow_left.svg')
 }
 .sd-tab-set > input:checked + label {
 

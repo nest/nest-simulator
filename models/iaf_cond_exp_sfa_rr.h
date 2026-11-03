@@ -330,7 +330,7 @@ private:
 
 
 inline size_t
-nest::iaf_cond_exp_sfa_rr::send_test_event( Node& target, size_t receptor_type, synindex, bool )
+iaf_cond_exp_sfa_rr::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

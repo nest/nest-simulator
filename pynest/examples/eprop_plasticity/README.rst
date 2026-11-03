@@ -11,7 +11,7 @@ formulation by Bellec et al. (2020) :footcite:p:`Bellec2020` and an extended var
 .. image:: eprop_model_relationships.png
 
 We provide tutorials to reproduce the supervised regression task for generating temporal patterns and the supervised
-classification task from the original `TensorFlow implementation <https://github.com/IGITUGraz/eligibility_propagation/blob/master/Figure_3_and_S7_e_prop_tutorials/>`__. In addition, we provide two tutorials on
+classification task from the original `TensorFlow implementation <https://github.com/IGITUGraz/eligibility_propagation/tree/master/Figure_3_and_S7_e_prop_tutorials/>`__. In addition, we provide two tutorials on
 supervised regression for generating two-dimensional temporal patterns and on supervised classification of neuromorphic
 MNIST :footcite:p:`Orchard2015`.
 

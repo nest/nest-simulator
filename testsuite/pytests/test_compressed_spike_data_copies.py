@@ -92,6 +92,43 @@ def test_without_compressed_spikes():
         assert np.array_equal(a, b)
 
 
+def build_and_run_gap_junctions(copies, threads):
+    """Network with gap junctions (secondary connections) and spiking connections; returns the recorded spikes."""
+    nest.ResetKernel()
+    nest.local_num_threads = threads
+    nest.rng_seed = 321
+    nest.compressed_spike_data_copies = copies
+
+    neurons = nest.Create("hh_psc_alpha_gap", 20, params={"I_e": 200.0})
+    rec = nest.Create("spike_recorder")
+    nest.Connect(
+        neurons[:10],
+        neurons[10:],
+        {"rule": "one_to_one", "make_symmetric": True},
+        {"synapse_model": "gap_junction", "weight": 0.5},
+    )
+    nest.Connect(neurons, neurons, {"rule": "fixed_indegree", "indegree": 3}, {"weight": 20.0, "delay": 1.0})
+    nest.Connect(neurons, rec)
+    nest.Simulate(200.0)
+    ev = rec.events
+    return ev["senders"], ev["times"]
+
+
+@pytest.mark.skipif_missing_gsl
+@pytest.mark.parametrize("threads, copies", [(2, 2), (4, 2), (4, 4)])
+def test_secondary_connections(threads, copies):
+    """
+    Copies with secondary connections (gap junctions) give the results of a single copy.
+
+    The target data of secondary connections are collected after the copies are made; they must be read from the copies.
+    """
+    ref = build_and_run_gap_junctions(1, threads)
+    cpy = build_and_run_gap_junctions(copies, threads)
+    assert len(ref[0]) > 0
+    for a, b in zip(ref, cpy):
+        assert np.array_equal(a, b)
+
+
 def test_parameter():
     nest.ResetKernel()
     assert nest.compressed_spike_data_copies == 1

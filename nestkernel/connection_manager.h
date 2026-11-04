@@ -481,6 +481,14 @@ public:
    */
   size_t get_compressed_spike_data_lcid( const size_t tid, const synindex syn_id, const size_t idx ) const;
 
+  /**
+   * Entry of thread tid in row idx of the compressed spike data of synapse type syn_id.
+   *
+   * Reads the copy of the thread's block if there are copies (compressed_spike_data_copies > 1); the original structure
+   * is empty then.
+   */
+  const SpikeData& get_compressed_spike_data_entry( const size_t tid, const synindex syn_id, const size_t idx ) const;
+
   //! Set iteration_state_ entries for all threads to beginning of compressed_spike_data_map_.
   void initialize_iteration_state();
 
@@ -973,16 +981,21 @@ ConnectionManager::set_source_has_more_targets( const size_t tid,
   connections_[ tid ][ syn_id ]->set_source_has_more_targets( lcid, more_targets );
 }
 
-inline size_t
-ConnectionManager::get_compressed_spike_data_lcid( const size_t tid, const synindex syn_id, const size_t idx ) const
+inline const SpikeData&
+ConnectionManager::get_compressed_spike_data_entry( const size_t tid, const synindex syn_id, const size_t idx ) const
 {
   if ( compressed_spike_data_blocks_.empty() )
   {
-    return compressed_spike_data_[ syn_id ][ idx ][ tid ].get_lcid();
+    return compressed_spike_data_[ syn_id ][ idx ][ tid ];
   }
   return compressed_spike_data_blocks_[ compressed_spike_data_block_of_[ tid ] ][ syn_id ][ idx ]
-                                      [ compressed_spike_data_column_of_[ tid ] ]
-                                        .get_lcid();
+                                      [ compressed_spike_data_column_of_[ tid ] ];
+}
+
+inline size_t
+ConnectionManager::get_compressed_spike_data_lcid( const size_t tid, const synindex syn_id, const size_t idx ) const
+{
+  return get_compressed_spike_data_entry( tid, syn_id, idx ).get_lcid();
 }
 
 inline void

@@ -1929,8 +1929,9 @@ ConnectionManager::fill_target_buffer( const size_t tid,
       else
       {
         const auto target_thread = source_2_idx->second.get_target_thread();
+        // Read through the accessor: with copies of the compressed spike data the original structure is empty.
         const SpikeData& conn_info =
-          compressed_spike_data_[ syn_id ][ source_2_idx->second.get_source_index() ][ target_thread ];
+          get_compressed_spike_data_entry( target_thread, syn_id, source_2_idx->second.get_source_index() );
         assert( target_thread == static_cast< unsigned long >( conn_info.get_tid() ) );
         const size_t relative_recv_buffer_pos =
           get_secondary_recv_buffer_position( target_thread, syn_id, conn_info.get_lcid() )

@@ -53,6 +53,9 @@ a:visited,
 a:active {color:var(--nest-orange);}
 a:hover{color:var(--nest-orange); text-decoration:underline;}
 
+.carousel-dark .carousel-caption {
+	position: static !important;
+}
 /* set api function and class names style */
 
 .sig-prename.descclassname {
@@ -293,8 +296,9 @@ div[role="main"] .md-source {
    background-color: black;
 }
 /* add admonition warning / info (?) */
+/* Hides 'show sources link */
 .md-nav__extra_link{
-  color: var(--nest-orange);
+  display: none;
 }
 div.admonition .md-typeset a > code {
 	color: white;
@@ -387,12 +391,6 @@ width: 85%;
 .sd-container, .sd-container-fluid, .sd-container-lg, .sd-container-md, .sd-container-sm, .sd-container-xl {
 	padding-left: 0;
 	padding-right: 0;
-}
-.scbs-carousel-control-next-icon{
-  background-image: url('../img/arrow_right.svg')
-}
-.scbs-carousel-control-prev-icon{
-  background-image: url('../img/arrow_left.svg')
 }
 .sd-tab-set > input:checked + label {
 
@@ -986,7 +984,6 @@ ul.srt-menu li li li.sfHover ul {
 	margin:40px 0 -13px;
 }
 
-}
 
 /*
 DESKTOP
@@ -1028,6 +1025,21 @@ iPhone 5 or iPod Touch 5th generation styles (you can include your own file if y
 */
 @media (device-height: 568px) and (-webkit-min-device-pixel-ratio: 2) {
 
+}
+
+#options-for-configuring-nest table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+#options-for-configuring-nest table td:first-child,
+#options-for-configuring-nest table th:first-child {
+  width: 30%;
+}
+
+#options-for-configuring-nest table td:nth-child(2),
+#options-for-configuring-nest table th:nth-child(2) {
+  width: 70%;
 }
 
 @media only screen and (max-width: 76.1875em) {

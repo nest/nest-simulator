@@ -46,7 +46,7 @@ Currently, AMPA, GABA or AMPA+NMDA receptors.
 Description
 +++++++++++
 
-``cm_default`` is an implementation of a compartmental model. The structure of the
+``cm_default`` is an implementation of a compartmental model :footcite:p:`Wybo2021`. The structure of the
 neuron -- soma, dendrites, axon -- is user-defined at runtime by adding
 compartments through ``nest.SetStatus()``. Each compartment can be assigned
 receptors, also through ``nest.SetStatus()``.
@@ -224,9 +224,7 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 References
 ++++++++++
 
-Data-driven reduction of dendritic morphologies with preserved dendro-somatic responses
-WAM Wybo, J Jordan, B Ellenberger, UM Mengual, T Nevian, W Senn
-Elife 10, `e60936 <https://elifesciences.org/articles/60936>`_
+.. footbibliography::
 
 See also
 ++++++++
@@ -307,7 +305,7 @@ private:
 
 
 inline size_t
-nest::cm_default::send_test_event( Node& target, size_t receptor_type, synindex, bool )
+cm_default::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

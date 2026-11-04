@@ -37,8 +37,11 @@
 #include "compose.hpp"
 #include "logging.h"
 
+
+namespace nest
+{
 void
-nest::register_music_cont_out_proxy( const std::string& name )
+register_music_cont_out_proxy( const std::string& name )
 {
   register_node_model< music_cont_out_proxy >( name );
 }
@@ -48,7 +51,7 @@ nest::register_music_cont_out_proxy( const std::string& name )
  * ----------------------------------------------------------------
  */
 
-nest::music_cont_out_proxy::Parameters_::Parameters_()
+music_cont_out_proxy::Parameters_::Parameters_()
   : interval_( Time::ms( 1.0 ) )
   , port_name_( "cont_out" )
   , record_from_()
@@ -56,7 +59,7 @@ nest::music_cont_out_proxy::Parameters_::Parameters_()
 {
 }
 
-nest::music_cont_out_proxy::Parameters_::Parameters_( const Parameters_& p )
+music_cont_out_proxy::Parameters_::Parameters_( const Parameters_& p )
   : interval_( p.interval_ )
   , port_name_( p.port_name_ )
   , record_from_( p.record_from_ )
@@ -65,25 +68,25 @@ nest::music_cont_out_proxy::Parameters_::Parameters_( const Parameters_& p )
   interval_.calibrate();
 }
 
-nest::music_cont_out_proxy::State_::State_()
+music_cont_out_proxy::State_::State_()
   : published_( false )
   , port_width_( 0 )
 {
 }
 
-nest::music_cont_out_proxy::State_::State_( const State_& s )
+music_cont_out_proxy::State_::State_( const State_& s )
   : published_( s.published_ )
   , port_width_( s.port_width_ )
 {
 }
 
-nest::music_cont_out_proxy::Buffers_::Buffers_()
+music_cont_out_proxy::Buffers_::Buffers_()
   : has_targets_( false )
   , data_()
 {
 }
 
-nest::music_cont_out_proxy::Buffers_::Buffers_( const Buffers_& b )
+music_cont_out_proxy::Buffers_::Buffers_( const Buffers_& b )
   : has_targets_( b.has_targets_ )
   , data_( b.data_ )
 {
@@ -94,7 +97,7 @@ nest::music_cont_out_proxy::Buffers_::Buffers_( const Buffers_& b )
  * ---------------------------------------------------------------- */
 
 void
-nest::music_cont_out_proxy::Parameters_::get( Dictionary& d ) const
+music_cont_out_proxy::Parameters_::get( Dictionary& d ) const
 {
   d[ names::port_name ] = port_name_;
   d[ names::interval ] = interval_.get_ms();
@@ -103,7 +106,7 @@ nest::music_cont_out_proxy::Parameters_::get( Dictionary& d ) const
 }
 
 void
-nest::music_cont_out_proxy::Parameters_::set( const Dictionary& d,
+music_cont_out_proxy::Parameters_::set( const Dictionary& d,
   const Node& self,
   const State_& state,
   const Buffers_& buffers )
@@ -161,7 +164,7 @@ nest::music_cont_out_proxy::Parameters_::set( const Dictionary& d,
 }
 
 void
-nest::music_cont_out_proxy::State_::get( Dictionary& d ) const
+music_cont_out_proxy::State_::get( Dictionary& d ) const
 {
   d[ names::published ] = published_;
   d[ names::port_width ] = static_cast< long >( port_width_ );
@@ -171,7 +174,7 @@ nest::music_cont_out_proxy::State_::get( Dictionary& d ) const
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::music_cont_out_proxy::music_cont_out_proxy()
+music_cont_out_proxy::music_cont_out_proxy()
   : DeviceNode()
   , P_()
   , S_()
@@ -179,7 +182,7 @@ nest::music_cont_out_proxy::music_cont_out_proxy()
 {
 }
 
-nest::music_cont_out_proxy::music_cont_out_proxy( const music_cont_out_proxy& n )
+music_cont_out_proxy::music_cont_out_proxy( const music_cont_out_proxy& n )
   : DeviceNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -188,18 +191,18 @@ nest::music_cont_out_proxy::music_cont_out_proxy( const music_cont_out_proxy& n 
 }
 
 void
-nest::music_cont_out_proxy::init_buffers_()
+music_cont_out_proxy::init_buffers_()
 {
   B_.data_.clear();
 }
 
 void
-nest::music_cont_out_proxy::finalize()
+music_cont_out_proxy::finalize()
 {
 }
 
 size_t
-nest::music_cont_out_proxy::send_test_event( Node& target, size_t receptor_type, synindex, bool )
+music_cont_out_proxy::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   DataLoggingRequest e( P_.interval_, P_.record_from_ );
   e.set_sender( *this );
@@ -213,7 +216,7 @@ nest::music_cont_out_proxy::send_test_event( Node& target, size_t receptor_type,
 }
 
 void
-nest::music_cont_out_proxy::pre_run_hook()
+music_cont_out_proxy::pre_run_hook()
 {
   // only publish the output port once,
   if ( S_.published_ == false )
@@ -285,7 +288,7 @@ nest::music_cont_out_proxy::pre_run_hook()
 }
 
 void
-nest::music_cont_out_proxy::get_status( Dictionary& d ) const
+music_cont_out_proxy::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
@@ -309,13 +312,13 @@ nest::music_cont_out_proxy::get_status( Dictionary& d ) const
 }
 
 void
-nest::music_cont_out_proxy::set_status( const Dictionary& d )
+music_cont_out_proxy::set_status( const Dictionary& d )
 {
   P_.set( d, *this, S_, B_ );  // throws if BadProperty
 }
 
 void
-nest::music_cont_out_proxy::update( Time const& origin, const long from, const long )
+music_cont_out_proxy::update( Time const& origin, const long from, const long )
 {
   /* There is nothing to request during the first time slice. For
      each subsequent slice, we collect all data generated during
@@ -339,7 +342,7 @@ nest::music_cont_out_proxy::update( Time const& origin, const long from, const l
 }
 
 void
-nest::music_cont_out_proxy::handle( DataLoggingReply& reply )
+music_cont_out_proxy::handle( DataLoggingReply& reply )
 {
   // easy access to relevant information
   DataLoggingReply::Container const& info = reply.get_info();
@@ -356,5 +359,7 @@ nest::music_cont_out_proxy::handle( DataLoggingReply& reply )
     }
   }
 }
+
+}  // namespace nest
 
 #endif

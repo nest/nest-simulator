@@ -11,3 +11,4 @@ How NEST works
    built-in_timers
    random_numbers
    running_simulations
+   simulation_limits

@@ -26,7 +26,7 @@ Brette et al. 2007 Benchmark Framework
 This module provides a common framework for running the Brette et al. 2007
 simulator review benchmarks. The benchmarks create sparsely coupled networks
 of excitatory and inhibitory neurons which exhibit self-sustained activity
-after an initial stimulus. The model is based on the Vogels & Abbott network model [1]_.
+after an initial stimulus. The model is based on the Vogels & Abbott network model :footcite:p:`Vogels2005`.
 
 This framework is used by the individual benchmark scripts:
 - ``coba.py`` (Benchmark 1: Conductance-based synapses)
@@ -38,10 +38,7 @@ This framework is used by the individual benchmark scripts:
 References
 ----------
 
-.. [1] Vogels TP, Abbott LF. 2005. Signal propagation and logic gating in
-       networks of integrate-and-fire neurons. Journal of Neuroscience.
-       25(46):10786-10795.
-       https://doi.org/10.1523/JNEUROSCI.3508-05.2005
+.. footbibliography::
 """
 
 import nest

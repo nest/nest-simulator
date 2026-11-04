@@ -361,7 +361,7 @@ spike_generator::get_status( Dictionary& d ) const
 }
 
 inline void
-nest::spike_generator::set_status( const Dictionary& d )
+spike_generator::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;  // temporary copy in case of errors
 

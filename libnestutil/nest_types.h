@@ -29,19 +29,12 @@
 #include <cstddef>
 #include <limits>
 #include <stdint.h>
+#include <type_traits>
 
 // Generated includes:
 #include "config.h"
 
-#ifdef HAVE_32BIT_ARCH
-#ifdef HAVE_UINT64_T  // 32-bit platforms usually provide the ...
-#include <stdint.h>   // ... 64-bit unsigned integer data type 'uint64_t' in stdint.h
-#else
-#error "32-bit platform does not provide a 64-bit unsigned integer data type"
-#endif
-#else
-#include <cstdint>  // `uint64_t` on 64-bit platforms
-#endif
+#include <cstdint>  // `uint64_t`
 
 /**
  * Namespace for the NEST simulation kernel.
@@ -107,20 +100,9 @@ constexpr uint64_t MAX_NODE_ID = DISABLED_NODE_ID - 1;
 /**
  * Type for Time tics.
  */
-#ifdef HAVE_LONG_LONG
 typedef long long tic_t;
-#ifdef LLONG_MAX
-const tic_t tic_t_max = LLONG_MAX;
-const tic_t tic_t_min = LLONG_MIN;
-#else
-const tic_t tic_t_max = LONG_LONG_MAX;
-const tic_t tic_t_min = LONG_LONG_MIN;
-#endif
-#else
-typedef long tic_t;
-const tic_t tic_t_max = LONG_MAX;
-const tic_t tic_t_min = LONG_MIN;
-#endif
+constexpr tic_t tic_t_max = std::numeric_limits< tic_t >::max();
+constexpr tic_t tic_t_min = std::numeric_limits< tic_t >::min();
 
 /**
  *  Unsigned long type for enumerations.
@@ -131,7 +113,7 @@ __attribute__( ( __unused__ ) ) constexpr size_t invalid_index = std::numeric_li
  *  For enumerations of synapse types.
  */
 typedef size_t synindex;
-const synindex invalid_synindex = MAX_SYN_ID;
+constexpr synindex invalid_synindex = MAX_SYN_ID;
 
 /**
  * Unsigned short type for compact target representation.
@@ -140,7 +122,7 @@ const synindex invalid_synindex = MAX_SYN_ID;
  */
 //! target index into thread local node vector
 typedef unsigned short targetindex;
-const targetindex invalid_targetindex = USHRT_MAX;
+constexpr targetindex invalid_targetindex = USHRT_MAX;
 __attribute__( ( __unused__ ) ) const size_t max_targetindex = invalid_targetindex - 1;
 
 /**
@@ -186,6 +168,21 @@ enum SignalType
   BINARY = 2,
   ALL = SPIKE | BINARY
 };
+
+/**
+ * Cast enum value to underlying integer type.
+ *
+ * @note Useful where we do arithmetic mixing different enum types.
+ * @note Once we switch to C++23, replace with @c std::to_underlying()
+ *
+ * Suggested by Claude Haiku 4.5.
+ */
+template < typename E >
+constexpr auto
+to_underlying( E e ) noexcept
+{
+  return static_cast< std::underlying_type_t< E > >( e );
+}
 }
 
 #endif /* #ifndef NEST_TYPES_H */

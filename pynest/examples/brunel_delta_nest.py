@@ -24,7 +24,7 @@ Random balanced network (delta synapses)
 ----------------------------------------
 
 This script simulates an excitatory and an inhibitory population on
-the basis of the network used in [1]_
+the basis of the network used in :footcite:p:`Brunel2000`
 
 When connecting the network, customary synapse models are used, which
 allow for querying the number of created synapses. Using spike
@@ -35,10 +35,7 @@ network are recorded.
 References
 ~~~~~~~~~~
 
-.. [1] Brunel N (2000). Dynamics of sparsely connected networks of excitatory and
-       inhibitory spiking neurons. Journal of Computational Neuroscience 8,
-       183-208.
-
+.. footbibliography::
 """
 
 ###############################################################################

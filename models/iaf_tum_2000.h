@@ -36,7 +36,7 @@ namespace nest
 {
 
 // clang-format off
-/* BeginUserDocs: neuron, integrate-and-fire, current-based, short-term plasticity, hard threshold
+/* BeginUserDocs: neuron, integrate-and-fire, current-based, stp, hard threshold
 
 Short description
 +++++++++++++++++
@@ -49,7 +49,7 @@ Description
 ``iaf_tum_2000`` is a leaky integrate-and-fire neuron model with short-term synaptic
 plasticity and exponential shaped postsynaptic currents (PSCs). In particular,
 ``iaf_tum_2000`` implements short-term depression and short-term facilitation
-according to [1]_ by solving Eqs. (3) and (4) from that paper in an exact manner.
+according to :footcite:p:`Tsodyks2000` by solving Eqs. (3) and (4) from that paper in an exact manner.
 
 ``iaf_tum_2000`` differs from :doc:`iaf_psc_exp </models/iaf_psc_exp>` by the addition
 of synaptic state variables :math:`x`, :math:`z` and :math:`u`, which together
@@ -141,9 +141,7 @@ The following parameters can be set in the status dictionary.
 References
 ++++++++++
 
-.. [1] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent
-       networks with frequency-dependent synapses. Journal of Neuroscience,
-       20 RC50. URL: http://infoscience.epfl.ch/record/183402
+.. footbibliography::
 
 Transmits
 +++++++++
@@ -398,7 +396,7 @@ private:
 
 
 inline size_t
-nest::iaf_tum_2000::send_test_event( Node& target, size_t receptor_type, synindex, bool )
+iaf_tum_2000::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   if ( target.get_model_id() != this->get_model_id() and target.is_off_grid() )
   {

@@ -180,7 +180,7 @@ spin_detector::receives_signal() const
 }
 
 inline void
-nest::spin_detector::calibrate_time( const TimeConverter& tc )
+spin_detector::calibrate_time( const TimeConverter& tc )
 {
   t_last_in_spike_ = tc.from_old_tics( t_last_in_spike_.get_tics() );
 }

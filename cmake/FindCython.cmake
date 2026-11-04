@@ -47,8 +47,14 @@ if ( NOT CYTHON_EXECUTABLE STREQUAL "CYTHON_EXECUTABLE-NOTFOUND" )
       OUTPUT_STRIP_TRAILING_WHITESPACE
   )
   if ( RESULT EQUAL 0 )
+    # Cython >= 3.0 writes the version to stdout; older releases wrote to
+    # stderr. Try stdout first, fall back to stderr.
     string( REGEX REPLACE ".* ([0-9]+\\.[0-9]+(\\.[0-9]+)?).*" "\\1"
                           CYTHON_VERSION "${CYTHON_VAR_OUTPUT}" )
+    if ( NOT CYTHON_VERSION )
+      string( REGEX REPLACE ".* ([0-9]+\\.[0-9]+(\\.[0-9]+)?).*" "\\1"
+                            CYTHON_VERSION "${CYTHON_ERR_OUTPUT}" )
+    endif ()
   else ()
     printError( "Cython error: ${CYTHON_ERR_OUTPUT}\nat ${CYTHON_EXECUTABLE}")
   endif ()

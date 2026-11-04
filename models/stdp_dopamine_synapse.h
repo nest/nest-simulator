@@ -36,7 +36,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapse, spike-timing-dependent plasticity
+/* BeginUserDocs: synapse, chemical, functional, stdp, 3-factor
 
 Short description
 +++++++++++++++++
@@ -48,7 +48,7 @@ Description
 
 ``stdp_dopamine_synapse`` is a connection to create synapses with
 dopamine-modulated spike-timing dependent plasticity (used as a
-benchmark model in [1]_, based on [2]_). The dopaminergic signal is a
+benchmark model in :footcite:p:`Potjans2010`, based on :footcite:p:`Izhikevich2007`). The dopaminergic signal is a
 low-pass filtered version of the spike rate of a user-specific pool
 of neurons. The spikes emitted by the pool of dopamine neurons are
 delivered to the synapse via the assigned volume transmitter. The
@@ -77,7 +77,7 @@ Parameters
                                                 is simply the multiplier for facilitation (as in the
                                                 stdp_synapse model). If b is not zero, then A_plus
                                                 will be the multiplier for facilitation only if n - b
-                                                is positive, where n is the instantenous dopamine
+                                                is positive, where n is the instantaneous dopamine
                                                 concentration in the volume transmitter. If n - b is
                                                 negative, A_plus will be the multiplier for
                                                 depression.
@@ -87,7 +87,7 @@ Parameters
                                                 is simply the multiplier for depression (as in the
                                                 stdp_synapse model). If b is not zero, then A_minus
                                                 will be the multiplier for depression only if n - b
-                                                is positive, where n is the instantenous dopamine
+                                                is positive, where n is the instantaneous dopamine
                                                 concentration in the volume transmitter. If n - b is
                                                 negative, A_minus will be the multiplier for
                                                 facilitation.
@@ -113,13 +113,7 @@ to all instances of the synapse model.
 References
 ++++++++++
 
-.. [1] Potjans W, Morrison A, Diesmann M (2010). Enabling functional neural
-       circuit simulations with distributed computing of neuromodulated
-       plasticity. Frontiers in Computational Neuroscience, 4:141.
-       DOI: https://doi.org/10.3389/fncom.2010.00141
-.. [2] Izhikevich EM (2007). Solving the distal reward problem through linkage
-       of STDP and dopamine signaling. Cerebral Cortex, 17(10):2443-2452.
-       DOI: https://doi.org/10.1093/cercor/bhl152
+.. footbibliography::
 
 Transmits
 +++++++++

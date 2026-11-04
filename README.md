@@ -4,7 +4,7 @@
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/2218/badge)](https://bestpractices.coreinfrastructure.org/projects/2218)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/nest/nest-simulator/badge)](https://scorecard.dev/viewer/?uri=github.com/nest/nest-simulator)
 [![License](http://img.shields.io/:license-GPLv2+-green.svg)](http://www.gnu.org/licenses/gpl-2.0.html)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10834751.svg)](https://doi.org/10.5281/zenodo.10834751)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18268837.svg)](https://doi.org/10.5281/zenodo.18268837)
 
 [![Latest release](https://img.shields.io/github/release/nest/nest-simulator.svg?color=brightgreen&label=latest%20release)](https://github.com/nest/nest-simulator/releases)
 [![GitHub contributors](https://img.shields.io/github/contributors/nest/nest-simulator?logo=github)](https://github.com/nest/nest-simulator)
@@ -91,7 +91,7 @@ For general citations, please use
 
 
 If you need help or would like to discuss an idea or issue,
-join our [maling list](https://nest-simulator.org/documentation/developer_space/guidelines/mailing_list_guidelines.html),
+join our [mailing list](https://nest-simulator.org/mailinglist),
 where we encourage active participation from our developers and users to share their knowledge and experience with NEST.
 
 
@@ -107,7 +107,12 @@ For bug reports, feature requests, documentation improvements, or other issues,
 you can create a [GitHub issue](https://github.com/nest/nest-simulator/issues/new/choose),
 
 For working with NEST code and documentation, you can find guidelines for contributions
-[in our documentation](https://nest-simulator.org/documentation/developer_space/index.html#contribute-to-nest)
+[in our documentation](https://nest-simulator.org/documentation/)
+
+### Developer docs
+
+If you want to view the developer documentation for the C++ source code, plus additional developer-related
+docs, check out our [developer space](https://nest.github.io/nest-simulator).
 
 
 ## Publications

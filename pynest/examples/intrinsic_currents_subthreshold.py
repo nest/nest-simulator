@@ -27,7 +27,7 @@ This example illustrates how to record from a model with multiple
 intrinsic currents and visualize the results. This is illustrated
 using the ``ht_neuron`` which has four intrinsic currents: ``I_NaP``,
 ``I_KNa``, ``I_T``, and ``I_h``. It is a slightly simplified implementation of
-neuron model proposed in [1]_.
+neuron model proposed in :footcite:p:`Hill2005`.
 
 The neuron is driven by DC current, which is alternated
 between depolarizing and hyperpolarizing. Hyperpolarization
@@ -36,9 +36,7 @@ intervals become increasingly longer.
 References
 ~~~~~~~~~~
 
-.. [1] Hill and Tononi (2005) Modeling Sleep and Wakefulness in the
-       Thalamocortical System J Neurophysiol 93:1671
-       http://dx.doi.org/10.1152/jn.00915.2004.
+.. footbibliography::
 
 See Also
 ~~~~~~~~

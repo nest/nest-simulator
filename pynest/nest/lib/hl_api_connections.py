@@ -213,6 +213,9 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=F
         if return_synapsecollection:
             raise ValueError("SynapseCollection cannot be returned when connecting two arrays of node IDs")
 
+        if isinstance(processed_conn_spec, dict) and processed_conn_spec.get("long_range", False):
+            raise ValueError("'long_range' connections cannot be created by connecting two arrays of node IDs.")
+
         if processed_syn_spec is None:
             raise ValueError(
                 "When connecting two arrays of node IDs, the synapse specification dictionary must "

@@ -23,6 +23,9 @@
 #ifndef CONNECTION_ID_H
 #define CONNECTION_ID_H
 
+// Includes from libnestutil:
+#include "config.h"
+
 #include "dictionary.h"
 
 
@@ -46,12 +49,27 @@ public:
   long get_synapse_model_id() const;
   long get_port() const;
 
+  /**
+   * Return true if the connection is on the long path of morph.
+   *
+   * Without morph, all connections are on the regular path and the function returns false.
+   */
+  bool is_long_delay() const;
+
+#ifdef HAVE_MORPH
+  //! Mark the connection as being on the long path of morph.
+  void set_long_delay();
+#endif
+
 protected:
   long source_node_id_;
   long target_node_id_;
   long target_thread_;
   long synapse_modelid_;
   long port_;
+#ifdef HAVE_MORPH
+  bool is_long_delay_;  //!< the connection is on the long path of morph; port_ is an index into its tables
+#endif
 };
 
 inline ConnectionID::ConnectionID()
@@ -60,6 +78,9 @@ inline ConnectionID::ConnectionID()
   , target_thread_( -1 )
   , synapse_modelid_( -1 )
   , port_( -1 )
+#ifdef HAVE_MORPH
+  , is_long_delay_( false )
+#endif
 {
 }
 
@@ -92,6 +113,24 @@ ConnectionID::get_port() const
 {
   return port_;
 }
+
+inline bool
+ConnectionID::is_long_delay() const
+{
+#ifdef HAVE_MORPH
+  return is_long_delay_;
+#else
+  return false;
+#endif
+}
+
+#ifdef HAVE_MORPH
+inline void
+ConnectionID::set_long_delay()
+{
+  is_long_delay_ = true;
+}
+#endif
 
 }  // namespace
 

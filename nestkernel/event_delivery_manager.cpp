@@ -556,7 +556,19 @@ EventDeliveryManager::gather_spike_data_( std::vector< SpikeDataT >& send_buffer
     // reached this point as well. This barrier is directly followed by another implicit barrier due to global
     // communication.
     kernel().get_mpi_synchronization_stopwatch().start();
+#ifdef HAVE_MORPH
+    // The barrier acts on the communicator of the exchange: the local group for the short path of morph.
+    if ( is_long_delay )
+    {
+      kernel().mpi_manager.synchronize();
+    }
+    else
+    {
+      kernel().mpi_manager.synchronize_short_path();
+    }
+#else
     kernel().mpi_manager.synchronize();
+#endif
     kernel().get_mpi_synchronization_stopwatch().stop();
 #endif
 
@@ -1516,9 +1528,17 @@ EventDeliveryManager::distribute_target_data_buffers_comm_local_( const size_t t
       if ( target_data.get_source_tid() == tid )
       {
         // Spikes of the short path are exchanged on the communicator of the local group, so the target table stores
-        // the index of the target process within the group.
-        kernel().connection_manager.add_target(
-          tid, kernel().mpi_manager.get_idx_in_comm_local_group( rank ), target_data );
+        // the index of the target process within the group. Connect() ensures that short-path connections do not
+        // cross group boundaries. Secondary events are exchanged among all processes and keep the global rank.
+        if ( target_data.is_primary() )
+        {
+          kernel().connection_manager.add_target(
+            tid, kernel().mpi_manager.get_idx_in_comm_local_group( rank ), target_data );
+        }
+        else
+        {
+          kernel().connection_manager.add_target( tid, rank, target_data );
+        }
       }
 
       // Is this the last target from this rank?

@@ -114,8 +114,13 @@ public:
    * \param target Pointer to target Node.
    * \param target_thread Thread that hosts the target node.
    * \param syn_id The synapse model to use.
+   * \param is_long_delay Disconnect a connection on the long path of morph; no effect in builds without morph.
    */
-  void disconnect( const size_t snode_id, Node* target, size_t target_thread, const size_t syn_id );
+  void disconnect( const size_t snode_id,
+    Node* target,
+    size_t target_thread,
+    const size_t syn_id,
+    const bool is_long_delay = false );
 
   void update_structural_plasticity();
   void update_structural_plasticity( SPBuilder* );

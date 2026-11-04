@@ -229,12 +229,30 @@ ConnectionManager::set_status( const Dictionary& d )
   double new_threshold_delay = 0.0;
   if ( d.update_value( names::threshold_delay, new_threshold_delay ) )
   {
-    if ( new_threshold_delay <= 0 )
+    if ( not( new_threshold_delay > 0.0 ) )
     {
-      throw KernelException( "Threshold value for delay must be larger than zero." );
+      throw BadProperty( "threshold_delay > 0 required." );
     }
-    // Translating to steps rounds the delay up.
-    threshold_delay_ = Time( Time::ms_stamp( new_threshold_delay ) ).get_steps();
+    // Infinity switches morph off. Other values are converted to steps like connection delays.
+    const long new_threshold_delay_steps =
+      std::isinf( new_threshold_delay ) ? delay_max : Time::delay_ms_to_steps( new_threshold_delay );
+    if ( new_threshold_delay_steps < 1 )
+    {
+      throw BadProperty( "threshold_delay must be at least one simulation step." );
+    }
+    if ( new_threshold_delay_steps != threshold_delay_ )
+    {
+      if ( kernel().simulation_manager.has_been_simulated() )
+      {
+        throw KernelException( "threshold_delay cannot be changed after the simulation has started." );
+      }
+      // The checks of new connections depend on threshold_delay (see check_short_range_connection_()).
+      if ( get_num_connections() > 0 )
+      {
+        throw KernelException( "threshold_delay must be set before connections are created." );
+      }
+      threshold_delay_ = new_threshold_delay_steps;
+    }
   }
 #else
   if ( d.known( names::threshold_delay ) )
@@ -246,6 +264,85 @@ ConnectionManager::set_status( const Dictionary& d )
 #endif
 }
 
+#ifdef HAVE_MORPH
+void
+ConnectionManager::check_long_range_connection_( const ConnectorModel& conn_model,
+  const bool is_primary,
+  const Dictionary& params,
+  const double delay ) const
+{
+  if ( not is_morph_active() )
+  {
+    throw IllegalConnection( "long_range connections require the kernel parameter threshold_delay." );
+  }
+  if ( not is_primary )
+  {
+    throw IllegalConnection( "Only connections that transmit spikes can be long_range." );
+  }
+  const double used_delay = conn_model.get_delay_of_new_connection( params, delay );
+  if ( numerics::is_nan( used_delay ) )
+  {
+    throw IllegalConnection( "long_range connections require a synapse model with delay." );
+  }
+  // A spike on the long path is delivered at the beginning of the interval of threshold_delay that follows the
+  // interval in which it was emitted. With lag l in [0, threshold_delay) relative to the beginning of the previous
+  // interval, the ring-buffer offset is l + delay - threshold_delay, which is non-negative for all l if and only if
+  // delay >= threshold_delay. Delays equal to the threshold were verified to give the same spikes as the conventional
+  // exchange. The published version of morph requires delay > threshold_delay (assertion).
+  if ( Time::delay_ms_to_steps( used_delay ) < threshold_delay_ )
+  {
+    throw BadDelay( used_delay,
+      String::compose( "The delay of long_range connections must be at least threshold_delay (%1 ms).",
+        Time::delay_steps_to_ms( threshold_delay_ ) ) );
+  }
+}
+
+void
+ConnectionManager::check_short_range_connection_( const size_t s_node_id ) const
+{
+  if ( not is_morph_active() )
+  {
+    return;
+  }
+  // Spikes of short-range connections are exchanged only within the local group of processes. Secondary events
+  // are exchanged among all processes and need no check.
+  const size_t source_rank = kernel().mpi_manager.get_process_id_of_node_id( s_node_id );
+  if ( not kernel().mpi_manager.is_in_comm_local_group( source_rank ) )
+  {
+    throw IllegalConnection( String::compose(
+      "The connection from node %1 on process %2 crosses the boundary of the local group of process %3 "
+      "(comm_local_ranks); connections between local groups must be long_range.",
+      s_node_id,
+      source_rank,
+      kernel().mpi_manager.get_rank() ) );
+  }
+}
+
+void
+ConnectionManager::check_morph_configuration() const
+{
+  if ( not is_morph_active() )
+  {
+    return;
+  }
+  // Long-path spikes are collected over threshold_delay / min_delay cycles and exchanged at the end of the last
+  // cycle of each interval. This requires that the interval consists of whole cycles.
+  if ( threshold_delay_ % min_delay_ != 0 )
+  {
+    throw KernelException( String::compose( "threshold_delay (%1 ms) must be a multiple of min_delay (%2 ms).",
+      Time::delay_steps_to_ms( threshold_delay_ ),
+      Time::delay_steps_to_ms( min_delay_ ) ) );
+  }
+  // Long-path spikes carry their lag relative to the beginning of the interval, which must fit into the lag field
+  // of SpikeData (SpikeData::set() asserts lag < generate_max_value( NUM_BITS_LAG )).
+  const long max_threshold_delay = generate_max_value( NUM_BITS_LAG );
+  if ( threshold_delay_ > max_threshold_delay )
+  {
+    throw KernelException(
+      String::compose( "threshold_delay must not exceed %1 simulation steps.", max_threshold_delay ) );
+  }
+}
+#endif
 
 DelayChecker&
 ConnectionManager::get_delay_checker()
@@ -260,7 +357,8 @@ ConnectionManager::get_status( Dictionary& dict )
   dict[ names::min_delay ] = Time( Time::step( min_delay_ ) ).get_ms();
   dict[ names::max_delay ] = Time( Time::step( max_delay_ ) ).get_ms();
 #ifdef HAVE_MORPH
-  dict[ names::threshold_delay ] = Time( Time::step( threshold_delay_ ) ).get_ms();
+  dict[ names::threshold_delay ] =
+    is_morph_active() ? Time::delay_steps_to_ms( threshold_delay_ ) : std::numeric_limits< double >::infinity();
 #endif
 
   const size_t n = get_num_connections();
@@ -283,7 +381,8 @@ ConnectionManager::get_synapse_status( const size_t source_node_id,
   const size_t target_node_id,
   const size_t tid,
   const synindex syn_id,
-  const size_t lcid ) const
+  const size_t lcid,
+  const bool is_long_delay ) const
 {
   kernel().model_manager.assert_valid_syn_id( syn_id, kernel().vp_manager.get_thread_id() );
 
@@ -298,7 +397,12 @@ ConnectionManager::get_synapse_status( const size_t source_node_id,
   const Node* target = kernel().node_manager.get_node_or_proxy( target_node_id, tid );
 
 #ifdef HAVE_MORPH
-  if ( is_long_delay_connection( tid, syn_id, source_node_id, target_node_id, lcid ) )
+  // the path of the connection; reported only if morph is active, so that the status is unchanged otherwise
+  if ( is_morph_active() )
+  {
+    dict[ names::long_range ] = is_long_delay;
+  }
+  if ( is_long_delay )
   {
     // connections on the long path of morph; always between neurons
     if ( not connections_long_delay_[ tid ][ syn_id ] )
@@ -340,7 +444,8 @@ ConnectionManager::set_synapse_status( const size_t source_node_id,
   const size_t tid,
   const synindex syn_id,
   const size_t lcid,
-  const Dictionary& dict )
+  const Dictionary& dict,
+  const bool is_long_delay )
 {
   kernel().model_manager.assert_valid_syn_id( syn_id, kernel().vp_manager.get_thread_id() );
 
@@ -351,7 +456,7 @@ ConnectionManager::set_synapse_status( const size_t source_node_id,
   {
     ConnectorModel& cm = kernel().model_manager.get_connection_model( syn_id, tid );
 #ifdef HAVE_MORPH
-    if ( is_long_delay_connection( tid, syn_id, source_node_id, target_node_id, lcid ) )
+    if ( is_long_delay )
     {
       // connections on the long path of morph; always between neurons
       if ( not connections_long_delay_[ tid ][ syn_id ] )
@@ -994,13 +1099,16 @@ ConnectionManager::connect_( Node& source,
 #ifdef HAVE_MORPH
   if ( long_range )
   {
-    assert( Time( Time::ms_stamp( conn_model.get_delay_of_new_connection( params, delay ) ) ).get_steps()
-      > threshold_delay_ );
+    check_long_range_connection_( conn_model, is_primary, params, delay );
     conn_model.add_connection( source, target, connections_long_delay_[ tid ], syn_id, params, delay, weight );
     source_table_long_delay_.add_source( tid, syn_id, s_node_id, is_primary );
   }
   else
   {
+    if ( is_primary )
+    {
+      check_short_range_connection_( s_node_id );
+    }
 #endif
     conn_model.add_connection( source, target, connections_[ tid ], syn_id, params, delay, weight );
     source_table_.add_source( tid, syn_id, s_node_id, is_primary );
@@ -1131,38 +1239,17 @@ ConnectionManager::find_connection_long_delay( const size_t tid,
 }
 #endif
 
-#ifdef HAVE_MORPH
-bool
-ConnectionManager::is_long_delay_connection( const size_t tid,
+void
+ConnectionManager::disconnect( const size_t tid,
   const synindex syn_id,
   const size_t snode_id,
   const size_t tnode_id,
-  const size_t lcid ) const
-{
-  // A ConnectionID does not record the pathway. The connection is in the long-delay tables if the entry at lcid
-  // there matches source and target and the entry at lcid in the short-delay tables does not.
-  const auto match = [ & ]( const std::vector< std::vector< ConnectorBase* > >& conns, const SourceTable& st )
-  {
-    const ConnectorBase* c = conns[ tid ][ syn_id ];
-    return c and lcid < c->size() and st.get_node_id( tid, syn_id, lcid ) == snode_id
-      and c->get_target_node_id( tid, lcid ) == tnode_id;
-  };
-  if ( connections_long_delay_.empty() or not connections_long_delay_[ tid ][ syn_id ] )
-  {
-    return false;
-  }
-  return not match( connections_, source_table_ ) and match( connections_long_delay_, source_table_long_delay_ );
-}
-#endif
-
-void
-ConnectionManager::disconnect( const size_t tid, const synindex syn_id, const size_t snode_id, const size_t tnode_id )
+  const bool is_long_delay )
 {
   assert( syn_id != invalid_synindex );
 
 #ifdef HAVE_MORPH
-  // Search the short-delay tables first, then the long-delay tables.
-  if ( find_connection( tid, syn_id, snode_id, tnode_id ) == invalid_index )
+  if ( is_long_delay )
   {
     const auto lcid = find_connection_long_delay( tid, syn_id, snode_id, tnode_id );
     if ( lcid == invalid_index )
@@ -1605,6 +1692,7 @@ ConnectionManager::get_connections_long_delay_( const size_t tid,
     return;
   }
 
+  const size_t first_new = conns_in_thread.size();
   const size_t num_connections_in_thread = connections->size();
   for ( size_t lcid = 0; lcid < num_connections_in_thread; ++lcid )
   {
@@ -1623,6 +1711,13 @@ ConnectionManager::get_connections_long_delay_( const size_t tid,
       // Passing target_node_id = 0 ignores target_node_id while getting connections.
       connections->get_connection( source_node_id, 0, tid, lcid, synapse_label, conns_in_thread );
     }
+  }
+
+  // The port of these connections is an index into the tables of the long path; record the path so that
+  // status queries and disconnection address the right connection.
+  for ( size_t i = first_new; i < conns_in_thread.size(); ++i )
+  {
+    conns_in_thread[ i ].set_long_delay();
   }
 }
 #endif

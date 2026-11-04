@@ -134,12 +134,74 @@ void
 MPIManager::set_comm_local_ranks( const std::vector< long >& ranks )
 {
   std::vector< int > new_ranks( ranks.begin(), ranks.end() );
+  std::sort( new_ranks.begin(), new_ranks.end() );
 
+  // Local checks
+  if ( new_ranks.empty() )
+  {
+    throw BadProperty( "comm_local_ranks must not be empty." );
+  }
+  if ( std::adjacent_find( new_ranks.begin(), new_ranks.end() ) != new_ranks.end() )
+  {
+    throw BadProperty( "comm_local_ranks must not contain a rank twice." );
+  }
+  if ( new_ranks.front() < 0 or new_ranks.back() >= num_processes_ )
+  {
+    throw BadProperty( String::compose( "comm_local_ranks must contain ranks between 0 and %1.", num_processes_ - 1 ) );
+  }
+  if ( not std::binary_search( new_ranks.begin(), new_ranks.end(), rank_ ) )
+  {
+    throw BadProperty( String::compose( "comm_local_ranks of process %1 must contain its own rank.", rank_ ) );
+  }
+
+  // Global check: the groups must partition the processes. A group is identified by its smallest rank; all members
+  // of a group must pass the same group, and every process naming the same smallest rank must be a member. A group
+  // consisting of this process only needs no check if all processes use such groups, as after initialization.
+  if ( num_processes_ > 1 )
+  {
+    std::vector< long > group_first( num_processes_, 0 );
+    std::vector< long > group_size( num_processes_, 0 );
+    group_first[ rank_ ] = new_ranks.front();
+    group_size[ rank_ ] = new_ranks.size();
+    const bool only_self = new_ranks.size() == 1;
+    if ( not kernel().mpi_manager.any_true( not only_self ) )
+    {
+      // all processes form groups of one; consistent by construction
+    }
+    else
+    {
+      communicate( group_first );
+      communicate( group_size );
+      bool consistent = true;
+      for ( int r = 0; r < num_processes_; ++r )
+      {
+        const bool member = std::binary_search( new_ranks.begin(), new_ranks.end(), r );
+        const bool same_group =
+          group_first[ r ] == new_ranks.front() and group_size[ r ] == static_cast< long >( new_ranks.size() );
+        if ( member != same_group )
+        {
+          consistent = false;
+        }
+      }
+      if ( kernel().mpi_manager.any_true( not consistent ) )
+      {
+        throw BadProperty(
+          "comm_local_ranks must partition the processes: every process must pass the ranks of its own group." );
+      }
+    }
+  }
+
+  if ( comm_local != MPI_COMM_NULL )
+  {
+    MPI_Comm_free( &comm_local );
+  }
   MPI_Group group_global;
   MPI_Comm_group( comm, &group_global );
   MPI_Group group_local;
   MPI_Group_incl( group_global, new_ranks.size(), new_ranks.data(), &group_local );
   MPI_Comm_create_group( comm, group_local, 0, &comm_local );
+  MPI_Group_free( &group_local );
+  MPI_Group_free( &group_global );
 
   comm_local_ranks_ = new_ranks;
   idx_in_comm_local_group_.assign( num_processes_, -1 );
@@ -161,6 +223,11 @@ MPIManager::communicate_Alltoall_short_path_( void* send_buffer, void* recv_buff
     kernel().connection_manager.is_morph_active() ? comm_local : comm );
 }
 
+void
+MPIManager::synchronize_short_path()
+{
+  MPI_Barrier( kernel().connection_manager.is_morph_active() ? comm_local : comm );
+}
 #endif
 
 void
@@ -237,6 +304,14 @@ MPIManager::initialize( const bool adjust_number_of_threads_or_rng_only )
   {
     return;
   }
+
+#ifdef HAVE_MORPH
+  // ResetKernel restores the default local group of morph: this process only.
+  if ( use_mpi_ )
+  {
+    set_comm_local_ranks( { rank_ } );
+  }
+#endif
 
 #ifndef HAVE_MPI
   char* pmix_rank_set = std::getenv( "PMIX_RANK" );  // set by OpenMPI's launcher
@@ -321,7 +396,22 @@ MPIManager::set_status( const Dictionary& dict )
   std::vector< long > new_comm_local_ranks;
   if ( dict.update_value( names::comm_local_ranks, new_comm_local_ranks ) )
   {
-    set_comm_local_ranks( new_comm_local_ranks );
+    std::vector< long > sorted_ranks( new_comm_local_ranks );
+    std::sort( sorted_ranks.begin(), sorted_ranks.end() );
+    if ( not std::equal(
+           sorted_ranks.begin(), sorted_ranks.end(), comm_local_ranks_.begin(), comm_local_ranks_.end() ) )
+    {
+      if ( kernel().simulation_manager.has_been_simulated() )
+      {
+        throw KernelException( "comm_local_ranks cannot be changed after the simulation has started." );
+      }
+      // The checks of new connections depend on the local group (see ConnectionManager::connect_()).
+      if ( kernel().connection_manager.get_num_connections() > 0 )
+      {
+        throw KernelException( "comm_local_ranks must be set before connections are created." );
+      }
+      set_comm_local_ranks( new_comm_local_ranks );
+    }
   }
 #else
   if ( dict.known( names::comm_local_ranks ) or dict.known( names::buffer_size_spike_data_long_delay ) )
@@ -362,6 +452,12 @@ void
 MPIManager::mpi_finalize( int exitcode )
 {
   MPI_Type_free( &MPI_OFFGRID_SPIKE );
+#ifdef HAVE_MORPH
+  if ( comm_local != MPI_COMM_NULL )
+  {
+    MPI_Comm_free( &comm_local );
+  }
+#endif
 
   int finalized;
   MPI_Finalized( &finalized );

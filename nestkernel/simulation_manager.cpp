@@ -535,6 +535,9 @@ SimulationManager::prepare()
   // find shortest and longest delay across all MPI processes
   // this call sets the member variables
   kernel().connection_manager.update_delay_extrema_();
+#ifdef HAVE_MORPH
+  kernel().connection_manager.check_morph_configuration();
+#endif
   kernel().event_delivery_manager.init_moduli();
 
   // if at the beginning of a simulation, set up spike buffers

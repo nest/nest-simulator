@@ -89,6 +89,8 @@ public:
    * Set the local group of processes of morph for this process.
    *
    * Spikes of short-range connections are exchanged within the local group (communicator comm_local).
+   * The groups must partition the processes; every process passes the ranks of its own group, including its own
+   * rank. Collective over all processes, except for a group consisting of the calling process only.
    */
   void set_comm_local_ranks( const std::vector< long >& ranks );
 
@@ -108,6 +110,8 @@ public:
    */
   size_t get_num_processes_short_path() const;
 
+  //! Barrier on the communicator of the exchange of short-path spikes (MPI_SYNC_TIMER).
+  void synchronize_short_path();
 #endif
 
   /**
@@ -391,7 +395,7 @@ private:
   unsigned int send_recv_count_spike_data_per_rank_long_delay_;
   unsigned int send_recv_count_target_data_per_rank_long_delay_;
 
-  std::vector< int > comm_local_ranks_;  //!< global ranks of the local group of morph
+  std::vector< int > comm_local_ranks_;  //!< global ranks of the local group of morph, in increasing order
   //! index within the local group for each global rank; -1 for ranks outside the group
   std::vector< int > idx_in_comm_local_group_;
 #endif

@@ -219,18 +219,18 @@ public:
    */
   size_t
   find_connection_long_delay( const size_t tid, const synindex syn_id, const size_t snode_id, const size_t tnode_id );
+#endif
 
   /**
-   * Return true if the connection identified by (tid, syn_id, lcid, snode_id, tnode_id) is in the long-delay tables.
+   * Disable the first enabled connection of given synapse type from snode_id to tnode_id on thread tid.
+   *
+   * The flag is_long_delay selects the tables of the long path of morph; it has no effect in builds without morph.
    */
-  bool is_long_delay_connection( const size_t tid,
+  void disconnect( const size_t tid,
     const synindex syn_id,
     const size_t snode_id,
     const size_t tnode_id,
-    const size_t lcid ) const;
-#endif
-
-  void disconnect( const size_t tid, const synindex syn_id, const size_t snode_id, const size_t tnode_id );
+    const bool is_long_delay = false );
 
   /**
    * Check whether a connection between the given source and target
@@ -241,20 +241,32 @@ public:
    */
   ConnectionType connection_required( Node*& source, Node*& target, size_t tid );
 
-  // aka conndatum GetStatus
+  /**
+   * Return the status of a connection (aka conndatum GetStatus).
+   *
+   * The flag is_long_delay selects the tables of the long path of morph (see ConnectionID::is_long_delay()); it has
+   * no effect in builds without morph.
+   */
   Dictionary get_synapse_status( const size_t source_node_id,
     const size_t target_node_id,
     const size_t tid,
     const synindex syn_id,
-    const size_t lcid ) const;
+    const size_t lcid,
+    const bool is_long_delay = false ) const;
 
-  // aka conndatum SetStatus
+  /**
+   * Set the status of a connection (aka conndatum SetStatus).
+   *
+   * The flag is_long_delay selects the tables of the long path of morph (see ConnectionID::is_long_delay()); it has
+   * no effect in builds without morph.
+   */
   void set_synapse_status( const size_t source_node_id,
     const size_t target_node_id,
     const size_t tid,
     const synindex syn_id,
     const size_t lcid,
-    const Dictionary& dict );
+    const Dictionary& dict,
+    const bool is_long_delay = false );
 
   /**
    * Return connections between pairs of neurons.
@@ -340,6 +352,12 @@ public:
   //! Return true if morph is active, that is, if the threshold delay is set.
   bool is_morph_active() const;
 
+  /**
+   * Check the configuration of morph before a simulation.
+   *
+   * Throws if the threshold delay is not a multiple of the minimal delay or too large for the lag field of SpikeData.
+   */
+  void check_morph_configuration() const;
 #endif
 
   bool get_user_set_delay_extrema() const;
@@ -545,6 +563,7 @@ private:
   /**
    * Collect connections on the long path of morph, optionally filtered by source and target.
    *
+   * The ConnectionID objects are marked as long-path connections.
    */
   void get_connections_long_delay_( const size_t tid,
     std::deque< ConnectionID >& conns_in_thread,
@@ -587,6 +606,26 @@ private:
    * Deletes all connections.
    */
   void delete_connections_();
+
+#ifdef HAVE_MORPH
+  /**
+   * Check a new connection on the long path of morph.
+   *
+   * Throws if morph is not active, if the connection does not transmit spikes, or if its delay is smaller than the
+   * threshold delay.
+   */
+  void check_long_range_connection_( const ConnectorModel& conn_model,
+    const bool is_primary,
+    const Dictionary& params,
+    const double delay ) const;
+
+  /**
+   * Check a new connection on the short path.
+   *
+   * If morph is active, throws if the source is outside the local group of processes of this process.
+   */
+  void check_short_range_connection_( const size_t s_node_id ) const;
+#endif
 
   /**
    * connect_ is used to establish a connection between a sender and

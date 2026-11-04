@@ -40,6 +40,9 @@ ConnectionID::ConnectionID( long source_node_id,
   , target_thread_( target_thread )
   , synapse_modelid_( synapse_modelid )
   , port_( port )
+#ifdef HAVE_MORPH
+  , is_long_delay_( false )
+#endif
 {
 }
 
@@ -49,6 +52,9 @@ ConnectionID::ConnectionID( long source_node_id, long target_thread, long synaps
   , target_thread_( target_thread )
   , synapse_modelid_( synapse_modelid )
   , port_( port )
+#ifdef HAVE_MORPH
+  , is_long_delay_( false )
+#endif
 {
 }
 
@@ -67,6 +73,13 @@ ConnectionID::get_dict() const
   dict[ names::target_thread ] = target_thread_;
   // The index in the list
   dict[ names::port ] = port_;
+#ifdef HAVE_MORPH
+  // Connections on the long path of morph
+  if ( is_long_delay_ )
+  {
+    dict[ names::long_range ] = true;
+  }
+#endif
 
   return dict;
 }
@@ -75,7 +88,11 @@ bool
 ConnectionID::operator==( const ConnectionID& c ) const
 {
   return source_node_id_ == c.source_node_id_ and ( target_node_id_ == c.target_node_id_ )
-    and target_thread_ == c.target_thread_ and port_ == c.port_ and ( synapse_modelid_ == c.synapse_modelid_ );
+    and target_thread_ == c.target_thread_ and port_ == c.port_ and ( synapse_modelid_ == c.synapse_modelid_ )
+#ifdef HAVE_MORPH
+    and is_long_delay_ == c.is_long_delay_
+#endif
+    ;
 }
 
 void

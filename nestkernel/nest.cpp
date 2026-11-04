@@ -258,7 +258,8 @@ set_connection_status( const std::deque< ConnectionID >& conns, const Dictionary
       conn.get_target_thread(),
       conn.get_synapse_model_id(),
       conn.get_port(),
-      dict );
+      dict,
+      conn.is_long_delay() );
   }
   dict.all_entries_accessed( "connection.set()", "params" );
 }
@@ -281,7 +282,8 @@ set_connection_status( const std::deque< ConnectionID >& conns, const std::vecto
       conn.get_target_thread(),
       conn.get_synapse_model_id(),
       conn.get_port(),
-      dict );
+      dict,
+      conn.is_long_delay() );
     dict.all_entries_accessed( "connection.set()", "params" );
   }
 }
@@ -298,7 +300,8 @@ get_connection_status( const std::deque< ConnectionID >& conns )
       conn.get_target_node_id(),
       conn.get_target_thread(),
       conn.get_synapse_model_id(),
-      conn.get_port() );
+      conn.get_port(),
+      conn.is_long_delay() );
     result.push_back( d );
   }
   return result;
@@ -323,7 +326,8 @@ get_connection_status( const ConnectionID& conn )
     conn.get_target_node_id(),
     conn.get_target_thread(),
     conn.get_synapse_model_id(),
-    conn.get_port() );
+    conn.get_port(),
+    conn.is_long_delay() );
 }
 
 NodeCollectionPTR
@@ -490,8 +494,11 @@ disconnect( const std::deque< ConnectionID >& conns )
   for ( auto& conn : conns )
   {
     const auto target_node = kernel().node_manager.get_node_or_proxy( conn.get_target_node_id() );
-    kernel().sp_manager.disconnect(
-      conn.get_source_node_id(), target_node, conn.get_target_thread(), conn.get_synapse_model_id() );
+    kernel().sp_manager.disconnect( conn.get_source_node_id(),
+      target_node,
+      conn.get_target_thread(),
+      conn.get_synapse_model_id(),
+      conn.is_long_delay() );
   }
 }
 

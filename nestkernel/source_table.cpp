@@ -398,7 +398,8 @@ SourceTable::get_next_target_data( const size_t tid,
   const size_t rank_start,
   const size_t rank_end,
   size_t& source_rank,
-  TargetData& next_target_data )
+  TargetData& next_target_data,
+  const bool is_long_delay )
 {
   SourceTablePosition& current_position = current_positions_[ tid ];
 
@@ -431,7 +432,8 @@ SourceTable::get_next_target_data( const size_t tid,
     kernel().connection_manager.set_source_has_more_targets( current_position.tid,
       current_position.syn_id,
       current_position.lcid,
-      next_entry_has_same_source_( current_position, current_source ) );
+      next_entry_has_same_source_( current_position, current_source ),
+      is_long_delay );
 
     // no need to communicate this entry if the previous entry has the same source
     if ( previous_entry_has_same_source_( current_position, current_source ) )
@@ -473,7 +475,7 @@ SourceTable::resize_compressible_sources()
 }
 
 void
-SourceTable::collect_compressible_sources( const size_t tid )
+SourceTable::collect_compressible_sources( const size_t tid, const bool is_long_delay )
 {
   for ( synindex syn_id = 0; syn_id < sources_[ tid ].size(); ++syn_id )
   {
@@ -491,13 +493,13 @@ SourceTable::collect_compressible_sources( const size_t tid )
       ++lcid;
       while ( ( lcid < syn_sources.size() ) and ( syn_sources[ lcid ].get_node_id() == old_source_node_id ) )
       {
-        kernel().connection_manager.set_source_has_more_targets( tid, syn_id, lcid - 1, true );
+        kernel().connection_manager.set_source_has_more_targets( tid, syn_id, lcid - 1, true, is_long_delay );
         ++lcid;
       }
       // Mark last connection in sequence as not having successor. This is essential if connections are
       // delete, e.g., by structural plasticity, because we do not globally reset the more_targets flag.
       assert( lcid - 1 < syn_sources.size() );
-      kernel().connection_manager.set_source_has_more_targets( tid, syn_id, lcid - 1, false );
+      kernel().connection_manager.set_source_has_more_targets( tid, syn_id, lcid - 1, false, is_long_delay );
     }
   }
 }

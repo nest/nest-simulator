@@ -156,6 +156,7 @@ class NestModule(types.ModuleType):
     to_do = KernelAttribute("int", "The number of steps yet to be simulated", readonly=True)
     max_delay = KernelAttribute("float", "The maximum delay in the network", default=0.1)
     min_delay = KernelAttribute("float", "The minimum delay in the network", default=0.1)
+    threshold_delay = KernelAttribute("float", "The threshold for short/long delays in the network")
     ms_per_tic = KernelAttribute(
         "float",
         ("The number of milliseconds per tic. Calculated by " + "ms_per_tic = 1 / tics_per_ms"),
@@ -194,6 +195,7 @@ class NestModule(types.ModuleType):
     total_num_virtual_procs = KernelAttribute("int", "The total number of virtual processes", default=1)
     local_num_threads = KernelAttribute("int", "The local number of threads", default=1)
     num_processes = KernelAttribute("int", "The number of MPI processes", readonly=True)
+    comm_local_ranks = KernelAttribute("list[int]", "The group of ranks for local MPI communication per rank")
     off_grid_spiking = KernelAttribute(
         "bool",
         "Whether to transmit precise spike times in MPI communication",
@@ -217,6 +219,11 @@ class NestModule(types.ModuleType):
     buffer_size_spike_data = KernelAttribute(
         "int",
         "Total size of MPI buffer for communication of spikes",
+        default=2,
+    )
+    buffer_size_spike_data_long_delay = KernelAttribute(
+        "int",
+        "Total size of MPI buffer for long delay communication of spikes",
         default=2,
     )
     buffer_size_target_data = KernelAttribute(

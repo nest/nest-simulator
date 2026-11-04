@@ -81,6 +81,7 @@ public:
   bool valid_connection_rule( std::string );
 
   void compute_target_data_buffer_size();
+  void compute_target_data_buffer_size_long_delay();
   void compute_compressed_secondary_recv_buffer_positions( const size_t tid );
   void collect_compressed_spike_data( const size_t tid );
   void clear_compressed_spike_data_map();
@@ -147,6 +148,7 @@ public:
     size_t target_thread,
     const synindex syn_id,
     const Dictionary& params,
+    const bool long_range = false,
     const double delay = numerics::nan,
     const double weight = numerics::nan );
 
@@ -200,9 +202,22 @@ public:
   /**
    * Find first non-disabled thread-local connection of given synapse type with given source and target node.
    *
-   * @returns Local connection id (lcid) or `invalid_index`
+   * @returns Local connection id (lcid) or `invalid_index`; sets is_long_delay to the pathway holding the connection
    */
-  size_t find_connection( const size_t tid, const synindex syn_id, const size_t snode_id, const size_t tnode_id );
+  size_t find_connection( const size_t tid,
+    const synindex syn_id,
+    const size_t snode_id,
+    const size_t tnode_id,
+    bool& is_long_delay );
+
+  /**
+   * Return true if the connection identified by (tid, syn_id, lcid, snode_id, tnode_id) is in the long-delay tables.
+   */
+  bool is_long_delay_connection( const size_t tid,
+    const synindex syn_id,
+    const size_t snode_id,
+    const size_t tnode_id,
+    const size_t lcid ) const;
 
   void disconnect( const size_t tid, const synindex syn_id, const size_t snode_id, const size_t tnode_id );
 
@@ -275,7 +290,8 @@ public:
     const std::string& post_synaptic_element,
     std::vector< std::vector< size_t > >& targets );
 
-  const std::vector< Target >& get_remote_targets_of_local_node( const size_t tid, const size_t lid ) const;
+  const std::vector< Target >&
+  get_remote_targets_of_local_node( const size_t tid, const size_t lid, const bool is_long_delay ) const;
 
   size_t get_target_node_id( const size_t tid, const synindex syn_id, const size_t lcid ) const;
 
@@ -301,13 +317,22 @@ public:
    */
   long get_max_delay() const;
 
+  long get_threshold_delay() const;
+
+  size_t get_delay_interval_idx() const;
+
+  void increment_delay_interval_idx();
+
+  void reset_delay_interval_idx();
+
   bool get_user_set_delay_extrema() const;
 
   void send( const size_t tid,
     const synindex syn_id,
     const size_t lcid,
     const std::vector< ConnectorModel* >& cm,
-    Event& e );
+    Event& e,
+    const bool is_long_delay );
 
   /**
    * Send event e to all device targets of source source_node_id
@@ -340,18 +365,18 @@ public:
   DelayChecker& get_delay_checker();
 
   //! Removes processed entries from source table
-  void clean_source_table( const size_t tid );
+  void clean_source_table( const size_t tid, const bool is_long_delay );
 
   //! Clears all entries in source table
-  void clear_source_table( const size_t tid );
+  void clear_source_table( const size_t tid, const bool is_long_delay );
 
   //! Returns true if source table is kept after building network
   bool get_keep_source_table() const;
 
   //! Returns true if source table was cleared
-  bool is_source_table_cleared() const;
+  bool is_source_table_cleared( const bool is_long_delay ) const;
 
-  void prepare_target_table( const size_t tid );
+  void prepare_target_table( const size_t tid, const bool is_long_delay );
 
   void resize_target_table_devices_to_number_of_neurons();
 
@@ -361,23 +386,26 @@ public:
     const size_t rank_start,
     const size_t rank_end,
     size_t& target_rank,
-    TargetData& next_target_data );
+    TargetData& next_target_data,
+    const bool is_long_delay );
 
   bool fill_target_buffer( const size_t tid,
     const size_t rank_start,
     const size_t rank_end,
     std::vector< TargetData >& send_buffer_target_data,
-    TargetSendBufferPosition& send_buffer_position );
+    TargetSendBufferPosition& send_buffer_position,
+    const bool is_long_delay );
 
-  void reject_last_target_data( const size_t tid );
+  void reject_last_target_data( const size_t tid, const bool is_long_delay );
 
-  void save_source_table_entry_point( const size_t tid );
+  void save_source_table_entry_point( const size_t tid, const bool is_long_delay );
 
-  void reset_source_table_entry_point( const size_t tid );
+  void reset_source_table_entry_point( const size_t tid, const bool is_long_delay );
 
-  void restore_source_table_entry_point( const size_t tid );
+  void restore_source_table_entry_point( const size_t tid, const bool is_long_delay );
 
   void add_target( const size_t tid, const size_t target_rank, const TargetData& target_data );
+  void add_target_long_delay( const size_t tid, const size_t target_rank, const TargetData& target_data );
 
   /**
    * Returns whether spikes should be compressed.
@@ -421,10 +449,13 @@ public:
    */
   void restructure_connection_tables( const size_t tid );
 
-  void
-  set_source_has_more_targets( const size_t tid, const synindex syn_id, const size_t lcid, const bool more_targets );
+  void set_source_has_more_targets( const size_t tid,
+    const synindex syn_id,
+    const size_t lcid,
+    const bool more_targets,
+    const bool is_long_delay );
 
-  void no_targets_to_process( const size_t tid );
+  void no_targets_to_process( const size_t tid, const bool is_long_delay );
 
   const std::vector< size_t >&
   get_secondary_send_buffer_positions( const size_t tid, const size_t lid, const synindex syn_id ) const;
@@ -460,13 +491,14 @@ public:
   // start and stop in high-level connect functions in nestmodule.cpp and nest.cpp
   Stopwatch< StopwatchGranularity::Normal, StopwatchParallelism::MasterOnly > sw_construction_connect;
 
-  const std::vector< SpikeData >& get_compressed_spike_data( const synindex syn_id, const size_t idx );
+  const std::vector< SpikeData >&
+  get_compressed_spike_data( const synindex syn_id, const size_t idx, const bool is_long_delay );
 
   //! Set iteration_state_ entries for all threads to beginning of compressed_spike_data_map_.
-  void initialize_iteration_state();
+  void initialize_iteration_state( const bool has_long_delays );
 
 private:
-  size_t get_num_target_data( const size_t tid ) const;
+  size_t get_num_target_data( const size_t tid, const bool is_long_delay ) const;
 
   size_t get_num_connections_( const size_t tid, const synindex syn_id ) const;
 
@@ -549,6 +581,7 @@ private:
     const size_t tid,
     const synindex syn_id,
     const Dictionary& params,
+    const bool long_range = false,
     const double delay = numerics::nan,
     const double weight = numerics::nan );
 
@@ -617,6 +650,8 @@ private:
    */
   std::vector< std::vector< ConnectorBase* > > connections_;
 
+  std::vector< std::vector< ConnectorBase* > > connections_long_delay_;
+
   /**
    * A structure to hold the node IDs of presynaptic neurons during
    * postsynaptic connection creation, before the connection
@@ -625,12 +660,16 @@ private:
    */
   SourceTable source_table_;
 
+  SourceTable source_table_long_delay_;
+
   /**
    * A structure to hold "unpacked" spikes on the postsynaptic side if
    * spike compression is enabled. Internally arranged in a 3d
    * structure: synapses|sources|target_threads
    */
   std::vector< std::vector< std::vector< SpikeData > > > compressed_spike_data_;
+
+  std::vector< std::vector< std::vector< SpikeData > > > compressed_spike_data_long_delay_;
 
   /**
    * Stores absolute position in receive buffer of secondary events.
@@ -646,6 +685,8 @@ private:
    * structure: threads|localnodes|targets
    */
   TargetTable target_table_;
+
+  TargetTable target_table_long_delay_;
 
   TargetTableDevices target_table_devices_;
 
@@ -670,6 +711,10 @@ private:
   long min_delay_;  //!< Value of the smallest delay in the network.
 
   long max_delay_;  //!< Value of the largest delay in the network in steps.
+
+  long threshold_delay_;
+
+  size_t delay_interval_idx_;
 
   //! Whether to keep source table after connection setup is complete.
   bool keep_source_table_;
@@ -710,6 +755,7 @@ private:
   //! For each thread, store (syn_id, compressed_spike_data_map_::iterator) pair for next iteration while filling target
   //! buffers
   std::vector< std::pair< size_t, std::map< size_t, CSDMapEntry >::const_iterator > > iteration_state_;
+  std::vector< std::pair< size_t, std::map< size_t, CSDMapEntry >::const_iterator > > iteration_state_long_delay_;
 };
 
 inline bool
@@ -730,21 +776,59 @@ ConnectionManager::get_max_delay() const
   return max_delay_;
 }
 
+inline long
+ConnectionManager::get_threshold_delay() const
+{
+  return threshold_delay_;
+}
+
+inline size_t
+ConnectionManager::get_delay_interval_idx() const
+{
+  return delay_interval_idx_;
+}
+
 inline void
-ConnectionManager::clean_source_table( const size_t tid )
+ConnectionManager::increment_delay_interval_idx()
+{
+  delay_interval_idx_ += 1;
+}
+
+inline void
+ConnectionManager::reset_delay_interval_idx()
+{
+  delay_interval_idx_ = 0;
+}
+
+inline void
+ConnectionManager::clean_source_table( const size_t tid, const bool is_long_delay )
 {
   if ( not keep_source_table_ )
   {
-    source_table_.clean( tid );
+    if ( is_long_delay )
+    {
+      source_table_long_delay_.clean( tid );
+    }
+    else
+    {
+      source_table_.clean( tid );
+    }
   }
 }
 
 inline void
-ConnectionManager::clear_source_table( const size_t tid )
+ConnectionManager::clear_source_table( const size_t tid, const bool is_long_delay )
 {
   if ( not keep_source_table_ )
   {
-    source_table_.clear( tid );
+    if ( is_long_delay )
+    {
+      source_table_long_delay_.clear( tid );
+    }
+    else
+    {
+      source_table_.clear( tid );
+    }
   }
 }
 
@@ -755,9 +839,16 @@ ConnectionManager::get_keep_source_table() const
 }
 
 inline bool
-ConnectionManager::is_source_table_cleared() const
+ConnectionManager::is_source_table_cleared( const bool is_long_delay ) const
 {
-  return source_table_.is_cleared();
+  if ( is_long_delay )
+  {
+    return source_table_long_delay_.is_cleared();
+  }
+  else
+  {
+    return source_table_.is_cleared();
+  }
 }
 
 inline void
@@ -773,45 +864,96 @@ ConnectionManager::resize_target_table_devices_to_number_of_synapse_types()
 }
 
 inline void
-ConnectionManager::reject_last_target_data( const size_t tid )
+ConnectionManager::reject_last_target_data( const size_t tid, const bool is_long_delay )
 {
-  source_table_.reject_last_target_data( tid );
+  if ( is_long_delay )
+  {
+    source_table_long_delay_.reject_last_target_data( tid );
+  }
+  else
+  {
+    source_table_.reject_last_target_data( tid );
+  }
 }
 
 inline void
-ConnectionManager::save_source_table_entry_point( const size_t tid )
+ConnectionManager::save_source_table_entry_point( const size_t tid, const bool is_long_delay )
 {
-  source_table_.save_entry_point( tid );
+  if ( is_long_delay )
+  {
+    source_table_long_delay_.save_entry_point( tid );
+  }
+  else
+  {
+    source_table_.save_entry_point( tid );
+  }
 }
 
 inline void
-ConnectionManager::no_targets_to_process( const size_t tid )
+ConnectionManager::no_targets_to_process( const size_t tid, const bool is_long_delay )
 {
-  source_table_.no_targets_to_process( tid );
+  if ( is_long_delay )
+  {
+    source_table_long_delay_.no_targets_to_process( tid );
+  }
+  else
+  {
+    source_table_.no_targets_to_process( tid );
+  }
 }
 
 inline void
-ConnectionManager::reset_source_table_entry_point( const size_t tid )
+ConnectionManager::reset_source_table_entry_point( const size_t tid, const bool is_long_delay )
 {
-  source_table_.reset_entry_point( tid );
+  if ( is_long_delay )
+  {
+    source_table_long_delay_.reset_entry_point( tid );
+  }
+  else
+  {
+    source_table_.reset_entry_point( tid );
+  }
 }
 
 inline void
-ConnectionManager::restore_source_table_entry_point( const size_t tid )
+ConnectionManager::restore_source_table_entry_point( const size_t tid, const bool is_long_delay )
 {
-  source_table_.restore_entry_point( tid );
+  if ( is_long_delay )
+  {
+    source_table_long_delay_.restore_entry_point( tid );
+  }
+  else
+  {
+    source_table_.restore_entry_point( tid );
+  }
 }
 
 inline void
-ConnectionManager::prepare_target_table( const size_t tid )
+ConnectionManager::prepare_target_table( const size_t tid, const bool is_long_delay )
 {
-  target_table_.prepare( tid );
+  if ( is_long_delay )
+  {
+    target_table_long_delay_.prepare( tid );
+  }
+  else
+  {
+    target_table_.prepare( tid );
+  }
 }
 
 inline const std::vector< Target >&
-ConnectionManager::get_remote_targets_of_local_node( const size_t tid, const size_t lid ) const
+ConnectionManager::get_remote_targets_of_local_node( const size_t tid,
+  const size_t lid,
+  const bool is_long_delay ) const
 {
-  return target_table_.get_targets( tid, lid );
+  if ( is_long_delay )
+  {
+    return target_table_long_delay_.get_targets( tid, lid );
+  }
+  else
+  {
+    return target_table_.get_targets( tid, lid );
+  }
 }
 
 inline bool
@@ -826,14 +968,30 @@ ConnectionManager::add_target( const size_t tid, const size_t target_rank, const
   target_table_.add_target( tid, target_rank, target_data );
 }
 
+inline void
+ConnectionManager::add_target_long_delay( const size_t tid, const size_t target_rank, const TargetData& target_data )
+{
+  target_table_long_delay_.add_target( tid, target_rank, target_data );
+}
+
 inline bool
 ConnectionManager::get_next_target_data( const size_t tid,
   const size_t rank_start,
   const size_t rank_end,
   size_t& target_rank,
-  TargetData& next_target_data )
+  TargetData& next_target_data,
+  const bool is_long_delay )
 {
-  return source_table_.get_next_target_data( tid, rank_start, rank_end, target_rank, next_target_data );
+  if ( is_long_delay )
+  {
+    return source_table_long_delay_.get_next_target_data(
+      tid, rank_start, rank_end, target_rank, next_target_data, is_long_delay );
+  }
+  else
+  {
+    return source_table_.get_next_target_data(
+      tid, rank_start, rank_end, target_rank, next_target_data, is_long_delay );
+  }
 }
 
 inline const std::vector< size_t >&
@@ -905,38 +1063,67 @@ ConnectionManager::send( const size_t tid,
   const synindex syn_id,
   const size_t lcid,
   const std::vector< ConnectorModel* >& cm,
-  Event& e )
+  Event& e,
+  const bool is_long_delay )
 {
-  connections_[ tid ][ syn_id ]->send( tid, lcid, cm, e );
+  if ( is_long_delay )
+  {
+    connections_long_delay_[ tid ][ syn_id ]->send( tid, lcid, cm, e );
+  }
+  else
+  {
+    connections_[ tid ][ syn_id ]->send( tid, lcid, cm, e );
+  }
 }
 
 inline void
 ConnectionManager::restructure_connection_tables( const size_t tid )
 {
   assert( not source_table_.is_cleared() );
+  assert( not source_table_long_delay_.is_cleared() );
+
   target_table_.clear( tid );
   source_table_.reset_processed_flags( tid );
+
+  target_table_long_delay_.clear( tid );
+  source_table_long_delay_.reset_processed_flags( tid );
 }
 
 inline void
 ConnectionManager::set_source_has_more_targets( const size_t tid,
   const synindex syn_id,
   const size_t lcid,
-  const bool more_targets )
+  const bool more_targets,
+  const bool is_long_delay )
 {
-  connections_[ tid ][ syn_id ]->set_source_has_more_targets( lcid, more_targets );
+  if ( is_long_delay )
+  {
+    connections_long_delay_[ tid ][ syn_id ]->set_source_has_more_targets( lcid, more_targets );
+  }
+  else
+  {
+    connections_[ tid ][ syn_id ]->set_source_has_more_targets( lcid, more_targets );
+  }
 }
 
 inline const std::vector< SpikeData >&
-ConnectionManager::get_compressed_spike_data( const synindex syn_id, const size_t idx )
+ConnectionManager::get_compressed_spike_data( const synindex syn_id, const size_t idx, const bool is_long_delay )
 {
-  return compressed_spike_data_[ syn_id ][ idx ];
+  if ( is_long_delay )
+  {
+    return compressed_spike_data_long_delay_[ syn_id ][ idx ];
+  }
+  else
+  {
+    return compressed_spike_data_[ syn_id ][ idx ];
+  }
 }
 
 inline void
 ConnectionManager::clear_compressed_spike_data_map()
 {
   source_table_.clear_compressed_spike_data_map();
+  source_table_long_delay_.clear_compressed_spike_data_map();
 }
 
 }  // namespace nest

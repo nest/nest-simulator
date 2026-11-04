@@ -75,14 +75,17 @@ EventDeliveryManager::send< SpikeEvent >( Node& source, SpikeEvent& e, const lon
 
     e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
     e.set_sender( source );
-
+  
+    const long threshold_delay = kernel().connection_manager.get_threshold_delay();
+    const bool has_long_delay = threshold_delay < delay_max;
+   
     if ( source.is_off_grid() )
     {
-      send_off_grid_remote( tid, e, lag );
+      send_off_grid_remote( tid, e, lag, has_long_delay );
     }
     else
     {
-      send_remote( tid, e, lag );
+      send_remote( tid, e, lag, has_long_delay );
     }
     kernel().connection_manager.send_to_devices( tid, source_node_id, e );
   }
@@ -101,11 +104,11 @@ EventDeliveryManager::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const
 }
 
 inline void
-EventDeliveryManager::send_remote( size_t tid, SpikeEvent& e, const long lag )
+EventDeliveryManager::send_remote( size_t tid, SpikeEvent& e, const long lag, const bool has_long_delay )
 {
   // Put the spike in a buffer for the remote machines
-  const size_t lid = kernel().vp_manager.node_id_to_lid( e.get_sender().get_node_id() );
-  const auto& targets = kernel().connection_manager.get_remote_targets_of_local_node( tid, lid );
+  size_t lid = kernel().vp_manager.node_id_to_lid( e.get_sender().get_node_id() );
+  const auto& targets = kernel().connection_manager.get_remote_targets_of_local_node( tid, lid, false );
 
   for ( const auto& target : targets )
   {
@@ -115,14 +118,29 @@ EventDeliveryManager::send_remote( size_t tid, SpikeEvent& e, const long lag )
       ( *emitted_spikes_register_[ tid ] ).emplace_back( target, lag, e.is_flush_event() );
     }
   }
+  if ( has_long_delay )
+  {
+    lid = kernel().vp_manager.node_id_to_lid( e.get_sender().get_node_id() );
+    const auto& targets_long_delay = kernel().connection_manager.get_remote_targets_of_local_node( tid, lid, true );
+    for ( const auto& target : targets_long_delay )
+    {
+      // Unroll spike multiplicity as plastic synapses only handle individual spikes.
+      for ( size_t i = 0; i < e.get_multiplicity(); ++i )
+      {
+        const size_t min_delay = kernel().connection_manager.get_min_delay();
+        const size_t delay_interval_idx = kernel().connection_manager.get_delay_interval_idx();
+        ( *emitted_spikes_register_long_delay_[ tid ] ).emplace_back( target, lag + ( min_delay * delay_interval_idx ), e.is_flush_event() );
+      }
+    } 
+  }
 }
 
 inline void
-EventDeliveryManager::send_off_grid_remote( size_t tid, SpikeEvent& e, const long lag )
+EventDeliveryManager::send_off_grid_remote( size_t tid, SpikeEvent& e, const long lag, const bool has_long_delay )
 {
   // Put the spike in a buffer for the remote machines
-  const size_t lid = kernel().vp_manager.node_id_to_lid( e.get_sender().get_node_id() );
-  const auto& targets = kernel().connection_manager.get_remote_targets_of_local_node( tid, lid );
+  size_t lid = kernel().vp_manager.node_id_to_lid( e.get_sender().get_node_id() );
+  const auto& targets = kernel().connection_manager.get_remote_targets_of_local_node( tid, lid, false );
 
   for ( const auto& target : targets )
   {
@@ -130,6 +148,24 @@ EventDeliveryManager::send_off_grid_remote( size_t tid, SpikeEvent& e, const lon
     for ( size_t i = 0; i < e.get_multiplicity(); ++i )
     {
       ( *off_grid_emitted_spikes_register_[ tid ] ).emplace_back( target, lag, e.get_offset() );
+    }
+  }
+
+  if ( has_long_delay )
+  {
+    // Put the spike in a buffer for the remote machines
+    lid = kernel().vp_manager.node_id_to_lid( e.get_sender().get_node_id() );
+    const auto& targets_long_delay = kernel().connection_manager.get_remote_targets_of_local_node( tid, lid, true );
+
+    for ( const auto& target : targets_long_delay )
+    {
+      // Unroll spike multiplicity as plastic synapses only handle individual spikes.
+      for ( int i = 0; i < e.get_multiplicity(); ++i )
+      {
+        const size_t min_delay = kernel().connection_manager.get_min_delay();
+        const size_t delay_interval_idx = kernel().connection_manager.get_delay_interval_idx();
+        ( *off_grid_emitted_spikes_register_long_delay_[ tid ] ).emplace_back( target, lag + ( min_delay * delay_interval_idx ), e.get_offset() );    
+      }
     }
   }
 }

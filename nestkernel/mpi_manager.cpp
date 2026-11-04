@@ -59,13 +59,16 @@ MPIManager::MPIManager()
   , use_mpi_( false )
   , buffer_size_target_data_( 1 )
   , buffer_size_spike_data_( 1 )
+  , buffer_size_spike_data_long_delay_( 1 )
   , max_buffer_size_target_data_( 16777216 )
   , adaptive_target_buffers_( true )
   , growth_factor_buffer_spike_data_( 1.5 )
   , growth_factor_buffer_target_data_( 1.5 )
   , shrink_factor_buffer_spike_data_( 1.1 )
   , send_recv_count_spike_data_per_rank_( 0 )
+  , send_recv_count_spike_data_per_rank_long_delay_( 0 )
   , send_recv_count_target_data_per_rank_( 0 )
+  , send_recv_count_target_data_per_rank_long_delay_( 0 )
 #ifdef HAVE_MPI
   , comm_step_( std::vector< int >() )
   , COMM_OVERFLOW_ERROR( std::numeric_limits< unsigned int >::max() )
@@ -108,6 +111,63 @@ MPIManager::set_communicator( MPI_Comm global_comm )
   // last entry to communicate end of communication)
   kernel().mpi_manager.set_buffer_size_target_data( 2 * kernel().mpi_manager.get_num_processes() );
   kernel().mpi_manager.set_buffer_size_spike_data( 2 * kernel().mpi_manager.get_num_processes() );
+  kernel().mpi_manager.set_buffer_size_spike_data_long_delay( 2 * kernel().mpi_manager.get_num_processes() );
+
+  if ( comm_local_ranks_.size() == 0 )
+  {
+    comm_local_ranks_.push_back( rank_ );
+  }
+
+  set_communicator_local();
+  create_ranks_to_idx_comm_local();
+}
+
+void
+MPIManager::set_communicator_local()
+{
+  MPI_Group group_global;
+  MPI_Comm_group( comm, &group_global );
+
+  MPI_Group group_local;
+  MPI_Group_incl( group_global, comm_local_ranks_.size(), &comm_local_ranks_[ 0 ], &group_local );
+  MPI_Comm_create_group( comm, group_local, 0, &comm_local );
+}
+
+size_t
+MPIManager::get_comm_local_group_size() const
+{
+  return comm_local_ranks_.size();
+}
+
+std::vector< int >
+MPIManager::get_comm_local_ranks() const
+{
+  return comm_local_ranks_;
+}
+
+void
+MPIManager::create_ranks_to_idx_comm_local()
+{
+  int idx_comm_local = 0;
+  for ( auto it = comm_local_ranks_.begin(); it != comm_local_ranks_.end(); ++it )
+  {
+    auto it_comm_local = std::find( comm_local_ranks_.begin(), comm_local_ranks_.end(), *it );
+    if ( it_comm_local != comm_local_ranks_.end() )
+    {
+      idx_comm_local = it_comm_local - comm_local_ranks_.begin();
+    }
+    else
+    {
+      // Throw exception
+    }
+    ranks_to_idx_comm_local_[ *it ] = idx_comm_local;
+  }
+}
+
+std::map< int, int >
+MPIManager::get_ranks_to_idx_comm_local() const
+{
+  return ranks_to_idx_comm_local_;
 }
 
 void
@@ -240,6 +300,13 @@ MPIManager::set_status( const Dictionary& dict )
     set_buffer_size_spike_data( new_buffer_size_spike_data );
   }
 
+  long new_buffer_size_spike_data_long_delay = buffer_size_spike_data_long_delay_;
+  dict.update_value( names::buffer_size_spike_data_long_delay, new_buffer_size_spike_data_long_delay );
+  if ( new_buffer_size_spike_data_long_delay != static_cast< long >( buffer_size_spike_data_long_delay_ ) )
+  {
+    set_buffer_size_spike_data_long_delay( new_buffer_size_spike_data_long_delay );
+  }
+
   dict.update_value( names::growth_factor_buffer_spike_data, growth_factor_buffer_spike_data_ );
   dict.update_value( names::growth_factor_buffer_target_data, growth_factor_buffer_target_data_ );
 
@@ -254,6 +321,16 @@ MPIManager::set_status( const Dictionary& dict )
   }
 
   dict.update_value( names::shrink_factor_buffer_spike_data, shrink_factor_buffer_spike_data_ );
+
+  std::vector< long > comm_local_ranks_tmp;
+  if ( dict.update_value( names::comm_local_ranks, comm_local_ranks_tmp ) )
+  {
+    comm_local_ranks_.assign( comm_local_ranks_tmp.begin(), comm_local_ranks_tmp.end() );
+#ifdef HAVE_MPI
+    set_communicator_local();
+    create_ranks_to_idx_comm_local();
+#endif
+  }
 }
 
 void
@@ -264,6 +341,7 @@ MPIManager::get_status( Dictionary& dict )
   dict[ names::adaptive_target_buffers ] = adaptive_target_buffers_;
   dict[ names::buffer_size_target_data ] = static_cast< long >( buffer_size_target_data_ );
   dict[ names::buffer_size_spike_data ] = static_cast< long >( buffer_size_spike_data_ );
+  dict[ names::buffer_size_spike_data_long_delay ] = static_cast< long >( buffer_size_spike_data_long_delay_ );
   dict[ names::send_buffer_size_secondary_events ] =
     static_cast< long >( get_send_buffer_size_secondary_events_in_int() );
   dict[ names::recv_buffer_size_secondary_events ] =
@@ -271,6 +349,7 @@ MPIManager::get_status( Dictionary& dict )
   dict[ names::max_buffer_size_target_data ] = static_cast< long >( max_buffer_size_target_data_ );
   dict[ names::growth_factor_buffer_spike_data ] = growth_factor_buffer_spike_data_;
   dict[ names::growth_factor_buffer_target_data ] = growth_factor_buffer_target_data_;
+  dict[ names::comm_local_ranks ] = std::vector< long >( comm_local_ranks_.begin(), comm_local_ranks_.end() );
 }
 
 #ifdef HAVE_MPI
@@ -781,9 +860,21 @@ MPIManager::communicate_Allgather( std::vector< long >& buffer )
 }
 
 void
-MPIManager::communicate_Alltoall_( void* send_buffer, void* recv_buffer, const unsigned int send_recv_count )
+MPIManager::communicate_Alltoall_( void* send_buffer,
+  void* recv_buffer,
+  const unsigned int send_recv_count,
+  const bool is_long_delay,
+  const long threshold_delay )
 {
-  MPI_Alltoall( send_buffer, send_recv_count, MPI_UNSIGNED, recv_buffer, send_recv_count, MPI_UNSIGNED, comm );
+  // Short-delay spikes travel within the local group; all other data travels on the global communicator.
+  const bool use_global = is_long_delay or threshold_delay == delay_max;
+  MPI_Alltoall( send_buffer,
+    send_recv_count,
+    MPI_UNSIGNED,
+    recv_buffer,
+    send_recv_count,
+    MPI_UNSIGNED,
+    use_global ? comm : comm_local );
 }
 
 void

@@ -96,9 +96,21 @@ VPManager::get_num_assigned_ranks_per_thread() const
 }
 
 inline size_t
+VPManager::get_num_assigned_ranks_per_thread_local() const
+{
+  return ceil( float( kernel().mpi_manager.get_comm_local_group_size() ) / n_threads_ );
+}
+
+inline size_t
 VPManager::get_start_rank_per_thread( const size_t tid ) const
 {
   return tid * get_num_assigned_ranks_per_thread();
+}
+
+inline size_t
+VPManager::get_start_rank_per_thread_local( const size_t tid ) const
+{
+  return tid * get_num_assigned_ranks_per_thread_local();
 }
 
 inline size_t
@@ -112,6 +124,22 @@ VPManager::get_end_rank_per_thread( const size_t rank_start, const size_t num_as
   if ( rank_end > kernel().mpi_manager.get_num_processes() )
   {
     rank_end = std::max( rank_start, kernel().mpi_manager.get_num_processes() );
+  }
+
+  return rank_end;
+}
+
+inline size_t
+VPManager::get_end_rank_per_thread_local( const size_t rank_start, const size_t num_assigned_ranks_per_thread ) const
+{
+  size_t rank_end = rank_start + num_assigned_ranks_per_thread;
+
+  // if we have more threads than ranks, or if ranks can not be
+  // distributed evenly on threads, we need to make sure, that all
+  // threads care only about existing ranks
+  if ( rank_end > kernel().mpi_manager.get_comm_local_group_size() )
+  {
+    rank_end = std::max( rank_start, kernel().mpi_manager.get_comm_local_group_size() );
   }
 
   return rank_end;

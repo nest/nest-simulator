@@ -225,6 +225,7 @@ protected:
   bool allow_multapses_;
   bool make_symmetric_;
   bool creates_symmetric_connections_;
+  bool long_range_;
 
   //! buffer for exceptions raised in threads
   std::vector< std::exception_ptr > exceptions_raised_;

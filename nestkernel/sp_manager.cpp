@@ -248,7 +248,15 @@ SPManager::disconnect( NodeCollectionPTR sources,
 #pragma omp parallel
     {
       const size_t tid = kernel().vp_manager.get_thread_id();
-      kernel().simulation_manager.update_connection_infrastructure( tid );
+      const long threshold_delay = kernel().connection_manager.get_threshold_delay();
+      if ( threshold_delay < delay_max )
+      {
+        kernel().simulation_manager.update_connection_infrastructure( tid, true );
+      }
+      else
+      {
+        kernel().simulation_manager.update_connection_infrastructure( tid , false);
+      }
     }
   }
 

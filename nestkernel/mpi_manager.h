@@ -70,8 +70,18 @@ public:
   void get_status( Dictionary& ) override;
 
   void init_mpi( int* argc, char** argv[] );
+
 #ifdef HAVE_MPI
   void set_communicator( MPI_Comm );
+  void set_communicator_local();
+
+  size_t get_comm_local_group_size() const;
+
+  std::vector< int > get_comm_local_ranks() const;
+
+  void create_ranks_to_idx_comm_local();
+
+  std::map< int, int > get_ranks_to_idx_comm_local() const;
 
   MPI_Comm
   get_communicator()
@@ -173,22 +183,22 @@ public:
   /**
    * Returns total size of MPI buffer for communication of connections.
    */
-  size_t get_buffer_size_target_data() const;
+  size_t get_buffer_size_target_data( const bool is_long_delay ) const;
 
   /**
    * Returns size of MPI buffer for connections divided by number of processes.
    */
-  unsigned int get_send_recv_count_target_data_per_rank() const;
+  unsigned int get_send_recv_count_target_data_per_rank( const bool is_long_delay ) const;
 
   /**
    * Returns total size of MPI buffer for communication of spikes.
    */
-  size_t get_buffer_size_spike_data() const;
+  size_t get_buffer_size_spike_data( const bool is_long_delay ) const;
 
   /**
    * Returns size of MPI buffer for spikes divided by number of processes.
    */
-  unsigned int get_send_recv_count_spike_data_per_rank() const;
+  unsigned int get_send_recv_count_spike_data_per_rank( const bool is_long_delay ) const;
 
   /**
    * Returns total size of MPI send buffer for communication of secondary events.
@@ -202,7 +212,11 @@ public:
 
 #ifdef HAVE_MPI
 
-  void communicate_Alltoall_( void* send_buffer, void* recv_buffer, const unsigned int send_recv_count );
+  void communicate_Alltoall_( void* send_buffer,
+    void* recv_buffer,
+    const unsigned int send_recv_count,
+    const bool is_long_delay,
+    const long threshold_delay );
 
   void communicate_Alltoallv_( void* send_buffer,
     const int* send_counts,
@@ -216,13 +230,23 @@ public:
   template < class D >
   void communicate_Alltoall( std::vector< D >& send_buffer,
     std::vector< D >& recv_buffer,
-    const unsigned int send_recv_count );
+    const unsigned int send_recv_count,
+    const bool is_long_delay = true,
+    const long threshold_delay = delay_max );
   template < class D >
-  void communicate_target_data_Alltoall( std::vector< D >& send_buffer, std::vector< D >& recv_buffer );
+  void communicate_target_data_Alltoall( std::vector< D >& send_buffer,
+    std::vector< D >& recv_buffer,
+    const bool is_long_delay );
   template < class D >
-  void communicate_spike_data_Alltoall( std::vector< D >& send_buffer, std::vector< D >& recv_buffer );
+  void communicate_spike_data_Alltoall( std::vector< D >& send_buffer,
+    std::vector< D >& recv_buffer,
+    const bool is_long_delay,
+    const long threshold_delay );
   template < class D >
-  void communicate_off_grid_spike_data_Alltoall( std::vector< D >& send_buffer, std::vector< D >& recv_buffer );
+  void communicate_off_grid_spike_data_Alltoall( std::vector< D >& send_buffer,
+    std::vector< D >& recv_buffer,
+    const bool is_long_delay,
+    const long threshold_delay );
   template < class D >
   void communicate_secondary_events_Alltoallv( std::vector< D >& send_buffer, std::vector< D >& recv_buffer );
 
@@ -247,13 +271,17 @@ public:
   double time_communicate_alltoallv( int num_bytes, int samples = 1000 );
 
   void set_buffer_size_target_data( size_t buffer_size );
+  void set_buffer_size_target_data_long_delay( size_t buffer_size );
   void set_buffer_size_spike_data( size_t buffer_size );
+  void set_buffer_size_spike_data_long_delay( size_t buffer_size );
 
   /**
    * Increases the size of the MPI buffer for communication of connections if it
    * needs to be increased. Returns whether the size was changed.
    */
   bool increase_buffer_size_target_data();
+
+  bool increase_buffer_size_target_data_long_delay();
 
   /**
    * Returns whether MPI buffers for communication of connections are adaptive.
@@ -312,8 +340,14 @@ private:
   size_t buffer_size_target_data_;  //!< total size of MPI buffer for
   // communication of connections
 
+  size_t buffer_size_target_data_long_delay_;  //!< total size of MPI buffer for
+  // communication of long-delay connections
+
   size_t buffer_size_spike_data_;  //!< total size of MPI buffer for
   // communication of spikes
+
+  size_t buffer_size_spike_data_long_delay_;  //!< total size of MPI buffer for
+  // communication of long-delay spikes
 
   size_t max_buffer_size_target_data_;  //!< maximal size of MPI buffer for
   // communication of connections
@@ -326,8 +360,13 @@ private:
 
   double shrink_factor_buffer_spike_data_;
 
+  std::vector< int > comm_local_ranks_;
+  std::map< int, int > ranks_to_idx_comm_local_;
+
   unsigned int send_recv_count_spike_data_per_rank_;
+  unsigned int send_recv_count_spike_data_per_rank_long_delay_;
   unsigned int send_recv_count_target_data_per_rank_;
+  unsigned int send_recv_count_target_data_per_rank_long_delay_;
 
   //! How many secondary elements (in ints) will be received from each rank
   std::vector< int > recv_counts_secondary_events_in_int_per_rank_;
@@ -350,6 +389,7 @@ private:
 
   //! Variable to hold the MPI communicator to use (the datatype matters).
   MPI_Comm comm;
+  MPI_Comm comm_local;
   MPI_Datatype MPI_OFFGRID_SPIKE;
 
   void communicate_Allgather( std::vector< unsigned int >& send_buffer,
@@ -373,6 +413,7 @@ private:
   void communicate_Allgather( std::vector< T >& send_buffer,
     std::vector< T >& recv_buffer,
     std::vector< int >& displacements );
+
 
 #endif /* #ifdef HAVE_MPI */
 
@@ -507,27 +548,55 @@ MPIManager::is_mpi_used()
 }
 
 inline size_t
-MPIManager::get_buffer_size_target_data() const
+MPIManager::get_buffer_size_target_data( const bool is_long_delay ) const
 {
-  return buffer_size_target_data_;
+  if ( is_long_delay )
+  {
+    return buffer_size_target_data_long_delay_;
+  }
+  else
+  {
+    return buffer_size_target_data_;
+  }
 }
 
 inline unsigned int
-MPIManager::get_send_recv_count_target_data_per_rank() const
+MPIManager::get_send_recv_count_target_data_per_rank( const bool is_long_delay ) const
 {
-  return send_recv_count_target_data_per_rank_;
+  if ( is_long_delay )
+  {
+    return send_recv_count_target_data_per_rank_long_delay_;
+  }
+  else
+  {
+    return send_recv_count_target_data_per_rank_;
+  }
 }
 
 inline size_t
-MPIManager::get_buffer_size_spike_data() const
+MPIManager::get_buffer_size_spike_data( const bool is_long_delay ) const
 {
-  return buffer_size_spike_data_;
+  if ( is_long_delay )
+  {
+    return buffer_size_spike_data_long_delay_;
+  }
+  else
+  {
+    return buffer_size_spike_data_;
+  }
 }
 
 inline unsigned int
-MPIManager::get_send_recv_count_spike_data_per_rank() const
+MPIManager::get_send_recv_count_spike_data_per_rank( const bool is_long_delay ) const
 {
-  return send_recv_count_spike_data_per_rank_;
+  if ( is_long_delay )
+  {
+    return send_recv_count_spike_data_per_rank_long_delay_;
+  }
+  else
+  {
+    return send_recv_count_spike_data_per_rank_;
+  }
 }
 
 inline size_t
@@ -558,21 +627,43 @@ MPIManager::set_buffer_size_target_data( const size_t buffer_size )
   {
     buffer_size_target_data_ = max_buffer_size_target_data_;
   }
-  send_recv_count_target_data_per_rank_ = static_cast< size_t >(
-    floor( static_cast< double >( get_buffer_size_target_data() ) / static_cast< double >( get_num_processes() ) ) );
+  send_recv_count_target_data_per_rank_ = static_cast< size_t >( floor(
+    static_cast< double >( get_buffer_size_target_data( false ) ) / static_cast< double >( get_num_processes() ) ) );
 
-  assert( send_recv_count_target_data_per_rank_ * get_num_processes() <= get_buffer_size_target_data() );
+  assert( send_recv_count_target_data_per_rank_ * get_num_processes() <= get_buffer_size_target_data( false ) );
 }
 
 inline void
-MPIManager::set_buffer_size_spike_data( const size_t buffer_size )
+MPIManager::set_buffer_size_target_data_long_delay( const size_t buffer_size )
 {
   assert( buffer_size >= static_cast< size_t >( 2 * get_num_processes() ) );
-  buffer_size_spike_data_ = buffer_size;
+  if ( buffer_size <= max_buffer_size_target_data_ )
+  {
+    buffer_size_target_data_long_delay_ = buffer_size;
+  }
+  else
+  {
+    buffer_size_target_data_long_delay_ = max_buffer_size_target_data_;
+  }
+  send_recv_count_target_data_per_rank_long_delay_ = static_cast< size_t >( floor(
+    static_cast< double >( get_buffer_size_target_data( true ) ) / static_cast< double >( get_num_processes() ) ) );
 
-  send_recv_count_spike_data_per_rank_ = floor( get_buffer_size_spike_data() / get_num_processes() );
+  assert(
+    send_recv_count_target_data_per_rank_long_delay_ * get_num_processes() <= get_buffer_size_target_data( true ) );
+}
 
-  assert( send_recv_count_spike_data_per_rank_ * get_num_processes() <= get_buffer_size_spike_data() );
+inline void
+MPIManager::set_buffer_size_spike_data_long_delay( const size_t buffer_size )
+{
+  const bool is_long_delay = true;
+  assert( buffer_size >= static_cast< size_t >( 2 * get_num_processes() ) );
+  buffer_size_spike_data_long_delay_ = buffer_size;
+
+  send_recv_count_spike_data_per_rank_long_delay_ =
+    floor( get_buffer_size_spike_data( is_long_delay ) / get_num_processes() );
+
+  assert( send_recv_count_spike_data_per_rank_long_delay_ * get_num_processes()
+    <= get_buffer_size_spike_data( is_long_delay ) );
 }
 
 inline bool
@@ -595,6 +686,31 @@ MPIManager::increase_buffer_size_target_data()
     {
       // this also adjusts send_recv_count_target_data_per_rank_
       set_buffer_size_target_data( max_buffer_size_target_data_ );
+    }
+    return true;
+  }
+}
+
+inline bool
+MPIManager::increase_buffer_size_target_data_long_delay()
+{
+  assert( adaptive_target_buffers_ );
+  if ( buffer_size_target_data_long_delay_ >= max_buffer_size_target_data_ )
+  {
+    return false;
+  }
+  else
+  {
+    if ( buffer_size_target_data_long_delay_ * growth_factor_buffer_target_data_ < max_buffer_size_target_data_ )
+    {
+      // this also adjusts send_recv_count_target_data_per_rank_
+      set_buffer_size_target_data_long_delay(
+        static_cast< size_t >( floor( buffer_size_target_data_long_delay_ * growth_factor_buffer_target_data_ ) ) );
+    }
+    else
+    {
+      // this also adjusts send_recv_count_target_data_per_rank_
+      set_buffer_size_target_data_long_delay( max_buffer_size_target_data_ );
     }
     return true;
   }
@@ -689,12 +805,14 @@ template < class D >
 void
 MPIManager::communicate_Alltoall( std::vector< D >& send_buffer,
   std::vector< D >& recv_buffer,
-  const unsigned int send_recv_count )
+  const unsigned int send_recv_count,
+  const bool is_long_delay,
+  const long threshold_delay )
 {
   void* send_buffer_int = static_cast< void* >( &send_buffer[ 0 ] );
   void* recv_buffer_int = static_cast< void* >( &recv_buffer[ 0 ] );
 
-  communicate_Alltoall_( send_buffer_int, recv_buffer_int, send_recv_count );
+  communicate_Alltoall_( send_buffer_int, recv_buffer_int, send_recv_count, is_long_delay, threshold_delay );
 }
 
 template < class D >
@@ -733,32 +851,67 @@ MPIManager::communicate_secondary_events_Alltoallv( std::vector< D >& send_buffe
 
 template < class D >
 void
-MPIManager::communicate_target_data_Alltoall( std::vector< D >& send_buffer, std::vector< D >& recv_buffer )
+MPIManager::communicate_target_data_Alltoall( std::vector< D >& send_buffer,
+  std::vector< D >& recv_buffer,
+  const bool is_long_delay )
 {
-  const size_t send_recv_count_target_data_in_int_per_rank =
-    sizeof( TargetData ) / sizeof( unsigned int ) * send_recv_count_target_data_per_rank_;
-
-  communicate_Alltoall( send_buffer, recv_buffer, send_recv_count_target_data_in_int_per_rank );
+  if ( is_long_delay )
+  {
+    const size_t send_recv_count_target_data_in_int_per_rank =
+      sizeof( TargetData ) / sizeof( unsigned int ) * send_recv_count_target_data_per_rank_long_delay_;
+    communicate_Alltoall( send_buffer, recv_buffer, send_recv_count_target_data_in_int_per_rank );
+  }
+  else
+  {
+    const size_t send_recv_count_target_data_in_int_per_rank =
+      sizeof( TargetData ) / sizeof( unsigned int ) * send_recv_count_target_data_per_rank_;
+    communicate_Alltoall( send_buffer, recv_buffer, send_recv_count_target_data_in_int_per_rank );
+  }
 }
 
 template < class D >
 void
-MPIManager::communicate_spike_data_Alltoall( std::vector< D >& send_buffer, std::vector< D >& recv_buffer )
+MPIManager::communicate_spike_data_Alltoall( std::vector< D >& send_buffer,
+  std::vector< D >& recv_buffer,
+  const bool is_long_delay,
+  const long threshold_delay )
 {
-  const size_t send_recv_count_spike_data_in_int_per_rank =
-    sizeof( SpikeData ) / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_;
-
-  communicate_Alltoall( send_buffer, recv_buffer, send_recv_count_spike_data_in_int_per_rank );
+  if ( is_long_delay )
+  {
+    const size_t send_recv_count_spike_data_in_int_per_rank =
+      sizeof( SpikeData ) / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_long_delay_;
+    communicate_Alltoall(
+      send_buffer, recv_buffer, send_recv_count_spike_data_in_int_per_rank, is_long_delay, threshold_delay );
+  }
+  else
+  {
+    const size_t send_recv_count_spike_data_in_int_per_rank =
+      sizeof( SpikeData ) / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_;
+    communicate_Alltoall(
+      send_buffer, recv_buffer, send_recv_count_spike_data_in_int_per_rank, is_long_delay, threshold_delay );
+  }
 }
 
 template < class D >
 void
-MPIManager::communicate_off_grid_spike_data_Alltoall( std::vector< D >& send_buffer, std::vector< D >& recv_buffer )
+MPIManager::communicate_off_grid_spike_data_Alltoall( std::vector< D >& send_buffer,
+  std::vector< D >& recv_buffer,
+  const bool is_long_delay,
+  const long threshold_delay )
 {
-  const size_t send_recv_count_off_grid_spike_data_in_int_per_rank =
-    sizeof( OffGridSpikeData ) / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_;
-
-  communicate_Alltoall( send_buffer, recv_buffer, send_recv_count_off_grid_spike_data_in_int_per_rank );
+  if ( is_long_delay )
+  {
+    const size_t send_recv_count_off_grid_spike_data_in_int_per_rank =
+      sizeof( OffGridSpikeData ) / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_long_delay_;
+    communicate_Alltoall( send_buffer, recv_buffer, send_recv_count_off_grid_spike_data_in_int_per_rank );
+  }
+  else
+  {
+    const size_t send_recv_count_off_grid_spike_data_in_int_per_rank =
+      sizeof( OffGridSpikeData ) / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_;
+    communicate_Alltoall(
+      send_buffer, recv_buffer, send_recv_count_off_grid_spike_data_in_int_per_rank, is_long_delay, threshold_delay );
+  }
 }
 }
 

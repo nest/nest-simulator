@@ -79,6 +79,21 @@ MPIManager::get_process_id_of_node_id( const size_t node_id ) const
   return node_id % kernel().vp_manager.get_num_virtual_processes() % num_processes_;
 }
 
+inline void
+nest::MPIManager::set_buffer_size_spike_data( const size_t buffer_size )
+{
+  // Short-delay spikes are exchanged within the local group if morph is active.
+  const size_t num_processes =
+    kernel().connection_manager.get_threshold_delay() == delay_max ? get_num_processes() : get_comm_local_group_size();
+
+  assert( buffer_size >= static_cast< size_t >( 2 * num_processes ) );
+  buffer_size_spike_data_ = buffer_size;
+
+  send_recv_count_spike_data_per_rank_ = floor( get_buffer_size_spike_data( false ) / num_processes );
+
+  assert( send_recv_count_spike_data_per_rank_ * num_processes <= get_buffer_size_spike_data( false ) );
+}
+
 #else  // HAVE_MPI
 
 

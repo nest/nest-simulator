@@ -172,7 +172,12 @@ SimulationManager::set_status( const Dictionary& d )
       from_step_ = 0;
       slice_ = 0;
       // clear all old spikes
-      kernel().event_delivery_manager.configure_spike_data_buffers();
+      const long threshold_delay = kernel().connection_manager.get_threshold_delay();
+      kernel().event_delivery_manager.configure_spike_data_buffers( false );
+      if ( threshold_delay < delay_max )
+      {
+        kernel().event_delivery_manager.configure_spike_data_buffers( true );
+      }
     }
   }
 
@@ -537,10 +542,17 @@ SimulationManager::prepare()
   kernel().connection_manager.update_delay_extrema_();
   kernel().event_delivery_manager.init_moduli();
 
+  const long threshold_delay = kernel().connection_manager.get_threshold_delay();
+
   // if at the beginning of a simulation, set up spike buffers
   if ( not simulated_ )
   {
-    kernel().event_delivery_manager.configure_spike_data_buffers();
+    kernel().event_delivery_manager.configure_spike_data_buffers( false );
+
+    if ( threshold_delay < delay_max )
+    {
+      kernel().event_delivery_manager.configure_spike_data_buffers( true );
+    }
   }
 
   kernel().node_manager.update_thread_local_node_data();
@@ -566,7 +578,7 @@ SimulationManager::prepare()
 #pragma omp parallel
     {
       const size_t tid = kernel().vp_manager.get_thread_id();
-      update_connection_infrastructure( tid );
+      update_connection_infrastructure( tid, kernel().connection_manager.get_threshold_delay() < delay_max );
     }  // of omp parallel
   }
 }
@@ -749,7 +761,7 @@ SimulationManager::call_update_()
 }
 
 void
-SimulationManager::update_connection_infrastructure( const size_t tid )
+SimulationManager::update_connection_infrastructure( const size_t tid, const bool has_long_delays )
 {
   kernel().get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
@@ -770,7 +782,12 @@ SimulationManager::update_connection_infrastructure( const size_t tid )
 #pragma omp single
   {
     kernel().connection_manager.compute_target_data_buffer_size();
-    kernel().event_delivery_manager.resize_send_recv_buffers_target_data();
+    kernel().event_delivery_manager.resize_send_recv_buffers_target_data( false );
+    if ( has_long_delays )
+    {
+      kernel().connection_manager.compute_target_data_buffer_size_long_delay();
+      kernel().event_delivery_manager.resize_send_recv_buffers_target_data( true );
+    }
 
     // check whether primary and secondary connections exists on any
     // compute node
@@ -806,13 +823,21 @@ SimulationManager::update_connection_infrastructure( const size_t tid )
 #pragma omp barrier
 #pragma omp single
     {
-      kernel().connection_manager.initialize_iteration_state();  // could possibly be combined with s'th above
+      kernel().connection_manager.initialize_iteration_state( has_long_delays );
     }
-    kernel().event_delivery_manager.gather_target_data_compressed( tid );
+    kernel().event_delivery_manager.gather_target_data_compressed( tid, false );
+    if ( has_long_delays )
+    {
+      kernel().event_delivery_manager.gather_target_data_compressed( tid, true );
+    }
   }
   else
   {
-    kernel().event_delivery_manager.gather_target_data( tid );
+    kernel().event_delivery_manager.gather_target_data( tid, false );
+    if ( has_long_delays )
+    {
+      kernel().event_delivery_manager.gather_target_data( tid, true );
+    }
   }
 
   sw_gather_target_data_.stop();
@@ -854,6 +879,8 @@ SimulationManager::update_()
   // End of variables updated by master thread
 
   std::vector< std::exception_ptr > exceptions_raised( kernel().vp_manager.get_num_threads() );
+
+  const long threshold_delay = kernel().connection_manager.get_threshold_delay();
 
 #ifdef CYCLE_TIMERS
   double start_current_communicate = kernel().event_delivery_manager.get_sw_communicate_spike_data().elapsed();
@@ -897,7 +924,12 @@ SimulationManager::update_()
           {
             sw_deliver_spike_data_.start();
             // Deliver spikes from receive buffer to ring buffers.
-            kernel().event_delivery_manager.deliver_events( tid );
+            kernel().event_delivery_manager.deliver_events( tid, false );
+            if ( threshold_delay < delay_max
+              and ( ( clock_.get_steps() ) % kernel().connection_manager.get_threshold_delay() == 0 ) )
+            {
+              kernel().event_delivery_manager.deliver_events( tid, true );
+            }
 
             sw_deliver_spike_data_.stop();
           }
@@ -1056,8 +1088,8 @@ SimulationManager::update_()
           // connections, update the connection infrastructure; implies
           // complete removal of presynaptic part and reconstruction
           // from postsynaptic data
-          update_connection_infrastructure( tid );
 
+          update_connection_infrastructure( tid, threshold_delay < delay_max );
         }  // of structural plasticity
 
         sw_update_.start();
@@ -1089,7 +1121,7 @@ SimulationManager::update_()
             if ( kernel().connection_manager.has_primary_connections() )
             {
               sw_gather_spike_data_.start();
-              kernel().event_delivery_manager.gather_spike_data();
+              kernel().event_delivery_manager.gather_spike_data( false );
               sw_gather_spike_data_.stop();
             }
             if ( kernel().connection_manager.secondary_connections_exist() )
@@ -1100,6 +1132,13 @@ SimulationManager::update_()
             }
           }
 
+          if ( threshold_delay < delay_max
+            and ( clock_.get_steps() + kernel().connection_manager.get_min_delay() ) % threshold_delay == 0 )
+          {
+            sw_gather_spike_data_.start();
+            kernel().event_delivery_manager.gather_spike_data( true );
+            sw_gather_spike_data_.stop();
+          }
           advance_time_();
 
           if ( print_time_ )

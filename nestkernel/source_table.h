@@ -230,7 +230,8 @@ public:
     const size_t rank_start,
     const size_t rank_end,
     size_t& source_rank,
-    TargetData& next_target_data );
+    TargetData& next_target_data,
+    const bool is_long_delay );
 
   /**
    * Rejects the last target data, and resets the current_positions_
@@ -348,7 +349,7 @@ public:
   void resize_compressible_sources();
 
   // creates maps of sources with more than one thread-local target
-  void collect_compressible_sources( const size_t tid );
+  void collect_compressible_sources( const size_t tid, const bool is_long_delay );
   // fills the compressed_spike_data structure in ConnectionManager
   void fill_compressed_spike_data( std::vector< std::vector< std::vector< SpikeData > > >& compressed_spike_data );
 

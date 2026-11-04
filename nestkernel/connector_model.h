@@ -75,6 +75,8 @@ public:
   {
   }
 
+virtual double check_delay( const Dictionary& p, const double delay ) = 0;
+
   /**
    * Adds a connection.
    *
@@ -171,6 +173,8 @@ public:
   {
   }
 
+  double check_delay( const Dictionary& p, const double delay );
+
   void add_connection( Node& src,
     Node& tgt,
     std::vector< ConnectorBase* >& hetconn,
@@ -210,7 +214,7 @@ public:
   }
 
 private:
-  void used_default_delay();
+  double used_default_delay();
 
   void add_connection_( Node& src,
     Node& tgt,

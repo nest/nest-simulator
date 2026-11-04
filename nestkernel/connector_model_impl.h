@@ -159,7 +159,7 @@ GenericConnectorModel< ConnectionT >::check_synapse_params( const Dictionary& sy
 
 
 template < typename ConnectionT >
-void
+double
 GenericConnectorModel< ConnectionT >::used_default_delay()
 {
   // if not used before, check now. Solves bug #138, MH 08-01-08
@@ -167,6 +167,7 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
   // MH 08-04-24
   // get_default_delay_ must be overridden by derived class to return the
   // correct default delay (either from commonprops or default connection)
+
   if ( default_delay_needs_check_ )
   {
     try
@@ -199,6 +200,15 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
     }
     default_delay_needs_check_ = false;
   }
+
+  if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
+  {
+    return default_connection_.get_delay();
+  }
+  else
+  {
+    return NAN;
+  }
 }
 
 template < typename ConnectionT >
@@ -216,20 +226,17 @@ GenericConnectorModel< ConnectionT >::set_syn_id( synindex syn_id )
 }
 
 template < typename ConnectionT >
-void
-GenericConnectorModel< ConnectionT >::add_connection( Node& src,
-  Node& tgt,
-  std::vector< ConnectorBase* >& thread_local_connectors,
-  const synindex syn_id,
-  const Dictionary& p,
-  const double delay,
-  const double weight )
+double
+GenericConnectorModel< ConnectionT >::check_delay( const Dictionary& p, const double delay )
 {
+  double used_delay = 0.;
+
   if ( not numerics::is_nan( delay ) )
   {
     if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
     {
       kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
+      used_delay = delay;
     }
 
     if ( p.known( names::delay ) )
@@ -241,22 +248,31 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   }
   else
   {
-    // check delay
-    double delay = 0.0;
-
-    if ( p.update_value( names::delay, delay ) )
+    if ( p.update_value( names::delay, used_delay ) )
     {
       if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
       {
-        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
+        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( used_delay );
       }
     }
     else
     {
-      used_default_delay();
+      used_delay = used_default_delay();
     }
   }
+  return used_delay;
+}
 
+template < typename ConnectionT >
+void
+GenericConnectorModel< ConnectionT >::add_connection( Node& src,
+  Node& tgt,
+  std::vector< ConnectorBase* >& thread_local_connectors,
+  const synindex syn_id,
+  const Dictionary& p,
+  const double delay,
+  const double weight )
+{
   // create a new instance of the default connection
   ConnectionT connection = ConnectionT( default_connection_ );
 
@@ -265,16 +281,16 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     connection.set_weight( weight );
   }
 
-  if ( not numerics::is_nan( delay ) )
-  {
-    connection.set_delay( delay );
-  }
-
   if ( not p.empty() )
   {
     // Reference to connector model needed here to check delay (maybe this could
     // be done one level above?).
     connection.set_status( p, *this );
+  }
+
+  if ( not numerics::is_nan( delay ) )
+  {
+    connection.set_delay( delay );
   }
 
   // We must use a local variable here to hold the actual value of the

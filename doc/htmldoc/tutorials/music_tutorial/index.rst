@@ -3,7 +3,6 @@
 MUSIC Tutorials
 ===============
 
-
 .. grid:: 1 1 1 1
 
 

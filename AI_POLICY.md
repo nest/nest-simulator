@@ -1,6 +1,6 @@
 # AI Policy
 
-The NEST Simulator is built and maintained by humans. While we acknowledge that AI tools can increase 
+The NEST Simulator is built and maintained by humans. While we acknowledge that AI tools can increase
 productivity, we believe in transparency and human creativity and accountability in software development.
 
 ## Requirements for Submitting Issues and Pull Requests

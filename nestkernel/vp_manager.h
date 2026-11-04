@@ -154,13 +154,9 @@ public:
    * while processing MPI buffers in a multithreaded environment.
    */
   size_t get_num_assigned_ranks_per_thread() const;
-  size_t get_num_assigned_ranks_per_thread_local() const;
 
   size_t get_start_rank_per_thread( const size_t tid ) const;
-  size_t get_start_rank_per_thread_local( const size_t tid ) const;
-
   size_t get_end_rank_per_thread( const size_t rank_start, const size_t num_assigned_ranks_per_thread ) const;
-  size_t get_end_rank_per_thread_local( const size_t rank_start, const size_t num_assigned_ranks_per_thread ) const;
 
   /**
    * Returns assigned ranks per thread to fill MPI buffers.
@@ -170,7 +166,6 @@ public:
    * at most assigned_ranks.max_size
    */
   AssignedRanks get_assigned_ranks( const size_t tid );
-  AssignedRanks get_assigned_ranks_comm_local( const size_t tid );
 
 private:
   const bool force_singlethreading_;

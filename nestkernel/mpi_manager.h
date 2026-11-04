@@ -26,6 +26,10 @@
 // Generated includes:
 #include "config.h"
 
+#if defined( HAVE_MORPH ) && !defined( HAVE_MPI )
+#error "Structure-aware communication (morph, HAVE_MORPH) requires MPI (HAVE_MPI)."
+#endif
+
 // C includes:
 #include <unistd.h>
 #ifdef HAVE_MPI
@@ -70,24 +74,40 @@ public:
   void get_status( Dictionary& ) override;
 
   void init_mpi( int* argc, char** argv[] );
-
 #ifdef HAVE_MPI
   void set_communicator( MPI_Comm );
-  void set_communicator_local();
-
-  size_t get_comm_local_group_size() const;
-
-  std::vector< int > get_comm_local_ranks() const;
-
-  void create_ranks_to_idx_comm_local();
-
-  std::map< int, int > get_ranks_to_idx_comm_local() const;
 
   MPI_Comm
   get_communicator()
   {
     return comm;
   };
+#endif
+
+#ifdef HAVE_MORPH
+  /**
+   * Set the local group of processes of morph for this process.
+   *
+   * Spikes of short-range connections are exchanged within the local group (communicator comm_local).
+   */
+  void set_comm_local_ranks( const std::vector< long >& ranks );
+
+  //! Return the number of processes in the local group of morph.
+  size_t get_comm_local_group_size() const;
+
+  //! Return true if the process with the given global rank is in the local group of this process.
+  bool is_in_comm_local_group( const size_t rank ) const;
+
+  //! Return the index of the process with the given global rank within the local group of this process.
+  size_t get_idx_in_comm_local_group( const size_t rank ) const;
+
+  /**
+   * Return the number of processes taking part in the exchange of short-path spikes.
+   *
+   * This is the size of the local group if morph is active and the number of all processes otherwise.
+   */
+  size_t get_num_processes_short_path() const;
+
 #endif
 
   /**
@@ -183,22 +203,22 @@ public:
   /**
    * Returns total size of MPI buffer for communication of connections.
    */
-  size_t get_buffer_size_target_data( const bool is_long_delay ) const;
+  size_t get_buffer_size_target_data( const bool is_long_delay = false ) const;
 
   /**
    * Returns size of MPI buffer for connections divided by number of processes.
    */
-  unsigned int get_send_recv_count_target_data_per_rank( const bool is_long_delay ) const;
+  unsigned int get_send_recv_count_target_data_per_rank( const bool is_long_delay = false ) const;
 
   /**
    * Returns total size of MPI buffer for communication of spikes.
    */
-  size_t get_buffer_size_spike_data( const bool is_long_delay ) const;
+  size_t get_buffer_size_spike_data( const bool is_long_delay = false ) const;
 
   /**
    * Returns size of MPI buffer for spikes divided by number of processes.
    */
-  unsigned int get_send_recv_count_spike_data_per_rank( const bool is_long_delay ) const;
+  unsigned int get_send_recv_count_spike_data_per_rank( const bool is_long_delay = false ) const;
 
   /**
    * Returns total size of MPI send buffer for communication of secondary events.
@@ -212,11 +232,16 @@ public:
 
 #ifdef HAVE_MPI
 
-  void communicate_Alltoall_( void* send_buffer,
-    void* recv_buffer,
-    const unsigned int send_recv_count,
-    const bool is_long_delay,
-    const long threshold_delay );
+  void communicate_Alltoall_( void* send_buffer, void* recv_buffer, const unsigned int send_recv_count );
+
+#ifdef HAVE_MORPH
+  /**
+   * Alltoall on the communicator of the exchange of short-path spikes.
+   *
+   * The communicator is that of the local group of morph if morph is active and the global one otherwise.
+   */
+  void communicate_Alltoall_short_path_( void* send_buffer, void* recv_buffer, const unsigned int send_recv_count );
+#endif
 
   void communicate_Alltoallv_( void* send_buffer,
     const int* send_counts,
@@ -230,23 +255,19 @@ public:
   template < class D >
   void communicate_Alltoall( std::vector< D >& send_buffer,
     std::vector< D >& recv_buffer,
-    const unsigned int send_recv_count,
-    const bool is_long_delay = true,
-    const long threshold_delay = delay_max );
+    const unsigned int send_recv_count );
   template < class D >
   void communicate_target_data_Alltoall( std::vector< D >& send_buffer,
     std::vector< D >& recv_buffer,
-    const bool is_long_delay );
+    const bool is_long_delay = false );
   template < class D >
   void communicate_spike_data_Alltoall( std::vector< D >& send_buffer,
     std::vector< D >& recv_buffer,
-    const bool is_long_delay,
-    const long threshold_delay );
+    const bool is_long_delay = false );
   template < class D >
   void communicate_off_grid_spike_data_Alltoall( std::vector< D >& send_buffer,
     std::vector< D >& recv_buffer,
-    const bool is_long_delay,
-    const long threshold_delay );
+    const bool is_long_delay = false );
   template < class D >
   void communicate_secondary_events_Alltoallv( std::vector< D >& send_buffer, std::vector< D >& recv_buffer );
 
@@ -271,9 +292,11 @@ public:
   double time_communicate_alltoallv( int num_bytes, int samples = 1000 );
 
   void set_buffer_size_target_data( size_t buffer_size );
-  void set_buffer_size_target_data_long_delay( size_t buffer_size );
   void set_buffer_size_spike_data( size_t buffer_size );
+#ifdef HAVE_MORPH
+  void set_buffer_size_target_data_long_delay( size_t buffer_size );
   void set_buffer_size_spike_data_long_delay( size_t buffer_size );
+#endif
 
   /**
    * Increases the size of the MPI buffer for communication of connections if it
@@ -281,7 +304,10 @@ public:
    */
   bool increase_buffer_size_target_data();
 
+#ifdef HAVE_MORPH
+  //! Increase the size of the MPI buffer for the target data of the long path of morph; see above.
   bool increase_buffer_size_target_data_long_delay();
+#endif
 
   /**
    * Returns whether MPI buffers for communication of connections are adaptive.
@@ -340,14 +366,8 @@ private:
   size_t buffer_size_target_data_;  //!< total size of MPI buffer for
   // communication of connections
 
-  size_t buffer_size_target_data_long_delay_;  //!< total size of MPI buffer for
-  // communication of long-delay connections
-
   size_t buffer_size_spike_data_;  //!< total size of MPI buffer for
   // communication of spikes
-
-  size_t buffer_size_spike_data_long_delay_;  //!< total size of MPI buffer for
-  // communication of long-delay spikes
 
   size_t max_buffer_size_target_data_;  //!< maximal size of MPI buffer for
   // communication of connections
@@ -360,13 +380,21 @@ private:
 
   double shrink_factor_buffer_spike_data_;
 
-  std::vector< int > comm_local_ranks_;
-  std::map< int, int > ranks_to_idx_comm_local_;
-
   unsigned int send_recv_count_spike_data_per_rank_;
-  unsigned int send_recv_count_spike_data_per_rank_long_delay_;
   unsigned int send_recv_count_target_data_per_rank_;
+
+#ifdef HAVE_MORPH
+  //! total size of MPI buffer for communication of connections of the long path of morph
+  size_t buffer_size_target_data_long_delay_;
+  //! total size of MPI buffer for communication of spikes of the long path of morph
+  size_t buffer_size_spike_data_long_delay_;
+  unsigned int send_recv_count_spike_data_per_rank_long_delay_;
   unsigned int send_recv_count_target_data_per_rank_long_delay_;
+
+  std::vector< int > comm_local_ranks_;  //!< global ranks of the local group of morph
+  //! index within the local group for each global rank; -1 for ranks outside the group
+  std::vector< int > idx_in_comm_local_group_;
+#endif
 
   //! How many secondary elements (in ints) will be received from each rank
   std::vector< int > recv_counts_secondary_events_in_int_per_rank_;
@@ -389,7 +417,9 @@ private:
 
   //! Variable to hold the MPI communicator to use (the datatype matters).
   MPI_Comm comm;
-  MPI_Comm comm_local;
+#ifdef HAVE_MORPH
+  MPI_Comm comm_local;  //!< communicator of the local group of morph
+#endif
   MPI_Datatype MPI_OFFGRID_SPIKE;
 
   void communicate_Allgather( std::vector< unsigned int >& send_buffer,
@@ -413,7 +443,6 @@ private:
   void communicate_Allgather( std::vector< T >& send_buffer,
     std::vector< T >& recv_buffer,
     std::vector< int >& displacements );
-
 
 #endif /* #ifdef HAVE_MPI */
 
@@ -550,11 +579,13 @@ MPIManager::is_mpi_used()
 inline size_t
 MPIManager::get_buffer_size_target_data( const bool is_long_delay ) const
 {
+#ifdef HAVE_MORPH
   if ( is_long_delay )
   {
     return buffer_size_target_data_long_delay_;
   }
   else
+#endif
   {
     return buffer_size_target_data_;
   }
@@ -563,11 +594,13 @@ MPIManager::get_buffer_size_target_data( const bool is_long_delay ) const
 inline unsigned int
 MPIManager::get_send_recv_count_target_data_per_rank( const bool is_long_delay ) const
 {
+#ifdef HAVE_MORPH
   if ( is_long_delay )
   {
     return send_recv_count_target_data_per_rank_long_delay_;
   }
   else
+#endif
   {
     return send_recv_count_target_data_per_rank_;
   }
@@ -576,11 +609,13 @@ MPIManager::get_send_recv_count_target_data_per_rank( const bool is_long_delay )
 inline size_t
 MPIManager::get_buffer_size_spike_data( const bool is_long_delay ) const
 {
+#ifdef HAVE_MORPH
   if ( is_long_delay )
   {
     return buffer_size_spike_data_long_delay_;
   }
   else
+#endif
   {
     return buffer_size_spike_data_;
   }
@@ -589,15 +624,38 @@ MPIManager::get_buffer_size_spike_data( const bool is_long_delay ) const
 inline unsigned int
 MPIManager::get_send_recv_count_spike_data_per_rank( const bool is_long_delay ) const
 {
+#ifdef HAVE_MORPH
   if ( is_long_delay )
   {
     return send_recv_count_spike_data_per_rank_long_delay_;
   }
   else
+#endif
   {
     return send_recv_count_spike_data_per_rank_;
   }
 }
+
+#ifdef HAVE_MORPH
+inline size_t
+MPIManager::get_comm_local_group_size() const
+{
+  return comm_local_ranks_.size();
+}
+
+inline bool
+MPIManager::is_in_comm_local_group( const size_t rank ) const
+{
+  return rank < idx_in_comm_local_group_.size() and idx_in_comm_local_group_[ rank ] >= 0;
+}
+
+inline size_t
+MPIManager::get_idx_in_comm_local_group( const size_t rank ) const
+{
+  assert( is_in_comm_local_group( rank ) );
+  return idx_in_comm_local_group_[ rank ];
+}
+#endif
 
 inline size_t
 MPIManager::get_send_buffer_size_secondary_events_in_int() const
@@ -627,12 +685,26 @@ MPIManager::set_buffer_size_target_data( const size_t buffer_size )
   {
     buffer_size_target_data_ = max_buffer_size_target_data_;
   }
-  send_recv_count_target_data_per_rank_ = static_cast< size_t >( floor(
-    static_cast< double >( get_buffer_size_target_data( false ) ) / static_cast< double >( get_num_processes() ) ) );
+  send_recv_count_target_data_per_rank_ = static_cast< size_t >(
+    floor( static_cast< double >( get_buffer_size_target_data() ) / static_cast< double >( get_num_processes() ) ) );
 
-  assert( send_recv_count_target_data_per_rank_ * get_num_processes() <= get_buffer_size_target_data( false ) );
+  assert( send_recv_count_target_data_per_rank_ * get_num_processes() <= get_buffer_size_target_data() );
 }
 
+#ifndef HAVE_MORPH
+inline void
+MPIManager::set_buffer_size_spike_data( const size_t buffer_size )
+{
+  assert( buffer_size >= static_cast< size_t >( 2 * get_num_processes() ) );
+  buffer_size_spike_data_ = buffer_size;
+
+  send_recv_count_spike_data_per_rank_ = floor( get_buffer_size_spike_data() / get_num_processes() );
+
+  assert( send_recv_count_spike_data_per_rank_ * get_num_processes() <= get_buffer_size_spike_data() );
+}
+#endif
+
+#ifdef HAVE_MORPH
 inline void
 MPIManager::set_buffer_size_target_data_long_delay( const size_t buffer_size )
 {
@@ -665,6 +737,7 @@ MPIManager::set_buffer_size_spike_data_long_delay( const size_t buffer_size )
   assert( send_recv_count_spike_data_per_rank_long_delay_ * get_num_processes()
     <= get_buffer_size_spike_data( is_long_delay ) );
 }
+#endif
 
 inline bool
 MPIManager::increase_buffer_size_target_data()
@@ -691,6 +764,7 @@ MPIManager::increase_buffer_size_target_data()
   }
 }
 
+#ifdef HAVE_MORPH
 inline bool
 MPIManager::increase_buffer_size_target_data_long_delay()
 {
@@ -715,6 +789,7 @@ MPIManager::increase_buffer_size_target_data_long_delay()
     return true;
   }
 }
+#endif
 
 inline bool
 MPIManager::adaptive_target_buffers() const
@@ -805,14 +880,12 @@ template < class D >
 void
 MPIManager::communicate_Alltoall( std::vector< D >& send_buffer,
   std::vector< D >& recv_buffer,
-  const unsigned int send_recv_count,
-  const bool is_long_delay,
-  const long threshold_delay )
+  const unsigned int send_recv_count )
 {
   void* send_buffer_int = static_cast< void* >( &send_buffer[ 0 ] );
   void* recv_buffer_int = static_cast< void* >( &recv_buffer[ 0 ] );
 
-  communicate_Alltoall_( send_buffer_int, recv_buffer_int, send_recv_count, is_long_delay, threshold_delay );
+  communicate_Alltoall_( send_buffer_int, recv_buffer_int, send_recv_count );
 }
 
 template < class D >
@@ -855,6 +928,7 @@ MPIManager::communicate_target_data_Alltoall( std::vector< D >& send_buffer,
   std::vector< D >& recv_buffer,
   const bool is_long_delay )
 {
+#ifdef HAVE_MORPH
   if ( is_long_delay )
   {
     const size_t send_recv_count_target_data_in_int_per_rank =
@@ -862,6 +936,7 @@ MPIManager::communicate_target_data_Alltoall( std::vector< D >& send_buffer,
     communicate_Alltoall( send_buffer, recv_buffer, send_recv_count_target_data_in_int_per_rank );
   }
   else
+#endif
   {
     const size_t send_recv_count_target_data_in_int_per_rank =
       sizeof( TargetData ) / sizeof( unsigned int ) * send_recv_count_target_data_per_rank_;
@@ -873,34 +948,42 @@ template < class D >
 void
 MPIManager::communicate_spike_data_Alltoall( std::vector< D >& send_buffer,
   std::vector< D >& recv_buffer,
-  const bool is_long_delay,
-  const long threshold_delay )
+  const bool is_long_delay )
 {
+#ifdef HAVE_MORPH
   if ( is_long_delay )
   {
+    // the long path exchanges spikes among all processes
     const size_t send_recv_count_spike_data_in_int_per_rank =
       sizeof( SpikeData ) / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_long_delay_;
-    communicate_Alltoall(
-      send_buffer, recv_buffer, send_recv_count_spike_data_in_int_per_rank, is_long_delay, threshold_delay );
+    communicate_Alltoall( send_buffer, recv_buffer, send_recv_count_spike_data_in_int_per_rank );
   }
   else
   {
     const size_t send_recv_count_spike_data_in_int_per_rank =
       sizeof( SpikeData ) / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_;
-    communicate_Alltoall(
-      send_buffer, recv_buffer, send_recv_count_spike_data_in_int_per_rank, is_long_delay, threshold_delay );
+    communicate_Alltoall_short_path_( static_cast< void* >( &send_buffer[ 0 ] ),
+      static_cast< void* >( &recv_buffer[ 0 ] ),
+      send_recv_count_spike_data_in_int_per_rank );
   }
+#else
+  const size_t send_recv_count_spike_data_in_int_per_rank =
+    sizeof( SpikeData ) / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_;
+
+  communicate_Alltoall( send_buffer, recv_buffer, send_recv_count_spike_data_in_int_per_rank );
+#endif
 }
 
 template < class D >
 void
 MPIManager::communicate_off_grid_spike_data_Alltoall( std::vector< D >& send_buffer,
   std::vector< D >& recv_buffer,
-  const bool is_long_delay,
-  const long threshold_delay )
+  const bool is_long_delay )
 {
+#ifdef HAVE_MORPH
   if ( is_long_delay )
   {
+    // the long path exchanges spikes among all processes
     const size_t send_recv_count_off_grid_spike_data_in_int_per_rank =
       sizeof( OffGridSpikeData ) / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_long_delay_;
     communicate_Alltoall( send_buffer, recv_buffer, send_recv_count_off_grid_spike_data_in_int_per_rank );
@@ -909,9 +992,16 @@ MPIManager::communicate_off_grid_spike_data_Alltoall( std::vector< D >& send_buf
   {
     const size_t send_recv_count_off_grid_spike_data_in_int_per_rank =
       sizeof( OffGridSpikeData ) / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_;
-    communicate_Alltoall(
-      send_buffer, recv_buffer, send_recv_count_off_grid_spike_data_in_int_per_rank, is_long_delay, threshold_delay );
+    communicate_Alltoall_short_path_( static_cast< void* >( &send_buffer[ 0 ] ),
+      static_cast< void* >( &recv_buffer[ 0 ] ),
+      send_recv_count_off_grid_spike_data_in_int_per_rank );
   }
+#else
+  const size_t send_recv_count_off_grid_spike_data_in_int_per_rank =
+    sizeof( OffGridSpikeData ) / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_;
+
+  communicate_Alltoall( send_buffer, recv_buffer, send_recv_count_off_grid_spike_data_in_int_per_rank );
+#endif
 }
 }
 

@@ -138,6 +138,14 @@ BipartiteConnBuilder::BipartiteConnBuilder( NodeCollectionPTR sources,
   conn_spec.update_value< bool >( names::allow_multapses, allow_multapses_ );
   conn_spec.update_value< bool >( names::make_symmetric, make_symmetric_ );
   conn_spec.update_value< bool >( names::long_range, long_range_ );
+#ifndef HAVE_MORPH
+  if ( long_range_ )
+  {
+    throw KernelException(
+      "Connection property 'long_range' requires morph: NEST was built without morph "
+      "(-Dwith-morph=ON)." );
+  }
+#endif
 
   if ( make_symmetric_ and third_out_ )
   {
@@ -398,6 +406,8 @@ BipartiteConnBuilder::single_connect_( size_t snode_id, Node& target, size_t tar
         target_thread,
         synapse_model_id_[ synapse_indx ],
         param_dicts_[ synapse_indx ][ target_thread ],
+        numerics::nan,
+        numerics::nan,
         long_range_ );
     }
     else if ( default_weight_[ synapse_indx ] )
@@ -407,8 +417,9 @@ BipartiteConnBuilder::single_connect_( size_t snode_id, Node& target, size_t tar
         target_thread,
         synapse_model_id_[ synapse_indx ],
         param_dicts_[ synapse_indx ][ target_thread ],
-        long_range_,
-        delays_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target ) );
+        delays_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target ),
+        numerics::nan,
+        long_range_ );
     }
     else if ( default_delay_[ synapse_indx ] )
     {
@@ -417,9 +428,9 @@ BipartiteConnBuilder::single_connect_( size_t snode_id, Node& target, size_t tar
         target_thread,
         synapse_model_id_[ synapse_indx ],
         param_dicts_[ synapse_indx ][ target_thread ],
-        long_range_,
         numerics::nan,
-        weights_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target ) );
+        weights_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target ),
+        long_range_ );
     }
     else
     {
@@ -430,9 +441,9 @@ BipartiteConnBuilder::single_connect_( size_t snode_id, Node& target, size_t tar
         target_thread,
         synapse_model_id_[ synapse_indx ],
         param_dicts_[ synapse_indx ][ target_thread ],
-        long_range_,
         delay,
-        weight );
+        weight,
+        long_range_ );
     }
   }
 

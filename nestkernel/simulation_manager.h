@@ -172,7 +172,7 @@ public:
   long get_to_step() const;
 
   //! Sorts source table and connections and create new target table.
-  void update_connection_infrastructure( const size_t tid, const bool has_long_delays );
+  void update_connection_infrastructure( const size_t tid );
 
   /**
    * Set time measurements for internal profiling to zero (reg. prep.)

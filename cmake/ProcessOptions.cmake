@@ -457,6 +457,18 @@ function( NEST_PROCESS_WITH_MPI_SYNC_TIMER )
   set( MPI_SYNC_TIMER ${with-mpi-sync-timer} PARENT_SCOPE )
 endfunction()
 
+function( NEST_PROCESS_WITH_MORPH )
+  set( HAVE_MORPH OFF PARENT_SCOPE )
+  if ( NOT with-morph )
+    return()
+  endif ()
+  if ( NOT HAVE_MPI )
+    message( FATAL_ERROR "-Dwith-morph=ON requires -Dwith-mpi=ON: structure-aware communication (morph) "
+                         "exchanges short-range spikes within groups of MPI processes." )
+  endif ()
+  set( HAVE_MORPH ON PARENT_SCOPE )
+endfunction()
+
 function( NEST_PROCESS_WITH_MUSIC )
   set( HAVE_MUSIC OFF PARENT_SCOPE )
   nest_find_package_restrict_if_pinned( Music )

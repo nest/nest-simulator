@@ -88,6 +88,12 @@ KernelManager::get_build_info_()
   build_info[ "have_mpi" ] = false;
 #endif
 
+#ifdef HAVE_MORPH
+  build_info[ "have_morph" ] = true;
+#else
+  build_info[ "have_morph" ] = false;
+#endif
+
 #ifdef HAVE_GSL
   build_info[ "have_gsl" ] = true;
 #else

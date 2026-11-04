@@ -78,10 +78,13 @@ class KernelAttribute:
     Descriptor that dispatches attribute access to the nest kernel.
     """
 
-    def __init__(self, typehint, description, readonly=False, default=None, localonly=False):
+    def __init__(self, typehint, description, readonly=False, default=None, localonly=False, build_flag=None):
         self._readonly = readonly
         self._localonly = localonly
         self._default = default
+        # Pair of the entry of ``build_info`` that must be true for the attribute to exist (e.g. ``have_morph``)
+        # and the error message otherwise
+        self._build_flag = build_flag
 
         readonly = readonly and "**read only**"
         localonly = localonly and "**local only**"
@@ -98,11 +101,22 @@ class KernelAttribute:
         self._name = name
         self._full_status = name == "kernel_status"
 
+    def _check_build_flag(self, status_root=None):
+        if self._build_flag is None:
+            return
+        if status_root is None:
+            status_root = nestkernel.llapi_get_kernel_status()
+        flag, message = self._build_flag
+        if not status_root["build_info"].get(flag, False):
+            # not AttributeError: Python would replace it by the generic message of the module's __getattr__
+            raise NotImplementedError(f"`{self._name}` is not available: {message}.")
+
     def __get__(self, instance, cls=None):
         if instance is None:
             return self
 
         status_root = nestkernel.llapi_get_kernel_status()
+        self._check_build_flag(status_root)
 
         if self._full_status:
             return status_root
@@ -112,6 +126,7 @@ class KernelAttribute:
     def __set__(self, instance, value):
         if self._readonly:
             raise AttributeError(f"`{self._name}` is a read only kernel attribute.")
+        self._check_build_flag()
         nestkernel.llapi_set_kernel_status({self._name: value})
 
 

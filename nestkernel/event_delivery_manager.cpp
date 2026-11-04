@@ -48,9 +48,7 @@ EventDeliveryManager::EventDeliveryManager()
   , moduli_()
   , slice_moduli_()
   , emitted_spikes_register_()
-  , emitted_spikes_register_long_delay_()
   , off_grid_emitted_spikes_register_()
-  , off_grid_emitted_spikes_register_long_delay_()
   , send_buffer_secondary_events_()
   , recv_buffer_secondary_events_()
   , local_spike_counter_()
@@ -59,18 +57,19 @@ EventDeliveryManager::EventDeliveryManager()
   , send_buffer_off_grid_spike_data_()
   , recv_buffer_off_grid_spike_data_()
   , send_buffer_target_data_()
-  , send_buffer_target_data_long_delay_()
   , recv_buffer_target_data_()
-  , recv_buffer_target_data_long_delay_()
   , buffer_size_target_data_has_changed_( false )
+#ifdef HAVE_MORPH
   , buffer_size_target_data_has_changed_long_delay_( false )
+#endif
   , global_max_spikes_per_rank_( 0 )
-  , global_max_spikes_per_rank_comm_world_( 0 )
+#ifdef HAVE_MORPH
+  , global_max_spikes_per_rank_long_delay_( 0 )
+#endif
   , send_recv_buffer_shrink_limit_( 0.2 )
   , send_recv_buffer_shrink_spare_( 0.1 )
   , send_recv_buffer_grow_extra_( 0.5 )
   , send_recv_buffer_resize_log_()
-  , send_recv_buffer_resize_log_long_delay_()
   , gather_completed_checker_()
 {
 }
@@ -91,12 +90,14 @@ EventDeliveryManager::initialize( const bool adjust_number_of_threads_or_rng_onl
     // Ensures that ResetKernel resets off_grid_spiking_
     off_grid_spiking_ = false;
     buffer_size_target_data_has_changed_ = false;
-    buffer_size_target_data_has_changed_long_delay_ = false;
     send_recv_buffer_shrink_limit_ = 0.2;
     send_recv_buffer_shrink_spare_ = 0.1;
     send_recv_buffer_grow_extra_ = 0.5;
     send_recv_buffer_resize_log_.clear();
+#ifdef HAVE_MORPH
+    buffer_size_target_data_has_changed_long_delay_ = false;
     send_recv_buffer_resize_log_long_delay_.clear();
+#endif
   }
 
   const size_t num_threads = kernel().vp_manager.get_num_threads();
@@ -104,9 +105,11 @@ EventDeliveryManager::initialize( const bool adjust_number_of_threads_or_rng_onl
   local_spike_counter_.resize( num_threads, 0 );
   reset_counters();
   emitted_spikes_register_.resize( num_threads );
-  emitted_spikes_register_long_delay_.resize( num_threads );
   off_grid_emitted_spikes_register_.resize( num_threads );
+#ifdef HAVE_MORPH
+  emitted_spikes_register_long_delay_.resize( num_threads );
   off_grid_emitted_spikes_register_long_delay_.resize( num_threads );
+#endif
   gather_completed_checker_.initialize( num_threads, false );
 
 #pragma omp parallel
@@ -123,7 +126,7 @@ EventDeliveryManager::initialize( const bool adjust_number_of_threads_or_rng_onl
       off_grid_emitted_spikes_register_[ tid ] = new std::vector< OffGridSpikeDataWithRank >();
     }
 
-    // Repeat for long-delay spikes
+#ifdef HAVE_MORPH
     if ( not emitted_spikes_register_long_delay_[ tid ] )
     {
       emitted_spikes_register_long_delay_[ tid ] = new std::vector< SpikeDataWithRank >();
@@ -133,6 +136,7 @@ EventDeliveryManager::initialize( const bool adjust_number_of_threads_or_rng_onl
     {
       off_grid_emitted_spikes_register_long_delay_[ tid ] = new std::vector< OffGridSpikeDataWithRank >();
     }
+#endif
   }  // of omp parallel
 }
 
@@ -152,35 +156,32 @@ EventDeliveryManager::finalize( const bool )
   }
   off_grid_emitted_spikes_register_.clear();
 
-  // Repeat for long delay spike register
-  for ( auto it = emitted_spikes_register_long_delay_.begin(); it < emitted_spikes_register_long_delay_.end(); ++it )
+#ifdef HAVE_MORPH
+  for ( auto& vec_spikedata_ptr : emitted_spikes_register_long_delay_ )
   {
-    ( *it )->clear();
-    delete ( *it );
+    delete vec_spikedata_ptr;
   }
   emitted_spikes_register_long_delay_.clear();
 
-  for ( auto it = off_grid_emitted_spikes_register_long_delay_.begin();
-        it < off_grid_emitted_spikes_register_long_delay_.end();
-        ++it )
+  for ( auto& vec_spikedata_ptr : off_grid_emitted_spikes_register_long_delay_ )
   {
-    ( *it )->clear();
-    delete ( *it );
+    delete vec_spikedata_ptr;
   }
   off_grid_emitted_spikes_register_long_delay_.clear();
+
+  send_buffer_spike_data_long_delay_.clear();
+  recv_buffer_spike_data_long_delay_.clear();
+  send_buffer_off_grid_spike_data_long_delay_.clear();
+  recv_buffer_off_grid_spike_data_long_delay_.clear();
+#endif
 
   send_buffer_secondary_events_.clear();
   recv_buffer_secondary_events_.clear();
   send_buffer_spike_data_.clear();
   recv_buffer_spike_data_.clear();
-  send_buffer_spike_data_long_delay_.clear();
-  recv_buffer_spike_data_long_delay_.clear();
   send_buffer_off_grid_spike_data_.clear();
   recv_buffer_off_grid_spike_data_.clear();
-  send_buffer_off_grid_spike_data_long_delay_.clear();
-  recv_buffer_off_grid_spike_data_long_delay_.clear();
 }
-
 
 
 void
@@ -242,6 +243,7 @@ EventDeliveryManager::get_status( Dictionary& dict )
 void
 EventDeliveryManager::resize_send_recv_buffers_target_data( const bool is_long_delay )
 {
+#ifdef HAVE_MORPH
   if ( is_long_delay )
   {
     // compute send receive counts and allocate memory for buffers
@@ -249,6 +251,7 @@ EventDeliveryManager::resize_send_recv_buffers_target_data( const bool is_long_d
     recv_buffer_target_data_long_delay_.resize( kernel().mpi_manager.get_buffer_size_target_data( is_long_delay ) );
   }
   else
+#endif
   {
     send_buffer_target_data_.resize( kernel().mpi_manager.get_buffer_size_target_data( is_long_delay ) );
     recv_buffer_target_data_.resize( kernel().mpi_manager.get_buffer_size_target_data( is_long_delay ) );
@@ -258,6 +261,7 @@ EventDeliveryManager::resize_send_recv_buffers_target_data( const bool is_long_d
 void
 EventDeliveryManager::resize_send_recv_buffers_spike_data_( const bool is_long_delay )
 {
+#ifdef HAVE_MORPH
   if ( is_long_delay )
   {
     if ( kernel().mpi_manager.get_buffer_size_spike_data( is_long_delay ) > send_buffer_spike_data_long_delay_.size() )
@@ -271,6 +275,7 @@ EventDeliveryManager::resize_send_recv_buffers_spike_data_( const bool is_long_d
     }
   }
   else
+#endif
   {
     if ( kernel().mpi_manager.get_buffer_size_spike_data( is_long_delay ) > send_buffer_spike_data_.size() )
     {
@@ -283,39 +288,34 @@ EventDeliveryManager::resize_send_recv_buffers_spike_data_( const bool is_long_d
 }
 
 void
-EventDeliveryManager::configure_spike_data_buffers( const bool is_long_delay )
+EventDeliveryManager::configure_spike_data_buffers()
 {
   assert( kernel().connection_manager.get_min_delay() != 0 );
 
-  configure_spike_register( is_long_delay );
+  configure_spike_register();
 
-  if ( is_long_delay )
-  {
-    send_buffer_spike_data_long_delay_.clear();
-    send_buffer_off_grid_spike_data_long_delay_.clear();
-  }
-  else
-  {
-    send_buffer_spike_data_.clear();
-    send_buffer_off_grid_spike_data_.clear();
-  }
-  resize_send_recv_buffers_spike_data_( is_long_delay );
+  send_buffer_spike_data_.clear();
+  send_buffer_off_grid_spike_data_.clear();
+
+  resize_send_recv_buffers_spike_data_();
+
+#ifdef HAVE_MORPH
+  send_buffer_spike_data_long_delay_.clear();
+  send_buffer_off_grid_spike_data_long_delay_.clear();
+  resize_send_recv_buffers_spike_data_( true );
+#endif
 }
 
 void
-EventDeliveryManager::configure_spike_register( const bool is_long_delay )
+EventDeliveryManager::configure_spike_register()
 {
 #pragma omp parallel
   {
     const size_t tid = kernel().vp_manager.get_thread_id();
-    if ( is_long_delay )
-    {
-      reset_spike_register_long_delay_( tid );
-    }
-    else
-    {
-      reset_spike_register_( tid );
-    }
+    reset_spike_register_( tid );
+#ifdef HAVE_MORPH
+    reset_spike_register_long_delay_( tid );
+#endif
   }
 }
 
@@ -392,10 +392,6 @@ EventDeliveryManager::reset_counters()
   }
 }
 
-
-
-
-
 void
 EventDeliveryManager::reset_timers_for_preparation()
 {
@@ -408,7 +404,6 @@ EventDeliveryManager::reset_timers_for_dynamics()
   sw_collocate_spike_data_.reset();
   sw_communicate_spike_data_.reset();
 }
-
 
 void
 EventDeliveryManager::write_done_marker_secondary_events_( const bool done )
@@ -439,39 +434,29 @@ EventDeliveryManager::deliver_secondary_events( const size_t tid, const bool cal
 void
 EventDeliveryManager::gather_spike_data( const bool is_long_delay )
 {
-  if ( off_grid_spiking_ )
+#ifdef HAVE_MORPH
+  if ( is_long_delay )
   {
-    if ( is_long_delay )
+    if ( off_grid_spiking_ )
     {
       gather_spike_data_(
         send_buffer_off_grid_spike_data_long_delay_, recv_buffer_off_grid_spike_data_long_delay_, is_long_delay );
     }
     else
     {
-      gather_spike_data_( send_buffer_off_grid_spike_data_, recv_buffer_off_grid_spike_data_, is_long_delay );
+      gather_spike_data_( send_buffer_spike_data_long_delay_, recv_buffer_spike_data_long_delay_, is_long_delay );
     }
+    return;
+  }
+#endif
+
+  if ( off_grid_spiking_ )
+  {
+    gather_spike_data_( send_buffer_off_grid_spike_data_, recv_buffer_off_grid_spike_data_, is_long_delay );
   }
   else
   {
-    if ( is_long_delay )
-    {
-      gather_spike_data_( send_buffer_spike_data_long_delay_, recv_buffer_spike_data_long_delay_, is_long_delay );
-    }
-    else
-    {
-      if ( kernel().connection_manager.get_delay_interval_idx()
-        < static_cast< size_t >(
-            kernel().connection_manager.get_threshold_delay() / kernel().connection_manager.get_min_delay() )
-          - 1 )
-      {
-        kernel().connection_manager.increment_delay_interval_idx();
-      }
-      else
-      {
-        kernel().connection_manager.reset_delay_interval_idx();
-      }
-      gather_spike_data_( send_buffer_spike_data_, recv_buffer_spike_data_, is_long_delay );
-    }
+    gather_spike_data_( send_buffer_spike_data_, recv_buffer_spike_data_, is_long_delay );
   }
 }
 
@@ -484,39 +469,37 @@ EventDeliveryManager::gather_spike_data_( std::vector< SpikeDataT >& send_buffer
   // NOTE: For meaning and logic of SpikeData flags for detecting complete transmission
   //       and information for shrink/grow, see comment in spike_data.h.
 
-  const size_t old_buff_size_per_rank = kernel().mpi_manager.get_send_recv_count_spike_data_per_rank( is_long_delay );
+#ifdef HAVE_MORPH
+  // With morph, the short path exchanges spikes within the local group of processes, the long path among all.
+  const size_t num_procs =
+    is_long_delay ? kernel().mpi_manager.get_num_processes() : kernel().mpi_manager.get_num_processes_short_path();
+  size_t& global_max_spikes_per_rank =
+    is_long_delay ? global_max_spikes_per_rank_long_delay_ : global_max_spikes_per_rank_;
+  BufferResizeLog& resize_log = is_long_delay ? send_recv_buffer_resize_log_long_delay_ : send_recv_buffer_resize_log_;
+#else
+  const size_t num_procs = kernel().mpi_manager.get_num_processes();
+  size_t& global_max_spikes_per_rank = global_max_spikes_per_rank_;
+  BufferResizeLog& resize_log = send_recv_buffer_resize_log_;
+#endif
 
-  const long threshold_delay = kernel().connection_manager.get_threshold_delay();
-  size_t num_procs = 0;
-  size_t global_max_spikes_per_rank = 0;
-  if ( is_long_delay or threshold_delay == delay_max )
-  {
-    num_procs = kernel().mpi_manager.get_num_processes();
-    global_max_spikes_per_rank = global_max_spikes_per_rank_comm_world_;
-  }
-  else
-  {
-    num_procs = kernel().mpi_manager.get_comm_local_group_size();
-    global_max_spikes_per_rank = global_max_spikes_per_rank_;
-  }
+  const size_t old_buff_size_per_rank = kernel().mpi_manager.get_send_recv_count_spike_data_per_rank( is_long_delay );
 
   if ( global_max_spikes_per_rank < send_recv_buffer_shrink_limit_ * old_buff_size_per_rank )
   {
     const size_t new_buff_size_per_rank =
       std::max( 2UL, static_cast< size_t >( ( 1 + send_recv_buffer_shrink_spare_ ) * global_max_spikes_per_rank ) );
-
+#ifdef HAVE_MORPH
     if ( is_long_delay )
     {
       kernel().mpi_manager.set_buffer_size_spike_data_long_delay( num_procs * new_buff_size_per_rank );
-      resize_send_recv_buffers_spike_data_( is_long_delay );
-      send_recv_buffer_resize_log_long_delay_.add_entry( global_max_spikes_per_rank, new_buff_size_per_rank );
     }
     else
+#endif
     {
       kernel().mpi_manager.set_buffer_size_spike_data( num_procs * new_buff_size_per_rank );
-      resize_send_recv_buffers_spike_data_( is_long_delay );
-      send_recv_buffer_resize_log_.add_entry( global_max_spikes_per_rank, new_buff_size_per_rank );
     }
+    resize_send_recv_buffers_spike_data_( is_long_delay );
+    resize_log.add_entry( global_max_spikes_per_rank, new_buff_size_per_rank );
   }
 
   /* The following do-while loop is executed
@@ -533,9 +516,10 @@ EventDeliveryManager::gather_spike_data_( std::vector< SpikeDataT >& send_buffer
 
     // Set marker at end of each chunk to DEFAULT
     reset_complete_marker_spike_data_( send_buffer_position, send_buffer, num_procs );
-    std::vector< size_t > num_spikes_per_rank( kernel().mpi_manager.get_num_processes(), 0 );
+    std::vector< size_t > num_spikes_per_rank( num_procs, 0 );
 
     // Collocate spikes to send buffer
+#ifdef HAVE_MORPH
     if ( is_long_delay )
     {
       collocate_spike_data_buffers_(
@@ -547,6 +531,7 @@ EventDeliveryManager::gather_spike_data_( std::vector< SpikeDataT >& send_buffer
       }
     }
     else
+#endif
     {
       collocate_spike_data_buffers_( send_buffer_position, emitted_spikes_register_, send_buffer, num_spikes_per_rank );
 
@@ -559,6 +544,7 @@ EventDeliveryManager::gather_spike_data_( std::vector< SpikeDataT >& send_buffer
 
     // Largest number of spikes sent from this rank to any other rank.
     const auto local_max_spikes_per_rank = *std::max_element( num_spikes_per_rank.begin(), num_spikes_per_rank.end() );
+
     // At this point, all send_buffer entries with spikes to be transmitted, as well
     // as all chunk-end entries, have marker DEFAULT.
     set_end_marker_( send_buffer_position, send_buffer, local_max_spikes_per_rank, num_procs, is_long_delay );
@@ -577,13 +563,11 @@ EventDeliveryManager::gather_spike_data_( std::vector< SpikeDataT >& send_buffer
     // Given that we templatize by plain vs offgrid, this if should not be necessary, but ...
     if ( off_grid_spiking_ )
     {
-      kernel().mpi_manager.communicate_off_grid_spike_data_Alltoall(
-        send_buffer, recv_buffer, is_long_delay, kernel().connection_manager.get_threshold_delay() );
+      kernel().mpi_manager.communicate_off_grid_spike_data_Alltoall( send_buffer, recv_buffer, is_long_delay );
     }
     else
     {
-      kernel().mpi_manager.communicate_spike_data_Alltoall(
-        send_buffer, recv_buffer, is_long_delay, kernel().connection_manager.get_threshold_delay() );
+      kernel().mpi_manager.communicate_spike_data_Alltoall( send_buffer, recv_buffer, is_long_delay );
     }
 
     sw_communicate_spike_data_.stop();
@@ -599,36 +583,18 @@ EventDeliveryManager::gather_spike_data_( std::vector< SpikeDataT >& send_buffer
       const size_t new_buff_size_per_rank =
         static_cast< size_t >( ( 1 + send_recv_buffer_grow_extra_ ) * global_max_spikes_per_rank );
 
+#ifdef HAVE_MORPH
       if ( is_long_delay )
       {
-        kernel().mpi_manager.set_buffer_size_spike_data_long_delay(
-          kernel().mpi_manager.get_num_processes() * new_buff_size_per_rank );
-        resize_send_recv_buffers_spike_data_( is_long_delay );
-        send_recv_buffer_resize_log_long_delay_.add_entry( global_max_spikes_per_rank, new_buff_size_per_rank );
+        kernel().mpi_manager.set_buffer_size_spike_data_long_delay( num_procs * new_buff_size_per_rank );
       }
       else
+#endif
       {
-        if ( kernel().connection_manager.get_threshold_delay() == delay_max )
-        {
-          kernel().mpi_manager.set_buffer_size_spike_data(
-            kernel().mpi_manager.get_num_processes() * new_buff_size_per_rank );
-        }
-        else
-        {
-          kernel().mpi_manager.set_buffer_size_spike_data(
-            kernel().mpi_manager.get_comm_local_group_size() * new_buff_size_per_rank );
-        }
-        resize_send_recv_buffers_spike_data_( is_long_delay );
-        send_recv_buffer_resize_log_.add_entry( global_max_spikes_per_rank, new_buff_size_per_rank );
+        kernel().mpi_manager.set_buffer_size_spike_data( num_procs * new_buff_size_per_rank );
       }
-    }
-    if ( is_long_delay or threshold_delay == delay_max )
-    {
-      global_max_spikes_per_rank_comm_world_ = global_max_spikes_per_rank;
-    }
-    else
-    {
-      global_max_spikes_per_rank_ = global_max_spikes_per_rank;
+      resize_send_recv_buffers_spike_data_( is_long_delay );
+      resize_log.add_entry( global_max_spikes_per_rank, new_buff_size_per_rank );
     }
 
   } while ( not all_spikes_transmitted );
@@ -766,6 +732,7 @@ EventDeliveryManager::get_global_max_spikes_per_rank_( const SendBufferPosition&
 void
 EventDeliveryManager::deliver_events( const size_t tid, const bool is_long_delay )
 {
+#ifdef HAVE_MORPH
   if ( is_long_delay )
   {
     if ( off_grid_spiking_ )
@@ -777,19 +744,19 @@ EventDeliveryManager::deliver_events( const size_t tid, const bool is_long_delay
       deliver_events_( tid, recv_buffer_spike_data_long_delay_, is_long_delay );
     }
     reset_spike_register_long_delay_( tid );
+    return;
+  }
+#endif
+
+  if ( off_grid_spiking_ )
+  {
+    deliver_events_( tid, recv_buffer_off_grid_spike_data_, is_long_delay );
   }
   else
   {
-    if ( off_grid_spiking_ )
-    {
-      deliver_events_( tid, recv_buffer_off_grid_spike_data_, is_long_delay );
-    }
-    else
-    {
-      deliver_events_( tid, recv_buffer_spike_data_, is_long_delay );
-    }
-    reset_spike_register_( tid );
+    deliver_events_( tid, recv_buffer_spike_data_, is_long_delay );
   }
+  reset_spike_register_( tid );
 }
 
 template < typename SpikeDataT >
@@ -808,41 +775,27 @@ EventDeliveryManager::deliver_events_( const size_t tid,
     kernel().mpi_manager.get_send_recv_count_spike_data_per_rank( is_long_delay );
   const std::vector< ConnectorModel* >& cm = kernel().model_manager.get_connection_models( tid );
 
-  long origin_correction = 0;
-  size_t num_processes;
-  if ( is_long_delay )
+#ifdef HAVE_MORPH
+  // Spikes of the long path were emitted in the previous interval of threshold_delay; their lag is relative to the
+  // beginning of that interval. The short path exchanges spikes within the local group of processes.
+  const long interval =
+    is_long_delay ? kernel().connection_manager.get_threshold_delay() : kernel().connection_manager.get_min_delay();
+  const size_t num_processes =
+    is_long_delay ? kernel().mpi_manager.get_num_processes() : kernel().mpi_manager.get_num_processes_short_path();
+#else
+  const long interval = kernel().connection_manager.get_min_delay();
+  const size_t num_processes = kernel().mpi_manager.get_num_processes();
+#endif
+
+  // prepare Time objects for every possible time stamp within the interval (min_delay_ without morph)
+  std::vector< Time > prepared_timestamps( interval );
+  for ( size_t lag = 0; lag < static_cast< size_t >( interval ); ++lag )
   {
-    origin_correction = kernel().connection_manager.get_threshold_delay() - kernel().connection_manager.get_min_delay();
-    num_processes = kernel().mpi_manager.get_num_processes();
-  }
-  else
-  {
-    if ( kernel().connection_manager.get_threshold_delay() == delay_max )
-    {
-      num_processes = kernel().mpi_manager.get_num_processes();
-    }
-    else
-    {
-      num_processes = kernel().mpi_manager.get_comm_local_group_size();
-    }
+    // Subtract the interval because spikes were emitted in the previous interval and we use current clock.
+    prepared_timestamps[ lag ] = kernel().simulation_manager.get_clock() + Time::step( lag + 1 - interval );
   }
 
-  // In case of long delay connections,
-  // time stamps need to be prepared up to threshold_delay
-  size_t num_time_stamps = kernel().connection_manager.get_threshold_delay();
-  if ( num_time_stamps >= delay_max )
-  {
-    num_time_stamps = kernel().connection_manager.get_min_delay();
-  }
-  // prepare Time objects for every possible time stamp within min_delay_
-  std::vector< Time > prepared_timestamps( num_time_stamps );
-
-  for ( size_t lag = 0; lag < num_time_stamps; ++lag )
-  {
-    // Subtract min_delay because spikes were emitted in previous time slice and we use current clock.
-    prepared_timestamps[ lag ] = kernel().simulation_manager.get_clock()
-      + Time::step( lag + 1 - origin_correction - kernel().connection_manager.get_min_delay() );
-  }
+  // Deliver spikes sent by each rank in order
   for ( size_t rank = 0; rank < num_processes; ++rank )
   {
     // Continue with next rank if no spikes were sent by current rank
@@ -1009,7 +962,6 @@ void
 EventDeliveryManager::gather_target_data( const size_t tid, const bool is_long_delay )
 {
   assert( not kernel().connection_manager.is_source_table_cleared( is_long_delay ) );
-#pragma omp barrier
 
   // assume all threads have some work to do
   gather_completed_checker_.set_false( tid );
@@ -1028,13 +980,13 @@ EventDeliveryManager::gather_target_data( const size_t tid, const bool is_long_d
 
 #pragma omp master
     {
-      if ( is_long_delay and kernel().mpi_manager.adaptive_target_buffers()
-        and buffer_size_target_data_has_changed_long_delay_ )
-      {
-        resize_send_recv_buffers_target_data( is_long_delay );
-      }
-      else if ( not is_long_delay and kernel().mpi_manager.adaptive_target_buffers()
-        and buffer_size_target_data_has_changed_ )
+#ifdef HAVE_MORPH
+      const bool buffer_size_target_data_has_changed =
+        is_long_delay ? buffer_size_target_data_has_changed_long_delay_ : buffer_size_target_data_has_changed_;
+#else
+      const bool buffer_size_target_data_has_changed = buffer_size_target_data_has_changed_;
+#endif
+      if ( kernel().mpi_manager.adaptive_target_buffers() and buffer_size_target_data_has_changed )
       {
         resize_send_recv_buffers_target_data( is_long_delay );
       }
@@ -1048,9 +1000,13 @@ EventDeliveryManager::gather_target_data( const size_t tid, const bool is_long_d
     TargetSendBufferPosition send_buffer_position(
       assigned_ranks, kernel().mpi_manager.get_send_recv_count_target_data_per_rank( is_long_delay ) );
 
+#ifdef HAVE_MORPH
     const bool gather_completed = is_long_delay
       ? collocate_target_data_buffers_long_delay_( tid, assigned_ranks, send_buffer_position )
       : collocate_target_data_buffers_( tid, assigned_ranks, send_buffer_position );
+#else
+    const bool gather_completed = collocate_target_data_buffers_( tid, assigned_ranks, send_buffer_position );
+#endif
     gather_completed_checker_.logical_and( tid, gather_completed );
 
     if ( gather_completed_checker_.all_true() )
@@ -1066,33 +1022,38 @@ EventDeliveryManager::gather_target_data( const size_t tid, const bool is_long_d
 #pragma omp master
     {
       sw_communicate_target_data_.start();
+#ifdef HAVE_MORPH
       if ( is_long_delay )
       {
         kernel().mpi_manager.communicate_target_data_Alltoall(
           send_buffer_target_data_long_delay_, recv_buffer_target_data_long_delay_, is_long_delay );
       }
       else
+#endif
       {
-        kernel().mpi_manager.communicate_target_data_Alltoall(
-          send_buffer_target_data_, recv_buffer_target_data_, is_long_delay );
+        kernel().mpi_manager.communicate_target_data_Alltoall( send_buffer_target_data_, recv_buffer_target_data_ );
       }
       sw_communicate_target_data_.stop();
     }  // of omp master (no barriers!)
 #pragma omp barrier
 
+#ifdef HAVE_MORPH
     bool distribute_completed;
     if ( is_long_delay )
     {
       distribute_completed = distribute_target_data_buffers_long_delay_( tid );
     }
-    else if ( kernel().connection_manager.get_threshold_delay() == delay_max )
-    {
-      distribute_completed = distribute_target_data_buffers_( tid );
-    }
-    else
+    else if ( kernel().connection_manager.is_morph_active() )
     {
       distribute_completed = distribute_target_data_buffers_comm_local_( tid );
     }
+    else
+    {
+      distribute_completed = distribute_target_data_buffers_( tid );
+    }
+#else
+    const bool distribute_completed = distribute_target_data_buffers_( tid );
+#endif
     gather_completed_checker_.logical_and( tid, distribute_completed );
 
     // resize mpi buffers, if necessary and allowed
@@ -1100,12 +1061,14 @@ EventDeliveryManager::gather_target_data( const size_t tid, const bool is_long_d
     {
 #pragma omp master
       {
+#ifdef HAVE_MORPH
         if ( is_long_delay )
         {
           buffer_size_target_data_has_changed_long_delay_ =
             kernel().mpi_manager.increase_buffer_size_target_data_long_delay();
         }
         else
+#endif
         {
           buffer_size_target_data_has_changed_ = kernel().mpi_manager.increase_buffer_size_target_data();
         }
@@ -1121,7 +1084,6 @@ void
 EventDeliveryManager::gather_target_data_compressed( const size_t tid, const bool is_long_delay )
 {
   assert( not kernel().connection_manager.is_source_table_cleared( is_long_delay ) );
-#pragma omp barrier
 
   // assume all threads have some work to do
   gather_completed_checker_.set_false( tid );
@@ -1137,13 +1099,13 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid, const boo
 
 #pragma omp master
     {
-      if ( is_long_delay and kernel().mpi_manager.adaptive_target_buffers()
-        and buffer_size_target_data_has_changed_long_delay_ )
-      {
-        resize_send_recv_buffers_target_data( is_long_delay );
-      }
-      else if ( not is_long_delay and kernel().mpi_manager.adaptive_target_buffers()
-        and buffer_size_target_data_has_changed_ )
+#ifdef HAVE_MORPH
+      const bool buffer_size_target_data_has_changed =
+        is_long_delay ? buffer_size_target_data_has_changed_long_delay_ : buffer_size_target_data_has_changed_;
+#else
+      const bool buffer_size_target_data_has_changed = buffer_size_target_data_has_changed_;
+#endif
+      if ( kernel().mpi_manager.adaptive_target_buffers() and buffer_size_target_data_has_changed )
       {
         resize_send_recv_buffers_target_data( is_long_delay );
       }
@@ -1155,9 +1117,14 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid, const boo
     TargetSendBufferPosition send_buffer_position(
       assigned_ranks, kernel().mpi_manager.get_send_recv_count_target_data_per_rank( is_long_delay ) );
 
+#ifdef HAVE_MORPH
     const bool gather_completed = is_long_delay
       ? collocate_target_data_buffers_compressed_long_delay_( tid, assigned_ranks, send_buffer_position )
       : collocate_target_data_buffers_compressed_( tid, assigned_ranks, send_buffer_position );
+#else
+    const bool gather_completed =
+      collocate_target_data_buffers_compressed_( tid, assigned_ranks, send_buffer_position );
+#endif
     gather_completed_checker_.logical_and( tid, gather_completed );
 
     if ( gather_completed_checker_.all_true() )
@@ -1172,15 +1139,16 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid, const boo
 #pragma omp master
     {
       sw_communicate_target_data_.start();
+#ifdef HAVE_MORPH
       if ( is_long_delay )
       {
         kernel().mpi_manager.communicate_target_data_Alltoall(
           send_buffer_target_data_long_delay_, recv_buffer_target_data_long_delay_, is_long_delay );
       }
       else
+#endif
       {
-        kernel().mpi_manager.communicate_target_data_Alltoall(
-          send_buffer_target_data_, recv_buffer_target_data_, is_long_delay );
+        kernel().mpi_manager.communicate_target_data_Alltoall( send_buffer_target_data_, recv_buffer_target_data_ );
       }
       sw_communicate_target_data_.stop();
     }  // of omp master (no barrier)
@@ -1189,31 +1157,37 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid, const boo
     // Up to here, gather_completed_checker_ just has local info: has this thread been able to write
     // all data it is responsible for to buffers. Now combine with information on whether other ranks
     // have sent all their data. Note: All threads will return the same value for distribute_completed.
+#ifdef HAVE_MORPH
     bool distribute_completed;
     if ( is_long_delay )
     {
       distribute_completed = distribute_target_data_buffers_long_delay_( tid );
     }
-    else if ( kernel().connection_manager.get_threshold_delay() == delay_max )
-    {
-      distribute_completed = distribute_target_data_buffers_( tid );
-    }
-    else
+    else if ( kernel().connection_manager.is_morph_active() )
     {
       distribute_completed = distribute_target_data_buffers_comm_local_( tid );
     }
+    else
+    {
+      distribute_completed = distribute_target_data_buffers_( tid );
+    }
+#else
+    const bool distribute_completed = distribute_target_data_buffers_( tid );
+#endif
     gather_completed_checker_.logical_and( tid, distribute_completed );
     // resize mpi buffers, if necessary and allowed
     if ( gather_completed_checker_.any_false() and kernel().mpi_manager.adaptive_target_buffers() )
     {
 #pragma omp master
       {
+#ifdef HAVE_MORPH
         if ( is_long_delay )
         {
           buffer_size_target_data_has_changed_long_delay_ =
             kernel().mpi_manager.increase_buffer_size_target_data_long_delay();
         }
         else
+#endif
         {
           buffer_size_target_data_has_changed_ = kernel().mpi_manager.increase_buffer_size_target_data();
         }
@@ -1237,12 +1211,11 @@ EventDeliveryManager::collocate_target_data_buffers_( const size_t tid,
   TargetData next_target_data;
   bool valid_next_target_data;
   bool is_source_table_read = true;
-  const bool is_long_delay = false;
 
   // no ranks to process for this thread
   if ( assigned_ranks.begin == assigned_ranks.end )
   {
-    kernel().connection_manager.no_targets_to_process( tid, is_long_delay );
+    kernel().connection_manager.no_targets_to_process( tid );
     return is_source_table_read;
   }
 
@@ -1260,18 +1233,18 @@ EventDeliveryManager::collocate_target_data_buffers_( const size_t tid,
   while ( true )
   {
     valid_next_target_data = kernel().connection_manager.get_next_target_data(
-      tid, assigned_ranks.begin, assigned_ranks.end, source_rank, next_target_data, is_long_delay );
+      tid, assigned_ranks.begin, assigned_ranks.end, source_rank, next_target_data );
     if ( valid_next_target_data )  // add valid entry to MPI buffer
     {
       if ( send_buffer_position.is_chunk_filled( source_rank ) )
       {
         // entry does not fit in this part of the MPI buffer any more,
         // so we need to reject it
-        kernel().connection_manager.reject_last_target_data( tid, is_long_delay );
+        kernel().connection_manager.reject_last_target_data( tid );
         // after rejecting the last target, we need to save the
         // position to start at this point again next communication
         // round
-        kernel().connection_manager.save_source_table_entry_point( tid, is_long_delay );
+        kernel().connection_manager.save_source_table_entry_point( tid );
         // we have just rejected an entry, so source table can not be
         // fully read
         is_source_table_read = false;
@@ -1309,6 +1282,7 @@ EventDeliveryManager::collocate_target_data_buffers_( const size_t tid,
   }  // of while(true)
 }
 
+#ifdef HAVE_MORPH
 bool
 EventDeliveryManager::collocate_target_data_buffers_long_delay_( const size_t tid,
   const AssignedRanks& assigned_ranks,
@@ -1342,7 +1316,7 @@ EventDeliveryManager::collocate_target_data_buffers_long_delay_( const size_t ti
   {
     valid_next_target_data = kernel().connection_manager.get_next_target_data(
       tid, assigned_ranks.begin, assigned_ranks.end, source_rank, next_target_data, is_long_delay );
-    if ( valid_next_target_data ) // add valid entry to MPI buffer
+    if ( valid_next_target_data )  // add valid entry to MPI buffer
     {
       if ( send_buffer_position.is_chunk_filled( source_rank ) )
       {
@@ -1356,7 +1330,7 @@ EventDeliveryManager::collocate_target_data_buffers_long_delay_( const size_t ti
         // we have just rejected an entry, so source table can not be
         // fully read
         is_source_table_read = false;
-        if ( send_buffer_position.are_all_chunks_filled() ) // buffer is full
+        if ( send_buffer_position.are_all_chunks_filled() )  // buffer is full
         {
           return is_source_table_read;
         }
@@ -1371,7 +1345,7 @@ EventDeliveryManager::collocate_target_data_buffers_long_delay_( const size_t ti
         send_buffer_position.increase( source_rank );
       }
     }
-    else // all connections have been processed
+    else  // all connections have been processed
     {
       // mark end of valid data for each rank
       for ( size_t rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
@@ -1386,9 +1360,10 @@ EventDeliveryManager::collocate_target_data_buffers_long_delay_( const size_t ti
         }
       }
       return is_source_table_read;
-    } // of else
-  }   // of while(true)
+    }  // of else
+  }  // of while(true)
 }
+#endif
 
 bool
 EventDeliveryManager::collocate_target_data_buffers_compressed_( const size_t tid,
@@ -1413,11 +1388,12 @@ EventDeliveryManager::collocate_target_data_buffers_compressed_( const size_t ti
   }
 
   const bool is_source_table_read = kernel().connection_manager.fill_target_buffer(
-    tid, assigned_ranks.begin, assigned_ranks.end, send_buffer_target_data_, send_buffer_position, false );
+    tid, assigned_ranks.begin, assigned_ranks.end, send_buffer_target_data_, send_buffer_position );
 
   return is_source_table_read;
 }
 
+#ifdef HAVE_MORPH
 bool
 EventDeliveryManager::collocate_target_data_buffers_compressed_long_delay_( const size_t tid,
   const AssignedRanks& assigned_ranks,
@@ -1445,13 +1421,14 @@ EventDeliveryManager::collocate_target_data_buffers_compressed_long_delay_( cons
 
   return is_source_table_read;
 }
-
+#endif
 
 void
 EventDeliveryManager::set_complete_marker_target_data_( const AssignedRanks& assigned_ranks,
   const TargetSendBufferPosition& send_buffer_position,
   const bool is_long_delay )
 {
+#ifdef HAVE_MORPH
   if ( is_long_delay )
   {
     for ( size_t rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
@@ -1461,6 +1438,7 @@ EventDeliveryManager::set_complete_marker_target_data_( const AssignedRanks& ass
     }
   }
   else
+#endif
   {
     for ( size_t rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
     {
@@ -1471,57 +1449,11 @@ EventDeliveryManager::set_complete_marker_target_data_( const AssignedRanks& ass
 }
 
 bool
-EventDeliveryManager::distribute_target_data_buffers_comm_local_( const size_t tid )
-{
-  bool are_others_completed = true;
-  const bool is_long_delay = false;
-  const unsigned int send_recv_count_target_data_per_rank =
-    kernel().mpi_manager.get_send_recv_count_target_data_per_rank( is_long_delay );
-
-  std::map< int, int > ranks_to_idx_comm_local = kernel().mpi_manager.get_ranks_to_idx_comm_local();
-
-  for ( size_t rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
-  {
-    // Check last entry for completed marker
-    if ( not recv_buffer_target_data_[ ( rank + 1 ) * send_recv_count_target_data_per_rank - 1 ].is_complete_marker() )
-    {
-      are_others_completed = false;
-    }
-
-    // Were any targets sent by this rank?
-    if ( recv_buffer_target_data_[ rank * send_recv_count_target_data_per_rank ].is_invalid_marker() )
-    {
-      continue;
-    }
-
-    const size_t local_rank = ranks_to_idx_comm_local[ rank ];
-
-    for ( unsigned int i = 0; i < send_recv_count_target_data_per_rank; ++i )
-    {
-      const TargetData& target_data = recv_buffer_target_data_[ rank * send_recv_count_target_data_per_rank + i ];
-      if ( target_data.get_source_tid() == tid )
-      {
-        kernel().connection_manager.add_target( tid, local_rank, target_data );
-      }
-
-      // Is this the last target from this rank?
-      if ( target_data.is_end_marker() )
-      {
-        break;
-      }
-    }
-  }
-
-  return are_others_completed;
-}
-
-bool
 EventDeliveryManager::distribute_target_data_buffers_( const size_t tid )
 {
   bool are_others_completed = true;
-  const bool is_long_delay = false;
   const unsigned int send_recv_count_target_data_per_rank =
-    kernel().mpi_manager.get_send_recv_count_target_data_per_rank( is_long_delay );
+    kernel().mpi_manager.get_send_recv_count_target_data_per_rank();
 
   for ( size_t rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
   {
@@ -1556,6 +1488,50 @@ EventDeliveryManager::distribute_target_data_buffers_( const size_t tid )
   return are_others_completed;
 }
 
+#ifdef HAVE_MORPH
+bool
+EventDeliveryManager::distribute_target_data_buffers_comm_local_( const size_t tid )
+{
+  bool are_others_completed = true;
+  const unsigned int send_recv_count_target_data_per_rank =
+    kernel().mpi_manager.get_send_recv_count_target_data_per_rank();
+
+  for ( size_t rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
+  {
+    // Check last entry for completed marker
+    if ( not recv_buffer_target_data_[ ( rank + 1 ) * send_recv_count_target_data_per_rank - 1 ].is_complete_marker() )
+    {
+      are_others_completed = false;
+    }
+
+    // Were any targets sent by this rank?
+    if ( recv_buffer_target_data_[ rank * send_recv_count_target_data_per_rank ].is_invalid_marker() )
+    {
+      continue;
+    }
+
+    for ( unsigned int i = 0; i < send_recv_count_target_data_per_rank; ++i )
+    {
+      const TargetData& target_data = recv_buffer_target_data_[ rank * send_recv_count_target_data_per_rank + i ];
+      if ( target_data.get_source_tid() == tid )
+      {
+        // Spikes of the short path are exchanged on the communicator of the local group, so the target table stores
+        // the index of the target process within the group.
+        kernel().connection_manager.add_target(
+          tid, kernel().mpi_manager.get_idx_in_comm_local_group( rank ), target_data );
+      }
+
+      // Is this the last target from this rank?
+      if ( target_data.is_end_marker() )
+      {
+        break;
+      }
+    }
+  }
+
+  return are_others_completed;
+}
+
 bool
 EventDeliveryManager::distribute_target_data_buffers_long_delay_( const size_t tid )
 {
@@ -1568,7 +1544,7 @@ EventDeliveryManager::distribute_target_data_buffers_long_delay_( const size_t t
   {
     // Check last entry for completed marker
     if ( not recv_buffer_target_data_long_delay_[ ( rank + 1 ) * send_recv_count_target_data_per_rank - 1 ]
-               .is_complete_marker() )
+           .is_complete_marker() )
     {
       are_others_completed = false;
     }
@@ -1598,6 +1574,7 @@ EventDeliveryManager::distribute_target_data_buffers_long_delay_( const size_t t
 
   return are_others_completed;
 }
+#endif
 
 #ifdef CYCLE_TIMERS
 Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly >

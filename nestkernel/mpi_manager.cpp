@@ -23,6 +23,7 @@
 #include "mpi_manager.h"
 
 // C++ includes:
+#include <algorithm>
 #include <cstdlib>
 
 // Includes from libnestutil:
@@ -59,20 +60,28 @@ MPIManager::MPIManager()
   , use_mpi_( false )
   , buffer_size_target_data_( 1 )
   , buffer_size_spike_data_( 1 )
-  , buffer_size_spike_data_long_delay_( 1 )
   , max_buffer_size_target_data_( 16777216 )
   , adaptive_target_buffers_( true )
   , growth_factor_buffer_spike_data_( 1.5 )
   , growth_factor_buffer_target_data_( 1.5 )
   , shrink_factor_buffer_spike_data_( 1.1 )
   , send_recv_count_spike_data_per_rank_( 0 )
-  , send_recv_count_spike_data_per_rank_long_delay_( 0 )
   , send_recv_count_target_data_per_rank_( 0 )
+#ifdef HAVE_MORPH
+  , buffer_size_target_data_long_delay_( 1 )
+  , buffer_size_spike_data_long_delay_( 1 )
+  , send_recv_count_spike_data_per_rank_long_delay_( 0 )
   , send_recv_count_target_data_per_rank_long_delay_( 0 )
+  , comm_local_ranks_()
+  , idx_in_comm_local_group_()
+#endif
 #ifdef HAVE_MPI
   , comm_step_( std::vector< int >() )
   , COMM_OVERFLOW_ERROR( std::numeric_limits< unsigned int >::max() )
   , comm( 0 )
+#ifdef HAVE_MORPH
+  , comm_local( MPI_COMM_NULL )
+#endif
   , MPI_OFFGRID_SPIKE( 0 )
 #endif
 {
@@ -111,64 +120,48 @@ MPIManager::set_communicator( MPI_Comm global_comm )
   // last entry to communicate end of communication)
   kernel().mpi_manager.set_buffer_size_target_data( 2 * kernel().mpi_manager.get_num_processes() );
   kernel().mpi_manager.set_buffer_size_spike_data( 2 * kernel().mpi_manager.get_num_processes() );
+#ifdef HAVE_MORPH
+  kernel().mpi_manager.set_buffer_size_target_data_long_delay( 2 * kernel().mpi_manager.get_num_processes() );
   kernel().mpi_manager.set_buffer_size_spike_data_long_delay( 2 * kernel().mpi_manager.get_num_processes() );
 
-  if ( comm_local_ranks_.size() == 0 )
-  {
-    comm_local_ranks_.push_back( rank_ );
-  }
-
-  set_communicator_local();
-  create_ranks_to_idx_comm_local();
+  // By default, the local group of morph consists of this process only.
+  set_comm_local_ranks( { rank_ } );
+#endif
 }
 
+#ifdef HAVE_MORPH
 void
-MPIManager::set_communicator_local()
+MPIManager::set_comm_local_ranks( const std::vector< long >& ranks )
 {
+  std::vector< int > new_ranks( ranks.begin(), ranks.end() );
+
   MPI_Group group_global;
   MPI_Comm_group( comm, &group_global );
-
   MPI_Group group_local;
-  MPI_Group_incl( group_global, comm_local_ranks_.size(), &comm_local_ranks_[ 0 ], &group_local );
+  MPI_Group_incl( group_global, new_ranks.size(), new_ranks.data(), &group_local );
   MPI_Comm_create_group( comm, group_local, 0, &comm_local );
-}
 
-size_t
-MPIManager::get_comm_local_group_size() const
-{
-  return comm_local_ranks_.size();
-}
-
-std::vector< int >
-MPIManager::get_comm_local_ranks() const
-{
-  return comm_local_ranks_;
-}
-
-void
-MPIManager::create_ranks_to_idx_comm_local()
-{
-  int idx_comm_local = 0;
-  for ( auto it = comm_local_ranks_.begin(); it != comm_local_ranks_.end(); ++it )
+  comm_local_ranks_ = new_ranks;
+  idx_in_comm_local_group_.assign( num_processes_, -1 );
+  for ( size_t idx = 0; idx < comm_local_ranks_.size(); ++idx )
   {
-    auto it_comm_local = std::find( comm_local_ranks_.begin(), comm_local_ranks_.end(), *it );
-    if ( it_comm_local != comm_local_ranks_.end() )
-    {
-      idx_comm_local = it_comm_local - comm_local_ranks_.begin();
-    }
-    else
-    {
-      // Throw exception
-    }
-    ranks_to_idx_comm_local_[ *it ] = idx_comm_local;
+    idx_in_comm_local_group_[ comm_local_ranks_[ idx ] ] = idx;
   }
 }
 
-std::map< int, int >
-MPIManager::get_ranks_to_idx_comm_local() const
+void
+MPIManager::communicate_Alltoall_short_path_( void* send_buffer, void* recv_buffer, const unsigned int send_recv_count )
 {
-  return ranks_to_idx_comm_local_;
+  MPI_Alltoall( send_buffer,
+    send_recv_count,
+    MPI_UNSIGNED,
+    recv_buffer,
+    send_recv_count,
+    MPI_UNSIGNED,
+    kernel().connection_manager.is_morph_active() ? comm_local : comm );
 }
+
+#endif
 
 void
 MPIManager::init_mpi( int* argc, char** argv[] )
@@ -300,12 +293,14 @@ MPIManager::set_status( const Dictionary& dict )
     set_buffer_size_spike_data( new_buffer_size_spike_data );
   }
 
+#ifdef HAVE_MORPH
   long new_buffer_size_spike_data_long_delay = buffer_size_spike_data_long_delay_;
   dict.update_value( names::buffer_size_spike_data_long_delay, new_buffer_size_spike_data_long_delay );
   if ( new_buffer_size_spike_data_long_delay != static_cast< long >( buffer_size_spike_data_long_delay_ ) )
   {
     set_buffer_size_spike_data_long_delay( new_buffer_size_spike_data_long_delay );
   }
+#endif
 
   dict.update_value( names::growth_factor_buffer_spike_data, growth_factor_buffer_spike_data_ );
   dict.update_value( names::growth_factor_buffer_target_data, growth_factor_buffer_target_data_ );
@@ -322,15 +317,20 @@ MPIManager::set_status( const Dictionary& dict )
 
   dict.update_value( names::shrink_factor_buffer_spike_data, shrink_factor_buffer_spike_data_ );
 
-  std::vector< long > comm_local_ranks_tmp;
-  if ( dict.update_value( names::comm_local_ranks, comm_local_ranks_tmp ) )
+#ifdef HAVE_MORPH
+  std::vector< long > new_comm_local_ranks;
+  if ( dict.update_value( names::comm_local_ranks, new_comm_local_ranks ) )
   {
-    comm_local_ranks_.assign( comm_local_ranks_tmp.begin(), comm_local_ranks_tmp.end() );
-#ifdef HAVE_MPI
-    set_communicator_local();
-    create_ranks_to_idx_comm_local();
-#endif
+    set_comm_local_ranks( new_comm_local_ranks );
   }
+#else
+  if ( dict.known( names::comm_local_ranks ) or dict.known( names::buffer_size_spike_data_long_delay ) )
+  {
+    throw KernelException(
+      "Kernel parameters 'comm_local_ranks' and 'buffer_size_spike_data_long_delay' require "
+      "morph: NEST was built without morph (-Dwith-morph=ON)." );
+  }
+#endif
 }
 
 void
@@ -341,7 +341,9 @@ MPIManager::get_status( Dictionary& dict )
   dict[ names::adaptive_target_buffers ] = adaptive_target_buffers_;
   dict[ names::buffer_size_target_data ] = static_cast< long >( buffer_size_target_data_ );
   dict[ names::buffer_size_spike_data ] = static_cast< long >( buffer_size_spike_data_ );
+#ifdef HAVE_MORPH
   dict[ names::buffer_size_spike_data_long_delay ] = static_cast< long >( buffer_size_spike_data_long_delay_ );
+#endif
   dict[ names::send_buffer_size_secondary_events ] =
     static_cast< long >( get_send_buffer_size_secondary_events_in_int() );
   dict[ names::recv_buffer_size_secondary_events ] =
@@ -349,7 +351,9 @@ MPIManager::get_status( Dictionary& dict )
   dict[ names::max_buffer_size_target_data ] = static_cast< long >( max_buffer_size_target_data_ );
   dict[ names::growth_factor_buffer_spike_data ] = growth_factor_buffer_spike_data_;
   dict[ names::growth_factor_buffer_target_data ] = growth_factor_buffer_target_data_;
+#ifdef HAVE_MORPH
   dict[ names::comm_local_ranks ] = std::vector< long >( comm_local_ranks_.begin(), comm_local_ranks_.end() );
+#endif
 }
 
 #ifdef HAVE_MPI
@@ -860,21 +864,9 @@ MPIManager::communicate_Allgather( std::vector< long >& buffer )
 }
 
 void
-MPIManager::communicate_Alltoall_( void* send_buffer,
-  void* recv_buffer,
-  const unsigned int send_recv_count,
-  const bool is_long_delay,
-  const long threshold_delay )
+MPIManager::communicate_Alltoall_( void* send_buffer, void* recv_buffer, const unsigned int send_recv_count )
 {
-  // Short-delay spikes travel within the local group; all other data travels on the global communicator.
-  const bool use_global = is_long_delay or threshold_delay == delay_max;
-  MPI_Alltoall( send_buffer,
-    send_recv_count,
-    MPI_UNSIGNED,
-    recv_buffer,
-    send_recv_count,
-    MPI_UNSIGNED,
-    use_global ? comm : comm_local );
+  MPI_Alltoall( send_buffer, send_recv_count, MPI_UNSIGNED, recv_buffer, send_recv_count, MPI_UNSIGNED, comm );
 }
 
 void

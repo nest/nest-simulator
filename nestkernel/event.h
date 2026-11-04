@@ -1009,7 +1009,6 @@ Event::get_rel_delivery_steps( const Time& t ) const
   {
     stamp_steps_ = stamp_.get_steps();
   }
-  
   return stamp_steps_ + d_ - 1 - t.get_steps();
 }
 

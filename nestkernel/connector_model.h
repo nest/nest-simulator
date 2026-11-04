@@ -28,6 +28,7 @@
 #include <string>
 
 // Includes from libnestutil:
+#include "config.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -75,8 +76,6 @@ public:
   {
   }
 
-virtual double check_delay( const Dictionary& p, const double delay ) = 0;
-
   /**
    * Adds a connection.
    *
@@ -100,6 +99,17 @@ virtual double check_delay( const Dictionary& p, const double delay ) = 0;
     const Dictionary& d,
     const double delay = NAN,
     const double weight = NAN ) = 0;
+
+#ifdef HAVE_MORPH
+  /**
+   * Return the delay in ms that add_connection() will give a new connection.
+   *
+   * The delay is the explicit argument if given, otherwise the delay in the parameter dictionary, otherwise the
+   * default delay of the model. Returns NAN for models without delay. The value is not checked; add_connection()
+   * checks it. Morph uses the value to check the delay of connections on the long path.
+   */
+  virtual double get_delay_of_new_connection( const Dictionary& d, const double delay ) const = 0;
+#endif
 
   virtual ConnectorModel* clone( std::string, synindex syn_id ) const = 0;
 
@@ -173,8 +183,6 @@ public:
   {
   }
 
-  double check_delay( const Dictionary& p, const double delay );
-
   void add_connection( Node& src,
     Node& tgt,
     std::vector< ConnectorBase* >& hetconn,
@@ -182,6 +190,10 @@ public:
     const Dictionary& d,
     const double delay,
     const double weight ) override;
+
+#ifdef HAVE_MORPH
+  double get_delay_of_new_connection( const Dictionary& d, const double delay ) const override;
+#endif
 
   ConnectorModel* clone( std::string, synindex ) const override;
 
@@ -214,7 +226,7 @@ public:
   }
 
 private:
-  double used_default_delay();
+  void used_default_delay();
 
   void add_connection_( Node& src,
     Node& tgt,

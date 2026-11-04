@@ -29,6 +29,7 @@
 #include <vector>
 
 // Includes from libnestutil:
+#include "config.h"
 #include "manager_interface.h"
 #include "stopwatch.h"
 
@@ -106,7 +107,7 @@ public:
    * in a synchronised (single threaded) state.
    * @see send_to_targets()
    */
-  void send_remote( size_t tid, SpikeEvent&, const long lag = 0, const bool has_long_delay = false );
+  void send_remote( size_t tid, SpikeEvent&, const long lag = 0 );
 
   /**
    * Add node ID of event sender to the spike_register.
@@ -127,7 +128,7 @@ public:
    * in a synchronised (single threaded) state.
    * @see send_to_targets()
    */
-  void send_off_grid_remote( size_t tid, SpikeEvent& e, const long lag = 0, const bool has_long_delay = false );
+  void send_off_grid_remote( size_t tid, SpikeEvent& e, const long lag = 0 );
 
   /**
    * Send event e directly to its target node.
@@ -189,33 +190,44 @@ public:
    * simulate() has been called. ConnectorModel::check_delay() and
    * Network::set_status() ensure this.
    */
-  void configure_spike_data_buffers( const bool is_long_delay );
+  void configure_spike_data_buffers();
 
-  void configure_spike_register( const bool is_long_delay );
+  void configure_spike_register();
 
-  void resize_send_recv_buffers_target_data( const bool is_long_delay );
+  /**
+   * Resize the MPI buffers for target data.
+   *
+   * The flag is_long_delay selects the buffers of the long path of morph; it has no effect in builds without morph.
+   */
+  void resize_send_recv_buffers_target_data( const bool is_long_delay = false );
 
   void configure_secondary_buffers();
 
   /**
    * Collocates spikes from register to MPI buffers, communicates via
    * MPI and delivers events to targets.
+   *
+   * The flag is_long_delay selects the long path of morph; it has no effect in builds without morph.
    */
-  void gather_spike_data( const bool is_long_delay );
+  void gather_spike_data( const bool is_long_delay = false );
 
   /**
    * Collocates presynaptic connection information, communicates via
    * MPI and creates presynaptic connection infrastructure.
+   *
+   * The flag is_long_delay selects the long path of morph; it has no effect in builds without morph.
    */
-  void gather_target_data( const size_t tid, const bool is_long_delay );
+  void gather_target_data( const size_t tid, const bool is_long_delay = false );
 
-  void gather_target_data_compressed( const size_t tid, const bool is_long_delay );
+  void gather_target_data_compressed( const size_t tid, const bool is_long_delay = false );
 
 
   /**
    * Delivers events to targets.
+   *
+   * The flag is_long_delay selects the long path of morph; it has no effect in builds without morph.
    */
-  void deliver_events( const size_t tid, const bool is_long_delay );
+  void deliver_events( const size_t tid, const bool is_long_delay = false );
 
   /**
    * Collocates presynaptic connection information for secondary events (MPI
@@ -286,7 +298,7 @@ private:
     std::vector< SpikeDataT >& recv_buffer,
     const bool is_long_delay );
 
-  void resize_send_recv_buffers_spike_data_( const bool is_long_delay );
+  void resize_send_recv_buffers_spike_data_( const bool is_long_delay = false );
 
   /**
    * Moves spikes from on grid and off grid spike registers to correct
@@ -345,7 +357,10 @@ private:
    */
   void reset_spike_register_( const size_t tid );
 
+#ifdef HAVE_MORPH
+  //! Delete all spikes from the spike registers of the long path of morph.
   void reset_spike_register_long_delay_( const size_t tid );
+#endif
 
   /**
    * Returns true if spike has been moved to MPI buffer, such that it
@@ -363,17 +378,23 @@ private:
     const AssignedRanks& assigned_ranks,
     TargetSendBufferPosition& send_buffer_position );
 
+#ifdef HAVE_MORPH
+  //! Variant of collocate_target_data_buffers_() for the long path of morph.
   bool collocate_target_data_buffers_long_delay_( const size_t tid,
     const AssignedRanks& assigned_ranks,
     TargetSendBufferPosition& send_buffer_position );
+#endif
 
   bool collocate_target_data_buffers_compressed_( const size_t tid,
     const AssignedRanks& assigned_ranks,
     TargetSendBufferPosition& send_buffer_position );
 
+#ifdef HAVE_MORPH
+  //! Variant of collocate_target_data_buffers_compressed_() for the long path of morph.
   bool collocate_target_data_buffers_compressed_long_delay_( const size_t tid,
     const AssignedRanks& assigned_ranks,
     TargetSendBufferPosition& send_buffer_position );
+#endif
 
   /**
    * Sets marker in MPI buffer that signals end of communication
@@ -390,9 +411,18 @@ private:
    */
   bool distribute_target_data_buffers_( const size_t tid );
 
+#ifdef HAVE_MORPH
+  //! Variant of distribute_target_data_buffers_() for the long path of morph.
   bool distribute_target_data_buffers_long_delay_( const size_t tid );
 
+  /**
+   * Variant of distribute_target_data_buffers_() for the short path of morph.
+   *
+   * The target table stores the index of the target process within the local group, because the short-path
+   * spikes are exchanged on the communicator of the local group.
+   */
   bool distribute_target_data_buffers_comm_local_( const size_t tid );
+#endif
 
   /**
    * Sends event e to all targets of node source. Delivers events from
@@ -444,7 +474,10 @@ private:
    */
   std::vector< std::vector< SpikeDataWithRank >* > emitted_spikes_register_;
 
+#ifdef HAVE_MORPH
+  //! Register of emitted spikes of the long path of morph; lag relative to the beginning of the interval
   std::vector< std::vector< SpikeDataWithRank >* > emitted_spikes_register_long_delay_;
+#endif
 
   /**
    * Register of emitted off-grid spikes.
@@ -459,7 +492,10 @@ private:
    */
   std::vector< std::vector< OffGridSpikeDataWithRank >* > off_grid_emitted_spikes_register_;
 
+#ifdef HAVE_MORPH
+  //! Register of emitted off-grid spikes of the long path of morph
   std::vector< std::vector< OffGridSpikeDataWithRank >* > off_grid_emitted_spikes_register_long_delay_;
+#endif
 
   /**
    * Buffer to collect the secondary events after serialization.
@@ -474,20 +510,25 @@ private:
 
   std::vector< SpikeData > send_buffer_spike_data_;
   std::vector< SpikeData > recv_buffer_spike_data_;
-  std::vector< SpikeData > send_buffer_spike_data_long_delay_;
-  std::vector< SpikeData > recv_buffer_spike_data_long_delay_;
   std::vector< OffGridSpikeData > send_buffer_off_grid_spike_data_;
   std::vector< OffGridSpikeData > recv_buffer_off_grid_spike_data_;
-  std::vector< OffGridSpikeData > send_buffer_off_grid_spike_data_long_delay_;
-  std::vector< OffGridSpikeData > recv_buffer_off_grid_spike_data_long_delay_;
 
   std::vector< TargetData > send_buffer_target_data_;
-  std::vector< TargetData > send_buffer_target_data_long_delay_;
   std::vector< TargetData > recv_buffer_target_data_;
-  std::vector< TargetData > recv_buffer_target_data_long_delay_;
+
   //! whether size of MPI buffer for communication of connections was changed
   bool buffer_size_target_data_has_changed_;
+
+#ifdef HAVE_MORPH
+  //! MPI buffers of the long path of morph
+  std::vector< SpikeData > send_buffer_spike_data_long_delay_;
+  std::vector< SpikeData > recv_buffer_spike_data_long_delay_;
+  std::vector< OffGridSpikeData > send_buffer_off_grid_spike_data_long_delay_;
+  std::vector< OffGridSpikeData > recv_buffer_off_grid_spike_data_long_delay_;
+  std::vector< TargetData > send_buffer_target_data_long_delay_;
+  std::vector< TargetData > recv_buffer_target_data_long_delay_;
   bool buffer_size_target_data_has_changed_long_delay_;
+#endif
   /**
    * Largest number of spikes sent from any rank to any other rank in last spike exchange round.
    *
@@ -495,7 +536,9 @@ private:
    * buffer resizing.
    */
   size_t global_max_spikes_per_rank_;
-  size_t global_max_spikes_per_rank_comm_world_;
+#ifdef HAVE_MORPH
+  size_t global_max_spikes_per_rank_long_delay_;  //!< as global_max_spikes_per_rank_, for the long path of morph
+#endif
 
   double send_recv_buffer_shrink_limit_;  //!< shrink buffer only if below this limit
   double send_recv_buffer_shrink_spare_;  //!< leave this fraction more space than minimally needed
@@ -507,7 +550,9 @@ private:
    * This is maintained by the main thread, which is responsible for communication and resizing.
    */
   BufferResizeLog send_recv_buffer_resize_log_;
-  BufferResizeLog send_recv_buffer_resize_log_long_delay_;
+#ifdef HAVE_MORPH
+  BufferResizeLog send_recv_buffer_resize_log_long_delay_;  //!< resize log of the long path of morph
+#endif
 
   PerThreadBoolIndicator gather_completed_checker_;
 
@@ -525,12 +570,14 @@ EventDeliveryManager::reset_spike_register_( const size_t tid )
   off_grid_emitted_spikes_register_[ tid ]->clear();
 }
 
+#ifdef HAVE_MORPH
 inline void
 EventDeliveryManager::reset_spike_register_long_delay_( const size_t tid )
 {
   emitted_spikes_register_long_delay_[ tid ]->clear();
   off_grid_emitted_spikes_register_long_delay_[ tid ]->clear();
 }
+#endif
 
 inline bool
 EventDeliveryManager::is_marked_for_removal_( const Target& target )

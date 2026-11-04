@@ -98,7 +98,7 @@ protected:
    *
    * The implementation of the delay of the convolved membrane potentials as used
    * here is not described in Clopath et al. 2010, but is present in the code
-   * on ModelDB (https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566)
+   * on ModelDB (https://modeldb.science/144566)
    * which was presumably used to create the figures in the paper. Since we write
    * into the buffer before we read from it, we have to add 1 to the size of the buffers.
    */

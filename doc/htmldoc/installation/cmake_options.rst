@@ -74,7 +74,7 @@ NEST to your needs:
 
 +---------------------------------------+------------------------------------------------------------------------------+
 | ``-Dwith-modelset=<modelset>``        | Specify the modelset to include. Sample configurations are in the            |
-|                                       | `modelsets <https://github.com/nest/nest-simulator/tree/master/modelsets>`_  |
+|                                       | `modelsets <https://github.com/nest/nest-simulator/tree/main/modelsets>`_  |
 |                                       | directory in the top-level of the source tree. A modelset is just a file     |
 |                                       | listing one model header files (without the .h filename extension) to scan   |
 |                                       | for models.                                                                  |

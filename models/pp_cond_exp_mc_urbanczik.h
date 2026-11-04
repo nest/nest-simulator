@@ -59,18 +59,17 @@ namespace nest
  */
 extern "C" int pp_cond_exp_mc_urbanczik_dynamics( double, const double*, double*, void* );
 
-/** @BeginDocumentation
-Name: pp_cond_exp_mc_urbanczik_parameters - Helper class for pp_cond_exp_mc_urbanczik
-
-Description:
-``pp_cond_exp_mc_urbanczik_parameters`` is a helper class for the ``pp_cond_exp_mc_urbanczik`` neuron model
-that contains all parameters of the model that are needed to compute the weight changes of a
-connected ``urbanczik_synapse`` in the base class UrbanczikArchivingNode.
-
-Author: Jonas Stapmanns, David Dahmen, Jan Hahne
-
-SeeAlso: pp_cond_exp_mc_urbanczik
-*/
+/**
+ * @brief Helper class for pp_cond_exp_mc_urbanczik neuron model.
+ *
+ * pp_cond_exp_mc_urbanczik_parameters is a helper class for the pp_cond_exp_mc_urbanczik neuron model
+ * that contains all parameters of the model that are needed to compute the weight changes of a
+ * connected urbanczik_synapse in the base class UrbanczikArchivingNode.
+ *
+ * @see pp_cond_exp_mc_urbanczik
+ *
+ * @author Jonas Stapmanns, David Dahmen, Jan Hahne
+ */
 class pp_cond_exp_mc_urbanczik_parameters
 {
   friend class pp_cond_exp_mc_urbanczik;

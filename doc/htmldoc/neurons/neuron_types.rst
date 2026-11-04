@@ -412,14 +412,15 @@ Receptor type
 
 Multisynapse, multi-compartment and multi-receptor models instead select the synapse by
 :ref:`receptor type <receptor-types>`. Each synapse or compartment has its own integer ID,
-which you pass as ``receptor_type`` in the ``syn_spec`` dictionary. The sign of the weight
-plays no part in the choice.
+which you pass as ``receptor_type`` in the ``syn_spec`` dictionary using one-based indexing, 
+i.e., ``receptor_type`` cannot be zero. The sign of the weight plays no part in the choice.
 
 .. code-block:: python
 
-    n = nest.Create("iaf_psc_exp_multisynapse", params={"tau_syn": [2.0, 10.0]})
+    n = nest.Create("iaf_psc_exp_multisynapse", params={"tau_syn": [2.0, 5.0]})
     pg = nest.Create("poisson_generator", params={"rate": 80.0})
 
+    # Connect to synapse with tau_syn == 5.0 ms
     nest.Connect(pg, n, syn_spec={"weight": 1.0, "delay": 1.0, "receptor_type": 2})
 
 For the current-based models in this group, a negative weight gives a hyperpolarizing

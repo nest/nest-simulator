@@ -412,7 +412,7 @@ Receptor type
 
 Multisynapse, multi-compartment and multi-receptor models instead select the synapse by
 :ref:`receptor type <receptor-types>`. Each synapse or compartment has its own integer ID,
-which you pass as ``receptor_type`` in the ``syn_spec`` dictionary using one-based indexing, 
+which you pass as ``receptor_type`` in the ``syn_spec`` dictionary using one-based indexing,
 i.e., ``receptor_type`` cannot be zero. The sign of the weight plays no part in the choice.
 
 .. code-block:: python

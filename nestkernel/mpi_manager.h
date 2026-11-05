@@ -298,7 +298,9 @@ public:
   void set_buffer_size_target_data( size_t buffer_size );
   void set_buffer_size_spike_data( size_t buffer_size );
 #ifdef HAVE_MORPH
+  //! Set the size of the MPI buffer for target data of the long path of morph; see set_buffer_size_target_data().
   void set_buffer_size_target_data_long_delay( size_t buffer_size );
+  //! Set the size of the MPI buffer for spikes of the long path of morph; see set_buffer_size_spike_data().
   void set_buffer_size_spike_data_long_delay( size_t buffer_size );
 #endif
 

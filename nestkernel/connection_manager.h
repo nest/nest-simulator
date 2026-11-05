@@ -441,6 +441,7 @@ public:
 
   void add_target( const size_t tid, const size_t target_rank, const TargetData& target_data );
 #ifdef HAVE_MORPH
+  //! Add a target to the target table of the long path of morph; see add_target().
   void add_target_long_delay( const size_t tid, const size_t target_rank, const TargetData& target_data );
 #endif
 

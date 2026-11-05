@@ -218,6 +218,11 @@ NEST properties
 | ``-Dwith-mpi-sync-timer=[OFF|ON]``            | Build with mpi synchronization barrier and timer [default=OFF].|
 |                                               | Can affect the performance.                                    |
 +-----------------------------------------------+----------------------------------------------------------------+
+| ``-Dwith-morph=[OFF|ON]``                     | Build with structure-aware communication (morph) [default=OFF].|
+|                                               | Requires ``-Dwith-mpi=ON``. The default build contains no code |
+|                                               | of morph and is unchanged. See                                 |
+|                                               | :ref:`structure_aware_communication`.                          |
++-----------------------------------------------+----------------------------------------------------------------+
 | ``-Dwith-target-bits-split=['default'|'hpc']``| Split of the 64-bit target neuron identifier type              |
 |                                               | [default='default']. 'default' is recommended for most users.  |
 |                                               | If running on more than 262144 MPI processes or more than 512  |

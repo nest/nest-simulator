@@ -581,7 +581,7 @@ MPIManager::is_mpi_used()
 }
 
 inline size_t
-MPIManager::get_buffer_size_target_data( const bool is_long_delay ) const
+MPIManager::get_buffer_size_target_data( [[maybe_unused]] const bool is_long_delay ) const
 {
 #ifdef HAVE_MORPH
   if ( is_long_delay )
@@ -596,7 +596,7 @@ MPIManager::get_buffer_size_target_data( const bool is_long_delay ) const
 }
 
 inline unsigned int
-MPIManager::get_send_recv_count_target_data_per_rank( const bool is_long_delay ) const
+MPIManager::get_send_recv_count_target_data_per_rank( [[maybe_unused]] const bool is_long_delay ) const
 {
 #ifdef HAVE_MORPH
   if ( is_long_delay )
@@ -611,7 +611,7 @@ MPIManager::get_send_recv_count_target_data_per_rank( const bool is_long_delay )
 }
 
 inline size_t
-MPIManager::get_buffer_size_spike_data( const bool is_long_delay ) const
+MPIManager::get_buffer_size_spike_data( [[maybe_unused]] const bool is_long_delay ) const
 {
 #ifdef HAVE_MORPH
   if ( is_long_delay )
@@ -626,7 +626,7 @@ MPIManager::get_buffer_size_spike_data( const bool is_long_delay ) const
 }
 
 inline unsigned int
-MPIManager::get_send_recv_count_spike_data_per_rank( const bool is_long_delay ) const
+MPIManager::get_send_recv_count_spike_data_per_rank( [[maybe_unused]] const bool is_long_delay ) const
 {
 #ifdef HAVE_MORPH
   if ( is_long_delay )
@@ -930,7 +930,7 @@ template < class D >
 void
 MPIManager::communicate_target_data_Alltoall( std::vector< D >& send_buffer,
   std::vector< D >& recv_buffer,
-  const bool is_long_delay )
+  [[maybe_unused]] const bool is_long_delay )
 {
 #ifdef HAVE_MORPH
   if ( is_long_delay )
@@ -952,7 +952,7 @@ template < class D >
 void
 MPIManager::communicate_spike_data_Alltoall( std::vector< D >& send_buffer,
   std::vector< D >& recv_buffer,
-  const bool is_long_delay )
+  [[maybe_unused]] const bool is_long_delay )
 {
 #ifdef HAVE_MORPH
   if ( is_long_delay )
@@ -982,7 +982,7 @@ template < class D >
 void
 MPIManager::communicate_off_grid_spike_data_Alltoall( std::vector< D >& send_buffer,
   std::vector< D >& recv_buffer,
-  const bool is_long_delay )
+  [[maybe_unused]] const bool is_long_delay )
 {
 #ifdef HAVE_MORPH
   if ( is_long_delay )

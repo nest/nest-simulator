@@ -55,8 +55,10 @@ Event::retrieve_sender_node_id_from_source_table() const
   }
   else
   {
-    const size_t node_id = kernel().connection_manager.get_source_node_id(
-      sender_spike_data_.get_tid(), sender_spike_data_.get_syn_id(), sender_spike_data_.get_lcid() );
+    const size_t node_id = kernel().connection_manager.get_source_node_id( sender_spike_data_.get_tid(),
+      sender_spike_data_.get_syn_id(),
+      sender_spike_data_.get_lcid(),
+      is_sender_long_delay() );
     return node_id;
   }
 }

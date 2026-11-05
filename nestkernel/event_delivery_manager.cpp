@@ -853,7 +853,7 @@ EventDeliveryManager::deliver_events_( const size_t tid,
           tid_batch[ j ] = spike_data.get_tid();
           syn_id_batch[ j ] = spike_data.get_syn_id();
           lcid_batch[ j ] = spike_data.get_lcid();
-          se_batch[ j ].set_sender_node_id_info( tid_batch[ j ], syn_id_batch[ j ], lcid_batch[ j ] );
+          se_batch[ j ].set_sender_node_id_info( tid_batch[ j ], syn_id_batch[ j ], lcid_batch[ j ], is_long_delay );
         }
         for ( size_t j = 0; j < SPIKES_PER_BATCH; ++j )
         {
@@ -876,7 +876,7 @@ EventDeliveryManager::deliver_events_( const size_t tid,
         tid_batch[ j ] = spike_data.get_tid();
         syn_id_batch[ j ] = spike_data.get_syn_id();
         lcid_batch[ j ] = spike_data.get_lcid();
-        se_batch[ j ].set_sender_node_id_info( tid_batch[ j ], syn_id_batch[ j ], lcid_batch[ j ] );
+        se_batch[ j ].set_sender_node_id_info( tid_batch[ j ], syn_id_batch[ j ], lcid_batch[ j ], is_long_delay );
       }
       for ( size_t j = 0; j < num_remaining_entries; ++j )
       {
@@ -916,7 +916,7 @@ EventDeliveryManager::deliver_events_( const size_t tid,
           {
             // non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
             // only if needed, as this is computationally costly
-            se_batch[ j ].set_sender_node_id_info( tid, syn_id_batch[ j ], lcid_batch[ j ] );
+            se_batch[ j ].set_sender_node_id_info( tid, syn_id_batch[ j ], lcid_batch[ j ], is_long_delay );
           }
         }
         for ( size_t j = 0; j < SPIKES_PER_BATCH; ++j )
@@ -955,7 +955,7 @@ EventDeliveryManager::deliver_events_( const size_t tid,
         {
           // non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
           // only if needed, as this is computationally costly
-          se_batch[ j ].set_sender_node_id_info( tid, syn_id_batch[ j ], lcid_batch[ j ] );
+          se_batch[ j ].set_sender_node_id_info( tid, syn_id_batch[ j ], lcid_batch[ j ], is_long_delay );
         }
       }
       for ( size_t j = 0; j < num_remaining_entries; ++j )
@@ -1438,7 +1438,7 @@ EventDeliveryManager::collocate_target_data_buffers_compressed_long_delay_( cons
 void
 EventDeliveryManager::set_complete_marker_target_data_( const AssignedRanks& assigned_ranks,
   const TargetSendBufferPosition& send_buffer_position,
-  const bool is_long_delay )
+  [[maybe_unused]] const bool is_long_delay )
 {
 #ifdef HAVE_MORPH
   if ( is_long_delay )

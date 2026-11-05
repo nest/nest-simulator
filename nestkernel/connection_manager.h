@@ -518,7 +518,14 @@ public:
 
   bool secondary_connections_exist() const;
 
-  size_t get_source_node_id( const size_t tid, const synindex syn_id, const size_t lcid );
+  /**
+   * Return the node ID of the source of a connection.
+   *
+   * The flag is_long_delay selects the source table of the long path of morph; it has no effect in builds without
+   * morph.
+   */
+  size_t
+  get_source_node_id( const size_t tid, const synindex syn_id, const size_t lcid, const bool is_long_delay = false );
 
   double get_stdp_eps() const;
 
@@ -876,7 +883,7 @@ ConnectionManager::is_morph_active() const
 #endif
 
 inline void
-ConnectionManager::clean_source_table( const size_t tid, const bool is_long_delay )
+ConnectionManager::clean_source_table( const size_t tid, [[maybe_unused]] const bool is_long_delay )
 {
   if ( not keep_source_table_ )
   {
@@ -894,7 +901,7 @@ ConnectionManager::clean_source_table( const size_t tid, const bool is_long_dela
 }
 
 inline void
-ConnectionManager::clear_source_table( const size_t tid, const bool is_long_delay )
+ConnectionManager::clear_source_table( const size_t tid, [[maybe_unused]] const bool is_long_delay )
 {
   if ( not keep_source_table_ )
   {
@@ -918,7 +925,7 @@ ConnectionManager::get_keep_source_table() const
 }
 
 inline bool
-ConnectionManager::is_source_table_cleared( const bool is_long_delay ) const
+ConnectionManager::is_source_table_cleared( [[maybe_unused]] const bool is_long_delay ) const
 {
 #ifdef HAVE_MORPH
   if ( is_long_delay )
@@ -945,7 +952,7 @@ ConnectionManager::resize_target_table_devices_to_number_of_synapse_types()
 }
 
 inline void
-ConnectionManager::reject_last_target_data( const size_t tid, const bool is_long_delay )
+ConnectionManager::reject_last_target_data( const size_t tid, [[maybe_unused]] const bool is_long_delay )
 {
 #ifdef HAVE_MORPH
   if ( is_long_delay )
@@ -960,7 +967,7 @@ ConnectionManager::reject_last_target_data( const size_t tid, const bool is_long
 }
 
 inline void
-ConnectionManager::save_source_table_entry_point( const size_t tid, const bool is_long_delay )
+ConnectionManager::save_source_table_entry_point( const size_t tid, [[maybe_unused]] const bool is_long_delay )
 {
 #ifdef HAVE_MORPH
   if ( is_long_delay )
@@ -975,7 +982,7 @@ ConnectionManager::save_source_table_entry_point( const size_t tid, const bool i
 }
 
 inline void
-ConnectionManager::no_targets_to_process( const size_t tid, const bool is_long_delay )
+ConnectionManager::no_targets_to_process( const size_t tid, [[maybe_unused]] const bool is_long_delay )
 {
 #ifdef HAVE_MORPH
   if ( is_long_delay )
@@ -990,7 +997,7 @@ ConnectionManager::no_targets_to_process( const size_t tid, const bool is_long_d
 }
 
 inline void
-ConnectionManager::reset_source_table_entry_point( const size_t tid, const bool is_long_delay )
+ConnectionManager::reset_source_table_entry_point( const size_t tid, [[maybe_unused]] const bool is_long_delay )
 {
 #ifdef HAVE_MORPH
   if ( is_long_delay )
@@ -1005,7 +1012,7 @@ ConnectionManager::reset_source_table_entry_point( const size_t tid, const bool 
 }
 
 inline void
-ConnectionManager::restore_source_table_entry_point( const size_t tid, const bool is_long_delay )
+ConnectionManager::restore_source_table_entry_point( const size_t tid, [[maybe_unused]] const bool is_long_delay )
 {
 #ifdef HAVE_MORPH
   if ( is_long_delay )
@@ -1020,7 +1027,7 @@ ConnectionManager::restore_source_table_entry_point( const size_t tid, const boo
 }
 
 inline void
-ConnectionManager::prepare_target_table( const size_t tid, const bool is_long_delay )
+ConnectionManager::prepare_target_table( const size_t tid, [[maybe_unused]] const bool is_long_delay )
 {
 #ifdef HAVE_MORPH
   if ( is_long_delay )
@@ -1037,7 +1044,7 @@ ConnectionManager::prepare_target_table( const size_t tid, const bool is_long_de
 inline const std::vector< Target >&
 ConnectionManager::get_remote_targets_of_local_node( const size_t tid,
   const size_t lid,
-  const bool is_long_delay ) const
+  [[maybe_unused]] const bool is_long_delay ) const
 {
 #ifdef HAVE_MORPH
   if ( is_long_delay )
@@ -1116,8 +1123,17 @@ ConnectionManager::get_num_connections_( const size_t tid, const synindex syn_id
 }
 
 inline size_t
-ConnectionManager::get_source_node_id( const size_t tid, const synindex syn_index, const size_t lcid )
+ConnectionManager::get_source_node_id( const size_t tid,
+  const synindex syn_index,
+  const size_t lcid,
+  [[maybe_unused]] const bool is_long_delay )
 {
+#ifdef HAVE_MORPH
+  if ( is_long_delay )
+  {
+    return source_table_long_delay_.get_node_id( tid, syn_index, lcid );
+  }
+#endif
   return source_table_.get_node_id( tid, syn_index, lcid );
 }
 
@@ -1163,7 +1179,7 @@ ConnectionManager::send( const size_t tid,
   const size_t lcid,
   const std::vector< ConnectorModel* >& cm,
   Event& e,
-  const bool is_long_delay )
+  [[maybe_unused]] const bool is_long_delay )
 {
 #ifdef HAVE_MORPH
   if ( is_long_delay )
@@ -1195,7 +1211,7 @@ ConnectionManager::set_source_has_more_targets( const size_t tid,
   const synindex syn_id,
   const size_t lcid,
   const bool more_targets,
-  const bool is_long_delay )
+  [[maybe_unused]] const bool is_long_delay )
 {
 #ifdef HAVE_MORPH
   if ( is_long_delay )
@@ -1210,7 +1226,9 @@ ConnectionManager::set_source_has_more_targets( const size_t tid,
 }
 
 inline const std::vector< SpikeData >&
-ConnectionManager::get_compressed_spike_data( const synindex syn_id, const size_t idx, const bool is_long_delay )
+ConnectionManager::get_compressed_spike_data( const synindex syn_id,
+  const size_t idx,
+  [[maybe_unused]] const bool is_long_delay )
 {
 #ifdef HAVE_MORPH
   if ( is_long_delay )

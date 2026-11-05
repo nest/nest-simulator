@@ -341,6 +341,15 @@ ConnectionManager::check_morph_configuration() const
     throw KernelException(
       String::compose( "threshold_delay must not exceed %1 simulation steps.", max_threshold_delay ) );
   }
+  // Structural plasticity creates connections on the short path between any two processes. A connection across
+  // the boundary of a local group would raise an error inside the update of the network; the local group must
+  // therefore comprise all processes.
+  if ( kernel().sp_manager.is_structural_plasticity_enabled()
+    and kernel().mpi_manager.get_comm_local_group_size() < kernel().mpi_manager.get_num_processes() )
+  {
+    throw KernelException(
+      "With morph, structural plasticity requires a local group of all processes (comm_local_ranks)." );
+  }
 }
 #endif
 
@@ -382,7 +391,7 @@ ConnectionManager::get_synapse_status( const size_t source_node_id,
   const size_t tid,
   const synindex syn_id,
   const size_t lcid,
-  const bool is_long_delay ) const
+  [[maybe_unused]] const bool is_long_delay ) const
 {
   kernel().model_manager.assert_valid_syn_id( syn_id, kernel().vp_manager.get_thread_id() );
 
@@ -445,7 +454,7 @@ ConnectionManager::set_synapse_status( const size_t source_node_id,
   const synindex syn_id,
   const size_t lcid,
   const Dictionary& dict,
-  const bool is_long_delay )
+  [[maybe_unused]] const bool is_long_delay )
 {
   kernel().model_manager.assert_valid_syn_id( syn_id, kernel().vp_manager.get_thread_id() );
 
@@ -1068,7 +1077,7 @@ ConnectionManager::connect_( Node& source,
   const Dictionary& params,
   const double delay,
   const double weight,
-  const bool long_range )
+  [[maybe_unused]] const bool long_range )
 {
   ConnectorModel& conn_model = kernel().model_manager.get_connection_model( syn_id, tid );
 
@@ -1244,12 +1253,15 @@ ConnectionManager::disconnect( const size_t tid,
   const synindex syn_id,
   const size_t snode_id,
   const size_t tnode_id,
-  const bool is_long_delay )
+  [[maybe_unused]] const bool is_long_delay )
 {
   assert( syn_id != invalid_synindex );
 
 #ifdef HAVE_MORPH
-  if ( is_long_delay )
+  // Callers without knowledge of the path (structural plasticity, Disconnect without long_range) ask for the short
+  // path; if the pair is connected only on the long path, that connection is removed.
+  if ( is_long_delay or not connections_[ tid ][ syn_id ]
+    or find_connection( tid, syn_id, snode_id, tnode_id ) == invalid_index )
   {
     const auto lcid = find_connection_long_delay( tid, syn_id, snode_id, tnode_id );
     if ( lcid == invalid_index )
@@ -1307,7 +1319,7 @@ ConnectionManager::trigger_update_weight( const long vt_id,
 }
 
 size_t
-ConnectionManager::get_num_target_data( const size_t tid, const bool is_long_delay ) const
+ConnectionManager::get_num_target_data( const size_t tid, [[maybe_unused]] const bool is_long_delay ) const
 {
   size_t num_connections = 0;
 #ifdef HAVE_MORPH

@@ -66,8 +66,9 @@ installation in the subdirectory ``pynest/examples/``.
 #
 # The NEural Simulation Tool (NEST: https://www.nest-initiative.org) is
 # designed for the simulation of large heterogeneous networks of point
-# neurons. It is open source software released under the GPL licence. The
-# simulator comes with an interface to Python. The simulation kernel is
+# neurons :footcite:p:`Gewaltig2007`. It is open source software released
+# under the GPL licence. The simulator comes with an interface to Python
+# :footcite:p:`Eppler2009`. The simulation kernel is
 # written in C++ to obtain the highest possible performance for the
 # simulation.
 #
@@ -80,7 +81,8 @@ installation in the subdirectory ``pynest/examples/``.
 #
 # Whether working interactively, semi-interactively, or purely executing
 # scripts, the first thing that needs to happen is importing NEST's
-# functionality into the Python interpreter. We also import Matplotlib, which
+# functionality into the Python interpreter. We also import Matplotlib
+# :footcite:p:`Hunter2007`, which
 # we use to display the results, and reset the kernel so the notebook can be
 # run repeatedly without interference from previous simulations.
 
@@ -452,7 +454,4 @@ plt.show()
 # References
 # ----------
 #
-# .. [1] Gewaltig MO and Diesmann M. 2007. NEural Simulation Tool. 2(4):1430.
-# .. [2] Eppler JM et al. 2009. PyNEST: A convenient interface to the NEST
-#        Simulator. 2:12. 10.3389/neuro.11.012.2008.
-# .. [3] Hunter JD. 2007. Matplotlib: A 2d graphics environment. 9(3):90-95.
+# .. footbibliography::

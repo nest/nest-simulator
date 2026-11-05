@@ -82,7 +82,7 @@ def GetConnections(source=None, target=None, synapse_model=None, synapse_label=N
     -----
     - Only connections with targets on the MPI process executing the command are returned.
     - If `source` or `target` is given, it must be a :py:class:`.NodeCollection` containing either only neurons or
-      only devices. Slices of :py:class:`.NodeCollection`s that interleave neurons and devices are not supported.
+      only devices. Slices of :py:class:`.NodeCollection` objects that interleave neurons and devices are not supported.
     """
 
     params = {}

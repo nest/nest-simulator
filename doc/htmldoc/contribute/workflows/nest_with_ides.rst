@@ -235,28 +235,6 @@ Homebrew
 
       brew install gcc gsl cmake open-mpi libtool
 
-MacPorts
-^^^^^^^^
-
-(We recommend using the Homebrew workflow, since there you can use a more current OpenMPI version for NEST, but we leave the MacPorts instructions for legacy purposes.)
-
-1. Follow the install instructions for `MacPorts <https://www.macports.org/install.php>`_.
-2. Open up the Terminal and execute the following lines:
-
-   .. code-block:: sh
-
-      sudo port install gcc48
-      sudo port select gcc mp-gcc48 # make gcc-48 the default compiler
-      sudo port install gsl +gcc48
-      sudo port install cmake       # build tools
-
-3. NEST on Mac requires OpenMPI 1.6 from MacPorts to work properly, so we have to get this older version for MacPort. Download the portsfile `Portfile-openmpi-1.6.4.txt <http://www.nest-simulator.org/wp-content/uploads/2014/12/Portfile-openmpi-1.6.4.txt>`_ and save it under the name ``Portfile`` in an arbitrary directory.
-4. In Terminal, move to the directory containing Portfile and run
-
-   .. code-block:: sh
-
-      sudo port install +gcc48 +threads configure.compiler=macports-gcc-4.8
-
 Install NEST
 ~~~~~~~~~~~~
 
@@ -288,8 +266,6 @@ Install NEST
 
       # with Homebrew infrastructure run:
       cmake -DCMAKE_INSTALL_PREFIX=$PWD/../install -Dwith-debug=ON -Dwith-mpi=ON -DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5 $PWD/../src
-      # with MacPorts infrastructure run:
-      cmake -DCMAKE_INSTALL_PREFIX=$PWD/../install -Dwith-debug=ON -Dwith-mpi=ON -DCMAKE_C_COMPILER=gcc-mp-4.8 -DCMAKE_CXX_COMPILER=g++-mp-4.8 $PWD/../src
 
       make -j8    # run make with 8 processes
       make install
@@ -297,7 +273,7 @@ Install NEST
 
 .. note::
 
-   Always supply a concrete ``CMAKE_C_COMPILER`` and ``CMAKE_CXX_COMPILER`` for the configure: e.g. ``-DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5`` (for Homebrew) or ``-DCMAKE_C_COMPILER=gcc-mp-4.8 -DCMAKE_CXX_COMPILER=g++-mp-4.8`` (for MacPorts).
+   Always supply a concrete ``CMAKE_C_COMPILER`` and ``CMAKE_CXX_COMPILER`` for the configure: e.g. ``-DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5`` (for Homebrew).
 
 .. note::
 

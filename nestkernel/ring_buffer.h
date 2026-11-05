@@ -382,6 +382,16 @@ public:
 
   size_t size() const;
 
+  //! Number of doubles per slot, i.e., distance between the first values of consecutive slots.
+  static constexpr size_t slot_stride = num_channels;
+
+  //! Pointer to the first double of slot 0, nullptr if the buffer is empty. Valid until the next resize().
+  double*
+  slot_data()
+  {
+    return buffer_.empty() ? nullptr : buffer_[ 0 ].data();
+  }
+
 private:
   /**
    * Buffered data stored in a vector of arrays of double values

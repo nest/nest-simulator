@@ -302,7 +302,7 @@ plt.show()
 ###############################################################################
 # Additional information on array indexing can be found in the `NumPy
 # documentation
-# <https://numpy.org/doc/stable/reference/arrays.indexing.html>`_.
+# <https://numpy.org/doc/stable/user/basics.indexing.html>`_.
 
 ###############################################################################
 # Connecting nodes with specific connections

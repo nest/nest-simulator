@@ -4,7 +4,7 @@ NEST is a simulator for spiking neural network models, focused on circuit models
 
 ## Quick Start
 - Install: `pip install nest-simulator`
-- Tutorial: [PyNEST Tutorial](https://nest-simulator.readthedocs.io/en/latest/tutorials/pynest_tutorial/index.html)
+- Tutorial: [PyNEST Tutorial](https://nest-simulator.readthedocs.io/en/latest/tutorials/pynest_tutorial/README.html)
 - Examples: [Example Gallery](https://nest-simulator.readthedocs.io/en/latest/examples/index.html)
 
 ## Core Concepts
@@ -53,7 +53,7 @@ nest.Simulate(1000.0)  # ms
 ### Getting Started
 - [Installation Guide](https://nest-simulator.readthedocs.io/en/latest/installation/index.html) - pip, conda, Docker, source build
 - [Tutorials and Guides](https://nest-simulator.readthedocs.io/en/latest/get-started_index.html) - Comprehensive learning path
-- [PyNEST Tutorial](https://nest-simulator.readthedocs.io/en/latest/tutorials/pynest_tutorial/index.html) - Step-by-step introduction
+- [PyNEST Tutorial](https://nest-simulator.readthedocs.io/en/latest/tutorials/pynest_tutorial/README.html) - Step-by-step introduction
 - [NEST Desktop](https://nest-desktop.readthedocs.io/en/latest/) - Interactive GUI for network building
 - [One Neuron Example](https://nest-simulator.readthedocs.io/en/latest/auto_examples/one_neuron.html) - Minimal working script
 

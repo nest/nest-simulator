@@ -35,7 +35,7 @@ class TestGifModels:
     Inject external DC current and also three spikes to the neuron and measure its
     spike times. The spike times should match the expected values. The expected
     spike times are computed by the Python code used for the publication
-    (Code/GIF.py in http://wiki.epfl.ch/giftoolbox/documents/GIF_Toolbox.zip).
+    (src/GIF.py in https://github.com/pozzorin/GIFFittingToolbox).
     In order to use the Python code, the adaptation parameters (q_stc/sfa) should
     be converted using the formula described in the model documentation.
     """

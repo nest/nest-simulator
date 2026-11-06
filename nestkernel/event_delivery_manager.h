@@ -231,21 +231,17 @@ public:
   bool deliver_secondary_events( const size_t tid, const bool called_from_wfr_update );
 
   /**
-   * Update modulo table based on current time settings.
+   * Advance the modulo tables to the current network clock.
    *
-   * This function is called after all nodes have been updated.
-   * We can compute the value of (T+d) mod max_delay without explicit
-   * reference to the network clock, because compute_moduli_ is
-   * called whenever the network clock advances.
-   * The various modulos for all available delays are stored in
-   * a lookup-table and this table is rotated once per time slice.
-   *
-   * Update table of fixed modulos, including slice-based.
+   * This function is called by the master thread whenever the network clock advances (once per time slice). The tables
+   * themselves are fixed (see init_moduli()); only the offsets into them change. The tables are read for every event
+   * written into a ring buffer, by all threads; rewriting them in every slice would force every thread to fetch them
+   * again from the cache of the master thread in every slice.
    */
   void update_moduli();
 
   /**
-   * Initialize modulo table.
+   * Initialize the modulo tables for the present min_delay and max_delay and set the offsets to the network clock.
    *
    * TODO: can probably be private
    */
@@ -388,10 +384,10 @@ private:
   /**
    * Table of pre-computed modulos.
    *
-   * This table is used to map time steps, given as offset from now,
-   * to ring-buffer bins.  There are min_delay+max_delay bins in a ring buffer,
-   * and the moduli_ array is rotated by min_delay elements after
-   * each slice is completed.
+   * This table is used to map time steps, given as offset from now, to ring-buffer bins. There are
+   * n = min_delay + max_delay bins in a ring buffer. The table holds i mod n for i = 0, ..., 2n - 1 and does not change
+   * during a simulation; the bin of offset d is moduli_[ moduli_offset_ + d ], with moduli_offset_ = T mod n for the
+   * network clock T (see CycleOffsets).
    * @see RingBuffer
    */
   std::vector< long > moduli_;
@@ -399,15 +395,38 @@ private:
   /**
    * Table of pre-computed slice-based modulos.
    *
-   * This table is used to map time steps, give as offset from now,
-   * to slice-based ring-buffer bins.  There are ceil(max_delay/min_delay)
-   * bins in a slice-based ring buffer, one per slice within max_delay.
-   * Since max_delay may not be a multiple of min_delay, we cannot simply
-   * rotate the table content after each slice, but have to recompute
-   * the table anew.
+   * This table is used to map time steps, given as offset from now, to slice-based ring-buffer bins. There are
+   * nbuff = ceil( ( min_delay + max_delay ) / min_delay ) bins in a slice-based ring buffer, one per slice. The value
+   * for the step T + d is ( ( T + d ) / min_delay ) mod nbuff, which is periodic in T with the period
+   * p = min_delay * nbuff. The table holds ( i / min_delay ) mod nbuff for i = 0, ..., p + min_delay + max_delay - 1
+   * and does not change during a simulation; the bin of offset d is slice_moduli_[ slice_moduli_offset_ + d ], with
+   * slice_moduli_offset_ = T mod p.
    * @see SliceRingBuffer
    */
   std::vector< long > slice_moduli_;
+
+  //! Number of entries of a ring buffer, min_delay + max_delay (the valid offsets d are 0, ..., num_moduli_ - 1).
+  long num_moduli_;
+
+  /**
+   * Offsets into the modulo tables, the only part that changes when the network clock advances.
+   *
+   * They have a cache line of their own, so that the rest of the object, which all threads read for every event, is
+   * not invalidated in every time slice.
+   */
+  struct alignas( 64 ) CycleOffsets
+  {
+    CycleOffsets()
+      : moduli_offset( 0 )
+      , slice_moduli_offset( 0 )
+    {
+    }
+
+    long moduli_offset;
+    long slice_moduli_offset;
+  };
+  CycleOffsets offsets_;
+  long slice_moduli_period_;  //!< min_delay * nbuff, period of the slice-based modulos
 
   /**
    * Register of emitted spikes.
@@ -528,9 +547,9 @@ EventDeliveryManager::get_modulo( long d )
 {
   // Note, here d may be 0, since bin 0 represents the "current" time
   // when all events due are read out.
-  assert( static_cast< std::vector< long >::size_type >( d ) < moduli_.size() );
+  assert( 0 <= d and d < num_moduli_ );
 
-  return moduli_[ d ];
+  return moduli_[ offsets_.moduli_offset + d ];
 }
 
 inline long
@@ -538,9 +557,9 @@ EventDeliveryManager::get_slice_modulo( long d )
 {
   // Note, here d may be 0, since bin 0 represents the "current" time
   // when all events due are read out.
-  assert( static_cast< std::vector< long >::size_type >( d ) < slice_moduli_.size() );
+  assert( 0 <= d and d < num_moduli_ );
 
-  return slice_moduli_[ d ];
+  return slice_moduli_[ offsets_.slice_moduli_offset + d ];
 }
 
 }  // namespace nest

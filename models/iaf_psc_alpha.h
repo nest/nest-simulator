@@ -139,8 +139,8 @@ hyperpolarization to biophysically plausible values, set parameter
 
 .. note::
 
-   Incoming spikes are routed to the excitatory or inhibitory synapse by the **sign of the
-   connection weight**. A positive weight targets the excitatory synapse, a negative weight
+   Incoming spikes are routed to the excitatory or inhibitory synapse type by the **sign of the
+   connection weight**. A positive weight targets the excitatory synapse type, a negative weight
    the inhibitory one, and also sets the direction of the post-synaptic current.
    Spike connections must use the default ``receptor_type`` of 0.
 

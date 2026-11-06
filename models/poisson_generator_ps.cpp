@@ -22,17 +22,21 @@
 
 #include "poisson_generator_ps.h"
 
+#include <assert.h>
 // C++ includes:
 #include <algorithm>
 #include <limits>
 
 // Includes from nestkernel:
-#include "event_delivery_manager_impl.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
-
+#include "nest_names.h"
 // Includes from libnestutil:
+#include "device.h"
 #include "dict_util.h"
+#include "event_delivery_manager_impl.h"
+#include "exceptions.h"
 
 
 namespace nest
@@ -202,7 +206,7 @@ poisson_generator_ps::update( Time const& T, const long from, const long to )
     // the event hook then sends out the real spikes with offgrid timing
     // We pretend to send at T+from
     DSSpikeEvent se;
-    kernel().event_delivery_manager.send( *this, se, from );
+    kernel::manager< EventDeliveryManager >.send( *this, se, from );
   }
 }
 

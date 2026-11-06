@@ -23,19 +23,26 @@
 
 #include "hh_psc_alpha_gap.h"
 
+#include <assert.h>
+#include <gsl/gsl_errno.h>
+
+#include "connection_manager.h"
+#include "event_delivery_manager.h"
+#include "secondary_event.h"
+#include "secondary_event_impl.h"
+#include "simulation_manager.h"
+
 #ifdef HAVE_GSL
 
 // C++ includes:
 #include <cmath>  // in case we need isnan() // fabs
-#include <cstdio>
-#include <iostream>
 
 // Includes from libnestutil:
 #include "dict_util.h"
 #include "numerics.h"
-
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
@@ -51,8 +58,7 @@ register_hh_psc_alpha_gap( const std::string& name )
   register_node_model< hh_psc_alpha_gap >( name );
 }
 
-// Override the create() method with one call to RecordablesMap::insert_()
-// for each quantity to be recorded.
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< hh_psc_alpha_gap >::create()
@@ -111,7 +117,7 @@ hh_psc_alpha_gap_dynamics( double time, const double y[], double f[], void* pnod
 
   const double t = time / node.B_.step_;
 
-  switch ( kernel().simulation_manager.get_wfr_interpolation_order() )
+  switch ( kernel::manager< SimulationManager >.get_wfr_interpolation_order() )
   {
   case 0:
     gap = -node.B_.sumj_g_ij_ * V + node.B_.interpolation_coefficients[ node.B_.lag_ ];
@@ -331,7 +337,7 @@ hh_psc_alpha_gap::hh_psc_alpha_gap()
   , B_( *this )
 {
   recordablesMap_.create();
-  Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
+  Node::set_node_uses_wfr( kernel::manager< SimulationManager >.use_wfr() );
 }
 
 hh_psc_alpha_gap::hh_psc_alpha_gap( const hh_psc_alpha_gap& n )
@@ -340,7 +346,7 @@ hh_psc_alpha_gap::hh_psc_alpha_gap( const hh_psc_alpha_gap& n )
   , S_( n.S_ )
   , B_( n.B_, *this )
 {
-  Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
+  Node::set_node_uses_wfr( kernel::manager< SimulationManager >.use_wfr() );
 }
 
 hh_psc_alpha_gap::~hh_psc_alpha_gap()
@@ -381,12 +387,12 @@ hh_psc_alpha_gap::init_buffers_()
   // per min_delay step)
 
   // resize interpolation_coefficients depending on interpolation order
-  const size_t buffer_size =
-    kernel().connection_manager.get_min_delay() * ( kernel().simulation_manager.get_wfr_interpolation_order() + 1 );
+  const size_t buffer_size = kernel::manager< ConnectionManager >.get_min_delay()
+    * ( kernel::manager< SimulationManager >.get_wfr_interpolation_order() + 1 );
 
   B_.interpolation_coefficients.resize( buffer_size, 0.0 );
 
-  B_.last_y_values.resize( kernel().connection_manager.get_min_delay(), 0.0 );
+  B_.last_y_values.resize( kernel::manager< ConnectionManager >.get_min_delay(), 0.0 );
 
   B_.sumj_g_ij_ = 0.0;
 
@@ -452,13 +458,13 @@ hh_psc_alpha_gap::pre_run_hook()
 bool
 hh_psc_alpha_gap::update_( Time const& origin, const long from, const long to, const bool called_from_wfr_update )
 {
-  const size_t interpolation_order = kernel().simulation_manager.get_wfr_interpolation_order();
-  const double wfr_tol = kernel().simulation_manager.get_wfr_tol();
+  const size_t interpolation_order = kernel::manager< SimulationManager >.get_wfr_interpolation_order();
+  const double wfr_tol = kernel::manager< SimulationManager >.get_wfr_tol();
   bool wfr_tol_exceeded = false;
 
   // allocate memory to store the new interpolation coefficients
   // to be sent by gap event
-  const size_t buffer_size = kernel().connection_manager.get_min_delay() * ( interpolation_order + 1 );
+  const size_t buffer_size = kernel::manager< ConnectionManager >.get_min_delay() * ( interpolation_order + 1 );
   std::vector< double > new_coefficients( buffer_size, 0.0 );
 
   // parameters needed for piecewise interpolation
@@ -467,7 +473,6 @@ hh_psc_alpha_gap::update_( Time const& origin, const long from, const long to, c
 
   for ( long lag = from; lag < to; ++lag )
   {
-
     // B_.lag is needed by hh_psc_alpha_gap_dynamics to
     // determine the current section
     B_.lag_ = lag;
@@ -531,7 +536,7 @@ hh_psc_alpha_gap::update_( Time const& origin, const long from, const long to, c
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
         SpikeEvent se;
-        kernel().event_delivery_manager.send( *this, se, lag );
+        kernel::manager< EventDeliveryManager >.send( *this, se, lag );
       }
 
       // log state data
@@ -591,13 +596,13 @@ hh_psc_alpha_gap::update_( Time const& origin, const long from, const long to, c
       new_coefficients[ temp * ( interpolation_order + 1 ) + 0 ] = S_.y_[ State_::V_M ];
     }
 
-    std::vector< double >( kernel().connection_manager.get_min_delay(), 0.0 ).swap( B_.last_y_values );
+    std::vector< double >( kernel::manager< ConnectionManager >.get_min_delay(), 0.0 ).swap( B_.last_y_values );
   }
 
   // Send gap-event
   GapJunctionEvent ge;
   ge.set_coeffarray( new_coefficients );
-  kernel().event_delivery_manager.send_secondary( *this, ge );
+  kernel::manager< EventDeliveryManager >.send_secondary( *this, ge );
 
   // Reset variables
   B_.sumj_g_ij_ = 0.0;
@@ -613,12 +618,12 @@ hh_psc_alpha_gap::handle( SpikeEvent& e )
 
   if ( e.get_weight() > 0.0 )
   {
-    B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
   else
   {
-    B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
 }
@@ -631,7 +636,7 @@ hh_psc_alpha_gap::handle( CurrentEvent& e )
   const double c = e.get_current();
   const double w = e.get_weight();
 
-  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ), w * c );
 }
 
 void

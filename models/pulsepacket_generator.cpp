@@ -22,18 +22,20 @@
 
 #include "pulsepacket_generator.h"
 
+#include <assert.h>
 // C++ includes:
 #include <algorithm>
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
-
-// Includes from nestkernel:
-#include "event_delivery_manager_impl.h"
+#include "dictionary.h"
+#include "event_delivery_manager.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
+#include "nest_names.h"
+#include "simulation_manager.h"
 
 
 namespace nest
@@ -146,7 +148,7 @@ pulsepacket_generator::pre_run_hook()
     V_.tolerance = 1.0;
   }
 
-  const double now = ( kernel().simulation_manager.get_time() ).get_ms();
+  const double now = ( kernel::manager< SimulationManager >.get_time() ).get_ms();
 
   V_.start_center_idx_ = 0;
   V_.stop_center_idx_ = 0;
@@ -224,7 +226,7 @@ pulsepacket_generator::update( Time const& T, const long, const long to )
     {
       SpikeEvent se;
       se.set_multiplicity( n_spikes );
-      kernel().event_delivery_manager.send( *this, se, prev_spike - T.get_steps() );
+      kernel::manager< EventDeliveryManager >.send( *this, se, prev_spike - T.get_steps() );
       n_spikes = 0;
     }
   }

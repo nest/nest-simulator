@@ -20,18 +20,50 @@
  *
  */
 
+#ifndef URBANCZIK_ARCHIVING_NODE_IMPL_H
+#define URBANCZIK_ARCHIVING_NODE_IMPL_H
+
 #include "urbanczik_archiving_node.h"
-
-// Includes from nestkernel:
-#include "kernel_manager.h"
-
 
 namespace nest
 {
 
-// member functions for UrbanczikArchivingNode
 template < class urbanczik_parameters >
-UrbanczikArchivingNode< urbanczik_parameters >::UrbanczikArchivingNode()
+inline double
+UrbanczikArchivingNode< urbanczik_parameters >::get_C_m( int comp )
+{
+  return urbanczik_params->C_m[ comp ];
+}
+
+template < class urbanczik_parameters >
+inline double
+UrbanczikArchivingNode< urbanczik_parameters >::get_g_L( int comp )
+{
+  return urbanczik_params->g_L[ comp ];
+}
+
+template < class urbanczik_parameters >
+inline double
+UrbanczikArchivingNode< urbanczik_parameters >::get_tau_L( int comp )
+{
+  return urbanczik_params->C_m[ comp ] / urbanczik_params->g_L[ comp ];
+}
+
+template < class urbanczik_parameters >
+inline double
+UrbanczikArchivingNode< urbanczik_parameters >::get_tau_syn_ex( int comp )
+{
+  return urbanczik_params->tau_syn_ex[ comp ];
+}
+
+template < class urbanczik_parameters >
+inline double
+UrbanczikArchivingNode< urbanczik_parameters >::get_tau_syn_in( int comp )
+{
+  return urbanczik_params->tau_syn_in[ comp ];
+}
+
+template < class urbanczik_parameters >UrbanczikArchivingNode< urbanczik_parameters >::UrbanczikArchivingNode()
   : ArchivingNode()
 {
 }
@@ -126,4 +158,7 @@ UrbanczikArchivingNode< urbanczik_parameters >::write_urbanczik_history( Time co
   }
 }
 
-}  // of namespace nest
+}
+
+
+#endif

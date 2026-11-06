@@ -1510,7 +1510,6 @@ files for the ``Mask`` parent class:
 .. code:: c
 
    #include "mask.h"
-   #include "mask_impl.h"
 
 The ``Mask`` class has a few methods that must be overridden:
 

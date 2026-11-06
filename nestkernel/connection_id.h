@@ -23,6 +23,8 @@
 #ifndef CONNECTION_ID_H
 #define CONNECTION_ID_H
 
+#include <iosfwd>
+
 #include "dictionary.h"
 
 
@@ -53,46 +55,6 @@ protected:
   long synapse_modelid_;
   long port_;
 };
-
-inline ConnectionID::ConnectionID()
-  : source_node_id_( -1 )
-  , target_node_id_( -1 )
-  , target_thread_( -1 )
-  , synapse_modelid_( -1 )
-  , port_( -1 )
-{
-}
-
-inline long
-ConnectionID::get_source_node_id() const
-{
-  return source_node_id_;
-}
-
-inline long
-ConnectionID::get_target_node_id() const
-{
-  return target_node_id_;
-}
-
-inline long
-ConnectionID::get_target_thread() const
-{
-  return target_thread_;
-}
-
-inline long
-ConnectionID::get_synapse_model_id() const
-{
-  return synapse_modelid_;
-}
-
-inline long
-ConnectionID::get_port() const
-{
-  return port_;
-}
-
 }  // namespace
 
 #endif /* #ifndef CONNECTION_ID_H */

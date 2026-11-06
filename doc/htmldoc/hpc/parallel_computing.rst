@@ -372,6 +372,9 @@ the three data directories shows that they all contain the same spikes,
 which means that the simulation results are indeed the same
 independently of the details of parallelization.
 
+Networks that divide into areas connected by long delays can reduce the cost of spike communication between MPI
+processes with :ref:`structure_aware_communication`.
+
 References
 ----------
 

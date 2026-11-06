@@ -195,13 +195,17 @@ SPManager::builder_max_delay() const
 }
 
 void
-SPManager::disconnect( const size_t snode_id, Node* target, size_t target_thread, const size_t syn_id )
+SPManager::disconnect( const size_t snode_id,
+  Node* target,
+  size_t target_thread,
+  const size_t syn_id,
+  const bool is_long_delay )
 {
   Node* const source = kernel().node_manager.get_node_or_proxy( snode_id );
   // normal nodes and devices with proxies
   if ( target->has_proxies() )
   {
-    kernel().connection_manager.disconnect( target_thread, syn_id, snode_id, target->get_node_id() );
+    kernel().connection_manager.disconnect( target_thread, syn_id, snode_id, target->get_node_id(), is_long_delay );
   }
   else if ( target->local_receiver() )  // normal devices
   {

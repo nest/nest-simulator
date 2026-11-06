@@ -201,6 +201,28 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
   }
 }
 
+#ifdef HAVE_MORPH
+template < typename ConnectionT >
+double
+GenericConnectorModel< ConnectionT >::get_delay_of_new_connection( const Dictionary& d, const double delay ) const
+{
+  if ( not has_property( ConnectionModelProperties::HAS_DELAY ) )
+  {
+    return NAN;
+  }
+  if ( not numerics::is_nan( delay ) )
+  {
+    return delay;
+  }
+  double dict_delay = NAN;
+  if ( d.update_value( names::delay, dict_delay ) )
+  {
+    return dict_delay;
+  }
+  return default_connection_.get_delay();
+}
+#endif
+
 template < typename ConnectionT >
 size_t
 GenericConnectorModel< ConnectionT >::get_syn_id() const

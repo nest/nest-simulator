@@ -335,7 +335,8 @@ Layer< D >::dump_connections( std::ostream& out,
         conn.get_target_node_id(),
         conn.get_target_thread(),
         conn.get_synapse_model_id(),
-        conn.get_port() );
+        conn.get_port(),
+        conn.is_long_delay() );
 
       const auto target_node_id = result_dict.get< long >( names::target );
       const auto weight = result_dict.get< double >( names::weight );

@@ -115,6 +115,24 @@ EventDeliveryManager::send_remote( size_t tid, SpikeEvent& e, const long lag )
       ( *emitted_spikes_register_[ tid ] ).emplace_back( target, lag, e.is_flush_event() );
     }
   }
+
+#ifdef HAVE_MORPH
+  if ( kernel().connection_manager.is_morph_active() )
+  {
+    // Spikes on the long path are exchanged once per interval of threshold_delay; their lag is relative to the
+    // beginning of the interval. Intervals begin at multiples of threshold_delay, which is a multiple of min_delay.
+    const auto& targets_long_delay = kernel().connection_manager.get_remote_targets_of_local_node( tid, lid, true );
+    const long lag_in_interval = lag
+      + kernel().simulation_manager.get_slice_origin().get_steps() % kernel().connection_manager.get_threshold_delay();
+    for ( const auto& target : targets_long_delay )
+    {
+      for ( size_t i = 0; i < e.get_multiplicity(); ++i )
+      {
+        ( *emitted_spikes_register_long_delay_[ tid ] ).emplace_back( target, lag_in_interval, e.is_flush_event() );
+      }
+    }
+  }
+#endif
 }
 
 inline void
@@ -132,6 +150,24 @@ EventDeliveryManager::send_off_grid_remote( size_t tid, SpikeEvent& e, const lon
       ( *off_grid_emitted_spikes_register_[ tid ] ).emplace_back( target, lag, e.get_offset() );
     }
   }
+
+#ifdef HAVE_MORPH
+  if ( kernel().connection_manager.is_morph_active() )
+  {
+    // see send_remote()
+    const auto& targets_long_delay = kernel().connection_manager.get_remote_targets_of_local_node( tid, lid, true );
+    const long lag_in_interval = lag
+      + kernel().simulation_manager.get_slice_origin().get_steps() % kernel().connection_manager.get_threshold_delay();
+    for ( const auto& target : targets_long_delay )
+    {
+      for ( size_t i = 0; i < e.get_multiplicity(); ++i )
+      {
+        ( *off_grid_emitted_spikes_register_long_delay_[ tid ] )
+          .emplace_back( target, lag_in_interval, e.get_offset() );
+      }
+    }
+  }
+#endif
 }
 
 inline void

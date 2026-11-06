@@ -101,6 +101,9 @@
 /* Whether to use the mpi synchronization timer (including an additional barrier) */
 #cmakedefine MPI_SYNC_TIMER 1
 
+/* Whether to build structure-aware communication (morph) of short-range and long-range spikes */
+#cmakedefine HAVE_MORPH 1
+
 /* Whether to do full logging */
 #cmakedefine ENABLE_FULL_LOGGING 1
 

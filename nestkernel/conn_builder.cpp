@@ -125,6 +125,7 @@ BipartiteConnBuilder::BipartiteConnBuilder( NodeCollectionPTR sources,
   , allow_multapses_( true )
   , make_symmetric_( false )
   , creates_symmetric_connections_( false )
+  , long_range_( false )
   , exceptions_raised_( kernel().vp_manager.get_num_threads() )
   , use_structural_plasticity_( false )
   , parameters_requiring_skipping_()
@@ -136,6 +137,15 @@ BipartiteConnBuilder::BipartiteConnBuilder( NodeCollectionPTR sources,
   conn_spec.update_value< bool >( names::allow_autapses, allow_autapses_ );
   conn_spec.update_value< bool >( names::allow_multapses, allow_multapses_ );
   conn_spec.update_value< bool >( names::make_symmetric, make_symmetric_ );
+  conn_spec.update_value< bool >( names::long_range, long_range_ );
+#ifndef HAVE_MORPH
+  if ( long_range_ )
+  {
+    throw KernelException(
+      "Connection property 'long_range' requires morph: NEST was built without morph "
+      "(-Dwith-morph=ON)." );
+  }
+#endif
 
   if ( make_symmetric_ and third_out_ )
   {
@@ -395,7 +405,10 @@ BipartiteConnBuilder::single_connect_( size_t snode_id, Node& target, size_t tar
         &target,
         target_thread,
         synapse_model_id_[ synapse_indx ],
-        param_dicts_[ synapse_indx ][ target_thread ] );
+        param_dicts_[ synapse_indx ][ target_thread ],
+        numerics::nan,
+        numerics::nan,
+        long_range_ );
     }
     else if ( default_weight_[ synapse_indx ] )
     {
@@ -404,7 +417,9 @@ BipartiteConnBuilder::single_connect_( size_t snode_id, Node& target, size_t tar
         target_thread,
         synapse_model_id_[ synapse_indx ],
         param_dicts_[ synapse_indx ][ target_thread ],
-        delays_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target ) );
+        delays_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target ),
+        numerics::nan,
+        long_range_ );
     }
     else if ( default_delay_[ synapse_indx ] )
     {
@@ -414,7 +429,8 @@ BipartiteConnBuilder::single_connect_( size_t snode_id, Node& target, size_t tar
         synapse_model_id_[ synapse_indx ],
         param_dicts_[ synapse_indx ][ target_thread ],
         numerics::nan,
-        weights_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target ) );
+        weights_[ synapse_indx ]->value_double( target_thread, rng, snode_id, &target ),
+        long_range_ );
     }
     else
     {
@@ -426,7 +442,8 @@ BipartiteConnBuilder::single_connect_( size_t snode_id, Node& target, size_t tar
         synapse_model_id_[ synapse_indx ],
         param_dicts_[ synapse_indx ][ target_thread ],
         delay,
-        weight );
+        weight,
+        long_range_ );
     }
   }
 

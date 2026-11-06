@@ -79,6 +79,28 @@ MPIManager::get_process_id_of_node_id( const size_t node_id ) const
   return node_id % kernel().vp_manager.get_num_virtual_processes() % num_processes_;
 }
 
+#ifdef HAVE_MORPH
+inline size_t
+MPIManager::get_num_processes_short_path() const
+{
+  return kernel().connection_manager.is_morph_active() ? get_comm_local_group_size() : get_num_processes();
+}
+
+inline void
+MPIManager::set_buffer_size_spike_data( const size_t buffer_size )
+{
+  // With morph, spikes of the short path are exchanged within the local group only.
+  const size_t num_processes = get_num_processes_short_path();
+
+  assert( buffer_size >= static_cast< size_t >( 2 * num_processes ) );
+  buffer_size_spike_data_ = buffer_size;
+
+  send_recv_count_spike_data_per_rank_ = floor( get_buffer_size_spike_data() / num_processes );
+
+  assert( send_recv_count_spike_data_per_rank_ * num_processes <= get_buffer_size_spike_data() );
+}
+#endif
+
 #else  // HAVE_MPI
 
 

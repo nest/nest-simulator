@@ -273,7 +273,7 @@ Install NEST
 
 .. note::
 
-   Always supply a concrete ``CMAKE_C_COMPILER`` and ``CMAKE_CXX_COMPILER`` for the configure: e.g. ``-DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5`` (for Homebrew).
+   Always supply a concrete ``CMAKE_CXX_COMPILER`` for the configure: e.g. ``-DCMAKE_CXX_COMPILER=g++-13`` (for Homebrew).
 
 .. note::
 

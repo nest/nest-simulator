@@ -297,6 +297,16 @@ EventDeliveryManager::configure_spike_data_buffers()
   send_buffer_spike_data_.clear();
   send_buffer_off_grid_spike_data_.clear();
 
+#ifdef HAVE_MORPH
+  // The number of processes of the short-path exchange (all processes, or the local group if morph is active) can
+  // differ from the one of the previous simulation, for example after ResetKernel. The MPI manager keeps the buffer
+  // size, but its count per process must be recomputed for the current number; otherwise the chunks of the send
+  // buffer can extend beyond its end (out-of-range access, found with -D_GLIBCXX_ASSERTIONS).
+  const size_t num_processes_short_path = kernel().mpi_manager.get_num_processes_short_path();
+  kernel().mpi_manager.set_buffer_size_spike_data(
+    std::max( kernel().mpi_manager.get_buffer_size_spike_data(), 2 * num_processes_short_path ) );
+#endif
+
   resize_send_recv_buffers_spike_data_();
 
 #ifdef HAVE_MORPH

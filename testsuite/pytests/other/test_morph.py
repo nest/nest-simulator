@@ -474,6 +474,20 @@ def test_morph_spikes_equal_conventional(inter_delay_low):
 
 
 @pytest.mark.skipif_missing_morph
+def test_morph_then_conventional_in_one_process():
+    """
+    Ensure that a conventional simulation after a simulation with morph in the same process works.
+
+    The number of processes of the short-path exchange changes from the local group to all processes; the MPI
+    buffer of the short path must be partitioned anew (regression: out-of-range access in the send buffer).
+    """
+
+    morph = simulate_areas(True)
+    conv = simulate_areas(False)
+    np.testing.assert_array_equal(conv, morph)
+
+
+@pytest.mark.skipif_missing_morph
 def test_morph_spikes_equal_conventional_local_groups_of_two():
     """Ensure that morph with local groups of two processes gives the spikes of the conventional exchange."""
 

@@ -77,6 +77,15 @@ neuron in each population. An approximation of random connectivity can be
 implemented by connecting populations using a ``bernoulli_synapse``.
 
 
+.. note::
+
+   Incoming spikes are routed to the excitatory or inhibitory synapse by the **sign of the
+   connection weight**. A positive weight targets the excitatory synapse, a negative weight
+   the inhibitory one, and also sets the direction of the post-synaptic current.
+   Spike connections must use the default ``receptor_type`` of 0.
+
+   See :ref:`synapse_selection` for the conventions used by other models.
+
 Parameters
 ++++++++++
 

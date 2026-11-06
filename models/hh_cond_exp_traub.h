@@ -96,6 +96,15 @@ simulators covered is available from ModelDB :footcite:p:`Traub1991b`.
    For further details on asynchronicity in spike and firing events with Hodgkin Huxley models
    see :ref:`here <hh_details>`.
 
+.. note::
+
+   Incoming spikes are routed to the excitatory or inhibitory synapse by the **sign of the
+   connection weight**. A positive weight targets the excitatory synapse, a negative weight
+   the inhibitory one. Only the absolute value of the weight sets the conductance
+   amplitude. Spike connections must use the default ``receptor_type`` of 0.
+
+   See :ref:`synapse_selection` for the conventions used by other models.
+
 Parameters
 ++++++++++
 

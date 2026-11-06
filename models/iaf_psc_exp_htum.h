@@ -98,6 +98,15 @@ neuron like dynamics interacting by point events is described in
 
 See also :footcite:p:`Diesmann2001`.
 
+.. note::
+
+   Incoming spikes are routed to the excitatory or inhibitory synapse by the **sign of the
+   connection weight**. A positive weight targets the excitatory synapse, a negative weight
+   the inhibitory one, and also sets the direction of the post-synaptic current.
+   Spike connections must use the default ``receptor_type`` of 0.
+
+   See :ref:`synapse_selection` for the conventions used by other models.
+
 Parameters
 ++++++++++
 

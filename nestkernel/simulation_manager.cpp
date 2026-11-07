@@ -561,7 +561,8 @@ SimulationManager::prepare()
   // it resizes coefficient arrays for secondary events
   kernel().node_manager.check_wfr_use();
 
-  if ( kernel().node_manager.have_nodes_changed() or kernel().connection_manager.connections_have_changed() )
+  if ( kernel().node_manager.have_nodes_changed() or kernel().connection_manager.connections_have_changed()
+    or kernel().connection_manager.compressed_spike_data_copies_changed() )
   {
 #pragma omp parallel
     {

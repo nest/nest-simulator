@@ -45,8 +45,8 @@ SPManager::SPManager()
   : ManagerInterface()
   , structural_plasticity_update_interval_( 10000. )
   , structural_plasticity_enabled_( false )
-  , structural_plasticity_kernel_()
-  , structural_plasticity_mask_()
+  , spatial_kernel_()
+  , spatial_mask_()
   , pos_dim( 0 )
   , sp_conn_builders_()
   , growthcurve_factories_()
@@ -71,8 +71,8 @@ SPManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 
   structural_plasticity_update_interval_ = 10000.;
   structural_plasticity_enabled_ = false;
-  structural_plasticity_kernel_ = ParameterPTR();
-  structural_plasticity_mask_ = MaskPTR();
+  spatial_kernel_ = ParameterPTR();
+  spatial_mask_ = MaskPTR();
 }
 
 void
@@ -134,7 +134,7 @@ SPManager::set_status( const Dictionary& d )
     return;
   }
 
-  Dictionary syn_specs;
+  Dictionary sp_specs;
   NodeCollectionPTR sources( new NodeCollectionPrimitive() );
   NodeCollectionPTR targets( new NodeCollectionPrimitive() );
 
@@ -144,11 +144,11 @@ SPManager::set_status( const Dictionary& d )
   }
   sp_conn_builders_.clear();
 
-  d.update_value< Dictionary >( names::structural_plasticity_synapses, syn_specs );
-  for ( auto& [ key, entry ] : syn_specs )
+  d.update_value< Dictionary >( names::structural_plasticity_synapses, sp_specs );
+  for ( auto& [ key, entry ] : sp_specs )
   {
     Dictionary conn_spec;
-    const auto syn_spec = syn_specs.get< Dictionary >( key );
+    const auto syn_spec = sp_specs.get< Dictionary >( key );
     if ( syn_spec.known( names::allow_autapses ) )
     {
       conn_spec[ names::allow_autapses ] = syn_spec.get< bool >( names::allow_autapses );
@@ -265,11 +265,17 @@ SPManager::gather_global_positions_and_ids()
 
 // Method to perform roulette wheel selection
 size_t
-SPManager::roulette_wheel_selection( const std::vector< double >& weights, double rnd )
+SPManager::roulette_wheel_selection( const std::vector< size_t >& ids,
+  const std::vector< double >& weights,
+  RngPtr rng )
 {
   if ( weights.empty() )
   {
     throw std::runtime_error( "Weight vector is empty." );
+  }
+  if ( ids.size() != weights.size() )
+  {
+    throw std::runtime_error( "Each candidate ID needs exactly one weight." );
   }
 
   std::vector< double > cumulative( weights.size() );
@@ -282,19 +288,23 @@ SPManager::roulette_wheel_selection( const std::vector< double >& weights, doubl
   }
 
   // Generate a random number in the range [0, sum)
-  const double random_value = rnd * sum;
+  const double random_value = rng->drand() * sum;
 
+  // upper_bound returns the first entry strictly greater than random_value. A zero weight repeats the
+  // cumulative sum of the entry before it (or is 0 at the front, which is never greater than random_value),
+  // so upper_bound always stops at an earlier, positive-weight entry: zero weights cannot be selected.
   const auto it = std::upper_bound( cumulative.begin(), cumulative.end(), random_value );
   if ( it == cumulative.end() )
   {
+    // Only reached if rounding makes random_value equal to sum; fall back to the last positive weight.
     size_t idx = weights.size() - 1;
     while ( idx > 0 and weights[ idx ] <= 0.0 )
     {
       --idx;
     }
-    return idx;
+    return ids[ idx ];
   }
-  return static_cast< size_t >( std::distance( cumulative.begin(), it ) );
+  return ids[ std::distance( cumulative.begin(), it ) ];
 }
 
 long
@@ -828,10 +838,11 @@ SPManager::match_vacant_elements_spatially( std::vector< size_t >& pre_ids,
 
       const std::vector< double > post_pos = get_global_position( post_id );
 
-      // Via the layer, so that periodic boundary conditions are respected.
+      // Displacements and kernel values are computed by the target's layer, which knows its extent and
+      // whether it has periodic boundary conditions.
       const AbstractLayerPTR post_layer = get_layer( kernel().node_manager.node_id_to_node_collection( post_id ) );
 
-      if ( structural_plasticity_mask_ )
+      if ( spatial_mask_ )
       {
         const unsigned int num_dimensions = post_layer->get_num_dimensions();
         std::vector< double > displacement( num_dimensions );
@@ -839,7 +850,7 @@ SPManager::match_vacant_elements_spatially( std::vector< size_t >& pre_ids,
         {
           displacement[ dim ] = post_layer->compute_displacement( pre_pos, post_pos, dim );
         }
-        if ( not structural_plasticity_mask_->inside( displacement ) )
+        if ( not spatial_mask_->inside( displacement ) )
         {
           continue;  // Outside the mask.
         }
@@ -847,9 +858,9 @@ SPManager::match_vacant_elements_spatially( std::vector< size_t >& pre_ids,
 
       // Without a kernel, the candidates admitted by the mask are equally likely.
       double weight = 1.0;
-      if ( structural_plasticity_kernel_ )
+      if ( spatial_kernel_ )
       {
-        weight = structural_plasticity_kernel_->value( rng, pre_pos, post_pos, *post_layer, nullptr );
+        weight = spatial_kernel_->value( rng, pre_pos, post_pos, *post_layer, nullptr );
 
         if ( not std::isfinite( weight ) or weight < 0.0 )
         {
@@ -872,8 +883,7 @@ SPManager::match_vacant_elements_spatially( std::vector< size_t >& pre_ids,
     }
 
     // Select a post-synaptic neuron using roulette wheel selection
-    const size_t selected_post_idx = roulette_wheel_selection( weights, rng->drand() );
-    const size_t selected_post_id = valid_post_ids[ selected_post_idx ];
+    const size_t selected_post_id = roulette_wheel_selection( valid_post_ids, weights, rng );
 
     // Remove the selected post-synaptic neuron from the list
     const auto post_it = std::find( post_ids.begin(), post_ids.end(), selected_post_id );
@@ -907,8 +917,8 @@ SPManager::enable_structural_plasticity( ParameterPTR spatial_kernel, MaskPTR sp
       "has been set to false." );
   }
 
-  structural_plasticity_kernel_ = spatial_kernel;
-  structural_plasticity_mask_ = spatial_mask;
+  spatial_kernel_ = spatial_kernel;
+  spatial_mask_ = spatial_mask;
   structural_plasticity_enabled_ = true;
 
   // Both the kernel and the mask need positions.

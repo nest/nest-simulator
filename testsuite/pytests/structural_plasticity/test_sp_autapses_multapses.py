@@ -44,7 +44,7 @@ class TestStructuralPlasticityAutapses(unittest.TestCase):
         assert not nest.structural_plasticity_synapses["synapse_ex"]["allow_autapses"]
 
     def test_multapses(self):
-        """Test if allow_multapses=False is rejected for structural plasticity synapses."""
+        """Test if allow_multapses==False is rejected for structural plasticity synapses."""
 
         nest.ResetKernel()
         nest.CopyModel("static_synapse", "synapse_ex")

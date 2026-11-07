@@ -128,7 +128,7 @@ public:
    * @param spatial_kernel  Weights candidates by their positions; zero excludes. Null: uniform matching.
    * @param spatial_mask    Excludes candidates whose source-target displacement lies outside it.
    */
-  void enable_structural_plasticity( ParameterPTR spatial_kernel = ParameterPTR(), MaskPTR spatial_mask = MaskPTR() );
+  void enable_structural_plasticity( ParameterPTR spatial_kernel, MaskPTR spatial_mask );
 
   /**
    * Disable structural plasticity
@@ -215,13 +215,15 @@ public:
   void gather_global_positions_and_ids();
 
   /**
-   * Select an index at random, with probability proportional to the given weights.
+   * Select a node ID at random, with probability proportional to its weight.
    *
-   * @param weights Non-negative, need not be normalised; at least one must be positive.
-   * @param rnd Random number drawn from [0, 1).
-   * @return Selected index.
+   * @param ids Candidate node IDs.
+   * @param weights Weight of each candidate in ids; non-negative, need not be normalised; at least one must be
+   *                strictly positive.
+   * @param rng Random number generator to draw from.
+   * @return Selected node ID; never one with zero weight.
    */
-  size_t roulette_wheel_selection( const std::vector< double >& weights, double rnd );
+  size_t roulette_wheel_selection( const std::vector< size_t >& ids, const std::vector< double >& weights, RngPtr rng );
 
   /**
    * Global list of neuron IDs used for structural plasticity computations.
@@ -248,10 +250,10 @@ private:
   bool structural_plasticity_enabled_;
 
   //! Optional spatial kernel weighting candidate partners; null means uniform matching.
-  ParameterPTR structural_plasticity_kernel_;
+  ParameterPTR spatial_kernel_;
 
   //! Optional spatial mask excluding candidate partners; null means no spatial restriction.
-  MaskPTR structural_plasticity_mask_;
+  MaskPTR spatial_mask_;
 
   /**
    * Dimensionality of the neuron positions
@@ -290,7 +292,7 @@ SPManager::get_structural_plasticity_update_interval() const
 inline bool
 SPManager::uses_spatial_matching() const
 {
-  return static_cast< bool >( structural_plasticity_kernel_ ) or static_cast< bool >( structural_plasticity_mask_ );
+  return static_cast< bool >( spatial_kernel_ ) or static_cast< bool >( spatial_mask_ );
 }
 
 }  // namespace nest

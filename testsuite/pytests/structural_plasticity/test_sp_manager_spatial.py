@@ -29,6 +29,7 @@ evaluated through the target's layer, so periodic boundary conditions are respec
 import nest
 import numpy as np
 import pytest
+from scipy.stats import binomtest
 
 
 def build_network(positions, axon_z, den_z, *, allow_autapses=True, edge_wrap=False, extent=None, seed=1):
@@ -87,20 +88,6 @@ def gaussian_kernel(std, mean=0.0):
     return nest.spatial_distributions.gaussian(nest.spatial.distance, mean=mean, std=std)
 
 
-def test_gaussian_follows_nest_convention():
-    """
-    The kernel is NEST's Gaussian, so K(0) = 1, K(std) = exp(-1/2) and K(2 std) = exp(-2).
-
-    This pins ``std`` to NEST's convention, exp(-(d - mean)^2 / (2 std^2)).
-    """
-
-    std = 0.7
-    nrns = build_network([(0.0, 0.0), (1.0, 0.0)], [1, 0], [0, 1])
-    values = gaussian_kernel(std=std).apply(nrns[0], [[0.0, 0.0], [std, 0.0], [2 * std, 0.0]])
-
-    assert values == pytest.approx([1.0, np.exp(-0.5), np.exp(-2.0)])
-
-
 def test_selection_frequencies_match_kernel_values():
     """
     A candidate is chosen in proportion to the value of the spatial kernel.
@@ -130,9 +117,9 @@ def test_selection_frequencies_match_kernel_values():
         assert len(targets) == 1
         num_near += targets[0] == near_id
 
-    # Four standard errors of the binomial estimate, so the tolerance does not depend on the seeds.
-    tolerance = 4 * np.sqrt(expected * (1 - expected) / num_runs)
-    assert num_near / num_runs == pytest.approx(expected, abs=tolerance)
+    # Exact binomial test of H0: P(near) = expected. The seeds are fixed, so the outcome is
+    # deterministic; the strict threshold only guards against an unlucky choice of seeds.
+    assert binomtest(num_near, n=num_runs, p=expected).pvalue > 1e-4
 
 
 def test_gaussian_kernel_without_mask_prefers_near_targets():

@@ -102,10 +102,10 @@ presynaptic and postsynaptic neuron must be of type ``iaf_tum_2000``.
 
 .. note::
 
-   Incoming spikes are routed to the excitatory or inhibitory synapse by the **sign of the
-   connection weight**. A positive weight targets the excitatory synapse, a negative weight
+   Incoming spikes are routed to the excitatory or inhibitory synapse type by the **sign of the
+   connection weight**. A positive weight targets the excitatory synapse type, a negative weight
    the inhibitory one, and also sets the direction of the post-synaptic current.
-   ``receptor_type`` selects the input channel rather than the synapse, and connections from
+   ``receptor_type`` selects the input channel rather than the synapse type, and connections from
    another ``iaf_tum_2000`` must use ``receptor_type`` 1.
 
    See :ref:`synapse_selection` for the conventions used by other models.

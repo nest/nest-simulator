@@ -63,7 +63,7 @@ extern "C" int iaf_cond_beta_dynamics( double, const double*, double*, void* );
 Short description
 +++++++++++++++++
 
-Leaky integrate-and-fire neuron model with beta-shaped synaptic conductances
+Leaky integrate-and-fire neuron model with beta-function shaped synaptic conductances
 
 Description
 +++++++++++
@@ -72,7 +72,7 @@ Description
 
 * a hard threshold,
 * a fixed refractory period,
-* beta-shaped synaptic conductances (a difference of two exponentials) with separate rise and decay
+* beta-function shaped synaptic conductances (a difference of two exponentials) with separate rise and decay
   times, normalized such that an event of weight 1.0 results in a peak conductance of 1 nS.
 
 The model follows the conductance-based integrate-and-fire framework discussed in
@@ -125,7 +125,7 @@ or inhibitory (:math:`\text{X} = \text{in}`) presynaptic neurons,
 :math:`k` indexes the spike times of neuron :math:`j`, and :math:`d_j`
 is the delay from neuron :math:`j`.
 
-The individual synaptic conductances are beta-shaped, that is, given by the difference of two
+The individual synaptic conductances are beta-function shaped, that is, given by the difference of two
 exponentials with separate rise and decay time constants,
 
 .. math::
@@ -160,15 +160,14 @@ uses that form.
 
 .. note::
 
-   Incoming spikes are routed to the excitatory or inhibitory synapse by the **sign of the
-   connection weight**. A positive weight targets the excitatory synapse, a negative weight
+   Incoming spikes are routed to the excitatory or inhibitory synapse type by the **sign of the
+   connection weight**. A positive weight targets the excitatory synapse type, a negative weight
    the inhibitory one. Only the absolute value of the weight sets the conductance
    amplitude. Spike connections must use the default ``receptor_type`` of 0.
 
-   See :ref:`synapse_selection` for the conventions used by other models.
+   See :ref:`synapse_selection` for the conventions used by other models. For input
+   separation by ``receptor_type``, see ``iaf_cond_alpha_mc``.
 
-   This class distinguishes between excitatory and inhibitory inputs by the sign of the
-   synaptic weight. For input separation by ``receptor_type``, see ``iaf_cond_alpha_mc``.
    This model integrates the dynamics with an adaptive-step-size Runge-Kutta-Fehlberg
    solver from the GNU Scientific Library.
 

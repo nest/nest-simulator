@@ -59,15 +59,27 @@ FlushEventMechanism::get_status( Dictionary& d ) const
 }
 
 void
-FlushEventMechanism::set_status( const Dictionary& d )
+FlushEventMechanism::set_status( const Dictionary& d, Node* node, const bool check_eprop_constraint )
 {
-  d.update_value( names::flush_event_send_interval, flush_event_send_interval_ );
+  double flush_event_send_interval_tmp = flush_event_send_interval_;
 
-  if ( flush_event_send_interval_ <= 0.0 )
+  update_value_param( d, names::flush_event_send_interval, flush_event_send_interval_tmp, node );
+
+  if ( flush_event_send_interval_tmp <= 0.0 )
   {
-    throw BadProperty(
-      "Interval since previous event after which a flush event is sent flush_event_send_interval > 0 required." );
+    throw BadProperty( "flush_event_send_interval > 0 required." );
   }
+
+  if ( check_eprop_constraint )
+  {
+    const double eprop_update_interval = kernel().simulation_manager.get_eprop_update_interval().get_ms();
+    if ( flush_event_send_interval_tmp < eprop_update_interval )
+    {
+      throw BadProperty( "flush_event_send_interval ≥ eprop_update_interval required." );
+    }
+  }
+
+  flush_event_send_interval_ = flush_event_send_interval_tmp;
 }
 
 }  // namespace nest

@@ -52,7 +52,7 @@ Description
 
 This model simulates a population of spike-response model neurons with
 multi-timescale adaptation and exponential postsynaptic currents, as
-described by Schwalger et al. (2017) [1]_.
+described by Schwalger et al. (2017) :footcite:p:`Schwalger2017`.
 
 The single neuron model is defined by the hazard function
 
@@ -76,6 +76,15 @@ Connecting two population models corresponds to full connectivity of every
 neuron in each population. An approximation of random connectivity can be
 implemented by connecting populations using a ``bernoulli_synapse``.
 
+
+.. note::
+
+   Incoming spikes are routed to the excitatory or inhibitory synapse by the **sign of the
+   connection weight**. A positive weight targets the excitatory synapse, a negative weight
+   the inhibitory one, and also sets the direction of the post-synaptic current.
+   Spike connections must use the default ``receptor_type`` of 0.
+
+   See :ref:`synapse_selection` for the conventions used by other models.
 
 Parameters
 ++++++++++
@@ -118,11 +127,7 @@ N                ---          use N gif_psc_exp neurons
 References
 ++++++++++
 
-.. [1] Schwalger T, Deger M, Gerstner W (2017). Towards a theory of cortical
-       columns: From spiking neurons to interacting neural populations of
-       finite size. PLoS Computational Biology.
-       https://doi.org/10.1371/journal.pcbi.1005507
-
+.. footbibliography::
 
 Sends
 +++++

@@ -1,3 +1,5 @@
+name: Trigger nest-extension-module CI
+
 on: [push]
 
 permissions:
@@ -5,12 +7,12 @@ permissions:
 
 jobs:
   trigger_externals:
-    if: ${{ github.repository_owner == 'nest' && github.ref_name == 'master' }}
+    if: ${{ github.repository_owner == 'nest' && github.ref_name == 'main' }}
     name: "Trigger downstream repos"
     runs-on: ubuntu-latest
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
         with:
           egress-policy: audit
           disable-telemetry: true

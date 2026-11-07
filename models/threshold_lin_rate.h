@@ -71,7 +71,7 @@ type ``threshold_lin_rate_ipn`` for input noise or of type
 can be obtained by creating models of type
 ``rate_transformer_threshold_lin``.
 
-See also [1]_ [2]_.
+See also :footcite:p:`Hahne2017` :footcite:p:`Hahne2015`.
 
 Parameters
 ++++++++++
@@ -96,14 +96,7 @@ transformers.
 References
 ++++++++++
 
-.. [1] Hahne J, Dahmen D, Schuecker J, Frommer A, Bolten M, Helias M,
-       Diesmann M (2017). Integration of continuous-time dynamics in a
-       spiking neural network simulator. Frontiers in Neuroinformatics, 11:34.
-       DOI: https://doi.org/10.3389/fninf.2017.00034
-.. [2] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A, Diesmann M
-       (2015). A unified framework for spiking and gap-junction interactions
-       in distributed neuronal network simulations. Frontiers in
-       Neuroinformatics, 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
+.. footbibliography::
 
 Sends
 +++++
@@ -175,13 +168,13 @@ nonlinearities_threshold_lin_rate::mult_coupling_in( double )
   return 1.;
 }
 
-typedef rate_neuron_ipn< nest::nonlinearities_threshold_lin_rate > threshold_lin_rate_ipn;
+typedef rate_neuron_ipn< nonlinearities_threshold_lin_rate > threshold_lin_rate_ipn;
 void register_threshold_lin_rate_ipn( const std::string& name );
 
-typedef rate_neuron_opn< nest::nonlinearities_threshold_lin_rate > threshold_lin_rate_opn;
+typedef rate_neuron_opn< nonlinearities_threshold_lin_rate > threshold_lin_rate_opn;
 void register_threshold_lin_rate_opn( const std::string& name );
 
-typedef rate_transformer_node< nest::nonlinearities_threshold_lin_rate > rate_transformer_threshold_lin;
+typedef rate_transformer_node< nonlinearities_threshold_lin_rate > rate_transformer_threshold_lin;
 void register_rate_transformer_threshold_lin( const std::string& name );
 
 

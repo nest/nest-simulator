@@ -30,9 +30,9 @@ neuron populations receive Poissonian background input. The spike output of
 500 neurons from each population are recorded. Neurons are modeled as leaky
 integrate-and-fire neurons with voltage jump synapses. Spike times are not
 constrained to the discrete time grid. The model is based on the Vogels & Abbott
-network model [1]_.
+network model :footcite:p:`Vogels2005`.
 
-This is Benchmark 4 of the FACETS simulator review (Brette et al., 2007) [2]_:
+This is Benchmark 4 of the FACETS simulator review (Brette et al., 2007) :footcite:p:`Brette2007`:
 - Neuron model: integrate-and-fire (``iaf_psc_delta``)
 - Synapse model: current-based (CUBA)
 - Synapse time course: delta (voltage jump)
@@ -41,16 +41,7 @@ This is Benchmark 4 of the FACETS simulator review (Brette et al., 2007) [2]_:
 References
 ~~~~~~~~~~
 
-.. [1] Vogels TP, Abbott LF. 2005. Signal propagation and logic gating in
-       networks of integrate-and-fire neurons. Journal of Neuroscience.
-       25(46):10786-10795.
-       https://doi.org/10.1523/JNEUROSCI.3508-05.2005
-
-.. [2] Brette R, Rudolph M, Carnevale T, Hines M, Beeman D, Bower JM, et al.
-       2007. Simulation of networks of spiking neurons: a review of tools and
-       strategies. Journal of Computational Neuroscience. 23(3):349-398.
-       https://doi.org/10.1007/s10827-007-0038-6
-
+.. footbibliography::
 """
 
 import nest

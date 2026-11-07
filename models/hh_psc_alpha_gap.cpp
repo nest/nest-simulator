@@ -41,10 +41,10 @@
 #include "universal_data_logger_impl.h"
 
 
-nest::RecordablesMap< nest::hh_psc_alpha_gap > nest::hh_psc_alpha_gap::recordablesMap_;
-
 namespace nest
 {
+RecordablesMap< hh_psc_alpha_gap > hh_psc_alpha_gap::recordablesMap_;
+
 void
 register_hh_psc_alpha_gap( const std::string& name )
 {
@@ -71,11 +71,11 @@ extern "C" int
 hh_psc_alpha_gap_dynamics( double time, const double y[], double f[], void* pnode )
 {
   // a shorthand
-  typedef nest::hh_psc_alpha_gap::State_ S;
+  typedef hh_psc_alpha_gap::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::hh_psc_alpha_gap& node = *( reinterpret_cast< nest::hh_psc_alpha_gap* >( pnode ) );
+  const hh_psc_alpha_gap& node = *( reinterpret_cast< hh_psc_alpha_gap* >( pnode ) );
 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
@@ -152,13 +152,12 @@ hh_psc_alpha_gap_dynamics( double time, const double y[], double f[], void* pnod
 
   return GSL_SUCCESS;
 }
-}
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::hh_psc_alpha_gap::Parameters_::Parameters_()
+hh_psc_alpha_gap::Parameters_::Parameters_()
   : t_ref_( 2.0 )    // ms
   , g_Na( 4500. )    // nS
   , g_Kv1( 9.0 )     // nS
@@ -174,7 +173,7 @@ nest::hh_psc_alpha_gap::Parameters_::Parameters_()
 {
 }
 
-nest::hh_psc_alpha_gap::State_::State_( const Parameters_& )
+hh_psc_alpha_gap::State_::State_( const Parameters_& )
   : r_( 0 )
 {
   y_[ 0 ] = -69.60401191631222;  // p.E_L;
@@ -201,7 +200,7 @@ nest::hh_psc_alpha_gap::State_::State_( const Parameters_& )
   y_[ HH_P ] = alpha_p / ( alpha_p + beta_p );
 }
 
-nest::hh_psc_alpha_gap::State_::State_( const State_& s )
+hh_psc_alpha_gap::State_::State_( const State_& s )
   : r_( s.r_ )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -210,8 +209,8 @@ nest::hh_psc_alpha_gap::State_::State_( const State_& s )
   }
 }
 
-nest::hh_psc_alpha_gap::State_&
-nest::hh_psc_alpha_gap::State_::operator=( const State_& s )
+hh_psc_alpha_gap::State_&
+hh_psc_alpha_gap::State_::operator=( const State_& s )
 {
   r_ = s.r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -226,7 +225,7 @@ nest::hh_psc_alpha_gap::State_::operator=( const State_& s )
  * ---------------------------------------------------------------- */
 
 void
-nest::hh_psc_alpha_gap::Parameters_::get( Dictionary& d ) const
+hh_psc_alpha_gap::Parameters_::get( Dictionary& d ) const
 {
   d[ names::t_ref ] = t_ref_;
   d[ names::g_Na ] = g_Na;
@@ -243,7 +242,7 @@ nest::hh_psc_alpha_gap::Parameters_::get( Dictionary& d ) const
 }
 
 void
-nest::hh_psc_alpha_gap::Parameters_::set( const Dictionary& d, Node* node )
+hh_psc_alpha_gap::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::t_ref, t_ref_, node );
   update_value_param( d, names::C_m, C_m, node );
@@ -278,7 +277,7 @@ nest::hh_psc_alpha_gap::Parameters_::set( const Dictionary& d, Node* node )
 }
 
 void
-nest::hh_psc_alpha_gap::State_::get( Dictionary& d ) const
+hh_psc_alpha_gap::State_::get( Dictionary& d ) const
 {
   d[ names::V_m ] = y_[ V_M ];
   d[ names::Act_m ] = y_[ HH_M ];
@@ -288,7 +287,7 @@ nest::hh_psc_alpha_gap::State_::get( Dictionary& d ) const
 }
 
 void
-nest::hh_psc_alpha_gap::State_::set( const Dictionary& d, Node* node )
+hh_psc_alpha_gap::State_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::V_m, y_[ V_M ], node );
   update_value_param( d, names::Act_m, y_[ HH_M ], node );
@@ -301,7 +300,7 @@ nest::hh_psc_alpha_gap::State_::set( const Dictionary& d, Node* node )
   }
 }
 
-nest::hh_psc_alpha_gap::Buffers_::Buffers_( hh_psc_alpha_gap& n )
+hh_psc_alpha_gap::Buffers_::Buffers_( hh_psc_alpha_gap& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -311,7 +310,7 @@ nest::hh_psc_alpha_gap::Buffers_::Buffers_( hh_psc_alpha_gap& n )
   // init_buffers_().
 }
 
-nest::hh_psc_alpha_gap::Buffers_::Buffers_( const Buffers_&, hh_psc_alpha_gap& n )
+hh_psc_alpha_gap::Buffers_::Buffers_( const Buffers_&, hh_psc_alpha_gap& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -325,7 +324,7 @@ nest::hh_psc_alpha_gap::Buffers_::Buffers_( const Buffers_&, hh_psc_alpha_gap& n
  * Default and copy constructor for node, and destructor
  * ---------------------------------------------------------------- */
 
-nest::hh_psc_alpha_gap::hh_psc_alpha_gap()
+hh_psc_alpha_gap::hh_psc_alpha_gap()
   : ArchivingNode()
   , P_()
   , S_( P_ )
@@ -335,7 +334,7 @@ nest::hh_psc_alpha_gap::hh_psc_alpha_gap()
   Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
 }
 
-nest::hh_psc_alpha_gap::hh_psc_alpha_gap( const hh_psc_alpha_gap& n )
+hh_psc_alpha_gap::hh_psc_alpha_gap( const hh_psc_alpha_gap& n )
   : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -344,7 +343,7 @@ nest::hh_psc_alpha_gap::hh_psc_alpha_gap( const hh_psc_alpha_gap& n )
   Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
 }
 
-nest::hh_psc_alpha_gap::~hh_psc_alpha_gap()
+hh_psc_alpha_gap::~hh_psc_alpha_gap()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
@@ -366,7 +365,7 @@ nest::hh_psc_alpha_gap::~hh_psc_alpha_gap()
  * ---------------------------------------------------------------- */
 
 void
-nest::hh_psc_alpha_gap::init_buffers_()
+hh_psc_alpha_gap::init_buffers_()
 {
   B_.spike_exc_.clear();  // includes resize
   B_.spike_inh_.clear();  // includes resize
@@ -434,7 +433,7 @@ nest::hh_psc_alpha_gap::init_buffers_()
 }
 
 void
-nest::hh_psc_alpha_gap::pre_run_hook()
+hh_psc_alpha_gap::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -451,7 +450,7 @@ nest::hh_psc_alpha_gap::pre_run_hook()
  * ---------------------------------------------------------------- */
 
 bool
-nest::hh_psc_alpha_gap::update_( Time const& origin, const long from, const long to, const bool called_from_wfr_update )
+hh_psc_alpha_gap::update_( Time const& origin, const long from, const long to, const bool called_from_wfr_update )
 {
   const size_t interpolation_order = kernel().simulation_manager.get_wfr_interpolation_order();
   const double wfr_tol = kernel().simulation_manager.get_wfr_tol();
@@ -608,7 +607,7 @@ nest::hh_psc_alpha_gap::update_( Time const& origin, const long from, const long
 }
 
 void
-nest::hh_psc_alpha_gap::handle( SpikeEvent& e )
+hh_psc_alpha_gap::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -625,7 +624,7 @@ nest::hh_psc_alpha_gap::handle( SpikeEvent& e )
 }
 
 void
-nest::hh_psc_alpha_gap::handle( CurrentEvent& e )
+hh_psc_alpha_gap::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -636,13 +635,13 @@ nest::hh_psc_alpha_gap::handle( CurrentEvent& e )
 }
 
 void
-nest::hh_psc_alpha_gap::handle( DataLoggingRequest& e )
+hh_psc_alpha_gap::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
 
 void
-nest::hh_psc_alpha_gap::handle( GapJunctionEvent& e )
+hh_psc_alpha_gap::handle( GapJunctionEvent& e )
 {
   const double weight = e.get_weight();
 
@@ -657,5 +656,7 @@ nest::hh_psc_alpha_gap::handle( GapJunctionEvent& e )
     ++i;
   }
 }
+
+}  // namespace nest
 
 #endif  // HAVE_GSL

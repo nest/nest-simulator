@@ -31,15 +31,12 @@ the neuron fire at the same rate as the excitatory population.
 Optimization is performed using the ``bisection`` method from Scipy,
 simulating the network repeatedly.
 
-This example is also shown in the article [1]_
+This example is also shown in the article :footcite:p:`Eppler2009`
 
 References
 ~~~~~~~~~~
 
-.. [1] Eppler JM, Helias M, Mulller E, Diesmann M, Gewaltig MO (2009). PyNEST: A convenient interface to the NEST
-       simulator, Front. Neuroinform.
-       http://dx.doi.org/10.3389/neuro.11.012.2008
-
+.. footbibliography::
 """
 
 ###############################################################################

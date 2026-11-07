@@ -39,6 +39,14 @@ namespace nest
 
 /* BeginUserDocs: NOINDEX
 
+Short description
++++++++++++++++++
+
+Stimulation device
+
+Description
++++++++++++
+
 All stimulation devices share the parameters ``start`` and ``stop``,
 which control the stimulation period. The property ``origin`` is a
 global offset that shifts the stimulation period. All three values are
@@ -160,6 +168,11 @@ public:
   void set_status( const Dictionary& ) override;
 
   bool has_proxies() const override;
+
+  /**
+   * @note Mark as local_receiver() so multimeter is properly identified as device.
+   */
+  bool local_receiver() const override;
   std::string get_element_type() const override;
 
   using Device::init_buffers;
@@ -230,6 +243,12 @@ inline bool
 StimulationDevice::has_proxies() const
 {
   return false;
+}
+
+inline bool
+StimulationDevice::local_receiver() const
+{
+  return true;
 }
 
 }  // namespace nest

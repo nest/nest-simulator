@@ -26,7 +26,7 @@ checks the following:
     - Default values can be set successfully.
     - Nodes are created with correct default values.
     - Nodes can be created with correct default values from the command line.
-    - Parameters can be set via SetStatus.
+    - Parameters can be set via set().
 """
 
 import nest

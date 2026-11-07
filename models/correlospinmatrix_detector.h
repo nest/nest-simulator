@@ -311,7 +311,7 @@ correlospinmatrix_detector::handles_test_event( SpikeEvent&, size_t receptor_typ
 }
 
 inline void
-nest::correlospinmatrix_detector::get_status( Dictionary& d ) const
+correlospinmatrix_detector::get_status( Dictionary& d ) const
 {
   device_.get_status( d );
   P_.get( d );
@@ -319,7 +319,7 @@ nest::correlospinmatrix_detector::get_status( Dictionary& d ) const
 }
 
 inline void
-nest::correlospinmatrix_detector::set_status( const Dictionary& d )
+correlospinmatrix_detector::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;
   const bool reset_required = ptmp.set( d, *this, this );

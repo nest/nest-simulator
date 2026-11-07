@@ -316,7 +316,7 @@ binary_neuron< TGainfunction >::set_status( const Dictionary& d )
 }
 
 template < typename TGainfunction >
-RecordablesMap< nest::binary_neuron< TGainfunction > > nest::binary_neuron< TGainfunction >::recordablesMap_;
+RecordablesMap< binary_neuron< TGainfunction > > binary_neuron< TGainfunction >::recordablesMap_;
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state

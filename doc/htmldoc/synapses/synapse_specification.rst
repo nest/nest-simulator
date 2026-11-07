@@ -3,7 +3,7 @@
 Synapse specification
 =====================
 
-This page is about parameterizing synapses. See :ref:`connectivity_concepts` for specifying connections (for using an external library see :ref:`connection_generator`) and :ref:`handling_connections` for inspecting and modifying ``SynapseCollections``.
+This page is about parameterizing synapses. See :ref:`connectivity_concepts` for specifying connections and :ref:`handling_connections` for inspecting and modifying ``SynapseCollections``.
 
 
 The synapse properties can be given as just the name of the desired
@@ -439,6 +439,15 @@ shows the setup and connection of such a model in more detail:
     print(B.n_synapses)   # This will print 3, as we set 3 different tau_syns
 
     nest.Connect(A, B, syn_spec={'receptor_type': 2})
+
+.. note::
+
+   Many neuron models do not use ``receptor_type`` to select between their excitatory and
+   inhibitory synapses. They use the **sign of the connection weight** instead, and require
+   ``receptor_type`` to be left at 0. Which mechanism applies is fixed by the neuron model
+   you connect to.
+
+   See :ref:`synapse_selection` for the mechanism each model uses.
 
 
 .. _synapse-types:

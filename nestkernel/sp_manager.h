@@ -190,8 +190,6 @@ public:
     std::vector< int >& se_deleted_n );
 
   void serialize_id( std::vector< size_t >& id, std::vector< int >& n, std::vector< size_t >& res );
-  void global_shuffle( std::vector< size_t >& v );
-  void global_shuffle( std::vector< size_t >& v, size_t n );
 
   /**
    * Match vacant pre- to post-synaptic elements using the configured spatial kernel and mask.

@@ -25,7 +25,8 @@ A small neuron-astrocyte network
 
 This script shows how to create a neuron-astrocyte network in NEST. The network
 in this script includes 20 neurons and five astrocytes. The astrocytes are modeled
-with ``astrocyte_lr_1994``, implemented according to [1]_, [2]_, and [3]_. The
+with ``astrocyte_lr_1994``, implemented according to :footcite:p:`Li1994`,
+:footcite:p:`DeYoung1992`, and :footcite:p:`Nadkarni2003`. The
 neurons are modeled with ``aeif_cond_alpha_astro``, an adaptive exponential
 integrate-and-fire neuron supporting neuron-astrocyte interactions.
 
@@ -113,20 +114,7 @@ rule.
 References
 ~~~~~~~~~~
 
-.. [1] Li, Y. X., & Rinzel, J. (1994). Equations for InsP3 receptor-mediated
-       [Ca2+]i oscillations derived from a detailed kinetic model: a
-       Hodgkin-Huxley like formalism. Journal of theoretical Biology, 166(4),
-       461-473. DOI: https://doi.org/10.1006/jtbi.1994.1041
-
-.. [2] De Young, G. W., & Keizer, J. (1992). A single-pool inositol
-       1,4,5-trisphosphate-receptor-based model for agonist-stimulated
-       oscillations in Ca2+ concentration. Proceedings of the National Academy
-       of Sciences, 89(20), 9895-9899. DOI:
-       https://doi.org/10.1073/pnas.89.20.9895
-
-.. [3] Nadkarni, S., & Jung, P. (2003). Spontaneous oscillations of dressed
-       neurons: a new mechanism for epilepsy?. Physical review letters, 91(26),
-       268101. DOI: https://doi.org/10.1103/PhysRevLett.91.268101
+.. footbibliography::
 
 See Also
 ~~~~~~~~

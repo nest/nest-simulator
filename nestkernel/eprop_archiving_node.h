@@ -26,6 +26,7 @@
 // nestkernel
 #include "flush_event_mechanism.h"
 #include "histentry.h"
+#include "ignore_and_spike_mechanism.h"
 #include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
@@ -37,7 +38,7 @@ namespace nest
  *
  * Base class implementing an intermediate archiving node model for node models supporting e-prop plasticity
  * according to Bellec et al. (2020) and supporting additional biological features described in
- * Korcsak-Gorzo et al. (2025).
+ * Korcsak-Gorzo et al. (2026).
  *
  * A node which archives the history of dynamic variables, the firing rate
  * regularization, and update times needed to calculate the weight updates for
@@ -48,7 +49,7 @@ namespace nest
  * @tparam HistEntryT The type of history entry.
  */
 template < typename HistEntryT >
-class EpropArchivingNode : public Node, public FlushEventMechanism
+class EpropArchivingNode : public Node, public FlushEventMechanism, public IgnoreAndSpikeMechanism
 {
 public:
   /**
@@ -121,6 +122,8 @@ public:
    * @brief Retrieves eprop history size.
    *
    * Retrieves the size of the eprop history buffer.
+   *
+   * @return The duration of the eprop history buffer (ms).
    */
   double get_eprop_history_duration() const;
 
@@ -129,6 +132,8 @@ public:
    *
    * Retrieves the time interval from the previous spike until the cutoff of
    * e-prop update computation between two spikes (ms).
+   *
+   * @return The eprop ISI trace cutoff (steps).
    */
   long
   get_eprop_isi_trace_cutoff() const
@@ -137,7 +142,11 @@ public:
   }
 
 protected:
-  //! Returns correct shift for history depending on whether it is a normal or a bsshslm_2020 model.
+  /**
+   * Returns the correct shift for history depending on whether it is a normal or a bsshslm_2020 model.
+   *
+   * @return The history shift (steps).
+   */
   virtual long model_dependent_history_shift_() const = 0;
 
   //! Number of incoming eprop synapses

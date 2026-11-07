@@ -26,7 +26,10 @@
 
 #include "recording_device.h"
 
-nest::RecordingDevice::RecordingDevice()
+
+namespace nest
+{
+RecordingDevice::RecordingDevice()
   : DeviceNode()
   , Device()
   , P_()
@@ -34,7 +37,7 @@ nest::RecordingDevice::RecordingDevice()
 {
 }
 
-nest::RecordingDevice::RecordingDevice( const RecordingDevice& rd )
+RecordingDevice::RecordingDevice( const RecordingDevice& rd )
   : DeviceNode( rd )
   , Device( rd )
   , P_( rd.P_ )
@@ -43,13 +46,13 @@ nest::RecordingDevice::RecordingDevice( const RecordingDevice& rd )
 }
 
 void
-nest::RecordingDevice::set_initialized_()
+RecordingDevice::set_initialized_()
 {
   kernel().io_manager.enroll_recorder( P_.record_to_, *this, backend_params_ );
 }
 
 void
-nest::RecordingDevice::pre_run_hook( const std::vector< std::string >& double_value_names,
+RecordingDevice::pre_run_hook( const std::vector< std::string >& double_value_names,
   const std::vector< std::string >& long_value_names )
 {
   Device::pre_run_hook();
@@ -57,26 +60,26 @@ nest::RecordingDevice::pre_run_hook( const std::vector< std::string >& double_va
 }
 
 const std::string&
-nest::RecordingDevice::get_label() const
+RecordingDevice::get_label() const
 {
   return P_.label_;
 }
 
-nest::RecordingDevice::Parameters_::Parameters_()
+RecordingDevice::Parameters_::Parameters_()
   : label_()
   , record_to_( names::memory )
 {
 }
 
 void
-nest::RecordingDevice::Parameters_::get( Dictionary& d ) const
+RecordingDevice::Parameters_::get( Dictionary& d ) const
 {
   d[ names::label ] = label_;
   d[ names::record_to ] = record_to_;
 }
 
 void
-nest::RecordingDevice::Parameters_::set( const Dictionary& d )
+RecordingDevice::Parameters_::set( const Dictionary& d )
 {
   d.update_value( names::label, label_ );
 
@@ -93,13 +96,13 @@ nest::RecordingDevice::Parameters_::set( const Dictionary& d )
   }
 }
 
-nest::RecordingDevice::State_::State_()
+RecordingDevice::State_::State_()
   : n_events_( 0 )
 {
 }
 
 void
-nest::RecordingDevice::State_::get( Dictionary& d ) const
+RecordingDevice::State_::get( Dictionary& d ) const
 {
   long n_events = 0;
   d.update_value( names::n_events, n_events );
@@ -108,7 +111,7 @@ nest::RecordingDevice::State_::get( Dictionary& d ) const
 }
 
 void
-nest::RecordingDevice::State_::set( const Dictionary& d )
+RecordingDevice::State_::set( const Dictionary& d )
 {
   long n_events = 0;
 
@@ -124,7 +127,7 @@ nest::RecordingDevice::State_::set( const Dictionary& d )
 }
 
 void
-nest::RecordingDevice::set_status( const Dictionary& d )
+RecordingDevice::set_status( const Dictionary& d )
 {
   if ( kernel().simulation_manager.has_been_prepared() )
   {
@@ -176,7 +179,7 @@ nest::RecordingDevice::set_status( const Dictionary& d )
 }
 
 void
-nest::RecordingDevice::get_status( Dictionary& d ) const
+RecordingDevice::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
@@ -203,7 +206,7 @@ nest::RecordingDevice::get_status( Dictionary& d ) const
 }
 
 bool
-nest::RecordingDevice::is_active( Time const& T ) const
+RecordingDevice::is_active( Time const& T ) const
 {
   const long stamp = T.get_steps();
 
@@ -211,10 +214,12 @@ nest::RecordingDevice::is_active( Time const& T ) const
 }
 
 void
-nest::RecordingDevice::write( const Event& event,
+RecordingDevice::write( const Event& event,
   const std::vector< double >& double_values,
   const std::vector< long >& long_values )
 {
   kernel().io_manager.write( P_.record_to_, *this, event, double_values, long_values );
   S_.n_events_++;
 }
+
+}  // namespace nest

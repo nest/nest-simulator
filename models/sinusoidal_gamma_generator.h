@@ -99,7 +99,7 @@ order
 individual_spike_trains
     See note above. Default: ``True``.
 
-See also [1]_.
+See also :footcite:p:`Barbieri2001`.
 
 Setting parameters from a stimulation backend
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -129,10 +129,7 @@ SpikeEvent
 References
 ++++++++++
 
-.. [1] Barbieri et al. (2001). Construction and analysis of non-Poisson
-       stimulus-response models of neural spiking activity. Journal of
-       Neuroscience Methods, 105:25-3.
-       DOI: https://doi.org/10.1016/S0165-0270(00)00344-7
+.. footbibliography::
 
 See also
 ++++++++

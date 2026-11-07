@@ -36,9 +36,9 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
+
 namespace nest
 {
-
 void
 register_eprop_readout( const std::string& name )
 {
@@ -126,12 +126,12 @@ eprop_readout::Parameters_::set( const Dictionary& d, Node* node )
 
   if ( C_m_ <= 0 )
   {
-    throw BadProperty( "Membrane capacitance C_m > 0 required." );
+    throw BadProperty( "C_m > 0 required." );
   }
 
   if ( tau_m_ <= 0 )
   {
-    throw BadProperty( "Membrane time constant tau_m > 0 required." );
+    throw BadProperty( "tau_m > 0 required." );
   }
   return delta_EL;
 }
@@ -294,9 +294,9 @@ eprop_readout::compute_gradient( const long t_spike,
   const long t_spike_previous,
   double& z_previous_buffer,
   double& z_bar,
-  double& e_bar,
-  double& e_bar_reg,
-  double& epsilon,
+  double& /*e_bar*/,
+  double& /*e_bar_reg*/,
+  double& /*epsilon*/,
   double& weight,
   const CommonSynapseProperties& cp,
   WeightOptimizer* optimizer,

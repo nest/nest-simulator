@@ -3,6 +3,9 @@
 PyNEST examples
 ===============
 
+.. meta::
+   :description: NEST example gallery with 50+ working scripts: Brunel networks, spatial connectivity, plasticity rules (STDP, eProp), astrocytes, HPC benchmarks, and fun projects like Sudoku and Pong.
+
 .. grid:: 1 1 2 3
     :gutter: 1
 
@@ -245,6 +248,8 @@ PyNEST examples
            * :doc:`../auto_examples/sensitivity_to_perturbation`
            * :doc:`../auto_examples/intrinsic_currents_spiking`
            * :doc:`../auto_examples/intrinsic_currents_subthreshold`
+           * :doc:`../auto_examples/ou_vs_white_noise`
+           * :doc:`../auto_examples/ou_noise_single_neuron`
 
     .. grid-item-card:: Handling output
            :img-top: ../static/img/pynest/store_restore.png
@@ -266,20 +271,12 @@ PyNEST examples
            :img-top: ../auto_examples/hpc_benchmark_connectivity.svg
 
            * :doc:`../auto_examples/hpc_benchmark`
+           * :doc:`../auto_examples/ignore_and_spike_mechanism`
 
     .. grid-item-card:: Brette et al. 2007 Benchmarks
            :img-top: ../static/img/nest_logo-faded.png
 
            :doc:`../auto_examples/brette_et_al_2007/index`
-
-
-.. grid:: 1 1 2 3
-
-    .. grid-item-card:: Connection set algebra
-           :img-top: ../static/img/nest_logo-faded.png
-
-           * :doc:`../auto_examples/csa_example`
-           * :doc:`../auto_examples/csa_spatial_example`
 
 .. toctree::
    :hidden:
@@ -287,6 +284,7 @@ PyNEST examples
    running_notebooks
    ../auto_examples/sudoku/index
    ../auto_examples/pong/index
+   ../auto_examples/ignore_and_spike_mechanism
    ../auto_examples/spatial/index
    ../auto_examples/music_cont_out_proxy_example/index
    ../auto_examples/compartmental_model/index
@@ -345,11 +343,11 @@ PyNEST examples
    ../auto_examples/cross_check_mip_corrdet
    ../auto_examples/intrinsic_currents_spiking
    ../auto_examples/intrinsic_currents_subthreshold
-   ../auto_examples/csa_example
-   ../auto_examples/csa_spatial_example
    ../auto_examples/hpc_benchmark
    ../auto_examples/brette_et_al_2007/index
    ../auto_examples/astrocytes/index
    ../auto_examples/EI_clustered_network/index
    ../auto_examples/eprop_plasticity/index
    ../auto_examples/wang_decision_making
+   ../auto_examples/ou_vs_white_noise
+   ../auto_examples/ou_noise_single_neuron

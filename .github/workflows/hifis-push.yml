@@ -2,15 +2,15 @@ name: Mirror to Codebase Helmholtz Cloud
 
 on:
   push:
-    branches: [ master ]
+    branches: [main]
 
 jobs:
-  sync_to_jsc:
+  sync_to_hifis:
     runs-on: ubuntu-latest
     if: ${{ github.repository_owner == 'nest' }}
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
         with:
           egress-policy: audit
           disable-telemetry: true

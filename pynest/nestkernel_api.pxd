@@ -183,7 +183,7 @@ cdef extern from "nest.h" namespace "nest":
     Dictionary get_model_defaults( const string& ) except +custom_exception_handler
     void set_model_defaults( const string&, const Dictionary& ) except +custom_exception_handler
     NodeCollectionPTR get_nodes( const Dictionary& params, const cbool local_only ) except +custom_exception_handler
-    deque[ConnectionID] get_connections( const Dictionary& dict ) except +custom_exception_handler
+    vector[deque[ConnectionID]] get_connections( const Dictionary& dict ) except +custom_exception_handler
     void set_kernel_status( const Dictionary& ) except +custom_exception_handler
     Dictionary get_nc_status( NodeCollectionPTR nc ) except +custom_exception_handler
     void set_nc_status( NodeCollectionPTR nc, vector[Dictionary]& params ) except +custom_exception_handler

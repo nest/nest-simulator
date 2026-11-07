@@ -556,17 +556,13 @@ SPManager::create_synapses( std::vector< size_t >& pre_id,
     // Shuffle only the largest vector
     if ( pre_id_rnd.size() > post_id_rnd.size() )
     {
-      // we only shuffle the n first items,
-      // where n is the number of postsynaptic elements
-      global_shuffle( pre_id_rnd, post_id_rnd.size() );
-      pre_id_rnd.resize( post_id_rnd.size() );
+      // randomly select n elements
+      get_rank_synced_rng()->partial_shuffle( pre_id_rnd, post_id_rnd.size() );
     }
     else
     {
-      // we only shuffle the n first items,
-      // where n is the number of pre synaptic elements
-      global_shuffle( post_id_rnd, pre_id_rnd.size() );
-      post_id_rnd.resize( pre_id_rnd.size() );
+      // randomly select n elements
+      get_rank_synced_rng()->partial_shuffle( post_id_rnd, pre_id_rnd.size() );
     }
 
     pre_ids_results = pre_id_rnd;
@@ -574,12 +570,8 @@ SPManager::create_synapses( std::vector< size_t >& pre_id,
   }
   else
   {
-    // Fisher-Yates: the matching below is sequential, so the serving order must be random.
-    for ( size_t i = pre_id_rnd.size(); i > 1; --i )
-    {
-      const size_t j = get_rank_synced_rng()->ulrand( i );
-      std::swap( pre_id_rnd[ i - 1 ], pre_id_rnd[ j ] );
-    }
+    // The matching below is sequential, so the serving order must be random.
+    get_rank_synced_rng()->partial_shuffle( pre_id_rnd, pre_id_rnd.size() );
     match_vacant_elements_spatially(
       pre_id_rnd, post_id_rnd, pre_ids_results, post_ids_results, sp_conn_builder->allows_autapses() );
   }
@@ -625,7 +617,7 @@ SPManager::delete_synapses_from_pre( const std::vector< size_t >& pre_deleted_id
     {
       *n_it = -global_targets.size();
     }
-    global_shuffle( global_targets, -( *n_it ) );
+    get_rank_synced_rng()->partial_shuffle( global_targets, -( *n_it ) );
 
     for ( int i = 0; i < -( *n_it ); ++i )  // n is negative
     {
@@ -704,7 +696,7 @@ SPManager::delete_synapses_from_post( std::vector< size_t >& post_deleted_id,
     {
       *n_it = -global_sources.size();
     }
-    global_shuffle( global_sources, -( *n_it ) );
+    get_rank_synced_rng()->partial_shuffle( global_sources, -( *n_it ) );
 
     for ( int i = 0; i < -( *n_it ); i++ )  // n is negative
     {
@@ -714,7 +706,7 @@ SPManager::delete_synapses_from_post( std::vector< size_t >& post_deleted_id,
 }
 
 void
-nest::SPManager::get_synaptic_elements( std::string se_name,
+SPManager::get_synaptic_elements( std::string se_name,
   std::vector< size_t >& se_vacant_id,
   std::vector< int >& se_vacant_n,
   std::vector< size_t >& se_deleted_id,
@@ -776,7 +768,7 @@ nest::SPManager::get_synaptic_elements( std::string se_name,
 }
 
 void
-nest::SPManager::serialize_id( std::vector< size_t >& id, std::vector< int >& n, std::vector< size_t >& res )
+SPManager::serialize_id( std::vector< size_t >& id, std::vector< int >& n, std::vector< size_t >& res )
 {
   // populate res with indexes of nodes corresponding to the number of elements
   res.clear();
@@ -794,34 +786,6 @@ nest::SPManager::serialize_id( std::vector< size_t >& id, std::vector< int >& n,
   }
 }
 
-void
-nest::SPManager::global_shuffle( std::vector< size_t >& v )
-{
-  global_shuffle( v, v.size() );
-}
-
-void
-nest::SPManager::global_shuffle( std::vector< size_t >& v, size_t n )
-{
-  assert( n <= v.size() );
-
-  // shuffle res using the global random number generator
-  unsigned int N = v.size();
-  std::vector< size_t > v2;
-  size_t tmp;
-  unsigned int rnd;
-  std::vector< size_t >::iterator rndi;
-  for ( unsigned int i = 0; i < n; i++ )
-  {
-    N = v.size();
-    rnd = get_rank_synced_rng()->ulrand( N );
-    tmp = v[ rnd ];
-    v2.push_back( tmp );
-    rndi = v.begin();
-    v.erase( rndi + rnd );
-  }
-  v = v2;
-}
 void
 SPManager::match_vacant_elements_spatially( std::vector< size_t >& pre_ids,
   std::vector< size_t >& post_ids,
@@ -924,7 +888,7 @@ SPManager::match_vacant_elements_spatially( std::vector< size_t >& pre_ids,
 }
 
 void
-nest::SPManager::enable_structural_plasticity( ParameterPTR spatial_kernel, MaskPTR spatial_mask )
+SPManager::enable_structural_plasticity( ParameterPTR spatial_kernel, MaskPTR spatial_mask )
 {
   if ( kernel().vp_manager.get_num_threads() > 1 )
   {
@@ -955,7 +919,7 @@ nest::SPManager::enable_structural_plasticity( ParameterPTR spatial_kernel, Mask
 }
 
 void
-nest::SPManager::disable_structural_plasticity()
+SPManager::disable_structural_plasticity()
 {
   structural_plasticity_enabled_ = false;
 }

@@ -917,15 +917,15 @@ SPManager::enable_structural_plasticity( ParameterPTR spatial_kernel, MaskPTR sp
       "has been set to false." );
   }
 
-  spatial_kernel_ = spatial_kernel;
-  spatial_mask_ = spatial_mask;
-  structural_plasticity_enabled_ = true;
-
   // Both the kernel and the mask need positions.
-  if ( uses_spatial_matching() )
+  if ( spatial_kernel or spatial_mask )
   {
     gather_global_positions_and_ids();
   }
+
+  spatial_kernel_ = spatial_kernel;
+  spatial_mask_ = spatial_mask;
+  structural_plasticity_enabled_ = true;
 }
 
 void

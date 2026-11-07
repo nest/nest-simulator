@@ -21,6 +21,8 @@
  */
 
 // C++ includes:
+#include <algorithm>
+#include <functional>
 #include <iostream>
 
 // Includes from nestkernel:
@@ -467,8 +469,7 @@ SourceTable::resize_compressible_sources()
   for ( size_t tid = 0; tid < static_cast< size_t >( compressible_sources_.size() ); ++tid )
   {
     compressible_sources_[ tid ].clear();
-    compressible_sources_[ tid ].resize(
-      kernel().model_manager.get_num_connection_models(), std::map< size_t, SpikeData >() );
+    compressible_sources_[ tid ].resize( kernel().model_manager.get_num_connection_models(), CompressibleSources() );
   }
 }
 
@@ -479,12 +480,21 @@ SourceTable::collect_compressible_sources( const size_t tid )
   {
     size_t lcid = 0;
     auto& syn_sources = sources_[ tid ][ syn_id ];
+    auto& syn_compressible_sources = compressible_sources_[ tid ][ syn_id ];
+
+    // Reserve one entry per run of equal sources. Keep this counting pass: the spare capacity of a growing vector in
+    // every thread raised the peak memory of Prepare by 0.3 GB per process (PD14, 1 x 256 threads).
+    size_t num_runs = 0;
+    for ( size_t i = 0; i < syn_sources.size(); ++i )
+    {
+      num_runs += ( i == 0 or syn_sources[ i ].get_node_id() != syn_sources[ i - 1 ].get_node_id() ) ? 1 : 0;
+    }
+    syn_compressible_sources.reserve( num_runs );
+
     while ( lcid < syn_sources.size() )
     {
       const size_t old_source_node_id = syn_sources[ lcid ].get_node_id();
-      const std::pair< size_t, SpikeData > source_node_id_to_spike_data =
-        std::make_pair( old_source_node_id, SpikeData( tid, syn_id, lcid, 0 ) );
-      compressible_sources_[ tid ][ syn_id ].insert( source_node_id_to_spike_data );
+      syn_compressible_sources.emplace_back( old_source_node_id, SpikeData( tid, syn_id, lcid, 0 ) );
 
       // For all subsequent connections with same source, set "has more targets" on preceding connection.
       // Requires sorted connections.
@@ -499,7 +509,241 @@ SourceTable::collect_compressible_sources( const size_t tid )
       assert( lcid - 1 < syn_sources.size() );
       kernel().connection_manager.set_source_has_more_targets( tid, syn_id, lcid - 1, false );
     }
+
+    // the connections are sorted by source, so the entries are sorted by node id and unique
+    assert( std::adjacent_find( syn_compressible_sources.begin(),
+              syn_compressible_sources.end(),
+              []( const CompressibleSources::value_type& lhs, const CompressibleSources::value_type& rhs )
+              { return lhs.first >= rhs.first; } )
+      == syn_compressible_sources.end() );
   }
+}
+
+void
+SourceTable::assemble_compressed_spike_data( const size_t tid )
+{
+#pragma omp single
+  {
+    const size_t num_threads = compressible_sources_.size();
+    const size_t num_synapse_models = kernel().model_manager.get_num_connection_models();
+    unique_compressible_sources_.assign( num_synapse_models, std::vector< UniqueSources >( num_threads ) );
+    num_unique_compressible_sources_.assign(
+      num_synapse_models, std::vector< size_t >( num_threads * num_threads, 0 ) );
+  }  // of omp single; implicit barrier
+
+  find_unique_sources_( tid );
+
+  kernel().get_omp_synchronization_construction_stopwatch().start();
+#pragma omp barrier
+  kernel().get_omp_synchronization_construction_stopwatch().stop();
+
+  number_unique_sources_( tid );
+
+  kernel().get_omp_synchronization_construction_stopwatch().start();
+#pragma omp barrier
+  kernel().get_omp_synchronization_construction_stopwatch().stop();
+
+#pragma omp single
+  {
+    allocate_compressed_spike_data_();
+  }  // of omp single; implicit barrier
+
+  write_own_column_( tid );
+
+#ifndef NDEBUG
+  kernel().get_omp_synchronization_construction_stopwatch().start();
+#pragma omp barrier
+  kernel().get_omp_synchronization_construction_stopwatch().stop();
+#pragma omp single
+  {
+    assert( is_result_of_serial_assembly_() );
+  }  // of omp single; implicit barrier
+#endif
+
+  for ( auto& sources : compressible_sources_[ tid ] )
+  {
+    CompressibleSources().swap( sources );
+  }
+}
+
+void
+SourceTable::find_unique_sources_( const size_t tid )
+{
+  const size_t num_threads = compressible_sources_.size();
+  const size_t max_node_id = kernel().node_manager.size();
+  const size_t range_begin = 1 + tid * max_node_id / num_threads;
+  const size_t range_end = 1 + ( tid + 1 ) * max_node_id / num_threads;
+  const auto node_id_less = []( const CompressibleSources::value_type& entry, const size_t node_id )
+  { return entry.first < node_id; };
+
+  // The sources of every thread are sorted, so a merge over a heap of (node id, thread) pairs visits them in the order
+  // (node id, thread), with memory proportional to the number of threads instead of a sorted copy of the range.
+  std::vector< std::pair< CompressibleSources::const_iterator, CompressibleSources::const_iterator > > cursors(
+    num_threads );
+  std::vector< std::pair< size_t, size_t > > heap;
+  heap.reserve( num_threads );
+  const std::greater< std::pair< size_t, size_t > > heap_order;
+  for ( synindex syn_id = 0; syn_id < unique_compressible_sources_.size(); ++syn_id )
+  {
+    for ( size_t target_thread = 0; target_thread < num_threads; ++target_thread )
+    {
+      const auto& sources = compressible_sources_[ target_thread ][ syn_id ];
+      assert( sources.empty() or sources.back().first <= max_node_id );  // the ranges cover all sources
+      const auto begin = std::lower_bound( sources.begin(), sources.end(), range_begin, node_id_less );
+      cursors[ target_thread ] =
+        std::make_pair( begin, std::lower_bound( begin, sources.end(), range_end, node_id_less ) );
+      if ( begin != cursors[ target_thread ].second )
+      {
+        heap.emplace_back( begin->first, target_thread );
+      }
+    }
+    std::make_heap( heap.begin(), heap.end(), heap_order );
+
+    auto& unique_sources = unique_compressible_sources_[ syn_id ][ tid ];
+    size_t* const num_unique_sources = &num_unique_compressible_sources_[ syn_id ][ tid * num_threads ];
+    while ( not heap.empty() )
+    {
+      std::pop_heap( heap.begin(), heap.end(), heap_order );
+      const auto [ node_id, target_thread ] = heap.back();
+      heap.pop_back();
+      if ( unique_sources.empty() or unique_sources.back().first != node_id )
+      {
+        unique_sources.emplace_back( node_id, CSDMapEntry( 0, target_thread ) );  // index set by number_unique_sources_
+        ++num_unique_sources[ target_thread ];
+      }
+      auto& cursor = cursors[ target_thread ];
+      if ( ++cursor.first != cursor.second )
+      {
+        heap.emplace_back( cursor.first->first, target_thread );
+        std::push_heap( heap.begin(), heap.end(), heap_order );
+      }
+    }
+  }
+}
+
+void
+SourceTable::number_unique_sources_( const size_t tid )
+{
+  // The serial algorithm numbers the sources in the order (first thread, node id). The sources of range tid whose
+  // first thread is t follow all sources of the threads before t and the sources of t in the ranges before tid.
+  // Each thread sums the counts of all ranges: O(T^2) per thread, negligible also for T = 288.
+  const size_t num_threads = compressible_sources_.size();
+  std::vector< size_t > next_index( num_threads );
+  for ( synindex syn_id = 0; syn_id < unique_compressible_sources_.size(); ++syn_id )
+  {
+    const std::vector< size_t >& num_unique_sources = num_unique_compressible_sources_[ syn_id ];
+    size_t num_sources_of_previous_threads = 0;
+    for ( size_t target_thread = 0; target_thread < num_threads; ++target_thread )
+    {
+      size_t num_in_previous_ranges = 0;
+      size_t num_of_thread = 0;
+      for ( size_t range = 0; range < num_threads; ++range )
+      {
+        const size_t n = num_unique_sources[ range * num_threads + target_thread ];
+        num_in_previous_ranges += range < tid ? n : 0;
+        num_of_thread += n;
+      }
+      next_index[ target_thread ] = num_sources_of_previous_threads + num_in_previous_ranges;
+      num_sources_of_previous_threads += num_of_thread;
+    }
+
+    for ( auto& unique_source : unique_compressible_sources_[ syn_id ][ tid ] )
+    {
+      const size_t target_thread = unique_source.second.get_target_thread();
+      unique_source.second = CSDMapEntry( next_index[ target_thread ]++, target_thread );
+    }
+  }
+}
+
+void
+SourceTable::allocate_compressed_spike_data_()
+{
+  const size_t num_threads = compressible_sources_.size();
+  const size_t num_synapse_models = unique_compressible_sources_.size();
+  assembled_compressed_spike_data_.assign( num_synapse_models, std::vector< std::vector< SpikeData > >() );
+  compressed_spike_data_map_.assign( num_synapse_models, std::map< size_t, CSDMapEntry >() );
+
+  for ( synindex syn_id = 0; syn_id < num_synapse_models; ++syn_id )
+  {
+    // the ranges are ordered by node id, so every new entry goes to the end of the map
+    auto& source_index_map = compressed_spike_data_map_[ syn_id ];
+    for ( const auto& unique_sources : unique_compressible_sources_[ syn_id ] )
+    {
+      source_index_map.insert( unique_sources.begin(), unique_sources.end() );
+    }
+    assembled_compressed_spike_data_[ syn_id ].assign( source_index_map.size(),
+      std::vector< SpikeData >( num_threads, SpikeData( invalid_targetindex, invalid_synindex, invalid_lcid, 0 ) ) );
+  }
+}
+
+void
+SourceTable::write_own_column_( const size_t tid )
+{
+  // The sources of thread tid and the unique sources of the ranges are both sorted by node id.
+  for ( synindex syn_id = 0; syn_id < unique_compressible_sources_.size(); ++syn_id )
+  {
+    const auto& unique_sources = unique_compressible_sources_[ syn_id ];
+    auto& compressed_spike_data = assembled_compressed_spike_data_[ syn_id ];
+    size_t range = 0;
+    size_t pos = 0;
+    for ( const auto& source : compressible_sources_[ tid ][ syn_id ] )
+    {
+      while ( pos == unique_sources[ range ].size() or unique_sources[ range ][ pos ].first < source.first )
+      {
+        if ( pos == unique_sources[ range ].size() )
+        {
+          ++range;
+          pos = 0;
+        }
+        else
+        {
+          ++pos;
+        }
+      }
+      assert( unique_sources[ range ][ pos ].first == source.first );
+      compressed_spike_data[ unique_sources[ range ][ pos ].second.get_source_index() ][ tid ] = source.second;
+    }
+  }
+}
+
+bool
+SourceTable::is_result_of_serial_assembly_() const
+{
+  // Serial algorithm: visit the threads in ascending order and, for each thread, its sources in ascending order of
+  // node id; a source gets the next row when it is seen for the first time.
+  for ( synindex syn_id = 0; syn_id < assembled_compressed_spike_data_.size(); ++syn_id )
+  {
+    const auto& assembled_map = compressed_spike_data_map_[ syn_id ];
+    std::map< size_t, CSDMapEntry > serial_map;
+    for ( size_t target_thread = 0; target_thread < compressible_sources_.size(); ++target_thread )
+    {
+      for ( const auto& [ node_id, spike_data ] : compressible_sources_[ target_thread ][ syn_id ] )
+      {
+        const CSDMapEntry entry =
+          serial_map.emplace( node_id, CSDMapEntry( serial_map.size(), target_thread ) ).first->second;
+        const auto it = assembled_map.find( node_id );
+        if ( entry.get_source_index() >= assembled_compressed_spike_data_[ syn_id ].size() )
+        {
+          return false;
+        }
+        const SpikeData& assembled =
+          assembled_compressed_spike_data_[ syn_id ][ entry.get_source_index() ][ target_thread ];
+        if ( it == assembled_map.end() or it->second.get_source_index() != entry.get_source_index()
+          or it->second.get_target_thread() != entry.get_target_thread()
+          or assembled.get_lcid() != spike_data.get_lcid() or assembled.get_tid() != spike_data.get_tid()
+          or assembled.get_syn_id() != spike_data.get_syn_id() )
+        {
+          return false;
+        }
+      }
+    }
+    if ( serial_map.size() != assembled_map.size()
+      or serial_map.size() != assembled_compressed_spike_data_[ syn_id ].size() )
+    {
+      return false;
+    }
+  }
+  return true;
 }
 
 void
@@ -545,51 +789,14 @@ SourceTable::dump_compressible_sources() const
 void
 SourceTable::fill_compressed_spike_data( std::vector< std::vector< std::vector< SpikeData > > >& compressed_spike_data )
 {
-  const size_t num_synapse_models = kernel().model_manager.get_num_connection_models();
+  // For each synapse type, and for each source neuron with at least one local target, compressed_spike_data holds one
+  // SpikeData entry for each local thread that owns a local target. compressed_spike_data_map_ holds the index into
+  // compressed_spike_data[ syn_id ] where the data for a given source is stored. Both were built by
+  // assemble_compressed_spike_data().
   compressed_spike_data.clear();
-  compressed_spike_data.resize( num_synapse_models );
-  compressed_spike_data_map_.clear();
-  compressed_spike_data_map_.resize( num_synapse_models, std::map< size_t, CSDMapEntry >() );
-
-  // For each synapse type, and for each source neuron with at least one local target,
-  // store in compressed_spike_data one SpikeData entry for each local thread that
-  // owns a local target. In compressed_spike_data_map_ store index into compressed_spike_data[syn_id]
-  // where data for a given source is stored.
-
-  // TODO: I believe that at this point compressible_sources_ is ordered by source gid.
-  //       Maybe one can exploit that to avoid searching with find() below.
-  for ( synindex syn_id = 0; syn_id < kernel().model_manager.get_num_connection_models(); ++syn_id )
-  {
-    for ( size_t target_thread = 0; target_thread < static_cast< size_t >( compressible_sources_.size() );
-      ++target_thread )
-    {
-      for ( const auto& connection : compressible_sources_[ target_thread ][ syn_id ] )
-      {
-        const auto source_gid = connection.first;
-
-        if ( compressed_spike_data_map_[ syn_id ].find( source_gid ) == compressed_spike_data_map_[ syn_id ].end() )
-        {
-          // Set up entry for new source
-          const auto new_source_index = compressed_spike_data[ syn_id ].size();
-
-          compressed_spike_data[ syn_id ].emplace_back( kernel().vp_manager.get_num_threads(),
-            SpikeData( invalid_targetindex, invalid_synindex, invalid_lcid, 0 ) );
-
-          compressed_spike_data_map_[ syn_id ].insert(
-            std::make_pair( source_gid, CSDMapEntry( new_source_index, target_thread ) ) );
-        }
-
-        const auto source_index = compressed_spike_data_map_[ syn_id ].find( source_gid )->second.get_source_index();
-
-        assert( compressed_spike_data[ syn_id ][ source_index ][ target_thread ].get_lcid() == invalid_lcid );
-
-        compressed_spike_data[ syn_id ][ source_index ][ target_thread ] = connection.second;
-      }  // for connection
-
-      compressible_sources_[ target_thread ][ syn_id ].clear();
-
-    }  // for target_thread
-  }  // for syn_id
+  compressed_spike_data.swap( assembled_compressed_spike_data_ );
+  std::vector< std::vector< UniqueSources > >().swap( unique_compressible_sources_ );
+  std::vector< std::vector< size_t > >().swap( num_unique_compressible_sources_ );
 }
 
 // Argument name only needed if full logging is activated. Macro-protect to avoid unused argument warning.

@@ -761,6 +761,7 @@ SimulationManager::update_connection_infrastructure( const size_t tid )
   sw_gather_target_data_.start();
   kernel().connection_manager.restructure_connection_tables( tid );
   kernel().connection_manager.collect_compressed_spike_data( tid );
+  kernel().connection_manager.count_target_data( tid );
   sw_gather_target_data_.stop();
 
   kernel().get_omp_synchronization_construction_stopwatch().start();

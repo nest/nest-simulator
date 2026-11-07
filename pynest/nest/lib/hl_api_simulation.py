@@ -312,22 +312,38 @@ def Install(module_name):
     nestkernel.llapi_install_module(module_name)
 
 
-def EnableStructuralPlasticity(
-    use_gaussian_kernel=False,
-    gaussian_kernel_sigma=1.0,
-    max_distance=float("inf"),
-):
+def EnableStructuralPlasticity(spatial_kernel=None, mask=None):
     """Enable structural plasticity for the network simulation
+
+    By default, vacant pre- and postsynaptic elements are matched uniformly at
+    random. Passing a spatial kernel and/or a mask restricts and weights that
+    matching by the positions of the neurons, which requires all neurons to be
+    spatially distributed.
 
     Parameters
     ----------
-    use_gaussian_kernel : bool, optional
-        Whether to use a Gaussian distance-dependent kernel for selecting
-        structural-plasticity partners.
-    gaussian_kernel_sigma : float, optional
-        Width of the Gaussian kernel.
-    max_distance : float, optional
-        Maximum allowed source-target distance.
+    spatial_kernel : Parameter, optional
+        Parameter evaluated on the positions of each candidate source-target
+        pair. Its value weights the candidate when a partner is drawn; a value
+        of zero excludes the candidate. The value must be finite and
+        non-negative. If not given, all candidates are equally likely.
+    mask : Mask, optional
+        Mask applied to the displacement from source to target. Candidates
+        outside the mask cannot be selected. If not given, no candidate is
+        excluded on spatial grounds.
+
+    Notes
+    -----
+    Distances and displacements are computed by the layer the target belongs
+    to, so periodic boundary conditions are respected.
+
+    **Example**
+    ::
+
+        nest.EnableStructuralPlasticity(
+            spatial_kernel=nest.spatial_distributions.gaussian(nest.spatial.distance, std=0.5),
+            mask=nest.CreateMask("circular", {"radius": 2.0}),
+        )
 
     See Also
     --------
@@ -335,10 +351,17 @@ def EnableStructuralPlasticity(
 
 
     """
+    # Imported here because hl_api_types imports from this module at import time.
+    from .hl_api_types import Mask, Parameter
+
+    if spatial_kernel is not None and not isinstance(spatial_kernel, Parameter):
+        raise TypeError("spatial_kernel must be a NEST Parameter")
+    if mask is not None and not isinstance(mask, Mask):
+        raise TypeError("mask must be a NEST Mask")
+
     nestkernel.llapi_enable_structural_plasticity(
-        bool(use_gaussian_kernel),
-        float(gaussian_kernel_sigma),
-        float(max_distance),
+        None if spatial_kernel is None else spatial_kernel._datum,
+        None if mask is None else mask._datum,
     )
 
 

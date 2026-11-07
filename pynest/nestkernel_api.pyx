@@ -334,8 +334,15 @@ def llapi_reset_kernel():
 def llapi_install_module( module_name ):
     install_module( pystr_to_string(module_name) )
 
-def llapi_enable_structural_plasticity(cbool use_gaussian_kernel, double gaussian_kernel_sigma, double max_distance):
-    enable_structural_plasticity(use_gaussian_kernel, gaussian_kernel_sigma, max_distance)
+def llapi_enable_structural_plasticity(object spatial_kernel, object spatial_mask):
+    # A default-constructed shared_ptr is the null that means "not set".
+    cdef ParameterPTR kernel_ptr
+    cdef MaskPTR mask_ptr
+    if spatial_kernel is not None:
+        kernel_ptr = (<ParameterObject?>spatial_kernel).thisptr
+    if spatial_mask is not None:
+        mask_ptr = (<MaskObject?>spatial_mask).thisptr
+    enable_structural_plasticity(kernel_ptr, mask_ptr)
 
 
 def llapi_disable_structural_plasticity():

@@ -104,6 +104,12 @@ class SourceTable
 {
   friend class ConnectionManager;
 
+  //! Sources of one thread and synapse type: (node id, spike data) pairs, sorted by node id, one entry per source
+  using CompressibleSources = std::vector< std::pair< size_t, SpikeData > >;
+
+  //! Unique sources of one range of node ids with their entries of compressed_spike_data_map_, sorted by node id
+  using UniqueSources = std::vector< std::pair< size_t, CSDMapEntry > >;
+
 private:
   /**
    * 3D structure storing node IDs of presynaptic neurons.
@@ -177,10 +183,34 @@ private:
    * Data from this structure is transferred to the compressed_spike_data_
    * structure of ConnectionManager during construction of the
    * postsynaptic connection infrastructure. Arranged as a two
-   * dimensional vector (thread|synapse) with an inner map (source
-   * node id -> spike data).
+   * dimensional vector (thread|synapse) with an inner vector of
+   * (source node id, spike data) pairs sorted by source node id.
    */
-  std::vector< std::vector< std::map< size_t, SpikeData > > > compressible_sources_;
+  std::vector< std::vector< CompressibleSources > > compressible_sources_;
+
+  /**
+   * Unique sources of all threads with their entries in compressed_spike_data_map_.
+   *
+   * Arranged as a two dimensional vector (synapse|range of source node ids) with an inner vector of (source node id,
+   * map entry) pairs sorted by source node id. Thread t determines the unique sources of range t, so that the ranges
+   * together cover all node ids. Only used while assemble_compressed_spike_data() runs.
+   */
+  std::vector< std::vector< UniqueSources > > unique_compressible_sources_;
+
+  /**
+   * Number of unique sources per range and first thread.
+   *
+   * Arranged as a vector over synapses; entry [ range * num_threads + thread ] counts the sources of the range that
+   * appear first in compressible_sources_ of the thread. Only used while assemble_compressed_spike_data() runs.
+   */
+  std::vector< std::vector< size_t > > num_unique_compressible_sources_;
+
+  /**
+   * Compressed spike data built by assemble_compressed_spike_data().
+   *
+   * Handed over to ConnectionManager by fill_compressed_spike_data().
+   */
+  std::vector< std::vector< std::vector< SpikeData > > > assembled_compressed_spike_data_;
 
   /**
    * A structure to temporarily store locations of "unpacked spikes"
@@ -193,6 +223,33 @@ private:
    * over synapse ids with an inner map (source node id -> (source_index+target_thread).
    */
   std::vector< std::map< size_t, CSDMapEntry > > compressed_spike_data_map_;
+
+  //! Step 1 of assemble_compressed_spike_data(): unique sources of node-id range tid and their first threads.
+  void find_unique_sources_( const size_t tid );
+
+  //! Step 2 of assemble_compressed_spike_data(): row of every unique source of range tid in the serial order.
+  void number_unique_sources_( const size_t tid );
+
+  /**
+   * Allocate one row per source in index order and build compressed_spike_data_map_ (one thread).
+   *
+   * One thread allocates and initializes the rows on purpose: the memory placement of the structure stays as with the
+   * serial construction, and placement is a separate concern (copies of the structure per block of threads). The pass
+   * is serial in sources x threads: negligible for PD14, but about 4 GB to initialize for the multi-area model with 128
+   * threads per process. Combined with the copies, write_own_column_() could write directly into the copy of its block
+   * and make this pass unnecessary.
+   */
+  void allocate_compressed_spike_data_();
+
+  //! Step 3 of assemble_compressed_spike_data(): thread tid writes its column of the compressed spike data.
+  void write_own_column_( const size_t tid );
+
+  /**
+   * Whether assembled_compressed_spike_data_ and compressed_spike_data_map_ equal the result of the serial algorithm.
+   *
+   * Used in assertions only; compressible_sources_ must still hold the sources of all threads.
+   */
+  bool is_result_of_serial_assembly_() const;
 
 public:
   SourceTable();
@@ -347,9 +404,25 @@ public:
 
   void resize_compressible_sources();
 
-  // creates maps of sources with more than one thread-local target
+  /**
+   * Collect the sources of thread tid with at least one local target.
+   *
+   * Guarantees that compressible_sources_[ tid ][ syn_id ] is sorted by node id and holds one entry per source.
+   */
   void collect_compressible_sources( const size_t tid );
-  // fills the compressed_spike_data structure in ConnectionManager
+
+  /**
+   * Build the compressed spike data and compressed_spike_data_map_ from compressible_sources_ in parallel.
+   *
+   * Must be called by all threads after collect_compressible_sources() has finished on all threads. Thread tid finds
+   * the unique sources in one range of source node ids, and later writes its own column of the compressed spike data.
+   * The result is identical to the serial algorithm: a source has the index it would get by visiting the threads in
+   * ascending order and, for each thread, its sources in ascending order of node id. One thread allocates the rows
+   * in this order.
+   */
+  void assemble_compressed_spike_data( const size_t tid );
+
+  //! Hand over the compressed spike data built by assemble_compressed_spike_data() and free the temporaries.
   void fill_compressed_spike_data( std::vector< std::vector< std::vector< SpikeData > > >& compressed_spike_data );
 
   void clear_compressed_spike_data_map();

@@ -1811,6 +1811,9 @@ ConnectionManager::fill_target_buffer( const size_t tid,
     return true;  // this thread has previously written all its targets
   }
 
+  // assume we will be able to send all data in this round
+  bool source_table_read = true;
+
   do
   {
     const auto& conn_model = kernel().model_manager.get_connection_model( syn_id, tid );
@@ -1832,12 +1835,8 @@ ConnectionManager::fill_target_buffer( const size_t tid,
         // When the we have filled the buffer space for one rank, we stop. If we continued for other ranks,
         // we would need to introduce "processed" markers to avoid multiple insertion (similar to base case).
         // Since sources should be evenly distributed, this should not matter very much.
-        //
-        // We store where we need to continue and stop iteration for now.
-        iteration_state_.at( tid ) =
-          std::pair< size_t, std::map< size_t, CSDMapEntry >::const_iterator >( syn_id, source_2_idx );
-
-        return false;  // there is data left to communicate
+        source_table_read = false;
+        break;
       }
 
       TargetData next_target_data;
@@ -1875,6 +1874,13 @@ ConnectionManager::fill_target_buffer( const size_t tid,
       ++source_2_idx;
     }  // end while
 
+    // If we breaked out of the while() loop, we also need to break out here as there is no more space
+    // for data in this thread's chunk.
+    if ( not source_table_read )
+    {
+      break;
+    }
+
     ++syn_id;
     if ( syn_id < csd_maps.size() )
     {
@@ -1882,9 +1888,10 @@ ConnectionManager::fill_target_buffer( const size_t tid,
     }
   } while ( syn_id < csd_maps.size() );
 
-  // Store iteration state for this thread. If we get here, ther is nothing more to do for
-  // this thread so we store a non-existing syn_id with a meaningless iterator to inform that
-  // this thread has nothing to do in the next round.
+  // Store iteration state for this thread. If there is data left to communicate, this will mark
+  // where to pick up. If all data was delivered, syn_id will be larger than any existing syn_id
+  // and the iterator will be irrelevant. This indicates that this thread has nothing to do in
+  // future rounds.
   iteration_state_.at( tid ) =
     std::pair< size_t, std::map< size_t, CSDMapEntry >::const_iterator >( syn_id, source_2_idx );
 
@@ -1903,8 +1910,7 @@ ConnectionManager::fill_target_buffer( const size_t tid,
     }
   }
 
-  // If we get here, this thread has written everything.
-  return true;
+  return source_table_read;
 }
 
 void

@@ -1811,6 +1811,26 @@ ConnectionManager::fill_target_buffer( const size_t tid,
     return true;  // this thread has previously written all its targets
   }
 
+  // Mark the end of the data of this round in the chunk of every rank of this thread. Both exits need the
+  // markers: a round that stops at a full chunk leaves the other chunks partly filled, and the receiver would
+  // read the entries behind the new ones, left over from an earlier round or an earlier network (#4004).
+  const auto mark_end_of_round = [ &send_buffer_target_data, &send_buffer_position, rank_start, rank_end ]()
+  {
+    for ( size_t rank = rank_start; rank < rank_end; ++rank )
+    {
+      if ( send_buffer_position.idx( rank ) > send_buffer_position.begin( rank ) )
+      {
+        // We have written data for the rank, mark last written entry with END marker
+        send_buffer_target_data.at( send_buffer_position.idx( rank ) - 1 ).set_end_marker();
+      }
+      else
+      {
+        // We have not written anything, mark beginning of chunk with INVALID marker
+        send_buffer_target_data.at( send_buffer_position.begin( rank ) ).set_invalid_marker();
+      }
+    }
+  };
+
   do
   {
     const auto& conn_model = kernel().model_manager.get_connection_model( syn_id, tid );
@@ -1837,6 +1857,7 @@ ConnectionManager::fill_target_buffer( const size_t tid,
         iteration_state_.at( tid ) =
           std::pair< size_t, std::map< size_t, CSDMapEntry >::const_iterator >( syn_id, source_2_idx );
 
+        mark_end_of_round();
         return false;  // there is data left to communicate
       }
 
@@ -1888,20 +1909,7 @@ ConnectionManager::fill_target_buffer( const size_t tid,
   iteration_state_.at( tid ) =
     std::pair< size_t, std::map< size_t, CSDMapEntry >::const_iterator >( syn_id, source_2_idx );
 
-  // Mark end of data for this round
-  for ( size_t rank = rank_start; rank < rank_end; ++rank )
-  {
-    if ( send_buffer_position.idx( rank ) > send_buffer_position.begin( rank ) )
-    {
-      // We have written data for the rank, mark last written entry with END marker
-      send_buffer_target_data.at( send_buffer_position.idx( rank ) - 1 ).set_end_marker();
-    }
-    else
-    {
-      // We have not written anything, mark beginning of chunk with INVALID marker
-      send_buffer_target_data.at( send_buffer_position.begin( rank ) ).set_invalid_marker();
-    }
-  }
+  mark_end_of_round();
 
   // If we get here, this thread has written everything.
   return true;

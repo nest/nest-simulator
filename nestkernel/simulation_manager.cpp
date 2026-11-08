@@ -855,6 +855,8 @@ SimulationManager::update_()
 
   std::vector< std::exception_ptr > exceptions_raised( kernel().vp_manager.get_num_threads() );
 
+  std::exception_ptr sp_exception_raised;
+
 #ifdef CYCLE_TIMERS
   double start_current_communicate = kernel().event_delivery_manager.get_sw_communicate_spike_data().elapsed();
   size_t start_local_spike_counter = kernel().event_delivery_manager.get_local_spike_counter();
@@ -1041,7 +1043,18 @@ SimulationManager::update_()
           kernel().get_omp_synchronization_simulation_stopwatch().stop();
 #pragma omp single
           {
-            kernel().sp_manager.update_structural_plasticity();
+            try
+            {
+              kernel().sp_manager.update_structural_plasticity();
+            }
+            catch ( ... )
+            {
+              sp_exception_raised = std::current_exception();
+            }
+          }
+          if ( sp_exception_raised )
+          {
+            std::rethrow_exception( sp_exception_raised );
           }
           // Remove 10% of the vacant elements
           for ( SparseNodeArray::const_iterator i = kernel().node_manager.get_local_nodes( tid ).begin();

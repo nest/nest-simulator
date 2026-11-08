@@ -104,9 +104,9 @@ reset_kernel()
 }
 
 void
-enable_structural_plasticity()
+enable_structural_plasticity( ParameterPTR spatial_kernel, MaskPTR spatial_mask )
 {
-  kernel().sp_manager.enable_structural_plasticity();
+  kernel().sp_manager.enable_structural_plasticity( spatial_kernel, spatial_mask );
 }
 
 void

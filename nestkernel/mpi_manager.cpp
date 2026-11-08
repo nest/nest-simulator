@@ -235,9 +235,9 @@ MPIManager::set_status( const Dictionary& dict )
     max_buffer_size_target_data_ = mbstd;
 
     // enforce maximum
-    if ( buffer_size_target_data_ < max_buffer_size_target_data_ )
+    if ( buffer_size_target_data_ > max_buffer_size_target_data_ )
     {
-      buffer_size_target_data_ = max_buffer_size_target_data_;
+      set_buffer_size_target_data( max_buffer_size_target_data_ );
     }
   }
 

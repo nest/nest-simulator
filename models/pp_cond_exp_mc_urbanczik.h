@@ -199,9 +199,9 @@ these parameters are marked with an asterisk.
  E_ex*          mV      Excitatory reversal potential
  E_in*          mV      Inhibitory reversal potential
  g_L*           nS      Leak conductance
- tau_syn_ex*    ms      Decay time constant of excitatory synaptic conductance 
+ tau_syn_ex*    ms      Decay time constant of excitatory synaptic conductance
                         (exponential function)
- tau_syn_in*    ms      Decay time constant of inhibitory synaptic conductance 
+ tau_syn_in*    ms      Decay time constant of inhibitory synaptic conductance
                         (exponential function)
  I_e*           pA      Constant input current
  g_sp           nS      Coupling between soma and dendrite

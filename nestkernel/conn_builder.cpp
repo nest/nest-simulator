@@ -138,7 +138,13 @@ BipartiteConnBuilder::BipartiteConnBuilder( NodeCollectionPTR sources,
   conn_spec.update_value< bool >( names::allow_multapses, allow_multapses_ );
   conn_spec.update_value< bool >( names::make_symmetric, make_symmetric_ );
   conn_spec.update_value< bool >( names::long_range, long_range_ );
-#ifndef HAVE_MORPH
+#ifdef HAVE_MORPH
+  // Checked here on every process; the check per connection runs only on the processes that own targets.
+  if ( long_range_ and not kernel().connection_manager.is_morph_active() )
+  {
+    throw IllegalConnection( "long_range connections require the kernel parameter threshold_delay." );
+  }
+#else
   if ( long_range_ )
   {
     throw KernelException(

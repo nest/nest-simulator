@@ -355,9 +355,13 @@ public:
   /**
    * Check the configuration of morph before a simulation.
    *
-   * Throws if the threshold delay is not a multiple of the minimal delay or too large for the lag field of SpikeData.
+   * Throws if the threshold delay is not a multiple of the minimal delay or too large for the lag field of SpikeData,
+   * or if long_range connections changed between Simulate calls while spikes of the long path are in flight.
    */
   void check_morph_configuration() const;
+
+  //! Record that the tables of the long path reflect its connections (see check_morph_configuration()).
+  void unset_long_delay_connections_have_changed();
 #endif
 
   bool get_user_set_delay_extrema() const;
@@ -619,13 +623,23 @@ private:
   /**
    * Check a new connection on the long path of morph.
    *
-   * Throws if morph is not active, if the connection does not transmit spikes, or if its delay is smaller than the
-   * threshold delay.
+   * Throws if the connection does not transmit spikes or if its delay is smaller than the threshold delay.
    */
   void check_long_range_connection_( const ConnectorModel& conn_model,
     const bool is_primary,
     const Dictionary& params,
     const double delay ) const;
+
+  //! Throw if the delay (in ms) is smaller than the threshold delay.
+  void check_long_range_delay_( const double delay ) const;
+
+  /**
+   * Record that a long_range connection was created or removed.
+   *
+   * Only a change after the simulation started matters (see check_morph_configuration()); before, the threads do
+   * not write the shared flag for every connection.
+   */
+  void set_long_delay_connections_have_changed_();
 
   /**
    * Check a new connection on the short path.
@@ -803,6 +817,10 @@ private:
 
 #ifdef HAVE_MORPH
   long threshold_delay_;  //!< threshold delay of morph in steps; delay_max if morph is not active
+
+  //! True if long_range connections were created or removed on this process after the simulation started, since
+  //! the last update of the tables
+  bool long_delay_connections_have_changed_;
 #endif
 
   //! Whether to keep source table after connection setup is complete.

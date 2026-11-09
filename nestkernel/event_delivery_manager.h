@@ -229,6 +229,15 @@ public:
    */
   void deliver_events( const size_t tid, const bool is_long_delay = false );
 
+#ifdef HAVE_MORPH
+  /**
+   * Return true if the last exchange of the long path of morph carried spikes.
+   *
+   * The value is the same on all processes: each process receives the largest number of spikes that any process sent.
+   */
+  bool long_delay_exchange_carried_spikes() const;
+#endif
+
   /**
    * Collocates presynaptic connection information for secondary events (MPI
    * buffer offsets), communicates via MPI and create presynaptic connection
@@ -629,6 +638,14 @@ EventDeliveryManager::get_slice_modulo( long d )
 
   return slice_moduli_[ d ];
 }
+
+#ifdef HAVE_MORPH
+inline bool
+EventDeliveryManager::long_delay_exchange_carried_spikes() const
+{
+  return global_max_spikes_per_rank_long_delay_ > 0;
+}
+#endif
 
 }  // namespace nest
 

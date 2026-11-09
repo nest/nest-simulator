@@ -72,6 +72,7 @@ ConnectionManager::ConnectionManager()
   , max_delay_( 1 )
 #ifdef HAVE_MORPH
   , threshold_delay_( delay_max )
+  , long_delay_connections_have_changed_( false )
 #endif
   , keep_source_table_( true )
   , connections_have_changed_( false )
@@ -119,6 +120,7 @@ ConnectionManager::initialize( const bool adjust_number_of_threads_or_rng_only )
     min_delay_ = max_delay_ = 1;
 #ifdef HAVE_MORPH
     threshold_delay_ = delay_max;
+    long_delay_connections_have_changed_ = false;
 #endif
     sw_construction_connect.reset();
   }
@@ -246,8 +248,9 @@ ConnectionManager::set_status( const Dictionary& d )
       {
         throw KernelException( "threshold_delay cannot be changed after the simulation has started." );
       }
-      // The checks of new connections depend on threshold_delay (see check_short_range_connection_()).
-      if ( get_num_connections() > 0 )
+      // The checks of new connections depend on threshold_delay (see check_short_range_connection_()); connections
+      // on any process count.
+      if ( kernel().mpi_manager.any_true( get_num_connections() > 0 ) )
       {
         throw KernelException( "threshold_delay must be set before connections are created." );
       }
@@ -271,10 +274,7 @@ ConnectionManager::check_long_range_connection_( const ConnectorModel& conn_mode
   const Dictionary& params,
   const double delay ) const
 {
-  if ( not is_morph_active() )
-  {
-    throw IllegalConnection( "long_range connections require the kernel parameter threshold_delay." );
-  }
+  assert( is_morph_active() );  // checked by the ConnBuilder on every process
   if ( not is_primary )
   {
     throw IllegalConnection( "Only connections that transmit spikes can be long_range." );
@@ -289,9 +289,31 @@ ConnectionManager::check_long_range_connection_( const ConnectorModel& conn_mode
   // interval, the ring-buffer offset is l + delay - threshold_delay, which is non-negative for all l if and only if
   // delay >= threshold_delay. Delays equal to the threshold were verified to give the same spikes as the conventional
   // exchange. The published version of morph requires delay > threshold_delay (assertion).
-  if ( Time::delay_ms_to_steps( used_delay ) < threshold_delay_ )
+  check_long_range_delay_( used_delay );
+}
+
+void
+ConnectionManager::set_long_delay_connections_have_changed_()
+{
+  if ( kernel().simulation_manager.has_been_simulated() )
   {
-    throw BadDelay( used_delay,
+#pragma omp atomic write
+    long_delay_connections_have_changed_ = true;
+  }
+}
+
+void
+ConnectionManager::unset_long_delay_connections_have_changed()
+{
+  long_delay_connections_have_changed_ = false;
+}
+
+void
+ConnectionManager::check_long_range_delay_( const double delay ) const
+{
+  if ( Time::delay_ms_to_steps( delay ) < threshold_delay_ )
+  {
+    throw BadDelay( delay,
       String::compose( "The delay of long_range connections must be at least threshold_delay (%1 ms).",
         Time::delay_steps_to_ms( threshold_delay_ ) ) );
   }
@@ -349,6 +371,21 @@ ConnectionManager::check_morph_configuration() const
   {
     throw KernelException(
       "With morph, structural plasticity requires a local group of all processes (comm_local_ranks)." );
+  }
+  // Spikes of the long path are in flight between two Simulate calls if the previous call ended within an interval
+  // (the senders still collect them) or if the exchange at its end carried spikes (they are delivered at the
+  // beginning of the next interval). They refer to the long-path connections as they were; the rebuilt tables would
+  // deliver them to other connections. Both conditions are the same on all processes.
+  if ( kernel().simulation_manager.has_been_simulated()
+    and kernel().mpi_manager.any_true( long_delay_connections_have_changed_ ) )
+  {
+    const bool within_interval = kernel().simulation_manager.get_time().get_steps() % threshold_delay_ != 0;
+    if ( within_interval or kernel().event_delivery_manager.long_delay_exchange_carried_spikes() )
+    {
+      throw KernelException(
+        "long_range connections cannot change between Simulate calls while spikes of the long path are in flight: "
+        "the previous call ended within an interval of threshold_delay, or the exchange at its end carried spikes." );
+    }
   }
 }
 #endif
@@ -471,6 +508,11 @@ ConnectionManager::set_synapse_status( const size_t source_node_id,
       if ( not connections_long_delay_[ tid ][ syn_id ] )
       {
         throw InexistentConnection();
+      }
+      double new_delay = 0.0;
+      if ( dict.update_value( names::delay, new_delay ) )
+      {
+        check_long_range_delay_( new_delay );
       }
       connections_long_delay_[ tid ][ syn_id ]->set_synapse_status( lcid, dict, cm );
       return;
@@ -621,6 +663,13 @@ ConnectionManager::calibrate( const TimeConverter& tc )
   {
     delay_checkers_[ tid ].calibrate( tc );
   }
+#ifdef HAVE_MORPH
+  // threshold_delay is kept in steps, as connection delays; delay_max (morph off) stays
+  if ( threshold_delay_ != delay_max )
+  {
+    threshold_delay_ = tc.from_old_steps( threshold_delay_ ).get_steps();
+  }
+#endif
 }
 
 void
@@ -1111,6 +1160,7 @@ ConnectionManager::connect_( Node& source,
     check_long_range_connection_( conn_model, is_primary, params, delay );
     conn_model.add_connection( source, target, connections_long_delay_[ tid ], syn_id, params, delay, weight );
     source_table_long_delay_.add_source( tid, syn_id, s_node_id, is_primary );
+    set_long_delay_connections_have_changed_();
   }
   else
   {
@@ -1271,6 +1321,7 @@ ConnectionManager::disconnect( const size_t tid,
     connections_long_delay_[ tid ][ syn_id ]->disable_connection( lcid );
     source_table_long_delay_.disable_connection( tid, syn_id, lcid );
     --num_connections_[ tid ][ syn_id ];
+    set_long_delay_connections_have_changed_();
     return;
   }
 #endif

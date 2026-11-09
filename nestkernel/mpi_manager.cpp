@@ -136,22 +136,27 @@ MPIManager::set_comm_local_ranks( const std::vector< long >& ranks )
   std::vector< int > new_ranks( ranks.begin(), ranks.end() );
   std::sort( new_ranks.begin(), new_ranks.end() );
 
-  // Local checks
+  // Local checks. The processes decide together, so that either all raise or all reach the collective calls below.
+  std::string error;
   if ( new_ranks.empty() )
   {
-    throw BadProperty( "comm_local_ranks must not be empty." );
+    error = "comm_local_ranks must not be empty.";
   }
-  if ( std::adjacent_find( new_ranks.begin(), new_ranks.end() ) != new_ranks.end() )
+  else if ( std::adjacent_find( new_ranks.begin(), new_ranks.end() ) != new_ranks.end() )
   {
-    throw BadProperty( "comm_local_ranks must not contain a rank twice." );
+    error = "comm_local_ranks must not contain a rank twice.";
   }
-  if ( new_ranks.front() < 0 or new_ranks.back() >= num_processes_ )
+  else if ( new_ranks.front() < 0 or new_ranks.back() >= num_processes_ )
   {
-    throw BadProperty( String::compose( "comm_local_ranks must contain ranks between 0 and %1.", num_processes_ - 1 ) );
+    error = String::compose( "comm_local_ranks must contain ranks between 0 and %1.", num_processes_ - 1 );
   }
-  if ( not std::binary_search( new_ranks.begin(), new_ranks.end(), rank_ ) )
+  else if ( not std::binary_search( new_ranks.begin(), new_ranks.end(), rank_ ) )
   {
-    throw BadProperty( String::compose( "comm_local_ranks of process %1 must contain its own rank.", rank_ ) );
+    error = String::compose( "comm_local_ranks of process %1 must contain its own rank.", rank_ );
+  }
+  if ( any_true( not error.empty() ) )
+  {
+    throw BadProperty( error.empty() ? "comm_local_ranks is invalid on another process." : error );
   }
 
   // Global check: the groups must partition the processes. A group is identified by its smallest rank; all members
@@ -373,6 +378,13 @@ MPIManager::set_status( const Dictionary& dict )
   dict.update_value( names::buffer_size_spike_data_long_delay, new_buffer_size_spike_data_long_delay );
   if ( new_buffer_size_spike_data_long_delay != static_cast< long >( buffer_size_spike_data_long_delay_ ) )
   {
+    // The long path is exchanged among all processes; each needs at least two entries, as set in set_communicator().
+    if ( new_buffer_size_spike_data_long_delay < 2 * num_processes_ )
+    {
+      throw BadProperty(
+        String::compose( "buffer_size_spike_data_long_delay must be at least twice the number of processes (%1).",
+          2 * num_processes_ ) );
+    }
     set_buffer_size_spike_data_long_delay( new_buffer_size_spike_data_long_delay );
   }
 #endif
@@ -398,15 +410,19 @@ MPIManager::set_status( const Dictionary& dict )
   {
     std::vector< long > sorted_ranks( new_comm_local_ranks );
     std::sort( sorted_ranks.begin(), sorted_ranks.end() );
-    if ( not std::equal(
-           sorted_ranks.begin(), sorted_ranks.end(), comm_local_ranks_.begin(), comm_local_ranks_.end() ) )
+    // Processes that keep their group take part in the collective calls of set_comm_local_ranks() if any group
+    // changes.
+    const bool changed =
+      not std::equal( sorted_ranks.begin(), sorted_ranks.end(), comm_local_ranks_.begin(), comm_local_ranks_.end() );
+    if ( any_true( changed ) )
     {
       if ( kernel().simulation_manager.has_been_simulated() )
       {
         throw KernelException( "comm_local_ranks cannot be changed after the simulation has started." );
       }
-      // The checks of new connections depend on the local group (see ConnectionManager::connect_()).
-      if ( kernel().connection_manager.get_num_connections() > 0 )
+      // The checks of new connections depend on the local group (see ConnectionManager::connect_()); connections on
+      // any process count.
+      if ( any_true( kernel().connection_manager.get_num_connections() > 0 ) )
       {
         throw KernelException( "comm_local_ranks must be set before connections are created." );
       }

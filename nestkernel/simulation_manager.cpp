@@ -780,6 +780,7 @@ SimulationManager::update_connection_infrastructure( const size_t tid )
       kernel().connection_manager.compute_target_data_buffer_size_long_delay();
       kernel().event_delivery_manager.resize_send_recv_buffers_target_data( true );
     }
+    kernel().connection_manager.unset_long_delay_connections_have_changed();
 #endif
 
     // check whether primary and secondary connections exists on any

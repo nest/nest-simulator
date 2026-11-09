@@ -208,7 +208,7 @@ def test_long_range_requires_threshold_delay():
     """Ensure that long_range connections require threshold_delay."""
 
     nest.ResetKernel()
-    n = nest.Create("iaf_psc_alpha", 4)
+    n = nest.Create("iaf_psc_alpha", 4 * nest.total_num_virtual_procs)
     with pytest.raises(nest.NESTError, match="threshold_delay"):
         nest.Connect(n, n, {"rule": "all_to_all", "long_range": True}, {"delay": 2.0})
 
@@ -219,7 +219,7 @@ def test_long_range_delay_at_least_threshold():
 
     nest.ResetKernel()
     nest.threshold_delay = THRESHOLD
-    n = nest.Create("iaf_psc_alpha", 4)
+    n = nest.Create("iaf_psc_alpha", 4 * nest.total_num_virtual_procs)
     with pytest.raises(nest.NESTError, match="at least threshold_delay"):
         nest.Connect(n, n, {"rule": "all_to_all", "long_range": True}, {"delay": THRESHOLD / 2})
     nest.Connect(n, n, {"rule": "all_to_all", "long_range": True}, {"delay": THRESHOLD})
@@ -662,3 +662,147 @@ def test_structural_plasticity_requires_local_group_of_all_processes():
     nest.Create("iaf_psc_alpha", 4 * num_procs())
     with pytest.raises(nest.NESTError, match="structural plasticity"):
         nest.Simulate(10.0)
+
+
+# ----------------------------------------------------------------------------------------------------------------
+# Decisions that all processes take alike, and spikes of the long path in flight
+
+
+def connect_onto_rank_0():
+    """Create neurons on every process and connect them onto the neurons of rank 0 only."""
+
+    n = nest.Create("iaf_psc_alpha", 4 * nest.total_num_virtual_procs)
+    nest.Connect(n, nest.NodeCollection([i for i in n.tolist() if rank_of(i) == 0]), "all_to_all")
+
+
+@pytest.mark.skipif_missing_morph
+def test_threshold_delay_not_after_connections_on_other_processes():
+    """Ensure that all processes raise if connections exist on one process only."""
+
+    nest.ResetKernel()
+    connect_onto_rank_0()
+    with pytest.raises(nest.NESTError, match="before connections"):
+        nest.threshold_delay = THRESHOLD
+
+
+@pytest.mark.skipif_missing_morph
+def test_comm_local_ranks_not_after_connections_on_other_processes():
+    """Ensure that all processes raise if connections exist on one process only."""
+
+    if num_procs() == 1:
+        pytest.skip("needs more than one process")
+    nest.ResetKernel()
+    connect_onto_rank_0()
+    with pytest.raises(nest.NESTError, match="before connections"):
+        nest.SetKernelStatus({"comm_local_ranks": list(range(num_procs()))})
+
+
+@pytest.mark.skipif_missing_morph
+def test_comm_local_ranks_kept_on_some_processes():
+    """Ensure that processes that keep their group take part in the change of the other groups."""
+
+    if num_procs() < 3:
+        pytest.skip("needs at least three processes")
+    nest.ResetKernel()
+    rank = nest.Rank()
+    first = rank if rank < 2 else 2 + (rank - 2) // 2 * 2
+    group = list(range(first, min(first + (1 if rank < 2 else 2), num_procs())))
+    nest.SetKernelStatus({"comm_local_ranks": group})
+    assert list(nest.comm_local_ranks) == group
+
+
+@pytest.mark.skipif_missing_morph
+def test_comm_local_ranks_invalid_on_some_processes():
+    """Ensure that all processes raise if the group passed by one process is invalid."""
+
+    if num_procs() == 1:
+        pytest.skip("needs more than one process")
+    nest.ResetKernel()
+    with pytest.raises(nest.NESTError, match="comm_local_ranks"):
+        nest.SetKernelStatus({"comm_local_ranks": [0]})  # valid on rank 0 only
+    assert list(nest.comm_local_ranks) == [nest.Rank()]
+
+
+@pytest.mark.skipif_missing_morph
+def test_buffer_size_spike_data_long_delay_at_least_two_per_process():
+    """Ensure that the buffer of the long path holds at least two entries per process."""
+
+    nest.ResetKernel()
+    with pytest.raises(nest.NESTError, match="buffer_size_spike_data_long_delay"):
+        nest.buffer_size_spike_data_long_delay = 2 * num_procs() - 1
+    nest.buffer_size_spike_data_long_delay = 4 * num_procs()
+    assert nest.buffer_size_spike_data_long_delay == 4 * num_procs()
+
+
+@pytest.mark.skipif_missing_morph
+def test_long_range_delay_not_set_below_threshold():
+    """Ensure that set cannot lower the delay of a long_range connection below threshold_delay."""
+
+    nest.ResetKernel()
+    nest.threshold_delay = THRESHOLD
+    n = nest.Create("iaf_psc_alpha", 4 * nest.total_num_virtual_procs)
+    nest.Connect(n, n, {"rule": "one_to_one", "long_range": True}, {"delay": 2 * THRESHOLD})
+    conns = nest.GetConnections(n, n)
+    with pytest.raises(nest.NESTError, match="at least threshold_delay"):
+        conns.set(delay=THRESHOLD / 2)
+    assert set(np.atleast_1d(conns.get("delay"))) == {2 * THRESHOLD}
+    conns.set(delay=THRESHOLD)
+
+
+@pytest.mark.skipif_missing_morph
+@pytest.mark.parametrize("resolution", [0.05, 0.2])
+def test_threshold_delay_follows_resolution(resolution):
+    """Ensure that threshold_delay keeps its value in ms when the resolution changes."""
+
+    nest.ResetKernel()
+    nest.threshold_delay = THRESHOLD
+    nest.resolution = resolution
+    assert nest.threshold_delay == pytest.approx(THRESHOLD)
+
+
+def simulate_with_long_range_spike(t_end):
+    """Simulate until t_end with one spike of the long path at 100.3 ms; return a silent neuron and the targets."""
+
+    nest.ResetKernel()
+    nest.threshold_delay = THRESHOLD
+    sources = nest.Create("parrot_neuron", 2)
+    targets = nest.Create("iaf_psc_delta", nest.total_num_virtual_procs)
+    sg = nest.Create("spike_generator", params={"spike_times": [100.2]})
+    nest.Connect(sg, sources[1:], syn_spec={"delay": 0.1})
+    nest.Connect(sources[1:], targets, {"rule": "all_to_all", "long_range": True}, {"delay": 2 * THRESHOLD})
+    nest.Simulate(t_end)
+    return sources[:1], targets
+
+
+@pytest.mark.skipif_missing_morph
+@pytest.mark.parametrize("t_end", [100.5, 101.0])
+def test_long_range_connect_with_spikes_in_flight_raises(t_end):
+    """
+    Ensure that long_range connections cannot change while spikes of the long path are in flight.
+
+    At 100.5 ms the senders still collect the spike of 100.3 ms; at 101.0 ms it has been exchanged and waits for its
+    delivery at the beginning of the next interval. Both refer to the connections as they were before Connect.
+    """
+
+    silent, targets = simulate_with_long_range_spike(t_end)
+    nest.Connect(silent, targets, {"rule": "all_to_all", "long_range": True}, {"delay": 2 * THRESHOLD})
+    with pytest.raises(nest.NESTError, match="in flight"):
+        nest.Simulate(10.0)
+
+
+@pytest.mark.skipif_missing_morph
+def test_long_range_connect_without_spikes_in_flight():
+    """Ensure that long_range connections can change after a call that ended at a quiet interval boundary."""
+
+    silent, targets = simulate_with_long_range_spike(103.0)
+    nest.Connect(silent, targets, {"rule": "all_to_all", "long_range": True}, {"delay": 2 * THRESHOLD})
+    nest.Simulate(10.0)
+
+
+@pytest.mark.skipif_missing_morph
+def test_short_connect_with_long_range_spikes_in_flight():
+    """Ensure that connections of the short path can change while spikes of the long path are in flight."""
+
+    _, targets = simulate_with_long_range_spike(100.5)
+    nest.Connect(targets, nest.Create("spike_recorder"))
+    nest.Simulate(10.0)

@@ -62,8 +62,8 @@ Kernel parameters
     the default.
 
 ``buffer_size_spike_data_long_delay`` (int)
-    Initial size of the MPI buffer of the long path. The buffer adapts during the simulation, as the buffer of the
-    conventional exchange does.
+    Initial size of the MPI buffer of the long path, at least twice the number of MPI processes. The buffer adapts
+    during the simulation, as the buffer of the conventional exchange does.
 
 Connections
 -----------
@@ -75,7 +75,8 @@ Connections enter the long path with the ``conn_spec`` key ``long_range``:
     nest.Connect(source_area, target_area, {"rule": "fixed_indegree", "indegree": 10, "long_range": True},
                  {"delay": nest.random.uniform(1.0, 3.0)})
 
-* The delay of a long-range connection must be at least ``threshold_delay``.
+* The delay of a long-range connection must be at least ``threshold_delay``, also when it is changed with ``set``
+  on a SynapseCollection.
 * Only connections between neurons that transmit spikes can be long-range; connections from or to devices and
   connections of synapse models for secondary events (for example gap junctions) cannot.
 * Connections without ``long_range`` use the short path. While morph is active, a short-path spike connection
@@ -156,6 +157,10 @@ Limitations
   therefore available only if one local group contains all processes; otherwise :py:func:`.Simulate` raises an
   error.
 * ``threshold_delay`` and ``comm_local_ranks`` cannot change once connections exist.
+* Long-range connections cannot be created or removed between :py:func:`.Simulate` calls while spikes of the long
+  path are in flight: if the previous call ended within an interval of ``threshold_delay``, or if spikes of the
+  long path were exchanged at its end. :py:func:`.Simulate` then raises an error. Connections of the short path
+  can change.
 
 References
 ----------

@@ -63,7 +63,7 @@ extern "C" int iaf_cond_beta_dynamics( double, const double*, double*, void* );
 Short description
 +++++++++++++++++
 
-Leaky integrate-and-fire neuron model with beta-function shaped synaptic conductances
+Leaky integrate-and-fire neuron model with beta-shaped function synaptic conductances
 
 Description
 +++++++++++
@@ -72,7 +72,7 @@ Description
 
 * a hard threshold,
 * a fixed refractory period,
-* beta-function shaped synaptic conductances (a difference of two exponentials) with separate rise and decay
+* beta-shaped function synaptic conductances (a difference of two exponentials) with separate rise and decay
   times, normalized such that an event of weight 1.0 results in a peak conductance of 1 nS.
 
 The model follows the conductance-based integrate-and-fire framework discussed in
@@ -125,7 +125,7 @@ or inhibitory (:math:`\text{X} = \text{in}`) presynaptic neurons,
 :math:`k` indexes the spike times of neuron :math:`j`, and :math:`d_j`
 is the delay from neuron :math:`j`.
 
-The individual synaptic conductances are beta-function shaped, that is, given by the difference of two
+The individual synaptic conductances are beta-shaped functions, that is, given by the difference of two
 exponentials with separate rise and decay time constants,
 
 .. math::

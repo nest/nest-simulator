@@ -28,7 +28,7 @@ excitatory spike at an off-grid time to the analytical solution.
 test_iaf_ps_psp_accuracy.sli checks the voltage response of the precise
 versions of the iaf_psc_alpha model neurons to a single incoming spike.
 The voltage excursion is called postsynaptic potential (PSP). In the model
-neurons the postsynaptic current is described by an alpha-function
+neurons the postsynaptic current is described by an alpha-shaped function
 (see [1] and references therein). The resulting PSP has a finite
 rise-time, with voltage and current beeing zero in the initial
 condition (see [1]).

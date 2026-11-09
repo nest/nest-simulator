@@ -75,7 +75,7 @@ neuron model described in :footcite:p:`Hill2005`. The most important properties 
 - Integrate-and-fire with adaptive threshold.
 - Repolarizing potassium current instead of hard reset.
 - AMPA, NMDA, GABA_A, and GABA_B conductance-based synapses with
-  beta-function (difference of exponentials) time course.
+  beta-shaped function (difference of exponentials) time course.
 - Voltage-dependent NMDA with instantaneous or two-stage unblocking :footcite:p:`Hill2005`, :footcite:p:`Vargas2003`.
 - Intrinsic currents I_h, I_T, I_Na(p), and I_KNa.
 - Synaptic "minis" are not implemented.

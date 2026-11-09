@@ -34,7 +34,7 @@ distributing them, not only the artificial synchrony is avoided
 but even machine precision can be obtained for small time steps.
 
 Here, we simulate the 'Hansel' network of 128 all-to-all connected
-excitatory integrate-and-fire neurons with alpha-shaped postsynaptic
+excitatory integrate-and-fire neurons with alpha-shaped function postsynaptic
 currents (PSC) in two implementations:
 
 1. Precise implementation by Morrison et al. (2007) :footcite:p:`Morrison2007a`

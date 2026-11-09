@@ -35,14 +35,14 @@
 Short description
 +++++++++++++++++
 
-Current-based generalized leaky integrate-and-fire (GLIF) models with double alpha-function
+Current-based generalized leaky integrate-and-fire (GLIF) models with double alpha-shaped function
 (from the Allen Institute)
 
 Description
 +++++++++++
 
 ``glif_psc_double_alpha`` provides five generalized leaky integrate-and-fire
-(GLIF) models :footcite:p:`Teeter2018` with double alpha-function shaped synaptic currents.
+(GLIF) models :footcite:p:`Teeter2018` with double alpha-shaped function synaptic currents.
 Incoming spike events induce a postsynaptic change of current modeled
 by the sum of two alpha functions (fast and slow components) for each receptor :footcite:p:`Meffin2004`.
 This function is normalized such that an event of weight 1.0 results in a peak current

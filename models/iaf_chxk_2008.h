@@ -63,7 +63,7 @@ is activated which repolarizes the neuron over time. Membrane potential is not
 reset explicitly and the model also has no explicit refractory time.
 
 The AHP conductance and excitatory and inhibitory synaptic input conductances
-follow alpha-function time courses as in the ``iaf_cond_alpha`` model.
+follow alpha-shaped function time courses as in the ``iaf_cond_alpha`` model.
 
 .. note::
    In accordance with the original Fortran implementation of the model used

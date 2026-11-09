@@ -126,7 +126,7 @@ and
 
 This means that once we have calculated :math:`A`, propagation consists of multiplications only.
 
-Example: The leaky integrate and fire model with alpha-function shaped inputs (iaf_psc_alpha)
+Example: The leaky integrate and fire model with alpha-shaped function inputs (iaf_psc_alpha)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The dynamics of the membrane potential :math:`V` is given by:
@@ -137,7 +137,7 @@ The dynamics of the membrane potential :math:`V` is given by:
 
 where :math:`\tau` is the membrane time constant and :math:`C` is the capacitance. :math:`I` is the sum of the synaptic currents and any external input:
 
-Postsynaptic currents are alpha-function shaped, i.e. the time course of the synaptic current :math:`\iota` due to one incoming spike is
+Postsynaptic currents are alpha-shaped functions, i.e. the time course of the synaptic current :math:`\iota` due to one incoming spike is
 
 .. math::
 

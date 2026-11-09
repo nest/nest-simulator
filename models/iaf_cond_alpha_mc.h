@@ -100,7 +100,7 @@ clamped to a reset potential, :math:` V_{m.s} == V_{reset}`, for the refractory
 period. Dendritic membrane potentials are not manipulated after a spike.
 
 There is one excitatory and one inhibitory conductance-based synapse
-onto each compartment, with alpha-function time course. The alpha
+onto each compartment, with alpha-shaped function time course. The alpha
 function is normalized such that an event of weight 1.0 results in a
 peak current of 1 nS at :math:`t = \tau_{syn}`. Each compartment can also
 receive current input from a current generator, and an external (rheobase)

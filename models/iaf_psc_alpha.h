@@ -41,7 +41,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Leaky integrate-and-fire model with alpha-function shaped input currents
+Leaky integrate-and-fire model with alpha-shaped function input currents
 
 Description
 +++++++++++

@@ -41,7 +41,7 @@ Description
 +++++++++++
 
 ``glif_psc`` provides five generalized leaky integrate-and-fire
-(GLIF) models :footcite:p:`Teeter2018` with alpha-function shaped synaptic currents.
+(GLIF) models :footcite:p:`Teeter2018` with alpha-shaped function synaptic currents.
 Incoming spike events induce a postsynaptic change of current modeled
 by an alpha function :footcite:p:`Meffin2004`. The alpha function is normalized such that an event
 of weight 1.0 results in a peak current of 1 pA at :math:`t = \tau_\mathrm{syn}`.

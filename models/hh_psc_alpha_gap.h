@@ -106,10 +106,6 @@ Parameters
 The following parameters can be set in the status Dictionary.
 
 ===========  ====== ============================================================
-tau_ex       ms      Rise time of the excitatory postsynaptic current
-                     (alpha function)
-tau_in       ms      Rise time of the inhibitory postsynaptic current
-                     (alpha function)
 g_K          nS      Potassium peak conductance
 V_m          mV      Membrane potential
 E_L          mV      Leak reversal potential

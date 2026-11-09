@@ -118,9 +118,9 @@ E_L         mV      Leak reversal potential
 C_m         pF      Capacity of the membrane
 t_ref       ms      Duration of refractory period
 g_L         nS      Leak conductance
-tau_ex      ms      Rise time of the excitatory postsynaptic current
+tau_syn_ex  ms      Rise time of the excitatory postsynaptic current
                     (alpha function)
-tau_in      ms      Rise time of the inhibitory postsynaptic current
+tau_syn_in  ms      Rise time of the inhibitory postsynaptic current
                     (alpha function)
 E_Na        mV      Sodium reversal potential
 g_Na        nS      Sodium peak conductance

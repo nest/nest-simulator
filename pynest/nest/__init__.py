@@ -111,7 +111,12 @@ class NestModule(types.ModuleType):
 
         # Finalize the nest module with a public API.
         _api = list(k for k in self.__dict__ if not k.startswith("_"))
-        _api.extend(k for k in dir(type(self)) if not k.startswith("_"))
+        # without the kernel attributes that the build does not provide (see KernelAttribute.available())
+        _api.extend(
+            k
+            for k in dir(type(self))
+            if not k.startswith("_") and getattr(vars(type(self)).get(k), "available", lambda: True)()
+        )
         self.__all__ = list(set(_api))
 
         # Add version for backward compatibility

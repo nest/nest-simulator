@@ -101,15 +101,19 @@ class KernelAttribute:
         self._name = name
         self._full_status = name == "kernel_status"
 
-    def _check_build_flag(self, status_root=None):
+    def available(self, status_root=None):
+        """Return whether NEST was built with what the attribute needs (see ``build_flag``)."""
         if self._build_flag is None:
-            return
+            return True
         if status_root is None:
             status_root = nestkernel.llapi_get_kernel_status()
-        flag, message = self._build_flag
-        if not status_root["build_info"].get(flag, False):
-            # not AttributeError: Python would replace it by the generic message of the module's __getattr__
-            raise NotImplementedError(f"`{self._name}` is not available: {message}.")
+        return bool(status_root["build_info"].get(self._build_flag[0], False))
+
+    def _check_build_flag(self, status_root=None):
+        if not self.available(status_root):
+            # AttributeError, so that the attribute counts as missing (hasattr gives False). On reading, the module
+            # replaces this message by its generic one; setting the attribute keeps it.
+            raise AttributeError(f"`{self._name}` is not available: {self._build_flag[1]}.")
 
     def __get__(self, instance, cls=None):
         if instance is None:

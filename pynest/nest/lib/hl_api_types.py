@@ -678,8 +678,12 @@ class SynapseCollection:
 
         if self.__len__() != other.__len__():
             return False
-        self_get = self.get(["source", "target", "target_thread", "synapse_id", "port"])
-        other_get = other.get(["source", "target", "target_thread", "synapse_id", "port"])
+        keys = ["source", "target", "target_thread", "synapse_id", "port"]
+        # with morph active, the port indexes the tables of the path of the connection
+        if self.__len__() > 0 and "long_range" in self[0].get():
+            keys.append("long_range")
+        self_get = self.get(keys)
+        other_get = other.get(keys)
         if self_get != other_get:
             return False
         return True

@@ -78,8 +78,11 @@ def test_interface_without_morph_raises(have_morph):
             nest.SetKernelStatus(params)
     for attr in ("threshold_delay", "comm_local_ranks", "buffer_size_spike_data_long_delay"):
         assert attr not in nest.GetKernelStatus()
-        with pytest.raises(NotImplementedError, match="-Dwith-morph=ON"):
-            getattr(nest, attr)
+        # the attributes behave as missing (hasattr, import *)
+        assert not hasattr(nest, attr)
+        assert attr not in nest.__all__
+        with pytest.raises(AttributeError, match="-Dwith-morph=ON"):
+            setattr(nest, attr, 1)
 
     n = nest.Create("iaf_psc_alpha", 2)
     with pytest.raises(nest.NESTError, match="-Dwith-morph=ON"):
@@ -758,6 +761,24 @@ def test_threshold_delay_follows_resolution(resolution):
     nest.threshold_delay = THRESHOLD
     nest.resolution = resolution
     assert nest.threshold_delay == pytest.approx(THRESHOLD)
+
+
+@pytest.mark.skipif_missing_morph
+def test_connections_on_both_paths_differ():
+    """Ensure that connections of the same pair on the short and the long path compare unequal."""
+
+    nest.ResetKernel()
+    nest.threshold_delay = THRESHOLD
+    ids = nest.Create("parrot_neuron", 2 * nest.total_num_virtual_procs).tolist()
+    pre, post = (nest.NodeCollection([i]) for i in [i for i in ids if rank_of(i) == 0][:2])
+    nest.Connect(pre, post, syn_spec={"delay": THRESHOLD})
+    nest.Connect(pre, post, {"rule": "one_to_one", "long_range": True}, {"delay": 2 * THRESHOLD})
+    conns = nest.GetConnections()
+    again = nest.GetConnections()  # GetConnections communicates: all processes call it
+    if len(conns) == 2:  # on rank 0
+        assert list(conns.get("port")) == [0, 0]
+        assert conns[0] != conns[1]
+        assert conns[0] == again[0]
 
 
 def simulate_with_long_range_spike(t_end):

@@ -73,7 +73,7 @@ Description
 that also supports gap junctions.
 
 This model is derived from the ``hh_conda_exp`` model, but supports double-exponential-shaped
-(beta-shaped) synaptic conductances and also supports gap junctions. The model is originally
+(beta-function shaped) synaptic conductances and also supports gap junctions. The model is originally
 based on a model of hippocampal pyramidal cells by Traub and Miles :footcite:p:`Traub1991`.
 The key differences between the current model and the model in :footcite:p:`Traub1991` are:
 

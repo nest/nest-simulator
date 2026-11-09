@@ -41,7 +41,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Leaky integrate-and-fire model with alpha-shaped function input currents
+Leaky integrate-and-fire model with alpha-function shaped input currents
 
 Description
 +++++++++++
@@ -160,8 +160,8 @@ The following parameters can be set in the status dictionary.
 ``t_ref``       2 ms               :math:`t_{\text{ref}}`          Duration of refractory period
 ``V_th``        -55 mV             :math:`V_{\text{th}}`           Spike threshold
 ``V_reset``     -70 mV             :math:`V_{\text{reset}}`        Reset potential of the membrane
-``tau_syn_ex``  2 ms               :math:`\tau_{\text{syn, ex}}`   Rise time of the excitatory synaptic alpha function
-``tau_syn_in``  2 ms               :math:`\tau_{\text{syn, in}}`   Rise time of the inhibitory synaptic alpha function
+``tau_syn_ex``  2 ms               :math:`\tau_{\text{syn, ex}}`   Rise time of the excitatory postsynaptic current (alpha function)
+``tau_syn_in``  2 ms               :math:`\tau_{\text{syn, in}}`   Rise time of the inhibitory postsynaptic current (alpha function)
 ``I_e``         0 pA               :math:`I_\text{e}`              Constant input current
 ``V_min``       :math:`-\infty` mV :math:`V_{\text{min}}`          Absolute lower value for the membrane potential
 =============== ================== =============================== ========================================================================

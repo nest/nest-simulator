@@ -75,7 +75,7 @@ its grid-constrained counterpart is ``iaf_psc_delta``. In this model the
 precise location of an outgoing spike is determined analytically.
 
 ``iaf_psc_alpha_ps`` is an
-integrate-and-fire neuron model with alpha-shaped function postsynaptic
+integrate-and-fire neuron model with alpha-function shaped postsynaptic
 current that employ precise spike times; The grid-constrained
 counterpart is ``iaf_psc_alpha``. The neuron models have been developed
 in the context of `Morrison et al.

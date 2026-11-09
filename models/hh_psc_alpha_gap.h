@@ -106,16 +106,20 @@ Parameters
 The following parameters can be set in the status Dictionary.
 
 ===========  ====== ============================================================
-tau_ex       ms      Rise time of the excitatory synaptic alpha function
-tau_in       ms      Rise time of the inhibitory synaptic alpha function
+tau_ex       ms      Rise time of the excitatory postsynaptic current
+                     (alpha function)
+tau_in       ms      Rise time of the inhibitory postsynaptic current
+                     (alpha function)
 g_K          nS      Potassium peak conductance
 V_m          mV      Membrane potential
 E_L          mV      Leak reversal potential
 g_L          nS      Leak conductance
 C_m          pF      Capacity of the membrane
 t_ref        ms      Duration of refractory period
-tau_syn_ex   ms      Rise time of the excitatory synaptic alpha function
-tau_syn_in   ms      Rise time of the inhibitory synaptic alpha function
+tau_syn_ex   ms      Rise time of the excitatory postsynaptic current
+                     (alpha function)
+tau_syn_in   ms      Rise time of the inhibitory postsynaptic current
+                     (alpha function)
 E_Na         mV      Sodium reversal potential
 g_Na         nS      Sodium peak conductance
 E_K          mV      Potassium reversal potential

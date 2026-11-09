@@ -123,7 +123,7 @@ nest.ResetKernel()
 # assign to a variable for later use.
 #
 # As a first example, we will create a neuron of type ``iaf_psc_alpha``. This
-# is an integrate-and-fire neuron with alpha-shaped function postsynaptic currents. The
+# is an integrate-and-fire neuron with alpha-function shaped postsynaptic currents. The
 # function returns a NodeCollection of the ids of all the created neurons, in
 # this case only one, which we store in a variable called ``neuron``.
 

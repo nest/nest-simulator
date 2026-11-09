@@ -49,7 +49,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Current-based leaky integrate-and-fire neuron with alpha-shaped function
+Current-based leaky integrate-and-fire neuron with alpha-function shaped
 postsynaptic currents using regula falsi method for approximation of
 threshold crossing
 
@@ -59,7 +59,7 @@ Description
 .. versionadded:: 2.18
 
 ``iaf_psc_alpha_ps`` is the "canonical" implementation of the leaky
-integrate-and-fire model neuron with alpha-shaped function postsynaptic
+integrate-and-fire model neuron with alpha-function shaped postsynaptic
 currents in the sense of :footcite:p:`Morrison2007a`, that is, the most exact implementation
 available. It is a leaky integrate-and-fire neuron model with
 

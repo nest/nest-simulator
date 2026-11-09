@@ -63,7 +63,7 @@ is activated which repolarizes the neuron over time. Membrane potential is not
 reset explicitly and the model also has no explicit refractory time.
 
 The AHP conductance and excitatory and inhibitory synaptic input conductances
-follow alpha-shaped function time courses as in the ``iaf_cond_alpha`` model.
+follow alpha-function time courses as in the ``iaf_cond_alpha`` model.
 
 .. note::
    In accordance with the original Fortran implementation of the model used
@@ -103,8 +103,10 @@ The following parameters can be set in the status Dictionary.
  E_ex     mV      Excitatory reversal potential
  E_in     mV      Inhibitory reversal potential
  g_L      nS      Leak conductance
- tau_ex   ms      Rise time of the excitatory synaptic alpha function
- tau_in   ms      Rise time of the inhibitory synaptic alpha function
+ tau_ex   ms      Rise time of the excitatory synaptic conductance
+                  (alpha function)
+ tau_in   ms      Rise time of the inhibitory synaptic conductance
+                  (alpha function)
  I_e      pA      Constant input current
  tau_ahp  ms      Afterhyperpolarization (AHP) time constant
  E_ahp    mV      AHP potential

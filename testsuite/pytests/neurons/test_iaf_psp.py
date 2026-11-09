@@ -29,7 +29,7 @@ Description:
  test_iaf_psp.sli checks the voltage response of the iaf_psc_alpha
  model neuron to a single incoming spike. The voltage excursion is
  called postsynaptic potential (PSP). In the iaf_psc_alpha model neuron
- the postsynaptic current is described by an alpha-shaped function
+ the postsynaptic current is described by an alpha-function
  (see [1] and references therein). The resulting PSP has a finite
  rise-time, with voltage and current being zero in the initial
  condition (see [1]).

@@ -63,7 +63,7 @@ extern "C" int iaf_cond_alpha_dynamics( double, const double*, double*, void* );
 Short description
 +++++++++++++++++
 
-Leaky integrate-and-fire neuron model with alpha-shaped function synaptic conductances
+Leaky integrate-and-fire neuron model with alpha-function shaped synaptic conductances
 
 Description
 +++++++++++

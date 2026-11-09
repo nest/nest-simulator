@@ -100,7 +100,7 @@ clamped to a reset potential, :math:` V_{m.s} == V_{reset}`, for the refractory
 period. Dendritic membrane potentials are not manipulated after a spike.
 
 There is one excitatory and one inhibitory conductance-based synapse
-onto each compartment, with alpha-shaped function time course. The alpha
+onto each compartment, with alpha-function time course. The alpha
 function is normalized such that an event of weight 1.0 results in a
 peak current of 1 nS at :math:`t = \tau_{syn}`. Each compartment can also
 receive current input from a current generator, and an external (rheobase)
@@ -128,8 +128,10 @@ these parameters are marked with an asterisk.
  E_ex*       mV      Excitatory reversal potential
  E_in*       mV      Inhibitory reversal potential
  g_L*        nS      Leak conductance
- tau_syn_ex* ms      Rise time of the excitatory synaptic alpha function
- tau_syn_in* ms      Rise time of the inhibitory synaptic alpha function
+ tau_syn_ex* ms      Rise time of the excitatory synaptic conductance
+                     (alpha function)
+ tau_syn_in* ms      Rise time of the inhibitory synaptic conductance
+                     (alpha function)
  I_e*        pA      Constant input current
  g_sp        nS      Conductance connecting soma and proximal dendrite
  g_pd        nS      Conductance connecting proximal and distal dendrite

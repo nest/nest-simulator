@@ -186,8 +186,8 @@ The following parameters can be set in the status dictionary.
 ``t_ref``       2 ms               :math:`t_{\text{ref}}`          Duration of refractory period
 ``V_th``        -55 mV             :math:`V_{\text{th}}`           Spike threshold
 ``V_reset``     -70 mV             :math:`V_{\text{reset}}`        Reset potential of the membrane
-``tau_syn_ex``  2 ms               :math:`\tau_{\text{syn, ex}}`   Rise time of the excitatory synaptic alpha function
-``tau_syn_in``  2 ms               :math:`\tau_{\text{syn, in}}`   Rise time of the inhibitory synaptic alpha function
+``tau_syn_ex``  2 ms               :math:`\tau_{\text{syn, ex}}`   Exponential decay time constant of excitatory postsynaptic current
+``tau_syn_in``  2 ms               :math:`\tau_{\text{syn, in}}`   Exponential decay time constant of inhibitory postsynaptic current
 ``I_e``         0 pA               :math:`I_\text{e}`              Constant input current
 ``delta``       0 mV               :math:`\delta`                  Parameter scaling stochastic spiking
 ``rho``         0.01 1/s           :math:`\rho`                    Baseline stochastic spiking

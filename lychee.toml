@@ -63,6 +63,10 @@ host_request_interval = "500ms"
 #
 # The fourth group are index pages that Doxygen generates at build time; the
 # devdoc markdown links to them, but they do not exist in the source tree.
+#
+# The fifth group are hosts that fail intermittently although the links are
+# valid. Dynamic Shields badges return 408 when slow, which is only cosmetic.
+# proceedings.neurips.cc has outages; remove it once the host is stable.
 exclude = [
     ".git/.*",
     "^https?://(www\\.)?gnu\\.org/",
@@ -82,6 +86,9 @@ exclude = [
     "^https://ghpusher",
 
     "^file://.*/doc/developer_space/(annotated|namespaces|files)\\.html$",
+
+    "^https?://img\\.shields\\.io/",
+    "^https://proceedings\\.neurips\\.cc/",
 ]
 
 # Rewrite URLs before checking (regex, `$n` refers to capture groups).

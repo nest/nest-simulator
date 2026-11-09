@@ -25,7 +25,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Restore Lychee Cache
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .lycheecache
           key: lychee-cache-${{ runner.os }}-${{ github.run_id }}
@@ -49,3 +49,12 @@ jobs:
           fail: true
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+      # Save even if links failed, otherwise one failure discards all the
+      # successful results. lychee does not write failed links to its cache.
+      - name: Save Lychee Cache
+        if: ${{ !cancelled() && hashFiles('.lycheecache') != '' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .lycheecache
+          key: lychee-cache-${{ runner.os }}-${{ github.run_id }}

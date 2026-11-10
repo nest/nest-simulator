@@ -88,7 +88,7 @@ public:
   /**
    * Set the local group of processes of morph for this process.
    *
-   * Spikes of short-range connections are exchanged within the local group (communicator comm_local).
+   * Spikes of short-range connections are exchanged within the local group (communicator comm_local_).
    * The groups must partition the processes; every process passes the ranks of its own group, including its own
    * rank. Collective over all processes, except for a group consisting of the calling process only.
    */
@@ -424,7 +424,7 @@ private:
   //! Variable to hold the MPI communicator to use (the datatype matters).
   MPI_Comm comm;
 #ifdef HAVE_MORPH
-  MPI_Comm comm_local;  //!< communicator of the local group of morph
+  MPI_Comm comm_local_;  //!< communicator of the local group of morph
 #endif
   MPI_Datatype MPI_OFFGRID_SPIKE;
 

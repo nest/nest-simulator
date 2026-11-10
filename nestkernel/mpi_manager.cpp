@@ -80,7 +80,7 @@ MPIManager::MPIManager()
   , COMM_OVERFLOW_ERROR( std::numeric_limits< unsigned int >::max() )
   , comm( 0 )
 #ifdef HAVE_MORPH
-  , comm_local( MPI_COMM_NULL )
+  , comm_local_( MPI_COMM_NULL )
 #endif
   , MPI_OFFGRID_SPIKE( 0 )
 #endif
@@ -196,15 +196,15 @@ MPIManager::set_comm_local_ranks( const std::vector< long >& ranks )
     }
   }
 
-  if ( comm_local != MPI_COMM_NULL )
+  if ( comm_local_ != MPI_COMM_NULL )
   {
-    MPI_Comm_free( &comm_local );
+    MPI_Comm_free( &comm_local_ );
   }
   MPI_Group group_global;
   MPI_Comm_group( comm, &group_global );
   MPI_Group group_local;
   MPI_Group_incl( group_global, new_ranks.size(), new_ranks.data(), &group_local );
-  MPI_Comm_create_group( comm, group_local, 0, &comm_local );
+  MPI_Comm_create_group( comm, group_local, 0, &comm_local_ );
   MPI_Group_free( &group_local );
   MPI_Group_free( &group_global );
 
@@ -225,13 +225,13 @@ MPIManager::communicate_Alltoall_short_path_( void* send_buffer, void* recv_buff
     recv_buffer,
     send_recv_count,
     MPI_UNSIGNED,
-    kernel().connection_manager.is_morph_active() ? comm_local : comm );
+    kernel().connection_manager.is_morph_active() ? comm_local_ : comm );
 }
 
 void
 MPIManager::synchronize_short_path()
 {
-  MPI_Barrier( kernel().connection_manager.is_morph_active() ? comm_local : comm );
+  MPI_Barrier( kernel().connection_manager.is_morph_active() ? comm_local_ : comm );
 }
 #endif
 
@@ -469,9 +469,9 @@ MPIManager::mpi_finalize( int exitcode )
 {
   MPI_Type_free( &MPI_OFFGRID_SPIKE );
 #ifdef HAVE_MORPH
-  if ( comm_local != MPI_COMM_NULL )
+  if ( comm_local_ != MPI_COMM_NULL )
   {
-    MPI_Comm_free( &comm_local );
+    MPI_Comm_free( &comm_local_ );
   }
 #endif
 

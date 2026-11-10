@@ -64,7 +64,7 @@ SimulationManager::SimulationManager()
   , update_time_limit_( std::numeric_limits< double >::infinity() )
   , min_update_time_( std::numeric_limits< double >::infinity() )
   , max_update_time_( -std::numeric_limits< double >::infinity() )
-  , tree_barrier_( std::make_unique< TreeBarrierControl >() )
+  , tree_barrier_( std::make_unique< TreeBarrierControl_ >() )
   , eprop_update_interval_( 1000. )
   , eprop_learning_window_( 1000. )
   , eprop_reset_neurons_on_update_( true )
@@ -97,8 +97,8 @@ SimulationManager::initialize( const bool adjust_number_of_threads_or_rng_only )
   simulated_ = false;
   inconsistent_state_ = false;
   print_time_ = false;
-  tree_barrier_->use = false;
-  tree_barrier_->fan_in = 8;
+  tree_barrier_->use_ = false;
+  tree_barrier_->fan_in_ = 8;
   use_wfr_ = true;
 
   wfr_comm_interval_ = 1.0;
@@ -180,15 +180,15 @@ SimulationManager::set_status( const Dictionary& d )
   }
 
   d.update_value( names::print_time, print_time_ );
-  d.update_value( names::tree_barrier, tree_barrier_->use );
-  long fan_in = tree_barrier_->fan_in;
+  d.update_value( names::tree_barrier, tree_barrier_->use_ );
+  long fan_in = tree_barrier_->fan_in_;
   if ( d.update_value( names::tree_barrier_fan_in, fan_in ) )
   {
     if ( fan_in < 2 )
     {
       throw BadProperty( "tree_barrier_fan_in >= 2 required." );
     }
-    tree_barrier_->fan_in = fan_in;
+    tree_barrier_->fan_in_ = fan_in;
   }
 
   // tics_per_ms and resolution must come after local_num_thread /
@@ -484,8 +484,8 @@ SimulationManager::get_status( Dictionary& d )
   d[ names::biological_time ] = get_time().get_ms();
   d[ names::to_do ] = static_cast< long >( to_do_ );  // casting to avoid extra checks of any types
   d[ names::print_time ] = print_time_;
-  d[ names::tree_barrier ] = tree_barrier_->use;
-  d[ names::tree_barrier_fan_in ] = static_cast< long >( tree_barrier_->fan_in );
+  d[ names::tree_barrier ] = tree_barrier_->use_;
+  d[ names::tree_barrier_fan_in ] = static_cast< long >( tree_barrier_->fan_in_ );
 
   d[ names::prepared ] = prepared_;
 
@@ -875,12 +875,12 @@ SimulationManager::update_()
   size_t start_local_spike_counter = kernel().event_delivery_manager.get_local_spike_counter();
 #endif
 
-  const bool use_tree_barrier = tree_barrier_->use;
+  const bool use_tree_barrier = tree_barrier_->use_;
   if ( use_tree_barrier )
   {
     // Prepared again for every run, so that a changed thread count or fan-in takes effect and
     // no state of an earlier run is carried over. This costs a few allocations per run, not per cycle.
-    tree_barrier_->barrier.initialize( kernel().vp_manager.get_num_threads(), tree_barrier_->fan_in );
+    tree_barrier_->barrier_.initialize( kernel().vp_manager.get_num_threads(), tree_barrier_->fan_in_ );
   }
 
 // parallel section begins
@@ -1101,7 +1101,7 @@ SimulationManager::update_()
         kernel().get_omp_synchronization_simulation_stopwatch().start();
         if ( use_tree_barrier )
         {
-          tree_barrier_->barrier.wait( tid );
+          tree_barrier_->barrier_.wait( tid );
         }
         else
         {
@@ -1169,7 +1169,7 @@ SimulationManager::update_()
         // end of master section, all threads have to synchronize at this point
         if ( use_tree_barrier )
         {
-          tree_barrier_->barrier.wait( tid );
+          tree_barrier_->barrier_.wait( tid );
         }
         else
         {

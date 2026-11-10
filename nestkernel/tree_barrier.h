@@ -50,90 +50,11 @@ namespace nest
 class TreeBarrier
 {
 public:
-  //! Barrier for no threads; initialize() prepares it for use.
-  TreeBarrier()
-    : num_threads_( 0 )
-    , fan_in_( 8 )
-    , level_nodes_()
-    , level_offset_()
-    , counters_()
-    , local_sense_()
-    , global_sense_()
-  {
-  }
-
   //! Prepare the barrier for num_threads threads; not thread safe.
-  void
-  initialize( const size_t num_threads, const size_t fan_in )
-  {
-    num_threads_ = num_threads;
-    fan_in_ = fan_in < 2 ? 2 : fan_in;
-    level_nodes_.clear();
-    level_offset_.clear();
-    size_t nodes_in_level = num_threads_;
-    size_t offset = 0;
-    while ( nodes_in_level > 1 )
-    {
-      const size_t groups = ( nodes_in_level + fan_in_ - 1 ) / fan_in_;
-      level_nodes_.push_back( groups );
-      level_offset_.push_back( offset );
-      offset += groups;
-      nodes_in_level = groups;
-    }
-    counters_ = std::vector< Padded >( offset > 0 ? offset : 1 );
-    local_sense_ = std::vector< Padded >( num_threads_ );
-    for ( auto& c : counters_ )
-    {
-      c.value.store( 0, std::memory_order_relaxed );
-    }
-    for ( auto& s : local_sense_ )
-    {
-      s.value.store( 0, std::memory_order_relaxed );
-    }
-    global_sense_.value.store( 0, std::memory_order_relaxed );
-  }
+  void initialize( const size_t num_threads, const size_t fan_in );
 
   //! Wait until all threads have arrived.
-  void
-  wait( const size_t tid )
-  {
-    const int sense = local_sense_[ tid ].value.load( std::memory_order_relaxed ) ^ 1;
-    local_sense_[ tid ].value.store( sense, std::memory_order_relaxed );
-
-    size_t index = tid;
-    size_t below = num_threads_;
-    bool last = true;
-    for ( size_t level = 0; level < level_nodes_.size(); ++level )
-    {
-      const size_t group = index / fan_in_;
-      const size_t group_size = std::min( fan_in_, below - group * fan_in_ );
-      Padded& counter = counters_[ level_offset_[ level ] + group ];
-      if ( counter.value.fetch_add( 1, std::memory_order_acq_rel ) != static_cast< int >( group_size ) - 1 )
-      {
-        last = false;
-        break;
-      }
-      counter.value.store( 0, std::memory_order_relaxed );
-      index = group;
-      below = level_nodes_[ level ];
-    }
-
-    if ( last )
-    {
-      global_sense_.value.store( sense, std::memory_order_release );
-      return;
-    }
-    size_t spins = 0;
-    while ( global_sense_.value.load( std::memory_order_acquire ) != sense )
-    {
-      pause_();
-      if ( ++spins > 20000 )
-      {
-        std::this_thread::yield();
-        spins = 0;
-      }
-    }
-  }
+  void wait( const size_t tid );
 
 private:
   /**
@@ -144,34 +65,103 @@ private:
    * The 64 bytes are the cache line size of the server processors NEST is run on; on a processor with larger
    * cache lines, two counters could share a line and the padding would not separate them.
    */
-  struct alignas( 64 ) Padded
+  struct alignas( 64 ) Padded_
   {
-    Padded()
-      : value( 0 )
-    {
-    }
-
-    std::atomic< int > value;
+    std::atomic< int > value_ = 0;
   };
 
-  static inline void
-  pause_()
-  {
-#if defined( __x86_64__ ) || defined( __i386__ )
-    __builtin_ia32_pause();
-#elif defined( __aarch64__ )
-    asm volatile( "yield" ::: "memory" );
-#endif
-  }
+  //! Hint to the processor that the thread is spinning.
+  static void pause_();
 
-  size_t num_threads_;
-  size_t fan_in_;
+  size_t num_threads_ = 0;
+  size_t fan_in_ = 8;
   std::vector< size_t > level_nodes_;   //!< number of groups per level
   std::vector< size_t > level_offset_;  //!< index of the first counter of the level
-  std::vector< Padded > counters_;
-  std::vector< Padded > local_sense_;
-  Padded global_sense_;
+  std::vector< Padded_ > counters_;
+  std::vector< Padded_ > local_sense_;
+  Padded_ global_sense_;
 };
+
+inline void
+TreeBarrier::initialize( const size_t num_threads, const size_t fan_in )
+{
+  num_threads_ = num_threads;
+  fan_in_ = fan_in < 2 ? 2 : fan_in;
+  level_nodes_.clear();
+  level_offset_.clear();
+  size_t nodes_in_level = num_threads_;
+  size_t offset = 0;
+  while ( nodes_in_level > 1 )
+  {
+    const size_t groups = ( nodes_in_level + fan_in_ - 1 ) / fan_in_;
+    level_nodes_.push_back( groups );
+    level_offset_.push_back( offset );
+    offset += groups;
+    nodes_in_level = groups;
+  }
+  counters_ = std::vector< Padded_ >( offset > 0 ? offset : 1 );
+  local_sense_ = std::vector< Padded_ >( num_threads_ );
+  for ( auto& c : counters_ )
+  {
+    c.value_.store( 0, std::memory_order_relaxed );
+  }
+  for ( auto& s : local_sense_ )
+  {
+    s.value_.store( 0, std::memory_order_relaxed );
+  }
+  global_sense_.value_.store( 0, std::memory_order_relaxed );
+}
+
+inline void
+TreeBarrier::wait( const size_t tid )
+{
+  const int sense = local_sense_[ tid ].value_.load( std::memory_order_relaxed ) ^ 1;
+  local_sense_[ tid ].value_.store( sense, std::memory_order_relaxed );
+
+  size_t index = tid;
+  size_t below = num_threads_;
+  bool last = true;
+  for ( size_t level = 0; level < level_nodes_.size(); ++level )
+  {
+    const size_t group = index / fan_in_;
+    const size_t group_size = std::min( fan_in_, below - group * fan_in_ );
+    Padded_& counter = counters_[ level_offset_[ level ] + group ];
+    if ( counter.value_.fetch_add( 1, std::memory_order_acq_rel ) != static_cast< int >( group_size ) - 1 )
+    {
+      last = false;
+      break;
+    }
+    counter.value_.store( 0, std::memory_order_relaxed );
+    index = group;
+    below = level_nodes_[ level ];
+  }
+
+  if ( last )
+  {
+    global_sense_.value_.store( sense, std::memory_order_release );
+    return;
+  }
+  size_t spins = 0;
+  while ( global_sense_.value_.load( std::memory_order_acquire ) != sense )
+  {
+    pause_();
+    if ( ++spins > 20000 )
+    {
+      std::this_thread::yield();
+      spins = 0;
+    }
+  }
+}
+
+inline void
+TreeBarrier::pause_()
+{
+#if defined( __x86_64__ ) || defined( __i386__ )
+  __builtin_ia32_pause();
+#elif defined( __aarch64__ )
+  asm volatile( "yield" ::: "memory" );
+#endif
+}
 
 }  // namespace nest
 

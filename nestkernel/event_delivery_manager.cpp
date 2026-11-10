@@ -289,8 +289,8 @@ EventDeliveryManager::update_moduli()
 {
   assert( num_moduli_ > 0 );
   const long steps = kernel().simulation_manager.get_clock().get_steps();
-  offsets_.moduli_offset = steps % num_moduli_;
-  offsets_.slice_moduli_offset = steps % slice_moduli_period_;
+  offsets_.moduli_offset_ = steps % num_moduli_;
+  offsets_.slice_moduli_offset_ = steps % slice_moduli_period_;
 }
 
 void

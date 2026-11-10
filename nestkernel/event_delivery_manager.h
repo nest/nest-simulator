@@ -387,7 +387,7 @@ private:
    * This table is used to map time steps, given as offset from now, to ring-buffer bins. There are
    * n = min_delay + max_delay bins in a ring buffer. The table holds i mod n for i = 0, ..., 2n - 1 and does not change
    * during a simulation; the bin of offset d is moduli_[ moduli_offset_ + d ], with moduli_offset_ = T mod n for the
-   * network clock T (see CycleOffsets).
+   * network clock T (see CycleOffsets_).
    * @see RingBuffer
    */
   std::vector< long > moduli_;
@@ -414,18 +414,12 @@ private:
    * They have a cache line of their own, so that the rest of the object, which all threads read for every event, is
    * not invalidated in every time slice.
    */
-  struct alignas( 64 ) CycleOffsets
+  struct alignas( 64 ) CycleOffsets_
   {
-    CycleOffsets()
-      : moduli_offset( 0 )
-      , slice_moduli_offset( 0 )
-    {
-    }
-
-    long moduli_offset;
-    long slice_moduli_offset;
+    long moduli_offset_ = 0;
+    long slice_moduli_offset_ = 0;
   };
-  CycleOffsets offsets_;
+  CycleOffsets_ offsets_;
   long slice_moduli_period_;  //!< min_delay * nbuff, period of the slice-based modulos
 
   /**
@@ -549,7 +543,7 @@ EventDeliveryManager::get_modulo( long d )
   // when all events due are read out.
   assert( 0 <= d and d < num_moduli_ );
 
-  return moduli_[ offsets_.moduli_offset + d ];
+  return moduli_[ offsets_.moduli_offset_ + d ];
 }
 
 inline long
@@ -559,7 +553,7 @@ EventDeliveryManager::get_slice_modulo( long d )
   // when all events due are read out.
   assert( 0 <= d and d < num_moduli_ );
 
-  return slice_moduli_[ offsets_.slice_moduli_offset + d ];
+  return slice_moduli_[ offsets_.slice_moduli_offset_ + d ];
 }
 
 }  // namespace nest

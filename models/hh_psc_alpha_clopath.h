@@ -90,8 +90,8 @@ see :ref:`here <hh_details>`.
 
 .. note::
 
-   Incoming spikes are routed to the excitatory or inhibitory synapse by the **sign of the
-   connection weight**. A positive weight targets the excitatory synapse, a negative weight
+   Incoming spikes are routed to the excitatory or inhibitory synapse type by the **sign of the
+   connection weight**. A positive weight targets the excitatory synapse type, a negative weight
    the inhibitory one, and also sets the direction of the post-synaptic current.
    Spike connections must use the default ``receptor_type`` of 0.
 
@@ -118,8 +118,10 @@ E_L         mV      Leak reversal potential
 C_m         pF      Capacity of the membrane
 t_ref       ms      Duration of refractory period
 g_L         nS      Leak conductance
-tau_ex      ms      Rise time of the excitatory synaptic alpha function
-tau_in      ms      Rise time of the inhibitory synaptic alpha function
+tau_syn_ex  ms      Rise time of the excitatory postsynaptic current
+                    (alpha function)
+tau_syn_in  ms      Rise time of the inhibitory postsynaptic current
+                    (alpha function)
 E_Na        mV      Sodium reversal potential
 g_Na        nS      Sodium peak conductance
 E_K         mV      Potassium reversal potential

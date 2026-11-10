@@ -83,8 +83,8 @@ follow alpha-function time courses as in the ``iaf_cond_alpha`` model.
 
 .. note::
 
-   Incoming spikes are routed to the excitatory or inhibitory synapse by the **sign of the
-   connection weight**. A positive weight targets the excitatory synapse, a negative weight
+   Incoming spikes are routed to the excitatory or inhibitory synapse type by the **sign of the
+   connection weight**. A positive weight targets the excitatory synapse type, a negative weight
    the inhibitory one. Only the absolute value of the weight sets the conductance
    amplitude. Spike connections must use the default ``receptor_type`` of 0.
 
@@ -95,23 +95,25 @@ Parameters
 
 The following parameters can be set in the status Dictionary.
 
-========  ======= ===========================================================
- V_m      mV      Membrane potential
- E_L      mV      Leak reversal potential
- C_m      pF      Capacity of the membrane
- V_th     mV      Spike threshold
- E_ex     mV      Excitatory reversal potential
- E_in     mV      Inhibitory reversal potential
- g_L      nS      Leak conductance
- tau_ex   ms      Rise time of the excitatory synaptic alpha function
- tau_in   ms      Rise time of the inhibitory synaptic alpha function
- I_e      pA      Constant input current
- tau_ahp  ms      Afterhyperpolarization (AHP) time constant
- E_ahp    mV      AHP potential
- g_ahp    nS      AHP conductance
- ahp_bug  boolean Defaults to false. If true, behaves like original
-                  model implementation
-========  ======= ===========================================================
+===========  ======= ===========================================================
+ V_m         mV      Membrane potential
+ E_L         mV      Leak reversal potential
+ C_m         pF      Capacity of the membrane
+ V_th        mV      Spike threshold
+ E_ex        mV      Excitatory reversal potential
+ E_in        mV      Inhibitory reversal potential
+ g_L         nS      Leak conductance
+ tau_syn_ex  ms      Rise time of the excitatory synaptic conductance
+                     (alpha function)
+ tau_syn_in  ms      Rise time of the inhibitory synaptic conductance
+                     (alpha function)
+ I_e         pA      Constant input current
+ tau_ahp     ms      Afterhyperpolarization (AHP) time constant
+ E_ahp       mV      AHP potential
+ g_ahp       nS      AHP conductance
+ ahp_bug     boolean Defaults to false. If true, behaves like original
+                     model implementation
+===========  ======= ===========================================================
 
 References
 ++++++++++

@@ -48,57 +48,58 @@ class DirectSpikeInputAddr
 {
 public:
   //! Address of a node that does not support direct delivery.
-  DirectSpikeInputAddr()
-    : slot0_( nullptr )
-    , stride_( 0 )
-    , excitatory_channel_( 0 )
-    , inhibitory_channel_( 0 )
-    , resolved_( false )
-  {
-  }
+  DirectSpikeInputAddr() = default;
 
   /**
    * Address of the input buffer `buffer` of a node.
    *
-   * BufferT provides slot_data() and slot_stride, as MultiChannelInputBuffer does. The address is
+   * BufferT provides slot_data() and SLOT_STRIDE, as MultiChannelInputBuffer does. The address is
    * valid until the buffer is resized, that is until the next call to prepare().
    */
   template < typename BufferT >
   DirectSpikeInputAddr( BufferT& buffer,
     const unsigned char excitatory_channel,
-    const unsigned char inhibitory_channel )
-    : slot0_( buffer.slot_data() )
-    , stride_( BufferT::slot_stride )
-    , excitatory_channel_( excitatory_channel )
-    , inhibitory_channel_( inhibitory_channel )
-    , resolved_( false )
-  {
-    static_assert( BufferT::slot_stride < 256, "stride must fit into an unsigned char" );
-  }
+    const unsigned char inhibitory_channel );
 
   //! Whether spikes can be added directly to the buffer.
-  bool
-  is_supported() const
-  {
-    return slot0_ != nullptr;
-  }
+  bool is_supported() const;
 
   //! Add weight w to the channel of its sign in the given slot of the ring.
-  void
-  add( const long slot, const double w ) const
-  {
-    slot0_[ stride_ * slot + ( w > 0 ? excitatory_channel_ : inhibitory_channel_ ) ] += w;
-  }
+  void add( const long slot, const double w ) const;
 
 private:
   friend class DirectSpikeTable;
 
-  double* slot0_;                     //!< first double of slot 0; nullptr if direct delivery is not supported
-  unsigned char stride_;              //!< doubles per slot
-  unsigned char excitatory_channel_;  //!< channel for spikes with positive weight
-  unsigned char inhibitory_channel_;  //!< channel for spikes with weight <= 0
-  bool resolved_;                     //!< set by DirectSpikeTable when the entry has been filled since the last clear()
+  double* slot0_ = nullptr;               //!< first double of slot 0; nullptr if direct delivery is not supported
+  unsigned char stride_ = 0;              //!< doubles per slot
+  unsigned char excitatory_channel_ = 0;  //!< channel for spikes with positive weight
+  unsigned char inhibitory_channel_ = 0;  //!< channel for spikes with weight <= 0
+  bool resolved_ = false;  //!< set by DirectSpikeTable when the entry has been filled since the last clear()
 };
+
+template < typename BufferT >
+DirectSpikeInputAddr::DirectSpikeInputAddr( BufferT& buffer,
+  const unsigned char excitatory_channel,
+  const unsigned char inhibitory_channel )
+  : slot0_( buffer.slot_data() )
+  , stride_( BufferT::SLOT_STRIDE )
+  , excitatory_channel_( excitatory_channel )
+  , inhibitory_channel_( inhibitory_channel )
+{
+  static_assert( BufferT::SLOT_STRIDE < 256, "stride must fit into an unsigned char" );
+}
+
+inline bool
+DirectSpikeInputAddr::is_supported() const
+{
+  return slot0_ != nullptr;
+}
+
+inline void
+DirectSpikeInputAddr::add( const long slot, const double w ) const
+{
+  slot0_[ stride_ * slot + ( w > 0 ? excitatory_channel_ : inhibitory_channel_ ) ] += w;
+}
 
 static_assert( sizeof( DirectSpikeInputAddr ) <= 16,
   "DirectSpikeInputAddr is a table entry read for every event, keep it small" );
@@ -119,11 +120,7 @@ class DirectSpikeTable
 {
 public:
   //! Discard all entries; the memory is kept for the next simulation.
-  void
-  clear()
-  {
-    entries_.clear();
-  }
+  void clear();
 
   /**
    * Address of the input buffer of the target of connection `conn`.
@@ -131,27 +128,36 @@ public:
    * Resolves the entry if needed: the target node is only accessed on the first spike to it.
    */
   template < typename ConnectionT >
-  const DirectSpikeInputAddr&
-  get( const ConnectionT& conn, const size_t tid )
-  {
-    const size_t idx = conn.get_target_index();
-    if ( idx >= entries_.size() )
-    {
-      entries_.resize( idx + 1 );
-    }
-    DirectSpikeInputAddr& entry = entries_[ idx ];
-    if ( not entry.resolved_ )
-    {
-      entry = conn.get_target( tid )->get_direct_spike_input();
-      entry.resolved_ = true;
-    }
-    return entry;
-  }
+  const DirectSpikeInputAddr& get( const ConnectionT& conn, const size_t tid );
 
 private:
   //! One entry per target; the flag resolved_ of an entry lives in the padding of the address (16 bytes in total).
   std::vector< DirectSpikeInputAddr > entries_;
 };
+
+inline void
+DirectSpikeTable::clear()
+{
+  entries_.clear();
+}
+
+template < typename ConnectionT >
+const DirectSpikeInputAddr&
+DirectSpikeTable::get( const ConnectionT& conn, const size_t tid )
+{
+  const size_t idx = conn.get_target_index();
+  if ( idx >= entries_.size() )
+  {
+    entries_.resize( idx + 1 );
+  }
+  DirectSpikeInputAddr& entry = entries_[ idx ];
+  if ( not entry.resolved_ )
+  {
+    entry = conn.get_target( tid )->get_direct_spike_input();
+    entry.resolved_ = true;
+  }
+  return entry;
+}
 
 }  // namespace nest
 

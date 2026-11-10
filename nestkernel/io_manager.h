@@ -24,6 +24,7 @@
 #define IO_MANAGER_H
 
 // C++ includes:
+#include <set>
 #include <string>
 
 // Includes from libnestutil:
@@ -150,6 +151,10 @@ public:
 private:
   void set_data_path_prefix_( const Dictionary& );
 
+  //! Delete and remove all backends except those named in keep.
+  template < typename BackendT >
+  void remove_backends_( std::map< std::string, BackendT* >& backends, const std::set< std::string >& keep );
+
   std::string data_path_;    //!< Path for all files written by devices
   std::string data_prefix_;  //!< Prefix for all files written by devices
   bool overwrite_files_;     //!< If true, overwrite existing data files.
@@ -163,6 +168,15 @@ private:
    * A mapping from names to registered stimulation backends
    */
   std::map< std::string, StimulationBackend* > stimulation_backends_;
+
+  /**
+   * Names of the built-in recording and stimulation backends.
+   *
+   * When only the number of threads changes, the built-in backends keep their state, whereas the backends of
+   * extension modules are removed, because ModuleManager::reinitialize_dynamic_modules() registers them again (#4013).
+   */
+  std::set< std::string > builtin_recording_backends_;
+  std::set< std::string > builtin_stimulation_backends_;
 };
 
 inline const std::string&

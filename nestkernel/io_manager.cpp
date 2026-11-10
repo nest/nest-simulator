@@ -32,6 +32,7 @@
 
 // C++ includes:
 #include <cstdlib>
+#include <ranges>
 
 // Includes from libnestutil:
 #include "compose.hpp"
@@ -68,10 +69,22 @@ IOManager::~IOManager()
 void
 IOManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
+  // Backends kept across a change of the number of threads adapt to it here; backends registered below, or later by
+  // extension modules, are initialized on registration (see register_recording_backend()).
+  for ( const auto& it : recording_backends_ )
+  {
+    it.second->initialize();
+  }
+  for ( const auto& it : stimulation_backends_ )
+  {
+    it.second->initialize();
+  }
+
   if ( not adjust_number_of_threads_or_rng_only )
   {
     // Register backends again, since finalize cleans up
     // so backends from external modules are unloaded
+    assert( recording_backends_.empty() and stimulation_backends_.empty() );
     register_recording_backend< RecordingBackendASCII >( "ascii" );
     register_recording_backend< RecordingBackendMemory >( "memory" );
     register_recording_backend< RecordingBackendScreen >( "screen" );
@@ -82,6 +95,10 @@ IOManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 #ifdef HAVE_SIONLIB
     register_recording_backend< RecordingBackendSIONlib >( "sionlib" );
 #endif
+    const auto recording_names = std::views::keys( recording_backends_ );
+    builtin_recording_backends_ = { recording_names.begin(), recording_names.end() };
+    const auto stimulation_names = std::views::keys( stimulation_backends_ );
+    builtin_stimulation_backends_ = { stimulation_names.begin(), stimulation_names.end() };
 
     Dictionary dict;
     // The properties data_path and data_prefix can be set via environment variables
@@ -100,15 +117,6 @@ IOManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 
     overwrite_files_ = false;
   }
-
-  for ( const auto& it : recording_backends_ )
-  {
-    it.second->initialize();
-  }
-  for ( const auto& it : stimulation_backends_ )
-  {
-    it.second->initialize();
-  }
 }
 
 void
@@ -123,19 +131,29 @@ IOManager::finalize( const bool adjust_number_of_threads_or_rng_only )
     it.second->finalize();
   }
 
-  if ( not adjust_number_of_threads_or_rng_only )
-  {
-    for ( const auto& it : recording_backends_ )
-    {
-      delete it.second;
-    }
-    recording_backends_.clear();
+  // When only the number of threads changes, the backends of extension modules are removed as well, as
+  // ModuleManager::reinitialize_dynamic_modules() registers them again (#4013); the built-in ones are kept.
+  const std::set< std::string > none;
+  remove_backends_( recording_backends_, adjust_number_of_threads_or_rng_only ? builtin_recording_backends_ : none );
+  remove_backends_(
+    stimulation_backends_, adjust_number_of_threads_or_rng_only ? builtin_stimulation_backends_ : none );
+}
 
-    for ( const auto& it : stimulation_backends_ )
+template < typename BackendT >
+void
+IOManager::remove_backends_( std::map< std::string, BackendT* >& backends, const std::set< std::string >& keep )
+{
+  for ( auto it = backends.begin(); it != backends.end(); )
+  {
+    if ( keep.contains( it->first ) )
     {
-      delete it.second;
+      ++it;
     }
-    stimulation_backends_.clear();
+    else
+    {
+      delete it->second;
+      it = backends.erase( it );
+    }
   }
 }
 

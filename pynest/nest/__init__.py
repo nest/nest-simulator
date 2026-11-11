@@ -80,6 +80,7 @@ For more information visit https://www.nest-simulator.org.
 #
 # pylint: disable=wildcard-import, unused-wildcard-import, no-name-in-module, invalid-name
 
+import inspect
 import sys
 import types
 import typing
@@ -595,7 +596,7 @@ def _install_kernel_attributes(cls, annotations):
     cls._readonly_kernel_attrs = frozenset(name for name, a in attributes.items() if a.readonly)
 
 
-_install_kernel_attributes(NestModule, __annotations__)
+_install_kernel_attributes(NestModule, inspect.get_annotations(sys.modules[__name__]))
 
 __version__ = _ll_api.nestkernel.llapi_get_kernel_status()["build_info"]["version"]
 
@@ -604,4 +605,4 @@ sys.modules[__name__].__class__ = NestModule
 
 # What is left in this file's namespace is the `nest` namespace, so drop the scaffolding
 # this file needed to build it.
-del sys, types, typing, Annotated, KernelAttribute, _ll_api, _install_kernel_attributes
+del inspect, sys, types, typing, Annotated, KernelAttribute, _ll_api, _install_kernel_attributes

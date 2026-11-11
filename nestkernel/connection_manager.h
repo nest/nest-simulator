@@ -440,6 +440,13 @@ public:
 
   void compress_secondary_send_buffer_pos( const size_t tid );
 
+  /**
+   * Discard the input-buffer addresses used by direct spike delivery in all connectors.
+   *
+   * Called by SimulationManager::prepare(), because input buffers may be reallocated there.
+   */
+  void clear_direct_spike_tables();
+
   void resize_connections();
 
   void sync_has_primary_connections();

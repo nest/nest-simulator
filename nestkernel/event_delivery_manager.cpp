@@ -45,6 +45,7 @@ namespace nest
 
 EventDeliveryManager::EventDeliveryManager()
   : off_grid_spiking_( false )
+  , direct_spike_delivery_( false )
   , moduli_()
   , slice_moduli_()
   , emitted_spikes_register_()
@@ -83,6 +84,7 @@ EventDeliveryManager::initialize( const bool adjust_number_of_threads_or_rng_onl
 
     // Ensures that ResetKernel resets off_grid_spiking_
     off_grid_spiking_ = false;
+    direct_spike_delivery_ = false;
     buffer_size_target_data_has_changed_ = false;
     send_recv_buffer_shrink_limit_ = 0.2;
     send_recv_buffer_shrink_spare_ = 0.1;
@@ -143,6 +145,7 @@ void
 EventDeliveryManager::set_status( const Dictionary& dict )
 {
   dict.update_value( names::off_grid_spiking, off_grid_spiking_ );
+  dict.update_value( names::direct_spike_delivery, direct_spike_delivery_ );
 
   double bsl = send_recv_buffer_shrink_limit_;
   if ( dict.update_value( names::spike_buffer_shrink_limit, bsl ) )
@@ -179,6 +182,7 @@ void
 EventDeliveryManager::get_status( Dictionary& dict )
 {
   dict[ names::off_grid_spiking ] = off_grid_spiking_;
+  dict[ names::direct_spike_delivery ] = direct_spike_delivery_;
   dict[ names::local_spike_counter ] = std::accumulate( local_spike_counter_.begin(), local_spike_counter_.end(), 0 );
   dict[ names::spike_buffer_shrink_limit ] = send_recv_buffer_shrink_limit_;
   dict[ names::spike_buffer_shrink_spare ] = send_recv_buffer_shrink_spare_;

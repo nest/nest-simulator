@@ -187,7 +187,7 @@ If you want to edit Model docs, PyNEST API files, or PyNEST examples, you will n
    Update ``pynest/examples/examples.yml`` to register it.
    This file is the single source of truth for example metadata: which files make
    up the example, which NEST models it demonstrates (``models``), and whether it
-   is exercised by automation (``skip``).
+   is used by automation (``skip``).
    See the comments at the top of ``examples.yml`` for a description of every field.
 
    To verify your changes are consistent with the files on disk, run from the repo root:

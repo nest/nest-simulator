@@ -1,8 +1,8 @@
 # Registry of all PyNEST examples in pynest/examples/.
 #
 # This file is the single source of truth for PyNEST example metadata: which
-# files make up an example, which NEST models it demonstrates, and whether it is
-# exercised by automation.
+# files make up an example, which NEST models it demonstrates, and whether it
+# is used by automation.
 #
 # Read today by:
 #   - check_examples_registry.py : validates this registry against the files on disk
@@ -313,6 +313,20 @@ examples:
   - iaf_psc_alpha
   - poisson_generator
   - voltmeter
+- name: ou_noise_single_neuron
+  path: ou_noise_single_neuron.py
+  models:
+  - iaf_psc_alpha
+  - ou_noise_generator
+  - voltmeter
+- name: ou_vs_white_noise
+  path: ou_vs_white_noise.py
+  models:
+  - iaf_psc_alpha
+  - multimeter
+  - noise_generator
+  - ou_noise_generator
+  - spike_recorder
 - name: plot_weight_matrices
   path: plot_weight_matrices.py
   models:

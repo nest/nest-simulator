@@ -199,6 +199,15 @@ class NestModule(types.ModuleType):
         "Whether to transmit precise spike times in MPI communication",
         readonly=True,
     )
+    spike_delivery_prefetch = KernelAttribute(
+        "bool",
+        (
+            "Whether the delivery of compressed spikes prefetches the entries of the"
+            + " compressed spike data and the first connection of every spike a few"
+            + " batches of spikes ahead (software prefetching). Results do not depend on it."
+        ),
+        default=False,
+    )
     adaptive_target_buffers = KernelAttribute(
         "bool",
         "Whether MPI buffers for communication of connections resize on the fly",

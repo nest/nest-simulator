@@ -24,6 +24,7 @@
 #define EVENT_DELIVERY_MANAGER_H
 
 // C++ includes:
+#include <algorithm>
 #include <atomic>
 #include <cassert>
 #include <limits>
@@ -391,6 +392,14 @@ private:
   size_t collocation_group_begin_( const size_t g ) const;
 
   /**
+   * Number of collocation groups, as allocated in configure_spike_data_buffers().
+   *
+   * Not group_buffers_.size(): in the two-barrier path the master thread swaps group_buffers_ and group_buffers_next_
+   * while threads that lead no group may still compute their group.
+   */
+  size_t num_collocation_groups_() const;
+
+  /**
    * Returns true if spike has been moved to MPI buffer, such that it
    * can be removed by clean_spike_register. Required static function
    * by std::remove_if.
@@ -624,14 +633,20 @@ EventDeliveryManager::collocation_group_begin_( const size_t g ) const
 {
   // group g consists of the threads [ ceil( g * num_threads / groups ), ceil( ( g + 1 ) * num_threads / groups ) )
   const size_t num_threads = emitted_spikes_register_.size();
-  const size_t groups = group_buffers_.size();
+  const size_t groups = num_collocation_groups_();
   return ( g * num_threads + groups - 1 ) / groups;
+}
+
+inline size_t
+EventDeliveryManager::num_collocation_groups_() const
+{
+  return std::min( collocation_groups_, emitted_spikes_register_.size() );
 }
 
 inline std::vector< size_t >
 EventDeliveryManager::get_collocation_group_bounds() const
 {
-  std::vector< size_t > bounds( group_buffers_.size() + 1 );
+  std::vector< size_t > bounds( num_collocation_groups_() + 1 );
   for ( size_t g = 0; g < bounds.size(); ++g )
   {
     bounds[ g ] = collocation_group_begin_( g );

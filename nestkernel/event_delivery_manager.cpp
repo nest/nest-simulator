@@ -249,10 +249,8 @@ EventDeliveryManager::configure_spike_data_buffers()
   configure_spike_register();
 
   // buffers for the collocation by several threads (allocated here, not in the parallel region)
-  const size_t num_groups =
-    std::max< size_t >( 1, std::min( collocation_groups_, kernel().vp_manager.get_num_threads() ) );
   group_buffers_.assign(
-    num_groups, std::vector< std::vector< SpikeData > >( kernel().mpi_manager.get_num_processes() ) );
+    num_collocation_groups_(), std::vector< std::vector< SpikeData > >( kernel().mpi_manager.get_num_processes() ) );
   group_buffers_next_ = group_buffers_;
 
   send_buffer_spike_data_.clear();
@@ -394,7 +392,7 @@ void
 EventDeliveryManager::collocate_groups( const size_t tid )
 {
   // only the first thread of a group collocates it; tid * groups / num_threads is the group of tid
-  const size_t g = tid * group_buffers_.size() / emitted_spikes_register_.size();
+  const size_t g = tid * num_collocation_groups_() / emitted_spikes_register_.size();
   if ( tid == collocation_group_begin_( g ) )
   {
     collocate_group( g );

@@ -535,6 +535,9 @@ SimulationManager::prepare()
   // find shortest and longest delay across all MPI processes
   // this call sets the member variables
   kernel().connection_manager.update_delay_extrema_();
+#ifdef HAVE_MORPH
+  kernel().connection_manager.check_morph_configuration();
+#endif
   kernel().event_delivery_manager.init_moduli();
 
   // if at the beginning of a simulation, set up spike buffers
@@ -771,6 +774,14 @@ SimulationManager::update_connection_infrastructure( const size_t tid )
   {
     kernel().connection_manager.compute_target_data_buffer_size();
     kernel().event_delivery_manager.resize_send_recv_buffers_target_data();
+#ifdef HAVE_MORPH
+    if ( kernel().connection_manager.is_morph_active() )
+    {
+      kernel().connection_manager.compute_target_data_buffer_size_long_delay();
+      kernel().event_delivery_manager.resize_send_recv_buffers_target_data( true );
+    }
+    kernel().connection_manager.unset_long_delay_connections_have_changed();
+#endif
 
     // check whether primary and secondary connections exists on any
     // compute node
@@ -809,10 +820,26 @@ SimulationManager::update_connection_infrastructure( const size_t tid )
       kernel().connection_manager.initialize_iteration_state();  // could possibly be combined with s'th above
     }
     kernel().event_delivery_manager.gather_target_data_compressed( tid );
+#ifdef HAVE_MORPH
+    if ( kernel().connection_manager.is_morph_active() )
+    {
+      // all threads must have left the previous gather before its completion checker is reset
+#pragma omp barrier
+      kernel().event_delivery_manager.gather_target_data_compressed( tid, true );
+    }
+#endif
   }
   else
   {
     kernel().event_delivery_manager.gather_target_data( tid );
+#ifdef HAVE_MORPH
+    if ( kernel().connection_manager.is_morph_active() )
+    {
+      // all threads must have left the previous gather before its completion checker is reset
+#pragma omp barrier
+      kernel().event_delivery_manager.gather_target_data( tid, true );
+    }
+#endif
   }
 
   sw_gather_target_data_.stop();
@@ -898,6 +925,14 @@ SimulationManager::update_()
             sw_deliver_spike_data_.start();
             // Deliver spikes from receive buffer to ring buffers.
             kernel().event_delivery_manager.deliver_events( tid );
+#ifdef HAVE_MORPH
+            // Spikes of the long path arrive once per interval of threshold_delay.
+            if ( kernel().connection_manager.is_morph_active()
+              and clock_.get_steps() % kernel().connection_manager.get_threshold_delay() == 0 )
+            {
+              kernel().event_delivery_manager.deliver_events( tid, true );
+            }
+#endif
 
             sw_deliver_spike_data_.stop();
           }
@@ -1090,6 +1125,17 @@ SimulationManager::update_()
             {
               sw_gather_spike_data_.start();
               kernel().event_delivery_manager.gather_spike_data();
+#ifdef HAVE_MORPH
+              // Spikes of the long path are exchanged among all processes at the end of each interval of
+              // threshold_delay.
+              if ( kernel().connection_manager.is_morph_active()
+                and ( clock_.get_steps() + kernel().connection_manager.get_min_delay() )
+                    % kernel().connection_manager.get_threshold_delay()
+                  == 0 )
+              {
+                kernel().event_delivery_manager.gather_spike_data( true );
+              }
+#endif
               sw_gather_spike_data_.stop();
             }
             if ( kernel().connection_manager.secondary_connections_exist() )

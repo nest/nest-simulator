@@ -30,6 +30,9 @@
 #include <memory>
 #include <vector>
 
+// Includes from libnestutil:
+#include "config.h"
+
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "nest_time.h"
@@ -166,8 +169,20 @@ public:
   /**
    * Set tid, syn_id, lcid of spike_data_.
    * These are required to retrieve the Node ID of a non-local sender from the SourceTable.
+   * The flag is_long_delay selects the source table of the long path of morph; it has no effect in builds without
+   * morph.
    */
-  void set_sender_node_id_info( const size_t tid, const synindex syn_id, const size_t lcid );
+  void set_sender_node_id_info( const size_t tid,
+    const synindex syn_id,
+    const size_t lcid,
+    const bool is_long_delay = false );
+
+  /**
+   * Return true if the event was delivered by a connection on the long path of morph.
+   *
+   * Without morph, the function returns false.
+   */
+  bool is_sender_long_delay() const;
 
   /**
    * Return time stamp of the event.
@@ -929,10 +944,29 @@ Event::set_sender_node_id( const size_t node_id )
 }
 
 inline void
-Event::set_sender_node_id_info( const size_t tid, const synindex syn_id, const size_t lcid )
+Event::set_sender_node_id_info( const size_t tid,
+  const synindex syn_id,
+  const size_t lcid,
+  [[maybe_unused]] const bool is_long_delay )
 {
+#ifdef HAVE_MORPH
+  // The lag of SpikeData is not used here otherwise; it marks connections on the long path of morph, whose lcid
+  // indexes the source table of the long path.
+  sender_spike_data_.set( tid, syn_id, lcid, is_long_delay ? 1 : 0, 0.0 );
+#else
   // lag and offset of SpikeData are not used here
   sender_spike_data_.set( tid, syn_id, lcid, 0, 0.0 );
+#endif
+}
+
+inline bool
+Event::is_sender_long_delay() const
+{
+#ifdef HAVE_MORPH
+  return sender_spike_data_.get_lag() == 1;
+#else
+  return false;
+#endif
 }
 
 inline Node&

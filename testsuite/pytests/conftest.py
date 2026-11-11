@@ -90,6 +90,10 @@ def pytest_configure(config):
         "markers",
         "skipif_missing_mpi4py: mark tests requiring MPI4Py",
     )
+    config.addinivalue_line(
+        "markers",
+        "skipif_missing_morph: mark tests requiring structure-aware communication (morph, -Dwith-morph=ON)",
+    )
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -210,6 +214,21 @@ def skipif_missing_music(request, have_music):
     """
     if not have_music and request.node.get_closest_marker("skipif_missing_music"):
         pytest.skip("skipped because missing MUSIC support.")
+
+
+@pytest.fixture(scope="session")
+def have_morph():
+    return nest.build_info["have_morph"]
+
+
+@pytest.fixture(autouse=True)
+def skipif_missing_morph(request, have_morph):
+    """
+    Globally applied fixture that skips tests marked to be skipped when NEST is
+    built without structure-aware communication (morph).
+    """
+    if not have_morph and request.node.get_closest_marker("skipif_missing_morph"):
+        pytest.skip("skipped because NEST was built without morph (-Dwith-morph=ON).")
 
 
 @pytest.fixture(scope="session")

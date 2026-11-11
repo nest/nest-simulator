@@ -507,13 +507,14 @@ jobs:
         cpp_compiler: ["gcc"]
 
         # available use flags (all default to "OFF"):
-        # openmp, mpi, gsl, ltdl, boost, sionlib, optimize, warning, userdoc, music, readline
+        # openmp, mpi, gsl, ltdl, boost, sionlib, optimize, warning, userdoc, music, readline, morph
         use:
           - "optimize, warning"
           - "boost, optimize, warning"
           - "openmp, gsl, ltdl, boost, optimize, warning"
           - "mpi, gsl, ltdl, boost, optimize, warning"
           - "openmp, mpi, gsl, ltdl, boost, hdf5, sionlib, optimize, warning, music, detailed-timers, threaded-timers, mpi-sync-timer"
+          - "openmp, mpi, gsl, ltdl, boost, optimize, warning, morph"
 
     steps:
       - name: Harden Runner
@@ -705,6 +706,7 @@ jobs:
               -Dwith-threaded-timers=${{ contains(matrix.use, 'threaded-timers') && 'ON' || 'OFF' }} \
               -Dwith-detailed-timers=${{ contains(matrix.use, 'detailed-timers') && 'ON' || 'OFF' }} \
               -Dwith-mpi-sync-timer=${{ contains(matrix.use, 'mpi-sync-timer') && 'ON' || 'OFF' }} \
+              -Dwith-morph=${{ contains(matrix.use, 'morph') && 'ON' || 'OFF' }} \
               ..
 
       - name: "Add GCC problem matcher"

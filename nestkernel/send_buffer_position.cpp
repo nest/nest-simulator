@@ -28,13 +28,12 @@
 
 namespace nest
 {
-SendBufferPosition::SendBufferPosition()
-  : begin_( kernel().mpi_manager.get_num_processes(), 0 )
-  , end_( kernel().mpi_manager.get_num_processes(), 0 )
-  , idx_( kernel().mpi_manager.get_num_processes(), 0 )
+SendBufferPosition::SendBufferPosition( const bool is_long_delay, const size_t num_procs )
+  : begin_( num_procs, 0 )
+  , end_( num_procs, 0 )
+  , idx_( num_procs, 0 )
 {
-  const size_t num_procs = kernel().mpi_manager.get_num_processes();
-  const size_t send_recv_count_per_rank = kernel().mpi_manager.get_send_recv_count_spike_data_per_rank();
+  const size_t send_recv_count_per_rank = kernel().mpi_manager.get_send_recv_count_spike_data_per_rank( is_long_delay );
 
   for ( size_t rank = 0; rank < num_procs; ++rank )
   {

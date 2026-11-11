@@ -111,7 +111,12 @@ class NestModule(types.ModuleType):
 
         # Finalize the nest module with a public API.
         _api = list(k for k in self.__dict__ if not k.startswith("_"))
-        _api.extend(k for k in dir(type(self)) if not k.startswith("_"))
+        # without the kernel attributes that the build does not provide (see KernelAttribute.available())
+        _api.extend(
+            k
+            for k in dir(type(self))
+            if not k.startswith("_") and getattr(vars(type(self)).get(k), "available", lambda: True)()
+        )
         self.__all__ = list(set(_api))
 
         # Add version for backward compatibility
@@ -156,6 +161,19 @@ class NestModule(types.ModuleType):
     to_do = KernelAttribute("int", "The number of steps yet to be simulated", readonly=True)
     max_delay = KernelAttribute("float", "The maximum delay in the network", default=0.1)
     min_delay = KernelAttribute("float", "The minimum delay in the network", default=0.1)
+    threshold_delay = KernelAttribute(
+        "float",
+        (
+            "Threshold delay (in ms) of structure-aware communication (morph). Spikes of connections created with "
+            + "the ``conn_spec`` property ``long_range`` are exchanged among all processes once per interval of "
+            + "``threshold_delay``; all other spikes are exchanged every ``min_delay`` within the local group of "
+            + "processes (see ``comm_local_ranks``). Long-range connections need a delay of at least "
+            + "``threshold_delay``. Must be a multiple of ``min_delay`` and be set before connections are created. "
+            + "Infinity (the default) switches morph off. Only available in NEST built with ``-Dwith-morph=ON``"
+        ),
+        default=float("inf"),
+        build_flag=("have_morph", "NEST was built without morph (-Dwith-morph=ON)"),
+    )
     ms_per_tic = KernelAttribute(
         "float",
         ("The number of milliseconds per tic. Calculated by " + "ms_per_tic = 1 / tics_per_ms"),
@@ -194,6 +212,17 @@ class NestModule(types.ModuleType):
     total_num_virtual_procs = KernelAttribute("int", "The total number of virtual processes", default=1)
     local_num_threads = KernelAttribute("int", "The local number of threads", default=1)
     num_processes = KernelAttribute("int", "The number of MPI processes", readonly=True)
+    comm_local_ranks = KernelAttribute(
+        "list[int]",
+        (
+            "Ranks of the local group of processes of this process for structure-aware communication (morph). "
+            + "Spikes of connections without ``long_range`` are exchanged within the local group only. Each process "
+            + "passes the ranks of its own group, including its own rank; the groups must partition the processes. "
+            + "Must be set before connections are created. Defaults to the own rank. Only available in NEST built "
+            + "with ``-Dwith-morph=ON``"
+        ),
+        build_flag=("have_morph", "NEST was built without morph (-Dwith-morph=ON)"),
+    )
     off_grid_spiking = KernelAttribute(
         "bool",
         "Whether to transmit precise spike times in MPI communication",
@@ -218,6 +247,15 @@ class NestModule(types.ModuleType):
         "int",
         "Total size of MPI buffer for communication of spikes",
         default=2,
+    )
+    buffer_size_spike_data_long_delay = KernelAttribute(
+        "int",
+        (
+            "Total size of MPI buffer for the communication of spikes of long-range connections (morph). "
+            + "Only available in NEST built with ``-Dwith-morph=ON``"
+        ),
+        default=2,
+        build_flag=("have_morph", "NEST was built without morph (-Dwith-morph=ON)"),
     )
     buffer_size_target_data = KernelAttribute(
         "int",

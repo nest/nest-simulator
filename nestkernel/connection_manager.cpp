@@ -70,6 +70,10 @@ ConnectionManager::ConnectionManager()
   , thirdconnbuilder_factories_()
   , min_delay_( 1 )
   , max_delay_( 1 )
+#ifdef HAVE_MORPH
+  , threshold_delay_( delay_max )
+  , long_delay_connections_have_changed_( false )
+#endif
   , keep_source_table_( true )
   , connections_have_changed_( false )
   , get_connections_has_been_called_( false )
@@ -114,6 +118,10 @@ ConnectionManager::initialize( const bool adjust_number_of_threads_or_rng_only )
     use_compressed_spikes_ = true;
     stdp_eps_ = 1.0e-6;
     min_delay_ = max_delay_ = 1;
+#ifdef HAVE_MORPH
+    threshold_delay_ = delay_max;
+    long_delay_connections_have_changed_ = false;
+#endif
     sw_construction_connect.reset();
   }
 
@@ -121,6 +129,10 @@ ConnectionManager::initialize( const bool adjust_number_of_threads_or_rng_only )
   connections_.resize( num_threads );
   secondary_recv_buffer_pos_.resize( num_threads );
   compressed_spike_data_.resize( 0 );
+#ifdef HAVE_MORPH
+  connections_long_delay_.resize( num_threads );
+  compressed_spike_data_long_delay_.resize( 0 );
+#endif
 
   has_primary_connections_ = false;
   check_primary_connections_.initialize( num_threads, false );
@@ -135,12 +147,19 @@ ConnectionManager::initialize( const bool adjust_number_of_threads_or_rng_only )
   {
     const size_t tid = kernel().vp_manager.get_thread_id();
     connections_.at( tid ) = std::vector< ConnectorBase* >( num_conn_models );
+#ifdef HAVE_MORPH
+    connections_long_delay_.at( tid ) = std::vector< ConnectorBase* >( num_conn_models );
+#endif
     secondary_recv_buffer_pos_.at( tid ) = std::vector< std::vector< size_t > >();
   }  // of omp parallel
 
   source_table_.initialize();
   target_table_.initialize();
   target_table_devices_.initialize();
+#ifdef HAVE_MORPH
+  source_table_long_delay_.initialize();
+  target_table_long_delay_.initialize();
+#endif
 
   std::vector< DelayChecker > tmp( kernel().vp_manager.get_num_threads() );
   delay_checkers_.swap( tmp );
@@ -159,6 +178,12 @@ ConnectionManager::finalize( const bool adjust_number_of_threads_or_rng_only )
   std::vector< std::vector< ConnectorBase* > >().swap( connections_ );
   std::vector< std::vector< std::vector< size_t > > >().swap( secondary_recv_buffer_pos_ );
   compressed_spike_data_.clear();
+#ifdef HAVE_MORPH
+  source_table_long_delay_.finalize();
+  target_table_long_delay_.finalize();
+  std::vector< std::vector< ConnectorBase* > >().swap( connections_long_delay_ );
+  compressed_spike_data_long_delay_.clear();
+#endif
 
   if ( not adjust_number_of_threads_or_rng_only )
   {
@@ -201,7 +226,169 @@ ConnectionManager::set_status( const Dictionary& d )
   {
     update_delay_extrema_();
   }
+
+#ifdef HAVE_MORPH
+  double new_threshold_delay = 0.0;
+  if ( d.update_value( names::threshold_delay, new_threshold_delay ) )
+  {
+    if ( not( new_threshold_delay > 0.0 ) )
+    {
+      throw BadProperty( "threshold_delay > 0 required." );
+    }
+    // Infinity switches morph off. Other values are converted to steps like connection delays.
+    const long new_threshold_delay_steps =
+      std::isinf( new_threshold_delay ) ? delay_max : Time::delay_ms_to_steps( new_threshold_delay );
+    if ( new_threshold_delay_steps < 1 )
+    {
+      throw BadProperty( "threshold_delay must be at least one simulation step." );
+    }
+    if ( new_threshold_delay_steps != threshold_delay_ )
+    {
+      if ( kernel().simulation_manager.has_been_simulated() )
+      {
+        throw KernelException( "threshold_delay cannot be changed after the simulation has started." );
+      }
+      // The checks of new connections depend on threshold_delay (see check_short_range_connection_()); connections
+      // on any process count.
+      if ( kernel().mpi_manager.any_true( get_num_connections() > 0 ) )
+      {
+        throw KernelException( "threshold_delay must be set before connections are created." );
+      }
+      threshold_delay_ = new_threshold_delay_steps;
+    }
+  }
+#else
+  if ( d.known( names::threshold_delay ) )
+  {
+    throw KernelException(
+      "Kernel parameter 'threshold_delay' requires morph: NEST was built without morph "
+      "(-Dwith-morph=ON)." );
+  }
+#endif
 }
+
+#ifdef HAVE_MORPH
+void
+ConnectionManager::check_long_range_connection_( const ConnectorModel& conn_model,
+  const bool is_primary,
+  const Dictionary& params,
+  const double delay ) const
+{
+  assert( is_morph_active() );  // checked by the ConnBuilder on every process
+  if ( not is_primary )
+  {
+    throw IllegalConnection( "Only connections that transmit spikes can be long_range." );
+  }
+  const double used_delay = conn_model.get_delay_of_new_connection( params, delay );
+  if ( numerics::is_nan( used_delay ) )
+  {
+    throw IllegalConnection( "long_range connections require a synapse model with delay." );
+  }
+  // A spike on the long path is delivered at the beginning of the interval of threshold_delay that follows the
+  // interval in which it was emitted. With lag l in [0, threshold_delay) relative to the beginning of the previous
+  // interval, the ring-buffer offset is l + delay - threshold_delay, which is non-negative for all l if and only if
+  // delay >= threshold_delay. Delays equal to the threshold were verified to give the same spikes as the conventional
+  // exchange. The published version of morph requires delay > threshold_delay (assertion).
+  check_long_range_delay_( used_delay );
+}
+
+void
+ConnectionManager::set_long_delay_connections_have_changed_()
+{
+  if ( kernel().simulation_manager.has_been_simulated() )
+  {
+#pragma omp atomic write
+    long_delay_connections_have_changed_ = true;
+  }
+}
+
+void
+ConnectionManager::unset_long_delay_connections_have_changed()
+{
+  long_delay_connections_have_changed_ = false;
+}
+
+void
+ConnectionManager::check_long_range_delay_( const double delay ) const
+{
+  if ( Time::delay_ms_to_steps( delay ) < threshold_delay_ )
+  {
+    throw BadDelay( delay,
+      String::compose( "The delay of long_range connections must be at least threshold_delay (%1 ms).",
+        Time::delay_steps_to_ms( threshold_delay_ ) ) );
+  }
+}
+
+void
+ConnectionManager::check_short_range_connection_( const size_t s_node_id ) const
+{
+  if ( not is_morph_active() )
+  {
+    return;
+  }
+  // Spikes of short-range connections are exchanged only within the local group of processes. Secondary events
+  // are exchanged among all processes and need no check.
+  const size_t source_rank = kernel().mpi_manager.get_process_id_of_node_id( s_node_id );
+  if ( not kernel().mpi_manager.is_in_comm_local_group( source_rank ) )
+  {
+    throw IllegalConnection( String::compose(
+      "The connection from node %1 on process %2 crosses the boundary of the local group of process %3 "
+      "(comm_local_ranks); connections between local groups must be long_range.",
+      s_node_id,
+      source_rank,
+      kernel().mpi_manager.get_rank() ) );
+  }
+}
+
+void
+ConnectionManager::check_morph_configuration() const
+{
+  if ( not is_morph_active() )
+  {
+    return;
+  }
+  // Long-path spikes are collected over threshold_delay / min_delay cycles and exchanged at the end of the last
+  // cycle of each interval. This requires that the interval consists of whole cycles.
+  if ( threshold_delay_ % min_delay_ != 0 )
+  {
+    throw KernelException( String::compose( "threshold_delay (%1 ms) must be a multiple of min_delay (%2 ms).",
+      Time::delay_steps_to_ms( threshold_delay_ ),
+      Time::delay_steps_to_ms( min_delay_ ) ) );
+  }
+  // Long-path spikes carry their lag relative to the beginning of the interval, which must fit into the lag field
+  // of SpikeData (SpikeData::set() asserts lag < generate_max_value( NUM_BITS_LAG )).
+  const long max_threshold_delay = generate_max_value( NUM_BITS_LAG );
+  if ( threshold_delay_ > max_threshold_delay )
+  {
+    throw KernelException(
+      String::compose( "threshold_delay must not exceed %1 simulation steps.", max_threshold_delay ) );
+  }
+  // Structural plasticity creates connections on the short path between any two processes. A connection across
+  // the boundary of a local group would raise an error inside the update of the network; the local group must
+  // therefore comprise all processes.
+  if ( kernel().sp_manager.is_structural_plasticity_enabled()
+    and kernel().mpi_manager.get_comm_local_group_size() < kernel().mpi_manager.get_num_processes() )
+  {
+    throw KernelException(
+      "With morph, structural plasticity requires a local group of all processes (comm_local_ranks)." );
+  }
+  // Spikes of the long path are in flight between two Simulate calls if the previous call ended within an interval
+  // (the senders still collect them) or if the exchange at its end carried spikes (they are delivered at the
+  // beginning of the next interval). They refer to the long-path connections as they were; the rebuilt tables would
+  // deliver them to other connections. Both conditions are the same on all processes.
+  if ( kernel().simulation_manager.has_been_simulated()
+    and kernel().mpi_manager.any_true( long_delay_connections_have_changed_ ) )
+  {
+    const bool within_interval = kernel().simulation_manager.get_time().get_steps() % threshold_delay_ != 0;
+    if ( within_interval or kernel().event_delivery_manager.long_delay_exchange_carried_spikes() )
+    {
+      throw KernelException(
+        "long_range connections cannot change between Simulate calls while spikes of the long path are in flight: "
+        "the previous call ended within an interval of threshold_delay, or the exchange at its end carried spikes." );
+    }
+  }
+}
+#endif
 
 DelayChecker&
 ConnectionManager::get_delay_checker()
@@ -215,6 +402,10 @@ ConnectionManager::get_status( Dictionary& dict )
   update_delay_extrema_();
   dict[ names::min_delay ] = Time( Time::step( min_delay_ ) ).get_ms();
   dict[ names::max_delay ] = Time( Time::step( max_delay_ ) ).get_ms();
+#ifdef HAVE_MORPH
+  dict[ names::threshold_delay ] =
+    is_morph_active() ? Time::delay_steps_to_ms( threshold_delay_ ) : std::numeric_limits< double >::infinity();
+#endif
 
   const size_t n = get_num_connections();
   dict[ names::num_connections ] = static_cast< long >( n );
@@ -236,7 +427,8 @@ ConnectionManager::get_synapse_status( const size_t source_node_id,
   const size_t target_node_id,
   const size_t tid,
   const synindex syn_id,
-  const size_t lcid ) const
+  const size_t lcid,
+  [[maybe_unused]] const bool is_long_delay ) const
 {
   kernel().model_manager.assert_valid_syn_id( syn_id, kernel().vp_manager.get_thread_id() );
 
@@ -249,6 +441,24 @@ ConnectionManager::get_synapse_status( const size_t source_node_id,
 
   const Node* source = kernel().node_manager.get_node_or_proxy( source_node_id, tid );
   const Node* target = kernel().node_manager.get_node_or_proxy( target_node_id, tid );
+
+#ifdef HAVE_MORPH
+  // the path of the connection; reported only if morph is active, so that the status is unchanged otherwise
+  if ( is_morph_active() )
+  {
+    dict[ names::long_range ] = is_long_delay;
+  }
+  if ( is_long_delay )
+  {
+    // connections on the long path of morph; always between neurons
+    if ( not connections_long_delay_[ tid ][ syn_id ] )
+    {
+      throw InexistentConnection();
+    }
+    connections_long_delay_[ tid ][ syn_id ]->get_synapse_status( tid, lcid, dict );
+    return dict;
+  }
+#endif
 
   // synapses from neurons to neurons and from neurons to globally receiving devices
   if ( ( source->has_proxies() and target->has_proxies() and connections_[ tid ][ syn_id ] )
@@ -280,7 +490,8 @@ ConnectionManager::set_synapse_status( const size_t source_node_id,
   const size_t tid,
   const synindex syn_id,
   const size_t lcid,
-  const Dictionary& dict )
+  const Dictionary& dict,
+  [[maybe_unused]] const bool is_long_delay )
 {
   kernel().model_manager.assert_valid_syn_id( syn_id, kernel().vp_manager.get_thread_id() );
 
@@ -290,6 +501,23 @@ ConnectionManager::set_synapse_status( const size_t source_node_id,
   try
   {
     ConnectorModel& cm = kernel().model_manager.get_connection_model( syn_id, tid );
+#ifdef HAVE_MORPH
+    if ( is_long_delay )
+    {
+      // connections on the long path of morph; always between neurons
+      if ( not connections_long_delay_[ tid ][ syn_id ] )
+      {
+        throw InexistentConnection();
+      }
+      double new_delay = 0.0;
+      if ( dict.update_value( names::delay, new_delay ) )
+      {
+        check_long_range_delay_( new_delay );
+      }
+      connections_long_delay_[ tid ][ syn_id ]->set_synapse_status( lcid, dict, cm );
+      return;
+    }
+#endif
     // synapses from neurons to neurons and from neurons to globally
     // receiving devices
     if ( ( source->has_proxies() and target->has_proxies() and connections_[ tid ][ syn_id ] )
@@ -334,6 +562,16 @@ ConnectionManager::delete_connections_()
       delete *conn;
     }
   }
+
+#ifdef HAVE_MORPH
+  for ( size_t tid = 0; tid < connections_long_delay_.size(); ++tid )
+  {
+    for ( auto conn = connections_long_delay_[ tid ].begin(); conn != connections_long_delay_[ tid ].end(); ++conn )
+    {
+      delete *conn;
+    }
+  }
+#endif
 }
 
 const Time
@@ -425,6 +663,13 @@ ConnectionManager::calibrate( const TimeConverter& tc )
   {
     delay_checkers_[ tid ].calibrate( tc );
   }
+#ifdef HAVE_MORPH
+  // threshold_delay is kept in steps, as connection delays; delay_max (morph off) stays
+  if ( threshold_delay_ != delay_max )
+  {
+    threshold_delay_ = tc.from_old_steps( threshold_delay_ ).get_steps();
+  }
+#endif
 }
 
 void
@@ -535,7 +780,8 @@ ConnectionManager::connect( const size_t snode_id,
   const synindex syn_id,
   const Dictionary& params,
   const double delay,
-  const double weight )
+  const double weight,
+  const bool long_range )
 {
   kernel().model_manager.assert_valid_syn_id( syn_id, kernel().vp_manager.get_thread_id() );
 
@@ -543,10 +789,17 @@ ConnectionManager::connect( const size_t snode_id,
 
   ConnectionType connection_type = connection_required( source, target, target_thread );
 
+#ifdef HAVE_MORPH
+  if ( long_range and ( connection_type == CONNECT_FROM_DEVICE or connection_type == CONNECT_TO_DEVICE ) )
+  {
+    throw IllegalConnection( "Connections from or to devices cannot be long_range." );
+  }
+#endif
+
   switch ( connection_type )
   {
   case CONNECT:
-    connect_( *source, *target, snode_id, target_thread, syn_id, params, delay, weight );
+    connect_( *source, *target, snode_id, target_thread, syn_id, params, delay, weight, long_range );
     break;
   case CONNECT_FROM_DEVICE:
     connect_from_device_( *source, *target, target_thread, syn_id, params, delay, weight );
@@ -872,7 +1125,8 @@ ConnectionManager::connect_( Node& source,
   const synindex syn_id,
   const Dictionary& params,
   const double delay,
-  const double weight )
+  const double weight,
+  [[maybe_unused]] const bool long_range )
 {
   ConnectorModel& conn_model = kernel().model_manager.get_connection_model( syn_id, tid );
 
@@ -899,8 +1153,27 @@ ConnectionManager::connect_( Node& source,
   }
 
   const bool is_primary = conn_model.has_property( ConnectionModelProperties::IS_PRIMARY );
-  conn_model.add_connection( source, target, connections_[ tid ], syn_id, params, delay, weight );
-  source_table_.add_source( tid, syn_id, s_node_id, is_primary );
+
+#ifdef HAVE_MORPH
+  if ( long_range )
+  {
+    check_long_range_connection_( conn_model, is_primary, params, delay );
+    conn_model.add_connection( source, target, connections_long_delay_[ tid ], syn_id, params, delay, weight );
+    source_table_long_delay_.add_source( tid, syn_id, s_node_id, is_primary );
+    set_long_delay_connections_have_changed_();
+  }
+  else
+  {
+    if ( is_primary )
+    {
+      check_short_range_connection_( s_node_id );
+    }
+#endif
+    conn_model.add_connection( source, target, connections_[ tid ], syn_id, params, delay, weight );
+    source_table_.add_source( tid, syn_id, s_node_id, is_primary );
+#ifdef HAVE_MORPH
+  }
+#endif
 
   increase_connection_count( tid, syn_id );
 
@@ -996,10 +1269,62 @@ ConnectionManager::find_connection( const size_t tid,
   return invalid_index;
 }
 
+#ifdef HAVE_MORPH
+size_t
+ConnectionManager::find_connection_long_delay( const size_t tid,
+  const synindex syn_id,
+  const size_t snode_id,
+  const size_t tnode_id )
+{
+  if ( not connections_long_delay_[ tid ][ syn_id ] )
+  {
+    return invalid_index;
+  }
+
+  if ( use_compressed_spikes_ )
+  {
+    const size_t source_index = source_table_long_delay_.find_first_source( tid, syn_id, snode_id );
+    if ( source_index == invalid_index )
+    {
+      return invalid_index;
+    }
+    return connections_long_delay_[ tid ][ syn_id ]->find_first_target( tid, source_index, tnode_id );
+  }
+  else
+  {
+    return connections_long_delay_[ tid ][ syn_id ]->find_enabled_connection(
+      tid, syn_id, snode_id, tnode_id, source_table_long_delay_ );
+  }
+}
+#endif
+
 void
-ConnectionManager::disconnect( const size_t tid, const synindex syn_id, const size_t snode_id, const size_t tnode_id )
+ConnectionManager::disconnect( const size_t tid,
+  const synindex syn_id,
+  const size_t snode_id,
+  const size_t tnode_id,
+  [[maybe_unused]] const bool is_long_delay )
 {
   assert( syn_id != invalid_synindex );
+
+#ifdef HAVE_MORPH
+  // Callers without knowledge of the path (structural plasticity, Disconnect without long_range) ask for the short
+  // path; if the pair is connected only on the long path, that connection is removed.
+  if ( is_long_delay or not connections_[ tid ][ syn_id ]
+    or find_connection( tid, syn_id, snode_id, tnode_id ) == invalid_index )
+  {
+    const auto lcid = find_connection_long_delay( tid, syn_id, snode_id, tnode_id );
+    if ( lcid == invalid_index )
+    {
+      throw InexistentConnection();
+    }
+    connections_long_delay_[ tid ][ syn_id ]->disable_connection( lcid );
+    source_table_long_delay_.disable_connection( tid, syn_id, lcid );
+    --num_connections_[ tid ][ syn_id ];
+    set_long_delay_connections_have_changed_();
+    return;
+  }
+#endif
 
   const auto lcid = find_connection( tid, syn_id, snode_id, tnode_id );
 
@@ -1031,17 +1356,43 @@ ConnectionManager::trigger_update_weight( const long vt_id,
         vt_id, tid, dopa_spikes, t_trig, kernel().model_manager.get_connection_models( tid ) );
     }
   }
+
+#ifdef HAVE_MORPH
+  for ( auto* connector : connections_long_delay_[ tid ] )
+  {
+    if ( connector )
+    {
+      connector->trigger_update_weight(
+        vt_id, tid, dopa_spikes, t_trig, kernel().model_manager.get_connection_models( tid ) );
+    }
+  }
+#endif
 }
 
 size_t
-ConnectionManager::get_num_target_data( const size_t tid ) const
+ConnectionManager::get_num_target_data( const size_t tid, [[maybe_unused]] const bool is_long_delay ) const
 {
   size_t num_connections = 0;
-  for ( synindex syn_id = 0; syn_id < connections_[ tid ].size(); ++syn_id )
+#ifdef HAVE_MORPH
+  if ( is_long_delay )
   {
-    if ( connections_[ tid ][ syn_id ] )
+    for ( synindex syn_id = 0; syn_id < connections_long_delay_[ tid ].size(); ++syn_id )
     {
-      num_connections += source_table_.num_unique_sources( tid, syn_id );
+      if ( connections_long_delay_[ tid ][ syn_id ] )
+      {
+        num_connections += source_table_long_delay_.num_unique_sources( tid, syn_id );
+      }
+    }
+  }
+  else
+#endif
+  {
+    for ( synindex syn_id = 0; syn_id < connections_[ tid ].size(); ++syn_id )
+    {
+      if ( connections_[ tid ][ syn_id ] )
+      {
+        num_connections += source_table_.num_unique_sources( tid, syn_id );
+      }
     }
   }
   return num_connections;
@@ -1167,7 +1518,11 @@ ConnectionManager::get_connections( std::vector< std::deque< ConnectionID > >& c
 
 #pragma omp parallel
   {
-    if ( is_source_table_cleared() )
+    if ( is_source_table_cleared( false )
+#ifdef HAVE_MORPH
+      or is_source_table_cleared( true )
+#endif
+    )
     {
       throw KernelException( "Invalid attempt to access connection information: source table was cleared." );
     }
@@ -1218,6 +1573,9 @@ ConnectionManager::get_connections_( const size_t tid,
       connections->get_connection( source_node_id, 0, tid, lcid, synapse_label, conns_in_thread );
     }
   }
+#ifdef HAVE_MORPH
+  get_connections_long_delay_( tid, conns_in_thread, nullptr, nullptr, syn_id, synapse_label );
+#endif
 
   target_table_devices_.get_connections( 0, 0, tid, syn_id, synapse_label, conns_in_thread );
 }
@@ -1254,6 +1612,9 @@ ConnectionManager::get_connections_to_targets_( const size_t tid,
           source_node_id, target, tid, lcid, synapse_label, conns_in_thread );
       }
     }
+#ifdef HAVE_MORPH
+    get_connections_long_delay_( tid, conns_in_thread, nullptr, target, syn_id, synapse_label );
+#endif
 
     // Getting connections from devices. Since target only contains neuron-like nodes,
     //  we do not need to consider connections to devices.
@@ -1322,6 +1683,9 @@ ConnectionManager::get_connections_from_sources_( const size_t tid,
       }
     }
   }
+#ifdef HAVE_MORPH
+  get_connections_long_delay_( tid, conns_in_thread, source, target, syn_id, synapse_label );
+#endif
 
   // Look for connections from devices; only relevant if source contains devices.
   if ( source->all_connect_as_devices() )
@@ -1376,6 +1740,51 @@ ConnectionManager::get_connections_from_sources_( const size_t tid,
   }
 }
 
+#ifdef HAVE_MORPH
+void
+ConnectionManager::get_connections_long_delay_( const size_t tid,
+  std::deque< ConnectionID >& conns_in_thread,
+  NodeCollectionPTR source,
+  NodeCollectionPTR target,
+  synindex syn_id,
+  long synapse_label ) const
+{
+  ConnectorBase const* const connections = connections_long_delay_[ tid ][ syn_id ];
+  if ( not connections )
+  {
+    return;
+  }
+
+  const size_t first_new = conns_in_thread.size();
+  const size_t num_connections_in_thread = connections->size();
+  for ( size_t lcid = 0; lcid < num_connections_in_thread; ++lcid )
+  {
+    const size_t source_node_id = source_table_long_delay_.get_node_id( tid, syn_id, lcid );
+    if ( source and not source->contains( source_node_id ) )
+    {
+      continue;
+    }
+    if ( target )
+    {
+      connections->get_connection_with_specified_targets(
+        source_node_id, target, tid, lcid, synapse_label, conns_in_thread );
+    }
+    else
+    {
+      // Passing target_node_id = 0 ignores target_node_id while getting connections.
+      connections->get_connection( source_node_id, 0, tid, lcid, synapse_label, conns_in_thread );
+    }
+  }
+
+  // The port of these connections is an index into the tables of the long path; record the path so that
+  // status queries and disconnection address the right connection.
+  for ( size_t i = first_new; i < conns_in_thread.size(); ++i )
+  {
+    conns_in_thread[ i ].set_long_delay();
+  }
+}
+#endif
+
 void
 ConnectionManager::get_source_node_ids_( const size_t tid,
   const synindex syn_id,
@@ -1388,6 +1797,14 @@ ConnectionManager::get_source_node_ids_( const size_t tid,
     connections_[ tid ][ syn_id ]->get_source_lcids( tid, tnode_id, source_lcids );
     source_table_.get_source_node_ids( tid, syn_id, source_lcids, sources );
   }
+#ifdef HAVE_MORPH
+  source_lcids.clear();
+  if ( connections_long_delay_[ tid ][ syn_id ] )
+  {
+    connections_long_delay_[ tid ][ syn_id ]->get_source_lcids( tid, tnode_id, source_lcids );
+    source_table_long_delay_.get_source_node_ids( tid, syn_id, source_lcids, sources );
+  }
+#endif
 }
 
 void
@@ -1431,6 +1848,15 @@ ConnectionManager::get_targets( const std::vector< size_t >& sources,
       {
         connections_[ tid ][ syn_id ]->get_target_node_ids( tid, start_lcid, post_synaptic_element, targets[ i ] );
       }
+
+#ifdef HAVE_MORPH
+      const size_t start_lcid_long_delay = source_table_long_delay_.find_first_source( tid, syn_id, sources[ i ] );
+      if ( start_lcid_long_delay != invalid_index )
+      {
+        connections_long_delay_[ tid ][ syn_id ]->get_target_node_ids(
+          tid, start_lcid_long_delay, post_synaptic_element, targets[ i ] );
+      }
+#endif
     }
   }
 }
@@ -1448,6 +1874,18 @@ ConnectionManager::sort_connections( const size_t tid )
         connections_[ tid ][ syn_id ]->sort_connections( source_table_.get_thread_local_sources( tid )[ syn_id ] );
       }
     }
+
+#ifdef HAVE_MORPH
+    assert( not source_table_long_delay_.is_cleared() );
+    for ( synindex syn_id = 0; syn_id < connections_long_delay_[ tid ].size(); ++syn_id )
+    {
+      if ( connections_long_delay_[ tid ][ syn_id ] )
+      {
+        connections_long_delay_[ tid ][ syn_id ]->sort_connections(
+          source_table_long_delay_.get_thread_local_sources( tid )[ syn_id ] );
+      }
+    }
+#endif
     remove_disabled_connections_( tid );
   }
 }
@@ -1461,7 +1899,7 @@ ConnectionManager::compute_target_data_buffer_size()
   size_t num_target_data = 0;
   for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    num_target_data += get_num_target_data( tid );
+    num_target_data += get_num_target_data( tid, false );
   }
 
   // Determine maximum number of target data across all ranks, because
@@ -1477,6 +1915,34 @@ ConnectionManager::compute_target_data_buffer_size()
   // Adjust target data buffers accordingly
   kernel().mpi_manager.set_buffer_size_target_data( std::max( min_num_target_data, max_num_target_data ) );
 }
+
+#ifdef HAVE_MORPH
+void
+ConnectionManager::compute_target_data_buffer_size_long_delay()
+{
+  // Determine number of target data on this rank. Since each thread
+  // has its own data structures, we need to count connections on every
+  // thread separately to compute the total number of sources.
+  size_t num_target_data = 0;
+  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  {
+    num_target_data += get_num_target_data( tid, true );
+  }
+
+  // Determine maximum number of target data across all ranks, because
+  // all ranks need identically sized buffers.
+  std::vector< long > global_num_target_data( kernel().mpi_manager.get_num_processes() );
+  global_num_target_data[ kernel().mpi_manager.get_rank() ] = num_target_data;
+  kernel().mpi_manager.communicate( global_num_target_data );
+  const size_t max_num_target_data = *std::max_element( global_num_target_data.begin(), global_num_target_data.end() );
+
+  // MPI buffers should have at least two entries per process
+  const size_t min_num_target_data = 2 * kernel().mpi_manager.get_num_processes();
+
+  // Adjust target data buffers accordingly
+  kernel().mpi_manager.set_buffer_size_target_data_long_delay( std::max( min_num_target_data, max_num_target_data ) );
+}
+#endif
 
 void
 ConnectionManager::compute_compressed_secondary_recv_buffer_positions( const size_t tid )
@@ -1721,6 +2187,22 @@ ConnectionManager::remove_disabled_connections_( const size_t tid )
       connectors[ syn_id ]->remove_disabled_connections( first_disabled_index );
     }
   }
+
+#ifdef HAVE_MORPH
+  std::vector< ConnectorBase* >& connectors_long_delay = connections_long_delay_[ tid ];
+  for ( synindex syn_id = 0; syn_id < connectors_long_delay.size(); ++syn_id )
+  {
+    if ( not connectors_long_delay[ syn_id ] )
+    {
+      continue;
+    }
+    const size_t first_disabled_index = source_table_long_delay_.remove_disabled_sources( tid, syn_id );
+    if ( first_disabled_index != invalid_index )
+    {
+      connectors_long_delay[ syn_id ]->remove_disabled_connections( first_disabled_index );
+    }
+  }
+#endif
 }
 
 void
@@ -1732,6 +2214,11 @@ ConnectionManager::resize_connections()
 
   source_table_.resize_sources();
   target_table_devices_.resize_to_number_of_synapse_types();
+#ifdef HAVE_MORPH
+  connections_long_delay_.at( kernel().vp_manager.get_thread_id() )
+    .resize( kernel().model_manager.get_num_connection_models() );
+  source_table_long_delay_.resize_sources();
+#endif
 }
 
 void
@@ -1779,15 +2266,24 @@ ConnectionManager::collect_compressed_spike_data( const size_t tid )
 #pragma omp single
     {
       source_table_.resize_compressible_sources();
+#ifdef HAVE_MORPH
+      source_table_long_delay_.resize_compressible_sources();
+#endif
     }  // of omp single; implicit barrier
 
-    source_table_.collect_compressible_sources( tid );
+    source_table_.collect_compressible_sources( tid, false );
+#ifdef HAVE_MORPH
+    source_table_long_delay_.collect_compressible_sources( tid, true );
+#endif
     kernel().get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
     kernel().get_omp_synchronization_construction_stopwatch().stop();
 #pragma omp single
     {
       source_table_.fill_compressed_spike_data( compressed_spike_data_ );
+#ifdef HAVE_MORPH
+      source_table_long_delay_.fill_compressed_spike_data( compressed_spike_data_long_delay_ );
+#endif
     }  // of omp single; implicit barrier
   }
 }
@@ -1797,16 +2293,25 @@ ConnectionManager::fill_target_buffer( const size_t tid,
   const size_t rank_start,
   const size_t rank_end,
   std::vector< TargetData >& send_buffer_target_data,
-  TargetSendBufferPosition& send_buffer_position )
+  TargetSendBufferPosition& send_buffer_position,
+  const bool is_long_delay )
 {
   // At this point, NEST has at least one synapse type (because we can only get here if at least
   // one connection has been created) and we know that iteration_state_ for each thread
   // contains a valid entry.
-  const auto& csd_maps = source_table_.compressed_spike_data_map_;
-  auto syn_id = iteration_state_.at( tid ).first;
-  auto source_2_idx = iteration_state_.at( tid ).second;
+  auto* iter_state = &iteration_state_;
+  auto* csd_maps = &source_table_.compressed_spike_data_map_;
+#ifdef HAVE_MORPH
+  if ( is_long_delay )
+  {
+    csd_maps = &source_table_long_delay_.compressed_spike_data_map_;
+    iter_state = &iteration_state_long_delay_;
+  }
+#endif
+  auto syn_id = iter_state->at( tid ).first;
+  auto source_2_idx = iter_state->at( tid ).second;
 
-  if ( syn_id >= csd_maps.size() )
+  if ( syn_id >= csd_maps->size() )
   {
     return true;  // this thread has previously written all its targets
   }
@@ -1816,7 +2321,7 @@ ConnectionManager::fill_target_buffer( const size_t tid,
     const auto& conn_model = kernel().model_manager.get_connection_model( syn_id, tid );
     const bool is_primary = conn_model.has_property( ConnectionModelProperties::IS_PRIMARY );
 
-    while ( source_2_idx != csd_maps.at( syn_id ).end() )
+    while ( source_2_idx != csd_maps->at( syn_id ).end() )
     {
       const auto source_gid = source_2_idx->first;
       const auto source_rank = kernel().mpi_manager.get_process_id_of_node_id( source_gid );
@@ -1834,7 +2339,7 @@ ConnectionManager::fill_target_buffer( const size_t tid,
         // Since sources should be evenly distributed, this should not matter very much.
         //
         // We store where we need to continue and stop iteration for now.
-        iteration_state_.at( tid ) =
+        iter_state->at( tid ) =
           std::pair< size_t, std::map< size_t, CSDMapEntry >::const_iterator >( syn_id, source_2_idx );
 
         return false;  // there is data left to communicate
@@ -1845,6 +2350,7 @@ ConnectionManager::fill_target_buffer( const size_t tid,
       next_target_data.reset_marker();
       next_target_data.set_source_tid(
         kernel().vp_manager.vp_to_thread( kernel().vp_manager.node_id_to_vp( source_gid ) ) );
+
       next_target_data.set_source_lid( kernel().vp_manager.node_id_to_lid( source_gid ) );
 
       if ( is_primary )
@@ -1856,6 +2362,8 @@ ConnectionManager::fill_target_buffer( const size_t tid,
       }
       else
       {
+        // Connections on the long path of morph transmit spikes only (see check_long_range_connection_()).
+        assert( not is_long_delay );
         const auto target_thread = source_2_idx->second.get_target_thread();
         const SpikeData& conn_info =
           compressed_spike_data_[ syn_id ][ source_2_idx->second.get_source_index() ][ target_thread ];
@@ -1876,17 +2384,16 @@ ConnectionManager::fill_target_buffer( const size_t tid,
     }  // end while
 
     ++syn_id;
-    if ( syn_id < csd_maps.size() )
+    if ( syn_id < csd_maps->size() )
     {
-      source_2_idx = csd_maps.at( syn_id ).begin();
+      source_2_idx = csd_maps->at( syn_id ).begin();
     }
-  } while ( syn_id < csd_maps.size() );
+  } while ( syn_id < csd_maps->size() );
 
   // Store iteration state for this thread. If we get here, ther is nothing more to do for
   // this thread so we store a non-existing syn_id with a meaningless iterator to inform that
   // this thread has nothing to do in the next round.
-  iteration_state_.at( tid ) =
-    std::pair< size_t, std::map< size_t, CSDMapEntry >::const_iterator >( syn_id, source_2_idx );
+  iter_state->at( tid ) = std::pair< size_t, std::map< size_t, CSDMapEntry >::const_iterator >( syn_id, source_2_idx );
 
   // Mark end of data for this round
   for ( size_t rank = rank_start; rank < rank_end; ++rank )
@@ -1922,6 +2429,21 @@ ConnectionManager::initialize_iteration_state()
   {
     iteration_state_.push_back( std::pair< size_t, std::map< size_t, CSDMapEntry >::const_iterator >( 0, begin ) );
   }
+
+#ifdef HAVE_MORPH
+  if ( is_morph_active() )
+  {
+    iteration_state_long_delay_.clear();
+    iteration_state_long_delay_.reserve( num_threads );
+
+    begin = source_table_long_delay_.compressed_spike_data_map_.at( 0 ).cbegin();
+    for ( size_t t = 0; t < num_threads; ++t )
+    {
+      iteration_state_long_delay_.push_back(
+        std::pair< size_t, std::map< size_t, CSDMapEntry >::const_iterator >( 0, begin ) );
+    }
+  }
+#endif
 }
 
 }  // namespace nest

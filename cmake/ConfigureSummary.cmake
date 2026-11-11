@@ -148,6 +148,13 @@ function( NEST_PRINT_CONFIG_SUMMARY )
   endif ()
 
   message( "" )
+  if ( HAVE_MORPH )
+    message( "Morph               : Yes (structure-aware communication)" )
+  else ()
+    message( "Morph               : No" )
+  endif ()
+
+  message( "" )
   if ( HAVE_MUSIC )
     message( "Use MUSIC           : Yes (MUSIC ${MUSIC_VERSION})" )
     message( "    Includes        : ${MUSIC_INCLUDE_DIRS}" )

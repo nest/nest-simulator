@@ -46,7 +46,7 @@ private:
   std::vector< size_t > idx_;    //!< next entry in rank to write to
 
 public:
-  SendBufferPosition();
+  SendBufferPosition( const bool is_long_delay, const size_t num_procs );
 
   /**
    * Returns begin index of specified rank in MPI buffer.

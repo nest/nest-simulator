@@ -64,7 +64,9 @@ namespace nest
 
 
 ConnectionManager::ConnectionManager()
-  : connruledict_()
+  : compressed_spike_data_copies_( 1 )
+  , compressed_spike_data_copies_changed_( false )
+  , connruledict_()
   , connbuilder_factories_()
   , thirdconnruledict_()
   , thirdconnbuilder_factories_()
@@ -112,6 +114,8 @@ ConnectionManager::initialize( const bool adjust_number_of_threads_or_rng_only )
     connections_have_changed_ = false;
     get_connections_has_been_called_ = false;
     use_compressed_spikes_ = true;
+    compressed_spike_data_copies_ = 1;
+    compressed_spike_data_copies_changed_ = false;
     stdp_eps_ = 1.0e-6;
     min_delay_ = max_delay_ = 1;
     sw_construction_connect.reset();
@@ -159,6 +163,7 @@ ConnectionManager::finalize( const bool adjust_number_of_threads_or_rng_only )
   std::vector< std::vector< ConnectorBase* > >().swap( connections_ );
   std::vector< std::vector< std::vector< size_t > > >().swap( secondary_recv_buffer_pos_ );
   compressed_spike_data_.clear();
+  compressed_spike_data_blocks_.clear();
 
   if ( not adjust_number_of_threads_or_rng_only )
   {
@@ -196,6 +201,22 @@ ConnectionManager::set_status( const Dictionary& d )
 
   d.update_value( names::use_compressed_spikes, use_compressed_spikes_ );
 
+  long copies = compressed_spike_data_copies_;
+  if ( d.update_value( names::compressed_spike_data_copies, copies ) )
+  {
+    if ( copies < 1 )
+    {
+      throw BadProperty( "compressed_spike_data_copies >= 1 required." );
+    }
+    if ( static_cast< size_t >( copies ) != compressed_spike_data_copies_ )
+    {
+      compressed_spike_data_copies_ = copies;
+      // the copies are made when the connection infrastructure is built; not connections_have_changed_, see
+      // compressed_spike_data_copies_changed()
+      compressed_spike_data_copies_changed_ = true;
+    }
+  }
+
   //  Need to update the saved values if we have changed the delay bounds.
   if ( d.known( names::min_delay ) or d.known( names::max_delay ) )
   {
@@ -220,6 +241,7 @@ ConnectionManager::get_status( Dictionary& dict )
   dict[ names::num_connections ] = static_cast< long >( n );
   dict[ names::keep_source_table ] = keep_source_table_;
   dict[ names::use_compressed_spikes ] = use_compressed_spikes_;
+  dict[ names::compressed_spike_data_copies ] = static_cast< long >( compressed_spike_data_copies_ );
 
   sw_construction_connect.get_status( dict, names::time_construction_connect, names::time_construction_connect_cpu );
 
@@ -1767,6 +1789,7 @@ void
 ConnectionManager::unset_connections_have_changed()
 {
   connections_have_changed_ = false;
+  compressed_spike_data_copies_changed_ = false;
 }
 
 
@@ -1788,7 +1811,56 @@ ConnectionManager::collect_compressed_spike_data( const size_t tid )
 #pragma omp single
     {
       source_table_.fill_compressed_spike_data( compressed_spike_data_ );
+
+      const size_t num_threads = kernel().vp_manager.get_num_threads();
+      const size_t blocks = std::min( compressed_spike_data_copies_, num_threads );
+      compressed_spike_data_blocks_.clear();
+      if ( blocks > 1 )
+      {
+        compressed_spike_data_blocks_.resize( blocks );
+        compressed_spike_data_block_of_.resize( num_threads );
+        compressed_spike_data_column_of_.resize( num_threads );
+        for ( size_t t = 0; t < num_threads; ++t )
+        {
+          // block b consists of the threads [ lo, hi ) with lo = ceil( b * num_threads / blocks )
+          // and hi = ceil( ( b + 1 ) * num_threads / blocks )
+          const size_t b = t * blocks / num_threads;
+          compressed_spike_data_block_of_[ t ] = b;
+          compressed_spike_data_column_of_[ t ] = t - ( b * num_threads + blocks - 1 ) / blocks;
+        }
+      }
     }  // of omp single; implicit barrier
+
+    if ( not compressed_spike_data_blocks_.empty() )
+    {
+      // The first thread of every block copies the columns of the threads of its block, so that the memory of the copy
+      // is allocated and first touched by a thread of the block.
+      const size_t num_threads = kernel().vp_manager.get_num_threads();
+      const size_t blocks = compressed_spike_data_blocks_.size();
+      const size_t b = compressed_spike_data_block_of_[ tid ];
+      const size_t first = ( b * num_threads + blocks - 1 ) / blocks;
+      const size_t last = ( ( b + 1 ) * num_threads + blocks - 1 ) / blocks;
+      if ( tid == first )
+      {
+        auto& copy = compressed_spike_data_blocks_[ b ];
+        copy.resize( compressed_spike_data_.size() );
+        for ( size_t syn_id = 0; syn_id < compressed_spike_data_.size(); ++syn_id )
+        {
+          copy[ syn_id ].reserve( compressed_spike_data_[ syn_id ].size() );
+          for ( const auto& row : compressed_spike_data_[ syn_id ] )
+          {
+            copy[ syn_id ].emplace_back( row.begin() + first, row.begin() + last );
+          }
+        }
+      }
+      kernel().get_omp_synchronization_construction_stopwatch().start();
+#pragma omp barrier
+      kernel().get_omp_synchronization_construction_stopwatch().stop();
+#pragma omp single
+      {
+        std::vector< std::vector< std::vector< SpikeData > > >().swap( compressed_spike_data_ );
+      }  // of omp single; implicit barrier
+    }
   }
 }
 
@@ -1857,8 +1929,9 @@ ConnectionManager::fill_target_buffer( const size_t tid,
       else
       {
         const auto target_thread = source_2_idx->second.get_target_thread();
+        // Read through the accessor: with copies of the compressed spike data the original structure is empty.
         const SpikeData& conn_info =
-          compressed_spike_data_[ syn_id ][ source_2_idx->second.get_source_index() ][ target_thread ];
+          get_compressed_spike_data_entry( target_thread, syn_id, source_2_idx->second.get_source_index() );
         assert( target_thread == static_cast< unsigned long >( conn_info.get_tid() ) );
         const size_t relative_recv_buffer_pos =
           get_secondary_recv_buffer_position( target_thread, syn_id, conn_info.get_lcid() )

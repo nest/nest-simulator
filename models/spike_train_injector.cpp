@@ -32,6 +32,7 @@
 // Includes from libnestutil:
 #include "dict_util.h"
 
+
 namespace nest
 {
 void

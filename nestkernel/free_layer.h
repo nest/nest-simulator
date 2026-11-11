@@ -169,7 +169,7 @@ FreeLayer< D >::set_status( const Dictionary& d )
       }
       assert( positions_.size() == num_local_nodes_ );
     }
-    else if ( std::holds_alternative< std::shared_ptr< nest::Parameter > >( positions ) )
+    else if ( std::holds_alternative< std::shared_ptr< Parameter > >( positions ) )
     {
       auto pd = d.get< ParameterPTR >( names::positions );
       auto pos = dynamic_cast< DimensionParameter* >( pd.get() );

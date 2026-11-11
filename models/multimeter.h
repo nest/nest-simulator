@@ -153,6 +153,15 @@ public:
     return false;
   }
 
+  /**
+   * @note Mark as local_receiver() so multimeter is properly identified as device.
+   */
+  bool
+  local_receiver() const override
+  {
+    return true;
+  }
+
   std::string
   get_element_type() const override
   {
@@ -231,7 +240,7 @@ private:
 
 
 inline void
-nest::multimeter::get_status( Dictionary& d ) const
+multimeter::get_status( Dictionary& d ) const
 {
   RecordingDevice::get_status( d );
   P_.get( d );
@@ -255,7 +264,7 @@ nest::multimeter::get_status( Dictionary& d ) const
 }
 
 inline void
-nest::multimeter::set_status( const Dictionary& d )
+multimeter::set_status( const Dictionary& d )
 {
   // protect multimeter from being frozen
   bool freeze = false;
@@ -272,13 +281,13 @@ nest::multimeter::set_status( const Dictionary& d )
 }
 
 inline SignalType
-nest::multimeter::sends_signal() const
+multimeter::sends_signal() const
 {
   return ALL;
 }
 
 inline void
-nest::multimeter::calibrate_time( const TimeConverter& tc )
+multimeter::calibrate_time( const TimeConverter& tc )
 {
   P_.interval_ = tc.from_old_tics( P_.interval_.get_tics() );
   P_.offset_ = tc.from_old_tics( P_.offset_.get_tics() );

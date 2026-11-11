@@ -29,7 +29,7 @@ Description
 ~~~~~~~~~~~
 
 This script demonstrates supervised learning of a classification task with the eligibility propagation (e-prop)
-plasticity mechanism by Bellec et al. :footcite:p:`Bellec2020` with additional biological features described in :footcite:p:`KorcsakGorzo2025`.
+plasticity mechanism by Bellec et al. :footcite:p:`Bellec2020` with additional biological features described in :footcite:p:`KorcsakGorzo2026`.
 
 The primary objective of this task is to classify the N-MNIST dataset :footcite:p:`Orchard2015`, an adaptation of the traditional
 MNIST dataset of handwritten digits specifically designed for neuromorphic computing. The N-MNIST dataset
@@ -52,7 +52,7 @@ which it receives from a rate generator representing the respective digit class.
 network classifiers that may employ softmax functions and cross-entropy loss for classification, this network
 model utilizes a mean-squared error loss to evaluate the training error and perform digit classification.
 
-Details on the event-based NEST implementation of e-prop can be found in :footcite:p:`KorcsakGorzo2025`.
+Details on the event-based NEST implementation of e-prop can be found in :footcite:p:`KorcsakGorzo2026`.
 
 References
 ~~~~~~~~~~

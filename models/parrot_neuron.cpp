@@ -111,4 +111,4 @@ parrot_neuron::handle( SpikeEvent& e )
   }
 }
 
-}  // namespace
+}  // namespace nest

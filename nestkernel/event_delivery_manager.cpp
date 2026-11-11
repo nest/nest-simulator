@@ -161,10 +161,12 @@ EventDeliveryManager::set_status( const Dictionary& dict )
       throw BadProperty( "collocation_groups >= 1 required." );
     }
     if ( static_cast< size_t >( groups ) != collocation_groups_
-      and kernel().simulation_manager.get_slice_origin().get_steps() > 0 )
+      and ( kernel().simulation_manager.has_been_prepared()
+        or kernel().simulation_manager.get_slice_origin().get_steps() > 0 ) )
     {
-      // spikes that are still in the group buffers or in the receive buffers would be lost
-      throw BadProperty( "collocation_groups can only be changed before the first call of Simulate." );
+      // Spikes that are still in the group buffers or in the receive buffers would be lost. After Prepare, the group
+      // buffers are allocated for the old number of groups, which num_collocation_groups_() would no longer match.
+      throw BadProperty( "collocation_groups can only be changed before the first call of Prepare or Simulate." );
     }
     collocation_groups_ = groups;
   }
@@ -452,6 +454,10 @@ EventDeliveryManager::gather_spike_data()
         std::this_thread::yield();
       }
     }
+    // All groups have collocated, and no thread reads the group buffers during the swap: with two barriers the other
+    // threads wait at the second barrier or compute their group (from num_collocation_groups_(), not the buffers),
+    // with one barrier they wait in it. The wait above is needed also with one MPI process, since the swap must not
+    // precede the collocation of any group.
     groups_collocated_.store( 0, std::memory_order_relaxed );
     group_buffers_.swap( group_buffers_next_ );
     if ( kernel().mpi_manager.get_num_processes() == 1 )

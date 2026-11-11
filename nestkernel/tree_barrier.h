@@ -28,6 +28,7 @@
 #include <atomic>
 #include <cassert>
 #include <cstddef>
+#include <functional>
 #include <thread>
 #include <vector>
 
@@ -129,9 +130,7 @@ TreeBarrier::initialize( const size_t fan_in, const std::vector< size_t >& group
 {
   // every group has at least one thread, otherwise no thread would complete it
   assert( group_bounds.size() >= 2 and group_bounds.front() == 0
-    and std::adjacent_find(
-          group_bounds.begin(), group_bounds.end(), []( const size_t a, const size_t b ) { return a >= b; } )
-      == group_bounds.end() );
+    and std::ranges::adjacent_find( group_bounds, std::greater_equal<>() ) == group_bounds.end() );
   num_threads_ = group_bounds.back();
   fan_in_ = fan_in < 2 ? 2 : fan_in;
   num_groups_ = group_bounds.size() - 1;

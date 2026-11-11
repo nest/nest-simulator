@@ -97,7 +97,12 @@ def test_parameter():
     nest.collocation_groups = 2
     n = nest.Create("iaf_psc_exp", 2)
     nest.Connect(n, n)
-    nest.Simulate(1.0)
+    # after Prepare the group buffers are allocated for the current number of groups
+    nest.Prepare()
+    with pytest.raises(nest.NESTErrors.BadProperty):
+        nest.collocation_groups = 3
+    nest.Run(1.0)
+    nest.Cleanup()
     with pytest.raises(nest.NESTErrors.BadProperty):
         nest.collocation_groups = 3
 

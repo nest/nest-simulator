@@ -204,6 +204,13 @@ class NestModule(types.ModuleType):
         "Number of consecutive threads that form a group of the tree barrier (a core complex or socket)",
         default=8,
     )
+    single_cycle_barrier = KernelAttribute(
+        "bool",
+        "Whether the tree barrier completes a cycle in one barrier instead of two: the last thread of each collocation "
+        "group collocates its group and the master thread exchanges the spikes and advances the time before the "
+        "release (requires tree_barrier)",
+        default=False,
+    )
     collocation_groups = KernelAttribute(
         "int",
         (

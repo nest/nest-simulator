@@ -26,6 +26,7 @@
 // C++ includes:
 #include <algorithm>
 #include <atomic>
+#include <cassert>
 #include <cstddef>
 #include <thread>
 #include <vector>
@@ -44,17 +45,33 @@ namespace nest
  * socket, so that the cache lines which every arriving thread has to modify do not travel across the chip, in contrast
  * to a central counter. All state is padded to cache lines.
  *
+ * The threads can further be divided into groups of consecutive threads (group g consists of the threads
+ * [ ceil( g * T / G ), ceil( ( g + 1 ) * T / G ) ), the groups of the collocation of the spikes). Each group has a tree
+ * of its own; the last thread of a group arrives at a counter of the groups. The variant of wait() with steps uses this
+ * to replace the two barriers of a cycle by one: the last thread of a group to arrive executes the step of the group,
+ * the master thread waits until all groups are complete and executes the step of the master, and only then are the
+ * threads released. The master step stays on the master thread, as MPI requires.
+ *
  * Every thread of the team must call wait() with its own thread number for every barrier. The barrier is meant for
  * teams that are not oversubscribed; after a number of spins a waiting thread yields the processor.
  */
 class TreeBarrier
 {
 public:
-  //! Prepare the barrier for num_threads threads; not thread safe.
-  void initialize( const size_t num_threads, const size_t fan_in );
+  //! Prepare the barrier for num_threads threads in num_groups groups; not thread safe.
+  void initialize( const size_t num_threads, const size_t fan_in, const size_t num_groups = 1 );
 
   //! Wait until all threads have arrived.
   void wait( const size_t tid );
+
+  /**
+   * Wait until all threads have arrived and the steps are done.
+   *
+   * The last thread of group g to arrive calls on_group( g ), the master thread calls on_root() after all groups have
+   * completed their steps; no thread leaves before on_root() has returned.
+   */
+  template < typename OnGroup, typename OnRoot >
+  void wait( const size_t tid, OnGroup&& on_group, OnRoot&& on_root );
 
 private:
   /**
@@ -70,79 +87,142 @@ private:
     std::atomic< int > value_ = 0;
   };
 
+  //! Tree of the arrival within one group of threads.
+  struct Group_
+  {
+    size_t first_ = 0;                    //!< first thread of the group
+    size_t size_ = 0;                     //!< number of threads of the group
+    std::vector< size_t > level_nodes_;   //!< number of nodes per level
+    std::vector< size_t > level_offset_;  //!< index of the first counter of the level
+  };
+
   //! Hint to the processor that the thread is spinning.
   static void pause_();
 
+  //! Spin until the flag has the given value.
+  static void spin_( const Padded_& flag, const int value );
+
+  //! Flip the sense of thread tid and return the new sense.
+  int flip_sense_( const size_t tid );
+
+  //! Arrival of thread tid in the tree of its group; true if it is the last thread of the group.
+  bool arrive_in_group_( const size_t tid );
+
   size_t num_threads_ = 0;
   size_t fan_in_ = 8;
-  std::vector< size_t > level_nodes_;   //!< number of groups per level
-  std::vector< size_t > level_offset_;  //!< index of the first counter of the level
+  size_t num_groups_ = 1;
+  std::vector< size_t > group_of_;  //!< group of each thread
+  std::vector< Group_ > groups_;
   std::vector< Padded_ > counters_;
   std::vector< Padded_ > local_sense_;
+  Padded_ groups_arrived_;
   Padded_ global_sense_;
 };
 
 inline void
-TreeBarrier::initialize( const size_t num_threads, const size_t fan_in )
+TreeBarrier::initialize( const size_t num_threads, const size_t fan_in, const size_t num_groups )
 {
+  assert( num_groups >= 1 and num_groups <= std::max< size_t >( 1, num_threads ) );
   num_threads_ = num_threads;
   fan_in_ = fan_in < 2 ? 2 : fan_in;
-  level_nodes_.clear();
-  level_offset_.clear();
-  size_t nodes_in_level = num_threads_;
+  num_groups_ = num_groups;
+  group_of_.assign( num_threads_, 0 );
+  groups_.assign( num_groups_, Group_() );
   size_t offset = 0;
-  while ( nodes_in_level > 1 )
+  for ( size_t g = 0; g < num_groups_; ++g )
   {
-    const size_t groups = ( nodes_in_level + fan_in_ - 1 ) / fan_in_;
-    level_nodes_.push_back( groups );
-    level_offset_.push_back( offset );
-    offset += groups;
-    nodes_in_level = groups;
+    Group_& group = groups_[ g ];
+    group.first_ = ( g * num_threads_ + num_groups_ - 1 ) / num_groups_;
+    group.size_ = ( ( g + 1 ) * num_threads_ + num_groups_ - 1 ) / num_groups_ - group.first_;
+    std::fill_n( group_of_.begin() + group.first_, group.size_, g );
+    size_t nodes_in_level = group.size_;
+    while ( nodes_in_level > 1 )
+    {
+      const size_t nodes = ( nodes_in_level + fan_in_ - 1 ) / fan_in_;
+      group.level_nodes_.push_back( nodes );
+      group.level_offset_.push_back( offset );
+      offset += nodes;
+      nodes_in_level = nodes;
+    }
   }
-  counters_ = std::vector< Padded_ >( offset > 0 ? offset : 1 );
+  counters_ = std::vector< Padded_ >( std::max< size_t >( offset, 1 ) );
   local_sense_ = std::vector< Padded_ >( num_threads_ );
-  for ( auto& c : counters_ )
-  {
-    c.value_.store( 0, std::memory_order_relaxed );
-  }
-  for ( auto& s : local_sense_ )
-  {
-    s.value_.store( 0, std::memory_order_relaxed );
-  }
+  groups_arrived_.value_.store( 0, std::memory_order_relaxed );
   global_sense_.value_.store( 0, std::memory_order_relaxed );
+}
+
+inline int
+TreeBarrier::flip_sense_( const size_t tid )
+{
+  const int sense = local_sense_[ tid ].value_.load( std::memory_order_relaxed ) ^ 1;
+  local_sense_[ tid ].value_.store( sense, std::memory_order_relaxed );
+  return sense;
+}
+
+inline bool
+TreeBarrier::arrive_in_group_( const size_t tid )
+{
+  const Group_& group = groups_[ group_of_[ tid ] ];
+  size_t index = tid - group.first_;
+  size_t below = group.size_;
+  for ( size_t level = 0; level < group.level_nodes_.size(); ++level )
+  {
+    const size_t node = index / fan_in_;
+    const size_t node_size = std::min( fan_in_, below - node * fan_in_ );
+    Padded_& counter = counters_[ group.level_offset_[ level ] + node ];
+    if ( counter.value_.fetch_add( 1, std::memory_order_acq_rel ) != static_cast< int >( node_size ) - 1 )
+    {
+      return false;
+    }
+    counter.value_.store( 0, std::memory_order_relaxed );
+    index = node;
+    below = group.level_nodes_[ level ];
+  }
+  return true;
 }
 
 inline void
 TreeBarrier::wait( const size_t tid )
 {
-  const int sense = local_sense_[ tid ].value_.load( std::memory_order_relaxed ) ^ 1;
-  local_sense_[ tid ].value_.store( sense, std::memory_order_relaxed );
-
-  size_t index = tid;
-  size_t below = num_threads_;
-  bool last = true;
-  for ( size_t level = 0; level < level_nodes_.size(); ++level )
+  const int sense = flip_sense_( tid );
+  // The last thread of the last group to arrive releases all threads.
+  if ( arrive_in_group_( tid )
+    and ( num_groups_ == 1
+      or groups_arrived_.value_.fetch_add( 1, std::memory_order_acq_rel ) == static_cast< int >( num_groups_ ) - 1 ) )
   {
-    const size_t group = index / fan_in_;
-    const size_t group_size = std::min( fan_in_, below - group * fan_in_ );
-    Padded_& counter = counters_[ level_offset_[ level ] + group ];
-    if ( counter.value_.fetch_add( 1, std::memory_order_acq_rel ) != static_cast< int >( group_size ) - 1 )
-    {
-      last = false;
-      break;
-    }
-    counter.value_.store( 0, std::memory_order_relaxed );
-    index = group;
-    below = level_nodes_[ level ];
-  }
-
-  if ( last )
-  {
+    groups_arrived_.value_.store( 0, std::memory_order_relaxed );
     global_sense_.value_.store( sense, std::memory_order_release );
     return;
   }
+  spin_( global_sense_, sense );
+}
+
+template < typename OnGroup, typename OnRoot >
+inline void
+TreeBarrier::wait( const size_t tid, OnGroup&& on_group, OnRoot&& on_root )
+{
+  const int sense = flip_sense_( tid );
+  if ( arrive_in_group_( tid ) )
+  {
+    on_group( group_of_[ tid ] );
+    groups_arrived_.value_.fetch_add( 1, std::memory_order_acq_rel );
+  }
+  if ( tid == 0 )
+  {
+    spin_( groups_arrived_, static_cast< int >( num_groups_ ) );
+    groups_arrived_.value_.store( 0, std::memory_order_relaxed );
+    on_root();
+    global_sense_.value_.store( sense, std::memory_order_release );
+    return;
+  }
+  spin_( global_sense_, sense );
+}
+
+inline void
+TreeBarrier::spin_( const Padded_& flag, const int value )
+{
   size_t spins = 0;
-  while ( global_sense_.value_.load( std::memory_order_acquire ) != sense )
+  while ( flag.value_.load( std::memory_order_acquire ) != value )
   {
     pause_();
     if ( ++spins > 20000 )

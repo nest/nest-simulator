@@ -21,8 +21,8 @@
 
 
 """
-Test that the spinning tree barrier of the update loop (kernel parameters tree_barrier and tree_barrier_fan_in)
-gives exactly the same results as the OpenMP barriers.
+Test that the spinning tree barrier of the update loop (kernel parameters tree_barrier, tree_barrier_fan_in and
+single_cycle_barrier) gives exactly the same results as the OpenMP barriers.
 """
 
 import nest
@@ -32,12 +32,14 @@ import pytest
 pytestmark = pytest.mark.skipif_missing_threads
 
 
-def build_and_run(tree, threads, fan_in=8):
+def build_and_run(tree, threads, fan_in=8, single=False, groups=1):
     nest.ResetKernel()
     nest.local_num_threads = threads
     nest.rng_seed = 321
     nest.tree_barrier = tree
     nest.tree_barrier_fan_in = fan_in
+    nest.single_cycle_barrier = single
+    nest.collocation_groups = groups
 
     n_ex, n_in = 80, 20
     neurons = nest.Create("iaf_psc_exp", n_ex + n_in, params={"I_e": 300.0})
@@ -73,10 +75,23 @@ def test_identical_results(threads, fan_in):
         assert np.array_equal(a, b)
 
 
+# One barrier per cycle, with the collocation of the groups and the master section as steps of the barrier.
+@pytest.mark.parametrize(
+    "threads, fan_in, groups", [(1, 8, 1), (2, 2, 2), (3, 2, 2), (4, 8, 1), (5, 2, 3), (8, 2, 4), (9, 3, 2), (16, 4, 4)]
+)
+def test_single_barrier_identical_results(threads, fan_in, groups):
+    ref = build_and_run(False, threads, groups=groups)
+    single = build_and_run(True, threads, fan_in, single=True, groups=groups)
+    assert len(ref[0]) > 100
+    for a, b in zip(ref, single):
+        assert np.array_equal(a, b)
+
+
 def test_parameters():
     nest.ResetKernel()
     assert nest.tree_barrier is False
     assert nest.tree_barrier_fan_in == 8
+    assert nest.single_cycle_barrier is False
     with pytest.raises(nest.NESTErrors.BadProperty):
         nest.tree_barrier_fan_in = 1
 

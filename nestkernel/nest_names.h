@@ -492,6 +492,7 @@ const std::string shift_now_spikes( "shift_now_spikes" );
 const std::string shrink_factor_buffer_spike_data( "shrink_factor_buffer_spike_data" );
 const std::string sigma( "sigma" );
 const std::string sigmoid( "sigmoid" );
+const std::string single_cycle_barrier( "single_cycle_barrier" );
 const std::string sion_chunksize( "sion_chunksize" );
 const std::string sion_collective( "sion_collective" );
 const std::string sion_n_files( "sion_n_files" );

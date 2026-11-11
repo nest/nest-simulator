@@ -231,8 +231,9 @@ private:
   //! Switch, fan-in and state of the spinning tree barrier of the update loop.
   struct TreeBarrierControl_
   {
-    bool use_ = false;   //!< Use the tree barrier instead of the OpenMP barriers in the update loop
-    size_t fan_in_ = 8;  //!< Fan-in of the tree barrier (threads per group)
+    bool use_ = false;     //!< Use the tree barrier instead of the OpenMP barriers in the update loop
+    size_t fan_in_ = 8;    //!< Fan-in of the tree barrier (threads per group)
+    bool single_ = false;  //!< One barrier per cycle, with the collocation and the master section as its steps
     TreeBarrier barrier_;
   };
 

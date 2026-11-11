@@ -99,6 +99,7 @@ SimulationManager::initialize( const bool adjust_number_of_threads_or_rng_only )
   print_time_ = false;
   tree_barrier_->use_ = false;
   tree_barrier_->fan_in_ = 8;
+  tree_barrier_->single_ = false;
   use_wfr_ = true;
 
   wfr_comm_interval_ = 1.0;
@@ -190,6 +191,7 @@ SimulationManager::set_status( const Dictionary& d )
     }
     tree_barrier_->fan_in_ = fan_in;
   }
+  d.update_value( names::single_cycle_barrier, tree_barrier_->single_ );
 
   // tics_per_ms and resolution must come after local_num_thread /
   // total_num_threads because they might reset the network and the time
@@ -486,6 +488,7 @@ SimulationManager::get_status( Dictionary& d )
   d[ names::print_time ] = print_time_;
   d[ names::tree_barrier ] = tree_barrier_->use_;
   d[ names::tree_barrier_fan_in ] = static_cast< long >( tree_barrier_->fan_in_ );
+  d[ names::single_cycle_barrier ] = tree_barrier_->single_;
 
   d[ names::prepared ] = prepared_;
 
@@ -876,11 +879,17 @@ SimulationManager::update_()
 #endif
 
   const bool use_tree_barrier = tree_barrier_->use_;
+  const bool use_single_barrier = use_tree_barrier and tree_barrier_->single_;
   if ( use_tree_barrier )
   {
     // Prepared again for every run, so that a changed thread count or fan-in takes effect and
     // no state of an earlier run is carried over. This costs a few allocations per run, not per cycle.
-    tree_barrier_->barrier_.initialize( kernel().vp_manager.get_num_threads(), tree_barrier_->fan_in_ );
+    // With one barrier per cycle, the groups of the barrier are those of the collocation, so that the last thread
+    // of a group to arrive can collocate it.
+    const size_t num_groups = use_single_barrier and kernel().event_delivery_manager.use_group_collocation()
+      ? kernel().event_delivery_manager.get_num_collocation_groups()
+      : 1;
+    tree_barrier_->barrier_.initialize( kernel().vp_manager.get_num_threads(), tree_barrier_->fan_in_, num_groups );
   }
 
 // parallel section begins
@@ -1103,28 +1112,9 @@ SimulationManager::update_()
           and kernel().connection_manager.has_primary_connections()
           and kernel().event_delivery_manager.use_group_collocation();
 
-        // parallel section ends, wait until all threads are done -> synchronize
-        kernel().get_omp_synchronization_simulation_stopwatch().start();
-        if ( use_tree_barrier )
-        {
-          tree_barrier_->barrier_.wait( tid );
-        }
-        else
-        {
-#pragma omp barrier
-        }
-        kernel().get_omp_synchronization_simulation_stopwatch().stop();
-
-        // Collocation by several threads: the first thread of every group of threads collocates its group, all groups
-        // in parallel, instead of the master thread alone (see EventDeliveryManager::use_group_collocation()).
-        if ( collocate_in_groups )
-        {
-          kernel().event_delivery_manager.collocate_groups( tid );
-        }
-
-        // the following block is executed by the master thread only
-        // the other threads are enforced to wait at the end of the block
-#pragma omp master
+        // Master section: exchange of the spikes, advance of the time, bookkeeping of the cycle. Executed by the master
+        // thread, between the two barriers or as the master step of the single barrier.
+        const auto master_section = [ & ]()
         {
           // gather and deliver only at end of slice, i.e., end of min_delay step
           if ( to_step_ == kernel().connection_manager.get_min_delay() )
@@ -1178,15 +1168,59 @@ SimulationManager::update_()
           cycle_time_log_.add_entry( update_time, communicate_time, local_spike_counter );
 
 #endif
-        }
-        // end of master section, all threads have to synchronize at this point
-        if ( use_tree_barrier )
+        };
+
+        if ( use_single_barrier )
         {
-          tree_barrier_->barrier_.wait( tid );
+          // One barrier per cycle: the last thread of each group to arrive collocates its group, the master thread
+          // executes the master section after all groups are complete, then all threads leave. The synchronization
+          // time therefore includes the steps of the threads that execute them.
+          kernel().get_omp_synchronization_simulation_stopwatch().start();
+          tree_barrier_->barrier_.wait(
+            tid,
+            [ & ]( const size_t g )
+            {
+              if ( collocate_in_groups )
+              {
+                kernel().event_delivery_manager.collocate_group( g );
+              }
+            },
+            master_section );
+          kernel().get_omp_synchronization_simulation_stopwatch().stop();
         }
         else
         {
+          // parallel section ends, wait until all threads are done -> synchronize
+          kernel().get_omp_synchronization_simulation_stopwatch().start();
+          if ( use_tree_barrier )
+          {
+            tree_barrier_->barrier_.wait( tid );
+          }
+          else
+          {
 #pragma omp barrier
+          }
+          kernel().get_omp_synchronization_simulation_stopwatch().stop();
+
+          // Collocation by several threads: the first thread of every group of threads collocates its group, all
+          // groups in parallel, instead of the master thread alone (see EventDeliveryManager::use_group_collocation()).
+          if ( collocate_in_groups )
+          {
+            kernel().event_delivery_manager.collocate_groups( tid );
+          }
+
+#pragma omp master
+          master_section();
+
+          // end of master section, all threads have to synchronize at this point
+          if ( use_tree_barrier )
+          {
+            tree_barrier_->barrier_.wait( tid );
+          }
+          else
+          {
+#pragma omp barrier
+          }
         }
 
         if ( update_time_limit_exceeded )

@@ -227,6 +227,17 @@ public:
   void collocate_groups( const size_t tid );
 
   /**
+   * Collocation of group g, by any one thread, after all threads of the group have finished their update.
+   *
+   * Used by the single barrier per cycle, in which the last thread of a group to arrive collocates the group (see
+   * TreeBarrier).
+   */
+  void collocate_group( const size_t g );
+
+  //! Number of groups of the collocation; valid after configure_spike_data_buffers().
+  size_t get_num_collocation_groups() const;
+
+  /**
    * Collocates presynaptic connection information, communicates via
    * MPI and creates presynaptic connection infrastructure.
    */
@@ -420,14 +431,24 @@ private:
   //! Number of groups of threads that collocate the spike registers in parallel (1: master thread alone).
   size_t collocation_groups_;
 
-  //! [ group ][ target rank ] spikes collected by the first thread of the group (see use_group_collocation()).
+  //! [ group ][ target rank ] spikes of the last cycle, read by the delivery or the MPI exchange (see
+  //! use_group_collocation()).
   std::vector< std::vector< std::vector< SpikeData > > > group_buffers_;
 
   /**
-   * Number of groups that have finished their collocation in the current cycle (several MPI processes only).
+   * [ group ][ target rank ] spikes collected in the current cycle; swapped with group_buffers_ in gather_spike_data().
    *
-   * Atomic, because the first threads of all groups increment it concurrently while the master thread spins on it in
-   * gather_spike_data() before the MPI exchange; release and acquire make the group buffers visible to the master.
+   * Two sets, because with one barrier per cycle a group collocates as soon as its own threads have arrived, while
+   * threads of other groups may still deliver the spikes of the last cycle from group_buffers_.
+   */
+  std::vector< std::vector< std::vector< SpikeData > > > group_buffers_next_;
+
+  /**
+   * Number of groups that have finished their collocation in the current cycle.
+   *
+   * Atomic, because the collocating threads of all groups increment it concurrently while the master thread spins on
+   * it in gather_spike_data() before it swaps the group buffers; release and acquire make the group buffers visible to
+   * the master.
    */
   std::atomic< size_t > groups_collocated_;
 
@@ -587,6 +608,12 @@ EventDeliveryManager::get_slice_modulo( long d )
   assert( static_cast< std::vector< long >::size_type >( d ) < slice_moduli_.size() );
 
   return slice_moduli_[ d ];
+}
+
+inline size_t
+EventDeliveryManager::get_num_collocation_groups() const
+{
+  return group_buffers_.size();
 }
 
 }  // namespace nest

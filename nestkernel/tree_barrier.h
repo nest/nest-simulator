@@ -66,7 +66,7 @@ public:
    */
   void initialize( const size_t fan_in, const std::vector< size_t >& group_bounds );
 
-  //! Wait until all threads have arrived.
+  //! Wait until all threads have arrived; for a barrier with a single group.
   void wait( const size_t tid );
 
   /**
@@ -154,8 +154,16 @@ TreeBarrier::initialize( const size_t fan_in, const std::vector< size_t >& group
       nodes_in_level = nodes;
     }
   }
-  counters_ = std::vector< Padded_ >( std::max< size_t >( offset, 1 ) );
+  counters_ = std::vector< Padded_ >( offset > 0 ? offset : 1 );
   local_sense_ = std::vector< Padded_ >( num_threads_ );
+  for ( auto& c : counters_ )
+  {
+    c.value_.store( 0, std::memory_order_relaxed );
+  }
+  for ( auto& s : local_sense_ )
+  {
+    s.value_.store( 0, std::memory_order_relaxed );
+  }
   groups_arrived_.value_.store( 0, std::memory_order_relaxed );
   global_sense_.value_.store( 0, std::memory_order_relaxed );
 }
@@ -193,13 +201,11 @@ TreeBarrier::arrive_in_group_( const size_t tid )
 inline void
 TreeBarrier::wait( const size_t tid )
 {
+  assert( num_groups_ == 1 );
   const int sense = flip_sense_( tid );
-  // The last thread of the last group to arrive releases all threads.
-  if ( arrive_in_group_( tid )
-    and ( num_groups_ == 1
-      or groups_arrived_.value_.fetch_add( 1, std::memory_order_acq_rel ) == static_cast< int >( num_groups_ ) - 1 ) )
+  if ( arrive_in_group_( tid ) )
   {
-    groups_arrived_.value_.store( 0, std::memory_order_relaxed );
+    // the last thread to arrive releases all threads
     global_sense_.value_.store( sense, std::memory_order_release );
     return;
   }

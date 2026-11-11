@@ -1089,12 +1089,11 @@ NodeCollectionComposite::specific_local_begin_( size_t period,
     }
 
     FULL_LOGGING_ONLY(
-      kernel().write_to_dump( String::compose( "SPLB rk %1, thr %2, phase_first %3, offs %4, stp %5, sto %6,"
-                                               " pix %7, lp %8, le %9, primsz %10, nprts: %11, this: %12",
+      kernel().write_to_dump( String::compose( "SPLB rk %1, thr %2, phase_first %3, stp %4, sto %5,"
+                                               " pix %6, lp %7, le %8, primsz %9, nprts: %10, this: %11",
         kernel().mpi_manager.get_rank(),
         kernel().vp_manager.get_thread_id(),
         phase_first_node,
-        offset,
         first_part,
         first_elem,
         pix,

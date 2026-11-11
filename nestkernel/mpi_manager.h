@@ -550,6 +550,8 @@ inline void
 MPIManager::set_buffer_size_target_data( const size_t buffer_size )
 {
   assert( buffer_size >= static_cast< size_t >( 2 * get_num_processes() ) );
+  assert( max_buffer_size_target_data_ >= static_cast< size_t >( 2 * get_num_processes() ) );
+
   if ( buffer_size <= max_buffer_size_target_data_ )
   {
     buffer_size_target_data_ = buffer_size;
@@ -561,6 +563,7 @@ MPIManager::set_buffer_size_target_data( const size_t buffer_size )
   send_recv_count_target_data_per_rank_ = static_cast< size_t >(
     floor( static_cast< double >( get_buffer_size_target_data() ) / static_cast< double >( get_num_processes() ) ) );
 
+  assert( send_recv_count_target_data_per_rank_ >= 2 );
   assert( send_recv_count_target_data_per_rank_ * get_num_processes() <= get_buffer_size_target_data() );
 }
 

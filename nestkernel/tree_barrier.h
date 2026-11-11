@@ -45,8 +45,8 @@ namespace nest
  * socket, so that the cache lines which every arriving thread has to modify do not travel across the chip, in contrast
  * to a central counter. All state is padded to cache lines.
  *
- * The threads can further be divided into groups of consecutive threads (group g consists of the threads
- * [ ceil( g * T / G ), ceil( ( g + 1 ) * T / G ) ), the groups of the collocation of the spikes). Each group has a tree
+ * The threads can further be divided into groups of consecutive threads, given by their boundaries (the groups of the
+ * collocation of the spikes, see EventDeliveryManager::get_collocation_group_bounds()). Each group has a tree
  * of its own; the last thread of a group arrives at a counter of the groups. The variant of wait() with steps uses this
  * to replace the two barriers of a cycle by one: the last thread of a group to arrive executes the step of the group,
  * the master thread waits until all groups are complete and executes the step of the master, and only then are the
@@ -58,8 +58,13 @@ namespace nest
 class TreeBarrier
 {
 public:
-  //! Prepare the barrier for num_threads threads in num_groups groups; not thread safe.
-  void initialize( const size_t num_threads, const size_t fan_in, const size_t num_groups = 1 );
+  /**
+   * Prepare the barrier; not thread safe.
+   *
+   * Group g consists of the threads [ group_bounds[ g ], group_bounds[ g + 1 ] ); the last entry is the number of
+   * threads.
+   */
+  void initialize( const size_t fan_in, const std::vector< size_t >& group_bounds );
 
   //! Wait until all threads have arrived.
   void wait( const size_t tid );
@@ -120,20 +125,24 @@ private:
 };
 
 inline void
-TreeBarrier::initialize( const size_t num_threads, const size_t fan_in, const size_t num_groups )
+TreeBarrier::initialize( const size_t fan_in, const std::vector< size_t >& group_bounds )
 {
-  assert( num_groups >= 1 and num_groups <= std::max< size_t >( 1, num_threads ) );
-  num_threads_ = num_threads;
+  // every group has at least one thread, otherwise no thread would complete it
+  assert( group_bounds.size() >= 2 and group_bounds.front() == 0
+    and std::adjacent_find(
+          group_bounds.begin(), group_bounds.end(), []( const size_t a, const size_t b ) { return a >= b; } )
+      == group_bounds.end() );
+  num_threads_ = group_bounds.back();
   fan_in_ = fan_in < 2 ? 2 : fan_in;
-  num_groups_ = num_groups;
+  num_groups_ = group_bounds.size() - 1;
   group_of_.assign( num_threads_, 0 );
   groups_.assign( num_groups_, Group_() );
   size_t offset = 0;
   for ( size_t g = 0; g < num_groups_; ++g )
   {
     Group_& group = groups_[ g ];
-    group.first_ = ( g * num_threads_ + num_groups_ - 1 ) / num_groups_;
-    group.size_ = ( ( g + 1 ) * num_threads_ + num_groups_ - 1 ) / num_groups_ - group.first_;
+    group.first_ = group_bounds[ g ];
+    group.size_ = group_bounds[ g + 1 ] - group.first_;
     std::fill_n( group_of_.begin() + group.first_, group.size_, g );
     size_t nodes_in_level = group.size_;
     while ( nodes_in_level > 1 )

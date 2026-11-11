@@ -234,8 +234,9 @@ public:
    */
   void collocate_group( const size_t g );
 
-  //! Number of groups of the collocation; valid after configure_spike_data_buffers().
-  size_t get_num_collocation_groups() const;
+  //! First thread of each collocation group, followed by the number of threads; valid after
+  //! configure_spike_data_buffers().
+  const std::vector< size_t >& get_collocation_group_bounds() const;
 
   /**
    * Collocates presynaptic connection information, communicates via
@@ -444,6 +445,14 @@ private:
   std::vector< std::vector< std::vector< SpikeData > > > group_buffers_next_;
 
   /**
+   * Boundaries of the collocation groups: group g consists of the threads [ collocation_group_bounds_[ g ],
+   * collocation_group_bounds_[ g + 1 ] ).
+   *
+   * Defined in one place, because the tree barrier uses the same groups (see SimulationManager::update_()).
+   */
+  std::vector< size_t > collocation_group_bounds_;
+
+  /**
    * Number of groups that have finished their collocation in the current cycle.
    *
    * Atomic, because the collocating threads of all groups increment it concurrently while the master thread spins on
@@ -610,10 +619,10 @@ EventDeliveryManager::get_slice_modulo( long d )
   return slice_moduli_[ d ];
 }
 
-inline size_t
-EventDeliveryManager::get_num_collocation_groups() const
+inline const std::vector< size_t >&
+EventDeliveryManager::get_collocation_group_bounds() const
 {
-  return group_buffers_.size();
+  return collocation_group_bounds_;
 }
 
 }  // namespace nest

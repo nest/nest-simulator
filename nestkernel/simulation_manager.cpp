@@ -886,10 +886,11 @@ SimulationManager::update_()
     // no state of an earlier run is carried over. This costs a few allocations per run, not per cycle.
     // With one barrier per cycle, the groups of the barrier are those of the collocation, so that the last thread
     // of a group to arrive can collocate it.
-    const size_t num_groups = use_single_barrier and kernel().event_delivery_manager.use_group_collocation()
-      ? kernel().event_delivery_manager.get_num_collocation_groups()
-      : 1;
-    tree_barrier_->barrier_.initialize( kernel().vp_manager.get_num_threads(), tree_barrier_->fan_in_, num_groups );
+    const size_t num_threads = kernel().vp_manager.get_num_threads();
+    tree_barrier_->barrier_.initialize( tree_barrier_->fan_in_,
+      use_single_barrier and kernel().event_delivery_manager.use_group_collocation()
+        ? kernel().event_delivery_manager.get_collocation_group_bounds()
+        : std::vector< size_t > { 0, num_threads } );
   }
 
 // parallel section begins

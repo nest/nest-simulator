@@ -41,7 +41,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Leaky integrate-and-fire model with alpha-shaped input currents
+Leaky integrate-and-fire model with alpha-function shaped input currents
 
 Description
 +++++++++++
@@ -124,8 +124,8 @@ hyperpolarization to biophysically plausible values, set parameter
 
 .. note::
 
-   NEST uses exact integration [1]_, [2]_ to integrate subthreshold membrane
-   dynamics with maximum precision; see also [3]_.
+   NEST uses exact integration :footcite:p:`Rotter1999`, :footcite:p:`Diesmann2001` to integrate subthreshold membrane
+   dynamics with maximum precision; see also :footcite:p:`Morrison2007a`.
 
    If :math:`\tau_\text{m}\approx \tau_{\text{syn, ex}}` or
    :math:`\tau_\text{m}\approx \tau_{\text{syn, in}}`, the model will
@@ -136,6 +136,15 @@ hyperpolarization to biophysically plausible values, set parameter
    For implementation details see the
    `IAF Integration Singularity notebook <../model_details/IAF_Integration_Singularity.ipynb>`_.
 
+
+.. note::
+
+   Incoming spikes are routed to the excitatory or inhibitory synapse type by the **sign of the
+   connection weight**. A positive weight targets the excitatory synapse type, a negative weight
+   the inhibitory one, and also sets the direction of the post-synaptic current.
+   Spike connections must use the default ``receptor_type`` of 0.
+
+   See :ref:`synapse_selection` for the conventions used by other models.
 
 Parameters
 ++++++++++
@@ -151,8 +160,8 @@ The following parameters can be set in the status dictionary.
 ``t_ref``       2 ms               :math:`t_{\text{ref}}`          Duration of refractory period
 ``V_th``        -55 mV             :math:`V_{\text{th}}`           Spike threshold
 ``V_reset``     -70 mV             :math:`V_{\text{reset}}`        Reset potential of the membrane
-``tau_syn_ex``  2 ms               :math:`\tau_{\text{syn, ex}}`   Rise time of the excitatory synaptic alpha function
-``tau_syn_in``  2 ms               :math:`\tau_{\text{syn, in}}`   Rise time of the inhibitory synaptic alpha function
+``tau_syn_ex``  2 ms               :math:`\tau_{\text{syn, ex}}`   Rise time of the excitatory postsynaptic current (alpha function)
+``tau_syn_in``  2 ms               :math:`\tau_{\text{syn, in}}`   Rise time of the inhibitory postsynaptic current (alpha function)
 ``I_e``         0 pA               :math:`I_\text{e}`              Constant input current
 ``V_min``       :math:`-\infty` mV :math:`V_{\text{min}}`          Absolute lower value for the membrane potential
 =============== ================== =============================== ========================================================================
@@ -171,18 +180,7 @@ The following state variables evolve during simulation and are available either 
 References
 ++++++++++
 
-.. [1] Rotter S,  Diesmann M (1999). Exact simulation of
-       time-invariant linear systems with applications to neuronal
-       modeling. Biologial Cybernetics 81:381-402.
-       DOI: https://doi.org/10.1007/s004220050570
-.. [2] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001). State
-       space analysis of synchronous spiking in cortical neural
-       networks. Neurocomputing 38-40:565-571.
-       DOI: https://doi.org/10.1016/S0925-2312(01)00409-X
-.. [3] Morrison A, Straube S, Plesser H E, Diesmann M (2006). Exact
-       subthreshold integration with continuous spike times in discrete time
-       neural network simulations. Neural Computation, in press
-       DOI: https://doi.org/10.1162/neco.2007.19.1.47
+.. footbibliography::
 
 Sends
 +++++
@@ -415,7 +413,7 @@ private:
 };
 
 inline size_t
-nest::iaf_psc_alpha::send_test_event( Node& target, size_t receptor_type, synindex, bool )
+iaf_psc_alpha::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

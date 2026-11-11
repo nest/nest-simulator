@@ -30,7 +30,7 @@
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
 
-/* BeginUserDocs: neuron, integrate-and-fire, current-based, adaptation, hard thershold
+/* BeginUserDocs: neuron, integrate-and-fire, current-based, adaptation, hard threshold
 
 Short description
 +++++++++++++++++
@@ -41,9 +41,9 @@ Description
 +++++++++++
 
 ``glif_psc`` provides five generalized leaky integrate-and-fire
-(GLIF) models [1]_ with alpha-function shaped synaptic currents.
+(GLIF) models :footcite:p:`Teeter2018` with alpha-function shaped synaptic currents.
 Incoming spike events induce a postsynaptic change of current modeled
-by an alpha function [2]_. The alpha function is normalized such that an event
+by an alpha function :footcite:p:`Meffin2004`. The alpha function is normalized such that an event
 of weight 1.0 results in a peak current of 1 pA at :math:`t = \tau_\mathrm{syn}`.
 By default, ``glif_psc`` has a single synapse that is accessible through
 ``receptor_port`` 1. An arbitrary number of synapses with different time constants
@@ -87,8 +87,8 @@ can be found and downloaded in the `Allen Cell Type Database
 <https://celltypes.brain-map.org>`_. For example, the default parameter setting of
 this ``glif_psc`` neuron model was from the parameter values of GLIF Model 5 of Cell
 490626718, which can be retrieved from the `Allen Brain Atlas
-<https://celltypes.brain-map.org/mouse/experiment/electrophysiology/
-490626718>`_, with units being converted from SI units (i.e., V, S (1/Ohm),
+<https://celltypes.brain-map.org/mouse/experiment/electrophysiology/490626718>`_,
+with units being converted from SI units (i.e., V, S (1/Ohm),
 F, s, A) to NEST used units (i.e., mV, nS (1/GOhm), pF, ms, pA) and values
 being rounded to appropriate digits for simplification.
 
@@ -135,36 +135,36 @@ V_reset    double   Reset potential of the membrane in mV (GLIF 1 or GLIF 3)
 -------------------------------------------------------------------------------
 th_spike_add               double         Threshold addition following spike
                                           in mV (delta_theta_s in Equation (6)
-                                          in [1]_)
+                                          in :footcite:p:`Teeter2018`)
 th_spike_decay             double         Spike-induced threshold time
                                           constant in 1/ms (bs in Equation (2)
-                                          in [1]_)
+                                          in :footcite:p:`Teeter2018`)
 voltage_reset_fraction     double         Voltage fraction coefficient
                                           following spike (fv in Equation (5)
-                                          in [1]_)
+                                          in :footcite:p:`Teeter2018`)
 voltage_reset_add          double         Voltage addition following spike in
                                           mV (-delta_V (sign flipped) in
-                                          Equation (5) in [1]_)
+                                          Equation (5) in :footcite:p:`Teeter2018`)
 asc_init                   double vector  Initial values of after-spike
                                           currents in pA
 asc_decay                  double vector  After-spike current time constants
-                                          in 1/ms (kj in Equation (3) in [1]_)
+                                          in 1/ms (kj in Equation (3) in :footcite:p:`Teeter2018`)
 asc_amps                   double vector  After-spike current amplitudes in
-                                          pA (deltaIj in Equation (7) in [1]_)
+                                          pA (deltaIj in Equation (7) in :footcite:p:`Teeter2018`)
 asc_r                      double vector  Current fraction following spike
                                           coefficients for fj in Equation (7)
-                                          in [1]_
+                                          in :footcite:p:`Teeter2018`
 th_voltage_index           double         Adaptation index of threshold - A
                                           'leak-conductance' for the
                                           voltage-dependent component of the
                                           threshold in 1/ms (av in Equation
-                                          (4) in [1]_)
+                                          (4) in :footcite:p:`Teeter2018`)
 th_voltage_decay           double         Voltage-induced threshold time
                                           constant - Inverse of which is the
                                           time constant of the
                                           voltage-dependent component of the
                                           threshold in 1/ms (bv in Equation
-                                          (4) in [1]_)
+                                          (4) in :footcite:p:`Teeter2018`)
 tau_syn                    double vector  Time constants of the synaptic
                                           alpha function in ms
 E_rev                      double vector  Reversal potential in mV
@@ -181,13 +181,7 @@ adapting_threshold         bool           flag whether the neuron has a
 References
 ++++++++++
 
-.. [1] Teeter C, Iyer R, Menon V, Gouwens N, Feng D, Berg J, Szafer A,
-       Cain N, Zeng H, Hawrylycz M, Koch C, & Mihalas S (2018)
-       Generalized leaky integrate-and-fire models classify multiple neuron
-       types. Nature Communications 9:709.
-.. [2] Meffin, H., Burkitt, A. N., & Grayden, D. B. (2004). An analytical
-       model for the large, fluctuating synaptic conductance state typical of
-       neocortical neurons in vivo. J.  Comput. Neurosci., 16, 159-175.
+.. footbibliography::
 
 See also
 ++++++++
@@ -214,18 +208,18 @@ public:
 
   glif_psc( const glif_psc& );
 
-  using nest::Node::handle;
-  using nest::Node::handles_test_event;
+  using Node::handle;
+  using Node::handles_test_event;
 
-  size_t send_test_event( nest::Node&, size_t, nest::synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  void handle( nest::SpikeEvent& ) override;
-  void handle( nest::CurrentEvent& ) override;
-  void handle( nest::DataLoggingRequest& ) override;
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  size_t handles_test_event( nest::SpikeEvent&, size_t ) override;
-  size_t handles_test_event( nest::CurrentEvent&, size_t ) override;
-  size_t handles_test_event( nest::DataLoggingRequest&, size_t ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
   void get_status( Dictionary& ) const override;
   void set_status( const Dictionary& ) override;
@@ -238,11 +232,11 @@ private:
   void pre_run_hook() override;
 
   //! Take neuron through given time interval
-  void update( nest::Time const&, const long, const long ) override;
+  void update( Time const&, const long, const long ) override;
 
   // The next two classes need to be friends to access the State_ class/member
-  friend class nest::RecordablesMap< glif_psc >;
-  friend class nest::UniversalDataLogger< glif_psc >;
+  friend class RecordablesMap< glif_psc >;
+  friend class UniversalDataLogger< glif_psc >;
 
   struct Parameters_
   {
@@ -312,11 +306,11 @@ private:
     Buffers_( glif_psc& );
     Buffers_( const Buffers_&, glif_psc& );
 
-    std::vector< nest::RingBuffer > spikes_;  //!< Buffer incoming spikes through delay, as sum
-    nest::RingBuffer currents_;               //!< Buffer incoming currents through delay,
+    std::vector< RingBuffer > spikes_;  //!< Buffer incoming spikes through delay, as sum
+    RingBuffer currents_;               //!< Buffer incoming currents through delay,
 
     //! Logger for all analog data
-    nest::UniversalDataLogger< glif_psc > logger_;
+    UniversalDataLogger< glif_psc > logger_;
   };
 
   struct Variables_
@@ -395,40 +389,40 @@ private:
   Buffers_ B_;
 
   //! Mapping of recordables names to access functions
-  static nest::RecordablesMap< glif_psc > recordablesMap_;
+  static RecordablesMap< glif_psc > recordablesMap_;
 };
 
 
 inline size_t
-nest::glif_psc::Parameters_::n_receptors_() const
+glif_psc::Parameters_::n_receptors_() const
 {
   return tau_syn_.size();
 }
 
 inline size_t
-nest::glif_psc::send_test_event( nest::Node& target, size_t receptor_type, nest::synindex, bool )
+glif_psc::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
-  nest::SpikeEvent e;
+  SpikeEvent e;
   e.set_sender( *this );
   return target.handles_test_event( e, receptor_type );
 }
 
 inline size_t
-nest::glif_psc::handles_test_event( nest::CurrentEvent&, size_t receptor_type )
+glif_psc::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
-    throw nest::UnknownReceptorType( receptor_type, get_name() );
+    throw UnknownReceptorType( receptor_type, get_name() );
   }
   return 0;
 }
 
 inline size_t
-nest::glif_psc::handles_test_event( nest::DataLoggingRequest& dlr, size_t receptor_type )
+glif_psc::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
-    throw nest::UnknownReceptorType( receptor_type, get_name() );
+    throw UnknownReceptorType( receptor_type, get_name() );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
@@ -443,7 +437,7 @@ glif_psc::get_status( Dictionary& d ) const
   // get information managed by parent class
   ArchivingNode::get_status( d );
 
-  d[ nest::names::recordables ] = recordablesMap_.get_list();
+  d[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void

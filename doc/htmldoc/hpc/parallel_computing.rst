@@ -208,7 +208,7 @@ Multiprocessing
 ---------------
 
 
-NEST internally parallelizes network construction [1]_ and maintains internal data structures in this process. For
+NEST internally parallelizes network construction :footcite:p:`Ippen2017` and maintains internal data structures in this process. For
 example, running several :py:func:`.Connect` calls simultaneously can interfere with the internal parallelization and will
 likely lead to unpredictable/wrong results.
 
@@ -375,5 +375,4 @@ independently of the details of parallelization.
 References
 ----------
 
-.. [1] Ippen T, Eppler JM, Plesser HE and Diesmann M (2017). Constructing neuronal network models in massively
-       parallel environments. Front. Neuroinform. 11:30. DOI: 10.3389/fninf.2017.00030
+.. footbibliography::

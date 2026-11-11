@@ -73,17 +73,17 @@ Description
 that also supports gap junctions.
 
 This model is derived from the ``hh_conda_exp`` model, but supports double-exponential-shaped
-(beta-shaped) synaptic conductances and also supports gap junctions. The model is originally
-based on a model of hippocampal pyramidal cells by Traub and Miles [1]_.
-The key differences between the current model and the model in [1]_ are:
+(beta-function shaped) synaptic conductances and also supports gap junctions. The model is originally
+based on a model of hippocampal pyramidal cells by Traub and Miles :footcite:p:`Traub1991`.
+The key differences between the current model and the model in :footcite:p:`Traub1991` are:
 
 - This model is a point neuron, not a compartmental model.
-- Following [2]_, this model includes only ``I_Na`` and ``I_K``, with simpler ``I_K`` dynamics than
-  in [1]_, so it has only three instead of eight gating variables;
+- Following :footcite:p:`Brette2007`, this model includes only ``I_Na`` and ``I_K``, with simpler ``I_K`` dynamics than
+  in :footcite:p:`Traub1991`, so it has only three instead of eight gating variables;
   in particular, all Ca dynamics have been removed.
 - Incoming spikes induce an instantaneous conductance change followed by
   exponential decay instead of activation over time.
-- The model incorporates gap junctions [3]_.
+- The model incorporates gap junctions :footcite:p:`Hahne2015`.
 
 For details on asynchronicity in spike and firing events with Hodgkin Huxley models
 see :ref:`here <hh_details>`.
@@ -93,9 +93,8 @@ Postsynaptic currents
 ---------------------
 
 Incoming spike events induce a postsynaptic change of conductance modelled by a
-beta function as outlined in [4]_ [5]_. The beta function is normalized such that an
-event of weight 1.0 results in a peak conductance of 1 nS at :math:`t = \tau_{rise,xx}`
-where xx is `ex` or `in`.
+beta function as outlined in :footcite:p:`Rotter1999` :footcite:p:`Roth2010`. The beta function is normalized such that
+an event of weight 1.0 results in a peak conductance of 1 nS at :math:`t = \tau_{rise,xx}` where xx is `ex` or `in`.
 
 Spike Detection
 ---------------
@@ -116,8 +115,17 @@ Gap Junctions are implemented by a gap current of the form
 
    To avoid multiple spikes from occurring during the falling flank of a
    spike, it is essential to choose a sufficiently long refractory period.
-   Traub and Miles used :math:`t_{ref} = 3` ms ([1]_, p 118), while we used
-   :math:`t_{ref} = 2` ms in [1]_.
+   Traub and Miles used :math:`t_{ref} = 3` ms (:footcite:p:`Traub1991`, p 118), while we used
+   :math:`t_{ref} = 2` ms in :footcite:p:`Traub1991`.
+
+.. note::
+
+   Incoming spikes are routed to the excitatory or inhibitory synapse type by the **sign of the
+   connection weight**. A positive weight targets the excitatory synapse type, a negative weight
+   the inhibitory one. Only the absolute value of the weight sets the conductance
+   amplitude. Spike connections must use the default ``receptor_type`` of 0.
+
+   See :ref:`synapse_selection` for the conventions used by other models.
 
 Parameters
 ++++++++++
@@ -132,10 +140,14 @@ V_T          mV      Voltage offset that controls dynamics. For default
 E_L          mV      Leak reversal potential
 C_m          pF      Capacity of the membrane
 g_L          nS      Leak conductance
-tau_rise_ex  ms      Excitatory synaptic beta function rise time
-tau_decay_ex ms      Excitatory synaptic beta function decay time
-tau_rise_in  ms      Inhibitory synaptic beta function rise time
-tau_decay_in ms      Inhibitory synaptic beta function decay time
+tau_rise_ex  ms      Rise time of the excitatory synaptic conductance
+                     (beta function)
+tau_decay_ex ms      Decay time of the excitatory synaptic conductance
+                     (beta function)
+tau_rise_in  ms      Rise time of the inhibitory synaptic conductance
+                     (beta function)
+tau_decay_in ms      Decay time of the inhibitory synaptic conductance
+                     (beta function)
 t_ref        ms      Duration of refractory period (see Note)
 E_ex         mV      Excitatory synaptic reversal potential
 E_in         mV      Inhibitory synaptic reversal potential
@@ -149,21 +161,7 @@ I_e          pA      External input current
 References
 ++++++++++
 
-.. [1] Traub RD and Miles R (1991). Neuronal Networks of the Hippocampus.
-       Cambridge University Press, Cambridge UK.
-.. [2] Brette R, et al (2007). Simulation of networks of spiking neurons:
-       A review of tools and strategies. J Comput Neurosci, 23, 349–398
-       DOI: https://doi.org/10.1007/s10827-007-0038-6
-.. [3] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A,
-       and Diesmann M. (2015). A unified framework for spiking and gap-junction
-       interactions in distributed neuronal network simulations.
-       Frontiers in Neuroinformatics, 9. DOI: https://doi.org/10.3389/fninf.2015.00022
-.. [4] Rotter S and Diesmann M (1999). Exact digital simulation of
-       time-invariant linear systems with applications to neuronal modeling.
-       Biological Cybernetics 81:381 DOI: https://doi.org/10.1007/s004220050570
-.. [5] Roth A and van Rossum M (2010). Chapter 6: Modeling synapses.
-       in De Schutter, Computational Modeling Methods for Neuroscientists,
-       MIT Press.
+.. footbibliography::
 
 Sends
 +++++

@@ -82,10 +82,20 @@ Spike detection is done by a combined threshold-and-local-maximum search: if
 there is a local maximum above a certain threshold of the membrane potential,
 it is considered a spike.
 
-See also [1]_, [2]_, [3]_, [4]_, [5]_, [6]_.
+See also :footcite:p:`Gerstner2002`, :footcite:p:`Dayan2001`, :footcite:p:`Hodgkin1952`, :footcite:p:`Clopath2010a`,
+:footcite:p:`Clopath2010b`, :footcite:p:`Torben-Nielsen2010`.
 
 For details on asynchronicity in spike and firing events with Hodgkin Huxley models
 see :ref:`here <hh_details>`.
+
+.. note::
+
+   Incoming spikes are routed to the excitatory or inhibitory synapse type by the **sign of the
+   connection weight**. A positive weight targets the excitatory synapse type, a negative weight
+   the inhibitory one, and also sets the direction of the post-synaptic current.
+   Spike connections must use the default ``receptor_type`` of 0.
+
+   See :ref:`synapse_selection` for the conventions used by other models.
 
 Parameters
 ++++++++++
@@ -108,8 +118,10 @@ E_L         mV      Leak reversal potential
 C_m         pF      Capacity of the membrane
 t_ref       ms      Duration of refractory period
 g_L         nS      Leak conductance
-tau_ex      ms      Rise time of the excitatory synaptic alpha function
-tau_in      ms      Rise time of the inhibitory synaptic alpha function
+tau_syn_ex  ms      Rise time of the excitatory postsynaptic current
+                    (alpha function)
+tau_syn_in  ms      Rise time of the inhibitory postsynaptic current
+                    (alpha function)
 E_Na        mV      Sodium reversal potential
 g_Na        nS      Sodium peak conductance
 E_K         mV      Potassium reversal potential
@@ -146,24 +158,7 @@ Problems/Todo
 References
 ++++++++++
 
-.. [1] Gerstner W and Kistler WM (2002). Spiking neuron models: Single neurons,
-       populations, plasticity. New York: Cambridge university press.
-.. [2] Dayan P and Abbott L (2001). Theoretical Neuroscience: Computational
-       and Mathematical Modeling of Neural Systems. Cambridge, MA: MIT Press.
-       https://pure.mpg.de/pubman/faces/ViewItemOverviewPage.jsp?itemId=item_3006127
-.. [3] Hodgkin AL and Huxley A F (1952). A quantitative description of
-       membrane current and its application to conduction and excitation in
-       nerve. The Journal of Physiology 117.
-       DOI: https://doi.org/10.1113/jphysiol.1952.sp004764
-.. [4] Clopath et al. (2010). Connectivity reflects coding: a model of
-       voltage-based STDP with homeostasis. Nature Neuroscience 13(3):344-352.
-       DOI: https://doi.org/10.1038/nn.2479
-.. [5] Clopath and Gerstner (2010). Voltage and spike timing interact
-       in STDP – a unified model. Frontiers in Synaptic Neuroscience. 2:25
-       DOI: https://doi.org/10.3389/fnsyn.2010.00025
-.. [6] Voltage-based STDP synapse (Clopath et al. 2010) connected to a
-       Hodgkin-Huxley neuron on ModelDB:
-       https://modeldb.science/144566?tab=1
+.. footbibliography::
 
 Sends
 +++++

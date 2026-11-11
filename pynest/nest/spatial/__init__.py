@@ -21,8 +21,8 @@
 
 import functools as _functools
 
-from .hl_api_spatial import DistanceParameter as _DistanceParameter
 from .hl_api_spatial import *  # noqa: F401,F403
+from .hl_api_spatial import DistanceParameter as _DistanceParameter
 
 
 @_functools.lru_cache(maxsize=None)

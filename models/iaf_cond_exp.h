@@ -73,7 +73,7 @@ Description
 * a hard threshold,
 * a fixed refractory period,
 * no adaptation mechanisms,
-* exponentially-shaped synaptic conductances according to [1]_, normalized such that an event of weight 1.0 results in a peak conductance of 1 nS.
+* exponentially-shaped synaptic conductances according to :footcite:p:`Meffin2004`, normalized such that an event of weight 1.0 results in a peak conductance of 1 nS.
 
 Membrane potential evolution, spike emission, and refractoriness
 ................................................................
@@ -135,6 +135,15 @@ where :math:`\Theta(x)` is the Heaviside step function. The conductances are nor
 
 where :math:`w` is a weight (excitatory if :math:`w > 0` or inhibitory if :math:`w < 0`).
 
+.. note::
+
+   Incoming spikes are routed to the excitatory or inhibitory synapse type by the **sign of the
+   connection weight**. A positive weight targets the excitatory synapse type, a negative weight
+   the inhibitory one. Only the absolute value of the weight sets the conductance
+   amplitude. Spike connections must use the default ``receptor_type`` of 0.
+
+   See :ref:`synapse_selection` for the conventions used by other models.
+
 Parameters
 ++++++++++
 
@@ -177,11 +186,7 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 References
 ++++++++++
 
-.. [1] Meffin H, Burkitt AN, Grayden DB (2004). An analytical
-       model for the large, fluctuating synaptic conductance state typical of
-       neocortical neurons in vivo. Journal of Computational Neuroscience,
-       16:159-175.
-       DOI: https://doi.org/10.1023/B:JCNS.0000014108.03012.81
+.. footbibliography::
 
 See also
 ++++++++
@@ -372,7 +377,7 @@ private:
 
 
 inline size_t
-nest::iaf_cond_exp::send_test_event( Node& target, size_t receptor_type, synindex, bool )
+iaf_cond_exp::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

@@ -59,7 +59,6 @@ def beautify_layer(
     ax.set_axisbelow(True)
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
-    return
 
 
 def conn_figure(

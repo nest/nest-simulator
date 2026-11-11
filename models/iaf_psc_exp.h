@@ -51,7 +51,7 @@ Description
 * a hard threshold (if :math:`\delta=0`, see below)
 * a fixed refractory period,
 * no adaptation mechanisms,
-* exponential-shaped synaptic input currents according to [1]_.
+* exponential-shaped synaptic input currents according to :footcite:p:`Tsodyks2000`.
 
 Membrane potential evolution, spike emission, and refractoriness
 ................................................................
@@ -135,7 +135,7 @@ on the synaptic time constant according to
   will numerically behave as if ``tau_m`` is equal to ``tau_syn_ex`` or
   ``tau_syn_in``, respectively, to avoid numerical instabilities.
 
-  NEST uses exact integration [2]_, [3]_ to integrate subthreshold membrane dynamics
+  NEST uses exact integration :footcite:p:`Rotter1999`, :footcite:p:`Diesmann2001` to integrate subthreshold membrane dynamics
   with  maximum precision.
 
   For implementation details see the
@@ -150,7 +150,7 @@ on the synaptic time constant according to
    exponential kernel with the time constant of the excitatory synapse,
    ``tau_syn_ex``.
 
-   For an example application, see [4]_.
+   For an example application, see :footcite:p:`Schuecker2015`.
 
    **Warning:** this current input is added to the state variable
    ``i_syn_ex_``. If this variable is being recorded, its numerical value
@@ -161,6 +161,15 @@ on the synaptic time constant according to
 For conversion between postsynaptic potentials (PSPs) and PSCs,
 please refer to the ``postsynaptic_potential_to_current`` function in
 `PyNEST Microcircuit: Helper Functions <https://github.com/INM-6/microcircuit-PD14-model/blob/main/PyNEST/src/microcircuit/helpers.py>`_.
+
+.. note::
+
+   Incoming spikes are routed to the excitatory or inhibitory synapse type by the **sign of the
+   connection weight**. A positive weight targets the excitatory synapse type, a negative weight
+   the inhibitory one, and also sets the direction of the post-synaptic current.
+   Spike connections must use the default ``receptor_type`` of 0.
+
+   See :ref:`synapse_selection` for the conventions used by other models.
 
 Parameters
 ++++++++++
@@ -177,8 +186,8 @@ The following parameters can be set in the status dictionary.
 ``t_ref``       2 ms               :math:`t_{\text{ref}}`          Duration of refractory period
 ``V_th``        -55 mV             :math:`V_{\text{th}}`           Spike threshold
 ``V_reset``     -70 mV             :math:`V_{\text{reset}}`        Reset potential of the membrane
-``tau_syn_ex``  2 ms               :math:`\tau_{\text{syn, ex}}`   Rise time of the excitatory synaptic alpha function
-``tau_syn_in``  2 ms               :math:`\tau_{\text{syn, in}}`   Rise time of the inhibitory synaptic alpha function
+``tau_syn_ex``  2 ms               :math:`\tau_{\text{syn, ex}}`   Exponential decay time constant of excitatory postsynaptic current
+``tau_syn_in``  2 ms               :math:`\tau_{\text{syn, in}}`   Exponential decay time constant of inhibitory postsynaptic current
 ``I_e``         0 pA               :math:`I_\text{e}`              Constant input current
 ``delta``       0 mV               :math:`\delta`                  Parameter scaling stochastic spiking
 ``rho``         0.01 1/s           :math:`\rho`                    Baseline stochastic spiking
@@ -198,20 +207,7 @@ The following state variables evolve during simulation and are available either 
 References
 ++++++++++
 
-.. [1] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent
-       networks with frequency-dependent synapses. The Journal of Neuroscience,
-       20,RC50:1-5. URL: https://infoscience.epfl.ch/record/183402
-.. [2] Rotter S,  Diesmann M (1999). Exact simulation of
-       time-invariant linear systems with applications to neuronal
-       modeling. Biologial Cybernetics 81:381-402.
-       DOI: https://doi.org/10.1007/s004220050570
-.. [3] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001). State
-       space analysis of synchronous spiking in cortical neural
-       networks. Neurocomputing 38-40:565-571.
-       DOI: https://doi.org/10.1016/S0925-2312(01)00409-X
-.. [4] Schuecker J, Diesmann M, Helias M (2015). Modulated escape from a
-       metastable state driven by colored noise. Physical Review E 92:052119
-       DOI: https://doi.org/10.1103/PhysRevE.92.052119
+.. footbibliography::
 
 Sends
 +++++
@@ -470,7 +466,7 @@ private:
 
 
 inline size_t
-nest::iaf_psc_exp::send_test_event( Node& target, size_t receptor_type, synindex, bool )
+iaf_psc_exp::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

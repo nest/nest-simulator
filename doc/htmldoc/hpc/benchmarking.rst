@@ -23,11 +23,11 @@ However, maintaining comparability of benchmark results across different systems
 The software framework `beNNch <https://github.com/INM-6/beNNch>`_ tackles this challenge by implementing a unified, modular workflow for configuring, executing, and analyzing such benchmarks.
 beNNch builds around the `JUBE Benchmarking Environment <https://www.fz-juelich.de/ias/jsc/EN/Expertise/Support/Software/JUBE/_node.html>`_, installs simulation software, provides an interface to benchmark models, automates data and metadata annotation, and accounts for storage and presentation of results.
 
-For more details on the conceptual ideas behind beNNch, refer to Albers et al. (2022) [1]_.
+For more details on the conceptual ideas behind beNNch, refer to Albers et al. (2022) :footcite:p:`Albers2022`.
 
 .. figure:: ../static/img/multi-area-model_5faa0e9c.png
 
-    Example ``beNNch`` output (Figure 5C of [1]_)
+    Example ``beNNch`` output (Figure 5C of :footcite:p:`Albers2022`)
 
     Strong-scaling performance of the `multi-area model <https://github.com/INM-6/multi-area-model>`_ simulated with NEST on JURECA-DC.
     The left graph shows the absolute wall-clock time measured with Python-level timers for both network construction and state propagation.
@@ -52,5 +52,4 @@ References
 ----------
 
 
-.. [1] Albers J., et al (2022). A Modular Workflow for Performance Benchmarking of Neuronal Network Simulations.
-       Frontiers in Neuroinformatics(16):837549. https://doi.org/10.3389/fninf.2022.837549
+.. footbibliography::

@@ -59,7 +59,7 @@ Description
 +++++++++++
 
 ``gif_psc_exp`` is the generalized integrate-and-fire neuron according to
-Mensi et al. (2012) [1]_ and Pozzorini et al. (2015) [2]_, with postsynaptic
+Mensi et al. (2012) :footcite:p:`Mensi2012` and Pozzorini et al. (2015) :footcite:p:`Pozzorini2015`, with postsynaptic
 conductances in the form of truncated exponentials.
 
 This model features both an adaptation current and a dynamic threshold for
@@ -119,7 +119,7 @@ Note:
 
 In the current implementation of the model, the values of
 :math:`\eta_i` and :math:`\gamma_i` are affected
-immediately after spike emission. However, `GIF toolbox <http://wiki.epfl.ch/giftoolbox>`_,
+immediately after spike emission. However, `GIF toolbox <https://github.com/pozzorin/GIFFittingToolbox>`_,
 which fits the model using experimental data, requires a different set of
 :math:`\eta_i` and :math:`\gamma_i`. It applies the jump of
 :math:`\eta_i` and :math:`\gamma_i` after the refractory period. One can
@@ -133,6 +133,15 @@ easily convert between :math:`q_\eta/\gamma` of these two approaches:
 The same formula applies for :math:`q_{\gamma}`.
 
 The shape of synaptic conductance is exponential.
+
+.. note::
+
+   Incoming spikes are routed to the excitatory or inhibitory synapse type by the **sign of the
+   connection weight**. A positive weight targets the excitatory synapse type, a negative weight
+   the inhibitory one. Only the absolute value of the weight sets the conductance
+   amplitude. Spike connections must use the default ``receptor_type`` of 0.
+
+   See :ref:`synapse_selection` for the conventions used by other models.
 
 Parameters
 ++++++++++
@@ -187,16 +196,7 @@ gsl_error_tol real    This parameter controls the admissible error of the
 References
 ++++++++++
 
-.. [1] Mensi S, Naud R, Pozzorini C, Avermann M, Petersen CC, Gerstner W (2012)
-       Parameter extraction and classification of three cortical neuron types
-       reveals two distinct adaptation mechanisms. Journal of
-       Neurophysiology, 107(6):1756-1775.
-       DOI: https://doi.org/10.1152/jn.00408.2011
-.. [2] Pozzorini C, Mensi S, Hagens O, Naud R, Koch C, Gerstner W (2015).
-       Automated high-throughput characterization of single neurons by means of
-       simplified spiking models. PLoS Computational Biology, 11(6), e1004275.
-       DOI: https://doi.org/10.1371/journal.pcbi.1004275
-
+.. footbibliography::
 
 Sends
 +++++

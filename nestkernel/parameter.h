@@ -200,7 +200,7 @@ public:
     if ( lower_ >= range_ )
     {
       throw BadProperty(
-        "nest::UniformParameter: "
+        "UniformParameter: "
         "min < max required." );
     }
 
@@ -240,7 +240,7 @@ public:
     d.update_integer_value( names::max, max_ );
     if ( max_ <= 0 )
     {
-      throw BadProperty( "nest::UniformIntParameter: max > 0 required." );
+      throw BadProperty( "UniformIntParameter: max > 0 required." );
     }
   }
 
@@ -329,6 +329,10 @@ public:
     : beta_( 1.0 )
   {
     d.update_value( names::beta, beta_ );
+    if ( beta_ < 0 )
+    {
+      throw BadProperty( "ExponentialParameter: beta ≥ 0 required." );
+    }
   }
 
   double

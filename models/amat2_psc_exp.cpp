@@ -34,14 +34,14 @@
 #include "universal_data_logger_impl.h"
 
 
+namespace nest
+{
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::amat2_psc_exp > nest::amat2_psc_exp::recordablesMap_;
+RecordablesMap< amat2_psc_exp > amat2_psc_exp::recordablesMap_;
 
-namespace nest  // template specialization must be placed in namespace
-{
 void
 register_amat2_psc_exp( const std::string& name )
 {
@@ -63,13 +63,12 @@ RecordablesMap< amat2_psc_exp >::create()
   insert_( names::I_syn_ex, &amat2_psc_exp::get_I_syn_ex_ );
   insert_( names::I_syn_in, &amat2_psc_exp::get_I_syn_in_ );
 }
-}
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::amat2_psc_exp::Parameters_::Parameters_()
+amat2_psc_exp::Parameters_::Parameters_()
   : Tau_( 10.0 )      // in ms
   , C_( 200.0 )       // in pF (R=50MOhm)
   , tau_ref_( 2.0 )   // in ms
@@ -89,7 +88,7 @@ nest::amat2_psc_exp::Parameters_::Parameters_()
 {
 }
 
-nest::amat2_psc_exp::State_::State_()
+amat2_psc_exp::State_::State_()
   : i_0_( 0.0 )
   , I_syn_ex_( 0.0 )
   , I_syn_in_( 0.0 )
@@ -107,7 +106,7 @@ nest::amat2_psc_exp::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::amat2_psc_exp::Parameters_::get( Dictionary& d ) const
+amat2_psc_exp::Parameters_::get( Dictionary& d ) const
 {
   d[ names::E_L ] = E_L_;  // Resting potential
   d[ names::I_e ] = I_e_;
@@ -126,7 +125,7 @@ nest::amat2_psc_exp::Parameters_::get( Dictionary& d ) const
 }
 
 double
-nest::amat2_psc_exp::Parameters_::set( const Dictionary& d, Node* node )
+amat2_psc_exp::Parameters_::set( const Dictionary& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
@@ -181,7 +180,7 @@ nest::amat2_psc_exp::Parameters_::set( const Dictionary& d, Node* node )
 }
 
 void
-nest::amat2_psc_exp::State_::get( Dictionary& d, const Parameters_& p ) const
+amat2_psc_exp::State_::get( Dictionary& d, const Parameters_& p ) const
 {
   d[ names::V_m ] = V_m_ + p.E_L_;  // Membrane potential
   // Adaptive threshold
@@ -192,7 +191,7 @@ nest::amat2_psc_exp::State_::get( Dictionary& d, const Parameters_& p ) const
 }
 
 void
-nest::amat2_psc_exp::State_::set( const Dictionary& d, const Parameters_& p, double delta_EL, Node* node )
+amat2_psc_exp::State_::set( const Dictionary& d, const Parameters_& p, double delta_EL, Node* node )
 {
   if ( update_value_param( d, names::V_m, V_m_, node ) )
   {
@@ -208,14 +207,14 @@ nest::amat2_psc_exp::State_::set( const Dictionary& d, const Parameters_& p, dou
   update_value_param( d, names::V_th_v, V_th_v_, node );
 }
 
-nest::amat2_psc_exp::Buffers_::Buffers_( amat2_psc_exp& n )
+amat2_psc_exp::Buffers_::Buffers_( amat2_psc_exp& n )
   : logger_( n )
 {
   // The other member variables are left uninitialised or are
   // automatically initialised by their default constructor.
 }
 
-nest::amat2_psc_exp::Buffers_::Buffers_( const Buffers_&, amat2_psc_exp& n )
+amat2_psc_exp::Buffers_::Buffers_( const Buffers_&, amat2_psc_exp& n )
   : logger_( n )
 {
   // The other member variables are left uninitialised or are
@@ -226,7 +225,7 @@ nest::amat2_psc_exp::Buffers_::Buffers_( const Buffers_&, amat2_psc_exp& n )
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::amat2_psc_exp::amat2_psc_exp()
+amat2_psc_exp::amat2_psc_exp()
   : ArchivingNode()
   , P_()
   , S_()
@@ -235,7 +234,7 @@ nest::amat2_psc_exp::amat2_psc_exp()
   recordablesMap_.create();
 }
 
-nest::amat2_psc_exp::amat2_psc_exp( const amat2_psc_exp& n )
+amat2_psc_exp::amat2_psc_exp( const amat2_psc_exp& n )
   : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -248,7 +247,7 @@ nest::amat2_psc_exp::amat2_psc_exp( const amat2_psc_exp& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::amat2_psc_exp::init_buffers_()
+amat2_psc_exp::init_buffers_()
 {
   ArchivingNode::clear_history();
 
@@ -260,7 +259,7 @@ nest::amat2_psc_exp::init_buffers_()
 }
 
 void
-nest::amat2_psc_exp::pre_run_hook()
+amat2_psc_exp::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -364,7 +363,7 @@ nest::amat2_psc_exp::pre_run_hook()
  * ---------------------------------------------------------------- */
 
 void
-nest::amat2_psc_exp::update( Time const& origin, const long from, const long to )
+amat2_psc_exp::update( Time const& origin, const long from, const long to )
 {
   // evolve from timestep 'from' to timestep 'to' with steps of h each
   for ( long lag = from; lag < to; ++lag )
@@ -425,7 +424,7 @@ nest::amat2_psc_exp::update( Time const& origin, const long from, const long to 
 
 
 void
-nest::amat2_psc_exp::handle( SpikeEvent& e )
+amat2_psc_exp::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -442,7 +441,7 @@ nest::amat2_psc_exp::handle( SpikeEvent& e )
 }
 
 void
-nest::amat2_psc_exp::handle( CurrentEvent& e )
+amat2_psc_exp::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -454,7 +453,9 @@ nest::amat2_psc_exp::handle( CurrentEvent& e )
 }
 
 void
-nest::amat2_psc_exp::handle( DataLoggingRequest& e )
+amat2_psc_exp::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
+
+}  // namespace nest

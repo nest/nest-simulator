@@ -82,7 +82,7 @@ proxynode::sends_secondary_event( SICEvent& sic )
   kernel().model_manager.get_node_model( get_model_id() )->sends_secondary_event( sic );
 }
 
-nest::SignalType
+SignalType
 proxynode::sends_signal() const
 {
   return kernel().model_manager.get_node_model( get_model_id() )->sends_signal();

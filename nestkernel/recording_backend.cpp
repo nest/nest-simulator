@@ -22,7 +22,12 @@
 
 #include "recording_backend.h"
 
-const std::vector< std::string > nest::RecordingBackend::NO_DOUBLE_VALUE_NAMES;
-const std::vector< std::string > nest::RecordingBackend::NO_LONG_VALUE_NAMES;
-const std::vector< double > nest::RecordingBackend::NO_DOUBLE_VALUES;
-const std::vector< long > nest::RecordingBackend::NO_LONG_VALUES;
+
+namespace nest
+{
+const std::vector< std::string > RecordingBackend::NO_DOUBLE_VALUE_NAMES;
+const std::vector< std::string > RecordingBackend::NO_LONG_VALUE_NAMES;
+const std::vector< double > RecordingBackend::NO_DOUBLE_VALUES;
+const std::vector< long > RecordingBackend::NO_LONG_VALUES;
+
+}  // namespace nest

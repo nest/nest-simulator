@@ -62,100 +62,87 @@ In parallel it records a weighted histogram, where the connection weights
 are used to weight every count. In order to minimize numerical errors, the
 `Kahan summation algorithm <http://en.wikipedia.org/wiki/Kahan_summation_algorithm>`_
 is used when calculating the weighted histogram.
-Both are arrays of :math:`2\cdot\tau_{max}/\delta_{\tau}+1` values containing the
-histogram counts in the following way:
+Both ``histogram`` and ``count_histogram`` are arrays of
+:math:`2\cdot\tau_{max}/\delta_{\tau}+1` values, indexed by the bin number
+:math:`n`, and are filled in the following way:
 
-Let :math:`t_{1,i}` be the spike times of source 1,
+Let :math:`t_{1,i}` be the spike times of source 1 and
 :math:`t_{2,j}` the spike times of source 2.
-``histogram[n]`` then contains the sum of products of the weight
-:math:`w_{1,i}\cdot w_{2,j}`, count_histogram[n] contains 1 summed over all events
-with :math:`t_{2,j}-t_{1,i}` in
+``histogram[n]`` then contains the sum of the weight products
+:math:`w_{1,i}\cdot w_{2,j}`, and ``count_histogram[n]`` contains 1 summed over
+all event pairs whose time difference :math:`t_{2,j}-t_{1,i}` falls in the
+half-open interval
 
 .. math::
 
-    n\cdot\delta_\tau - \tau_{max} - \delta_\tau/2
-    n\cdot\delta_\tau - \tau_{max} + \delta_\tau/2
+    \left[ n\cdot\delta_\tau - \tau_{max} - \delta_\tau/2,\;
+           n\cdot\delta_\tau - \tau_{max} + \delta_\tau/2 \right)
 
-The bins are centered around the time difference they represent, but are
+The bins are centered around the time difference they represent and are
 left-closed and right-open. This means that events with time difference
-:math:`-\tau_{max}-\delta_\tau/2` are counted in the leftmost bin, but event with
-difference :math:`\tau_{max}+\delta_\tau/2` are not counted at all.
+:math:`-\tau_{max}-\delta_\tau/2` are counted in the leftmost bin, but events
+with difference :math:`\tau_{max}+\delta_\tau/2` are not counted at all.
 
-The correlation detector has two inputs, which are selected via the
-receptor_port of the incoming connection: All incoming connections with
-``receptor_port = 0`` will be pooled as the spike source 1, the ones with
-``receptor_port = 1`` will be used as spike source 2.
+The bin centers run from :math:`-\tau_{max}` to :math:`+\tau_{max}` in steps of
+:math:`\delta_\tau`. The corresponding array of time lags for the histogram bins
+can therefore be constructed in PyNEST as
+
+.. code-block:: python
+
+    import numpy as np
+
+    n_bins = int(2 * tau_max / delta_tau) + 1
+    times = np.linspace(-tau_max, tau_max, n_bins)
+
+The correlation detector has exactly two inputs, which are selected via the
+``receptor_type`` of the incoming connection: all incoming connections with
+``receptor_type = 0`` are pooled as spike source 1, the ones with
+``receptor_type = 1`` as spike source 2.
 
 Correlation detectors ignore any connection delays.
 
-See :doc:`../auto_examples/cross_check_mip_corrdet` to learn more
-about the usage of the correlation detector.
+This recorder does not record to file, screen, or memory in the usual sense.
+The recorded data is only available from the status dictionary.
+
 
 Parameters
 ++++++++++
 
-==================== ======== ==================================================
-Tstart               real     Time when to start counting events. This time
-should
-                              be set to at least start + tau_max in order to
-avoid
-                              edge effects of the correlation counts.
-Tstop                real     Time when to stop counting events. This time
-should
-                              be set to at most Tsim - tau_max, where Tsim is
-the
-                              duration of simulation, in order to avoid edge
-                              effects of the correlation counts.
-delta_tau            ms       Bin width. This has to be an odd multiple of
-                              the resolution, to allow the symmetry between
-                              positive and negative time-lags. Defaults to 5
-                              times the simulation resolution
-tau_max              ms       One-sided width. In the lower triangular part
-                              events with differences in [0, tau_max+delta_tau/2)
-                              are counted. On the diagonal and in the upper
-                              triangular part events with differences in
-                              (0, tau_max+delta_tau/2]. Defaults to 10 times the
-                              value of delta_tau.
-N_channels           integer  The number of pools. This defines the range of
-                              receptor_type. Default is 1.
-                              Setting N_channels clears count_covariance,
-                              covariance and n_events.
-histogram            squared  read-only - raw, weighted, cross-correlation
-counts
-                     synaptic Unit depends on model
-                     weights
-histogram_correction list of  read-only - Correction factors for Kahan summation
-                     integers algoritm
-n_events             list of  Number of events from source 0 and 1. By setting
-                     integers n_events to [0,0], the histogram is cleared.
-==================== ======== ==================================================
+The following parameters can be set in the status dictionary.
 
-Remarks:
+============= ==== ==================================================================
+Parameter     Unit Description
+============= ==== ==================================================================
+``Tstart``    ms   Time at which to start counting events. Set this to at least
+                   ``tau_max`` in order to avoid edge effects of the correlation
+                   counts.
+``Tstop``     ms   Time at which to stop counting events. Set this to at most
+                   ``Tsim - tau_max``, where ``Tsim`` is the duration of the
+                   simulation, in order to avoid edge effects of the correlation
+                   counts.
+``delta_tau`` ms   Bin width. This has to be an odd multiple of the simulation
+                   resolution, to allow the symmetry between positive and negative
+                   time lags. Defaults to 5 times the simulation resolution.
+``tau_max``   ms   One-sided maximum absolute time lag. Time differences in the
+                   range ``[-tau_max - delta_tau/2, tau_max + delta_tau/2)`` are
+                   binned. Must be a multiple of ``delta_tau``. Defaults to 10 times
+                   the value of ``delta_tau``.
+============= ==== ==================================================================
 
-This recorder does not record to file, screen or memory in the usual
-sense.
+The following read-only quantities are available in the status dictionary.
 
-Correlation detectors IGNORE any connection delays.
-
-Correlation detector breaks with the persistence scheme as
-follows: the internal buffers for storing spikes are part
-of ``State_``, but are initialized by init_buffers_().
-
-@todo The correlation detector could be made more efficient as follows
-(HEP 2008-07-01):
-
-- ``incoming_`` is vector of two deques
-- let handle() push_back() entries in ``incoming_`` and do nothing else
-- keep index to last "old spike" in each ``incoming_``; cannot
-  be iterator since that may change
-- update() deletes all entries before now-tau_max, sorts the new
-  entries, then registers new entries in histogram
-
-Example:
-
-See Auto- and crosscorrelation functions for spike
-trains[cross_check_mip_corrdet.py]
-in pynest/examples.
+======================== ===================================================================
+Recordable               Description
+======================== ===================================================================
+``count_histogram``      Raw, unweighted cross-correlation counts (array of integers).
+``histogram``            Weighted cross-correlation counts, where each count is weighted by
+                         the product of the connection weights. The unit is squared synaptic
+                         weights and depends on the model (array of doubles).
+``histogram_correction`` Correction factors used internally for the Kahan summation
+                         algorithm (array of doubles).
+``n_events``             Number of events from source 0 and source 1 (list of two integers).
+                         Setting ``n_events`` to ``[0, 0]`` clears the histograms.
+======================== ===================================================================
 
 Receives
 ++++++++

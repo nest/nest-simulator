@@ -62,7 +62,7 @@ n_proc
     Number of superimposed independent component processes, default: 1
 
 
-See also [1]_.
+See also :footcite:p:`Deger2011`.
 
 Set parameters from a stimulation backend
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -79,9 +79,7 @@ The indexing is as follows:
 References
 ++++++++++
 
-.. [1] Deger, Helias, Boucsein, Rotter (2011). Statistical properties of
-       superimposed stationary spike trains. Journal of Computational
-       Neuroscience. DOI: https://doi.org/10.1007/s10827-011-0362-8
+.. footbibliography::
 
 See also
 ++++++++

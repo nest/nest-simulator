@@ -58,7 +58,7 @@ namespace nest
  */
 extern "C" int hh_psc_alpha_gap_dynamics( double, const double*, double*, void* );
 
-/* BeginUserDocs: neuron, current-based, Hodgkin-Huxley, gap junction, soft threshold
+/* BeginUserDocs: neuron, current-based, Hodgkin-Huxley, electrical, soft threshold
 
 Short description
 +++++++++++++++++
@@ -86,10 +86,19 @@ it is considered a spike.
 Gap Junctions are implemented by a gap current of the form
 :math:`g_{ij}( V_i - V_j)`.
 
-See also [1]_, [2]_, [3]_, [4]_.
+See also :footcite:p:`Gerstner2002`, :footcite:p:`Mancilla2007`, :footcite:p:`Hodgkin1952`, :footcite:p:`Hahne2015`.
 
 For details on asynchronicity in spike and firing events with Hodgkin Huxley models
 see :ref:`here <hh_details>`.
+
+.. note::
+
+   Incoming spikes are routed to the excitatory or inhibitory synapse type by the **sign of the
+   connection weight**. A positive weight targets the excitatory synapse type, a negative weight
+   the inhibitory one, and also sets the direction of the post-synaptic current.
+   Spike connections must use the default ``receptor_type`` of 0.
+
+   See :ref:`synapse_selection` for the conventions used by other models.
 
 Parameters
 ++++++++++
@@ -97,16 +106,16 @@ Parameters
 The following parameters can be set in the status Dictionary.
 
 ===========  ====== ============================================================
-tau_ex       ms      Rise time of the excitatory synaptic alpha function
-tau_in       ms      Rise time of the inhibitory synaptic alpha function
 g_K          nS      Potassium peak conductance
 V_m          mV      Membrane potential
 E_L          mV      Leak reversal potential
 g_L          nS      Leak conductance
 C_m          pF      Capacity of the membrane
 t_ref        ms      Duration of refractory period
-tau_syn_ex   ms      Rise time of the excitatory synaptic alpha function
-tau_syn_in   ms      Rise time of the inhibitory synaptic alpha function
+tau_syn_ex   ms      Rise time of the excitatory postsynaptic current
+                     (alpha function)
+tau_syn_in   ms      Rise time of the inhibitory postsynaptic current
+                     (alpha function)
 E_Na         mV      Sodium reversal potential
 g_Na         nS      Sodium peak conductance
 E_K          mV      Potassium reversal potential
@@ -121,21 +130,7 @@ I_e          pA      External input current
 References
 ++++++++++
 
-.. [1] Gerstner W, Kistler W. Spiking neuron models: Single neurons,
-       populations, plasticity. Cambridge University Press
-.. [2] Mancilla JG, Lewis TG, Pinto DJ, Rinzel J, Connors BW (2007).
-       Synchronization of electrically coupled pairs of inhibitory
-       interneurons in neocortex, Journal of Neurosciece, 27:2058-2073
-       DOI: https://doi.org/10.1523/JNEUROSCI.2715-06.2007
-       (parameters taken from here)
-.. [3] Hodgkin AL and Huxley A F (1952). A quantitative description of
-       membrane current and its application to conduction and excitation in
-       nerve. The Journal of Physiology 117.
-       DOI: https://doi.org/10.1113/jphysiol.1952.sp004764
-.. [4] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A, Diesmann M
-       (2015). A unified framework for spiking and gap-junction interactions
-       in distributed neuronal netowrk simulations. Frontiers in
-       Neuroinformatics, 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
+.. footbibliography::
 
 Sends
 +++++

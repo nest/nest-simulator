@@ -23,65 +23,85 @@ import json
 from pathlib import Path
 
 from docutils import nodes
+from sphinx.util import logging
+
+logger = logging.getLogger(__name__)
+_VERSIONS_PATH = Path(__file__).parent / "versions.json"
 
 
-def version_role(pattern):
-    """Defines the role function
+def _load_versions(app):
+    """Read versions.json and cache its contents on the Sphinx app.
+
+    Called once when the builder is initialized so that the file is read a
+    single time per build rather than on every use of the role.
 
     Args:
-        pattern (str): This argument represents the input pattern of the role which is just a string (%s).
+        app (sphinx.application.Sphinx): The Sphinx application object. The
+            parsed JSON is stored on it as ``app._nest_versions``.
+    """
+    with open(_VERSIONS_PATH) as fp:
+        app._nest_versions = json.load(fp)
+
+
+def version_role(app_ref):
+    """Return a Docutils role function that looks up a version from versions.json.
+
+    The role accepts ``package`` or ``package,level`` (default level: ``min``).
+    The JSON is read once at builder-init time and cached on the app object.
+
+    Args:
+        app_ref (list): A single-element list holding the Sphinx application
+            object. A list is used so the closure can reach the app instance
+            once it has been populated by :func:`setup`.
 
     Returns:
-        function: Returns the defined role function.
+        function: The Docutils role function.
     """
 
     def role(name, rawtext, text, lineno, inliner, options={}, content=[]):
-        """Actual role implementation.
+        """Resolve a version number for a ``:version:`` role.
 
-        Args:
-            Refer to https://docutils.sourceforge.io/docs/howto/rst-roles.html for an overview.
+        See https://docutils.sourceforge.io/docs/howto/rst-roles.html for an
+        overview of the role function signature. The role's ``text`` is either
+        a package name or ``package,level``; ``level`` defaults to ``min``. If
+        the requested key is missing, a build warning is emitted and a visible
+        placeholder is inserted instead.
 
         Returns:
-            node.Text: Returns the node which contains the version number for a specific key (e.g. package).
+            tuple: ``([nodes.Text], [])`` containing the resolved version
+            number (or a placeholder) and an empty list of system messages.
         """
-
-        package_level = pattern % text
-        payload = package_level.split(",")
-        package = payload[0]
-
-        if len(payload) > 1:
-            level = payload[1]
-        else:
-            level = "min"
-
-        with open(Path(__file__).parent / "versions.json") as fp:
-            data = json.load(fp)
-
+        data = app_ref[0]._nest_versions
+        parts = text.split(",", 1)
+        package = parts[0].strip()
+        level = parts[1].strip() if len(parts) > 1 else "min"
         try:
-            version = data[package.strip()][level.strip()]
+            version = data[package][level]
         except KeyError:
-            version = f"'{level}' was not found!"
-
-        node = nodes.Text(version)
-        return [node], []
+            logger.warning(
+                f"versions.json: key '{package}.{level}' not found (used at line {lineno})",
+                type="versionsync",
+            )
+            version = f"[{package}.{level}?]"
+        return [nodes.Text(version)], []
 
     return role
 
 
 def setup(app):
-    """Adds the necessary routines to Sphinx.
+    """Register the extension with Sphinx.
+
+    Connects :func:`_load_versions` to the ``builder-inited`` event so the
+    version data is loaded once per build, and adds the ``version`` role.
 
     Args:
-        app (app): Application object.
+        app (sphinx.application.Sphinx): The Sphinx application object.
 
     Returns:
-        dict: returns a dict with version number of the extension and IO safety arguments.
+        dict: Extension metadata with its version number and the parallel
+        read/write safety flags.
     """
-
-    app.add_role("version", version_role("%s"))
-
-    return {
-        "version": "0.1",
-        "parallel_read_safe": True,
-        "parallel_write_safe": True,
-    }
+    app_ref = [app]
+    app.connect("builder-inited", lambda _: _load_versions(app_ref[0]))
+    app.add_role("version", version_role(app_ref))
+    return {"version": "0.2", "parallel_read_safe": True, "parallel_write_safe": True}

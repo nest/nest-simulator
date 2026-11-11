@@ -71,7 +71,6 @@ set ( nestkernel_sources
       conn_parameter.h conn_parameter.cpp
       conn_builder.h conn_builder_impl.h conn_builder.cpp
       conn_builder_factory.h
-      conn_builder_conngen.h conn_builder_conngen.cpp
       sonata_connector.h sonata_connector.cpp
       music_manager.cpp music_manager.h
       nest.h nest_impl.h nest.cpp
@@ -161,7 +160,7 @@ target_link_libraries( nestkernel
     nestutil models
     MPI::MPI_CXX
   PRIVATE
-    ${LTDL_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES} ${HDF5_LIBRARIES}
+    ${LTDL_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${HDF5_LIBRARIES}
     OpenMP::OpenMP_CXX
 )
 

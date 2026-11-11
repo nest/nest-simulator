@@ -13,7 +13,7 @@ further adjust settings for your system.
 
    The list below does not include the requirements for building documentation or running NEST server.
    The complete list of packages for an entire development environment can be found in the `environment.yml
-   <https://github.com/nest/nest-simulator/blob/master/environment.yml>`_ file.
+   <https://github.com/nest/nest-simulator/blob/main/environment.yml>`_ file.
    For more information see the :ref:`doc_workflow` and :ref:`nest_server` docs.
 
 .. code-block:: bash
@@ -84,10 +84,6 @@ We will refer to the full path of this directory by <nest_install_dir>.
 .. note::
 
    ``<nest_install_dir>`` should be an absolute path
-
-.. note::
-
-   Python bindings are enabled by default. Add the configuration option ``-Dwith-python=OFF`` to disable them.
 
 * Compile and install NEST:
 

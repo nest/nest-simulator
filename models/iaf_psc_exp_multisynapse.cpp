@@ -32,12 +32,12 @@
 #include "universal_data_logger_impl.h"
 
 
+namespace nest
+{
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
 
-namespace nest
-{
 void
 register_iaf_psc_exp_multisynapse( const std::string& name )
 {
@@ -267,7 +267,7 @@ iaf_psc_exp_multisynapse::init_buffers_()
 }
 
 void
-nest::iaf_psc_exp_multisynapse::pre_run_hook()
+iaf_psc_exp_multisynapse::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -422,4 +422,4 @@ iaf_psc_exp_multisynapse::set_status( const Dictionary& d )
   S_ = stmp;
 }
 
-}  // namespace
+}  // namespace nest

@@ -30,7 +30,7 @@ Description
 
 This script demonstrates supervised learning of a regression task with a recurrent spiking neural network that
 is equipped with the eligibility propagation (e-prop) plasticity mechanism by Bellec et al. :footcite:p:`Bellec2020` with
-additional biological features described in :footcite:p:`KorcsakGorzo2025`.
+additional biological features described in :footcite:p:`KorcsakGorzo2026`.
 
 This type of learning is demonstrated at the proof-of-concept task in :footcite:p:`Bellec2020`. We based this script on their
 TensorFlow script given in the `original implementation <https://github.com/IGITUGraz/eligibility_propagation/blob/master/Figure_3_and_S7_e_prop_tutorials/tutorial_pattern_generation.py>`__.
@@ -52,7 +52,7 @@ readout neuron. The readout neuron compares the network signal :math:`y` with th
 readout signal denoted as :math:`y_k` is compared with a corresponding target signal represented as
 :math:`y_k^*`. The network's training error is assessed by employing a mean-squared error loss.
 
-Details on the event-based NEST implementation of e-prop can be found in :footcite:p:`KorcsakGorzo2025`.
+Details on the event-based NEST implementation of e-prop can be found in :footcite:p:`KorcsakGorzo2026`.
 
 References
 ~~~~~~~~~~

@@ -44,7 +44,6 @@ repos:
           # note that these differ from arguments in .github/workflows/nestbuildmatrix.yml
           # IF YOU READ THIS: recheck for consistency with `find . -iname "*.sh" -o -iname "*.sh.in"`
           "build_support/check_forbidden_types.sh",
-          "build_support/install_csa-libneurosim.sh",
           "build_support/install_music.sh",
           "build_support/install_sionlib.sh",
           "build_support/version_info.sh",
@@ -71,7 +70,6 @@ repos:
       - id: mypy
         additional_dependencies: &TESTDEPS
           - attrs
-          - csa
           - data-science-types
           - h5py
           - matplotlib

@@ -10,11 +10,10 @@ Here you can find some tips to try to find out why your installation of NEST did
 Please make sure you have:
 
 * Followed the :ref:`installation instructions <install_nest>`
-* Installed the required `dependencies <https://github.com/nest/nest-simulator/blob/master/environment.yml>`_
+* Installed the required `dependencies <https://github.com/nest/nest-simulator/blob/main/environment.yml>`_
 * Viewed the :ref:`CMake options <cmake_options>`
 
-You can also check our `Mailing List Archive <https://www.nest-initiative.org/mailinglist/hyperkitty/list/
-users@nest-simulator.org/>`_ and `Stack Overflow <https://stackoverflow.com/questions/tagged/nest-simulator>`_
+You can also check our `Mailing List Archive <https://www.nest-simulator.org/mailinglist/>`_ and `Stack Overflow <https://stackoverflow.com/questions/tagged/nest-simulator>`_
 to see if your question has been resolved.
 
 1. CMAKE error says a <package> was not found or <package> is too old
@@ -121,9 +120,8 @@ This error message means something in your environment is not set correctly, dep
    You must use Python :version:`python` or newer if you installed NEST with
 
    a. the Ubuntu PPA,
-   b. the conda-forge package,
-   c. the Live Media, or
-   d. if you compiled NEST with Python 3 bindings
+   b. the conda-forge package, or
+   c. if you compiled NEST with Python 3 bindings
 
    Type ``python`` or ``ipython`` in the terminal. The python version that is used will be displayed.
 

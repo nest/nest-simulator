@@ -36,6 +36,7 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
+
 namespace nest
 {
 void
@@ -71,11 +72,11 @@ extern "C" inline int
 ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
 {
   // shorthand
-  typedef nest::ht_neuron::State_ S;
+  typedef ht_neuron::State_ S;
 
   // get access to node so we can almost work as in a member class
   assert( pnode );
-  nest::ht_neuron& node = *( reinterpret_cast< nest::ht_neuron* >( pnode ) );
+  ht_neuron& node = *( reinterpret_cast< ht_neuron* >( pnode ) );
 
   // easier access to membrane potential, clamp if requested
   const double& V = node.P_.voltage_clamp ? node.V_.V_clamp_ : y[ S::V_M ];
@@ -174,26 +175,26 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
 }
 
 inline double
-nest::ht_neuron::m_eq_h_( double V ) const
+ht_neuron::m_eq_h_( double V ) const
 {
   const double I_h_Vthreshold = -75.0;
   return 1.0 / ( 1.0 + std::exp( ( V - I_h_Vthreshold ) / 5.5 ) );
 }
 
 inline double
-nest::ht_neuron::h_eq_T_( double V ) const
+ht_neuron::h_eq_T_( double V ) const
 {
   return 1.0 / ( 1.0 + std::exp( ( V + 83.0 ) / 4 ) );
 }
 
 inline double
-nest::ht_neuron::m_eq_T_( double V ) const
+ht_neuron::m_eq_T_( double V ) const
 {
   return 1.0 / ( 1.0 + std::exp( -( V + 59.0 ) / 6.2 ) );
 }
 
 inline double
-nest::ht_neuron::D_eq_KNa_( double V ) const
+ht_neuron::D_eq_KNa_( double V ) const
 {
   const double D_influx_peak = 0.025;
   const double D_thresh = -10.0;
@@ -205,13 +206,13 @@ nest::ht_neuron::D_eq_KNa_( double V ) const
 }
 
 inline double
-nest::ht_neuron::m_eq_NMDA_( double V ) const
+ht_neuron::m_eq_NMDA_( double V ) const
 {
   return 1.0 / ( 1.0 + std::exp( -P_.S_act_NMDA * ( V - P_.V_act_NMDA ) ) );
 }
 
 inline double
-nest::ht_neuron::m_NMDA_( double V, double m_eq, double m_fast, double m_slow ) const
+ht_neuron::m_NMDA_( double V, double m_eq, double m_fast, double m_slow ) const
 {
   const double A1 = 0.51 - 0.0028 * V;
   const double A2 = 1 - A1;
@@ -219,7 +220,7 @@ nest::ht_neuron::m_NMDA_( double V, double m_eq, double m_fast, double m_slow ) 
 }
 
 inline double
-nest::ht_neuron::get_g_NMDA_() const
+ht_neuron::get_g_NMDA_() const
 {
   return S_.y_[ State_::G_NMDA_TIMECOURSE ]
     * m_NMDA_( S_.y_[ State_::V_M ],
@@ -232,7 +233,7 @@ nest::ht_neuron::get_g_NMDA_() const
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::ht_neuron::Parameters_::Parameters_()
+ht_neuron::Parameters_::Parameters_()
   : E_Na( 30.0 )  // mV
   , E_K( -90.0 )  // mV
   , g_NaL( 0.2 )
@@ -278,7 +279,7 @@ nest::ht_neuron::Parameters_::Parameters_()
 {
 }
 
-nest::ht_neuron::State_::State_( const ht_neuron& node, const Parameters_& p )
+ht_neuron::State_::State_( const ht_neuron& node, const Parameters_& p )
   : ref_steps_( 0 )
   , I_NaP_( 0.0 )
   , I_KNa_( 0.0 )
@@ -302,7 +303,7 @@ nest::ht_neuron::State_::State_( const ht_neuron& node, const Parameters_& p )
   y_[ h_IT ] = node.h_eq_T_( y_[ V_M ] );
 }
 
-nest::ht_neuron::State_::State_( const State_& s )
+ht_neuron::State_::State_( const State_& s )
   : ref_steps_( s.ref_steps_ )
   , I_NaP_( s.I_NaP_ )
   , I_KNa_( s.I_KNa_ )
@@ -315,8 +316,8 @@ nest::ht_neuron::State_::State_( const State_& s )
   }
 }
 
-nest::ht_neuron::State_&
-nest::ht_neuron::State_::operator=( const State_& s )
+ht_neuron::State_&
+ht_neuron::State_::operator=( const State_& s )
 {
   ref_steps_ = s.ref_steps_;
   I_NaP_ = s.I_NaP_;
@@ -330,7 +331,7 @@ nest::ht_neuron::State_::operator=( const State_& s )
   return *this;
 }
 
-nest::ht_neuron::State_::~State_()
+ht_neuron::State_::~State_()
 {
 }
 
@@ -339,7 +340,7 @@ nest::ht_neuron::State_::~State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::ht_neuron::Parameters_::get( Dictionary& d ) const
+ht_neuron::Parameters_::get( Dictionary& d ) const
 {
   d[ names::E_Na ] = E_Na;
   d[ names::E_K ] = E_K;
@@ -386,7 +387,7 @@ nest::ht_neuron::Parameters_::get( Dictionary& d ) const
 }
 
 void
-nest::ht_neuron::Parameters_::set( const Dictionary& d, Node* node )
+ht_neuron::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::E_Na, E_Na, node );
   update_value_param( d, names::E_K, E_K, node );
@@ -561,14 +562,14 @@ nest::ht_neuron::Parameters_::set( const Dictionary& d, Node* node )
 }
 
 void
-nest::ht_neuron::State_::get( Dictionary& d ) const
+ht_neuron::State_::get( Dictionary& d ) const
 {
   d[ names::V_m ] = y_[ V_M ];      // Membrane potential
   d[ names::theta ] = y_[ THETA ];  // Threshold
 }
 
 void
-nest::ht_neuron::State_::set( const Dictionary& d, const ht_neuron& node, Node* nodeptr )
+ht_neuron::State_::set( const Dictionary& d, const ht_neuron& node, Node* nodeptr )
 {
   update_value_param( d, names::V_m, y_[ V_M ], nodeptr );
   update_value_param( d, names::theta, y_[ THETA ], nodeptr );
@@ -586,7 +587,7 @@ nest::ht_neuron::State_::set( const Dictionary& d, const ht_neuron& node, Node* 
   }
 }
 
-nest::ht_neuron::Buffers_::Buffers_( ht_neuron& n )
+ht_neuron::Buffers_::Buffers_( ht_neuron& n )
   : logger_( n )
   , spike_inputs_( std::vector< RingBuffer >( SUP_SPIKE_RECEPTOR - 1 ) )
   , s_( nullptr )
@@ -598,7 +599,7 @@ nest::ht_neuron::Buffers_::Buffers_( ht_neuron& n )
 {
 }
 
-nest::ht_neuron::Buffers_::Buffers_( const Buffers_&, ht_neuron& n )
+ht_neuron::Buffers_::Buffers_( const Buffers_&, ht_neuron& n )
   : logger_( n )
   , spike_inputs_( std::vector< RingBuffer >( SUP_SPIKE_RECEPTOR - 1 ) )
   , s_( nullptr )
@@ -614,7 +615,7 @@ nest::ht_neuron::Buffers_::Buffers_( const Buffers_&, ht_neuron& n )
  * Default and copy constructor for node, and destructor
  * ---------------------------------------------------------------- */
 
-nest::ht_neuron::ht_neuron()
+ht_neuron::ht_neuron()
   : ArchivingNode()
   , P_()
   , S_( *this, P_ )
@@ -623,7 +624,7 @@ nest::ht_neuron::ht_neuron()
   recordablesMap_.create();
 }
 
-nest::ht_neuron::ht_neuron( const ht_neuron& n )
+ht_neuron::ht_neuron( const ht_neuron& n )
   : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -631,7 +632,7 @@ nest::ht_neuron::ht_neuron( const ht_neuron& n )
 {
 }
 
-nest::ht_neuron::~ht_neuron()
+ht_neuron::~ht_neuron()
 {
   // GSL structs may not be initialized, so we need to protect destruction.
   if ( B_.e_ )
@@ -653,7 +654,7 @@ nest::ht_neuron::~ht_neuron()
  * ---------------------------------------------------------------- */
 
 void
-nest::ht_neuron::init_buffers_()
+ht_neuron::init_buffers_()
 {
   // Reset spike buffers.
   for ( std::vector< RingBuffer >::iterator it = B_.spike_inputs_.begin(); it != B_.spike_inputs_.end(); ++it )
@@ -706,13 +707,13 @@ nest::ht_neuron::init_buffers_()
 }
 
 double
-nest::ht_neuron::get_synapse_constant( double tau_1, double tau_2, double g_peak )
+ht_neuron::get_synapse_constant( double tau_1, double tau_2, double g_peak )
 {
   return g_peak * beta_normalization_factor( tau_1, tau_2 );
 }
 
 void
-nest::ht_neuron::pre_run_hook()
+ht_neuron::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -734,7 +735,7 @@ nest::ht_neuron::pre_run_hook()
 }
 
 void
-nest::ht_neuron::get_status( Dictionary& d ) const
+ht_neuron::get_status( Dictionary& d ) const
 {
   P_.get( d );
   S_.get( d );
@@ -752,7 +753,7 @@ nest::ht_neuron::get_status( Dictionary& d ) const
 }
 
 void
-nest::ht_neuron::set_status( const Dictionary& d )
+ht_neuron::set_status( const Dictionary& d )
 {
   Parameters_ ptmp = P_;       // temporary copy in case of errors
   ptmp.set( d, this );         // throws if BadProperty
@@ -851,7 +852,7 @@ ht_neuron::update( Time const& origin, const long from, const long to )
 }
 
 void
-nest::ht_neuron::handle( SpikeEvent& e )
+ht_neuron::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
   assert( e.get_rport() < B_.spike_inputs_.size() );
@@ -861,7 +862,7 @@ nest::ht_neuron::handle( SpikeEvent& e )
 }
 
 void
-nest::ht_neuron::handle( CurrentEvent& e )
+ht_neuron::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -873,10 +874,11 @@ nest::ht_neuron::handle( CurrentEvent& e )
 }
 
 void
-nest::ht_neuron::handle( DataLoggingRequest& e )
+ht_neuron::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
-}
+
+}  // namespace nest
 
 #endif  // HAVE_GSL

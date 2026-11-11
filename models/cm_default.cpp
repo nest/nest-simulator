@@ -25,6 +25,7 @@
 // Includes from nestkernel:
 #include "nest_impl.h"
 
+
 namespace nest
 {
 void
@@ -50,7 +51,7 @@ DynamicRecordablesMap< cm_default >::create( cm_default& host )
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::cm_default::cm_default()
+cm_default::cm_default()
   : ArchivingNode()
   , c_tree_()
   , syn_buffers_( 0 )
@@ -61,7 +62,7 @@ nest::cm_default::cm_default()
   recordables_values.resize( 0 );
 }
 
-nest::cm_default::cm_default( const cm_default& n )
+cm_default::cm_default( const cm_default& n )
   : ArchivingNode( n )
   , c_tree_( n.c_tree_ )
   , syn_buffers_( n.syn_buffers_ )
@@ -107,7 +108,7 @@ cm_default::get_status( Dictionary& statusdict ) const
 }
 
 void
-nest::cm_default::set_status( const Dictionary& statusdict )
+cm_default::set_status( const Dictionary& statusdict )
 {
   statusdict.update_value( names::V_th, V_th_ );
   ArchivingNode::set_status( statusdict );
@@ -212,7 +213,7 @@ nest::cm_default::set_status( const Dictionary& statusdict )
 }
 
 void
-nest::cm_default::add_compartment_( const Dictionary& dd )
+cm_default::add_compartment_( const Dictionary& dd )
 {
   dd.init_access_flags();
 
@@ -229,7 +230,7 @@ nest::cm_default::add_compartment_( const Dictionary& dd )
 }
 
 void
-nest::cm_default::add_receptor_( const Dictionary& dd )
+cm_default::add_receptor_( const Dictionary& dd )
 {
   dd.init_access_flags();
 
@@ -258,7 +259,7 @@ nest::cm_default::add_receptor_( const Dictionary& dd )
 }
 
 void
-nest::cm_default::init_recordables_pointers_()
+cm_default::init_recordables_pointers_()
 {
   /**
    * Get the map of all recordables (i.e. all state variables of the model):
@@ -291,7 +292,7 @@ nest::cm_default::init_recordables_pointers_()
 }
 
 void
-nest::cm_default::pre_run_hook()
+cm_default::pre_run_hook()
 {
   logger_.init();
 
@@ -309,7 +310,7 @@ nest::cm_default::pre_run_hook()
  * Update and spike handling functions
  */
 void
-nest::cm_default::update( Time const& origin, const long from, const long to )
+cm_default::update( Time const& origin, const long from, const long to )
 {
   for ( long lag = from; lag < to; ++lag )
   {
@@ -332,7 +333,7 @@ nest::cm_default::update( Time const& origin, const long from, const long to )
 }
 
 void
-nest::cm_default::handle( SpikeEvent& e )
+cm_default::handle( SpikeEvent& e )
 {
   if ( e.get_weight() < 0 )
   {
@@ -347,7 +348,7 @@ nest::cm_default::handle( SpikeEvent& e )
 }
 
 void
-nest::cm_default::handle( CurrentEvent& e )
+cm_default::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -359,9 +360,9 @@ nest::cm_default::handle( CurrentEvent& e )
 }
 
 void
-nest::cm_default::handle( DataLoggingRequest& e )
+cm_default::handle( DataLoggingRequest& e )
 {
   logger_.handle( e );
 }
 
-}  // namespace
+}  // namespace nest

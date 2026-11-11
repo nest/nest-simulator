@@ -32,7 +32,7 @@ namespace nest
 
 /**
  * Channel taken from the following .mod file:
- * https://senselab.med.yale.edu/ModelDB/ShowModel?model=140828&file=/Branco_2010/mod.files/na.mod#tabs-2
+ * https://modeldb.science/140828
  *
  * Info in .mod file:
  * > Sodium channel, Hodgkin-Huxley style kinetics.
@@ -79,7 +79,7 @@ public:
 
 /**
  * Channel taken from the following .mod file:
- * https://senselab.med.yale.edu/ModelDB/ShowModel?model=140828&file=/Branco_2010/mod.files/kv.mod#tabs-2
+ * https://modeldb.science/140828
  *
  * Info in .mod file:
  * > Potassium channel, Hodgkin-Huxley style kinetics

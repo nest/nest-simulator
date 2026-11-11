@@ -34,12 +34,11 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-using namespace nest;
-
-nest::RecordablesMap< nest::glif_psc_double_alpha > nest::glif_psc_double_alpha::recordablesMap_;
 
 namespace nest
 {
+RecordablesMap< glif_psc_double_alpha > glif_psc_double_alpha::recordablesMap_;
+
 void
 register_glif_psc_double_alpha( const std::string& name )
 {
@@ -50,23 +49,22 @@ register_glif_psc_double_alpha( const std::string& name )
 // for each quantity to be recorded.
 template <>
 void
-RecordablesMap< nest::glif_psc_double_alpha >::create()
+RecordablesMap< glif_psc_double_alpha >::create()
 {
-  insert_( names::V_m, &nest::glif_psc_double_alpha::get_V_m_ );
-  insert_( names::ASCurrents_sum, &nest::glif_psc_double_alpha::get_ASCurrents_sum_ );
-  insert_( names::I, &nest::glif_psc_double_alpha::get_I_ );
-  insert_( names::I_syn, &nest::glif_psc_double_alpha::get_I_syn_ );
-  insert_( names::threshold, &nest::glif_psc_double_alpha::get_threshold_ );
-  insert_( names::threshold_spike, &nest::glif_psc_double_alpha::get_threshold_spike_ );
-  insert_( names::threshold_voltage, &nest::glif_psc_double_alpha::get_threshold_voltage_ );
-}
+  insert_( names::V_m, &glif_psc_double_alpha::get_V_m_ );
+  insert_( names::ASCurrents_sum, &glif_psc_double_alpha::get_ASCurrents_sum_ );
+  insert_( names::I, &glif_psc_double_alpha::get_I_ );
+  insert_( names::I_syn, &glif_psc_double_alpha::get_I_syn_ );
+  insert_( names::threshold, &glif_psc_double_alpha::get_threshold_ );
+  insert_( names::threshold_spike, &glif_psc_double_alpha::get_threshold_spike_ );
+  insert_( names::threshold_voltage, &glif_psc_double_alpha::get_threshold_voltage_ );
 }
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::glif_psc_double_alpha::Parameters_::Parameters_()
+glif_psc_double_alpha::Parameters_::Parameters_()
   : G_( 9.43 )                // in nS
   , E_L_( -78.85 )            // in mV
   , th_inf_( -51.68 - E_L_ )  // in mv, rel to E_L_, - 51.68 - E_L_, i.e., 27.17
@@ -93,7 +91,7 @@ nest::glif_psc_double_alpha::Parameters_::Parameters_()
 {
 }
 
-nest::glif_psc_double_alpha::State_::State_( const Parameters_& p )
+glif_psc_double_alpha::State_::State_( const Parameters_& p )
   : U_( 0.0 )                   // in mV
   , threshold_( p.th_inf_ )     // in mV
   , threshold_spike_( 0.0 )     // in mV
@@ -121,7 +119,7 @@ nest::glif_psc_double_alpha::State_::State_( const Parameters_& p )
  * ---------------------------------------------------------------- */
 
 void
-nest::glif_psc_double_alpha::Parameters_::get( Dictionary& d ) const
+glif_psc_double_alpha::Parameters_::get( Dictionary& d ) const
 {
   d[ names::V_th ] = th_inf_ + E_L_;
   d[ names::g ] = G_;
@@ -154,7 +152,7 @@ nest::glif_psc_double_alpha::Parameters_::get( Dictionary& d ) const
 }
 
 double
-nest::glif_psc_double_alpha::Parameters_::set( const Dictionary& d, Node* node )
+glif_psc_double_alpha::Parameters_::set( const Dictionary& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to E_L_
   const double ELold = E_L_;
@@ -329,7 +327,7 @@ nest::glif_psc_double_alpha::Parameters_::set( const Dictionary& d, Node* node )
 }
 
 void
-nest::glif_psc_double_alpha::State_::get( Dictionary& d, const Parameters_& p ) const
+glif_psc_double_alpha::State_::get( Dictionary& d, const Parameters_& p ) const
 {
   d[ names::V_m ] = U_ + p.E_L_;
   d[ names::ASCurrents ] = ASCurrents_;
@@ -338,7 +336,7 @@ nest::glif_psc_double_alpha::State_::get( Dictionary& d, const Parameters_& p ) 
 }
 
 void
-nest::glif_psc_double_alpha::State_::set( const Dictionary& d, const Parameters_& p, double delta_EL, Node* node )
+glif_psc_double_alpha::State_::set( const Dictionary& d, const Parameters_& p, double delta_EL, Node* node )
 {
   if ( update_value_param( d, names::V_m, U_, node ) )
   {
@@ -376,12 +374,12 @@ nest::glif_psc_double_alpha::State_::set( const Dictionary& d, const Parameters_
   }
 }
 
-nest::glif_psc_double_alpha::Buffers_::Buffers_( glif_psc_double_alpha& n )
+glif_psc_double_alpha::Buffers_::Buffers_( glif_psc_double_alpha& n )
   : logger_( n )
 {
 }
 
-nest::glif_psc_double_alpha::Buffers_::Buffers_( const Buffers_&, glif_psc_double_alpha& n )
+glif_psc_double_alpha::Buffers_::Buffers_( const Buffers_&, glif_psc_double_alpha& n )
   : logger_( n )
 {
 }
@@ -390,7 +388,7 @@ nest::glif_psc_double_alpha::Buffers_::Buffers_( const Buffers_&, glif_psc_doubl
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::glif_psc_double_alpha::glif_psc_double_alpha()
+glif_psc_double_alpha::glif_psc_double_alpha()
   : ArchivingNode()
   , P_()
   , S_( P_ )
@@ -399,7 +397,7 @@ nest::glif_psc_double_alpha::glif_psc_double_alpha()
   recordablesMap_.create();
 }
 
-nest::glif_psc_double_alpha::glif_psc_double_alpha( const glif_psc_double_alpha& n )
+glif_psc_double_alpha::glif_psc_double_alpha( const glif_psc_double_alpha& n )
   : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -412,7 +410,7 @@ nest::glif_psc_double_alpha::glif_psc_double_alpha( const glif_psc_double_alpha&
  * ---------------------------------------------------------------- */
 
 void
-nest::glif_psc_double_alpha::init_buffers_()
+glif_psc_double_alpha::init_buffers_()
 {
   B_.spikes_.clear();    // includes resize
   B_.currents_.clear();  // include resize
@@ -420,7 +418,7 @@ nest::glif_psc_double_alpha::init_buffers_()
 }
 
 void
-nest::glif_psc_double_alpha::pre_run_hook()
+glif_psc_double_alpha::pre_run_hook()
 {
   B_.logger_.init();
 
@@ -513,7 +511,7 @@ nest::glif_psc_double_alpha::pre_run_hook()
  * ---------------------------------------------------------------- */
 
 void
-nest::glif_psc_double_alpha::update( Time const& origin, const long from, const long to )
+glif_psc_double_alpha::update( Time const& origin, const long from, const long to )
 {
 
   double v_old = S_.U_;
@@ -659,7 +657,7 @@ nest::glif_psc_double_alpha::update( Time const& origin, const long from, const 
 }
 
 size_t
-nest::glif_psc_double_alpha::handles_test_event( SpikeEvent&, size_t receptor_type )
+glif_psc_double_alpha::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type <= 0 or receptor_type > P_.n_receptors_() )
   {
@@ -671,7 +669,7 @@ nest::glif_psc_double_alpha::handles_test_event( SpikeEvent&, size_t receptor_ty
 }
 
 void
-nest::glif_psc_double_alpha::handle( SpikeEvent& e )
+glif_psc_double_alpha::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -680,7 +678,7 @@ nest::glif_psc_double_alpha::handle( SpikeEvent& e )
 }
 
 void
-nest::glif_psc_double_alpha::handle( CurrentEvent& e )
+glif_psc_double_alpha::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -691,7 +689,9 @@ nest::glif_psc_double_alpha::handle( CurrentEvent& e )
 // Do not move this function as inline to h-file. It depends on
 // universal_data_logger_impl.h being included here.
 void
-nest::glif_psc_double_alpha::handle( DataLoggingRequest& e )
+glif_psc_double_alpha::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );  // the logger does this for us
 }
+
+}  // namespace nest

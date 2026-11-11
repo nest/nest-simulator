@@ -57,7 +57,7 @@ a rate generator. Since the decision is at the end and all the cues are relevant
 cues in memory. Additional adaptive neurons in the network enable this memory. The network's training error is
 assessed by employing a cross-entropy error loss.
 
-Details on the event-based NEST implementation of e-prop can be found in :footcite:p:`KorcsakGorzo2025`.
+Details on the event-based NEST implementation of e-prop can be found in :footcite:p:`KorcsakGorzo2026`.
 
 References
 ~~~~~~~~~~

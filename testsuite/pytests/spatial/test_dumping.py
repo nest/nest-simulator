@@ -62,7 +62,7 @@ class DumpingTestCase(unittest.TestCase):
         )
         nest.Connect(spatial_nodes, spatial_nodes, cdict)
 
-        filename = os.path.join(self.nest_tmpdir(), "test_DumpConns.out.cnn")
+        filename = os.path.join(self.nest_tmpdir(), f"{self._testMethodName}.out.cnn")
         nest.DumpLayerConnections(spatial_nodes, spatial_nodes, "static_synapse", filename)
         npa = np.genfromtxt(filename)
         reference = np.array(
@@ -87,7 +87,7 @@ class DumpingTestCase(unittest.TestCase):
 
         print("Num. connections:", nest.num_connections)
 
-        filename = os.path.join(self.nest_tmpdir(), "test_DumpConns.out.cnn")
+        filename = os.path.join(self.nest_tmpdir(), f"{self._testMethodName}.out.cnn")
         nest.DumpLayerConnections(l1, l2, "static_synapse", filename)
         print("filename:", filename)
         npa = np.genfromtxt(filename)
@@ -110,7 +110,7 @@ class DumpingTestCase(unittest.TestCase):
 
         print("Num. connections:", nest.num_connections)
 
-        filename = os.path.join(self.nest_tmpdir(), "test_DumpConns.out.cnn")
+        filename = os.path.join(self.nest_tmpdir(), f"{self._testMethodName}.out.cnn")
         nest.DumpLayerConnections(l2, l3, syn_model, filename)
         print("filename:", filename)
         npa = np.genfromtxt(filename)
@@ -127,7 +127,7 @@ class DumpingTestCase(unittest.TestCase):
         )
         nest.Connect(spatial_nodes, spatial_nodes, cdict)
 
-        filename = os.path.join(self.nest_tmpdir(), "test_DumpConns.out.cnn")
+        filename = os.path.join(self.nest_tmpdir(), f"{self._testMethodName}.out.cnn")
         nest.DumpLayerConnections(spatial_nodes[0], spatial_nodes, "static_synapse", filename)
         npa = np.genfromtxt(filename)
         reference = np.array(

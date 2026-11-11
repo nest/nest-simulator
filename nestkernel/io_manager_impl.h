@@ -38,6 +38,7 @@ IOManager::register_recording_backend( const std::string& name )
   }
 
   RecordingBackendT* recording_backend = new RecordingBackendT();
+  recording_backend->initialize();
   recording_backend->pre_run_hook();
   recording_backends_.insert( std::make_pair( name, recording_backend ) );
 }
@@ -52,6 +53,7 @@ IOManager::register_stimulation_backend( const std::string& name )
   }
 
   StimulationBackendT* stimulation_backend = new StimulationBackendT();
+  stimulation_backend->initialize();
   stimulation_backend->pre_run_hook();
   stimulation_backends_.insert( std::make_pair( name, stimulation_backend ) );
 }

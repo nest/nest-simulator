@@ -25,3 +25,8 @@ Here is a list of attributes that can be get and/or set on the ``nest`` module:
 .. autoclass:: nest.NestModule
    :members:
    :no-undoc-members:
+
+Besides the kernel attributes, the ``nest`` module exposes the communicator hook that
+an MPI-parallel simulation needs:
+
+.. autofunction:: nest.set_communicator

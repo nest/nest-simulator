@@ -236,7 +236,7 @@ public:
 
   //! First thread of each collocation group, followed by the number of threads; valid after
   //! configure_spike_data_buffers().
-  const std::vector< size_t >& get_collocation_group_bounds() const;
+  std::vector< size_t > get_collocation_group_bounds() const;
 
   /**
    * Collocates presynaptic connection information, communicates via
@@ -383,6 +383,14 @@ private:
   void reset_spike_register_( const size_t tid );
 
   /**
+   * First thread of collocation group g (g = number of groups gives the number of threads).
+   *
+   * A function, not a table of the boundaries, because an additional member of the manager changes the memory layout
+   * of the kernel and cost about 4 % on PD14 (one process of 288 threads on JUPITER).
+   */
+  size_t collocation_group_begin_( const size_t g ) const;
+
+  /**
    * Returns true if spike has been moved to MPI buffer, such that it
    * can be removed by clean_spike_register. Required static function
    * by std::remove_if.
@@ -443,14 +451,6 @@ private:
    * threads of other groups may still deliver the spikes of the last cycle from group_buffers_.
    */
   std::vector< std::vector< std::vector< SpikeData > > > group_buffers_next_;
-
-  /**
-   * Boundaries of the collocation groups: group g consists of the threads [ collocation_group_bounds_[ g ],
-   * collocation_group_bounds_[ g + 1 ] ).
-   *
-   * Defined in one place, because the tree barrier uses the same groups (see SimulationManager::update_()).
-   */
-  std::vector< size_t > collocation_group_bounds_;
 
   /**
    * Number of groups that have finished their collocation in the current cycle.
@@ -619,10 +619,24 @@ EventDeliveryManager::get_slice_modulo( long d )
   return slice_moduli_[ d ];
 }
 
-inline const std::vector< size_t >&
+inline size_t
+EventDeliveryManager::collocation_group_begin_( const size_t g ) const
+{
+  // group g consists of the threads [ ceil( g * num_threads / groups ), ceil( ( g + 1 ) * num_threads / groups ) )
+  const size_t num_threads = emitted_spikes_register_.size();
+  const size_t groups = group_buffers_.size();
+  return ( g * num_threads + groups - 1 ) / groups;
+}
+
+inline std::vector< size_t >
 EventDeliveryManager::get_collocation_group_bounds() const
 {
-  return collocation_group_bounds_;
+  std::vector< size_t > bounds( group_buffers_.size() + 1 );
+  for ( size_t g = 0; g < bounds.size(); ++g )
+  {
+    bounds[ g ] = collocation_group_begin_( g );
+  }
+  return bounds;
 }
 
 }  // namespace nest

@@ -255,14 +255,6 @@ EventDeliveryManager::configure_spike_data_buffers()
     num_groups, std::vector< std::vector< SpikeData > >( kernel().mpi_manager.get_num_processes() ) );
   group_buffers_next_ = group_buffers_;
 
-  // group g consists of the threads [ ceil( g * num_threads / groups ), ceil( ( g + 1 ) * num_threads / groups ) )
-  const size_t num_threads = kernel().vp_manager.get_num_threads();
-  collocation_group_bounds_.resize( num_groups + 1 );
-  for ( size_t g = 0; g <= num_groups; ++g )
-  {
-    collocation_group_bounds_[ g ] = ( g * num_threads + num_groups - 1 ) / num_groups;
-  }
-
   send_buffer_spike_data_.clear();
   send_buffer_off_grid_spike_data_.clear();
 
@@ -401,19 +393,19 @@ EventDeliveryManager::use_group_collocation() const
 void
 EventDeliveryManager::collocate_groups( const size_t tid )
 {
-  // only the first thread of a group collocates it
-  const auto first = std::find( collocation_group_bounds_.begin(), collocation_group_bounds_.end() - 1, tid );
-  if ( first != collocation_group_bounds_.end() - 1 )
+  // only the first thread of a group collocates it; tid * groups / num_threads is the group of tid
+  const size_t g = tid * group_buffers_.size() / emitted_spikes_register_.size();
+  if ( tid == collocation_group_begin_( g ) )
   {
-    collocate_group( first - collocation_group_bounds_.begin() );
+    collocate_group( g );
   }
 }
 
 void
 EventDeliveryManager::collocate_group( const size_t g )
 {
-  const size_t first = collocation_group_bounds_[ g ];
-  const size_t last = collocation_group_bounds_[ g + 1 ];
+  const size_t first = collocation_group_begin_( g );
+  const size_t last = collocation_group_begin_( g + 1 );
   // Only the master thread records this master-only stopwatch, so it measures the collocation of the groups the
   // master thread collocates (group 0 if it leads or completes it), not of all groups. With several MPI processes,
   // the same stopwatch also measures the concatenation in gather_spike_data_; the time the master thread waits there

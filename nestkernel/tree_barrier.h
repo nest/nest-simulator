@@ -73,8 +73,8 @@ public:
   /**
    * Wait until all threads have arrived and the steps are done.
    *
-   * The last thread of group g to arrive calls on_group( g ), the master thread calls on_root() after all groups have
-   * completed their steps; no thread leaves before on_root() has returned.
+   * The last thread of group g to arrive calls on_group( g ), the master thread (thread 0) calls on_root() after all
+   * groups have completed their steps; no thread leaves before on_root() has returned.
    */
   template < typename OnGroup, typename OnRoot >
   void wait( const size_t tid, OnGroup&& on_group, OnRoot&& on_root );

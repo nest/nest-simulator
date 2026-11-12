@@ -230,8 +230,8 @@ public:
   /**
    * Collocation of group g, by any one thread, after all threads of the group have finished their update.
    *
-   * Used by the single barrier per cycle, in which the last thread of a group to arrive collocates the group (see
-   * TreeBarrier).
+   * Called by collocate_groups() (first thread of the group, two barriers) and as the group step of the single barrier
+   * (last thread of the group to arrive, see TreeBarrier).
    */
   void collocate_group( const size_t g );
 

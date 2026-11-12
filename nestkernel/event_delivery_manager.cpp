@@ -251,9 +251,9 @@ EventDeliveryManager::configure_spike_data_buffers()
   configure_spike_register();
 
   // buffers for the collocation by several threads (allocated here, not in the parallel region)
-  // groups of consecutive threads, aligned with the NUMA nodes of the threads
-  // collocation_group_begin_() ends the last group there
+  // collocation_group_begin_() ends the last group at the number of spike registers
   assert( emitted_spikes_register_.size() == kernel().vp_manager.get_num_threads() );
+  // groups of consecutive threads, aligned with the NUMA nodes of the threads
   const std::vector< size_t > bounds = kernel().vp_manager.get_thread_blocks( collocation_groups_ );
   group_buffers_.assign( bounds.size() - 1, CollocationGroup_() );
   for ( size_t g = 0; g < group_buffers_.size(); ++g )

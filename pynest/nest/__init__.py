@@ -215,7 +215,7 @@ class NestModule(types.ModuleType):
         "int",
         (
             "Number of groups of threads that collocate the spike registers in parallel; 1: the master thread "
-            "collocates alone. Can only be changed before the first call of Simulate. Has no effect with a "
+            "collocates alone. Can only be changed before the first call of Prepare or Simulate. Has no effect with a "
             "single thread, with off_grid_spiking, or with a single MPI process without compressed spikes. "
             "The number of groups is at most the number of threads"
         ),

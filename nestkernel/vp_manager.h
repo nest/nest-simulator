@@ -23,6 +23,9 @@
 #ifndef VP_MANAGER_H
 #define VP_MANAGER_H
 
+// C++ includes:
+#include <vector>
+
 // Includes from libnestutil:
 #include "manager_interface.h"
 
@@ -138,6 +141,23 @@ public:
    * Returns the number of virtual processes.
    */
   size_t get_num_virtual_processes() const;
+
+  /**
+   * NUMA node of the core on which the calling thread runs, or unknown_numa_node (see thread_blocks.h).
+   *
+   * Known only if the thread is bound to a place (OMP_PROC_BIND, OMP_PLACES) and the system reports the node (Linux);
+   * a thread that is not bound may move to another node.
+   */
+  size_t get_numa_node_of_calling_thread() const;
+
+  /**
+   * Boundaries of num_blocks blocks of consecutive threads, aligned with the NUMA nodes of the threads.
+   *
+   * Records the NUMA node of every thread in a parallel region of its own, so it must be called outside parallel
+   * regions; see thread_blocks() for the rule. The nodes are not stored, because an additional member of a manager
+   * changes the memory layout of the kernel.
+   */
+  std::vector< size_t > get_thread_blocks( const size_t num_blocks ) const;
 
   /**
    * Fails if NEST is in thread-parallel section.

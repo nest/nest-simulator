@@ -194,6 +194,33 @@ class NestModule(types.ModuleType):
     total_num_virtual_procs = KernelAttribute("int", "The total number of virtual processes", default=1)
     local_num_threads = KernelAttribute("int", "The local number of threads", default=1)
     num_processes = KernelAttribute("int", "The number of MPI processes", readonly=True)
+    tree_barrier = KernelAttribute(
+        "bool",
+        "Whether the threads synchronize in the update loop with a spinning tree barrier instead of OpenMP barriers",
+        default=False,
+    )
+    tree_barrier_fan_in = KernelAttribute(
+        "int",
+        "Number of consecutive threads that form a group of the tree barrier (a core complex or socket)",
+        default=8,
+    )
+    single_cycle_barrier = KernelAttribute(
+        "bool",
+        "Whether the tree barrier completes a cycle in one barrier instead of two: the last thread of each collocation "
+        "group collocates its group and the master thread exchanges the spikes and advances the time before the "
+        "release (requires tree_barrier)",
+        default=False,
+    )
+    collocation_groups = KernelAttribute(
+        "int",
+        (
+            "Number of groups of threads that collocate the spike registers in parallel; 1: the master thread "
+            "collocates alone. Can only be changed before the first call of Prepare or Simulate. Has no effect with a "
+            "single thread, with off_grid_spiking, or with a single MPI process without compressed spikes. "
+            "The number of groups is at most the number of threads"
+        ),
+        default=1,
+    )
     off_grid_spiking = KernelAttribute(
         "bool",
         "Whether to transmit precise spike times in MPI communication",
@@ -326,6 +353,20 @@ class NestModule(types.ModuleType):
             + " per target thread; it implies that connections are sorted by source."
         ),
         default=True,
+    )
+    compressed_spike_data_copies = KernelAttribute(
+        "int",
+        (
+            "Number of copies of the compressed spike data (only used with"
+            + " use_compressed_spikes). The threads are divided into this many blocks"
+            + " of consecutive thread numbers; every block has its own copy, written by"
+            + " a thread of the block. If the threads of a block are pinned to one NUMA"
+            + " domain, e.g. one socket, the look-ups during spike delivery read local"
+            + " memory. A typical value is the number of NUMA domains used by the process."
+            + " The copies are made when the connection infrastructure is built at the next"
+            + " simulation; the value can also be changed between simulations."
+        ),
+        default=1,
     )
     data_path = KernelAttribute(
         "str",

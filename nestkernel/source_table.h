@@ -177,10 +177,10 @@ private:
    * Data from this structure is transferred to the compressed_spike_data_
    * structure of ConnectionManager during construction of the
    * postsynaptic connection infrastructure. Arranged as a two
-   * dimensional vector (thread|synapse) with an inner map (source
-   * node id -> spike data).
+   * dimensional vector (thread|synapse) with an inner sorted vector of pairs
+   * (source node id, spike data).
    */
-  std::vector< std::vector< std::map< size_t, SpikeData > > > compressible_sources_;
+  std::vector< std::vector< std::vector< std::pair< size_t, SpikeData > > > > compressible_sources_;
 
   /**
    * A structure to temporarily store locations of "unpacked spikes"
@@ -190,9 +190,93 @@ private:
    * Data from this structure is transferred to the
    * presynaptic side during construction of the presynaptic
    * connection infrastructure. Arranged as a one-dimensional vector
-   * over synapse ids with an inner map (source node id -> (source_index+target_thread).
+   * over synapse ids with an inner sorted vector of pairs
+   * (source node id, (source_index+target_thread)).
    */
-  std::vector< std::map< size_t, CSDMapEntry > > compressed_spike_data_map_;
+  std::vector< std::vector< std::pair< size_t, CSDMapEntry > > > compressed_spike_data_map_;
+
+  /**
+   * Used by fill_compressed_spike_data(). Entry [ t ][ b ] first counts the sources in block b whose first thread is
+   * t, then holds the index in compressed_spike_data of the next such source.
+   */
+  std::vector< std::vector< size_t > > merge_new_source_counts_;
+
+  /**
+   * Used by fill_compressed_spike_data(). Entry [ b ] first counts the sources in block b, then holds the position
+   * of the block's first entry in compressed_spike_data_map_.
+   */
+  std::vector< size_t > merge_block_unique_counts_;
+
+  //! Iterator into one thread's sorted vector of (source node id, spike data) pairs in compressible_sources_.
+  using CompressibleSourceIt = std::vector< std::pair< size_t, SpikeData > >::const_iterator;
+
+  /**
+   * One thread's working state in fill_compressed_spike_data() for one synapse type.
+   *
+   * The thread owns the source node ids [gid_begin, gid_end). Each source in this block has a slot: its offset from
+   * gid_begin if use_direct_index, otherwise its position in unique_gids.
+   */
+  struct MergeBlock
+  {
+    explicit MergeBlock( const size_t num_threads );
+
+    //! Returns the slot of a source node id in the block.
+    size_t slot_of( const size_t gid ) const;
+
+    //! Returns the source node id of a slot.
+    size_t gid_of( const size_t slot ) const;
+
+    size_t gid_begin;
+    size_t gid_end;
+    size_t num_entries;     //!< Number of (thread, source) entries in the block over all threads
+    bool use_direct_index;  //!< Whether the block is narrow enough to index slots by node id directly
+
+    //! Per thread, the part of its sources that lies in the block
+    std::vector< CompressibleSourceIt > slice_begin;
+    std::vector< CompressibleSourceIt > slice_end;
+
+    //! Sorted node ids present in the block; used only if not use_direct_index
+    std::vector< size_t > unique_gids;
+
+    /**
+     * Per slot, invalid_index if no thread has the source. Otherwise the first thread that has it, until
+     * write_block_() replaces it by the source's index in compressed_spike_data.
+     */
+    std::vector< size_t > slot_state;
+  };
+
+  /**
+   * Finds the calling thread's block of source node ids for synapse type syn_id and the part of each thread's sources
+   * in it.
+   *
+   * The node ids from the smallest to the largest source over all threads are cut into one block of equal width per
+   * thread, in thread order. Returns false, on every thread alike, if no thread has a source of this synapse type.
+   */
+  bool find_block_slices_( const size_t tid, const synindex syn_id, MergeBlock& block ) const;
+
+  /**
+   * Records in block.slot_state the first thread that has each source of the block. Stores in
+   * merge_new_source_counts_[ t ][ tid ] the number of the block's sources whose first thread is t, and in
+   * merge_block_unique_counts_[ tid ] the number of the block's sources.
+   */
+  void mark_first_threads_( const size_t tid, MergeBlock& block );
+
+  /**
+   * Turns the counts of mark_first_threads_() into offsets, and sizes compressed_spike_data[ syn_id ] and
+   * compressed_spike_data_map_[ syn_id ].
+   *
+   * Must be called by one thread, after all threads have marked their blocks.
+   */
+  void compute_merge_offsets_( const synindex syn_id,
+    std::vector< std::vector< std::vector< SpikeData > > >& compressed_spike_data );
+
+  /**
+   * Writes the block's entries of compressed_spike_data_map_ and its sources' data into compressed_spike_data.
+   */
+  void write_block_( const size_t tid,
+    const synindex syn_id,
+    MergeBlock& block,
+    std::vector< std::vector< std::vector< SpikeData > > >& compressed_spike_data );
 
 public:
   SourceTable();
@@ -347,10 +431,18 @@ public:
 
   void resize_compressible_sources();
 
-  // creates maps of sources with more than one thread-local target
+  // creates sorted vectors of sources with thread-local targets
   void collect_compressible_sources( const size_t tid );
-  // fills the compressed_spike_data structure in ConnectionManager
-  void fill_compressed_spike_data( std::vector< std::vector< std::vector< SpikeData > > >& compressed_spike_data );
+
+  /**
+   * Fills the compressed_spike_data structure of ConnectionManager and compressed_spike_data_map_ from
+   * compressible_sources_, which it frees.
+   *
+   * Must be called by all threads of the parallel region; they merge together, each one block of source node ids.
+   * The result is entry for entry that of a serial merge over threads in order and sources in node id order.
+   */
+  void fill_compressed_spike_data( const size_t tid,
+    std::vector< std::vector< std::vector< SpikeData > > >& compressed_spike_data );
 
   void clear_compressed_spike_data_map();
 
@@ -528,6 +620,7 @@ SourceTable::clear_compressed_spike_data_map()
   for ( auto& source_index_map : compressed_spike_data_map_ )
   {
     source_index_map.clear();
+    source_index_map.shrink_to_fit();
   }
 }
 

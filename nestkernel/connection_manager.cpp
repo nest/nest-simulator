@@ -1785,10 +1785,8 @@ ConnectionManager::collect_compressed_spike_data( const size_t tid )
     kernel().get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
     kernel().get_omp_synchronization_construction_stopwatch().stop();
-#pragma omp single
-    {
-      source_table_.fill_compressed_spike_data( compressed_spike_data_ );
-    }  // of omp single; implicit barrier
+
+    source_table_.fill_compressed_spike_data( tid, compressed_spike_data_ );
   }
 }
 
@@ -1834,8 +1832,7 @@ ConnectionManager::fill_target_buffer( const size_t tid,
         // Since sources should be evenly distributed, this should not matter very much.
         //
         // We store where we need to continue and stop iteration for now.
-        iteration_state_.at( tid ) =
-          std::pair< size_t, std::map< size_t, CSDMapEntry >::const_iterator >( syn_id, source_2_idx );
+        iteration_state_.at( tid ) = std::make_pair( syn_id, source_2_idx );
 
         return false;  // there is data left to communicate
       }
@@ -1885,8 +1882,7 @@ ConnectionManager::fill_target_buffer( const size_t tid,
   // Store iteration state for this thread. If we get here, ther is nothing more to do for
   // this thread so we store a non-existing syn_id with a meaningless iterator to inform that
   // this thread has nothing to do in the next round.
-  iteration_state_.at( tid ) =
-    std::pair< size_t, std::map< size_t, CSDMapEntry >::const_iterator >( syn_id, source_2_idx );
+  iteration_state_.at( tid ) = std::make_pair( syn_id, source_2_idx );
 
   // Mark end of data for this round
   for ( size_t rank = rank_start; rank < rank_end; ++rank )
@@ -1920,7 +1916,7 @@ ConnectionManager::initialize_iteration_state()
   auto begin = source_table_.compressed_spike_data_map_.at( 0 ).cbegin();
   for ( size_t t = 0; t < num_threads; ++t )
   {
-    iteration_state_.push_back( std::pair< size_t, std::map< size_t, CSDMapEntry >::const_iterator >( 0, begin ) );
+    iteration_state_.push_back( std::make_pair( static_cast< size_t >( 0 ), begin ) );
   }
 }
 

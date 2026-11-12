@@ -54,6 +54,7 @@
 #include "node.h"
 #include "stopwatch_impl.h"
 #include "target_table_devices_impl.h"
+#include "thread_blocks.h"
 
 #ifdef HAVE_HDF5
 #include "sonata_connector.h"
@@ -1802,9 +1803,13 @@ ConnectionManager::collect_compressed_spike_data( const size_t tid )
 #pragma omp single
     {
       source_table_.resize_compressible_sources();
+      compressed_spike_data_block_of_.assign( kernel().vp_manager.get_num_threads(), 0 );
     }  // of omp single; implicit barrier
 
     source_table_.collect_compressible_sources( tid );
+    // until the blocks are formed below, the table of the blocks holds the NUMA node of every thread (no additional
+    // member, see VPManager::get_thread_blocks())
+    compressed_spike_data_block_of_[ tid ] = kernel().vp_manager.get_numa_node_of_calling_thread();
     kernel().get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
     kernel().get_omp_synchronization_construction_stopwatch().stop();
@@ -1812,21 +1817,22 @@ ConnectionManager::collect_compressed_spike_data( const size_t tid )
     {
       source_table_.fill_compressed_spike_data( compressed_spike_data_ );
 
-      const size_t num_threads = kernel().vp_manager.get_num_threads();
-      const size_t blocks = std::min( compressed_spike_data_copies_, num_threads );
+      // blocks of consecutive threads, aligned with the NUMA nodes of the threads
+      const std::vector< size_t > bounds =
+        thread_blocks( compressed_spike_data_block_of_, compressed_spike_data_copies_ );
+      const size_t blocks = bounds.size() - 1;
       compressed_spike_data_blocks_.clear();
       if ( blocks > 1 )
       {
         compressed_spike_data_blocks_.resize( blocks );
-        compressed_spike_data_block_of_.resize( num_threads );
-        compressed_spike_data_column_of_.resize( num_threads );
-        for ( size_t t = 0; t < num_threads; ++t )
+        compressed_spike_data_column_of_.resize( kernel().vp_manager.get_num_threads() );
+        for ( size_t b = 0; b < blocks; ++b )
         {
-          // block b consists of the threads [ lo, hi ) with lo = ceil( b * num_threads / blocks )
-          // and hi = ceil( ( b + 1 ) * num_threads / blocks )
-          const size_t b = t * blocks / num_threads;
-          compressed_spike_data_block_of_[ t ] = b;
-          compressed_spike_data_column_of_[ t ] = t - ( b * num_threads + blocks - 1 ) / blocks;
+          for ( size_t t = bounds[ b ]; t < bounds[ b + 1 ]; ++t )
+          {
+            compressed_spike_data_block_of_[ t ] = b;
+            compressed_spike_data_column_of_[ t ] = t - bounds[ b ];
+          }
         }
       }
     }  // of omp single; implicit barrier
@@ -1835,13 +1841,15 @@ ConnectionManager::collect_compressed_spike_data( const size_t tid )
     {
       // The first thread of every block copies the columns of the threads of its block, so that the memory of the copy
       // is allocated and first touched by a thread of the block.
-      const size_t num_threads = kernel().vp_manager.get_num_threads();
-      const size_t blocks = compressed_spike_data_blocks_.size();
       const size_t b = compressed_spike_data_block_of_[ tid ];
-      const size_t first = ( b * num_threads + blocks - 1 ) / blocks;
-      const size_t last = ( ( b + 1 ) * num_threads + blocks - 1 ) / blocks;
+      const size_t first = tid - compressed_spike_data_column_of_[ tid ];
       if ( tid == first )
       {
+        size_t last = first + 1;
+        while ( last < compressed_spike_data_block_of_.size() and compressed_spike_data_block_of_[ last ] == b )
+        {
+          ++last;
+        }
         auto& copy = compressed_spike_data_blocks_[ b ];
         copy.resize( compressed_spike_data_.size() );
         for ( size_t syn_id = 0; syn_id < compressed_spike_data_.size(); ++syn_id )

@@ -25,6 +25,12 @@
 // C++ includes:
 #include <cstdlib>
 
+// System includes:
+#if defined( __linux__ )
+#include <sys/syscall.h>
+#include <unistd.h>
+#endif
+
 // Includes from libnestutil:
 #include "logging.h"
 
@@ -32,6 +38,7 @@
 #include "kernel_manager.h"
 #include "mpi_manager.h"
 #include "mpi_manager_impl.h"
+#include "thread_blocks.h"
 #include "vp_manager_impl.h"
 
 
@@ -192,6 +199,39 @@ VPManager::set_num_threads( size_t n_threads )
 #ifdef _OPENMP
   omp_set_num_threads( n_threads_ );
 #endif
+}
+
+size_t
+VPManager::get_numa_node_of_calling_thread() const
+{
+#if defined( __linux__ ) and defined( SYS_getcpu )
+#ifdef _OPENMP
+  if ( omp_get_place_num() < 0 )
+  {
+    return unknown_numa_node;  // not bound to a place
+  }
+#endif
+  unsigned int cpu = 0;
+  unsigned int node = 0;
+  // the system call, because the wrapper getcpu() exists only from glibc 2.29 on
+  if ( syscall( SYS_getcpu, &cpu, &node, nullptr ) == 0 )
+  {
+    return node;
+  }
+#endif
+  return unknown_numa_node;
+}
+
+std::vector< size_t >
+VPManager::get_thread_blocks( const size_t num_blocks ) const
+{
+  assert_single_threaded();
+  std::vector< size_t > numa_node_of_thread( get_num_threads() );
+#pragma omp parallel
+  {
+    numa_node_of_thread[ get_thread_id() ] = get_numa_node_of_calling_thread();
+  }
+  return thread_blocks( numa_node_of_thread, num_blocks );
 }
 
 }  // namespace nest

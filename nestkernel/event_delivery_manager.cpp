@@ -251,14 +251,13 @@ EventDeliveryManager::configure_spike_data_buffers()
   configure_spike_register();
 
   // buffers for the collocation by several threads (allocated here, not in the parallel region)
-  // group g consists of the threads [ ceil( g * num_threads / groups ), ceil( ( g + 1 ) * num_threads / groups ) )
-  const size_t num_threads = kernel().vp_manager.get_num_threads();
-  assert( emitted_spikes_register_.size() == num_threads );  // collocation_group_begin_() ends the last group there
-  const size_t num_groups = std::max< size_t >( 1, std::min( collocation_groups_, num_threads ) );
-  group_buffers_.assign( num_groups, CollocationGroup_() );
-  for ( size_t g = 0; g < num_groups; ++g )
+  // groups of consecutive threads, aligned with the NUMA nodes of the threads
+  assert( emitted_spikes_register_.size() == kernel().vp_manager.get_num_threads() );  // collocation_group_begin_()
+  const std::vector< size_t > bounds = kernel().vp_manager.get_thread_blocks( collocation_groups_ );
+  group_buffers_.assign( bounds.size() - 1, CollocationGroup_() );
+  for ( size_t g = 0; g < group_buffers_.size(); ++g )
   {
-    group_buffers_[ g ].first_thread_ = ( g * num_threads + num_groups - 1 ) / num_groups;
+    group_buffers_[ g ].first_thread_ = bounds[ g ];
     group_buffers_[ g ].spikes_.resize( kernel().mpi_manager.get_num_processes() );
     group_buffers_[ g ].spikes_next_.resize( kernel().mpi_manager.get_num_processes() );
   }

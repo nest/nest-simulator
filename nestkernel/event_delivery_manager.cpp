@@ -165,7 +165,7 @@ EventDeliveryManager::set_status( const Dictionary& dict )
         or kernel().simulation_manager.get_slice_origin().get_steps() > 0 ) )
     {
       // Spikes that are still in the group buffers or in the receive buffers would be lost. After Prepare, the group
-      // buffers are allocated for the old number of groups, which num_collocation_groups_() would no longer match.
+      // buffers are allocated for the old number of groups.
       throw BadProperty( "collocation_groups can only be changed before the first call of Prepare or Simulate." );
     }
     collocation_groups_ = groups;
@@ -251,9 +251,16 @@ EventDeliveryManager::configure_spike_data_buffers()
   configure_spike_register();
 
   // buffers for the collocation by several threads (allocated here, not in the parallel region)
-  group_buffers_.assign(
-    num_collocation_groups_(), std::vector< std::vector< SpikeData > >( kernel().mpi_manager.get_num_processes() ) );
-  group_buffers_next_ = group_buffers_;
+  // group g consists of the threads [ ceil( g * num_threads / groups ), ceil( ( g + 1 ) * num_threads / groups ) )
+  const size_t num_threads = kernel().vp_manager.get_num_threads();
+  const size_t num_groups = std::max< size_t >( 1, std::min( collocation_groups_, num_threads ) );
+  group_buffers_.assign( num_groups, CollocationGroup_() );
+  for ( size_t g = 0; g < num_groups; ++g )
+  {
+    group_buffers_[ g ].first_thread_ = ( g * num_threads + num_groups - 1 ) / num_groups;
+    group_buffers_[ g ].spikes_.resize( kernel().mpi_manager.get_num_processes() );
+    group_buffers_[ g ].spikes_next_.resize( kernel().mpi_manager.get_num_processes() );
+  }
 
   send_buffer_spike_data_.clear();
   send_buffer_off_grid_spike_data_.clear();
@@ -393,11 +400,11 @@ EventDeliveryManager::use_group_collocation() const
 void
 EventDeliveryManager::collocate_groups( const size_t tid )
 {
-  // only the first thread of a group collocates it; tid * groups / num_threads is the group of tid
-  const size_t g = tid * num_collocation_groups_() / emitted_spikes_register_.size();
-  if ( tid == collocation_group_begin_( g ) )
+  // only the first thread of a group collocates it
+  const auto group = std::ranges::find( group_buffers_, tid, &CollocationGroup_::first_thread_ );
+  if ( group != group_buffers_.end() )
   {
-    collocate_group( g );
+    collocate_group( group - group_buffers_.begin() );
   }
 }
 
@@ -411,7 +418,7 @@ EventDeliveryManager::collocate_group( const size_t g )
   // the same stopwatch also measures the concatenation in gather_spike_data_; the time the master thread waits there
   // for the other groups is not included.
   sw_collocate_spike_data_.start();
-  for ( auto& buffer : group_buffers_next_[ g ] )
+  for ( auto& buffer : group_buffers_[ g ].spikes_next_ )
   {
     buffer.clear();
   }
@@ -419,7 +426,7 @@ EventDeliveryManager::collocate_group( const size_t g )
   {
     for ( const SpikeDataWithRank& e : *emitted_spikes_register_[ t ] )
     {
-      group_buffers_next_[ g ][ e.rank ].push_back( e.spike_data );
+      group_buffers_[ g ].spikes_next_[ e.rank ].push_back( e.spike_data );
     }
   }
   sw_collocate_spike_data_.stop();
@@ -454,12 +461,15 @@ EventDeliveryManager::gather_spike_data()
         std::this_thread::yield();
       }
     }
-    // All groups have collocated, and no thread reads the group buffers during the swap: with two barriers the other
-    // threads wait at the second barrier or compute their group (from num_collocation_groups_(), not the buffers),
-    // with one barrier they wait in it. The wait above is needed also with one MPI process, since the swap must not
-    // precede the collocation of any group.
+    // All groups have collocated, and no thread reads the sets of spikes during the swap: with two barriers the other
+    // threads wait at the second barrier or look up their group (first_thread_, which the swap does not touch), with
+    // one barrier they wait in it. The wait above is needed also with one MPI process, since the swap must not precede
+    // the collocation of any group.
     groups_collocated_.store( 0, std::memory_order_relaxed );
-    group_buffers_.swap( group_buffers_next_ );
+    for ( auto& group : group_buffers_ )
+    {
+      group.spikes_.swap( group.spikes_next_ );
+    }
     if ( kernel().mpi_manager.get_num_processes() == 1 )
     {
       // no communication: every thread delivers directly from the buffers of the groups
@@ -633,10 +643,10 @@ EventDeliveryManager::concatenate_group_buffers_( SendBufferPosition& send_buffe
   // as in collocate_spike_data_buffers_(): all spikes are counted, only those that fit into the chunk are written
   for ( const auto& group : group_buffers_ )
   {
-    for ( size_t rank = 0; rank < group.size(); ++rank )
+    for ( size_t rank = 0; rank < group.spikes_.size(); ++rank )
     {
-      num_spikes_per_rank[ rank ] += group[ rank ].size();
-      for ( const SpikeData& spike_data : group[ rank ] )
+      num_spikes_per_rank[ rank ] += group.spikes_[ rank ].size();
+      for ( const SpikeData& spike_data : group.spikes_[ rank ] )
       {
         if ( send_buffer_position.is_chunk_filled( rank ) )
         {
@@ -790,8 +800,8 @@ EventDeliveryManager::deliver_events_from_groups_( const size_t tid )
 #if defined( __GNUC__ ) || defined( __clang__ )
   for ( const auto& group : group_buffers_ )
   {
-    const char* data = reinterpret_cast< const char* >( group[ 0 ].data() );
-    const size_t bytes = group[ 0 ].size() * sizeof( SpikeData );
+    const char* data = reinterpret_cast< const char* >( group.spikes_[ 0 ].data() );
+    const size_t bytes = group.spikes_[ 0 ].size() * sizeof( SpikeData );
     for ( size_t offset = 0; offset < bytes; offset += 64 )
     {
       __builtin_prefetch( data + offset );
@@ -801,7 +811,7 @@ EventDeliveryManager::deliver_events_from_groups_( const size_t tid )
 
   for ( const auto& group : group_buffers_ )
   {
-    const std::vector< SpikeData >& buffer = group[ 0 ];  // single MPI process: target rank 0
+    const std::vector< SpikeData >& buffer = group.spikes_[ 0 ];  // single MPI process: target rank 0
     const size_t num_entries = buffer.size();
     for ( size_t start = 0; start < num_entries; start += SPIKES_PER_BATCH )
     {

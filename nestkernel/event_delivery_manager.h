@@ -383,21 +383,8 @@ private:
    */
   void reset_spike_register_( const size_t tid );
 
-  /**
-   * First thread of collocation group g (g = number of groups gives the number of threads).
-   *
-   * A function, not a table of the boundaries, because an additional member of the manager changes the memory layout
-   * of the kernel and cost about 4 % on PD14 (one process of 288 threads on JUPITER).
-   */
+  //! First thread of collocation group g; for g = number of groups, the number of threads.
   size_t collocation_group_begin_( const size_t g ) const;
-
-  /**
-   * Number of collocation groups, as allocated in configure_spike_data_buffers().
-   *
-   * Not group_buffers_.size(): in the two-barrier path the master thread swaps group_buffers_ and group_buffers_next_
-   * while threads that lead no group may still compute their group.
-   */
-  size_t num_collocation_groups_() const;
 
   /**
    * Returns true if spike has been moved to MPI buffer, such that it
@@ -449,17 +436,26 @@ private:
   //! Number of groups of threads that collocate the spike registers in parallel (1: master thread alone).
   size_t collocation_groups_;
 
-  //! [ group ][ target rank ] spikes of the last cycle, read by the delivery or the MPI exchange (see
-  //! use_group_collocation()).
-  std::vector< std::vector< std::vector< SpikeData > > > group_buffers_;
+  //! Buffers of one group of threads for the collocation of the spike registers (see use_group_collocation()).
+  struct CollocationGroup_
+  {
+    size_t first_thread_ = 0;  //!< first thread of the group; the group ends where the next one begins
+    //! [ target rank ] spikes of the last cycle, read by the delivery or the MPI exchange
+    std::vector< std::vector< SpikeData > > spikes_;
+    //! [ target rank ] spikes collected in the current cycle; swapped with spikes_ in gather_spike_data()
+    std::vector< std::vector< SpikeData > > spikes_next_;
+  };
 
   /**
-   * [ group ][ target rank ] spikes collected in the current cycle; swapped with group_buffers_ in gather_spike_data().
+   * The collocation groups.
    *
-   * Two sets, because with one barrier per cycle a group collocates as soon as its own threads have arrived, while
-   * threads of other groups may still deliver the spikes of the last cycle from group_buffers_.
+   * Two sets of spikes per group, because with one barrier per cycle a group collocates as soon as its own threads have
+   * arrived, while threads of other groups may still deliver the spikes of the last cycle. The master thread swaps the
+   * sets within each group; the vector of the groups does not change during a simulation, so that every thread can
+   * read the groups and their first threads at any time. Both sets live in this one member, because an additional
+   * member of the manager changes the memory layout of the kernel, which cost up to 4 % on PD14.
    */
-  std::vector< std::vector< std::vector< SpikeData > > > group_buffers_next_;
+  std::vector< CollocationGroup_ > group_buffers_;
 
   /**
    * Number of groups that have finished their collocation in the current cycle.
@@ -631,22 +627,13 @@ EventDeliveryManager::get_slice_modulo( long d )
 inline size_t
 EventDeliveryManager::collocation_group_begin_( const size_t g ) const
 {
-  // group g consists of the threads [ ceil( g * num_threads / groups ), ceil( ( g + 1 ) * num_threads / groups ) )
-  const size_t num_threads = emitted_spikes_register_.size();
-  const size_t groups = num_collocation_groups_();
-  return ( g * num_threads + groups - 1 ) / groups;
-}
-
-inline size_t
-EventDeliveryManager::num_collocation_groups_() const
-{
-  return std::min( collocation_groups_, emitted_spikes_register_.size() );
+  return g < group_buffers_.size() ? group_buffers_[ g ].first_thread_ : emitted_spikes_register_.size();
 }
 
 inline std::vector< size_t >
 EventDeliveryManager::get_collocation_group_bounds() const
 {
-  std::vector< size_t > bounds( num_collocation_groups_() + 1 );
+  std::vector< size_t > bounds( group_buffers_.size() + 1 );
   for ( size_t g = 0; g < bounds.size(); ++g )
   {
     bounds[ g ] = collocation_group_begin_( g );

@@ -24,6 +24,7 @@
 #define EVENT_DELIVERY_MANAGER_H
 
 // C++ includes:
+#include <atomic>
 #include <cassert>
 #include <limits>
 #include <vector>
@@ -204,6 +205,40 @@ public:
   void gather_spike_data();
 
   /**
+   * True if the spike registers are collocated by several threads in parallel.
+   *
+   * This is the case if the kernel parameter collocation_groups is larger than one, there is more than one thread and
+   * the spikes are on-grid. The threads are divided into groups of consecutive threads. After the first barrier of a
+   * cycle the first thread of every group copies the spike registers of its group into buffers of the group (one per
+   * target rank), all groups in parallel (collocate_groups()). With several MPI processes the master thread then
+   * concatenates the buffers of the groups, in the order of the groups, into the send buffer, which is what the
+   * collocation of a single thread would have produced; the MPI communication is unchanged. With a single MPI process
+   * (and compressed spikes) there is no communication at all: after the second barrier every thread delivers directly
+   * from the buffers of the groups.
+   */
+  bool use_group_collocation() const;
+
+  /**
+   * Collocation of the group of thread tid by its first thread (no operation for the other threads).
+   *
+   * Called by all threads between the two barriers of a cycle, if use_group_collocation() was true before the first
+   * barrier.
+   */
+  void collocate_groups( const size_t tid );
+
+  /**
+   * Collocation of group g, by any one thread, after all threads of the group have finished their update.
+   *
+   * Called by collocate_groups() (first thread of the group, two barriers) and as the group step of the single barrier
+   * (last thread of the group to arrive, see TreeBarrier).
+   */
+  void collocate_group( const size_t g );
+
+  //! First thread of each collocation group, followed by the number of threads; valid after
+  //! configure_spike_data_buffers().
+  std::vector< size_t > get_collocation_group_bounds() const;
+
+  /**
    * Collocates presynaptic connection information, communicates via
    * MPI and creates presynaptic connection infrastructure.
    */
@@ -332,11 +367,23 @@ private:
   template < typename SpikeDataT >
   void deliver_events_( const size_t tid, const std::vector< SpikeDataT >& recv_buffer );
 
+  //! Delivers events directly from the buffers of the groups (single MPI process, see use_group_collocation()).
+  void deliver_events_from_groups_( const size_t tid );
+
+  //! Copies the buffers of the groups into the send buffer like collocate_spike_data_buffers_() does for the registers.
+  template < typename SpikeDataT >
+  void concatenate_group_buffers_( SendBufferPosition& send_buffer_position,
+    std::vector< SpikeDataT >& send_buffer,
+    std::vector< size_t >& num_spikes_per_rank );
+
   /**
    * Deletes all spikes from spike registers and resets spike
    * counters.
    */
   void reset_spike_register_( const size_t tid );
+
+  //! First thread of collocation group g; for g = number of groups, the number of threads.
+  size_t collocation_group_begin_( const size_t g ) const;
 
   /**
    * Returns true if spike has been moved to MPI buffer, such that it
@@ -384,6 +431,47 @@ private:
 
   bool off_grid_spiking_;  //!< indicates whether spikes are not constrained to
                            //!< the grid
+
+  //! Number of groups of threads that collocate the spike registers in parallel (1: master thread alone).
+  size_t collocation_groups_;
+
+  //! Buffers of one group of threads for the collocation of the spike registers (see use_group_collocation()).
+  struct CollocationGroup_
+  {
+    size_t first_thread_ = 0;  //!< first thread of the group; the group ends where the next one begins
+    //! [ target rank ] spikes of the last cycle, read by the delivery or the MPI exchange
+    std::vector< std::vector< SpikeData > > spikes_;
+    //! [ target rank ] spikes collected in the current cycle; swapped with spikes_ in gather_spike_data()
+    std::vector< std::vector< SpikeData > > spikes_next_;
+  };
+
+  /**
+   * The collocation groups.
+   *
+   * Two sets of spikes per group, because with one barrier per cycle a group collocates as soon as its own threads have
+   * arrived, while threads of other groups may still deliver the spikes of the last cycle. The master thread swaps the
+   * sets within each group; the vector of the groups does not change during a simulation, so that every thread can
+   * read the groups and their first threads at any time. Both sets live in this one member, because an additional
+   * member of the manager changes the memory layout of the kernel, which cost up to 4 % on PD14.
+   */
+  std::vector< CollocationGroup_ > group_buffers_;
+
+  //! Counter on a cache line of its own (see groups_collocated_).
+  struct alignas( 64 ) PaddedCounter_
+  {
+    std::atomic< size_t > value_ = 0;
+  };
+
+  /**
+   * Number of groups that have finished their collocation in the current cycle.
+   *
+   * Atomic, because the collocating threads of all groups increment it concurrently while the master thread spins on
+   * it in gather_spike_data() before it swaps the group buffers; release and acquire make the group buffers visible to
+   * the master. On a cache line of its own, because it is written in every cycle while all threads read the
+   * neighboring members (moduli_ for every delivered spike); sharing a line cost up to 13 % on PD14 (one process of
+   * 288 threads on four NVIDIA Grace chips).
+   */
+  PaddedCounter_ groups_collocated_;
 
   /**
    * Table of pre-computed modulos.
@@ -541,6 +629,23 @@ EventDeliveryManager::get_slice_modulo( long d )
   assert( static_cast< std::vector< long >::size_type >( d ) < slice_moduli_.size() );
 
   return slice_moduli_[ d ];
+}
+
+inline size_t
+EventDeliveryManager::collocation_group_begin_( const size_t g ) const
+{
+  return g < group_buffers_.size() ? group_buffers_[ g ].first_thread_ : emitted_spikes_register_.size();
+}
+
+inline std::vector< size_t >
+EventDeliveryManager::get_collocation_group_bounds() const
+{
+  std::vector< size_t > bounds( group_buffers_.size() + 1 );
+  for ( size_t g = 0; g < bounds.size(); ++g )
+  {
+    bounds[ g ] = collocation_group_begin_( g );
+  }
+  return bounds;
 }
 
 }  // namespace nest

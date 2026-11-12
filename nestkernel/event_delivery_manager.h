@@ -24,7 +24,6 @@
 #define EVENT_DELIVERY_MANAGER_H
 
 // C++ includes:
-#include <algorithm>
 #include <atomic>
 #include <cassert>
 #include <limits>

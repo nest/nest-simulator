@@ -23,7 +23,7 @@
 #include "event_delivery_manager.h"
 
 // C++ includes:
-#include <algorithm>  // rotate
+#include <algorithm>  // rotate, ranges::find
 #include <numeric>    // accumulate
 #include <thread>     // this_thread::yield
 
@@ -165,7 +165,7 @@ EventDeliveryManager::set_status( const Dictionary& dict )
         or kernel().simulation_manager.get_slice_origin().get_steps() > 0 ) )
     {
       // Spikes that are still in the group buffers or in the receive buffers would be lost. After Prepare, the group
-      // buffers are allocated for the old number of groups.
+      // buffers are allocated for the old number of groups, so a change would not take effect.
       throw BadProperty( "collocation_groups can only be changed before the first call of Prepare or Simulate." );
     }
     collocation_groups_ = groups;
@@ -253,6 +253,7 @@ EventDeliveryManager::configure_spike_data_buffers()
   // buffers for the collocation by several threads (allocated here, not in the parallel region)
   // group g consists of the threads [ ceil( g * num_threads / groups ), ceil( ( g + 1 ) * num_threads / groups ) )
   const size_t num_threads = kernel().vp_manager.get_num_threads();
+  assert( emitted_spikes_register_.size() == num_threads );  // collocation_group_begin_() ends the last group there
   const size_t num_groups = std::max< size_t >( 1, std::min( collocation_groups_, num_threads ) );
   group_buffers_.assign( num_groups, CollocationGroup_() );
   for ( size_t g = 0; g < num_groups; ++g )

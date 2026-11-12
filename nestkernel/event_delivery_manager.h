@@ -456,14 +456,22 @@ private:
    */
   std::vector< CollocationGroup_ > group_buffers_;
 
+  //! Counter on a cache line of its own (see groups_collocated_).
+  struct alignas( 64 ) PaddedCounter_
+  {
+    std::atomic< size_t > value_ = 0;
+  };
+
   /**
    * Number of groups that have finished their collocation in the current cycle.
    *
    * Atomic, because the collocating threads of all groups increment it concurrently while the master thread spins on
    * it in gather_spike_data() before it swaps the group buffers; release and acquire make the group buffers visible to
-   * the master.
+   * the master. On a cache line of its own, because it is written in every cycle while all threads read the
+   * neighboring members (moduli_ for every delivered spike); sharing a line cost up to 13 % on PD14 (one process of
+   * 288 threads on four NVIDIA Grace chips).
    */
-  std::atomic< size_t > groups_collocated_;
+  PaddedCounter_ groups_collocated_;
 
   /**
    * Table of pre-computed modulos.

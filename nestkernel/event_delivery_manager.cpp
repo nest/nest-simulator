@@ -52,7 +52,7 @@ EventDeliveryManager::EventDeliveryManager()
   : off_grid_spiking_( false )
   , collocation_groups_( 1 )
   , group_buffers_()
-  , groups_collocated_( 0 )
+  , groups_collocated_()
   , moduli_()
   , slice_moduli_()
   , emitted_spikes_register_()
@@ -431,7 +431,7 @@ EventDeliveryManager::collocate_group( const size_t g )
     }
   }
   sw_collocate_spike_data_.stop();
-  groups_collocated_.fetch_add( 1, std::memory_order_release );
+  groups_collocated_.value_.fetch_add( 1, std::memory_order_release );
 }
 
 void
@@ -442,7 +442,7 @@ EventDeliveryManager::gather_spike_data()
     // Wait for the other groups; the first thread of the first group is the master thread. With one barrier per cycle
     // all groups are complete before the master step, and the wait ends at once.
     unsigned int spins = 0;
-    while ( groups_collocated_.load( std::memory_order_acquire ) < group_buffers_.size() )
+    while ( groups_collocated_.value_.load( std::memory_order_acquire ) < group_buffers_.size() )
     {
       if ( spins < 100 )
       {
@@ -466,7 +466,7 @@ EventDeliveryManager::gather_spike_data()
     // threads wait at the second barrier or look up their group (first_thread_, which the swap does not touch), with
     // one barrier they wait in it. The wait above is needed also with one MPI process, since the swap must not precede
     // the collocation of any group.
-    groups_collocated_.store( 0, std::memory_order_relaxed );
+    groups_collocated_.value_.store( 0, std::memory_order_relaxed );
     for ( auto& group : group_buffers_ )
     {
       group.spikes_.swap( group.spikes_next_ );

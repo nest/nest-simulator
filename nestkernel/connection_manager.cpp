@@ -1803,21 +1803,29 @@ ConnectionManager::collect_compressed_spike_data( const size_t tid )
 #pragma omp single
     {
       source_table_.resize_compressible_sources();
-      compressed_spike_data_block_of_.assign( kernel().vp_manager.get_num_threads(), 0 );
     }  // of omp single; implicit barrier
 
     source_table_.collect_compressible_sources( tid );
-    // Until the blocks are formed below, the table of the blocks holds the NUMA node of every thread: the nodes must be
-    // recorded by the threads of this parallel region, and a member of their own would change the memory layout of
-    // the kernel (see VPManager::get_thread_blocks()).
-    compressed_spike_data_block_of_[ tid ] = kernel().vp_manager.get_numa_node_of_calling_thread();
     kernel().get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
     kernel().get_omp_synchronization_construction_stopwatch().stop();
 #pragma omp single
     {
       source_table_.fill_compressed_spike_data( compressed_spike_data_ );
+      // Allocated after the compressed spike data, as before the alignment with the NUMA nodes, so that the large
+      // allocations keep their order in memory.
+      compressed_spike_data_block_of_.assign( kernel().vp_manager.get_num_threads(), 0 );
+    }  // of omp single; implicit barrier
 
+    // Until the blocks are formed below, the table of the blocks holds the NUMA node of every thread: the nodes must be
+    // recorded by the threads of this parallel region, and a member of their own would change the memory layout of the
+    // kernel (see VPManager::get_thread_blocks()).
+    compressed_spike_data_block_of_[ tid ] = kernel().vp_manager.get_numa_node_of_calling_thread();
+    kernel().get_omp_synchronization_construction_stopwatch().start();
+#pragma omp barrier
+    kernel().get_omp_synchronization_construction_stopwatch().stop();
+#pragma omp single
+    {
       // blocks of consecutive threads, aligned with the NUMA nodes of the threads
       const std::vector< size_t > bounds =
         thread_blocks( compressed_spike_data_block_of_, compressed_spike_data_copies_ );

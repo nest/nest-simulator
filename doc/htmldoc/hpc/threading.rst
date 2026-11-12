@@ -83,6 +83,35 @@ Table of OpenMP settings
    * - ``export OMP_DISPLAY_ENV=true``
      - display OpenMP variables
 
+.. _one_core_free:
+
+Leaving one core to the operating system
+````````````````````````````````````````
+
+The operating system handles most of its background work, such as interrupts and system services, on the first core of a
+node. A thread of NEST on that core is delayed now and then, and since all threads meet at the end of every simulation cycle,
+the other threads wait for it. Leaving this core free and running one thread fewer can therefore make a simulation faster,
+in particular with many threads per process and short simulation cycles. Whether it does depends on the system, so compare
+the run times with and without.
+
+To leave core 0 free, list the places of the threads explicitly. For one process on a node with two sockets of 64 cores
+each (cores 0-63 and 64-127):
+
+.. code-block:: bash
+
+   export OMP_NUM_THREADS=127
+   export OMP_PROC_BIND=close
+   export OMP_PLACES="{1}:63,{64}:64"
+
+and set ``nest.local_num_threads = 127`` in your script. ``{1}:63`` means 63 places starting at core 1, ``{64}:64`` the 64
+cores of the second socket. Run ``lscpu`` to see how the cores of your node are numbered and which cores belong to which
+socket or NUMA node. With Slurm, request all cores of the node (``--cpus-per-task=128``) and let OpenMP place the threads
+(``srun --cpu-bind=none``), so that the places above are not restricted by Slurm.
+
+When the threads are bound to places in this way, NEST forms its blocks of threads (``collocation_groups``,
+``compressed_spike_data_copies``) along the NUMA nodes of the threads, so that a block does not span two nodes even if the
+nodes run different numbers of threads.
+
 .. note::
 
    Using ```python``` on HPC systems might lead to inconsistencies in multi-threading libraries resulting in a degredation of performance.

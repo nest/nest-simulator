@@ -1807,8 +1807,9 @@ ConnectionManager::collect_compressed_spike_data( const size_t tid )
     }  // of omp single; implicit barrier
 
     source_table_.collect_compressible_sources( tid );
-    // until the blocks are formed below, the table of the blocks holds the NUMA node of every thread (no additional
-    // member, see VPManager::get_thread_blocks())
+    // Until the blocks are formed below, the table of the blocks holds the NUMA node of every thread: the nodes must be
+    // recorded by the threads of this parallel region, and a member of their own would change the memory layout of
+    // the kernel (see VPManager::get_thread_blocks()).
     compressed_spike_data_block_of_[ tid ] = kernel().vp_manager.get_numa_node_of_calling_thread();
     kernel().get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
@@ -1834,6 +1835,10 @@ ConnectionManager::collect_compressed_spike_data( const size_t tid )
             compressed_spike_data_column_of_[ t ] = t - bounds[ b ];
           }
         }
+      }
+      else
+      {
+        compressed_spike_data_block_of_.clear();  // holds the NUMA nodes, not needed with a single copy
       }
     }  // of omp single; implicit barrier
 

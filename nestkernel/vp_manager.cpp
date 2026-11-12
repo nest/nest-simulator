@@ -204,7 +204,7 @@ VPManager::set_num_threads( size_t n_threads )
 size_t
 VPManager::get_numa_node_of_calling_thread() const
 {
-#if defined( __linux__ ) and defined( SYS_getcpu )
+#if defined( __linux__ ) && defined( SYS_getcpu )
 #ifdef _OPENMP
   if ( omp_get_place_num() < 0 )
   {

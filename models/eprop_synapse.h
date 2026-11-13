@@ -89,7 +89,7 @@ For more information, see the following topics:
 * triggering synaptic plasticity computations to reduce memory usage via the
   :ref:`flush event mechanism<flush_event_mechanism>`
 
-Details on the event-based NEST implementation of e-prop can be found in :footcite:p:`KorcsakGorzo2025`.
+Details on the event-based NEST implementation of e-prop can be found in :footcite:p:`KorcsakGorzo2026`.
 
 .. warning::
 
@@ -166,7 +166,7 @@ EndUserDocs */
  * @brief Base class implementing common properties for e-prop synapses with additional biological features.
  *
  * Base class implementing common properties for the e-prop synapse model according to Bellec et al. (2020) with
- * additional biological features described in Korcsak-Gorzo et al. (2025).
+ * additional biological features described in Korcsak-Gorzo et al. (2026).
 
  *
  * This class in particular manages a pointer to weight-optimizer common properties to support
@@ -213,7 +213,7 @@ void register_eprop_synapse( const std::string& name );
  * @brief Class implementing a synapse model for e-prop plasticity with additional biological features.
  *
  * Class implementing a synapse model for e-prop plasticity according to Bellec et al. (2020) with
- * additional biological features described in Korcsak-Gorzo et al. (2025).
+ * additional biological features described in Korcsak-Gorzo et al. (2026).
  *
  * @note Each synapse has an optimizer_ object managed through a `WeightOptimizer*`, pointing to an object of
  * a specific weight optimizer type. This optimizer, drawing also on parameters in the `WeightOptimizerCommonProperties`

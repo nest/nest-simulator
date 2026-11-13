@@ -10,7 +10,7 @@ a look at our `detailed guidelines for C++ coding in NEST <https://nest.github.i
 Development environment
 -----------------------
 
-We have provided an `environment.yml <https://github.com/nest/nest-simulator/blob/master/environment.yml>`_
+We have provided an `environment.yml <https://github.com/nest/nest-simulator/blob/main/environment.yml>`_
 file that contains all packages to do development in NEST, including the tools listed below.
 
 See our :ref:`instructions on installing NEST from source <dev_install>`.
@@ -30,7 +30,7 @@ pre-commit
 
 We use `pre-commit <https://pre-commit.com/>`_ to run Git hooks on every commit to identify simple issues such as
 trailing whitespace or not complying with the required formatting. Our ``pre-commit`` configuration is
-specified in the `.pre-commit-config.yaml <https://github.com/nest/nest-simulator/blob/master/.pre-commit-config.yaml>`_
+specified in the `.pre-commit-config.yaml <https://github.com/nest/nest-simulator/blob/main/.pre-commit-config.yaml>`_
 file.
 
 To set up the Git hook scripts specified in ``.pre-commit-config.yaml``, run
@@ -83,7 +83,7 @@ Run ``isort`` manually with
 clang-format
 ~~~~~~~~~~~~
 
-We use `clang-format <http://clang.llvm.org/docs/ClangFormat.html>`_ to format all C/C++ code. The configuration is defined in the `.clang-format <https://github.com/nest/nest-simulator/blob/master/.clang-format>`_ file corresponding to the version specified by ``CLANG_REQUIRE_VERSION`` in `nestbuildmatrix.yml <https://github.com/nest/nest-simulator/blob/master/.github/workflows/nestbuildmatrix.yml>`_.
+We use `clang-format <http://clang.llvm.org/docs/ClangFormat.html>`_ to format all C/C++ code. The configuration is defined in the `.clang-format <https://github.com/nest/nest-simulator/blob/main/.clang-format>`_ file corresponding to the version specified by ``CLANG_REQUIRE_VERSION`` in `nestbuildmatrix.yml <https://github.com/nest/nest-simulator/blob/main/.github/workflows/nestbuildmatrix.yml>`_.
 
 ``clang-format`` is run automatically via ``pre-commit``.
 
@@ -92,4 +92,4 @@ Local static analysis
 
 We have several static code analyzers in the GitHub Actions CI. To run static code checks locally,
 please refer to the "run" lines in the GitHub Actions CI definition at
-https://github.com/nest/nest-simulator/blob/master/.github/workflows/nestbuildmatrix.yml.
+https://github.com/nest/nest-simulator/blob/main/.github/workflows/nestbuildmatrix.yml.

@@ -138,8 +138,10 @@ these parameters are marked with an asterisk.
  E_ex*       mV      Excitatory reversal potential
  E_in*       mV      Inhibitory reversal potential
  g_L*        nS      Leak conductance
- tau_syn_ex* ms      Rise time of the excitatory synaptic alpha function
- tau_syn_in* ms      Rise time of the inhibitory synaptic alpha function
+ tau_syn_ex* ms      Rise time of the excitatory synaptic conductance
+                     (alpha function)
+ tau_syn_in* ms      Rise time of the inhibitory synaptic conductance
+                     (alpha function)
  I_e*        pA      Constant input current
  g_sp        nS      Conductance connecting soma and proximal dendrite
  g_pd        nS      Conductance connecting proximal and distal dendrite

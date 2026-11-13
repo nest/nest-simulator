@@ -19,13 +19,6 @@ conda-forge install |linux| |macos|
 You can install NEST with the :ref:`Conda forge package <conda_forge_install>`.
 
 
-Live media |linux| |macos| |windows|
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-We have live media (.ova) if you want to run NEST in a virtual machine.
-
-:ref:`Download the live media here <download_livemedia>`, and follow the :doc:`instructions to set up the virtual machine <livemedia>` .
-
 
 -------------
 

@@ -72,23 +72,23 @@ leads to quite long compilation times and is often not necessary.
 There are two ways to restrict the set of built-in models to tailor
 NEST to your needs:
 
-+---------------------------------------+------------------------------------------------------------------------------+
-| ``-Dwith-modelset=<modelset>``        | Specify the modelset to include. Sample configurations are in the            |
-|                                       | `modelsets <https://github.com/nest/nest-simulator/tree/master/modelsets>`_  |
-|                                       | directory in the top-level of the source tree. A modelset is just a file     |
-|                                       | listing one model header files (without the .h filename extension) to scan   |
-|                                       | for models.                                                                  |
-|                                       | Available pre-defined modelsets include: ``full`` (all models, default),     |
-|                                       | ``binary`` (binary neuron models), ``rate`` (rate-based models),             |
-|                                       | ``precise`` (high-precision IAF models), ``iaf_minimal`` (minimal IAF set),  |
-|                                       | ``eprop`` (e-prop learning models), and ``empty`` (no built-in models).      |
-|                                       | Using a smaller modelset significantly reduces compilation time.             |
-|                                       | This option is mutually exclusive with -Dwith-models. [default=full].        |
-+---------------------------------------+------------------------------------------------------------------------------+
-| ``-Dwith-models=[<modellist>|OFF]``   | Specify the models to include as a semicolon-separated list of model header  |
-|                                       | files (without the .h filename extension) that are to be scanned for models. |
-|                                       | This option is mutually exclusive with -Dwith-modelset. [default=OFF].       |
-+---------------------------------------+------------------------------------------------------------------------------+
++---------------------------------------+--------------------------------------------------------------------------------+
+| ``-Dwith-modelset=<modelset>``        | Specify the modelset to include. Sample configurations are in the              |
+|                                       | `modelsets <https://github.com/nest/nest-simulator/tree/main/modelsets>`_      |
+|                                       | directory in the top-level of the source tree. A modelset is just a file       |
+|                                       | listing one model header files (without the .h filename extension) to scan     |
+|                                       | for models.                                                                    |
+|                                       | Available pre-defined modelsets include: ``full`` (all models, default),       |
+|                                       | ``binary`` (binary neuron models), ``rate`` (rate-based models),               |
+|                                       | ``precise`` (high-precision IAF models), ``iaf_minimal`` (minimal IAF set),    |
+|                                       | ``eprop`` (e-prop learning models), and ``empty`` (no built-in models).        |
+|                                       | Using a smaller modelset significantly reduces compilation time.               |
+|                                       | This option is mutually exclusive with -Dwith-models. [default=full].          |
++---------------------------------------+--------------------------------------------------------------------------------+
+| ``-Dwith-models=[<modellist>|OFF]``   | Specify the models to include as a semicolon-separated list of model header    |
+|                                       | files (without the .h filename extension) that are to be scanned for models.   |
+|                                       | This option is mutually exclusive with -Dwith-modelset. [default=OFF].         |
++---------------------------------------+--------------------------------------------------------------------------------+
 
 .. _performance_cmake:
 

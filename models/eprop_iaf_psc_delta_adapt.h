@@ -228,7 +228,7 @@ For more information on e-prop plasticity, see the documentation on the other e-
  * :doc:`eprop_synapse<../models/eprop_synapse/>`
  * :doc:`eprop_learning_signal_connection<../models/eprop_learning_signal_connection/>`
 
-Details on the event-based NEST implementation of e-prop can be found in :footcite:p:`KorcsakGorzo2025`.
+Details on the event-based NEST implementation of e-prop can be found in :footcite:p:`KorcsakGorzo2026`.
 
 Parameters
 ++++++++++
@@ -368,7 +368,7 @@ void register_eprop_iaf_psc_delta_adapt( const std::string& name );
  *
  * Class implementing a current-based leaky integrate-and-fire neuron model with delta-shaped postsynaptic currents
  * and spike threshold adaptation for e-prop plasticity according to Bellec et al. (2020) with additional biological
- * features described in Korcsak-Gorzo et al. (2025).
+ * features described in Korcsak-Gorzo et al. (2026).
  */
 class eprop_iaf_psc_delta_adapt : public EpropArchivingNodeRecurrent< false >
 {

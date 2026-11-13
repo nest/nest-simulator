@@ -89,7 +89,7 @@ Description
 that also supports gap junctions.
 
 This model is derived from the ``hh_conda_exp`` model, but supports double-exponential-shaped
-(beta-shaped) synaptic conductances and also supports gap junctions. The model is originally
+(beta-function shaped) synaptic conductances and also supports gap junctions. The model is originally
 based on a model of hippocampal pyramidal cells by Traub and Miles :footcite:p:`Traub1991`.
 The key differences between the current model and the model in :footcite:p:`Traub1991` are:
 
@@ -134,6 +134,15 @@ Gap Junctions are implemented by a gap current of the form
    Traub and Miles used :math:`t_{ref} = 3` ms (:footcite:p:`Traub1991`, p 118), while we used
    :math:`t_{ref} = 2` ms in :footcite:p:`Traub1991`.
 
+.. note::
+
+   Incoming spikes are routed to the excitatory or inhibitory synapse type by the **sign of the
+   connection weight**. A positive weight targets the excitatory synapse type, a negative weight
+   the inhibitory one. Only the absolute value of the weight sets the conductance
+   amplitude. Spike connections must use the default ``receptor_type`` of 0.
+
+   See :ref:`synapse_selection` for the conventions used by other models.
+
 Parameters
 ++++++++++
 
@@ -147,10 +156,14 @@ V_T          mV      Voltage offset that controls dynamics. For default
 E_L          mV      Leak reversal potential
 C_m          pF      Capacity of the membrane
 g_L          nS      Leak conductance
-tau_rise_ex  ms      Excitatory synaptic beta function rise time
-tau_decay_ex ms      Excitatory synaptic beta function decay time
-tau_rise_in  ms      Inhibitory synaptic beta function rise time
-tau_decay_in ms      Inhibitory synaptic beta function decay time
+tau_rise_ex  ms      Rise time of the excitatory synaptic conductance
+                     (beta function)
+tau_decay_ex ms      Decay time of the excitatory synaptic conductance
+                     (beta function)
+tau_rise_in  ms      Rise time of the inhibitory synaptic conductance
+                     (beta function)
+tau_decay_in ms      Decay time of the inhibitory synaptic conductance
+                     (beta function)
 t_ref        ms      Duration of refractory period (see Note)
 E_ex         mV      Excitatory synaptic reversal potential
 E_in         mV      Inhibitory synaptic reversal potential

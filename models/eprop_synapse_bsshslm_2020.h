@@ -76,7 +76,7 @@ For more information, see the following topics:
 * triggering synaptic plasticity computations to reduce memory usage via the
   :ref:`flush event mechanism<flush_event_mechanism>`
 
-Details on the event-based NEST implementation of e-prop can be found in :footcite:p:`KorcsakGorzo2025`.
+Details on the event-based NEST implementation of e-prop can be found in :footcite:p:`KorcsakGorzo2026`.
 
 .. warning::
 

@@ -137,7 +137,7 @@ The dynamics of the membrane potential :math:`V` is given by:
 
 where :math:`\tau` is the membrane time constant and :math:`C` is the capacitance. :math:`I` is the sum of the synaptic currents and any external input:
 
-Postsynaptic currents are alpha-shaped, i.e. the time course of the synaptic current :math:`\iota` due to one incoming spike is
+Postsynaptic currents are alpha-function shaped, i.e. the time course of the synaptic current :math:`\iota` due to one incoming spike is
 
 .. math::
 

@@ -53,7 +53,7 @@ For more information on e-prop plasticity, see the documentation on the other e-
  * :doc:`eprop_readout<../models/eprop_readout/>`
  * :doc:`eprop_synapse<../models/eprop_synapse/>`
 
-Details on the event-based NEST implementation of e-prop can be found in :footcite:p:`KorcsakGorzo2025`.
+Details on the event-based NEST implementation of e-prop can be found in :footcite:p:`KorcsakGorzo2026`.
 
 Parameters
 ++++++++++
@@ -119,7 +119,7 @@ void register_eprop_learning_signal_connection( const std::string& name );
  *
  * Class implementing a synapse model transmitting secondary feedback learning signals for e-prop plasticity
  * according to Bellec et al. (2020) with additional biological features described in
- * Korcsak-Gorzo et al. (2025).
+ * Korcsak-Gorzo et al. (2026).
  */
 template < typename targetidentifierT >
 class eprop_learning_signal_connection : public Connection< targetidentifierT, TotalDelay >

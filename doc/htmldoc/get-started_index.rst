@@ -214,7 +214,7 @@ More topics
    :maxdepth: 1
    :hidden:
 
-   tutorials/pynest_tutorial/index
+   tutorials/pynest_tutorial/README
    tutorials/music_tutorial/index
    neurons/neuron_update
    neurons/neuron_types

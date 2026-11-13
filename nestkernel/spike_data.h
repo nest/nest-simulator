@@ -92,8 +92,7 @@ enum enum_flush_event
 };
 
 /**
- * Used to communicate spikes. These are the elements of the MPI
- * buffers.
+ * Used to communicate spikes. These are the elements of the MPI buffers.
  *
  * @see TargetData
  */

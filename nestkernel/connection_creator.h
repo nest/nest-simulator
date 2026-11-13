@@ -184,6 +184,8 @@ private:
   std::vector< std::vector< Dictionary > > param_dicts_;
   std::vector< ParameterPTR > weight_;
   std::vector< ParameterPTR > delay_;
+  std::vector< ParameterPTR > dendritic_delay_;
+  std::vector< ParameterPTR > axonal_delay_;
 };
 
 }  // namespace nest

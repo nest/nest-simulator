@@ -28,12 +28,12 @@
 #include <deque>
 
 // Includes from nestkernel:
+#include "axonal_delay_archiving_node.h"
 #include "histentry.h"
 #include "ignore_and_spike_mechanism.h"
 #include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
-#include "structural_plasticity_node.h"
 
 
 #define DEBUG_ARCHIVER 1
@@ -45,7 +45,7 @@ namespace nest
  * A node which archives spike history for the purposes of spike-timing
  * dependent plasticity (STDP)
  */
-class ArchivingNode : public StructuralPlasticityNode, public IgnoreAndSpikeMechanism
+class ArchivingNode : public AxonalDelayArchivingNode, public IgnoreAndSpikeMechanism
 {
 public:
   ArchivingNode();
@@ -91,7 +91,9 @@ public:
    * t_first_read: The newly registered synapse will read the history entries
    * with t > t_first_read.
    */
-  void register_stdp_connection( double t_first_read, double delay ) override;
+  void register_stdp_connection( const double t_first_read,
+    const double dendritic_delay,
+    const double axonal_delay ) override;
 
   void get_status( Dictionary& d ) const override;
   void set_status( const Dictionary& d ) override;

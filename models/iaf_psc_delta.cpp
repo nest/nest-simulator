@@ -234,6 +234,8 @@ iaf_psc_delta::init_buffers_()
 void
 iaf_psc_delta::pre_run_hook()
 {
+  AxonalDelayArchivingNode::pre_run_hook_();
+
   B_.logger_.init();
 
   const double h = Time::get_resolution().get_ms();
@@ -326,6 +328,8 @@ iaf_psc_delta::update( Time const& origin, const long from, const long to )
 
     // voltage logging
     B_.logger_.record_data( origin.get_steps() + lag );
+
+    reset_correction_entries_stdp_ax_delay_( lag );
   }
 }
 
@@ -334,12 +338,18 @@ iaf_psc_delta::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  // EX: We must compute the arrival time of the incoming spike
-  //     explicity, since it depends on delay and offset within
-  //     the update cycle.  The way it is done here works, but
-  //     is clumsy and should be improved.
+  // EX: We must compute the arrival time of the incoming spike explicitly, since it depends on delay and offset within
+  //     the update cycle.  The way it is done here works, but is clumsy and should be improved.
   B_.spikes_.add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
+}
+
+
+void
+iaf_psc_delta::handle( CorrectionSpikeEvent& e )
+{
+  B_.spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    ( e.get_new_weight() - e.get_weight() ) * e.get_multiplicity() );
 }
 
 void

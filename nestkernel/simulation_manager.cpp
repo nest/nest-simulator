@@ -24,21 +24,44 @@
 
 // C includes:
 #include <sys/time.h>
-
 // C++ includes:
+#include <algorithm>
+#include <cmath>
+#include <exception>
 #include <iomanip>
+#include <iostream>
 #include <limits>
+#include <sstream>
+#include <string>
 #include <vector>
 
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "numerics.h"
-
 // Includes from nestkernel:
-#include "connection_manager_impl.h"
+#include "block_vector.h"
+#include "config.h"
+#include "connection_manager.h"
+#include "dictionary.h"
 #include "event_delivery_manager.h"
+#include "exceptions.h"
+#include "io_manager.h"
 #include "kernel_manager.h"
+#include "logging.h"
+#include "logging_manager.h"
+#include "model_manager.h"
+#include "mpi_manager.h"
+#include "music_manager.h"
+#include "nest_names.h"
+#include "nest_timeconverter.h"
+#include "nest_types.h"
+#include "node.h"
+#include "node_manager.h"
+#include "random_manager.h"
+#include "sp_manager.h"
+#include "sparse_node_array.h"
 #include "stopwatch_impl.h"
+#include "vp_manager.h"
 
 
 namespace nest
@@ -73,6 +96,10 @@ SimulationManager::SimulationManager()
 void
 SimulationManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
+  sw_omp_synchronization_construction_.reset();
+  sw_omp_synchronization_simulation_.reset();
+  sw_mpi_synchronization_.reset();
+
   if ( adjust_number_of_threads_or_rng_only )
   {
     return;
@@ -172,7 +199,7 @@ SimulationManager::set_status( const Dictionary& d )
       from_step_ = 0;
       slice_ = 0;
       // clear all old spikes
-      kernel().event_delivery_manager.configure_spike_data_buffers();
+      kernel::manager< EventDeliveryManager >.configure_spike_data_buffers();
     }
   }
 
@@ -189,7 +216,7 @@ SimulationManager::set_status( const Dictionary& d )
   if ( tics_per_ms_updated or res_updated )
   {
     std::vector< std::string > errors;
-    if ( kernel().node_manager.size() > 0 )
+    if ( kernel::manager< NodeManager >.size() > 0 )
     {
       errors.push_back( "Nodes have already been created" );
     }
@@ -197,7 +224,7 @@ SimulationManager::set_status( const Dictionary& d )
     {
       errors.push_back( "Network has been simulated" );
     }
-    if ( kernel().model_manager.are_model_defaults_modified() )
+    if ( kernel::manager< ModelManager >.are_model_defaults_modified() )
     {
       errors.push_back( "Model defaults were modified" );
     }
@@ -236,8 +263,8 @@ SimulationManager::set_status( const Dictionary& d )
         // adjust to new resolution
         clock_.calibrate();
         // adjust delays in the connection system to new resolution
-        kernel().connection_manager.calibrate( time_converter );
-        kernel().model_manager.calibrate( time_converter );
+        kernel::manager< ConnectionManager >.calibrate( time_converter );
+        kernel::manager< ModelManager >.calibrate( time_converter );
 
         std::string msg =
           String::compose( "Tics per ms and resolution changed from %1 tics and %2 ms to %3 tics and %4 ms.",
@@ -273,8 +300,8 @@ SimulationManager::set_status( const Dictionary& d )
         Time::set_resolution( resd );
         clock_.calibrate();  // adjust to new resolution
         // adjust delays in the connection system to new resolution
-        kernel().connection_manager.calibrate( time_converter );
-        kernel().model_manager.calibrate( time_converter );
+        kernel::manager< ConnectionManager >.calibrate( time_converter );
+        kernel::manager< ModelManager >.calibrate( time_converter );
 
         std::string msg = String::compose( "Temporal resolution changed from %1 to %2 ms.", old_res, resd );
         LOG( VerbosityLevel::INFO, "SimulationManager::set_status", msg );
@@ -300,7 +327,7 @@ SimulationManager::set_status( const Dictionary& d )
   bool wfr;
   if ( d.update_value( names::use_wfr, wfr ) )
   {
-    if ( kernel().node_manager.size() > 0 )
+    if ( kernel::manager< NodeManager >.size() > 0 )
     {
       LOG( VerbosityLevel::ERROR,
         "SimulationManager::set_status",
@@ -334,7 +361,7 @@ SimulationManager::set_status( const Dictionary& d )
         "relaxation is disabled. Set use_wfr to true first." );
       throw KernelException();
     }
-    else if ( kernel().connection_manager.get_num_connections() != 0 )
+    else if ( kernel::manager< ConnectionManager >.get_num_connections() != 0 )
     {
       LOG( VerbosityLevel::ERROR,
         "SimulationManager::set_status",
@@ -494,6 +521,12 @@ SimulationManager::get_status( Dictionary& d )
   sw_deliver_secondary_data_.get_status(
     d, names::time_deliver_secondary_data, names::time_deliver_secondary_data_cpu );
 
+  sw_omp_synchronization_construction_.get_status(
+    d, names::time_omp_synchronization_construction, names::time_omp_synchronization_construction_cpu );
+  sw_omp_synchronization_simulation_.get_status(
+    d, names::time_omp_synchronization_simulation, names::time_omp_synchronization_simulation_cpu );
+  sw_mpi_synchronization_.get_status( d, names::time_mpi_synchronization, names::time_mpi_synchronization_cpu );
+
   d[ names::eprop_update_interval ] = eprop_update_interval_;
   d[ names::eprop_learning_window ] = eprop_learning_window_;
   d[ names::eprop_reset_neurons_on_update ] = eprop_reset_neurons_on_update_;
@@ -508,7 +541,7 @@ SimulationManager::get_status( Dictionary& d )
 void
 SimulationManager::prepare()
 {
-  assert( kernel().is_initialized() );
+  assert( kernel::manager< KernelManager >.is_initialized() );
 
   if ( prepared_ )
   {
@@ -524,9 +557,12 @@ SimulationManager::prepare()
       "earlier error. Please run ResetKernel first." );
   }
 
+  sw_omp_synchronization_simulation_.reset();
+  sw_mpi_synchronization_.reset();
+
   // reset profiling timers
   reset_timers_for_dynamics();
-  kernel().event_delivery_manager.reset_timers_for_dynamics();
+  kernel::manager< EventDeliveryManager >.reset_timers_for_dynamics();
 
   t_real_ = 0;
   t_slice_begin_ = timeval();  // set to timeval{0, 0} as unset flag
@@ -534,38 +570,39 @@ SimulationManager::prepare()
 
   // find shortest and longest delay across all MPI processes
   // this call sets the member variables
-  kernel().connection_manager.update_delay_extrema_();
-  kernel().event_delivery_manager.init_moduli();
+  kernel::manager< ConnectionManager >.update_delay_extrema_();
+  kernel::manager< EventDeliveryManager >.init_moduli();
 
   // if at the beginning of a simulation, set up spike buffers
   if ( not simulated_ )
   {
-    kernel().event_delivery_manager.configure_spike_data_buffers();
+    kernel::manager< EventDeliveryManager >.configure_spike_data_buffers();
   }
 
-  kernel().node_manager.update_thread_local_node_data();
-  kernel().node_manager.prepare_nodes();
+  kernel::manager< NodeManager >.update_thread_local_node_data();
+  kernel::manager< NodeManager >.prepare_nodes();
 
   // we have to do enter_runtime after prepare_nodes, since we use
   // calibrate to map the ports of MUSIC devices, which has to be done
   // before enter_runtime
   if ( not simulated_ )  // only enter the runtime mode once
   {
-    double tick = Time::get_resolution().get_ms() * kernel().connection_manager.get_min_delay();
-    kernel().music_manager.enter_runtime( tick );
+    double tick = Time::get_resolution().get_ms() * kernel::manager< ConnectionManager >.get_min_delay();
+    kernel::manager< MUSICManager >.enter_runtime( tick );
   }
   prepared_ = true;
 
   // check whether waveform relaxation is used on any MPI process;
   // needs to be called before update_connection_intrastructure_since
   // it resizes coefficient arrays for secondary events
-  kernel().node_manager.check_wfr_use();
+  kernel::manager< NodeManager >.check_wfr_use();
 
-  if ( kernel().node_manager.have_nodes_changed() or kernel().connection_manager.connections_have_changed() )
+  if ( kernel::manager< NodeManager >.have_nodes_changed()
+    or kernel::manager< ConnectionManager >.connections_have_changed() )
   {
 #pragma omp parallel
     {
-      const size_t tid = kernel().vp_manager.get_thread_id();
+      const size_t tid = kernel::manager< VPManager >.get_thread_id();
       update_connection_infrastructure( tid );
     }  // of omp parallel
   }
@@ -617,7 +654,7 @@ SimulationManager::run( Time const& t )
 {
   assert_valid_simtime( t );
 
-  kernel().random_manager.check_rng_synchrony();
+  kernel::manager< RandomManager >.check_rng_synchrony();
 
   if ( not prepared_ )
   {
@@ -634,10 +671,10 @@ SimulationManager::run( Time const& t )
     return;
   }
 
-  kernel().io_manager.pre_run_hook();
+  kernel::manager< IOManager >.pre_run_hook();
 
   // Reset local spike counters within event_delivery_manager
-  kernel().event_delivery_manager.reset_counters();
+  kernel::manager< EventDeliveryManager >.reset_counters();
 
   sw_simulate_.start();
 
@@ -645,14 +682,14 @@ SimulationManager::run( Time const& t )
   // of a simulation, it has been reset properly elsewhere.  If
   // a simulation was ended and is now continued, from_step_ will
   // have the proper value.  to_step_ is set as in advance_time().
-  to_step_ = std::min( from_step_ + to_do_, kernel().connection_manager.get_min_delay() );
+  to_step_ = std::min( from_step_ + to_do_, kernel::manager< ConnectionManager >.get_min_delay() );
 
 
   // Warn about possible inconsistencies, see #504.
   // This test cannot come any earlier, because we first need to compute
   // min_delay_
   // above.
-  if ( t.get_steps() % kernel().connection_manager.get_min_delay() != 0 )
+  if ( t.get_steps() % kernel::manager< ConnectionManager >.get_min_delay() != 0 )
   {
     LOG( VerbosityLevel::WARNING,
       "SimulationManager::run",
@@ -666,8 +703,8 @@ SimulationManager::run( Time const& t )
 
   call_update_();
 
-  kernel().io_manager.post_run_hook();
-  kernel().random_manager.check_rng_synchrony();
+  kernel::manager< IOManager >.post_run_hook();
+  kernel::manager< RandomManager >.check_rng_synchrony();
 
   sw_simulate_.stop();
 }
@@ -688,30 +725,30 @@ SimulationManager::cleanup()
     return;
   }
 
-  kernel().node_manager.finalize_nodes();
+  kernel::manager< NodeManager >.finalize_nodes();
   prepared_ = false;
 }
 
 void
 SimulationManager::call_update_()
 {
-  assert( kernel().is_initialized() and not inconsistent_state_ );
+  assert( kernel::manager< KernelManager >.is_initialized() and not inconsistent_state_ );
 
   std::ostringstream os;
   double t_sim = to_do_ * Time::get_resolution().get_ms();
 
-  size_t num_active_nodes = kernel().node_manager.get_num_active_nodes();
+  size_t num_active_nodes = kernel::manager< NodeManager >.get_num_active_nodes();
   os << "Number of local nodes: " << num_active_nodes << std::endl;
   os << "Simulation time (ms): " << t_sim;
 
 #ifdef _OPENMP
-  os << std::endl << "Number of OpenMP threads: " << kernel().vp_manager.get_num_threads();
+  os << std::endl << "Number of OpenMP threads: " << kernel::manager< VPManager >.get_num_threads();
 #else
   os << std::endl << "Not using OpenMP";
 #endif
 
 #ifdef HAVE_MPI
-  os << std::endl << "Number of MPI processes: " << kernel().mpi_manager.get_num_processes();
+  os << std::endl << "Number of MPI processes: " << kernel::manager< MPIManager >.get_num_processes();
 #else
   os << std::endl << "Not using MPI";
 #endif
@@ -743,7 +780,7 @@ SimulationManager::call_update_()
     std::cout << std::endl;
   }
 
-  kernel().mpi_manager.synchronize();
+  kernel::manager< MPIManager >.synchronize();
 
   LOG( VerbosityLevel::INFO, "SimulationManager::run", "Simulation finished." );
 }
@@ -751,49 +788,49 @@ SimulationManager::call_update_()
 void
 SimulationManager::update_connection_infrastructure( const size_t tid )
 {
-  kernel().get_omp_synchronization_construction_stopwatch().start();
+  get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
-  kernel().get_omp_synchronization_construction_stopwatch().stop();
+  get_omp_synchronization_construction_stopwatch().stop();
 
   sw_communicate_prepare_.start();
 
-  kernel().connection_manager.sort_connections( tid );
+  kernel::manager< ConnectionManager >.sort_connections( tid );
   sw_gather_target_data_.start();
-  kernel().connection_manager.restructure_connection_tables( tid );
-  kernel().connection_manager.collect_compressed_spike_data( tid );
+  kernel::manager< ConnectionManager >.restructure_connection_tables( tid );
+  kernel::manager< ConnectionManager >.collect_compressed_spike_data( tid );
   sw_gather_target_data_.stop();
 
-  kernel().get_omp_synchronization_construction_stopwatch().start();
+  get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier  // wait for all threads to finish sorting
-  kernel().get_omp_synchronization_construction_stopwatch().stop();
+  get_omp_synchronization_construction_stopwatch().stop();
 
 #pragma omp single
   {
-    kernel().connection_manager.compute_target_data_buffer_size();
-    kernel().event_delivery_manager.resize_send_recv_buffers_target_data();
+    kernel::manager< ConnectionManager >.compute_target_data_buffer_size();
+    kernel::manager< EventDeliveryManager >.resize_send_recv_buffers_target_data();
 
     // check whether primary and secondary connections exists on any
     // compute node
-    kernel().connection_manager.sync_has_primary_connections();
-    kernel().connection_manager.check_secondary_connections_exist();
+    kernel::manager< ConnectionManager >.sync_has_primary_connections();
+    kernel::manager< ConnectionManager >.check_secondary_connections_exist();
   }
 
-  if ( kernel().connection_manager.secondary_connections_exist() )
+  if ( kernel::manager< ConnectionManager >.secondary_connections_exist() )
   {
-    kernel().get_omp_synchronization_construction_stopwatch().start();
+    get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
-    kernel().get_omp_synchronization_construction_stopwatch().stop();
+    get_omp_synchronization_construction_stopwatch().stop();
 
-    kernel().connection_manager.compute_compressed_secondary_recv_buffer_positions( tid );
+    kernel::manager< ConnectionManager >.compute_compressed_secondary_recv_buffer_positions( tid );
 
-    kernel().get_omp_synchronization_construction_stopwatch().start();
+    get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
-    kernel().get_omp_synchronization_construction_stopwatch().stop();
+    get_omp_synchronization_construction_stopwatch().stop();
 
 #pragma omp single
     {
-      kernel().mpi_manager.communicate_recv_counts_secondary_events();
-      kernel().event_delivery_manager.configure_secondary_buffers();
+      kernel::manager< MPIManager >.communicate_recv_counts_secondary_events();
+      kernel::manager< EventDeliveryManager >.configure_secondary_buffers();
     }
   }
 
@@ -801,35 +838,35 @@ SimulationManager::update_connection_infrastructure( const size_t tid )
 
   // communicate connection information from postsynaptic to
   // presynaptic side
-  if ( kernel().connection_manager.use_compressed_spikes() )
+  if ( kernel::manager< ConnectionManager >.use_compressed_spikes() )
   {
 #pragma omp barrier
 #pragma omp single
     {
-      kernel().connection_manager.initialize_iteration_state();  // could possibly be combined with s'th above
+      kernel::manager< ConnectionManager >.initialize_iteration_state();  // could possibly be combined with s'th above
     }
-    kernel().event_delivery_manager.gather_target_data_compressed( tid );
+    kernel::manager< EventDeliveryManager >.gather_target_data_compressed( tid );
   }
   else
   {
-    kernel().event_delivery_manager.gather_target_data( tid );
+    kernel::manager< EventDeliveryManager >.gather_target_data( tid );
   }
 
   sw_gather_target_data_.stop();
 
-  if ( kernel().connection_manager.secondary_connections_exist() )
+  if ( kernel::manager< ConnectionManager >.secondary_connections_exist() )
   {
-    kernel().connection_manager.compress_secondary_send_buffer_pos( tid );
+    kernel::manager< ConnectionManager >.compress_secondary_send_buffer_pos( tid );
   }
 
-  kernel().get_omp_synchronization_construction_stopwatch().start();
+  get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
-  kernel().get_omp_synchronization_construction_stopwatch().stop();
+  get_omp_synchronization_construction_stopwatch().stop();
 #pragma omp single
   {
-    kernel().connection_manager.clear_compressed_spike_data_map();
-    kernel().node_manager.set_have_nodes_changed( false );
-    kernel().connection_manager.unset_connections_have_changed();
+    kernel::manager< ConnectionManager >.clear_compressed_spike_data_map();
+    kernel::manager< NodeManager >.set_have_nodes_changed( false );
+    kernel::manager< ConnectionManager >.unset_connections_have_changed();
   }
   sw_communicate_prepare_.stop();
 }
@@ -853,17 +890,17 @@ SimulationManager::update_()
   bool update_time_limit_exceeded = false;
   // End of variables updated by master thread
 
-  std::vector< std::exception_ptr > exceptions_raised( kernel().vp_manager.get_num_threads() );
+  std::vector< std::exception_ptr > exceptions_raised( kernel::manager< VPManager >.get_num_threads() );
 
 #ifdef CYCLE_TIMERS
-  double start_current_communicate = kernel().event_delivery_manager.get_sw_communicate_spike_data().elapsed();
-  size_t start_local_spike_counter = kernel().event_delivery_manager.get_local_spike_counter();
+  double start_current_communicate = kernel< EventDeliveryManager >.get_sw_communicate_spike_data().elapsed();
+  size_t start_local_spike_counter = kernel< EventDeliveryManager >.get_local_spike_counter();
 #endif
 
 // parallel section begins
 #pragma omp parallel
   {
-    const size_t tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel::manager< VPManager >.get_thread_id();
 
     // We update in a parallel region. Therefore, we need to catch
     // exceptions here and then handle them after the parallel region.
@@ -886,18 +923,18 @@ SimulationManager::update_()
           // reach target neurons before spikes are propagated through eprop synapses.
           // This sequence safeguards the gradient computation from missing critical information
           // from the time step preceding the arrival of the spike triggering the weight update.
-          if ( kernel().connection_manager.secondary_connections_exist() )
+          if ( kernel::manager< ConnectionManager >.secondary_connections_exist() )
           {
             sw_deliver_secondary_data_.start();
-            kernel().event_delivery_manager.deliver_secondary_events( tid, false );
+            kernel::manager< EventDeliveryManager >.deliver_secondary_events( tid, false );
             sw_deliver_secondary_data_.stop();
           }
 
-          if ( kernel().connection_manager.has_primary_connections() )
+          if ( kernel::manager< ConnectionManager >.has_primary_connections() )
           {
             sw_deliver_spike_data_.start();
             // Deliver spikes from receive buffer to ring buffers.
-            kernel().event_delivery_manager.deliver_events( tid );
+            kernel::manager< EventDeliveryManager >.deliver_events( tid );
 
             sw_deliver_spike_data_.stop();
           }
@@ -909,9 +946,9 @@ SimulationManager::update_()
           // MUSIC *before* MUSIC time is advanced
 
           // wait until all threads are done -> synchronize
-          kernel().get_omp_synchronization_simulation_stopwatch().start();
+          get_omp_synchronization_simulation_stopwatch().start();
 #pragma omp barrier
-          kernel().get_omp_synchronization_simulation_stopwatch().stop();
+          get_omp_synchronization_simulation_stopwatch().stop();
 // the following block is executed by the master thread only
 // the other threads are enforced to wait at the end of the block
 #pragma omp master
@@ -922,11 +959,11 @@ SimulationManager::update_()
             // MUSIC *before* MUSIC time is advanced
             if ( slice_ > 0 )
             {
-              kernel().music_manager.advance_music_time();
+              kernel::manager< MUSICManager >.advance_music_time();
             }
 
             // the following could be made thread-safe
-            kernel().music_manager.update_music_event_handlers( clock_, from_step_, to_step_ );
+            kernel::manager< MUSICManager >.update_music_event_handlers( clock_, from_step_, to_step_ );
           }
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier
@@ -936,7 +973,8 @@ SimulationManager::update_()
         // preliminary update of nodes that use waveform relaxtion, only
         // necessary if secondary connections exist and any node uses
         // wfr
-        if ( kernel().connection_manager.secondary_connections_exist() and kernel().node_manager.wfr_is_used() )
+        if ( kernel::manager< ConnectionManager >.secondary_connections_exist()
+          and kernel::manager< NodeManager >.wfr_is_used() )
         {
 #pragma omp single
           {
@@ -947,14 +985,15 @@ SimulationManager::update_()
             // needs to be done in omp single since to_step_ is a scheduler
             // variable
             old_to_step = to_step_;
-            if ( to_step_ < kernel().connection_manager.get_min_delay() )
+            if ( to_step_ < kernel::manager< ConnectionManager >.get_min_delay() )
             {
-              to_step_ = kernel().connection_manager.get_min_delay();
+              to_step_ = kernel::manager< ConnectionManager >.get_min_delay();
             }
           }
 
           bool max_iterations_reached = true;
-          const std::vector< Node* >& thread_local_wfr_nodes = kernel().node_manager.get_wfr_nodes_on_thread( tid );
+          const std::vector< Node* >& thread_local_wfr_nodes =
+            kernel::manager< NodeManager >.get_wfr_nodes_on_thread( tid );
           for ( long n = 0; n < wfr_max_iterations_; ++n )
           {
             bool done_p = true;
@@ -974,9 +1013,9 @@ SimulationManager::update_()
               done.push_back( done_p );
             }
             // parallel section ends, wait until all threads are done -> synchronize
-            kernel().get_omp_synchronization_simulation_stopwatch().start();
+            get_omp_synchronization_simulation_stopwatch().start();
 #pragma omp barrier
-            kernel().get_omp_synchronization_simulation_stopwatch().stop();
+            get_omp_synchronization_simulation_stopwatch().stop();
 
 // the following block is executed by a single thread
 // the other threads wait at the end of the block
@@ -989,7 +1028,7 @@ SimulationManager::update_()
               }
 
               // gather SecondaryEvents (e.g. GapJunctionEvents)
-              kernel().event_delivery_manager.gather_secondary_events( done_all );
+              kernel::manager< EventDeliveryManager >.gather_secondary_events( done_all );
 
               // reset done and done_all
               //(needs to be in the single threaded part)
@@ -999,7 +1038,7 @@ SimulationManager::update_()
 
             // deliver SecondaryEvents generated during wfr_update
             // returns the done value over all threads
-            done_p = kernel().event_delivery_manager.deliver_secondary_events( tid, true );
+            done_p = kernel::manager< EventDeliveryManager >.deliver_secondary_events( tid, true );
 
             if ( done_p )
             {
@@ -1023,29 +1062,29 @@ SimulationManager::update_()
         }  // of if(wfr_is_used)
            // end of preliminary update
 
-        if ( kernel().sp_manager.is_structural_plasticity_enabled()
+        if ( kernel::manager< SPManager >.is_structural_plasticity_enabled()
           and ( std::fmod( Time( Time::step( clock_.get_steps() + from_step_ ) ).get_ms(),
-                  kernel().sp_manager.get_structural_plasticity_update_interval() )
+                  kernel::manager< SPManager >.get_structural_plasticity_update_interval() )
             == 0 ) )
         {
 #pragma omp barrier
-          for ( SparseNodeArray::const_iterator i = kernel().node_manager.get_local_nodes( tid ).begin();
-            i != kernel().node_manager.get_local_nodes( tid ).end();
+          for ( SparseNodeArray::const_iterator i = kernel::manager< NodeManager >.get_local_nodes( tid ).begin();
+            i != kernel::manager< NodeManager >.get_local_nodes( tid ).end();
             ++i )
           {
             Node* node = i->get_node();
             node->update_synaptic_elements( Time( Time::step( clock_.get_steps() + from_step_ ) ).get_ms() );
           }
-          kernel().get_omp_synchronization_simulation_stopwatch().start();
+          get_omp_synchronization_simulation_stopwatch().start();
 #pragma omp barrier
-          kernel().get_omp_synchronization_simulation_stopwatch().stop();
+          get_omp_synchronization_simulation_stopwatch().stop();
 #pragma omp single
           {
-            kernel().sp_manager.update_structural_plasticity();
+            kernel::manager< SPManager >.update_structural_plasticity();
           }
           // Remove 10% of the vacant elements
-          for ( SparseNodeArray::const_iterator i = kernel().node_manager.get_local_nodes( tid ).begin();
-            i != kernel().node_manager.get_local_nodes( tid ).end();
+          for ( SparseNodeArray::const_iterator i = kernel::manager< NodeManager >.get_local_nodes( tid ).begin();
+            i != kernel::manager< NodeManager >.get_local_nodes( tid ).end();
             ++i )
           {
             Node* node = i->get_node();
@@ -1061,7 +1100,7 @@ SimulationManager::update_()
         }  // of structural plasticity
 
         sw_update_.start();
-        const SparseNodeArray& thread_local_nodes = kernel().node_manager.get_local_nodes( tid );
+        const SparseNodeArray& thread_local_nodes = kernel::manager< NodeManager >.get_local_nodes( tid );
 
         for ( SparseNodeArray::const_iterator n = thread_local_nodes.begin(); n != thread_local_nodes.end(); ++n )
         {
@@ -1075,27 +1114,27 @@ SimulationManager::update_()
         sw_update_.stop();
 
         // parallel section ends, wait until all threads are done -> synchronize
-        kernel().get_omp_synchronization_simulation_stopwatch().start();
+        get_omp_synchronization_simulation_stopwatch().start();
 #pragma omp barrier
-        kernel().get_omp_synchronization_simulation_stopwatch().stop();
+        get_omp_synchronization_simulation_stopwatch().stop();
 
         // the following block is executed by the master thread only
         // the other threads are enforced to wait at the end of the block
 #pragma omp master
         {
           // gather and deliver only at end of slice, i.e., end of min_delay step
-          if ( to_step_ == kernel().connection_manager.get_min_delay() )
+          if ( to_step_ == kernel::manager< ConnectionManager >.get_min_delay() )
           {
-            if ( kernel().connection_manager.has_primary_connections() )
+            if ( kernel::manager< ConnectionManager >.has_primary_connections() )
             {
               sw_gather_spike_data_.start();
-              kernel().event_delivery_manager.gather_spike_data();
+              kernel::manager< EventDeliveryManager >.gather_spike_data();
               sw_gather_spike_data_.stop();
             }
-            if ( kernel().connection_manager.secondary_connections_exist() )
+            if ( kernel::manager< ConnectionManager >.secondary_connections_exist() )
             {
               sw_gather_secondary_data_.start();
-              kernel().event_delivery_manager.gather_secondary_events( true );
+              kernel::manager< EventDeliveryManager >.gather_secondary_events( true );
               sw_gather_secondary_data_.stop();
             }
           }
@@ -1124,11 +1163,11 @@ SimulationManager::update_()
 #ifdef CYCLE_TIMERS
 
           const double end_current_communicate =
-            kernel().event_delivery_manager.get_sw_communicate_spike_data().elapsed();
+            kernel< EventDeliveryManager >.get_sw_communicate_spike_data().elapsed();
           const double communicate_time = end_current_communicate - start_current_communicate;
           start_current_communicate = end_current_communicate;
 
-          const size_t end_local_spike_counter = kernel().event_delivery_manager.get_local_spike_counter();
+          const size_t end_local_spike_counter = kernel< EventDeliveryManager >.get_local_spike_counter();
           const size_t local_spike_counter = end_local_spike_counter - start_local_spike_counter;
           start_local_spike_counter = end_local_spike_counter;
 
@@ -1147,18 +1186,18 @@ SimulationManager::update_()
 
         // if block to avoid omp barrier if SIONLIB is not used
 #ifdef HAVE_SIONLIB
-        kernel().io_manager.post_step_hook();
+        kernel::manager< IOManager >.post_step_hook();
         // enforce synchronization after post-step activities of the recording backends
-        kernel().get_omp_synchronization_simulation_stopwatch().start();
+        get_omp_synchronization_simulation_stopwatch().start();
 #pragma omp barrier
-        kernel().get_omp_synchronization_simulation_stopwatch().stop();
+        get_omp_synchronization_simulation_stopwatch().stop();
 #endif
 
       } while ( to_do_ > 0 );
 
       // End of the slice, we update the number of synaptic elements
-      for ( SparseNodeArray::const_iterator i = kernel().node_manager.get_local_nodes( tid ).begin();
-        i != kernel().node_manager.get_local_nodes( tid ).end();
+      for ( SparseNodeArray::const_iterator i = kernel::manager< NodeManager >.get_local_nodes( tid ).begin();
+        i != kernel::manager< NodeManager >.get_local_nodes( tid ).end();
         ++i )
       {
         Node* node = i->get_node();
@@ -1197,11 +1236,11 @@ SimulationManager::advance_time_()
   to_do_ -= to_step_ - from_step_;
 
   // advance clock, update modulos, slice counter only if slice completed
-  if ( to_step_ == kernel().connection_manager.get_min_delay() )
+  if ( to_step_ == kernel::manager< ConnectionManager >.get_min_delay() )
   {
-    clock_ += Time::step( kernel().connection_manager.get_min_delay() );
+    clock_ += Time::step( kernel::manager< ConnectionManager >.get_min_delay() );
     ++slice_;
-    kernel().event_delivery_manager.update_moduli();
+    kernel::manager< EventDeliveryManager >.update_moduli();
     from_step_ = 0;
   }
   else
@@ -1211,17 +1250,17 @@ SimulationManager::advance_time_()
 
   long end_sim = from_step_ + to_do_;
 
-  if ( kernel().connection_manager.get_min_delay() < end_sim )
+  if ( kernel::manager< ConnectionManager >.get_min_delay() < end_sim )
   {
     // update to end of time slice
-    to_step_ = kernel().connection_manager.get_min_delay();
+    to_step_ = kernel::manager< ConnectionManager >.get_min_delay();
   }
   else
   {
     to_step_ = end_sim;  // update to end of simulation time
   }
 
-  assert( to_step_ - from_step_ <= kernel().connection_manager.get_min_delay() );
+  assert( to_step_ - from_step_ <= kernel::manager< ConnectionManager >.get_min_delay() );
 }
 
 void
@@ -1251,10 +1290,10 @@ SimulationManager::print_progress_()
   std::flush( std::cout );
 }
 
-Time const
-SimulationManager::get_previous_slice_origin() const
+nest::Time
+nest::SimulationManager::get_previous_slice_origin() const
 {
-  return clock_ - Time::step( kernel().connection_manager.get_min_delay() );
+  return clock_ - Time::step( kernel::manager< ConnectionManager >.get_min_delay() );
 }
 
 }  // namespace nest

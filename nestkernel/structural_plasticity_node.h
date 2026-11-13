@@ -23,15 +23,16 @@
 #ifndef STRUCTURAL_PLASTICITY_NODE_H
 #define STRUCTURAL_PLASTICITY_NODE_H
 
-// C++ includes:
-#include <algorithm>
-#include <deque>
+#include <map>
+#include <string>
 
 // Includes from nestkernel:
+#include "dictionary.h"
 #include "nest_time.h"
-#include "nest_types.h"
 #include "node.h"
 #include "synaptic_element.h"
+
+class Dictionary;
 
 
 namespace nest
@@ -148,18 +149,6 @@ private:
    */
   std::map< std::string, SynapticElement > synaptic_elements_map_;
 };
-
-inline double
-StructuralPlasticityNode::get_tau_Ca() const
-{
-  return tau_Ca_;
-}
-
-inline double
-StructuralPlasticityNode::get_Ca_minus() const
-{
-  return Ca_minus_;
-}
 
 }  // of namespace
 

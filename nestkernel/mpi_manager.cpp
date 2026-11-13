@@ -20,19 +20,26 @@
  *
  */
 
-#include "mpi_manager.h"
+#include "mpi_manager_impl.h"
 
-// C++ includes:
-#include <cstdlib>
-
-// Includes from libnestutil:
-#include "stopwatch_impl.h"
+#include "config.h"
 
 // Includes from nestkernel:
+#include "dictionary.h"
 #include "kernel_manager.h"
-#include "mpi_manager_impl.h"
-#include "nest_types.h"
+#include "logging.h"
+#include "logging_manager.h"
+#include "music_manager.h"
+#include "nest_names.h"
+#include "stopwatch.h"
+#include "stopwatch_impl.h"
 
+// C++ includes
+#include <cmath>
+#include <limits>
+#include <numeric>
+#include <string>
+#include <vector>
 
 namespace nest
 {
@@ -84,8 +91,8 @@ MPIManager::init_mpi( int*, char*** )
   // use 2 processes entries (need at least two
   // entries per process to use flag of first entry as validity and
   // last entry to communicate end of communication)
-  kernel().mpi_manager.set_buffer_size_target_data( 2 );
-  kernel().mpi_manager.set_buffer_size_spike_data( 2 );
+  kernel::manager< MPIManager >.set_buffer_size_target_data( 2 );
+  kernel::manager< MPIManager >.set_buffer_size_spike_data( 2 );
 
   recv_counts_secondary_events_in_int_per_rank_.resize( 1, 0 );
   recv_displacements_secondary_events_in_int_per_rank_.resize( 1, 0 );
@@ -106,8 +113,8 @@ MPIManager::set_communicator( MPI_Comm global_comm )
   // use at least 2 * number of processes entries (need at least two
   // entries per process to use flag of first entry as validity and
   // last entry to communicate end of communication)
-  kernel().mpi_manager.set_buffer_size_target_data( 2 * kernel().mpi_manager.get_num_processes() );
-  kernel().mpi_manager.set_buffer_size_spike_data( 2 * kernel().mpi_manager.get_num_processes() );
+  kernel::manager< MPIManager >.set_buffer_size_target_data( 2 * kernel::manager< MPIManager >.get_num_processes() );
+  kernel::manager< MPIManager >.set_buffer_size_spike_data( 2 * kernel::manager< MPIManager >.get_num_processes() );
 }
 
 void
@@ -119,9 +126,9 @@ MPIManager::init_mpi( int* argc, char** argv[] )
   if ( init == 0 )
   {
 #ifdef HAVE_MUSIC
-    kernel().music_manager.init_music( argc, argv );
+    kernel::manager< MUSICManager >.init_music( argc, argv );
     // get a communicator from MUSIC
-    set_communicator( static_cast< MPI_Comm >( kernel().music_manager.communicator() ) );
+    set_communicator( static_cast< MPI_Comm >( kernel::manager< MUSICManager >.communicator() ) );
 #else  /* #ifdef HAVE_MUSIC */
     int provided_thread_level;
     MPI_Init_thread( argc, argv, MPI_THREAD_FUNNELED, &provided_thread_level );
@@ -290,7 +297,7 @@ MPIManager::mpi_finalize( int exitcode )
   {
     if ( exitcode == 0 )
     {
-      kernel().music_manager.music_finalize();  // calls MPI_Finalize()
+      kernel::manager< MUSICManager >.music_finalize();  // calls MPI_Finalize()
     }
     else
     {
@@ -312,7 +319,7 @@ MPIManager::mpi_finalize( int )
 #ifdef HAVE_MPI
 
 void
-MPIManager::mpi_abort( int exitcode )
+MPIManager::mpi_abort( int exitcode ) const
 {
   MPI_Abort( comm, exitcode );
 }
@@ -706,7 +713,7 @@ MPIManager::communicate( std::vector< int >& send_buffer,
 }
 
 void
-MPIManager::communicate( double send_val, std::vector< double >& recv_buffer )
+MPIManager::communicate( double send_val, std::vector< double >& recv_buffer ) const
 {
   recv_buffer.resize( get_num_processes() );
   MPI_Allgather( &send_val, 1, MPI_DOUBLE, &recv_buffer[ 0 ], 1, MPI_DOUBLE, comm );
@@ -729,7 +736,7 @@ MPIManager::communicate( std::vector< long >& buffer )
 }
 
 void
-MPIManager::communicate_Allgather( std::vector< int >& buffer )
+MPIManager::communicate_Allgather( std::vector< int >& buffer ) const
 {
   // avoid aliasing, see http://www.mpi-forum.org/docs/mpi-11-html/node10.html
   int my_val = buffer[ get_rank() ];
@@ -737,32 +744,32 @@ MPIManager::communicate_Allgather( std::vector< int >& buffer )
 }
 
 void
-MPIManager::communicate_Allreduce_sum_in_place( double buffer )
+MPIManager::communicate_Allreduce_sum_in_place( double buffer ) const
 {
   MPI_Allreduce( MPI_IN_PLACE, &buffer, 1, MPI_Type< double >::type, MPI_SUM, comm );
 }
 
 void
-MPIManager::communicate_Allreduce_sum_in_place( std::vector< double >& buffer )
+MPIManager::communicate_Allreduce_sum_in_place( std::vector< double >& buffer ) const
 {
   MPI_Allreduce( MPI_IN_PLACE, &buffer[ 0 ], buffer.size(), MPI_Type< double >::type, MPI_SUM, comm );
 }
 
 void
-MPIManager::communicate_Allreduce_sum_in_place( std::vector< int >& buffer )
+MPIManager::communicate_Allreduce_sum_in_place( std::vector< int >& buffer ) const
 {
   MPI_Allreduce( MPI_IN_PLACE, &buffer[ 0 ], buffer.size(), MPI_Type< int >::type, MPI_SUM, comm );
 }
 
 void
-MPIManager::communicate_Allreduce_sum( std::vector< double >& send_buffer, std::vector< double >& recv_buffer )
+MPIManager::communicate_Allreduce_sum( std::vector< double >& send_buffer, std::vector< double >& recv_buffer ) const
 {
   assert( recv_buffer.size() == send_buffer.size() );
   MPI_Allreduce( &send_buffer[ 0 ], &recv_buffer[ 0 ], send_buffer.size(), MPI_Type< double >::type, MPI_SUM, comm );
 }
 
 bool
-MPIManager::equal_cross_ranks( const double value )
+MPIManager::equal_cross_ranks( const double value ) const
 {
   // Flipping the sign of one argument to check both min and max values.
   double values[ 2 ];
@@ -773,7 +780,7 @@ MPIManager::equal_cross_ranks( const double value )
 }
 
 void
-MPIManager::communicate_Allgather( std::vector< long >& buffer )
+MPIManager::communicate_Allgather( std::vector< long >& buffer ) const
 {
   // avoid aliasing, see http://www.mpi-forum.org/docs/mpi-11-html/node10.html
   long my_val = buffer[ get_rank() ];
@@ -781,7 +788,7 @@ MPIManager::communicate_Allgather( std::vector< long >& buffer )
 }
 
 void
-MPIManager::communicate_Alltoall_( void* send_buffer, void* recv_buffer, const unsigned int send_recv_count )
+MPIManager::communicate_Alltoall_( void* send_buffer, void* recv_buffer, const unsigned int send_recv_count ) const
 {
   MPI_Alltoall( send_buffer, send_recv_count, MPI_UNSIGNED, recv_buffer, send_recv_count, MPI_UNSIGNED, comm );
 }
@@ -792,7 +799,7 @@ MPIManager::communicate_Alltoallv_( void* send_buffer,
   const int* send_displacements,
   void* recv_buffer,
   const int* recv_counts,
-  const int* recv_displacements )
+  const int* recv_displacements ) const
 {
   MPI_Alltoallv( send_buffer,
     send_counts,
@@ -808,7 +815,6 @@ MPIManager::communicate_Alltoallv_( void* send_buffer,
 void
 MPIManager::communicate_recv_counts_secondary_events()
 {
-
   communicate_Alltoall(
     recv_counts_secondary_events_in_int_per_rank_, send_counts_secondary_events_in_int_per_rank_, 1 );
 
@@ -818,7 +824,7 @@ MPIManager::communicate_recv_counts_secondary_events()
 }
 
 void
-MPIManager::synchronize()
+MPIManager::synchronize() const
 {
   MPI_Barrier( comm );
 }
@@ -827,7 +833,7 @@ MPIManager::synchronize()
 // any_true: takes a single bool, exchanges with all other processes,
 // and returns "true" if one or more processes provide "true"
 bool
-MPIManager::any_true( const bool my_bool )
+MPIManager::any_true( const bool my_bool ) const
 {
   if ( get_num_processes() == 1 )
   {
@@ -842,7 +848,7 @@ MPIManager::any_true( const bool my_bool )
 
 // average communication time for a packet size of num_bytes using Allgather
 double
-MPIManager::time_communicate( int num_bytes, int samples )
+MPIManager::time_communicate( int num_bytes, int samples ) const
 {
   if ( get_num_processes() == 1 )
   {
@@ -906,7 +912,7 @@ MPIManager::time_communicatev( int num_bytes, int samples )
 
 // average communication time for a packet size of num_bytes
 double
-MPIManager::time_communicate_offgrid( int num_bytes, int samples )
+MPIManager::time_communicate_offgrid( int num_bytes, int samples ) const
 {
   if ( get_num_processes() == 1 )
   {
@@ -939,7 +945,7 @@ MPIManager::time_communicate_offgrid( int num_bytes, int samples )
 
 // average communication time for a packet size of num_bytes using Alltoall
 double
-MPIManager::time_communicate_alltoall( int num_bytes, int samples )
+MPIManager::time_communicate_alltoall( int num_bytes, int samples ) const
 {
   if ( get_num_processes() == 1 )
   {
@@ -968,7 +974,7 @@ MPIManager::time_communicate_alltoall( int num_bytes, int samples )
 
 // average communication time for a packet size of num_bytes using Alltoallv
 double
-MPIManager::time_communicate_alltoallv( int num_bytes, int samples )
+MPIManager::time_communicate_alltoallv( int num_bytes, int samples ) const
 {
   if ( get_num_processes() == 1 )
   {
@@ -1075,7 +1081,7 @@ MPIManager::communicate( std::vector< int >& send_buffer,
 }
 
 void
-MPIManager::communicate( double send_val, std::vector< double >& recv_buffer )
+MPIManager::communicate( double send_val, std::vector< double >& recv_buffer ) const
 {
   recv_buffer.resize( 1 );
   recv_buffer[ 0 ] = send_val;
@@ -1087,28 +1093,28 @@ MPIManager::communicate( std::vector< size_t >&, std::vector< size_t >& )
 }
 
 void
-MPIManager::communicate_Allreduce_sum_in_place( double )
+MPIManager::communicate_Allreduce_sum_in_place( double ) const
 {
 }
 
 void
-MPIManager::communicate_Allreduce_sum_in_place( std::vector< double >& )
+MPIManager::communicate_Allreduce_sum_in_place( std::vector< double >& ) const
 {
 }
 
 void
-MPIManager::communicate_Allreduce_sum_in_place( std::vector< int >& )
+MPIManager::communicate_Allreduce_sum_in_place( std::vector< int >& ) const
 {
 }
 
 void
-MPIManager::communicate_Allreduce_sum( std::vector< double >& send_buffer, std::vector< double >& recv_buffer )
+MPIManager::communicate_Allreduce_sum( std::vector< double >& send_buffer, std::vector< double >& recv_buffer ) const
 {
   recv_buffer.swap( send_buffer );
 }
 
 bool
-MPIManager::equal_cross_ranks( const double )
+MPIManager::equal_cross_ranks( const double ) const
 {
   return true;
 }
@@ -1125,5 +1131,113 @@ MPIManager::communicate_recv_counts_secondary_events()
 }
 
 #endif /* #ifdef HAVE_MPI  */
+
+#ifndef HAVE_MPI
+
+std::string
+MPIManager::get_processor_name()
+{
+  char name[ 1024 ];
+  name[ 1023 ] = '\0';
+  gethostname( name, 1023 );
+  return name;
+}
+
+#endif /* HAVE_MPI */
+
+bool
+MPIManager::increase_buffer_size_target_data()
+{
+  assert( adaptive_target_buffers_ );
+  if ( buffer_size_target_data_ >= max_buffer_size_target_data_ )
+  {
+    return false;
+  }
+  else
+  {
+    if ( buffer_size_target_data_ * growth_factor_buffer_target_data_ < max_buffer_size_target_data_ )
+    {
+      // this also adjusts send_recv_count_target_data_per_rank_
+      set_buffer_size_target_data(
+        static_cast< size_t >( floor( buffer_size_target_data_ * growth_factor_buffer_target_data_ ) ) );
+    }
+    else
+    {
+      // this also adjusts send_recv_count_target_data_per_rank_
+      set_buffer_size_target_data( max_buffer_size_target_data_ );
+    }
+    return true;
+  }
+}
+
+void
+MPIManager::set_buffer_size_spike_data( const size_t buffer_size )
+{
+  assert( buffer_size >= static_cast< size_t >( 2 * get_num_processes() ) );
+  buffer_size_spike_data_ = buffer_size;
+
+  send_recv_count_spike_data_per_rank_ = floor( get_buffer_size_spike_data() / get_num_processes() );
+
+  assert( send_recv_count_spike_data_per_rank_ * get_num_processes() <= get_buffer_size_spike_data() );
+}
+
+void
+MPIManager::set_buffer_size_target_data( const size_t buffer_size )
+{
+  assert( buffer_size >= static_cast< size_t >( 2 * get_num_processes() ) );
+  if ( buffer_size <= max_buffer_size_target_data_ )
+  {
+    buffer_size_target_data_ = buffer_size;
+  }
+  else
+  {
+    buffer_size_target_data_ = max_buffer_size_target_data_;
+  }
+  send_recv_count_target_data_per_rank_ = static_cast< size_t >(
+    floor( static_cast< double >( get_buffer_size_target_data() ) / static_cast< double >( get_num_processes() ) ) );
+
+  assert( send_recv_count_target_data_per_rank_ * get_num_processes() <= get_buffer_size_target_data() );
+}
+
+size_t
+MPIManager::get_recv_buffer_size_secondary_events_in_int() const
+{
+  return recv_displacements_secondary_events_in_int_per_rank_
+           [ recv_displacements_secondary_events_in_int_per_rank_.size() - 1 ]
+    + recv_counts_secondary_events_in_int_per_rank_[ recv_counts_secondary_events_in_int_per_rank_.size() - 1 ];
+}
+
+size_t
+MPIManager::get_send_buffer_size_secondary_events_in_int() const
+{
+  return send_displacements_secondary_events_in_int_per_rank_
+           [ send_displacements_secondary_events_in_int_per_rank_.size() - 1 ]
+    + send_counts_secondary_events_in_int_per_rank_[ send_counts_secondary_events_in_int_per_rank_.size() - 1 ];
+}
+
+void
+MPIManager::set_recv_counts_secondary_events_in_int_per_rank( const std::vector< int >& recv_counts_in_int_per_rank )
+{
+  recv_counts_secondary_events_in_int_per_rank_ = recv_counts_in_int_per_rank;
+
+  std::partial_sum( recv_counts_secondary_events_in_int_per_rank_.begin(),
+    recv_counts_secondary_events_in_int_per_rank_.end() - 1,
+    recv_displacements_secondary_events_in_int_per_rank_.begin() + 1 );
+}
+
+#ifndef HAVE_MPI
+
+void
+test_link( int, int )
+{
+}
+
+void
+test_links()
+{
+}
+
+#endif /* HAVE_MPI */
+
 
 }  // namespace nest

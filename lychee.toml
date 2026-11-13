@@ -64,6 +64,8 @@ host_request_interval = "500ms"
 # The fourth group are index pages that Doxygen generates at build time; the
 # devdoc markdown links to them, but they do not exist in the source tree.
 exclude = [
+    ".*highlightjs.*",
+    ".*conda/.*",
     ".git/.*",
     "^https?://(www\\.)?gnu\\.org/",
 

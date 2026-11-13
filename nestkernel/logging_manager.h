@@ -32,10 +32,6 @@
 #include "logging.h"
 #include "manager_interface.h"
 
-
-// Inclused from nestkernel:
-#include "nest_names.h"
-
 namespace nest
 {
 

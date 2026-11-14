@@ -74,10 +74,11 @@ The membrane potential evolves according to
 
 .. math::
 
-   \frac{dV_\text{m}}{dt} = -\frac{V_{\text{m}} - E_\text{L}}{\tau_{\text{m}}} + \frac{I_{\text{syn}} + I_\text{e}}{C_{\text{m}}}
+   \frac{dV_\text{m}}{dt} = -\frac{V_{\text{m}} - E_\text{L}}{\tau_{\text{m}}} + \frac{I_{\text{syn}} + I_\text{e} + I_0}{C_{\text{m}}}
 
-where the synaptic input current :math:`I_{\text{syn}}(t)` is discussed below and :math:`I_\text{e}` is
-a constant input current set as a model parameter.
+where the synaptic input current :math:`I_{\text{syn}}(t)` is discussed below, :math:`I_\text{e}` is
+a constant input current set as a model parameter, and :math:`I_0(t)` is the current input through
+``receptor_type`` 0 (see below).
 
 A spike is emitted at time step :math:`t^*=t_{k+1}` if
 
@@ -106,31 +107,24 @@ where
 
 .. math::
 
-   I_{\text{syn, X}}(t) = \sum_{j} \sum_{k} i_{\text{syn, X}}(t-t_j^k-d_j) \;,
+   I_{\text{syn, X}}(t) = \sum_{j} w_j \sum_{k} i_{\text{syn, X}}(t-t_j^k-d_j) \;,
 
-where :math:`j` indexes either excitatory (:math:`\text{X} = \text{ex}`)
-or inhibitory (:math:`\text{X} = \text{in}`) presynaptic neurons,
-:math:`k` indexes the spike times of neuron :math:`j`, and :math:`d_j`
-is the delay from neuron :math:`j`.
+where :math:`j` indexes either excitatory (:math:`\text{X} = \text{ex}`, :math:`w_j > 0`) or inhibitory
+(:math:`\text{X} = \text{in}`, :math:`w_j < 0`) presynaptic neurons, :math:`k` indexes the spike times of neuron
+:math:`j`, and :math:`w_j` and :math:`d_j` are the weight and the delay of the connection from neuron :math:`j`.
 
-The individual post-synaptic currents (PSCs) are given by
-
-.. math::
-
-   i_{\text{syn, X}}(t) = w \cdot e^{-\frac{t}{\tau_{\text{syn, X}}}} \cdot \Theta(t)
-
-where :math:`w` is a weight (excitatory if :math:`w > 0` or inhibitory if :math:`w < 0`), and :math:`\Theta(x)` is the Heaviside step function. The time dependent components of the PSCs are normalized to unit maximum, so that,
+The individual postsynaptic currents (PSCs) are exponentials normalized to unit maximum:
 
 .. math::
 
-   i_{\text{syn, X}}(t= 0) = w \;.
+   i_{\text{syn, X}}(t) = e^{-t/\tau_{\text{syn, X}}} \, \Theta(t) \;,
 
-As a consequence, the total charge :math:`q` transferred by a single PSC depends
-on the synaptic time constant according to
+where :math:`\Theta(x)` is the Heaviside step function. A PSC therefore starts with the amplitude :math:`w`, and the
+charge transferred by a single PSC depends on the synaptic time constant according to
 
 .. math::
 
-   q = \int_0^{\infty}  i_{\text{syn, X}}(t) dt = w \cdot \tau_{\text{syn, X}} \;.
+   q = w \int_0^{\infty} i_{\text{syn, X}}(t) \, dt = w \, \tau_{\text{syn, X}} \;.
 
 
 .. note::
@@ -140,8 +134,7 @@ on the synaptic time constant according to
   will numerically behave as if ``tau_m`` is equal to ``tau_syn_ex`` or
   ``tau_syn_in``, respectively, to avoid numerical instabilities.
 
-  NEST uses exact integration :footcite:p:`Rotter1999`, :footcite:p:`Diesmann2001` to integrate subthreshold membrane dynamics
-  with  maximum precision.
+  NEST integrates the subthreshold dynamics exactly :footcite:p:`Rotter1999,Diesmann2001`.
 
   For implementation details see the
   `IAF Integration Singularity notebook <../model_details/IAF_Integration_Singularity.ipynb>`_.
@@ -152,6 +145,14 @@ that is, this current directly enters the membrane potential equation. Other rec
 For conversion between postsynaptic potentials (PSPs) and PSCs,
 please refer to the ``postsynaptic_potential_to_current`` function in
 `PyNEST Microcircuit: Helper Functions <https://github.com/INM-6/microcircuit-PD14-model/blob/main/PyNEST/src/microcircuit/helpers.py>`_.
+
+.. note::
+
+   Incoming spikes are routed to the excitatory or inhibitory synapse type by the **sign of the
+   connection weight**. A positive weight targets the excitatory synapse type, a negative weight
+   the inhibitory one. Spike connections must use the default ``receptor_type`` of 0.
+
+   See :ref:`synapse_selection` for the conventions used by other models.
 
 Parameters
 ++++++++++

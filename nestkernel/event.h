@@ -453,12 +453,12 @@ SpikeEvent::get_multiplicity() const
   return multiplicity_;
 }
 
-class CorrectionSpikeEvent : public SpikeEvent
+class WeightCorrectionEvent : public SpikeEvent
 {
 public:
-  CorrectionSpikeEvent();
+  WeightCorrectionEvent();
   void operator()() override;
-  CorrectionSpikeEvent* clone() const override;
+  WeightCorrectionEvent* clone() const override;
 
   void set_new_weight( double );
   double get_new_weight() const;
@@ -467,25 +467,25 @@ protected:
   double new_weight_;
 };
 
-inline CorrectionSpikeEvent::CorrectionSpikeEvent()
+inline WeightCorrectionEvent::WeightCorrectionEvent()
   : new_weight_( 0. )
 {
 }
 
-inline CorrectionSpikeEvent*
-CorrectionSpikeEvent::clone() const
+inline WeightCorrectionEvent*
+WeightCorrectionEvent::clone() const
 {
-  return new CorrectionSpikeEvent( *this );
+  return new WeightCorrectionEvent( *this );
 }
 
 inline void
-CorrectionSpikeEvent::set_new_weight( double new_weight )
+WeightCorrectionEvent::set_new_weight( double new_weight )
 {
   new_weight_ = new_weight;
 }
 
 inline double
-CorrectionSpikeEvent::get_new_weight() const
+WeightCorrectionEvent::get_new_weight() const
 {
   return new_weight_;
 }

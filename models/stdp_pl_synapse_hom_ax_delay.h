@@ -43,9 +43,11 @@ Synapse type for spike-timing dependent plasticity with power law and both dendr
 Description
 +++++++++++
 
-``stdp_pl_synapse_hom_ax_delay`` is a synapse model implementing spike time dependent plasticity (as defined in
-:footcite:p:`Morrison2007c`). The model supports (and requires) setting the axonal and dendritic delays independently.
-Synapses of this type share plasticity parameters.
+``stdp_pl_synapse_hom_ax_delay`` is a connector to create synapses with spike time
+dependent plasticity using homogeneous parameters (as defined in :footcite:p:`Morrison2007c`).
+In contrast to ``stdp_pl_synapse_hom``, no single ``delay`` is specified. Instead, the delay is split into a
+dendritic and an axonal contribution, and both have to be specified individually via ``dendritic_delay`` and
+``axonal_delay``.
 
 Parameters
 ++++++++++
@@ -180,15 +182,11 @@ public:
   /**
    * Framework for STDP with predominantly axonal delays:
    * Correct this synapse and the corresponding previously sent spike
-   * taking into account a new post-synaptic spike.
+   * taking into account a new post-synaptic spike. The new weight of the synapse is recorded in the correction entry.
    */
-  void correct_synapse_stdp_ax_delay( const size_t tid,
-    const size_t lcid,
-    const double t_last_spike,
+  void correct_weight_stdp_ax_delay( const size_t tid,
+    CorrectionEntrySTDPAxDelay& entry,
     const double t_spike_critical_interval_end,
-    const double weight_revert,
-    double& new_weight,
-    const double K_plus_revert,
     const double t_post_spike,
     const STDPPLHomAxDelayCommonProperties& cp );
 
@@ -246,7 +244,7 @@ public:
           "delay of at least the dendritic delay." );
       }
 
-      CorrectionSpikeEvent e;
+      WeightCorrectionEvent e;
       t.handles_test_event( e, receptor_type );
     }
 
@@ -401,18 +399,21 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::set_status( const Dictionary&
 
 template < typename targetidentifierT >
 void
-stdp_pl_synapse_hom_ax_delay< targetidentifierT >::correct_synapse_stdp_ax_delay( const size_t tid,
-  const size_t lcid,
-  const double t_last_spike,
+stdp_pl_synapse_hom_ax_delay< targetidentifierT >::correct_weight_stdp_ax_delay( const size_t tid,
+  CorrectionEntrySTDPAxDelay& entry,
   const double t_spike_critical_interval_end,
-  const double weight_revert,
-  double& new_weight,
-  const double K_plus_revert,
   const double t_post_spike,
   const STDPPLHomAxDelayCommonProperties& cp )
 {
   const double wrong_weight = weight_;  // incorrectly transmitted weight
   Node* target = get_target( tid );
+
+  // Read everything required from the entry up front, since updating the weights to revert to below also modifies
+  // this entry.
+  const size_t lcid = entry.get_lcid();
+  const double t_last_spike = entry.get_t_last_pre_spike();
+  const double weight_revert = entry.get_weight_revert();
+  const double K_plus_revert = entry.get_K_plus_revert();
 
   const double axonal_delay_ms = get_axonal_delay_ms();
   double dendritic_delay_ms = get_dendritic_delay_ms();
@@ -441,13 +442,13 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::correct_synapse_stdp_ax_delay
   const double K_minus = target->get_K_value( t_spike + axonal_delay_ms - dendritic_delay_ms );
   weight_ = depress_( weight_, K_minus, cp );
 
-  new_weight = weight_;
+  entry.set_new_weight( weight_ );
 
   // send a correcting event to the target neuron
-  CorrectionSpikeEvent e;
+  WeightCorrectionEvent e;
   e.set_receiver( *target );
   e.set_weight( wrong_weight );
-  e.set_new_weight( new_weight );
+  e.set_new_weight( weight_ );
   e.set_delay_steps( get_delay_steps() );
   e.set_rport( get_rport() );
   e.set_stamp( Time::ms_stamp( t_spike ) );

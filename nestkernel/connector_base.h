@@ -52,6 +52,8 @@
 namespace nest
 {
 
+class CorrectionEntrySTDPAxDelay;
+
 /**
  * Base class to allow storing Connectors for different synapse types in vectors. We define the interface here to avoid
  * casting.
@@ -157,25 +159,18 @@ public:
   /**
    * On occurrence of a post-synaptic spike, correct the weight update of a previous pre-synaptic spike which was
    * processed before the current post-synaptic spike, but had to be processed after it, if it was known at this point
-   * in time.
+   * in time. The new weight of the synapse is recorded in the correction entry.
    *
    * @param tid The thread storing the synapse.
-   * @param syn_id Synapse type.
-   * @param lcid Local index of the synapse in the array of connections of the same type for this thread.
-   * @param t_last_pre_spike Time of the last pre-synaptic spike before the pre-synaptic spike which needs a correction.
-   * @param t_spike The time of the pre-synaptic spike which needs a correction.
-   * @param weight_revert The synaptic weight before depression after facilitation as baseline for potential later
+   * @param entry Correction entry of the pre-synaptic spike which needs a correction. It identifies the synapse
+   * (synapse type and local connection index) and holds the data required for the correction.
+   * @param t_spike_critical_interval_end End of the critical interval of the pre-synaptic spike which needs a
    * correction.
    * @param t_post_spike Time of the current post-synaptic spike.
    */
-  virtual void correct_synapse_stdp_ax_delay( const size_t tid,
-    const synindex syn_id,
-    const size_t lcid,
-    const double t_last_pre_spike,
+  virtual void correct_weight_stdp_ax_delay( const size_t tid,
+    CorrectionEntrySTDPAxDelay& entry,
     const double t_spike_critical_interval_end,
-    const double weight_revert,
-    double& new_weight,
-    const double K_plus_revert,
     const double t_post_spike ) = 0;
 
   virtual void
@@ -246,25 +241,25 @@ private:
    * such a connection needs the receiving neuron to be able to find its way back to it. Keeping this as a flag on the
    * Connector rather than testing each connection keeps the check out of the per-connection send loop.
    */
-  bool needs_axonal_delay_feedback_;
+  bool axonal_delay_correction_required_;
 
   /**
-   * Fold a newly added or modified connection into needs_axonal_delay_feedback_.
+   * Fold a newly added or modified connection into axonal_delay_correction_required_.
    */
   void
-  note_axonal_delay_feedback_( const ConnectionT& c )
+  register_axonal_delay_correction_required_( const ConnectionT& c )
   {
-    if constexpr ( ConnectionT::requires_axonal_delay_feedback )
+    if constexpr ( ConnectionT::requires_axonal_delay_correction )
     {
-      needs_axonal_delay_feedback_ =
-        needs_axonal_delay_feedback_ or ( c.get_axonal_delay_steps() >= c.get_dendritic_delay_steps() );
+      axonal_delay_correction_required_ =
+        axonal_delay_correction_required_ or ( c.get_axonal_delay_steps() >= c.get_dendritic_delay_steps() );
     }
   }
 
 public:
   explicit Connector( const synindex syn_id )
     : syn_id_( syn_id )
-    , needs_axonal_delay_feedback_( false )
+    , axonal_delay_correction_required_( false )
   {
   }
 
@@ -305,20 +300,20 @@ public:
     C_[ lcid ].set_status( dict, static_cast< GenericConnectorModel< ConnectionT >& >( cm ) );
 
     // the delays may have changed
-    note_axonal_delay_feedback_( C_[ lcid ] );
+    register_axonal_delay_correction_required_( C_[ lcid ] );
   }
 
   void
   push_back( const ConnectionT& c )
   {
-    note_axonal_delay_feedback_( c );
+    register_axonal_delay_correction_required_( c );
     C_.push_back( c );
   }
 
   void
   push_back( ConnectionT&& c )
   {
-    note_axonal_delay_feedback_( c );
+    register_axonal_delay_correction_required_( c );
     C_.push_back( std::move( c ) );
   }
 
@@ -459,9 +454,9 @@ public:
       e.set_port( lcid + lcid_offset );
       if ( not conn.is_disabled() )
       {
-        if constexpr ( ConnectionT::requires_axonal_delay_feedback )
+        if constexpr ( ConnectionT::requires_axonal_delay_correction )
         {
-          if ( needs_axonal_delay_feedback_ )
+          if ( axonal_delay_correction_required_ )
           {
             // non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
             // only if needed, as this is computationally costly
@@ -485,14 +480,9 @@ public:
     return 1 + lcid_offset;  // event was delivered to at least one target
   }
 
-  void correct_synapse_stdp_ax_delay( const size_t tid,
-    const synindex syn_id,
-    const size_t lcid,
-    const double t_last_pre_spike,
+  void correct_weight_stdp_ax_delay( const size_t tid,
+    CorrectionEntrySTDPAxDelay& entry,
     const double t_spike_critical_interval_end,
-    const double weight_revert,
-    double& new_weight,
-    const double K_plus_revert,
     const double t_post_spike ) override;
 
   // Implemented in connector_base_impl.h

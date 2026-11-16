@@ -128,7 +128,7 @@ ConnectionCreator::ConnectionCreator( const Dictionary& dict )
   {
     if ( not syn_defaults.get< bool >( names::has_delay ) or not syn_defaults.known( names::dendritic_delay ) )
     {
-      dendritic_delay_ = { create_parameter( numerics::nan ) };
+      dendritic_delay_ = { ParameterPTR() };
     }
     else
     {
@@ -144,7 +144,7 @@ ConnectionCreator::ConnectionCreator( const Dictionary& dict )
   {
     if ( not syn_defaults.get< bool >( names::has_delay ) or not syn_defaults.known( names::axonal_delay ) )
     {
-      axonal_delay_ = { create_parameter( numerics::nan ) };
+      axonal_delay_ = { ParameterPTR() };
     }
     else
     {
@@ -162,7 +162,7 @@ ConnectionCreator::ConnectionCreator( const Dictionary& dict )
     if ( not syn_defaults.get< bool >( names::has_delay ) or not syn_defaults.known( names::delay )
       or axonal_or_dendritic_delay_set )
     {
-      delay_ = { create_parameter( numerics::nan ) };
+      delay_ = { ParameterPTR() };
     }
     else
     {
@@ -225,8 +225,8 @@ ConnectionCreator::extract_params_( const Dictionary& dict, std::vector< Diction
   if ( dict.known( names::delay ) )
   {
     delay_.push_back( create_parameter( dict.at( names::delay ) ) );
-    dendritic_delay_.push_back( create_parameter( numerics::nan ) );
-    axonal_delay_.push_back( create_parameter( numerics::nan ) );
+    dendritic_delay_.push_back( ParameterPTR() );
+    axonal_delay_.push_back( ParameterPTR() );
   }
   else
   {
@@ -243,7 +243,7 @@ ConnectionCreator::extract_params_( const Dictionary& dict, std::vector< Diction
     {
       if ( not syn_defaults.get< bool >( names::has_delay ) or not syn_defaults.known( names::dendritic_delay ) )
       {
-        dendritic_delay_.push_back( create_parameter( numerics::nan ) );
+        dendritic_delay_.push_back( ParameterPTR() );
       }
       else
       {
@@ -260,7 +260,7 @@ ConnectionCreator::extract_params_( const Dictionary& dict, std::vector< Diction
     {
       if ( not syn_defaults.get< bool >( names::has_delay ) or not syn_defaults.known( names::axonal_delay ) )
       {
-        axonal_delay_.push_back( create_parameter( numerics::nan ) );
+        axonal_delay_.push_back( ParameterPTR() );
       }
       else
       {
@@ -272,7 +272,7 @@ ConnectionCreator::extract_params_( const Dictionary& dict, std::vector< Diction
     if ( not syn_defaults.get< bool >( names::has_delay ) or not syn_defaults.known( names::delay )
       or axonal_or_dendritic_delay_set )
     {
-      delay_.push_back( create_parameter( numerics::nan ) );
+      delay_.push_back( ParameterPTR() );
     }
     else
     {

@@ -64,6 +64,10 @@ and postsynaptic spike times for STDP protocols by connecting
 two parrot neurons spiking at desired times by, for example, a
 ``stdp_synapse`` onto port 1 on the postsynaptic parrot neuron.
 
+The ``parrot_neuron`` can be the target of STDP synapses with predominantly axonal delays, e.g.,
+``stdp_pl_synapse_hom_ax_delay``. Since the weights of connections *to* the ``parrot_neuron`` are ignored, the weight
+corrections caused by such synapses have no effect on its spiking.
+
 Parameters
 ++++++++++
 
@@ -118,9 +122,15 @@ public:
   SignalType receives_signal() const override;
 
   void handle( SpikeEvent& ) override;
-  void handle( CorrectionSpikeEvent& ) override;
+  void handle( WeightCorrectionEvent& ) override;
   size_t handles_test_event( SpikeEvent&, size_t ) override;
-  size_t handles_test_event( CorrectionSpikeEvent&, size_t ) override;
+  size_t handles_test_event( WeightCorrectionEvent&, size_t ) override;
+
+  bool
+  supports_axonal_delay_corrections() const override
+  {
+    return true;
+  }
 
   void get_status( Dictionary& ) const override;
   void set_status( const Dictionary& ) override;
@@ -131,6 +141,7 @@ private:
   pre_run_hook() override
   {
     FlushEventMechanism::pre_run_hook();
+    AxonalDelayArchivingNode::pre_run_hook_();
   }
 
   void update( Time const&, const long, const long ) override;
@@ -172,7 +183,7 @@ parrot_neuron::handles_test_event( SpikeEvent&, size_t receptor_type )
 }
 
 inline size_t
-parrot_neuron::handles_test_event( CorrectionSpikeEvent&, size_t receptor_type )
+parrot_neuron::handles_test_event( WeightCorrectionEvent&, size_t receptor_type )
 {
   // Allow connections to port 0 (spikes to be repeated)
   // and port 1 (spikes to be ignored).

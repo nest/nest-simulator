@@ -232,12 +232,12 @@ public:
     return true;
   }
 
-  void handle( CorrectionSpikeEvent& ) override;
+  void handle( WeightCorrectionEvent& ) override;
   void handle( CurrentEvent& ) override;
   void handle( DataLoggingRequest& ) override;
 
   size_t handles_test_event( SpikeEvent&, size_t ) override;
-  size_t handles_test_event( CorrectionSpikeEvent&, size_t ) override;
+  size_t handles_test_event( WeightCorrectionEvent&, size_t ) override;
   size_t handles_test_event( CurrentEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
@@ -439,7 +439,7 @@ iaf_psc_alpha::handles_test_event( SpikeEvent&, size_t receptor_type )
 }
 
 inline size_t
-iaf_psc_alpha::handles_test_event( CorrectionSpikeEvent&, size_t receptor_type )
+iaf_psc_alpha::handles_test_event( WeightCorrectionEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

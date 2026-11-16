@@ -72,7 +72,7 @@ ConnectionManager::ConnectionManager()
   , max_delay_( 1 )
   , keep_source_table_( true )
   , connections_have_changed_( false )
-  , have_nonzero_axonal_delays_( false )
+  , have_predominant_axonal_delays_( false )
   , check_axonal_delays_()
   , get_connections_has_been_called_( false )
   , use_compressed_spikes_( true )
@@ -124,7 +124,7 @@ ConnectionManager::initialize( const bool adjust_number_of_threads_or_rng_only )
   connections_.resize( num_threads );
   secondary_recv_buffer_pos_.resize( num_threads );
   compressed_spike_data_.resize( 0 );
-  have_nonzero_axonal_delays_ = false;
+  have_predominant_axonal_delays_ = false;
   check_axonal_delays_.initialize( num_threads, false );
   num_corrections_.assign( num_threads, 0 );
 
@@ -952,10 +952,10 @@ ConnectionManager::connect_( Node& source,
 
   increase_connection_count( tid, syn_id );
 
-  if ( check_axonal_delays_[ tid ].is_false() and axonal_delay > 0. )
+  if ( check_axonal_delays_[ tid ].is_false() and axonal_delay >= dendritic_delay )
   {
 #pragma omp atomic write
-    have_nonzero_axonal_delays_ = true;
+    have_predominant_axonal_delays_ = true;
     check_axonal_delays_.set_true( tid );
   }
 

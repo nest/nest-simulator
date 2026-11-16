@@ -395,7 +395,7 @@ public:
    * @throws IllegalConnection
    */
   virtual size_t handles_test_event( SpikeEvent&, size_t receptor_type );
-  virtual size_t handles_test_event( CorrectionSpikeEvent&, size_t receptor_type );
+  virtual size_t handles_test_event( WeightCorrectionEvent&, size_t receptor_type );
   virtual size_t handles_test_event( WeightRecorderEvent&, size_t receptor_type );
   virtual size_t handles_test_event( RateEvent&, size_t receptor_type );
   virtual size_t handles_test_event( DataLoggingRequest&, size_t receptor_type );
@@ -474,7 +474,7 @@ public:
   /**
    * Register a STDP connection
    *
-   * @param t_first_read Earliest spike time in ms that the connection will read
+   * @param t_first_read Earliest spike time in ms that the connection can possibly read
    * @param dendritic_delay Dendritic delay of the connection in ms
    * @param axonal_delay Axonal delay of the connection in ms
    *
@@ -583,7 +583,7 @@ public:
    * @ingroup event_interface
    */
   virtual void handle( SpikeEvent& e );
-  virtual void handle( CorrectionSpikeEvent& );
+  virtual void handle( WeightCorrectionEvent& );
 
   /**
    * Handle incoming weight recording events.

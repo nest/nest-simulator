@@ -36,6 +36,126 @@ namespace nest
 {
 
 /**
+ * Information on a received pre-synaptic spike which is buffered by an AxonalDelayArchivingNode, so that the weight of
+ * the synapse which transmitted it, and the spike itself, can be corrected retrospectively.
+ *
+ * Entries are handed to the synapse when it is corrected; the synapse reads the entry and records the outcome of the
+ * correction in it.
+ */
+class CorrectionEntrySTDPAxDelay
+{
+public:
+  CorrectionEntrySTDPAxDelay( const size_t lcid,
+    const synindex syn_id,
+    const double t_last_pre_spike,
+    const double weight_revert,
+    const double new_weight,
+    const double K_plus_revert,
+    const long next_offset = -1 )
+    : lcid_( lcid )
+    , syn_id_( syn_id )
+    , t_last_pre_spike_( t_last_pre_spike )
+    , weight_revert_( weight_revert )
+    , new_weight_( new_weight )
+    , K_plus_revert_( K_plus_revert )
+    , next_offset_( next_offset )
+  {
+  }
+
+  //! Local connection index of the synapse which transmitted the spike.
+  size_t
+  get_lcid() const
+  {
+    return lcid_;
+  }
+
+  //! Synapse type of the synapse which transmitted the spike.
+  synindex
+  get_syn_id() const
+  {
+    return syn_id_;
+  }
+
+  //! Time of the last pre-synaptic spike before this spike.
+  double
+  get_t_last_pre_spike() const
+  {
+    return t_last_pre_spike_;
+  }
+
+  //! Synaptic weight to revert to (STDP depression needs to be undone) before a correction.
+  double
+  get_weight_revert() const
+  {
+    return weight_revert_;
+  }
+
+  void
+  set_weight_revert( const double weight_revert )
+  {
+    weight_revert_ = weight_revert;
+  }
+
+  //! Weight of the synapse after the latest correction.
+  double
+  get_new_weight() const
+  {
+    return new_weight_;
+  }
+
+  void
+  set_new_weight( const double new_weight )
+  {
+    new_weight_ = new_weight;
+  }
+
+  //! Pre-synaptic trace before the possibly incorrect facilitation.
+  double
+  get_K_plus_revert() const
+  {
+    return K_plus_revert_;
+  }
+
+  /**
+   * Whether another spike of the same connection has been buffered after this one. If so, that spike has to revert to
+   * the weight this entry ends up with.
+   */
+  bool
+  has_next() const
+  {
+    return next_offset_ != -1;
+  }
+
+  /**
+   * Steps from the slot of this entry to the slot of the next spike on this connection. Stored as an interval rather
+   * than a lag because the lag of a given slot decreases by min_delay every slice.
+   */
+  long
+  get_next_offset() const
+  {
+    return next_offset_;
+  }
+
+  void
+  set_next_offset( const long next_offset )
+  {
+    next_offset_ = next_offset;
+  }
+
+private:
+  unsigned int lcid_;        //!< local connection index
+  unsigned int syn_id_;      //!< synapse-type index
+  double t_last_pre_spike_;  //!< time of the last pre-synaptic spike before this spike
+  double weight_revert_;     //!< synaptic weight to revert to (STDP depression needs to be undone)
+  double new_weight_;        //!< new weight after the latest correction
+  double K_plus_revert_;     //!< pre-synaptic trace before possibly incorrect facilitation
+  long next_offset_;         //!< steps to the next spike on this connection (-1 if none)
+};
+
+//! check for correct correction entry size
+using success_correction_entry_size = StaticAssert< sizeof( CorrectionEntrySTDPAxDelay ) == 48 >::success;
+
+/**
  * A node which buffers the information needed to retrospectively correct incoming STDP synapses with
  * predominantly axonal delays.
  *
@@ -54,7 +174,7 @@ namespace nest
  *  - calls reset_correction_entries_stdp_ax_delay_() for every lag in update(),
  *  - calls correct_synapses_stdp_ax_delay_() whenever it emits a spike, and accounts for the returned number
  *    of corrections in whatever spike archive it maintains,
- *  - handles CorrectionSpikeEvent, and
+ *  - handles WeightCorrectionEvent, and
  *  - overrides supports_axonal_delay_corrections() to return true.
  */
 class AxonalDelayArchivingNode : public StructuralPlasticityNode
@@ -96,6 +216,9 @@ public:
    * @param t_last_pre_spike The time of the last pre-synaptic spike that was processed before the current one.
    * @param weight_revert The synaptic weight before depression after facilitation as baseline for potential later
    * correction.
+   * @param new_weight The synaptic weight after the spike was transmitted, i.e., the weight the synapse is left with
+   * if no correction follows.
+   * @param K_plus_revert The pre-synaptic trace before the possibly incorrect facilitation.
    * @param time_while_critical The number of time steps until the spike no longer needs to be corrected.
    */
   void add_correction_entry_stdp_ax_delay( SpikeEvent& spike_event,
@@ -112,7 +235,8 @@ public:
   void update_weight_revert( const size_t lcid, const double weight_revert );
 
 protected:
-  //! Resize the correction buffer if the delay extrema changed since the last run.
+  //! Allocate or resize the correction buffer if the delay extrema changed since the last run. The buffer is only
+  //! allocated for nodes with incoming connections with predominantly axonal delay.
   void pre_run_hook_();
 
   //! Retire the correction entries which are no longer critical in the given time slot.
@@ -128,40 +252,6 @@ protected:
   size_t correct_synapses_stdp_ax_delay_( const Time& t_spike );
 
 private:
-  struct CorrectionEntrySTDPAxDelay
-  {
-    CorrectionEntrySTDPAxDelay( const size_t lcid,
-      const synindex syn_id,
-      const double t_last_pre_spike,
-      const double weight_revert,
-      const double new_weight,
-      const double K_plus_revert,
-      const long next_offset = -1 )
-      : lcid_( lcid )
-      , syn_id_( syn_id )
-      , t_last_pre_spike_( t_last_pre_spike )
-      , weight_revert_( weight_revert )
-      , new_weight_( new_weight )
-      , K_plus_revert_( K_plus_revert )
-      , next_offset_( next_offset )
-    {
-    }
-
-    unsigned int lcid_;        //!< local connection index
-    unsigned int syn_id_;      //!< synapse-type index
-    double t_last_pre_spike_;  //!< time of the last pre-synaptic spike before this spike
-    double weight_revert_;     //!< synaptic weight to revert to (STDP depression needs to be undone)
-    double new_weight_;        //!< new weight after the latest correction
-    double K_plus_revert_;     //!< pre-synaptic trace before possibly incorrect facilitation
-    //! steps from this entry's slot to that of the next spike on this connection (-1 if none).  Stored as
-    //! an interval rather than a lag because the lag of a given slot decreases by min_delay every slice.
-    long next_offset_;
-  };
-
-  //! check for correct correction entry size
-  using correction_entry_size =
-    StaticAssert< sizeof( AxonalDelayArchivingNode::CorrectionEntrySTDPAxDelay ) == 48 >::success;
-
   /**
    * Buffer of correction entries sorted by t_spike_pre + delay (i.e., the actual arrival time at this neuron).
    */

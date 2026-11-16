@@ -31,6 +31,7 @@
 #include "stopwatch.h"
 
 // Includes from nestkernel:
+#include "axonal_delay_archiving_node.h"
 #include "conn_builder.h"
 #include "connection_id.h"
 #include "connector_base.h"
@@ -318,25 +319,18 @@ public:
   /**
    * On occurrence of a post-synaptic spike, correct the weight update of a previous pre-synaptic spike which was
    * processed before the current post-synaptic spike, but had to be processed after it, if it was known at this point
-   * in time.
+   * in time. The new weight of the synapse is recorded in the correction entry.
    *
    * @param tid The thread storing the synapse.
-   * @param syn_id Synapse type.
-   * @param lcid Local index of the synapse in the array of connections of the same type for this thread.
-   * @param t_last_pre_spike Time of the last pre-synaptic spike before the pre-synaptic spike which needs a correction.
-   * @param t_spike
-   * @param weight_revert The synaptic weight before depression after facilitation as baseline for potential later
+   * @param entry Correction entry of the pre-synaptic spike which needs a correction. It identifies the synapse
+   * (synapse type and local connection index) and holds the data required for the correction.
+   * @param t_spike_critical_interval_end End of the critical interval of the pre-synaptic spike which needs a
    * correction.
    * @param t_post_spike Time of the current post-synaptic spike.
    */
-  void correct_synapse_stdp_ax_delay( size_t tid,
-    synindex syn_id,
-    size_t lcid,
-    double t_last_pre_spike,
+  void correct_weight_stdp_ax_delay( size_t tid,
+    CorrectionEntrySTDPAxDelay& entry,
     double t_spike_critical_interval_end,
-    const double weight_revert,
-    double& new_weight,
-    double K_plus_revert,
     double t_post_spike );
 
   /**
@@ -432,7 +426,7 @@ public:
    */
   void unset_connections_have_changed();
 
-  bool have_nonzero_axonal_delays() const;
+  bool have_predominant_axonal_delays() const;
 
   /**
    * Deletes TargetTable and resets processed flags of SourceTable.
@@ -704,8 +698,9 @@ private:
   //! simulate.
   bool connections_have_changed_;
 
-  //! True if any connection uses a nonzero axonal delay.
-  bool have_nonzero_axonal_delays_;
+  //! True if any connection has a predominantly axonal delay, i.e., an axonal delay at least as long as its dendritic
+  //! delay.
+  bool have_predominant_axonal_delays_;
 
   PerThreadBoolIndicator check_axonal_delays_;
 
@@ -862,9 +857,9 @@ ConnectionManager::connections_have_changed() const
 }
 
 inline bool
-ConnectionManager::have_nonzero_axonal_delays() const
+ConnectionManager::have_predominant_axonal_delays() const
 {
-  return have_nonzero_axonal_delays_;
+  return have_predominant_axonal_delays_;
 }
 
 inline void
@@ -958,26 +953,14 @@ ConnectionManager::send( const size_t tid,
 }
 
 inline void
-ConnectionManager::correct_synapse_stdp_ax_delay( const size_t tid,
-  const synindex syn_id,
-  const size_t lcid,
-  const double t_last_pre_spike,
+ConnectionManager::correct_weight_stdp_ax_delay( const size_t tid,
+  CorrectionEntrySTDPAxDelay& entry,
   const double t_spike_critical_interval_end,
-  const double weight_revert,
-  double& new_weight,
-  const double K_plus_revert,
   const double t_post_spike )
 {
   ++num_corrections_[ tid ];
-  connections_[ tid ][ syn_id ]->correct_synapse_stdp_ax_delay( tid,
-    syn_id,
-    lcid,
-    t_last_pre_spike,
-    t_spike_critical_interval_end,
-    weight_revert,
-    new_weight,
-    K_plus_revert,
-    t_post_spike );
+  connections_[ tid ][ entry.get_syn_id() ]->correct_weight_stdp_ax_delay(
+    tid, entry, t_spike_critical_interval_end, t_post_spike );
 }
 
 inline void

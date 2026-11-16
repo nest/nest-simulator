@@ -83,6 +83,8 @@ parrot_neuron::update( Time const& origin, const long from, const long to )
       kernel().event_delivery_manager.send( *this, se, lag );
       set_last_event_time( t );
     }
+
+    reset_correction_entries_stdp_ax_delay_( lag );
   }
 }
 
@@ -112,8 +114,10 @@ parrot_neuron::handle( SpikeEvent& e )
 }
 
 void
-parrot_neuron::handle( CorrectionSpikeEvent& )
+parrot_neuron::handle( WeightCorrectionEvent& )
 {
+  // Weights of incoming connections are ignored by the parrot neuron, so correcting a weight has no effect on
+  // the spikes it repeats.
 }
 
 }  // namespace nest

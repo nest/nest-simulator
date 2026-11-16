@@ -113,7 +113,7 @@ class Connection
 {
 
 public:
-  static constexpr bool requires_axonal_delay_feedback = std::is_same< DelayTypeT, AxonalDendriticDelay >::value;
+  static constexpr bool requires_axonal_delay_correction = std::is_same< DelayTypeT, AxonalDendriticDelay >::value;
 
   // properties used when registering a connection with the ModelManager
   static constexpr ConnectionModelProperties properties = ConnectionModelProperties::NONE;
@@ -127,7 +127,6 @@ public:
     , disabled_( false )
     , delay_( 1.0 )
   {
-    delay_.set_delay_ms( 1.0 );
   }
 
   Connection( const Connection< targetidentifierT, DelayTypeT >& rhs ) = default;
@@ -176,15 +175,11 @@ public:
   /**
    * Framework for STDP with predominantly axonal delays:
    * Correct this synapse and the corresponding previously sent spike
-   * taking into account a new post-synaptic spike.
+   * taking into account a new post-synaptic spike. The new weight of the synapse is recorded in the correction entry.
    */
-  void correct_synapse_stdp_ax_delay( const size_t tid,
-    const size_t lcid,
-    const double t_last_pre_spike,
+  void correct_weight_stdp_ax_delay( const size_t tid,
+    CorrectionEntrySTDPAxDelay& entry,
     const double t_spike_critical_interval_end,
-    const double weight_revert,
-    double& new_weight,
-    const double K_plus_revert,
     const double t_post_spike,
     const CommonSynapseProperties& );
 
@@ -465,12 +460,8 @@ Connection< targetidentifierT, DelayTypeT >::calibrate( const TimeConverter& tc 
 
 template < typename targetidentifierT, typename DelayTypeT >
 inline void
-Connection< targetidentifierT, DelayTypeT >::correct_synapse_stdp_ax_delay( const size_t,
-  const size_t,
-  const double,
-  const double,
-  const double,
-  double&,
+Connection< targetidentifierT, DelayTypeT >::correct_weight_stdp_ax_delay( const size_t,
+  CorrectionEntrySTDPAxDelay&,
   const double,
   const double,
   const CommonSynapseProperties& )

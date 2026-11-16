@@ -216,7 +216,7 @@ ax_perc = axonal_delays / total_delay
 num_corrections = np.empty(len(axonal_delays), dtype=np.int32)
 for i, axonal_delay in enumerate(axonal_delays):
     run(500.0, axonal_delay, total_delay - axonal_delay, enable_stdp=False, use_ax_delay=True)
-    num_corrections[i] = nest.kernel_status["num_corrections"]
+    num_corrections[i] = nest.num_corrections
 
 ##########################################################################
 # Plot the number of corrections

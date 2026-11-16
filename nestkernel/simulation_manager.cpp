@@ -561,14 +561,14 @@ SimulationManager::prepare()
 
   // If we simulated already and we use axonal delays, we have to make sure connectivity didn't change, as this would
   // invalidate the correction entries in the neurons that are required for connections with predominant axonal delays.
-  if ( simulated_ and kernel().connection_manager.have_nonzero_axonal_delays()
+  if ( simulated_ and kernel().connection_manager.have_predominant_axonal_delays()
     and kernel().connection_manager.connections_have_changed() )
   {
     throw KernelException(
       "Connections have changed during simulation, which is not allowed when using axonal delays!" );
   }
 
-  if ( kernel().connection_manager.have_nonzero_axonal_delays()
+  if ( kernel().connection_manager.have_predominant_axonal_delays()
     and kernel().sp_manager.is_structural_plasticity_enabled() )
   {
     throw KernelException( "Structural plasticity is not compatible with axonal delays!" );

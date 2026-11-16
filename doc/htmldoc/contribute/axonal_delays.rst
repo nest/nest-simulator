@@ -54,13 +54,13 @@ excitatory connections, which could be distinguished by the sign of the weight. 
 an old one, the sign might be negative even though both the old and new weight were originally positive, the new weight
 is just smaller. In such a case, the spike would be accumulated in the wrong buffer.
 
-Instead of sending a regular ``SpikeEvent`` to signal a correction, a ``CorrectionSpikeEvent`` is sent. Overloading the handle
+Instead of sending a regular ``SpikeEvent`` to signal a correction, a ``WeightCorrectionEvent`` is sent. Overloading the handle
 function now allows handling the correction in the correct way, depending on the model implementation.
 Furthermore, neuron models must now call ``AxonalDelayArchivingNode::pre_run_hook_()`` in their derived pre_run_hook
 implementation, call ``reset_correction_entries_stdp_ax_delay_()`` at the end of each timestep in their update
 implementation, and override ``supports_axonal_delay_corrections()`` to return true.
-Currently, the ``iaf_psc_alpha``, ``iaf_psc_exp`` and ``iaf_psc_delta`` neuron models support STDP with axonal
-delays. Connecting a
+Currently, the ``iaf_psc_alpha``, ``iaf_psc_exp``, ``iaf_psc_delta`` and ``parrot_neuron`` models support STDP with
+axonal delays. Connecting a
 synapse with a predominantly axonal delay to any other neuron model raises ``IllegalConnection``, rather than
 silently computing wrong weights.
 
@@ -78,7 +78,7 @@ asserts, it has broken the property the whole design rests on.
 
 The consequence for the delay range is that a dendritic delay is limited to 2^14 - 1 steps. The remaining differences
 compared to synapses with purely dendritic delays are the handling of delays inside the ``send`` function and the
-addition of ``correct_synapse_stdp_ax_delay``, which is called by the ``ConnectionManager`` when a synapse needs to
+addition of ``correct_weight_stdp_ax_delay``, which is called by the ``ConnectionManager`` when a synapse needs to
 re-calculate its weight given a new post-synaptic spike and a previous pre-synaptic one.
 Currently, only the ``stdp_pl_synapse_hom_ax_delay`` synapse model supports axonal delays, together with the
 ``_hpc``, ``_lbl`` and ``_hpc_lbl`` variants generated from it.
@@ -86,19 +86,27 @@ Currently, only the ``stdp_pl_synapse_hom_ax_delay`` synapse model supports axon
 Changes to the Python interface
 -------------------------------
 
-In general, the kernel was made axonal-delay-aware and this is reflected in the user interface, as it is now possible
-to set ``names::dendritic_delay`` and ``names::axonal_delay`` for each synapse whose delay container is
-``AxonalDendriticDelay``. Those synapses take the two parameters *instead of* ``delay``, not in addition to it: passing
-``delay`` to such a synapse raises, and so does passing ``axonal_delay`` or ``dendritic_delay`` to any other synapse.
-The rule holds in ``Connect``, ``SetStatus`` and ``SetDefaults`` alike;
-``testsuite/pytests/synapses/test_axonal_delay_user_interface.py`` is the specification.
+In general, the kernel was made axonal-delay-aware and this is reflected in the Python interface: synapse models which
+support split delays, currently ``stdp_pl_synapse_hom_ax_delay``, take the parameters ``dendritic_delay`` and
+``axonal_delay`` *instead of* the total ``delay``. The following rules apply, whether the parameters are given to
+``nest.Connect()`` (via ``syn_spec``), to ``set()`` on a ``SynapseCollection``, or to ``nest.SetDefaults()``:
+
+- Passing ``delay`` to a synapse model with split delays raises an error, because it is ambiguous how the total delay
+  should be split into a dendritic and an axonal contribution.
+- Passing ``axonal_delay`` or ``dendritic_delay`` to any other synapse model raises an error.
+- Each of the two parameters can be set on its own. If only one is given, the other one keeps its value, which is
+  ``1.0`` ms for the dendritic delay and ``0.0`` ms for the axonal delay by default.
+- The sum of the two delays must be greater than zero.
+
+The total delay can still be read from the connection via ``get()``, and the number of corrections performed so far is
+available as ``nest.num_corrections``.
 
 Remaining work
 ---------------
 
-Currently, three neuron models and one synapse model support axonal delays. All neuron models that support STDP could
+Currently, four neuron models and one synapse model support axonal delays. All neuron models that support STDP could
 also support axonal delays, without sacrificing performance, changing their behavior, or requiring more memory, but need
-to be adapted slightly (i.e., implement handle for ``CorrectionSpikeEvent``, call
+to be adapted slightly (i.e., implement handle for ``WeightCorrectionEvent``, call
 ``AxonalDelayArchivingNode::pre_run_hook_``, call ``reset_correction_entries_stdp_ax_delay_``, and override
 ``supports_axonal_delay_corrections``).
 

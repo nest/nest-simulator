@@ -64,7 +64,7 @@ EPS = 1e-6
 
 # The neuron models which support synapses with predominantly axonal delay; see
 # Node::supports_axonal_delay_corrections().
-SUPPORTED_NEURONS = ["iaf_psc_alpha", "iaf_psc_exp", "iaf_psc_delta"]
+SUPPORTED_NEURONS = ["iaf_psc_alpha", "iaf_psc_exp", "iaf_psc_delta", "parrot_neuron"]
 
 
 def _facilitate(weight, kplus):
@@ -115,7 +115,11 @@ def _simulate(axonal_delay, dendritic_delay, pre_interval, num_threads, neuron_m
     # parrot_neuron repeats its input exactly, so the presynaptic spike times are prescribed;
     # the postsynaptic times are whatever the neurons produce and are read back below.
     pre = nest.Create("parrot_neuron", N_PRE)
-    post = nest.Create(neuron_model, N_POST, params={"tau_minus": TAU_MINUS, "t_ref": 0.0})
+    # parrot_neuron has no refractory period, and it repeats spikes arriving on port 0 only. The plastic input is
+    # therefore connected to port 1, so that the STDP synapses do not influence the spiking of a parrot target.
+    is_parrot = neuron_model == "parrot_neuron"
+    post_params = {"tau_minus": TAU_MINUS} if is_parrot else {"tau_minus": TAU_MINUS, "t_ref": 0.0}
+    post = nest.Create(neuron_model, N_POST, params=post_params)
     pre_gen = nest.Create("spike_generator", N_PRE, params=[{"spike_times": t} for t in pre_drive])
     post_gen = nest.Create("spike_generator", N_POST, params=[{"spike_times": t} for t in post_drive])
 
@@ -131,17 +135,15 @@ def _simulate(axonal_delay, dendritic_delay, pre_interval, num_threads, neuron_m
     nest.Connect(pre + post, recorder, syn_spec={"synapse_model": "static_synapse"})
 
     nest.SetDefaults("stdp_pl_synapse_hom_ax_delay", SYNAPSE_PARAMS)
-    nest.Connect(
-        pre,
-        post,
-        "all_to_all",
-        syn_spec={
-            "synapse_model": "stdp_pl_synapse_hom_ax_delay",
-            "weight": INITIAL_WEIGHT,
-            "axonal_delay": axonal_delay,
-            "dendritic_delay": dendritic_delay,
-        },
-    )
+    syn_spec = {
+        "synapse_model": "stdp_pl_synapse_hom_ax_delay",
+        "weight": INITIAL_WEIGHT,
+        "axonal_delay": axonal_delay,
+        "dendritic_delay": dendritic_delay,
+    }
+    if is_parrot:
+        syn_spec["receptor_type"] = 1
+    nest.Connect(pre, post, "all_to_all", syn_spec=syn_spec)
 
     nest.Simulate(SIMTIME)
 

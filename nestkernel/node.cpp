@@ -273,7 +273,7 @@ Node::handle( SpikeEvent& )
   throw UnexpectedEvent( "The target node does not handle spike input." );
 }
 void
-Node::handle( CorrectionSpikeEvent& )
+Node::handle( WeightCorrectionEvent& )
 {
   throw UnexpectedEvent( "The target node does not handle spike input." );
 }
@@ -287,7 +287,7 @@ Node::handles_test_event( SpikeEvent&, size_t )
 }
 
 size_t
-Node::handles_test_event( CorrectionSpikeEvent&, size_t )
+Node::handles_test_event( WeightCorrectionEvent&, size_t )
 {
   throw IllegalConnection(
     "The target node or synapse model does not support spike input with axonal delays."

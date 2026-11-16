@@ -309,13 +309,17 @@ struct AxonalDendriticDelay
   }
 
   /**
-   * Set the delay of the connection specified in ms
+   * Setting the total delay is not supported, because it is ambiguous how it should be split into a dendritic and an
+   * axonal contribution.
+   *
+   * @throws BadProperty
    */
   void
-  set_delay_ms( const double d )
+  set_delay_ms( const double )
   {
-    dendritic_delay_ = Time::delay_ms_to_steps( d );
-    axonal_delay_ = 0;
+    throw BadProperty(
+      "The total delay cannot be set for synapse types which use both dendritic and axonal delays, because of "
+      "ambiguity." );
   }
 
   void

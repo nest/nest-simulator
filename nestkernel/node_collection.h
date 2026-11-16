@@ -33,7 +33,6 @@
 #include <vector>
 
 // Includes from libnestuil:
-#include "dictionary.h"
 #include "exceptions.h"
 
 // Includes from thirdparty:

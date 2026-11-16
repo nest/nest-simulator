@@ -189,8 +189,9 @@ KernelManager::initialize( const bool )
 
   ++fingerprint_;
   initialized_ = true;
-  FULL_LOGGING_ONLY( dump_.open(
-    String::compose( "dump_%1_%2.log", mpi_manager.get_num_processes(), mpi_manager.get_rank() ).c_str() ); )
+  FULL_LOGGING_ONLY( dump_.open( String::compose(
+    "dump_%1_%2.log", kernel::manager< MPIManager >.get_num_processes(), kernel::manager< MPIManager >.get_rank() )
+      .c_str() ); )
 }
 
 void

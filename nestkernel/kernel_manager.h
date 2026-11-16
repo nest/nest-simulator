@@ -211,11 +211,9 @@ private:
 
 namespace kernel
 {
-
 // This creates all managers exactly once and makes them accessible globally (including the KernelManager itself)
 template < class T >
 inline T manager;
-
 }
 
 inline RngPtr

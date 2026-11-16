@@ -26,9 +26,6 @@
 // C++
 #include <string>
 
-// nestkernel
-#include "dictionary.h"
-
 class Dictionary;
 
 namespace nest

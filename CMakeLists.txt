@@ -83,8 +83,8 @@ option( with-intel-compiler-strict-math "Pass -fp-model strict when compiling wi
 set( with-libraries OFF CACHE STRING "Link additional libraries [default=OFF]. Give full path. Separate multiple libraries by ';'." )
 set( with-includes OFF CACHE STRING "Add additional include paths [default=OFF]. Give full path without '-I'. Separate multiple include paths by ';'." )
 set( with-defines OFF CACHE STRING "Additional defines, e.g. '-DXYZ=1' [default=OFF]. Separate multiple defines by ';'." )
-set( with-lto OFF CACHE STRING "Control link-time optimization (LTO) [default=OFF]." )
-set( with-pgo OFF CACHE STRING "Control profile-guided optimization (PGO) [default=OFF]. Set to GENERATE to build with profiling instrumentation and set to USE to use the profiling results in the final optimized build." )
+option( with-lto "Control link-time optimization (LTO) [default=OFF]." OFF )
+set( with-pgo OFF CACHE STRING "Control profile-guided optimization (PGO) [default=OFF]. Set to GENERATE to build with profiling instrumentation and set to USE to use the profiling results in the final optimized build."  )
 set( CMAKE_INSTALL_MESSAGE LAZY CACHE STRING "Verbosity of install process output [default=LAZY]." )
 
 # documentation build configuration

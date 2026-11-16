@@ -27,14 +27,12 @@
 #include <deque>
 
 // Includes from nestkernel:
-#include "dictionary.h"
 #include "histentry.h"
 #include "ignore_and_spike_mechanism.h"
 #include "nest_time.h"
 #include "structural_plasticity_node.h"
 
 class Dictionary;
-
 
 #define DEBUG_ARCHIVER 1
 

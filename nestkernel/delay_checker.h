@@ -24,11 +24,9 @@
 #define DELAY_CHECKER_H
 
 // Includes from nestkernel:
-#include "dictionary.h"
 #include "nest_time.h"
 
 class Dictionary;
-
 
 namespace nest
 {

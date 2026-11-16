@@ -405,16 +405,12 @@ protected:
   friend class masked_iterator;
 };
 
-// Proper mod which returns non-negative numbers
-double mod( double x, double p );
-
 template < int D, class T, int max_capacity, int max_depth >
 void
 Ntree< D, T, max_capacity, max_depth >::push_back( const value_type& val )
 {
   insert( val );
 }
-
 
 }  // namespace nest
 

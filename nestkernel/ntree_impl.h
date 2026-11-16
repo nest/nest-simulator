@@ -24,6 +24,7 @@
 #define NTREE_IMPL_H
 
 #include "ntree.h"
+#include "numerics.h"
 #include "position.h"
 
 #include <bitset>
@@ -217,7 +218,8 @@ Ntree< D, T, max_capacity, max_depth >::masked_iterator::masked_iterator( Ntree<
     {
       if ( ntree_->periodic_[ i ] )
       {
-        anchor_[ i ] = mod( anchor_[ i ] + mask_bb.lower_left[ i ] - ntree_->lower_left_[ i ], ntree_->extent_[ i ] )
+        anchor_[ i ] =
+          numerics::pos_fmod( anchor_[ i ] + mask_bb.lower_left[ i ] - ntree_->lower_left_[ i ], ntree_->extent_[ i ] )
           - mask_bb.lower_left[ i ] + ntree_->lower_left_[ i ];
       }
     }

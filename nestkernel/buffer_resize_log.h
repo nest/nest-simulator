@@ -26,9 +26,6 @@
 // C++ includes:
 #include <vector>
 
-// Includes from libnestutil:
-#include "dictionary.h"
-
 class Dictionary;
 
 namespace nest

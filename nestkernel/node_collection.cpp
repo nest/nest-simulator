@@ -42,7 +42,6 @@
 #include "model.h"
 #include "mpi_manager.h"
 #include "nest_types.h"
-#include "numeric"  // accumulate
 #include "vp_manager.h"
 
 class Dictionary;

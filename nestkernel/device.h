@@ -25,13 +25,10 @@
 
 #include <string>
 
-// Includes from libnestutil:
-#include "dictionary.h"
 // Includes from nestkernel:
 #include "nest_time.h"
 
 class Dictionary;
-
 
 namespace nest
 {

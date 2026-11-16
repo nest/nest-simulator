@@ -112,7 +112,7 @@ set ( nestkernel_sources
       grid_mask.h grid_mask_impl.h grid_mask.cpp
       layer.h layer.cpp layer_impl.h
       mask.h mask.cpp mask_impl.h
-      ntree.h ntree.cpp ntree_impl.h
+      ntree.h ntree_impl.h
       position.h position_impl.h
       spatial.h spatial.cpp
       stimulation_backend.h

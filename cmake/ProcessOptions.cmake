@@ -616,63 +616,14 @@ function( NEST_PROCESS_FULL_LOGGING )
   set( ENABLE_FULL_LOGGING ${with-full-logging} PARENT_SCOPE )
 endfunction()
 
-function( NEST_PROCESS_LTO )
-    set( WITH_LTO OFF PARENT_SCOPE )
-    if ( ${with-lto} STREQUAL "ON" )
-        set( WITH_LTO ON PARENT_SCOPE )
+function(NEST_PROCESS_LTO)
+  if ( with-lto )
+    include(CheckIPOSupported)
+    check_ipo_supported()   # will terminate if unsupported
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE PARENT_SCOPE)
+  endif()
 
-        # enable link-time optimizations
-        include( CheckIPOSupported )
-        check_ipo_supported()
-        set( CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE )
-
-        if ( CMAKE_CXX_COMPILER_ID MATCHES "Clang" )
-            execute_process(
-                    COMMAND ${CMAKE_CXX_COMPILER} -print-prog-name=llvm-ar
-                    OUTPUT_VARIABLE LLVM_AR_PATH
-                    OUTPUT_STRIP_TRAILING_WHITESPACE
-            )
-
-            execute_process(
-                    COMMAND ${CMAKE_CXX_COMPILER} -print-prog-name=llvm-ranlib
-                    OUTPUT_VARIABLE LLVM_RANLIB_PATH
-                    OUTPUT_STRIP_TRAILING_WHITESPACE
-            )
-
-            # clang with LTO requires "llvm-ar" to be used instead of the standard "ar"
-            find_program( LLVM_AR NAMES ${LLVM_AR_PATH} llvm-ar )
-            find_program( LLVM_RANLIB NAMES ${LLVM_RANLIB_PATH} llvm-ranlib )
-
-            set( CMAKE_EXE_LINKER_FLAGS_INIT "-fuse-ld=lld" )
-            set( CMAKE_SHARED_LINKER_FLAGS_INIT "-fuse-ld=lld" )
-            set( CMAKE_MODULE_LINKER_FLAGS_INIT "-fuse-ld=lld" )
-
-            if ( LLVM_AR )
-                set( CMAKE_AR ${LLVM_AR} CACHE FILEPATH "Archiver" FORCE )
-            else ()
-                message( FATAL_ERROR "Clang with LTO requires llvm-ar" )
-            endif ()
-
-            if ( LLVM_RANLIB )
-                set( CMAKE_RANLIB ${LLVM_RANLIB} CACHE FILEPATH "Ranlib" FORCE )
-            else ()
-                message( FATAL_ERROR "Clang with LTO requires llvm-ranlib" )
-            endif ()
-        elseif ()
-            get_filename_component( GCC_BIN_DIR ${CMAKE_CXX_COMPILER} DIRECTORY )
-
-            find_program( GCC_AR NAMES gcc-ar HINTS ${GCC_BIN_DIR} )
-            find_program( GCC_RANLIB NAMES gcc-ranlib HINTS ${GCC_BIN_DIR} )
-
-            if ( GCC_AR )
-                set( CMAKE_AR ${GCC_AR} CACHE FILEPATH "Archiver" FORCE )
-            endif ()
-
-            if ( GCC_RANLIB )
-                set( CMAKE_RANLIB ${GCC_RANLIB} CACHE FILEPATH "Ranlib" FORCE )
-            endif ()
-        endif ()
-    endif ()
+  set(WITH_LTO ${with-lto} PARENT_SCOPE)
 endfunction()
 
 function( NEST_PROCESS_PGO )

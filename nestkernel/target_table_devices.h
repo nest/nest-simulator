@@ -27,8 +27,6 @@
 #include <deque>
 #include <vector>
 
-// Includes from libnestutil:
-#include "dictionary.h"
 // Includes from nestkernel:
 #include "connection_id.h"
 #include "connector_base.h"
@@ -37,7 +35,6 @@
 #include "secondary_event.h"
 
 class Dictionary;
-
 
 namespace nest
 {

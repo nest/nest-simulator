@@ -23,8 +23,6 @@
 #ifndef COMMON_PROPERTIES_HOM_W_H
 #define COMMON_PROPERTIES_HOM_W_H
 
-// Includes from libnestutil:
-#include "dictionary.h"
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
 

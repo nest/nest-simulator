@@ -60,48 +60,5 @@ Event::retrieve_sender_node_id_from_source_table() const
   }
 }
 
-DataLoggingRequest::DataLoggingRequest( const Time& rec_int,
-  const Time& rec_offset,
-  const std::vector< std::string >& recs )
-  : Event()
-  , recording_interval_( rec_int )
-  , recording_offset_( rec_offset )
-  , record_from_( &recs )
-{
-}
-
-DataLoggingRequest::DataLoggingRequest( const Time& rec_int, const std::vector< std::string >& recs )
-  : Event()
-  , recording_interval_( rec_int )
-  , record_from_( &recs )
-{
-}
-
-DataLoggingRequest::DataLoggingRequest()
-  : Event()
-  , recording_interval_( Time::neg_inf() )
-  , recording_offset_( Time::ms( 0. ) )
-  , record_from_( nullptr )
-{
-}
-
-WeightRecorderEvent::WeightRecorderEvent()
-  : receiver_node_id_( 0 )
-{
-}
-
-SpikeEvent::SpikeEvent()
-  : multiplicity_( 1 )
-{
-}
-
-Event::~Event()
-{
-}
-
-DataLoggingReply::DataLoggingReply( const DataLoggingReply::Container& info )
-  : info_( info )
-{
-}
 
 }  // std::stringspace nest

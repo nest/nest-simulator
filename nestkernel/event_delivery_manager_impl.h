@@ -25,7 +25,10 @@
 #define EVENT_DELIVERY_MANAGER_IMPL_H
 
 #include "event_delivery_manager.h"
+#include "connection_manager.h"
+#include "kernel_manager.h"
 #include "simulation_manager.h"
+#include "vp_manager.h"
 
 namespace nest
 {
@@ -55,6 +58,40 @@ inline void
 EventDeliveryManager::send( Node& source, EventT& e, const long lag )
 {
   send_local_( source, e, lag );
+}
+
+inline void
+EventDeliveryManager::send_off_grid_remote( size_t tid, SpikeEvent& e, const long lag )
+{
+  // Put the spike in a buffer for the remote machines
+  const size_t lid = kernel::manager< VPManager >.node_id_to_lid( e.get_sender().get_node_id() );
+  const auto& targets = kernel::manager< ConnectionManager >.get_remote_targets_of_local_node( tid, lid );
+
+  for ( const auto& target : targets )
+  {
+    // Unroll spike multiplicity as plastic synapses only handle individual spikes.
+    for ( size_t i = 0; i < e.get_multiplicity(); ++i )
+    {
+      off_grid_emitted_spikes_register_[ tid ]->emplace_back( target, lag, e.get_offset() );
+    }
+  }
+}
+
+inline void
+EventDeliveryManager::send_remote( size_t tid, SpikeEvent& e, const long lag )
+{
+  // Put the spike in a buffer for the remote machines
+  const size_t lid = kernel::manager< VPManager >.node_id_to_lid( e.get_sender().get_node_id() );
+  const auto& targets = kernel::manager< ConnectionManager >.get_remote_targets_of_local_node( tid, lid );
+
+  for ( const auto& target : targets )
+  {
+    // Unroll spike multiplicity as plastic synapses only handle individual spikes.
+    for ( size_t i = 0; i < e.get_multiplicity(); ++i )
+    {
+      emitted_spikes_register_[ tid ]->emplace_back( target, lag, e.is_flush_event() );
+    }
+  }
 }
 
 }  // namespace nest

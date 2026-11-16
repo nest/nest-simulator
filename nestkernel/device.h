@@ -167,6 +167,36 @@ private:
   Variables_ V_;
 };
 
+inline long
+Device::get_t_max_() const
+{
+  return V_.t_max_;
+}
+
+inline long
+Device::get_t_min_() const
+{
+  return V_.t_min_;
+}
+
+inline Time const&
+Device::get_stop() const
+{
+  return P_.stop_;
+}
+
+inline Time const&
+Device::get_start() const
+{
+  return P_.start_;
+}
+
+inline Time const&
+Device::get_origin() const
+{
+  return P_.origin_;
+}
+
 }  // namespace nest
 
 #endif /* DEVICE_H */

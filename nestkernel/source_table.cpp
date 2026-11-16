@@ -651,15 +651,6 @@ nest::SourceTable::clear_compressed_spike_data_map()
   }
 }
 
-size_t
-nest::SourceTable::pack_source_node_id_and_syn_id( const size_t source_node_id, const synindex syn_id ) const
-{
-  assert( source_node_id < 72057594037927936 );
-  assert( syn_id < invalid_synindex );
-  // syn_id is maximally 256, so shifting node ID by 8 bits and storing
-  // syn_id in the lowest 8 leads to a unique number
-  return ( source_node_id << 8 ) + syn_id;
-}
 
 size_t
 nest::SourceTable::num_unique_sources( const size_t tid, const synindex syn_id ) const
@@ -804,24 +795,6 @@ nest::SourceTable::clear( const size_t tid )
   }
   sources_[ tid ].clear();
   is_cleared_.set_true( tid );
-}
-void
-nest::SourceTable::add_source( const size_t tid, const synindex syn_id, const size_t node_id, const bool is_primary )
-{
-  const Source src( node_id, is_primary );
-  sources_[ tid ][ syn_id ].push_back( src );
-}
-
-size_t
-nest::CSDMapEntry::get_target_thread() const
-{
-  return target_thread_;
-}
-
-size_t
-nest::CSDMapEntry::get_source_index() const
-{
-  return source_index_;
 }
 
 }  // namespace nest

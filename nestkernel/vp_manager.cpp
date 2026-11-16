@@ -203,41 +203,4 @@ VPManager::set_num_threads( size_t n_threads )
 #endif
 }
 
-size_t
-nest::VPManager::get_thread_id() const
-{
-#ifdef _OPENMP
-  return omp_get_thread_num();
-#else
-  return 0;
-#endif
-}
-
-size_t
-nest::VPManager::get_end_rank_per_thread( const size_t rank_start, const size_t num_assigned_ranks_per_thread ) const
-{
-  size_t rank_end = rank_start + num_assigned_ranks_per_thread;
-
-  // if we have more threads than ranks, or if ranks can not be
-  // distributed evenly on threads, we need to make sure, that all
-  // threads care only about existing ranks
-  if ( rank_end > kernel::manager< MPIManager >.get_num_processes() )
-  {
-    rank_end = std::max( rank_start, kernel::manager< MPIManager >.get_num_processes() );
-  }
-
-  return rank_end;
-}
-
-nest::AssignedRanks
-nest::VPManager::get_assigned_ranks( const size_t tid )
-{
-  AssignedRanks assigned_ranks;
-  assigned_ranks.begin = get_start_rank_per_thread( tid );
-  assigned_ranks.max_size = get_num_assigned_ranks_per_thread();
-  assigned_ranks.end = get_end_rank_per_thread( assigned_ranks.begin, assigned_ranks.max_size );
-  assigned_ranks.size = assigned_ranks.end - assigned_ranks.begin;
-  return assigned_ranks;
-}
-
 }  // namespace nest

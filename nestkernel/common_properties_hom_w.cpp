@@ -44,11 +44,6 @@ CommonPropertiesHomW::get_status( Dictionary& d ) const
   d[ names::weight ] = weight_;
 }
 
-double
-CommonPropertiesHomW::get_weight() const
-{
-  return weight_;
-}
 
 void
 CommonPropertiesHomW::set_status( const Dictionary& d, ConnectorModel& cm )

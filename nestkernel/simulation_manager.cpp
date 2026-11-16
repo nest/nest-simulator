@@ -39,6 +39,7 @@
 #include "event_delivery_manager.h"
 #include "kernel_manager.h"
 #include "stopwatch_impl.h"
+#include "update_block.h"
 
 
 namespace nest
@@ -865,6 +866,9 @@ SimulationManager::update_()
   {
     const size_t tid = kernel().vp_manager.get_thread_id();
 
+    // The units of the update of this thread: blocks of neurons and single nodes, formed in prepare_nodes().
+    const auto& update_units = kernel().node_manager.get_update_units( tid );
+
     // We update in a parallel region. Therefore, we need to catch
     // exceptions here and then handle them after the parallel region.
     try
@@ -1061,14 +1065,15 @@ SimulationManager::update_()
         }  // of structural plasticity
 
         sw_update_.start();
-        const SparseNodeArray& thread_local_nodes = kernel().node_manager.get_local_nodes( tid );
-
-        for ( SparseNodeArray::const_iterator n = thread_local_nodes.begin(); n != thread_local_nodes.end(); ++n )
+        for ( const auto& [ block, node ] : update_units )
         {
-          Node* node = n->get_node();
-          if ( not( node )->is_frozen() )
+          if ( block )
           {
-            ( node )->update( clock_, from_step_, to_step_ );
+            block->update( clock_, from_step_, to_step_ );
+          }
+          else if ( not node->is_frozen() )
+          {
+            node->update( clock_, from_step_, to_step_ );
           }
         }
 

@@ -31,6 +31,12 @@
 
 namespace nest
 {
+
+long
+ring_buffer_min_delay()
+{
+  return kernel::manager< ConnectionManager >.get_min_delay();
+}
 RingBuffer::RingBuffer()
   : buffer_(
       kernel::manager< ConnectionManager >.get_min_delay() + kernel::manager< ConnectionManager >.get_max_delay(),

@@ -31,6 +31,7 @@
 #include "device_node.h"
 #include "event.h"
 #include "kernel_manager.h"
+#include "nest_names.h"
 #include "nest_timeconverter.h"
 #include "nest_types.h"
 #include "random_generators.h"

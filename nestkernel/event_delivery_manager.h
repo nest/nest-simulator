@@ -32,7 +32,6 @@
 #include "stopwatch_impl.h"
 // Includes from nestkernel:
 #include "buffer_resize_log.h"
-#include "connection_manager.h"
 #include "event.h"
 #include "kernel_manager.h"
 #include "mpi_manager.h"  // OffGridSpike
@@ -44,7 +43,6 @@
 #include "stopwatch.h"
 #include "target.h"
 #include "target_table.h"
-#include "vp_manager.h"
 
 class Dictionary;
 

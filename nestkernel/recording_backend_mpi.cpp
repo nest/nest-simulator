@@ -142,7 +142,7 @@ RecordingBackendMPI::prepare()
   }
   prepared_ = true;
   size_t thread_id_master = 0;
-#pragma omp parallel shared( thread_id_master )
+#pragma omp parallel
   {
 #pragma omp master
     {
@@ -200,7 +200,7 @@ RecordingBackendMPI::prepare()
     msg << "Connect to " << it_comm.first.data() << "\n";
     LOG( VerbosityLevel::INFO, "MPI Record connect", msg.str() );
   }
-#pragma omp parallel shared( thread_id_master )
+#pragma omp parallel
   {
     // Update all the threads
     size_t thread_id = kernel::manager< VPManager >.get_thread_id();

@@ -93,3 +93,37 @@ Local static analysis
 We have several static code analyzers in the GitHub Actions CI. To run static code checks locally,
 please refer to the "run" lines in the GitHub Actions CI definition at
 https://github.com/nest/nest-simulator/blob/main/.github/workflows/nestbuildmatrix.yml.
+
+include-what-you-use
+~~~~~~~~~~~~~~~~~~~~
+
+The GitHub Actions CI runs `include-what-you-use <https://include-what-you-use.org/>`_ (IWYU) on
+``nestkernel/``, ``models/`` and ``libnestutil/``. The check is informational for now and does not
+block merging. The job summary lists the number of findings per file, the full output is attached
+to the workflow run as the ``iwyu-log`` artifact, and findings in files changed by a pull request
+are shown as annotations.
+
+To run the same check locally, install IWYU (e.g. ``sudo apt install iwyu`` on Debian/Ubuntu),
+configure NEST with ``clang++`` and ``-DCMAKE_EXPORT_COMPILE_COMMANDS=ON`` (no build is needed),
+and run ``build_support/check_iwyu.sh`` on the build directory:
+
+.. code-block:: bash
+
+   cmake -S <nest_source_dir> -B <build_dir> -DCMAKE_CXX_COMPILER=clang++ \
+         -DCMAKE_INSTALL_PREFIX=<install_dir> -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+         -Dwith-openmp=OFF -Dwith-mpi=OFF
+   <nest_source_dir>/build_support/check_iwyu.sh <build_dir>
+
+The script writes the output to ``<build_dir>/iwyu.log``. To check only some files or directories,
+pass them after the build directory, e.g.
+``build_support/check_iwyu.sh <build_dir> nestkernel/node_manager.cpp``. Note that IWYU analyses a
+header together with its source file, so pass ``node_manager.cpp`` to check ``node_manager.h``.
+
+Keep in mind that IWYU's suggestions are not always right. In particular:
+
+* For ``size_t``, IWYU suggests ``<stddef.h>``; NEST code includes ``<cstddef>`` instead, which IWYU accepts.
+* ``config.h`` is always kept, because IWYU does not count ``#ifdef HAVE_...`` as a use.
+* NEST-specific mappings, e.g. that Boost sorting is used through ``sort.h``, are defined in
+  ``build_support/iwyu/nest.imp``. Extend this file if IWYU repeatedly suggests an unsuitable header.
+* Results depend on the configuration; code inside ``#ifdef`` blocks for disabled features (OpenMP, MPI, ...)
+  is not analysed.

@@ -1,0 +1,29 @@
+# nest.imp
+#
+# This file is part of NEST.
+#
+# Copyright (C) 2004 The NEST Initiative
+#
+# NEST is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# NEST is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
+# Mapping file for include-what-you-use (IWYU), used by
+# build_support/check_iwyu.sh. See
+# https://github.com/include-what-you-use/include-what-you-use/blob/master/docs/IWYUMappings.md
+[
+  # NEST code uses Boost sorting and the iterator/tuple machinery only
+  # through the wrappers in libnestutil.
+  { "include": ["@<boost/sort/.*>", "private", "\"sort.h\"", "public"] },
+  { "include": ["@<boost/iterator/.*>", "private", "\"iterator_pair.h\"", "public"] },
+  { "include": ["@<boost/tuple/.*>", "private", "\"iterator_pair.h\"", "public"] },
+]

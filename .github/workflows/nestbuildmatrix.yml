@@ -113,6 +113,81 @@ jobs:
         run: |
           cppcheck --enable=all --language=c++ --std=c++20 -i sli/ --suppressions-list=.cppcheck_suppressions ./
 
+  include-what-you-use:
+    # Informational for now: findings never fail the workflow. The run step
+    # fails only if IWYU itself could not analyse the sources (exit status 2).
+    runs-on: "ubuntu-24.04"
+    continue-on-error: true
+    env:
+      NEST_VPATH: "build"
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+        with:
+          egress-policy: audit
+          disable-telemetry: true
+
+      - name: "Checkout repository content"
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+
+      - name: "Install dependencies"
+        run: |
+          sudo apt-get update
+          # iwyu on Ubuntu 24.04 is built against clang 18; configure with the same compiler.
+          sudo apt-get install iwyu clang-18 libgsl-dev libboost-dev
+          python -m pip install cython
+          include-what-you-use --version
+
+      - name: "Configure NEST"
+        run: |
+          # Only configuring is needed: IWYU reads compile_commands.json and
+          # analyses the sources itself. OpenMP is off because IWYU's clang
+          # does not find omp.h; MPI is off to keep the setup minimal.
+          cmake -S . -B "$NEST_VPATH" \
+              -DCMAKE_CXX_COMPILER=clang++-18 \
+              -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+              -DCMAKE_INSTALL_PREFIX="$PWD/install" \
+              -Dwith-openmp=OFF \
+              -Dwith-mpi=OFF \
+              -Dwith-gsl=ON \
+              -Dwith-boost=ON \
+              -Dwith-ltdl=OFF
+
+      - name: "List changed files for annotations"
+        env:
+          BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          # GitHub shows only a few annotations per step, so annotate only the
+          # files this push or pull request changes.
+          if git cat-file -e "$BASE_SHA^{commit}" 2>/dev/null; then
+              files="$(git diff --name-only "$BASE_SHA"...HEAD -- '*.h' '*.cpp' | tr '\n' ' ')"
+          else
+              files=""
+          fi
+          echo "IWYU_ANNOTATE_FILES=$files" >> "$GITHUB_ENV"
+          echo "Annotating: ${files:-<none>}"
+
+      - name: "Run include-what-you-use"
+        run: |
+          rc=0
+          ./build_support/check_iwyu.sh "$NEST_VPATH" || rc=$?
+          # 1 = findings (informational), 2 = IWYU could not run properly
+          [ "$rc" -ne 2 ]
+
+      - name: "Upload IWYU log"
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: "iwyu-log"
+          path: build/iwyu.log
+
   rstcheck:
     runs-on: "ubuntu-22.04"
     steps:

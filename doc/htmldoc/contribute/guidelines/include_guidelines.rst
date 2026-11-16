@@ -16,6 +16,7 @@ Managers
 ``kernel_manager.h`` only forward-declares the managers. Including it gives you access to the ``kernel::manager``
 template, but not to the manager classes themselves. If a file uses a manager, for example
 ``kernel::manager< VPManager >.get_thread_id()``, it must include the corresponding header, here ``vp_manager.h``.
+See :ref:`kernel_managers` for how the managers are constructed.
 
 Headers versus source files
 ---------------------------

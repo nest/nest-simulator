@@ -52,6 +52,12 @@ namespace
 
 bool managers_created_ = false;
 
+/**
+ * Construct manager `T` in its storage.
+ *
+ * Placement new starts the lifetime of the manager object inside the union kernel::manager_storage< T >, after
+ * which kernel::manager< T > refers to a valid object. See the description in kernel_manager.h.
+ */
 template < class T >
 void
 construct_manager()
@@ -69,7 +75,9 @@ kernel::create_managers()
     return;
   }
 
-  // Same order as KernelManager::managers, which also determines the order of initialization.
+  // Construction order: a manager's constructor may only use managers constructed before it. Keep this order
+  // identical to KernelManager::managers, which determines the order of initialize() and finalize().
+  // KernelManager comes last; its constructor only stores the addresses of the other managers.
   construct_manager< LoggingManager >();
   construct_manager< MPIManager >();
   construct_manager< VPManager >();

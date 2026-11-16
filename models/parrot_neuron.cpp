@@ -81,7 +81,7 @@ parrot_neuron::update( Time const& origin, const long from, const long to )
       set_last_event_time( t );
     }
 
-    reset_correction_entries_stdp_ax_delay_( lag );
+    clear_expired_correction_entries_stdp_ax_delay_( lag );
   }
 }
 

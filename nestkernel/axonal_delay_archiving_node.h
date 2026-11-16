@@ -171,7 +171,7 @@ using success_correction_entry_size = StaticAssert< sizeof( CorrectionEntrySTDPA
  *
  * A model that derives from this class only supports being the target of a synapse with predominantly axonal
  * delay if it additionally
- *  - calls reset_correction_entries_stdp_ax_delay_() for every lag in update(),
+ *  - calls clear_expired_correction_entries_stdp_ax_delay_() for every lag in update(),
  *  - calls correct_synapses_stdp_ax_delay_() whenever it emits a spike, and accounts for the returned number
  *    of corrections in whatever spike archive it maintains,
  *  - handles WeightCorrectionEvent, and
@@ -183,21 +183,6 @@ public:
   AxonalDelayArchivingNode();
 
   AxonalDelayArchivingNode( const AxonalDelayArchivingNode& );
-
-  /**
-   * Whether this model implements everything needed to be the target of a synapse with predominantly axonal
-   * delay; see the class documentation for what that entails.
-   *
-   * Deriving from AxonalDelayArchivingNode provides the buffer, but the correction mechanism only works if
-   * the model also drives it from update() and on spike emission, so deriving alone still answers false.
-   * Models which do drive it override this to return true; the rest are rejected at connection time instead
-   * of silently producing wrong weights.
-   */
-  bool
-  supports_axonal_delay_corrections() const override
-  {
-    return false;
-  }
 
   /**
    * Register a new incoming STDP connection, so this node knows whether it has to maintain correction
@@ -240,7 +225,7 @@ protected:
   void pre_run_hook_();
 
   //! Retire the correction entries which are no longer critical in the given time slot.
-  void reset_correction_entries_stdp_ax_delay_( const size_t lag );
+  void clear_expired_correction_entries_stdp_ax_delay_( const size_t lag );
 
   /**
    * Triggered when this neuron spikes, to correct all relevant incoming STDP synapses with predominantly axonal delays

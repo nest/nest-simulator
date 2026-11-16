@@ -57,7 +57,7 @@ is just smaller. In such a case, the spike would be accumulated in the wrong buf
 Instead of sending a regular ``SpikeEvent`` to signal a correction, a ``WeightCorrectionEvent`` is sent. Overloading the handle
 function now allows handling the correction in the correct way, depending on the model implementation.
 Furthermore, neuron models must now call ``AxonalDelayArchivingNode::pre_run_hook_()`` in their derived pre_run_hook
-implementation, call ``reset_correction_entries_stdp_ax_delay_()`` at the end of each timestep in their update
+implementation, call ``clear_expired_correction_entries_stdp_ax_delay_()`` at the end of each timestep in their update
 implementation, and override ``supports_axonal_delay_corrections()`` to return true.
 Currently, the ``iaf_psc_alpha``, ``iaf_psc_exp``, ``iaf_psc_delta`` and ``parrot_neuron`` models support STDP with
 axonal delays. Connecting a
@@ -107,7 +107,7 @@ Remaining work
 Currently, four neuron models and one synapse model support axonal delays. All neuron models that support STDP could
 also support axonal delays, without sacrificing performance, changing their behavior, or requiring more memory, but need
 to be adapted slightly (i.e., implement handle for ``WeightCorrectionEvent``, call
-``AxonalDelayArchivingNode::pre_run_hook_``, call ``reset_correction_entries_stdp_ax_delay_``, and override
+``AxonalDelayArchivingNode::pre_run_hook_``, call ``clear_expired_correction_entries_stdp_ax_delay_``, and override
 ``supports_axonal_delay_corrections``).
 
 The same applies to further STDP synapse models. Each one needs to select a delay container through its ``Connection``

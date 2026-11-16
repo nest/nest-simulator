@@ -347,7 +347,7 @@ iaf_psc_exp::update( const Time& origin, const long from, const long to )
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );
 
-    reset_correction_entries_stdp_ax_delay_( lag );
+    clear_expired_correction_entries_stdp_ax_delay_( lag );
   }
 }
 

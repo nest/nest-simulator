@@ -329,7 +329,7 @@ iaf_psc_delta::update( Time const& origin, const long from, const long to )
     // voltage logging
     B_.logger_.record_data( origin.get_steps() + lag );
 
-    reset_correction_entries_stdp_ax_delay_( lag );
+    clear_expired_correction_entries_stdp_ax_delay_( lag );
   }
 }
 

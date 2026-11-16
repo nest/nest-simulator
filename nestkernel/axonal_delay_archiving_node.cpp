@@ -84,7 +84,7 @@ AxonalDelayArchivingNode::add_correction_entry_stdp_ax_delay( SpikeEvent& spike_
   // The slot of a spike is stamp + axonal - dendritic - 1 relative to the slice origin, a pure function
   // of its own emission time, so the slot of the previous spike on this connection is this spike's slot
   // minus the interval between the two.  A negative result means that slot has already been cleared:
-  // slots are only cleared by reset_correction_entries_stdp_ax_delay_() from update(), which runs after
+  // slots are only cleared by clear_expired_correction_entries_stdp_ax_delay_() from update(), which runs after
   // delivery, so every slot from the current origin onwards is still live.
   const long offset_to_previous = Time::delay_ms_to_steps( spike_event.get_stamp().get_ms() - t_last_pre_spike );
   const long previous_lag = lag - offset_to_previous;
@@ -110,7 +110,7 @@ AxonalDelayArchivingNode::add_correction_entry_stdp_ax_delay( SpikeEvent& spike_
 }
 
 void
-AxonalDelayArchivingNode::reset_correction_entries_stdp_ax_delay_( const size_t lag )
+AxonalDelayArchivingNode::clear_expired_correction_entries_stdp_ax_delay_( const size_t lag )
 {
   if ( has_predominant_stdp_ax_delay_ )
   {

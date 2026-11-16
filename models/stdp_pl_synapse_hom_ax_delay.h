@@ -431,7 +431,7 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::correct_weight_stdp_ax_delay(
     // Hand this in-progress weight to the connection's other entries now, instead of waiting for this
     // entry to expire. The same post-synaptic spike can also correct a later spike of this connection,
     // and that correction happens in this same scan -- long before the hand-off in
-    // reset_correction_entries_stdp_ax_delay_(), which only runs once this entry leaves the buffer. The
+    // clear_expired_correction_entries_stdp_ax_delay_(), which only runs once this entry leaves the buffer. The
     // two are therefore not alternatives: dropping this call makes 10 of the 13 cases in
     // test_axonal_delay_corrected_weights fail. Note that test_stdp_pl_synapse_hom still passes all 48 of
     // its cases without it, because the weights it compares are the transmitted, pre-correction ones.

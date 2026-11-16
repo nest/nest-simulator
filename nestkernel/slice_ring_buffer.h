@@ -228,10 +228,7 @@ SliceRingBuffer::add_refractory( const long stamp, const double ps_offset )
 }
 
 inline void
-SliceRingBuffer::add_spike( const long rel_delivery,
-  const long stamp,
-  const double ps_offset,
-  const double weight )
+SliceRingBuffer::add_spike( const long rel_delivery, const long stamp, const double ps_offset, const double weight )
 {
   const long idx = kernel::manager< EventDeliveryManager >.get_slice_modulo( rel_delivery );
   assert( static_cast< size_t >( idx ) < queue_.size() );

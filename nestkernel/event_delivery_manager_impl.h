@@ -24,8 +24,8 @@
 #ifndef EVENT_DELIVERY_MANAGER_IMPL_H
 #define EVENT_DELIVERY_MANAGER_IMPL_H
 
-#include "event_delivery_manager.h"
 #include "connection_manager.h"
+#include "event_delivery_manager.h"
 #include "kernel_manager.h"
 #include "simulation_manager.h"
 #include "vp_manager.h"

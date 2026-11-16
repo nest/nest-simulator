@@ -23,8 +23,8 @@
 #ifndef VP_MANAGER_H
 #define VP_MANAGER_H
 
-#include <assert.h>
 #include <algorithm>
+#include <assert.h>
 #include <cmath>
 
 // Includes from libnestutil:

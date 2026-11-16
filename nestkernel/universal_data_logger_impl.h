@@ -31,9 +31,6 @@ namespace nest
 {
 
 
-
-
-
 template < typename HostNode >
 DynamicUniversalDataLogger< HostNode >::DynamicUniversalDataLogger( HostNode& host )
   : host_( host )

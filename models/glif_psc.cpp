@@ -39,7 +39,6 @@
 #include "universal_data_logger_impl.h"
 
 
-
 namespace nest
 {
 RecordablesMap< glif_psc > glif_psc::recordablesMap_;

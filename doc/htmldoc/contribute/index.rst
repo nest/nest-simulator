@@ -45,6 +45,7 @@ Contribute code or docs to the NEST project
        * :ref:`Install NEST from source <dev_install>`
        * :ref:`required_dev_tools`
        * Review the :ref:`naming conventions for NEST <naming_conventions>`
+       * Follow the :ref:`include guidelines <include_guidelines>` for C++ code
        * :ref:`Developing NEST with IDEs <nest_ides>`
 
     .. grid-item-card:: Contribute code, modules, models

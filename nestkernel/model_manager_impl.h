@@ -25,12 +25,14 @@
 
 #include "model_manager.h"
 
+#include "connection_manager.h"
 #include "connector_model_impl.h"
 #include "exceptions.h"
 #include "genericmodel.h"
 #include "logging.h"
 #include "nest.h"
 #include "target_identifier.h"
+#include "vp_manager.h"
 
 namespace nest
 {

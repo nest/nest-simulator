@@ -211,10 +211,58 @@ private:
 
 namespace kernel
 {
-// This creates all managers exactly once and makes them accessible globally (including the KernelManager itself)
+
+/**
+ * Storage for a single manager object.
+ *
+ * The storage itself is constant-initialized, i.e., it exists before any dynamic initialization takes place.
+ * The manager object inside it is *not* constructed automatically. Instead, create_managers() constructs all
+ * managers explicitly in a well-defined order. This avoids the unspecified initialization (and destruction)
+ * order that implicitly instantiated variable templates would otherwise have.
+ *
+ * Managers are intentionally never destroyed, so that no manager can be used after its destruction during
+ * program exit. This is the same behavior as for the KernelManager singleton used before.
+ */
 template < class T >
-inline T manager;
-}
+union ManagerStorage
+{
+  constexpr
+  ManagerStorage() noexcept : unused_()
+  {
+  }
+
+  // Intentionally empty, see class documentation.
+  ~ManagerStorage()
+  {
+  }
+
+  char unused_;
+  T object;
+};
+
+template < class T >
+constinit inline ManagerStorage< T > manager_storage {};
+
+/**
+ * Global access to the managers (including the KernelManager itself), e.g., `kernel::manager< VPManager >`.
+ *
+ * The reference is bound at compile/link time, so access involves no additional indirection.
+ * The manager objects only exist after create_managers() has been called.
+ */
+template < class T >
+constinit inline T& manager = manager_storage< T >.object;
+
+/**
+ * Construct all managers in a well-defined order.
+ *
+ * Must be called before any manager is used. Calling it more than once has no effect.
+ */
+void create_managers();
+
+//! Returns true if create_managers() has been called.
+bool managers_created();
+
+}  // namespace kernel
 
 inline RngPtr
 get_rank_synced_rng()

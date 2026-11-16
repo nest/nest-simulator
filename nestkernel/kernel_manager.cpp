@@ -47,6 +47,54 @@
 namespace nest
 {
 
+namespace
+{
+
+bool managers_created_ = false;
+
+template < class T >
+void
+construct_manager()
+{
+  ::new ( static_cast< void* >( &kernel::manager_storage< T >.object ) ) T();
+}
+
+}  // namespace
+
+void
+kernel::create_managers()
+{
+  if ( managers_created_ )
+  {
+    return;
+  }
+
+  // Same order as KernelManager::managers, which also determines the order of initialization.
+  construct_manager< LoggingManager >();
+  construct_manager< MPIManager >();
+  construct_manager< VPManager >();
+  construct_manager< ModuleManager >();
+  construct_manager< RandomManager >();
+  construct_manager< SimulationManager >();
+  construct_manager< ModelRangeManager >();
+  construct_manager< ConnectionManager >();
+  construct_manager< SPManager >();
+  construct_manager< EventDeliveryManager >();
+  construct_manager< IOManager >();
+  construct_manager< ModelManager >();
+  construct_manager< MUSICManager >();
+  construct_manager< NodeManager >();
+  construct_manager< KernelManager >();
+
+  managers_created_ = true;
+}
+
+bool
+kernel::managers_created()
+{
+  return managers_created_;
+}
+
 Dictionary
 KernelManager::get_build_info_()
 {
@@ -183,6 +231,7 @@ void
 KernelManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
   assert( not adjust_number_of_threads_or_rng_only );
+  assert( kernel::managers_created() );
 
   for ( auto& manager : managers )
   {

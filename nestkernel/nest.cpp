@@ -71,6 +71,7 @@ AbstractMask* create_doughnut( const Dictionary& d );
 void
 init_nest( int* argc, char** argv[] )
 {
+  kernel::create_managers();
   kernel::manager< MPIManager >.init_mpi( argc, argv );
   kernel::manager< KernelManager >.initialize();
 

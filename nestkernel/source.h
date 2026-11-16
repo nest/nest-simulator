@@ -99,7 +99,7 @@ public:
     disabled_ = true;
   }
 
-  [[gnu::visibility( "hidden" )]] bool
+  bool
   is_disabled() const
   {
     return disabled_;

@@ -64,10 +64,10 @@ public:
   virtual ~Device();
 
   /** Reset dynamic state to that of model. */
-  void init_state();
+  virtual void init_state();
 
   /** Reset buffers. */
-  void init_buffers();
+  virtual void init_buffers();
 
   /** Set internal variables before calls to SimulationManager::run() */
   virtual void pre_run_hook();

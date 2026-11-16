@@ -180,8 +180,10 @@ KernelManager::~KernelManager()
 }
 
 void
-KernelManager::initialize( const bool )
+KernelManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
+  assert( not adjust_number_of_threads_or_rng_only );
+
   for ( auto& manager : managers )
   {
     manager->initialize( /* adjust_number_of_threads_or_rng_only */ false );
@@ -213,8 +215,10 @@ KernelManager::cleanup()
 }
 
 void
-KernelManager::finalize( const bool )
+KernelManager::finalize( const bool adjust_number_of_threads_or_rng_only )
 {
+  assert( not adjust_number_of_threads_or_rng_only );
+
   FULL_LOGGING_ONLY( dump_.close(); )
 
   for ( auto it = managers.rbegin(); it != managers.rend(); ++it )

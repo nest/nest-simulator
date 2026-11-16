@@ -274,22 +274,6 @@ TargetTableDevices::set_synapse_status_from_device( const size_t tid,
   target_from_devices_[ tid ][ ldid ][ syn_id ]->set_synapse_status( lcid, dict, cm );
 }
 
-void
-TargetTableDevices::send_from_device( const size_t tid,
-  const size_t ldid,
-  Event& e,
-  const std::vector< ConnectorModel* >& cm )
-{
-  for ( std::vector< ConnectorBase* >::iterator it = target_from_devices_[ tid ][ ldid ].begin();
-    it != target_from_devices_[ tid ][ ldid ].end();
-    ++it )
-  {
-    if ( *it )
-    {
-      ( *it )->send_to_all( tid, cm, e );
-    }
-  }
-}
 
 bool
 TargetTableDevices::is_device_connected( const size_t tid, const size_t lcid ) const
@@ -309,39 +293,6 @@ TargetTableDevices::is_device_connected( const size_t tid, const size_t lcid ) c
   return false;
 }
 
-void
-TargetTableDevices::send_to_device( const size_t tid,
-  const size_t source_node_id,
-  Event& e,
-  const std::vector< ConnectorModel* >& cm )
-{
-  const size_t lid = kernel::manager< VPManager >.node_id_to_lid( source_node_id );
-  for ( std::vector< ConnectorBase* >::iterator it = target_to_devices_[ tid ][ lid ].begin();
-    it != target_to_devices_[ tid ][ lid ].end();
-    ++it )
-  {
-    if ( *it )
-    {
-      ( *it )->send_to_all( tid, cm, e );
-    }
-  }
-}
-
-void
-TargetTableDevices::send_to_device( const size_t tid,
-  const size_t source_node_id,
-  SecondaryEvent& e,
-  const std::vector< ConnectorModel* >& cm )
-{
-  const size_t lid = kernel::manager< VPManager >.node_id_to_lid( source_node_id );
-  for ( auto& synid : e.get_supported_syn_ids() )
-  {
-    if ( target_to_devices_[ tid ][ lid ][ synid ] )
-    {
-      target_to_devices_[ tid ][ lid ][ synid ]->send_to_all( tid, cm, e );
-    }
-  }
-}
 
 void
 TargetTableDevices::get_synapse_status_to_device( const size_t tid,

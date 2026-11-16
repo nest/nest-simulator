@@ -116,35 +116,6 @@ PerThreadBoolIndicator::any_true() const
   return ret;
 }
 
-bool
-BoolIndicatorUInt64::is_true() const
-{
-  return ( status_ == true_uint64 );
-}
-
-bool
-BoolIndicatorUInt64::is_false() const
-{
-  return ( status_ == false_uint64 );
-}
-
-void
-BoolIndicatorUInt64::set_true()
-{
-  status_ = true_uint64;
-}
-
-void
-BoolIndicatorUInt64::set_false()
-{
-  status_ = false_uint64;
-}
-
-void
-BoolIndicatorUInt64::logical_and( const bool status )
-{
-  status_ = ( static_cast< bool >( status_ ) and status );
-}
 
 void
 PerThreadBoolIndicator::set_true( const size_t tid )

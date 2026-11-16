@@ -24,6 +24,7 @@
 #define VP_MANAGER_H
 
 #include <assert.h>
+#include <algorithm>
 #include <cmath>
 
 // Includes from libnestutil:
@@ -236,6 +237,43 @@ private:
   const bool force_singlethreading_;
   size_t n_threads_;  //!< Number of threads per process.
 };
+
+inline size_t
+VPManager::get_thread_id() const
+{
+#ifdef _OPENMP
+  return omp_get_thread_num();
+#else
+  return 0;
+#endif
+}
+
+inline size_t
+VPManager::get_end_rank_per_thread( const size_t rank_start, const size_t num_assigned_ranks_per_thread ) const
+{
+  size_t rank_end = rank_start + num_assigned_ranks_per_thread;
+
+  // if we have more threads than ranks, or if ranks can not be
+  // distributed evenly on threads, we need to make sure, that all
+  // threads care only about existing ranks
+  if ( rank_end > kernel::manager< MPIManager >.get_num_processes() )
+  {
+    rank_end = std::max( rank_start, kernel::manager< MPIManager >.get_num_processes() );
+  }
+
+  return rank_end;
+}
+
+inline AssignedRanks
+VPManager::get_assigned_ranks( const size_t tid )
+{
+  AssignedRanks assigned_ranks;
+  assigned_ranks.begin = get_start_rank_per_thread( tid );
+  assigned_ranks.max_size = get_num_assigned_ranks_per_thread();
+  assigned_ranks.end = get_end_rank_per_thread( assigned_ranks.begin, assigned_ranks.max_size );
+  assigned_ranks.size = assigned_ranks.end - assigned_ranks.begin;
+  return assigned_ranks;
+}
 
 }  // namespace nest
 

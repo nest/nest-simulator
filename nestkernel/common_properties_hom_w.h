@@ -54,6 +54,12 @@ private:
   double weight_;
 };
 
+inline double
+CommonPropertiesHomW::get_weight() const
+{
+  return weight_;
+}
+
 }  // namespace nest
 
 #endif /* #ifndef COMMON_PROPERTIES_HOM_W_H */

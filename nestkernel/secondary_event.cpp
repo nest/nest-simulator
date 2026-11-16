@@ -59,17 +59,6 @@ DiffusionConnectionEvent::clone() const
   return new DiffusionConnectionEvent( *this );
 }
 
-double
-DiffusionConnectionEvent::get_drift_factor() const
-{
-  return drift_factor_;
-}
-
-double
-DiffusionConnectionEvent::get_diffusion_factor() const
-{
-  return diffusion_factor_;
-}
 
 // ----- LearningSignalConnectionEvent -----------------------------------------
 

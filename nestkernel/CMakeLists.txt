@@ -33,13 +33,13 @@ set ( nestkernel_sources
       connection.h connection_impl.h
       connection_label.h connection_label_impl.h
       common_properties_hom_w.h common_properties_hom_w.cpp
-      syn_id_delay.h syn_id_delay.cpp
+      syn_id_delay.h
       connector_base.h connector_base.cpp connector_base_impl.h
       connector_model.h connector_model.cpp connector_model_impl.h
       connection_id.h connection_id.cpp
       deprecation_warning.h deprecation_warning.cpp
       device.h device.cpp
-      device_node.h device_node.cpp
+      device_node.h
       module_manager.h module_manager.cpp
       event.h event.cpp
       exceptions.h exceptions.cpp
@@ -60,7 +60,7 @@ set ( nestkernel_sources
       proxynode.h proxynode.cpp
       random_generators.h
       recording_device.h recording_device.cpp
-      pseudo_recording_device.h pseudo_recording_device.cpp
+      pseudo_recording_device.h
       ring_buffer.h ring_buffer.cpp ring_buffer_impl.h
       secondary_event.h secondary_event.cpp secondary_event_impl.h
       slice_ring_buffer.cpp slice_ring_buffer.h
@@ -97,14 +97,14 @@ set ( nestkernel_sources
       manager_interface.h
       target_table.h target_table.cpp
       target_table_devices.h target_table_devices.cpp
-      target.h target.cpp
+      target.h
       static_assert.h
-      target_data.h target_data.cpp
+      target_data.h
       send_buffer_position.h send_buffer_position.cpp
       source.h
       source_table.h source_table.cpp
-      source_table_position.h source_table_position.cpp
-      spike_data.h spike_data.cpp
+      source_table_position.h
+      spike_data.h
       structural_plasticity_node.h structural_plasticity_node.cpp
       connection_creator.h connection_creator.cpp
       free_layer.h free_layer_impl.h

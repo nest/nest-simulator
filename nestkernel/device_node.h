@@ -23,7 +23,6 @@
 #ifndef DEVICE_NODE_H
 #define DEVICE_NODE_H
 
-
 // Includes from nestkernel:
 #include "node.h"
 
@@ -37,9 +36,17 @@ class DeviceNode : public Node
 {
 
 public:
-  DeviceNode();
+  DeviceNode()
+    : Node()
+    , local_device_id_( invalid_index )
+  {
+  }
 
-  DeviceNode( DeviceNode const& dn );
+  DeviceNode( DeviceNode const& dn )
+    : Node( dn )
+    , local_device_id_( invalid_index )
+  {
+  }
 
   void set_local_device_id( const size_t ldid ) override;
   size_t get_local_device_id() const override;
@@ -47,6 +54,18 @@ public:
 protected:
   size_t local_device_id_;
 };
+
+inline void
+DeviceNode::set_local_device_id( const size_t ldid )
+{
+  local_device_id_ = ldid;
+}
+
+inline size_t
+DeviceNode::get_local_device_id() const
+{
+  return local_device_id_;
+}
 
 }  // namespace
 

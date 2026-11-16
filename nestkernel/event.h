@@ -1094,6 +1094,49 @@ DoubleDataEvent::clone() const
   return new DoubleDataEvent( *this );
 }
 
+inline DataLoggingRequest::DataLoggingRequest( const Time& rec_int,
+  const Time& rec_offset,
+  const std::vector< std::string >& recs )
+  : Event()
+  , recording_interval_( rec_int )
+  , recording_offset_( rec_offset )
+  , record_from_( &recs )
+{
+}
+
+inline DataLoggingRequest::DataLoggingRequest( const Time& rec_int, const std::vector< std::string >& recs )
+  : Event()
+  , recording_interval_( rec_int )
+  , record_from_( &recs )
+{
+}
+
+inline DataLoggingRequest::DataLoggingRequest()
+  : Event()
+  , recording_interval_( Time::neg_inf() )
+  , recording_offset_( Time::ms( 0. ) )
+  , record_from_( nullptr )
+{
+}
+
+inline WeightRecorderEvent::WeightRecorderEvent()
+  : receiver_node_id_( 0 )
+{
+}
+
+inline SpikeEvent::SpikeEvent()
+  : multiplicity_( 1 )
+{
+}
+
+inline Event::~Event()
+{
+}
+
+inline DataLoggingReply::DataLoggingReply( const DataLoggingReply::Container& info )
+  : info_( info )
+{
+}
 
 }
 

@@ -1122,6 +1122,90 @@ Node::downcast( const Node& n )
   return *tp;
 }
 
+inline size_t
+Node::get_thread_lid() const
+{
+  return thread_lid_;
+}
+
+inline size_t
+Node::get_vp() const
+{
+  return vp_;
+}
+
+inline size_t
+Node::get_thread() const
+{
+  return thread_;
+}
+
+inline bool
+Node::is_model_prototype() const
+{
+  return vp_ == invalid_thread;
+}
+
+inline int
+Node::get_model_id() const
+{
+  return model_id_;
+}
+
+inline size_t
+Node::get_node_id() const
+{
+  return node_id_;
+}
+
+inline bool
+Node::is_proxy() const
+{
+  return false;
+}
+
+inline bool
+Node::is_off_grid() const
+{
+  return false;
+}
+
+inline bool
+Node::one_node_per_process() const
+{
+  return false;
+}
+
+inline bool
+Node::local_receiver() const
+{
+  return false;
+}
+
+inline bool
+Node::has_proxies() const
+{
+  return true;
+}
+
+inline bool
+Node::supports_urbanczik_archiving() const
+{
+  return false;
+}
+
+inline bool
+Node::node_uses_wfr() const
+{
+  return node_uses_wfr_;
+}
+
+inline bool
+Node::is_frozen() const
+{
+  return frozen_;
+}
+
 }  // namespace
 
 #endif

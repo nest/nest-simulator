@@ -244,17 +244,10 @@ private:
   bool axonal_delay_correction_required_;
 
   /**
-   * Fold a newly added or modified connection into axonal_delay_correction_required_.
+   * Fold a newly added or modified connection into axonal_delay_correction_required_ and the kernel-wide
+   * predominant axonal delay flag. Implemented in connector_base_impl.h.
    */
-  void
-  register_axonal_delay_correction_required_( const ConnectionT& c )
-  {
-    if constexpr ( ConnectionT::requires_axonal_delay_correction )
-    {
-      axonal_delay_correction_required_ =
-        axonal_delay_correction_required_ or ( c.get_axonal_delay_steps() >= c.get_dendritic_delay_steps() );
-    }
-  }
+  void register_axonal_delay_correction_required_( const ConnectionT& c );
 
 public:
   explicit Connector( const synindex syn_id )

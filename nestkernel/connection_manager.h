@@ -428,6 +428,8 @@ public:
 
   bool have_predominant_axonal_delays() const;
 
+  void register_predominant_axonal_delay( const size_t tid );
+
   /**
    * Deletes TargetTable and resets processed flags of SourceTable.
    *
@@ -860,6 +862,17 @@ inline bool
 ConnectionManager::have_predominant_axonal_delays() const
 {
   return have_predominant_axonal_delays_;
+}
+
+inline void
+ConnectionManager::register_predominant_axonal_delay( const size_t tid )
+{
+  if ( check_axonal_delays_[ tid ].is_false() )
+  {
+#pragma omp atomic write
+    have_predominant_axonal_delays_ = true;
+    check_axonal_delays_.set_true( tid );
+  }
 }
 
 inline void

@@ -952,13 +952,6 @@ ConnectionManager::connect_( Node& source,
 
   increase_connection_count( tid, syn_id );
 
-  if ( check_axonal_delays_[ tid ].is_false() and axonal_delay >= dendritic_delay )
-  {
-#pragma omp atomic write
-    have_predominant_axonal_delays_ = true;
-    check_axonal_delays_.set_true( tid );
-  }
-
   // We do not check has_primary_connections_ and secondary_connections_exist_
   // directly as this led to worse performance on the supercomputer Piz Daint.
   if ( check_primary_connections_[ tid ].is_false() and is_primary )

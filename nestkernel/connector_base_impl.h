@@ -37,6 +37,20 @@ namespace nest
 
 template < typename ConnectionT >
 void
+Connector< ConnectionT >::register_axonal_delay_correction_required_( const ConnectionT& c )
+{
+  if constexpr ( ConnectionT::requires_axonal_delay_correction )
+  {
+    if ( c.get_axonal_delay_steps() >= c.get_dendritic_delay_steps() )
+    {
+      axonal_delay_correction_required_ = true;
+      kernel().connection_manager.register_predominant_axonal_delay( kernel().vp_manager.get_thread_id() );
+    }
+  }
+}
+
+template < typename ConnectionT >
+void
 Connector< ConnectionT >::send_weight_event( const size_t tid,
   const unsigned int lcid,
   Event& e,

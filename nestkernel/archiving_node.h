@@ -102,7 +102,7 @@ protected:
   /**
    * Record spike history
    */
-  void set_spiketime( Time const& t_sp, double offset = 0.0 );
+  void set_spiketime( Time const& t_sp, double offset = 0.0, size_t multiplicity = 1 );
 
   /**
    * Return most recent spike time in ms

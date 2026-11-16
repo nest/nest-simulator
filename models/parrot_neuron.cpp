@@ -70,10 +70,7 @@ parrot_neuron::update( Time const& origin, const long from, const long to )
       kernel().event_delivery_manager.send( *this, se, lag );
 
       // set the spike times, respecting the multiplicity
-      for ( unsigned long i = 0; i < current_spikes_n; i++ )
-      {
-        set_spiketime( Time::step( t + 1 ) );
-      }
+      set_spiketime( Time::step( t + 1 ), 0.0, current_spikes_n );
       set_last_event_time( t );
     }
     else if ( flush_event_is_due( t ) )

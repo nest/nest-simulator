@@ -179,9 +179,17 @@ ArchivingNode::get_history( double t1,
 }
 
 void
-ArchivingNode::set_spiketime( Time const& t_sp, double offset )
+ArchivingNode::set_spiketime( Time const& t_sp, double offset, size_t multiplicity )
 {
-  StructuralPlasticityNode::set_spiketime( t_sp, offset );
+  if ( multiplicity == 0 )
+  {
+    return;
+  }
+
+  for ( size_t i = 0; i < multiplicity; ++i )
+  {
+    StructuralPlasticityNode::set_spiketime( t_sp, offset );
+  }
 
   const double t_sp_ms = t_sp.get_ms() - offset;
 
@@ -208,10 +216,13 @@ ArchivingNode::set_spiketime( Time const& t_sp, double offset )
       }
     }
     // update spiking history
-    Kminus_ = Kminus_ * std::exp( ( last_spike_ - t_sp_ms ) * tau_minus_inv_ ) + 1.0;
-    Kminus_triplet_ = Kminus_triplet_ * std::exp( ( last_spike_ - t_sp_ms ) * tau_minus_triplet_inv_ ) + 1.0;
-    last_spike_ = t_sp_ms;
-    history_.push_back( histentry( last_spike_, Kminus_, Kminus_triplet_, 0 ) );
+    for ( size_t i = 0; i < multiplicity; ++i )
+    {
+      Kminus_ = Kminus_ * std::exp( ( last_spike_ - t_sp_ms ) * tau_minus_inv_ ) + 1.0;
+      Kminus_triplet_ = Kminus_triplet_ * std::exp( ( last_spike_ - t_sp_ms ) * tau_minus_triplet_inv_ ) + 1.0;
+      last_spike_ = t_sp_ms;
+      history_.push_back( histentry( last_spike_, Kminus_, Kminus_triplet_, 0 ) );
+    }
   }
   else
   {
@@ -223,7 +234,10 @@ ArchivingNode::set_spiketime( Time const& t_sp, double offset )
   const size_t num_corrections = correct_synapses_stdp_ax_delay_( t_sp );
   if ( num_corrections > 0 )
   {
-    history_.back().access_counter_ += num_corrections;
+    for ( size_t i = 0; i < multiplicity; ++i )
+    {
+      history_[ history_.size() - 1 - i ].access_counter_ += num_corrections;
+    }
   }
 }
 

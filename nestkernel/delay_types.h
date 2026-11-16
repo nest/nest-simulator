@@ -136,7 +136,7 @@ struct TotalDelay
   }
 
   /**
-   * Return the delay of the connection in ms
+   * Return the total delay of the connection in ms
    */
   double
   get_delay_ms() const
@@ -300,7 +300,7 @@ struct AxonalDendriticDelay
   }
 
   /**
-   * Return the delay of the connection in ms
+   * Return the total delay of the connection in ms
    */
   double
   get_delay_ms() const

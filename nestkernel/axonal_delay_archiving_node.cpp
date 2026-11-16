@@ -85,8 +85,7 @@ AxonalDelayArchivingNode::add_correction_entry_stdp_ax_delay( SpikeEvent& spike_
   const long idx = kernel().event_delivery_manager.get_modulo( lag );
   assert( static_cast< size_t >( idx ) < correction_entries_stdp_ax_delay_.size() );
 
-  const SpikeData& spike_data = spike_event.get_sender_spike_data();
-  const size_t lcid = spike_data.get_lcid();
+  const size_t lcid = spike_event.get_sender_spike_data().get_lcid();
 
   // The slot of a spike is stamp + axonal - dendritic - 1 relative to the slice origin, a pure function
   // of its own emission time, so the slot of the previous spike on this connection is this spike's slot
@@ -98,7 +97,7 @@ AxonalDelayArchivingNode::add_correction_entry_stdp_ax_delay( SpikeEvent& spike_
   if ( previous_lag >= 0 )
   {
     const size_t previous_idx = kernel().event_delivery_manager.get_modulo( previous_lag );
-    for ( CorrectionEntrySTDPAxDelay& entry : correction_entries_stdp_ax_delay_[ previous_idx ] )
+    for ( auto& entry : correction_entries_stdp_ax_delay_[ previous_idx ] )
     {
       if ( entry.lcid_ == lcid )
       {
@@ -108,8 +107,12 @@ AxonalDelayArchivingNode::add_correction_entry_stdp_ax_delay( SpikeEvent& spike_
     }
   }
 
-  correction_entries_stdp_ax_delay_[ idx ].push_back( CorrectionEntrySTDPAxDelay(
-    lcid, spike_data.get_syn_id(), t_last_pre_spike, weight_revert, new_weight, K_plus_revert ) );
+  correction_entries_stdp_ax_delay_[ idx ].emplace_back( lcid,
+    spike_event.get_sender_spike_data().get_syn_id(),
+    t_last_pre_spike,
+    weight_revert,
+    new_weight,
+    K_plus_revert );
 }
 
 void
@@ -125,20 +128,20 @@ AxonalDelayArchivingNode::reset_correction_entries_stdp_ax_delay_( const size_t 
     assert( static_cast< size_t >( idx ) < correction_entries_stdp_ax_delay_.size() );
 
     // iterate over all pre-synaptic spikes which are no longer critical
-    for ( CorrectionEntrySTDPAxDelay& it_corr_entry : correction_entries_stdp_ax_delay_[ idx ] )
+    for ( auto& corr_entry : correction_entries_stdp_ax_delay_[ idx ] )
     {
       // This entry is final, so the next spike on the same connection has to revert to the weight it
       // ends up with.  next_offset_ is an interval, so it stays valid however often the buffer rotated
       // between the two spikes being delivered.
-      if ( it_corr_entry.next_offset_ != -1 )
+      if ( corr_entry.next_offset_ != -1 )
       {
         const size_t next_idx =
-          kernel().event_delivery_manager.get_modulo( static_cast< long >( lag ) + it_corr_entry.next_offset_ );
+          kernel().event_delivery_manager.get_modulo( static_cast< long >( lag ) + corr_entry.next_offset_ );
         for ( CorrectionEntrySTDPAxDelay& next_entry : correction_entries_stdp_ax_delay_[ next_idx ] )
         {
-          if ( next_entry.lcid_ == it_corr_entry.lcid_ )
+          if ( next_entry.lcid_ == corr_entry.lcid_ )
           {
-            next_entry.weight_revert_ = it_corr_entry.new_weight_;
+            next_entry.weight_revert_ = corr_entry.new_weight_;
             break;
           }
         }
@@ -182,16 +185,16 @@ AxonalDelayArchivingNode::correct_synapses_stdp_ax_delay_( const Time& t_spike )
       const long idx = kernel().event_delivery_manager.get_modulo( lag );
       assert( static_cast< size_t >( idx ) < correction_entries_stdp_ax_delay_.size() );
 
-      for ( CorrectionEntrySTDPAxDelay& it_corr_entry : correction_entries_stdp_ax_delay_[ idx ] )
+      for ( auto& corr_entry : correction_entries_stdp_ax_delay_[ idx ] )
       {
         kernel().connection_manager.correct_synapse_stdp_ax_delay( get_thread(),
-          it_corr_entry.syn_id_,
-          it_corr_entry.lcid_,
-          it_corr_entry.t_last_pre_spike_,
+          corr_entry.syn_id_,
+          corr_entry.lcid_,
+          corr_entry.t_last_pre_spike_,
           ( ori + Time::step( lag + 1 ) ).get_ms(),
-          it_corr_entry.weight_revert_,
-          it_corr_entry.new_weight_,
-          it_corr_entry.K_plus_revert_,
+          corr_entry.weight_revert_,
+          corr_entry.new_weight_,
+          corr_entry.K_plus_revert_,
           t_spike.get_ms() );
       }
       num_corrections += correction_entries_stdp_ax_delay_[ idx ].size();

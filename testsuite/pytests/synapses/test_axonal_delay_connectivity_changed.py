@@ -23,8 +23,8 @@ import nest
 import pytest
 
 
-@pytest.mark.parametrize("conn1, conn2", [[0.0, 0.0], [1.0, 0.0], [0.0, 1.0], [1.0, 1.0]])
-def test_axonal_delay_connectivity_changed(conn1, conn2):
+@pytest.mark.parametrize("ax_del_conn1, ax_del_conn2", [[0.0, 0.0], [1.0, 0.0], [0.0, 1.0], [1.0, 1.0]])
+def test_axonal_delay_connectivity_changed(ax_del_conn1, ax_del_conn2):
     """
     Test that changing connectivity during simulation throws an exception when using axonal delays.
     """
@@ -34,13 +34,17 @@ def test_axonal_delay_connectivity_changed(conn1, conn2):
 
     neuron = nest.Create("iaf_psc_alpha")
 
-    nest.Connect(neuron, neuron, syn_spec={"synapse_model": "stdp_pl_synapse_hom_ax_delay", "axonal_delay": conn1})
+    nest.Connect(
+        neuron, neuron, syn_spec={"synapse_model": "stdp_pl_synapse_hom_ax_delay", "axonal_delay": ax_del_conn1}
+    )
 
     nest.Simulate(nest.resolution)
 
-    nest.Connect(neuron, neuron, syn_spec={"synapse_model": "stdp_pl_synapse_hom_ax_delay", "axonal_delay": conn2})
+    nest.Connect(
+        neuron, neuron, syn_spec={"synapse_model": "stdp_pl_synapse_hom_ax_delay", "axonal_delay": ax_del_conn2}
+    )
 
-    if conn1 > 0.0 or conn2 > 0.0:
+    if ax_del_conn1 > 0.0 or ax_del_conn2 > 0.0:
         with pytest.raises(nest.NESTError):
             nest.Simulate(nest.resolution)
     else:

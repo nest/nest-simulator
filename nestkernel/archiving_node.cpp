@@ -68,12 +68,12 @@ ArchivingNode::register_stdp_connection( const double t_first_read,
   const double dendritic_delay,
   const double axonal_delay )
 {
+  register_axonal_delay_connection( dendritic_delay, axonal_delay );
+
   // Mark all entries in the deque, which we will not read in future as read by
   // this input, so that we safely increment the incoming number of
   // connections afterwards without leaving spikes in the history.
   // For details see bug #218. MH 08-04-22
-
-  register_axonal_delay_connection( dendritic_delay, axonal_delay );
 
   for ( std::deque< histentry >::iterator runner = history_.begin();
     runner != history_.end() and ( t_first_read - runner->t_ > -1.0 * kernel().connection_manager.get_stdp_eps() );

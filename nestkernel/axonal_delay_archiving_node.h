@@ -89,7 +89,7 @@ public:
   void register_axonal_delay_connection( const double dendritic_delay, const double axonal_delay );
 
   /**
-   * Buffer a correction entry for a short time window.
+   * Buffer a correction entry for the critical time window.
    *
    * @param spike_event Incoming pre-synaptic spike which could potentially need a correction after the next
    * post-synaptic spike.

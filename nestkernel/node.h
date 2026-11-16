@@ -474,14 +474,20 @@ public:
   /**
    * Register a STDP connection
    *
+   * @param t_first_read Earliest spike time in ms that the connection will read
+   * @param dendritic_delay Dendritic delay of the connection in ms
+   * @param axonal_delay Axonal delay of the connection in ms
+   *
    * @throws IllegalConnection
    *
    */
   virtual void register_stdp_connection( double, double, double );
 
   /**
-   * Whether this model can be the target of a synapse with predominantly axonal delay. Only models deriving
-   * from AxonalDelayArchivingNode, which describes what that entails, may override this to return true.
+   * Whether this model can be the target of a synapse with predominantly axonal delay.
+   *
+   * Only models deriving from AxonalDelayArchivingNode, which describes what that entails, may override this to return
+   * true.
    */
   virtual bool supports_axonal_delay_corrections() const;
 

@@ -48,6 +48,7 @@ from scipy.spatial.distance import jensenshannon
 # Next we set the parameters
 
 
+# Time constant to ensure PSP rise time of 1.7ms, see Diesmann et al, Nature 402:529 (1999).
 tau_syn = 0.32582722403722841
 neuron_params = {
     "E_L": 0.0,
@@ -62,11 +63,15 @@ neuron_params = {
     "V_m": 5.7,
 }
 
+# STDP synapse parameters
 stdp_params = {"alpha": 0.0513, "mu": 0.4, "tau_plus": 15.0, "weight": 45.0}
 
+# Number of excitatory input neurons
 NE = 9000
+# External Poisson drive rate [kHz]
 eta = 4.92
 
+# Figure width for a single-column plot [in]
 single_column_in = 3.348
 
 
@@ -85,10 +90,10 @@ def run(T, axonal_delay, dendritic_delay, enable_stdp, use_ax_delay):
         stdp_params["lambda"] = 0.0
     # Reset the NEST kernel and set simulation parameters
     nest.ResetKernel()
-    nest.local_num_threads = 8
+    nest.local_num_threads = 4
     nest.resolution = RESOLUTION
     nest.rng_seed = 42
-    nest.set_verbosity("M_ERROR")
+    nest.verbosity = nest.VerbosityLevel.ERROR
 
     # Create devices and neurons
     E_ext = nest.Create("poisson_generator", 1, {"rate": eta * 1000.0})

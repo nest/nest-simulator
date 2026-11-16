@@ -185,7 +185,7 @@ def _simulate(axonal_delay, dendritic_delay, pre_interval, num_threads, neuron_m
 def test_corrected_weights_match_causal_reference(
     axonal_delay, dendritic_delay, pre_interval, num_threads, neuron_model
 ):
-    """Every synapse must end on the weight an implementation that never misses a spike computes."""
+    """Every synapse must end with the same weight as a causal implementation that never misses a spike."""
     connections, trains = _simulate(axonal_delay, dendritic_delay, pre_interval, num_threads, neuron_model)
 
     sources = connections.source
@@ -218,7 +218,7 @@ def test_corrections_actually_fire(neuron_model):
     needs is already there and the count has to be exactly zero, not merely small.
     """
     _simulate(axonal_delay=2.0, dendritic_delay=0.5, pre_interval=0.7, num_threads=1, neuron_model=neuron_model)
-    assert nest.kernel_status["num_corrections"] > 0
+    assert nest.num_corrections > 0
 
     _simulate(axonal_delay=1.5, dendritic_delay=1.5, pre_interval=0.7, num_threads=1, neuron_model=neuron_model)
-    assert nest.kernel_status["num_corrections"] == 0
+    assert nest.num_corrections == 0

@@ -83,7 +83,7 @@ re-calculate its weight given a new post-synaptic spike and a previous pre-synap
 Currently, only the ``stdp_pl_synapse_hom_ax_delay`` synapse model supports axonal delays, together with the
 ``_hpc``, ``_lbl`` and ``_hpc_lbl`` variants generated from it.
 
-Changes to the python interface
+Changes to the Python interface
 -------------------------------
 
 In general, the kernel was made axonal-delay-aware and this is reflected in the user interface, as it is now possible
@@ -95,7 +95,6 @@ The rule holds in ``Connect``, ``SetStatus`` and ``SetDefaults`` alike;
 
 Remaining work
 ---------------
-
 
 Currently, three neuron models and one synapse model support axonal delays. All neuron models that support STDP could
 also support axonal delays, without sacrificing performance, changing their behavior, or requiring more memory, but need

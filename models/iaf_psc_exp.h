@@ -266,8 +266,6 @@ public:
   size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
   void handle( SpikeEvent& ) override;
-  //! This model drives the retrospective correction mechanism from update() and on spike emission,
-  //! so it can be the target of a synapse with predominantly axonal delay.
   bool
   supports_axonal_delay_corrections() const override
   {

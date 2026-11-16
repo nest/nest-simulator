@@ -43,9 +43,9 @@ Synapse type for spike-timing dependent plasticity with power law and both dendr
 Description
 +++++++++++
 
-``stdp_pl_synapse_hom_ax_delay`` is a connector to create synapses with spike time dependent plasticity using
- homogeneous parameters (as defined in :footcite:p:`Morrison2007c`). Both axonal and dendritic delays can be specified
-for this model.
+``stdp_pl_synapse_hom_ax_delay`` is a synapse model implementing spike time dependent plasticity (as defined in
+:footcite:p:`Morrison2007c`). The model supports (and requires) setting the axonal and dendritic delays independently.
+Synapses of this type share plasticity parameters.
 
 Parameters
 ++++++++++
@@ -355,7 +355,7 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::send( Event& e,
     // pre-synaptic one arrives at the synapse.
     if ( time_while_critical > 0 )
     {
-      static_cast< AxonalDelayArchivingNode* >( target )->add_correction_entry_stdp_ax_delay(
+      static_cast< AxonalDelayArchivingNode& >( *target ).add_correction_entry_stdp_ax_delay(
         static_cast< SpikeEvent& >( e ), t_lastspike_, weight_revert, weight_, K_plus_revert, time_while_critical );
     }
   }
@@ -396,7 +396,6 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::set_status( const Dictionary&
 {
   ConnectionBase::set_status( d, cm );
   d.update_value( names::weight, weight_ );
-
   d.update_value( names::Kplus, Kplus_ );
 }
 
@@ -435,7 +434,7 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::correct_synapse_stdp_ax_delay
     // two are therefore not alternatives: dropping this call makes 10 of the 13 cases in
     // test_axonal_delay_corrected_weights fail. Note that test_stdp_pl_synapse_hom still passes all 48 of
     // its cases without it, because the weights it compares are the transmitted, pre-correction ones.
-    static_cast< AxonalDelayArchivingNode* >( target )->update_weight_revert( lcid, weight_ );
+    static_cast< AxonalDelayArchivingNode& >( *target ).update_weight_revert( lcid, weight_ );
   }
 
   // depression taking into account new post-synaptic spike

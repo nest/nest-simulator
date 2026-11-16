@@ -621,6 +621,24 @@ function(NEST_PROCESS_LTO)
     include(CheckIPOSupported)
     check_ipo_supported()   # will terminate if unsupported
     set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE PARENT_SCOPE)
+
+    # GNU ld cannot link Clang's ThinLTO objects from static archives ("Expected at most one
+    # ThinLTO module per bitcode file"), so Clang on Linux links with lld unless the user chose
+    # a linker explicitly. Apple's linker is fine.
+    set( USER_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_SHARED_LINKER_FLAGS} ${CMAKE_MODULE_LINKER_FLAGS}" )
+    if ( CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_SYSTEM_NAME STREQUAL "Linux"
+         AND NOT CMAKE_LINKER_TYPE AND NOT USER_LINKER_FLAGS MATCHES "-fuse-ld|--ld-path" )
+      string( REGEX MATCH "^[0-9]+" CLANG_MAJOR_VERSION "${CMAKE_CXX_COMPILER_VERSION}" )
+      get_filename_component( CLANG_BIN_DIR "${CMAKE_CXX_COMPILER}" DIRECTORY )
+      find_program( NEST_LLD_LINKER NAMES ld.lld-${CLANG_MAJOR_VERSION} ld.lld HINTS "${CLANG_BIN_DIR}" )
+      if ( NOT NEST_LLD_LINKER )
+        message( FATAL_ERROR "LTO with Clang requires the lld linker (e.g., package lld-${CLANG_MAJOR_VERSION}). "
+                             "To use another linker, pass it via -DCMAKE_LINKER_TYPE or -fuse-ld in the linker flags." )
+      endif ()
+      # --ld-path takes a full path (Clang >= 12); Debian/Ubuntu only provide versioned ld.lld-NN
+      add_link_options( "--ld-path=${NEST_LLD_LINKER}" )
+      message( STATUS "LTO: linking with ${NEST_LLD_LINKER}" )
+    endif ()
   endif()
 
   set(WITH_LTO ${with-lto} PARENT_SCOPE)

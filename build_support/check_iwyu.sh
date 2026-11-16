@@ -21,16 +21,21 @@
 
 # Run include-what-you-use (IWYU) on the NEST C++ sources.
 #
-# Usage: check_iwyu.sh <build-dir> [<source-dir-or-file> ...]
+# Usage: check_iwyu.sh [--changed <git-rev>] <build-dir> [<source-dir-or-file> ...]
 #
 # <build-dir> must contain compile_commands.json, i.e. NEST must have been
 # configured with -DCMAKE_EXPORT_COMPILE_COMMANDS=ON. Configuring is enough;
 # nothing needs to be built. Without further arguments, nestkernel/, models/
 # and libnestutil/ are checked.
 #
+# With --changed <git-rev>, only the C++ files in nestkernel/, models/ and
+# libnestutil/ that differ from <git-rev> (including uncommitted changes) are
+# checked: a changed foo.cpp, foo.h or foo_impl.h is checked through foo.cpp;
+# a header without its own .cpp is checked within one file that includes it.
+#
 # Environment variables:
 #   IWYU_JOBS             number of parallel IWYU processes [default: nproc]
-#   IWYU_LOG              file for the filtered IWYU output [default: <build-dir>/iwyu.log]
+#   IWYU_LOG              file for the complete IWYU output [default: <build-dir>/iwyu.log]
 #   IWYU_ANNOTATE_FILES   whitespace-separated list of source-relative paths for
 #                         which GitHub Actions annotations are printed (CI only)
 #   GITHUB_STEP_SUMMARY   if set (GitHub Actions), a Markdown summary is appended
@@ -45,19 +50,75 @@ if [ $# -lt 1 ]; then
     exit 2
 fi
 
+changed_rev=""
+if [ "$1" = "--changed" ]; then
+    changed_rev="${2:?--changed needs a git revision}"
+    shift 2
+fi
+
 NEST_SOURCE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BUILD_DIR="$(cd "$1" && pwd)"
 shift
 
-if [ $# -gt 0 ]; then
-    targets=("$@")
-else
-    targets=("$NEST_SOURCE/nestkernel" "$NEST_SOURCE/models" "$NEST_SOURCE/libnestutil")
-fi
-
 if [ ! -f "$BUILD_DIR/compile_commands.json" ]; then
     echo "error: $BUILD_DIR/compile_commands.json not found; configure NEST with -DCMAKE_EXPORT_COMPILE_COMMANDS=ON" >&2
     exit 2
+fi
+
+check_dirs=(nestkernel models libnestutil)
+extra_args=()
+
+if [ -n "$changed_rev" ]; then
+    # Translation units known to the compilation database.
+    declare -A is_tu=()
+    while IFS= read -r f; do
+        is_tu["$f"]=1
+    done < <(python3 -c 'import json, sys; print("\n".join(e["file"] for e in json.load(open(sys.argv[1]))))' \
+                     "$BUILD_DIR/compile_commands.json")
+
+    declare -A selected=()
+    pathspecs=()
+    for d in "${check_dirs[@]}"; do
+        pathspecs+=("$d/*.h" "$d/*.cpp")
+    done
+    while IFS= read -r f; do
+        case "$f" in
+            *.cpp)
+                tu="$NEST_SOURCE/$f"
+                ;;
+            *.h)
+                base="${f%.h}"
+                tu="$NEST_SOURCE/${base%_impl}.cpp"
+                if [ -z "${is_tu[$tu]:-}" ]; then
+                    # Header without its own .cpp: check it within the first file including it.
+                    tu="$(grep -lF "#include \"$(basename "$f")\"" "${!is_tu[@]}" 2>/dev/null | sort | head -n 1 || true)"
+                    [ -n "$tu" ] && extra_args+=(-Xiwyu "--check_also=*/$f")
+                fi
+                ;;
+        esac
+        if [ -n "${tu:-}" ] && [ -n "${is_tu[$tu]:-}" ]; then
+            selected["$tu"]=1
+        else
+            echo "note: no translation unit found to check $f"
+        fi
+    done < <(git -C "$NEST_SOURCE" diff --name-only --diff-filter=d "$changed_rev" -- "${pathspecs[@]}")
+
+    if [ ${#selected[@]} -eq 0 ]; then
+        echo "IWYU: no C++ files changed relative to $changed_rev in ${check_dirs[*]}; nothing to check."
+        if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
+            printf '## include-what-you-use\n\nNo C++ files changed in %s.\n' "${check_dirs[*]}" >> "$GITHUB_STEP_SUMMARY"
+        fi
+        exit 0
+    fi
+    mapfile -t targets < <(printf '%s\n' "${!selected[@]}" | sort)
+    echo "Checking ${#targets[@]} translation unit(s) affected by changes relative to $changed_rev."
+elif [ $# -gt 0 ]; then
+    targets=("$@")
+else
+    targets=()
+    for d in "${check_dirs[@]}"; do
+        targets+=("$NEST_SOURCE/$d")
+    done
 fi
 
 IWYU_TOOL="$(command -v iwyu_tool || command -v iwyu_tool.py || true)"
@@ -79,12 +140,15 @@ echo "Running $(include-what-you-use --version | head -n 1) with $IWYU_JOBS jobs
     -Xiwyu --mapping_file="$NEST_SOURCE/build_support/iwyu/nest.imp" \
     -Xiwyu --cxx17ns \
     -Xiwyu --keep='*config.h*' \
+    "${extra_args[@]}" \
     2>&1 | grep -v "no private include name for @headername mapping" > "$IWYU_LOG" || true
 
-# Report paths relative to the source directory.
-sed -i "s|$NEST_SOURCE/||g" "$IWYU_LOG"
+# Report paths relative to the source directory. IWYU suggests <stddef.h> for
+# size_t, but NEST uses <cstddef>, which IWYU accepts as well.
+sed -i -e "s|$NEST_SOURCE/||g" -e "s|add '#include <stddef.h>'|add '#include <cstddef>'|" "$IWYU_LOG"
 
-findings="$(grep -E '^[^ ]+:[0-9]+:[0-9]+: warning: ' "$IWYU_LOG" || true)"
+# A header checked from several translation units is reported once per unit.
+findings="$(grep -E '^[^ ]+:[0-9]+:[0-9]+: warning: ' "$IWYU_LOG" | awk '!seen[$0]++' || true)"
 n_findings="$(printf '%s' "$findings" | grep -c . || true)"
 n_files="$(printf '%s' "$findings" | cut -d: -f1 | sort -u | grep -c . || true)"
 # Missing headers, IWYU crashes (assertions) and mapping-file errors.

@@ -97,11 +97,11 @@ https://github.com/nest/nest-simulator/blob/main/.github/workflows/nestbuildmatr
 include-what-you-use
 ~~~~~~~~~~~~~~~~~~~~
 
-The GitHub Actions CI runs `include-what-you-use <https://include-what-you-use.org/>`_ (IWYU) on
-``nestkernel/``, ``models/`` and ``libnestutil/``. The check is informational for now and does not
-block merging. The job summary lists the number of findings per file, the full output is attached
-to the workflow run as the ``iwyu-log`` artifact, and findings in files changed by a pull request
-are shown as annotations.
+The GitHub Actions CI runs `include-what-you-use <https://include-what-you-use.org/>`_ (IWYU) on the files in
+``nestkernel/``, ``models/`` and ``libnestutil/`` that a pull request changes. The check is informational
+for now and does not block merging. The job summary lists the number of findings per file, the full output
+is attached to the workflow run as the ``iwyu-log`` artifact, and findings in changed files are shown as
+annotations.
 
 To run the same check locally, install IWYU (e.g. ``sudo apt install iwyu`` on Debian/Ubuntu),
 configure NEST with ``clang++`` and ``-DCMAKE_EXPORT_COMPILE_COMMANDS=ON`` (no build is needed),
@@ -109,21 +109,29 @@ and run ``build_support/check_iwyu.sh`` on the build directory:
 
 .. code-block:: bash
 
-   cmake -S <nest_source_dir> -B <build_dir> -DCMAKE_CXX_COMPILER=clang++ \
-         -DCMAKE_INSTALL_PREFIX=<install_dir> -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-         -Dwith-openmp=OFF -Dwith-mpi=OFF
-   <nest_source_dir>/build_support/check_iwyu.sh <build_dir>
+   cmake -S <nest_source_dir> -B <build_dir> -DCMAKE_CXX_COMPILER=clang++          -DCMAKE_INSTALL_PREFIX=<install_dir> -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+   <nest_source_dir>/build_support/check_iwyu.sh --changed main <build_dir>
 
-The script writes the output to ``<build_dir>/iwyu.log``. To check only some files or directories,
-pass them after the build directory, e.g.
-``build_support/check_iwyu.sh <build_dir> nestkernel/node_manager.cpp``. Note that IWYU analyses a
-header together with its source file, so pass ``node_manager.cpp`` to check ``node_manager.h``.
+``--changed main`` checks only the files that differ from ``main``, including uncommitted changes; a
+changed header is checked through its source file. Without ``--changed``, all files are checked, which
+takes a few minutes. To check specific files or directories, pass them after the build directory, e.g.
+``build_support/check_iwyu.sh <build_dir> nestkernel/node_manager.cpp``. IWYU analyses a header
+together with its source file, so pass ``node_manager.cpp`` to check ``node_manager.h``. The output is
+written to ``<build_dir>/iwyu.log``.
 
-Keep in mind that IWYU's suggestions are not always right. In particular:
+If IWYU reports ``'omp.h' file not found``, either configure with ``-Dwith-openmp=OFF`` or add the
+directory containing your compiler's ``omp.h`` with ``-DCMAKE_CXX_FLAGS="-isystem <dir>"``. Code inside
+``#ifdef`` blocks for disabled features is not analysed, so includes needed only there may be reported
+as superfluous.
 
-* For ``size_t``, IWYU suggests ``<stddef.h>``; NEST code includes ``<cstddef>`` instead, which IWYU accepts.
+IWYU's suggestions are not always right. Treat them as hints, not as rules:
+
+* Suggestions for one file belong together: an include reported as superfluous may only be
+  dispensable once the suggested additions are made.
+* IWYU misjudges the ``kernel::manager< ... >`` accessors and macros such as ``LOG`` defined in
+  header-only files, and sometimes asks a file to include headers needed only inside other
+  headers' templates.
 * ``config.h`` is always kept, because IWYU does not count ``#ifdef HAVE_...`` as a use.
+* IWYU's advice to include ``<stddef.h>`` for ``size_t`` is reported as ``<cstddef>``, which NEST uses.
 * NEST-specific mappings, e.g. that Boost sorting is used through ``sort.h``, are defined in
   ``build_support/iwyu/nest.imp``. Extend this file if IWYU repeatedly suggests an unsuitable header.
-* Results depend on the configuration; code inside ``#ifdef`` blocks for disabled features (OpenMP, MPI, ...)
-  is not analysed.

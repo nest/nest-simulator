@@ -141,43 +141,53 @@ jobs:
         run: |
           sudo apt-get update
           # iwyu on Ubuntu 24.04 is built against clang 18; configure with the same compiler.
-          sudo apt-get install iwyu clang-18 libgsl-dev libboost-dev
+          sudo apt-get install iwyu clang-18 libomp-18-dev libopenmpi-dev libgsl-dev libboost-dev
           python -m pip install cython
           include-what-you-use --version
 
       - name: "Configure NEST"
         run: |
           # Only configuring is needed: IWYU reads compile_commands.json and
-          # analyses the sources itself. OpenMP is off because IWYU's clang
-          # does not find omp.h; MPI is off to keep the setup minimal.
+          # analyses the sources itself. Enable as many features as possible, as
+          # IWYU does not see code in disabled #ifdef blocks. IWYU does not search
+          # clang's OpenMP include directory, so expose omp.h on its own.
+          omp_dir="$RUNNER_TEMP/omp-include"
+          mkdir -p "$omp_dir"
+          ln -sf "$(find /usr/lib/llvm-18 -name omp.h | head -n 1)" "$omp_dir/omp.h"
           cmake -S . -B "$NEST_VPATH" \
               -DCMAKE_CXX_COMPILER=clang++-18 \
+              -DCMAKE_CXX_FLAGS="-isystem $omp_dir" \
               -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
               -DCMAKE_INSTALL_PREFIX="$PWD/install" \
-              -Dwith-openmp=OFF \
-              -Dwith-mpi=OFF \
+              -Dwith-openmp=ON \
+              -Dwith-mpi=ON \
               -Dwith-gsl=ON \
               -Dwith-boost=ON \
               -Dwith-ltdl=OFF
 
-      - name: "List changed files for annotations"
+      - name: "Determine changed files"
         env:
           BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
         run: |
-          # GitHub shows only a few annotations per step, so annotate only the
-          # files this push or pull request changes.
+          # Check only what this push or pull request changes. Without a usable
+          # base (new branch, force push), check everything.
           if git cat-file -e "$BASE_SHA^{commit}" 2>/dev/null; then
-              files="$(git diff --name-only "$BASE_SHA"...HEAD -- '*.h' '*.cpp' | tr '\n' ' ')"
+              base="$(git merge-base "$BASE_SHA" HEAD)"
+              files="$(git diff --name-only "$base" HEAD -- '*.h' '*.cpp' | tr '\n' ' ')"
+              echo "IWYU_ARGS=--changed $base" >> "$GITHUB_ENV"
           else
               files=""
+              echo "IWYU_ARGS=" >> "$GITHUB_ENV"
           fi
+          # Annotations only for changed files; GitHub shows few annotations per step.
           echo "IWYU_ANNOTATE_FILES=$files" >> "$GITHUB_ENV"
-          echo "Annotating: ${files:-<none>}"
+          echo "Changed C++ files: ${files:-<none or unknown, checking everything>}"
 
       - name: "Run include-what-you-use"
         run: |
           rc=0
-          ./build_support/check_iwyu.sh "$NEST_VPATH" || rc=$?
+          # shellcheck disable=SC2086
+          ./build_support/check_iwyu.sh $IWYU_ARGS "$NEST_VPATH" || rc=$?
           # 1 = findings (informational), 2 = IWYU could not run properly
           [ "$rc" -ne 2 ]
 

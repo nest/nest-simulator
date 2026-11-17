@@ -25,7 +25,9 @@
 
 // C++ includes:
 #include <cassert>
+#include <concepts>
 #include <iterator>
+#include <memory>
 #include <type_traits>
 #include <unordered_set>
 #include <utility>
@@ -52,6 +54,20 @@ public:
 
   //! Update all neurons of the block for the steps from to to - 1 of the slice that begins at origin.
   virtual void update( const Time& origin, const long from, const long to ) = 0;
+};
+
+/**
+ * Whether the neuron class ElementT provides blocks.
+ *
+ * A neuron class provides blocks if it has a static function make_update_block( nodes ) that returns a block of the
+ * neurons nodes (the neurons of one Create() call on one thread, consecutive among the local nodes of the thread), or
+ * nullptr if it does not form one. GenericModel< ElementT > calls the function only if this concept holds, so that
+ * neuron classes without blocks need no change.
+ */
+template < typename ElementT >
+concept ProvidesUpdateBlocks = requires( const std::vector< Node* >& nodes )
+{
+  { ElementT::make_update_block( nodes ) }->std::same_as< std::unique_ptr< UpdateBlock > >;
 };
 
 //! One unit of the update of a thread: a block (node is the first node of the block) or a single node (block nullptr).

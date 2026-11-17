@@ -104,6 +104,7 @@ private:
    * Call placement new on the supplied memory position.
    */
   Node* create_() override;
+  std::unique_ptr< UpdateBlock > make_update_block_( const std::vector< Node* >& nodes ) override;
 
   /**
    * Prototype node from which all instances are constructed.
@@ -145,6 +146,20 @@ Model*
 GenericModel< ElementT >::clone( const std::string& newname ) const
 {
   return new GenericModel( *this, newname );
+}
+
+template < typename ElementT >
+std::unique_ptr< UpdateBlock >
+GenericModel< ElementT >::make_update_block_( const std::vector< Node* >& nodes )
+{
+  if constexpr ( ProvidesUpdateBlocks< ElementT > )
+  {
+    return ElementT::make_update_block( nodes );
+  }
+  else
+  {
+    return nullptr;
+  }
 }
 
 template < typename ElementT >

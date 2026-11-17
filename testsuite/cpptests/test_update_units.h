@@ -28,6 +28,7 @@
 
 // C++ includes:
 #include <map>
+#include <memory>
 #include <vector>
 
 // Includes from nestkernel:
@@ -101,6 +102,35 @@ BOOST_AUTO_TEST_CASE( empty_thread )
   std::vector< UpdateBlock* > ub;
   BOOST_REQUIRE( unit_starts( {}, ub ).empty() );
 }
+
+//! A neuron class that provides blocks.
+struct ClassWithBlocks
+{
+  static std::unique_ptr< UpdateBlock >
+  make_update_block( const std::vector< Node* >& )
+  {
+    return nullptr;
+  }
+};
+
+//! A neuron class without blocks.
+struct ClassWithoutBlocks
+{
+};
+
+//! A static function of the right name but the wrong return type does not count.
+struct ClassWithOtherFunction
+{
+  static int
+  make_update_block( const std::vector< Node* >& )
+  {
+    return 0;
+  }
+};
+
+static_assert( ProvidesUpdateBlocks< ClassWithBlocks > );
+static_assert( not ProvidesUpdateBlocks< ClassWithoutBlocks > );
+static_assert( not ProvidesUpdateBlocks< ClassWithOtherFunction > );
 
 BOOST_AUTO_TEST_SUITE_END()
 

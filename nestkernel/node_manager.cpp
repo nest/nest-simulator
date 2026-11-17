@@ -215,9 +215,11 @@ NodeManager::add_neurons_( Model& model, size_t min_node_id, size_t max_node_id 
 
       size_t node_id = min_node_id + ( num_vps + vp - min_node_id_vp ) % num_vps;
 
+      std::vector< Node* > created;  // the neurons of this Create() call on this thread, for a block of the model
       while ( node_id <= max_node_id )
       {
         Node* node = model.create( tid );
+        created.push_back( node );
         node->set_node_id_( node_id );
         node->set_model_id( model.get_model_id() );
         node->set_thread( tid );
@@ -226,6 +228,10 @@ NodeManager::add_neurons_( Model& model, size_t min_node_id, size_t max_node_id 
 
         local_nodes_[ tid ].add_local_node( *node );
         node_id += num_vps;
+      }
+      if ( not created.empty() )
+      {
+        model.create_update_block( tid, created );
       }
       local_nodes_[ tid ].set_max_node_id( max_node_id );
     }

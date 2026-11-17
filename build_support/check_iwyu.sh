@@ -28,10 +28,14 @@
 # nothing needs to be built. Without further arguments, nestkernel/, models/
 # and libnestutil/ are checked.
 #
+# A header foo.h is analysed together with foo.cpp. Every other header
+# (header-only code, *_impl.h) gets a stub translation unit that only includes
+# it, see build_support/iwyu/add_header_tus.py; this also checks that every
+# header compiles on its own.
+#
 # With --changed <git-rev>, only the C++ files in nestkernel/, models/ and
 # libnestutil/ that differ from <git-rev> (including uncommitted changes) are
-# checked: a changed foo.cpp, foo.h or foo_impl.h is checked through foo.cpp;
-# a header without its own .cpp is checked within one file that includes it.
+# checked.
 #
 # Environment variables:
 #   IWYU_JOBS             number of parallel IWYU processes [default: nproc]
@@ -66,7 +70,12 @@ if [ ! -f "$BUILD_DIR/compile_commands.json" ]; then
 fi
 
 check_dirs=(nestkernel models libnestutil)
-extra_args=()
+
+# Compilation database including the header stubs.
+IWYU_DB="$BUILD_DIR/iwyu"
+rm -rf "$IWYU_DB"
+mkdir -p "$IWYU_DB"
+python3 "$NEST_SOURCE/build_support/iwyu/add_header_tus.py" "$BUILD_DIR" "$NEST_SOURCE" "$IWYU_DB" "${check_dirs[@]}"
 
 if [ -n "$changed_rev" ]; then
     # Translation units known to the compilation database.
@@ -74,7 +83,7 @@ if [ -n "$changed_rev" ]; then
     while IFS= read -r f; do
         is_tu["$f"]=1
     done < <(python3 -c 'import json, sys; print("\n".join(e["file"] for e in json.load(open(sys.argv[1]))))' \
-                     "$BUILD_DIR/compile_commands.json")
+                     "$IWYU_DB/compile_commands.json")
 
     declare -A selected=()
     pathspecs=()
@@ -87,13 +96,8 @@ if [ -n "$changed_rev" ]; then
                 tu="$NEST_SOURCE/$f"
                 ;;
             *.h)
-                base="${f%.h}"
-                tu="$NEST_SOURCE/${base%_impl}.cpp"
-                if [ -z "${is_tu[$tu]:-}" ]; then
-                    # Header without its own .cpp: check it within the first file including it.
-                    tu="$(grep -lF "#include \"$(basename "$f")\"" "${!is_tu[@]}" 2>/dev/null | sort | head -n 1 || true)"
-                    [ -n "$tu" ] && extra_args+=(-Xiwyu "--check_also=*/$f")
-                fi
+                tu="$NEST_SOURCE/${f%.h}.cpp"
+                [ -n "${is_tu[$tu]:-}" ] || tu="$IWYU_DB/${f%.h}.iwyu.cpp"
                 ;;
         esac
         if [ -n "${tu:-}" ] && [ -n "${is_tu[$tu]:-}" ]; then
@@ -119,6 +123,7 @@ else
     for d in "${check_dirs[@]}"; do
         targets+=("$NEST_SOURCE/$d")
     done
+    targets+=("$IWYU_DB")
 fi
 
 IWYU_TOOL="$(command -v iwyu_tool || command -v iwyu_tool.py || true)"
@@ -134,21 +139,23 @@ echo "Running $(include-what-you-use --version | head -n 1) with $IWYU_JOBS jobs
 
 # - clang-warning output gives "file:line:col: warning: ..." lines.
 # - --keep: config.h is often needed only for #ifdef HAVE_..., which IWYU does
-#   not count as a use; removing it would silently change the build.
+#   not count as a use; removing it would silently change the build. IWYU cannot
+#   tell where the template definitions in *_impl.h are instantiated, so it must
+#   not remove those includes either.
 # - The grep drops IWYU's own complaints about libstdc++'s @headername comments.
-"$IWYU_TOOL" -p "$BUILD_DIR" -j "$IWYU_JOBS" -o clang-warning "${targets[@]}" -- \
+"$IWYU_TOOL" -p "$IWYU_DB" -j "$IWYU_JOBS" -o clang-warning "${targets[@]}" -- \
     -Xiwyu --mapping_file="$NEST_SOURCE/build_support/iwyu/nest.imp" \
     -Xiwyu --cxx17ns \
     -Xiwyu --keep='*config.h*' \
-    "${extra_args[@]}" \
+    -Xiwyu --keep='*_impl.h*' \
     2>&1 | grep -v "no private include name for @headername mapping" > "$IWYU_LOG" || true
 
 # Report paths relative to the source directory. IWYU suggests <stddef.h> for
 # size_t, but NEST uses <cstddef>, which IWYU accepts as well.
-sed -i -e "s|$NEST_SOURCE/||g" -e "s|add '#include <stddef.h>'|add '#include <cstddef>'|" "$IWYU_LOG"
+sed -i -e "s|$IWYU_DB/||g" -e "s|$NEST_SOURCE/||g" -e "s|add '#include <stddef.h>'|add '#include <cstddef>'|" "$IWYU_LOG"
 
 # A header checked from several translation units is reported once per unit.
-findings="$(grep -E '^[^ ]+:[0-9]+:[0-9]+: warning: ' "$IWYU_LOG" | awk '!seen[$0]++' || true)"
+findings="$(grep -E '^[^ ]+:[0-9]+:[0-9]+: warning: ' "$IWYU_LOG" | grep -v '[.]iwyu[.]cpp:' | awk '!seen[$0]++' || true)"
 n_findings="$(printf '%s' "$findings" | grep -c . || true)"
 n_files="$(printf '%s' "$findings" | cut -d: -f1 | sort -u | grep -c . || true)"
 # Missing headers, IWYU crashes (assertions) and mapping-file errors.

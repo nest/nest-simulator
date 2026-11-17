@@ -22,11 +22,10 @@
 
 #include "noise_generator.h"
 
+#include <algorithm>
 #include <assert.h>
 #include <cmath>
 
-// Includes from libnestutil:
-#include "compose.hpp"
 #include "dict_util.h"
 #include "logging.h"
 #include "numerics.h"
@@ -37,7 +36,6 @@
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
-#include "logging_manager.h"
 #include "nest_impl.h"
 #include "nest_timeconverter.h"
 #include "simulation_manager.h"

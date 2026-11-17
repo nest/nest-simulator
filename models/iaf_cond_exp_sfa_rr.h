@@ -23,31 +23,24 @@
 #ifndef IAF_COND_EXP_SFA_RR_H
 #define IAF_COND_EXP_SFA_RR_H
 
-#include <algorithm>
+#include <cstddef>
 #include <map>
-#include <math.h>
 #include <string>
-#include <vector>
 
 // Generated includes:
 #include "config.h"
 #include "dictionary.h"
 #include "exceptions.h"
 #include "nest_names.h"
-#include "nest_time.h"
 #include "node.h"
 #include "universal_data_logger.h"
 
 #ifdef HAVE_GSL
 
-// External includes:
-#include <gsl/gsl_errno.h>
-#include <gsl/gsl_matrix.h>
 #include <gsl/gsl_odeiv.h>
 
 // Includes from nestkernel:
 #include "archiving_node.h"
-#include "connection.h"
 #include "event.h"
 #include "nest_types.h"
 #include "recordables_map.h"

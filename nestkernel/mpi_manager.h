@@ -31,6 +31,7 @@
 #include <mpi.h>
 #endif
 
+#include <cstddef>
 // C++ includes:
 #include <cassert>
 #include <limits>
@@ -39,10 +40,6 @@
 
 // Includes from libnestutil:
 #include "manager_interface.h"
-// Includes from nestkernel:
-#include "spike_data.h"
-
-class Dictionary;
 
 
 namespace nest

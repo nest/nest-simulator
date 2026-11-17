@@ -24,14 +24,10 @@
 
 // C++ includes:
 #include <algorithm>
-#include <assert.h>
 #include <limits>
 #include <random>
 #include <utility>
 
-// Includes from nestkernel:
-#include "Random123/features/compilerfeatures.h"
-#include "compose.hpp"
 #include "config.h"
 #include "dictionary.h"
 #include "exceptions.h"

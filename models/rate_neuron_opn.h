@@ -23,25 +23,36 @@
 #ifndef RATE_NEURON_OPN_H
 #define RATE_NEURON_OPN_H
 
-// C++ includes:
 #include <cmath>  // in case we need isnan() // fabs
+
+#include <cstddef>
+// C++ includes:
 #include <string>
+#include <vector>
 
 // Includes from libnestutil:
 #include "numerics.h"
-
 // Includes from nestkernel:
 #include "archiving_node.h"
-#include "event.h"
+#include "connection_manager.h"
+#include "dict_util.h"
+#include "dictionary.h"
+#include "event_delivery_manager.h"
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "logging.h"
 #include "nest_impl.h"
 #include "nest_names.h"
+#include "nest_time.h"
 #include "node.h"
 #include "random_generators.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
+#include "secondary_event.h"
+#include "secondary_event_impl.h"
+#include "simulation_manager.h"
+#include "universal_data_logger.h"
 #include "universal_data_logger_impl.h"
 
 namespace nest

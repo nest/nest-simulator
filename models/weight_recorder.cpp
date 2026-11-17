@@ -24,6 +24,7 @@
 
 #include <algorithm>
 #include <iterator>
+#include <variant>
 #include <vector>
 
 // Includes from nestkernel:

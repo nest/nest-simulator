@@ -30,9 +30,6 @@
 #include <mpi.h>
 #endif
 
-// C++ includes:
-#include <sstream>
-
 // Includes from thirdparty:
 #include "compose.hpp"
 

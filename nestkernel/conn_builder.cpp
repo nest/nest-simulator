@@ -22,13 +22,14 @@
 
 #include "conn_builder.h"
 
+#include <assert.h>
 // Includes from C++:
 #include <algorithm>
-#include <assert.h>
 #include <cmath>
 #include <iterator>
 #include <memory>
 #include <utility>
+#include <variant>
 
 // Includes from libnestutil:
 #include "logging.h"
@@ -41,7 +42,6 @@
 #include "dictionary.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
-#include "logging_manager.h"
 #include "model_manager.h"
 #include "mpi_manager.h"
 #include "mpi_manager_impl.h"

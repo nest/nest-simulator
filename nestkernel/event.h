@@ -23,9 +23,8 @@
 #ifndef EVENT_H
 #define EVENT_H
 
-// C++ includes:
-#include <algorithm>
 #include <cassert>
+#include <cstddef>
 #include <limits>
 #include <memory>
 #include <string>

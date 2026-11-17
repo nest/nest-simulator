@@ -23,7 +23,7 @@
 #ifndef CONNECTION_LABEL_H
 #define CONNECTION_LABEL_H
 
-#include "dictionary.h"
+class Dictionary;
 
 namespace nest
 {

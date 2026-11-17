@@ -24,6 +24,7 @@
 
 // C++ includes:
 #include <algorithm>
+#include <compare>
 #include <exception>
 #include <iomanip>
 #include <iostream>
@@ -31,8 +32,6 @@
 #include <utility>
 #include <vector>
 
-// Includes from libnestutil:
-#include "compose.hpp"
 #include "dictionary.h"
 // Includes from nestkernel:
 #include "connection_manager.h"
@@ -42,7 +41,6 @@
 // Includes from models:
 #include "genericmodel.h"
 #include "logging.h"
-#include "logging_manager.h"
 #include "model.h"
 #include "modelrange_manager.h"
 #include "models.h"

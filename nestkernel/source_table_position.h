@@ -25,7 +25,6 @@
 
 // C++ includes:
 #include <cassert>
-#include <iostream>
 #include <vector>
 
 #include "block_vector.h"  // IWYU pragma: keep

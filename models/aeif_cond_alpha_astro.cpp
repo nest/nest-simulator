@@ -22,10 +22,13 @@
 
 #include "aeif_cond_alpha_astro.h"
 
+#include <algorithm>
 #include <assert.h>
 #include <gsl/gsl_errno.h>
+#include <vector>
 
 #include "connection_manager.h"
+#include "nest_time.h"
 #include "secondary_event_impl.h"
 #include "simulation_manager.h"
 

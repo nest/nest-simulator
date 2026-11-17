@@ -23,9 +23,8 @@
 #ifndef PP_COND_EXP_MC_URBANCZIK_H
 #define PP_COND_EXP_MC_URBANCZIK_H
 
-#include <algorithm>
 #include <assert.h>
-#include <deque>
+#include <cstddef>
 #include <map>
 #include <math.h>
 #include <string>
@@ -42,15 +41,10 @@
 
 #ifdef HAVE_GSL
 
-// C includes:
-#include <gsl/gsl_errno.h>
-#include <gsl/gsl_matrix.h>
 #include <gsl/gsl_odeiv.h>
 // C++ includes:
 #include <vector>
 
-// Includes from nestkernel:
-#include "connection.h"
 #include "event.h"
 #include "nest_types.h"
 #include "random_generators.h"

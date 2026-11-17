@@ -33,12 +33,6 @@
 
 namespace nest
 {
-class DelayedRateConnectionEvent;
-class DiffusionConnectionEvent;
-class GapJunctionEvent;
-class InstantaneousRateConnectionEvent;
-class LearningSignalConnectionEvent;
-class SICEvent;
 
 proxynode::proxynode( size_t node_id, size_t model_id, size_t vp )
   : Node()

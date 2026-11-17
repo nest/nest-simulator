@@ -23,14 +23,12 @@
 #ifndef SIGMOID_RATE_GG_1998_H
 #define SIGMOID_RATE_GG_1998_H
 
-// C++ includes:
-#include <algorithm>
 #include <cmath>
 #include <map>
 #include <string>
 
-// Includes from models:
-#include "dict_util.h"
+#include "compose.hpp"
+#include "kernel_manager.h"
 #include "rate_neuron_ipn.h"
 #include "rate_transformer_node.h"
 #include "recordables_map.h"

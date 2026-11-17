@@ -25,8 +25,16 @@
 #define EVENT_DELIVERY_MANAGER_IMPL_H
 
 #include "connection_manager.h"
+
+#include <cassert>
+#include <cstddef>
+#include <vector>
+
+#include "event.h"
 #include "event_delivery_manager.h"
 #include "kernel_manager.h"
+#include "nest_time.h"
+#include "node.h"
 #include "simulation_manager.h"
 #include "vp_manager.h"
 

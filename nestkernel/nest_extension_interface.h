@@ -26,15 +26,6 @@
 // Includes from nestkernel; placed here so module developer does not need to
 // include them manually
 #include "config.h"
-#include "exceptions.h"
-#include "genericmodel.h"
-#include "kernel_manager.h"
-#include "model.h"
-#include "nest.h"
-#include "target_identifier.h"
-
-// C++ includes
-#include <string>
 
 /**
  * Interface for NEST Extenstion Modules.

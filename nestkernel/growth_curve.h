@@ -34,10 +34,6 @@
 
 #include <string>
 
-// Includes from nestkernel:
-#include "exceptions.h"
-#include "nest_types.h"
-
 class Dictionary;
 
 namespace nest

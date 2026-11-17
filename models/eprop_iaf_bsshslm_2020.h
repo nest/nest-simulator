@@ -23,22 +23,16 @@
 #ifndef EPROP_IAF_BSSHSLM_2020_H
 #define EPROP_IAF_BSSHSLM_2020_H
 
-// C++
-#include <algorithm>
+#include <cstddef>
 #include <map>
-#include <math.h>
 #include <string>
-#include <vector>
 
-// nestkernel
-#include "connection.h"
 #include "dictionary.h"
 #include "eprop_archiving_node_recurrent.h"
+#include "eprop_archiving_node_recurrent_impl.h"
 #include "event.h"
 #include "exceptions.h"
-#include "histentry.h"
 #include "nest_names.h"
-#include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
 #include "recordables_map.h"
@@ -48,7 +42,6 @@
 
 namespace nest
 {
-class LearningSignalConnectionEvent;
 
 /* BeginUserDocs: neuron, e-prop plasticity, current-based, integrate-and-fire, hard threshold, Bellec
 

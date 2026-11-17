@@ -24,6 +24,8 @@
 #define HT_SYNAPSE_H
 
 #include <cmath>
+
+#include <cstddef>
 #include <string>
 
 // Includes from nestkernel:

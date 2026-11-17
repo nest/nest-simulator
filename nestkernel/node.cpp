@@ -23,9 +23,6 @@
 
 #include "node.h"
 
-
-// Includes from libnestutil:
-#include "compose.hpp"
 // Includes from nestkernel:
 #include "event.h"
 #include "exceptions.h"

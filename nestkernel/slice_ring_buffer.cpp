@@ -22,10 +22,8 @@
 
 #include "slice_ring_buffer.h"
 
-#include <assert.h>
 // C++ includes:
 #include <algorithm>
-#include <cmath>
 #include <functional>
 #include <limits>
 

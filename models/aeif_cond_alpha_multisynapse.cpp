@@ -28,6 +28,7 @@
 #include <gsl/gsl_errno.h>
 #include <sstream>
 
+#include "nest_time.h"
 #include "simulation_manager.h"
 
 #ifdef HAVE_GSL

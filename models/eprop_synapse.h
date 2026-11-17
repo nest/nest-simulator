@@ -25,6 +25,7 @@
 
 // C++
 #include <assert.h>
+#include <cstddef>
 #include <string>
 
 // nestkernel
@@ -41,7 +42,6 @@
 #include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
-#include "target_identifier.h"
 #include "weight_optimizer.h"
 
 namespace nest

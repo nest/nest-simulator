@@ -23,17 +23,17 @@
 #ifndef RECORDING_DEVICE_H
 #define RECORDING_DEVICE_H
 
-// C++ includes:
 #include <string>
+
+#include <cstddef>
+// C++ includes:
 #include <vector>
 
 // Includes from libnestutil:
 #include "dictionary.h"
-
 // Includes from nestkernel:
 #include "device.h"
 #include "device_node.h"
-#include "nest_time.h"
 #include "node.h"
 
 

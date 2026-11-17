@@ -23,7 +23,6 @@
 #include "mask.h"
 
 #include <algorithm>
-#include <utility>
 
 #include "nest_names.h"
 #include "position_impl.h"

@@ -24,6 +24,8 @@
 #define STDP_DOPAMINE_SYNAPSE_H
 
 #include <cmath>
+
+#include <cstddef>
 #include <deque>
 #include <string>
 #include <vector>

@@ -30,8 +30,6 @@
 #include <assert.h>
 #include <cmath>
 
-// Includes from libnestutil:
-#include "compose.hpp"
 #include "dict_util.h"
 #include "numerics.h"
 // Includes from nestkernel:
@@ -40,6 +38,7 @@
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
+#include "nest_time.h"
 #include "simulation_manager.h"
 #include "universal_data_logger_impl.h"
 

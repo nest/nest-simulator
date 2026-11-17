@@ -23,11 +23,32 @@
 #ifndef GRID_LAYER_IMPL_H
 #define GRID_LAYER_IMPL_H
 
-// Includes from spatial:
 #include "grid_layer.h"
+
+#include <algorithm>
+#include <cassert>
+#include <cmath>
+#include <cstddef>
+#include <iterator>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
+
+// Includes from spatial:
+#include "dictionary.h"
+#include "exceptions.h"
+#include "layer.h"
+#include "nest_names.h"
+#include "node_collection.h"
+#include "ntree.h"
+#include "position.h"
 
 namespace nest
 {
+class AbstractMask;
+template < int D >
+class Mask;
 
 
 template < int D >

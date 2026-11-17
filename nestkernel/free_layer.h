@@ -23,18 +23,17 @@
 #ifndef FREE_LAYER_H
 #define FREE_LAYER_H
 
-// C++ includes:
-#include <algorithm>
-#include <limits>
+#include <cstddef>
+#include <iterator>
 #include <vector>
-
-// Includes from nestkernel:
-#include "dictionary.h"
-#include "nest_names.h"
-#include "node_manager.h"
 
 // Includes from spatial:
 #include "layer.h"
+#include "node_collection.h"
+#include "ntree.h"
+#include "position.h"
+
+class Dictionary;
 
 namespace nest
 {

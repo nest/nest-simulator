@@ -22,6 +22,8 @@
 
 #include "dc_generator.h"
 
+#include <vector>
+
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
@@ -32,6 +34,7 @@
 // Includes from libnestutil:
 #include "dict_util.h"
 #include "event_delivery_manager.h"
+#include "nest_time.h"
 
 
 namespace nest

@@ -24,8 +24,10 @@
 #define CONT_DELAY_SYNAPSE_H
 
 
-// C++ includes:
 #include <cmath>
+
+#include <cstddef>
+// C++ includes:
 #include <string>
 
 // Includes from nestkernel:
@@ -39,7 +41,6 @@
 #include "event.h"
 #include "kernel_manager.h"
 #include "logging.h"
-#include "logging_manager.h"
 #include "nest_names.h"
 #include "nest_time.h"
 #include "nest_types.h"

@@ -24,15 +24,13 @@
 
 #include <assert.h>
 #include <cmath>
+#include <iterator>
 #include <map>
-#include <stdlib.h>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "dictionary.h"
-#include "logging.h"
-#include "logging_manager.h"
 #include "nest_names.h"
 #include "nest_time.h"
 #include "ring_buffer.h"

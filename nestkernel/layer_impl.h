@@ -23,14 +23,42 @@
 #define LAYER_IMPL_H
 
 #include "connection_creator_impl.h"
+
+#include <algorithm>
+#include <bitset>
+#include <cassert>
+#include <cmath>
+#include <cstddef>
+#include <deque>
+#include <iterator>
+#include <memory>
+#include <ostream>
+#include <string>
+#include <typeinfo>
+#include <vector>
+
+#include "connection_id.h"
+#include "connection_manager.h"
+#include "dictionary.h"
+#include "exceptions.h"
 #include "free_layer_impl.h"
 #include "grid_layer_impl.h"
 #include "grid_mask_impl.h"
+#include "kernel_manager.h"
 #include "layer.h"
+#include "mask.h"
 #include "mask_impl.h"
+#include "nest_names.h"
+#include "node_collection.h"
+#include "ntree.h"
+#include "position.h"
 
 namespace nest
 {
+template < int D >
+class GridLayer;
+template < int D >
+class GridMask;
 
 template < int D >
 std::shared_ptr< Ntree< D, size_t > > Layer< D >::cached_ntree_;

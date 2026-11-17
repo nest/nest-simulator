@@ -23,24 +23,18 @@
 #ifndef STIMULATION_BACKEND_MPI_H
 #define STIMULATION_BACKEND_MPI_H
 
-#include <arpa/inet.h>
+#include <cstddef>
+#include <iterator>
 #include <map>
 #include <mpi.h>
-#include <netinet/in.h>
-#include <set>
 #include <string>
-#include <sys/socket.h>
 #include <tuple>
-#include <unistd.h>
 #include <utility>
+#include <variant>
 #include <vector>
 
-#include "nest_time.h"
-#include "nest_types.h"
 #include "stimulation_backend.h"
 #include "stimulation_device.h"
-
-class Dictionary;
 
 /* BeginUserDocs: stimulation backend
 

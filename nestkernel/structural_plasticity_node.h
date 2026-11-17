@@ -31,8 +31,6 @@
 #include "node.h"
 #include "synaptic_element.h"
 
-class Dictionary;
-
 namespace nest
 {
 

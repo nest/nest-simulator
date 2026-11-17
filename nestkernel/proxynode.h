@@ -24,24 +24,13 @@
 #define PROXYNODE_H
 
 #include <assert.h>
+#include <cstddef>
 
-// Includes from nestkernel:
-#include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
 
-class Dictionary;
-
 namespace nest
 {
-class SpikeEvent;
-class CurrentEvent;
-class DelayedRateConnectionEvent;
-class DiffusionConnectionEvent;
-class GapJunctionEvent;
-class InstantaneousRateConnectionEvent;
-class LearningSignalConnectionEvent;
-class SICEvent;
 
 /**
  * @brief Proxy to provide Nodes on remote machines.

@@ -24,26 +24,33 @@
 #define CONNECTOR_BASE_IMPL_H
 
 #include "connection_label.h"
-#include "connection_manager.h"
-#include "kernel_manager.h"
-
-#include "connector_base.h"
-#include "node_collection.h"
 
 #include <algorithm>
 #include <cassert>
+#include <cstddef>
+#include <deque>
+#include <memory>
+#include <string>
+#include <vector>
 
+#include "block_vector.h"
 #include "common_synapse_properties.h"
-#include "connector_model.h"
+#include "connection_id.h"
+#include "connection_manager.h"
+#include "connector_base.h"
+#include "dictionary.h"
 #include "event.h"
+#include "kernel_manager.h"
 #include "nest_names.h"
-#include "node.h"
+#include "nest_types.h"
+#include "node_collection.h"
 #include "sort.h"
-#include "spikecounter.h"
-#include "weight_recorder.h"
+#include "source_table.h"
 
 namespace nest
 {
+template < typename ConnectionT >
+class GenericConnectorModel;
 
 /**
  * Homogeneous connector, contains synapses of one particular type (syn_id_).

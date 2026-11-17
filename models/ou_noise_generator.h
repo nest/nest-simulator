@@ -23,18 +23,22 @@
 #ifndef OU_NOISE_GENERATOR_H
 #define OU_NOISE_GENERATOR_H
 
-// C++ includes:
 #include <vector>
 
-// Includes from nestkernel:
-#include "connection.h"
-#include "device_node.h"
-#include "event.h"
+#include <cstddef>
+// C++ includes:
+#include <map>
+#include <string>
+
+#include "dictionary.h"
+#include "exceptions.h"
 #include "kernel_manager.h"
 #include "nest_names.h"
-#include "nest_timeconverter.h"
+#include "nest_time.h"
 #include "nest_types.h"
+#include "node.h"
 #include "random_generators.h"
+#include "recordables_map.h"
 #include "stimulation_device.h"
 #include "universal_data_logger.h"
 #include "vp_manager.h"

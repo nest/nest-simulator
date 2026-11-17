@@ -23,8 +23,12 @@
 #ifndef TARGET_H
 #define TARGET_H
 
-// C++ includes:
 #include <cassert>
+
+#include <cstddef>
+#include <cstdint>
+// C++ includes:
+#include <string>
 
 // Includes from nestkernel:
 #include "exceptions.h"

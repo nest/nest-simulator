@@ -63,9 +63,6 @@
  *     focal retinal lesions." PLoS Comput Biol 9.10 (2013): e1003259.
  */
 
-// C++ includes:
-#include <cmath>
-
 // Includes from nestkernel:
 #include "growth_curve.h"
 

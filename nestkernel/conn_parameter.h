@@ -23,19 +23,12 @@
 #ifndef CONN_PARAMETER_H
 #define CONN_PARAMETER_H
 
-// C++ includes:
-#include <limits>
+#include <cstddef>
 #include <vector>
 
-// Includes from nestkernel:
-#include "exceptions.h"
+#include "dictionary.h"
 #include "parameter.h"
 #include "random_generators.h"
-
-namespace boost
-{
-class any;
-}  // namespace boost
 
 /**
  * Base class for parameters provided to connection routines.

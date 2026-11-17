@@ -23,28 +23,22 @@
 #ifndef CONNECTOR_BASE_H
 #define CONNECTOR_BASE_H
 
-// C++ includes:
 #include <deque>
-#include <fstream>
+
+#include <cstddef>
+// C++ includes:
 #include <string>
 #include <vector>
 
 // Includes from models:
 #include "block_vector.h"
 #include "nest_types.h"
-#include "weight_recorder.h"
 
 #ifdef HAVE_SIONLIB
 #include <sion.h>
 #endif
 
-// Includes from nestkernel:
-#include "common_synapse_properties.h"
-#include "connection_id.h"
 #include "node_collection.h"
-#include "source.h"
-#include "source_table.h"
-#include "spikecounter.h"
 
 class Dictionary;
 
@@ -53,8 +47,6 @@ namespace nest
 {
 
 class ConnectorModel;
-template < typename ConnectionT >
-class GenericConnectorModel;
 class CommonSynapseProperties;
 class ConnectionID;
 class Event;

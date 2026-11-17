@@ -24,13 +24,10 @@
 #define MIP_GENERATOR_H
 
 #include <string>
-#include <vector>
 
-// Includes from nestkernel:
-#include "connection.h"
-#include "device_node.h"
+#include <cstddef>
+
 #include "event.h"
-#include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
 #include "random_generators.h"

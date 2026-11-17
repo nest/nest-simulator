@@ -27,12 +27,11 @@
 #include <gsl/gsl_errno.h>
 
 #include "event_delivery_manager.h"
+#include "nest_time.h"
 #include "simulation_manager.h"
 
 #ifdef HAVE_GSL
 
-// Includes from libnestutil:
-#include "compose.hpp"
 #include "dict_util.h"
 #include "numerics.h"
 // Includes from nestkernel:

@@ -25,10 +25,19 @@
 
 #include "simulation_manager.h"
 
-#include "eprop_archiving_node.h"
+#include <algorithm>
+#include <limits>
+#include <vector>
 
+#include "eprop_archiving_node.h"
 // Includes from nestkernel:
+#include "exceptions.h"
+#include "flush_event_mechanism.h"
+#include "histentry.h"
+#include "ignore_and_spike_mechanism.h"
 #include "kernel_manager.h"
+#include "nest_time.h"
+#include "node.h"
 
 namespace nest
 {

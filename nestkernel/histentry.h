@@ -24,7 +24,7 @@
 #define HISTENTRY_H
 
 
-#include "nest_types.h"
+#include <cstddef>
 
 namespace nest
 {

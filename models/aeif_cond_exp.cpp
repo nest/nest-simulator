@@ -22,9 +22,11 @@
 
 #include "aeif_cond_exp.h"
 
+#include <algorithm>
 #include <assert.h>
 #include <gsl/gsl_errno.h>
 
+#include "nest_time.h"
 #include "simulation_manager.h"
 
 #ifdef HAVE_GSL

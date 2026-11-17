@@ -24,6 +24,7 @@
 #define SP_MANAGER_H
 
 #include <assert.h>
+#include <cstddef>
 // C++ includes:
 #include <string>
 #include <vector>
@@ -33,8 +34,6 @@
 #include "manager_interface.h"
 // Includes from nestkernel:
 #include "growth_curve_factory.h"
-#include "nest_time.h"
-#include "nest_types.h"
 #include "node_collection.h"
 
 

@@ -23,9 +23,8 @@
 #ifndef HH_COND_BETA_GAP_TRAUB_H
 #define HH_COND_BETA_GAP_TRAUB_H
 
-#include <algorithm>
+#include <cstddef>
 #include <map>
-#include <math.h>
 #include <string>
 #include <vector>
 
@@ -37,22 +36,12 @@
 #include "nest_time.h"
 #include "universal_data_logger.h"
 
-namespace nest
-{
-class GapJunctionEvent;
-}  // namespace nest
-
 #ifdef HAVE_GSL
 
-// C includes:
-#include <gsl/gsl_errno.h>
-#include <gsl/gsl_matrix.h>
 #include <gsl/gsl_odeiv.h>
-#include <gsl/gsl_sf_exp.h>
 
 // Includes from nestkernel:
 #include "archiving_node.h"
-#include "connection.h"
 #include "event.h"
 #include "nest_types.h"
 #include "node.h"

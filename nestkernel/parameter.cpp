@@ -21,11 +21,11 @@
  */
 
 #include <algorithm>
+
 #include <assert.h>
 #include <cmath>
 #include <string>
 
-#include "compose.hpp"
 #include "dictionary.h"
 #include "exceptions.h"
 #include "kernel_manager.h"

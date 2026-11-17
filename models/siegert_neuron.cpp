@@ -32,11 +32,6 @@
 #include "secondary_event_impl.h"
 #include "simulation_manager.h"
 
-namespace nest
-{
-class DataLoggingRequest;
-}  // namespace nest
-
 #ifdef HAVE_GSL
 
 // C++ includes:

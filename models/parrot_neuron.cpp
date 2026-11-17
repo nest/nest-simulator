@@ -28,9 +28,8 @@
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
+#include "nest_time.h"
 #include "simulation_manager.h"
-
-class Dictionary;
 
 namespace nest
 {

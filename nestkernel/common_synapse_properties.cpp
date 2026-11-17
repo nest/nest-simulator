@@ -22,6 +22,7 @@
 
 #include "common_synapse_properties.h"
 
+#include <cstddef>
 #include <memory>
 #include <string>
 

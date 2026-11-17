@@ -22,6 +22,9 @@
 
 #include "sinusoidal_gamma_generator.h"
 
+#include "event_delivery_manager.h"
+#include "nest_time.h"
+
 #ifdef HAVE_GSL
 
 // External includes:

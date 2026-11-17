@@ -27,14 +27,11 @@
 #include <algorithm>  // min, max
 #include <string>
 
-// Includes from nestkernel:
-#include "compose.hpp"
 #include "connection_manager.h"
 #include "dictionary.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "logging.h"
-#include "logging_manager.h"
 #include "nest_names.h"
 #include "nest_time.h"
 #include "nest_timeconverter.h"

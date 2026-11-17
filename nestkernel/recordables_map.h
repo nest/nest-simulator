@@ -24,16 +24,15 @@
 #define RECORDABLES_MAP_H
 
 #include "exceptions.h"
-#include <vector>
 
+#include <cstddef>
+#include <vector>
 // C++ includes:
 #include <cassert>
 #include <map>
 #include <string>
 #include <utility>
 
-// Includes from nestkernel:
-#include "nest_types.h"
 
 namespace nest
 {

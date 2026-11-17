@@ -30,8 +30,6 @@
 #include "kernel_manager.h"
 #include "model_manager.h"
 
-class Dictionary;
-
 
 namespace nest
 {

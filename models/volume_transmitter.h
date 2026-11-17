@@ -24,14 +24,12 @@
 #define VOLUME_TRANSMITTER_H
 
 #include <string>
+
+#include <cstddef>
 #include <vector>
 
-// Includes from nestkernel:
-#include "event.h"
 #include "exceptions.h"
 #include "nest_names.h"
-#include "nest_time.h"
-#include "nest_types.h"
 #include "node.h"
 #include "ring_buffer.h"
 #include "spikecounter.h"
@@ -113,9 +111,6 @@ Examples using this model
 .. listexamples:: volume_transmitter
 
 EndUserDocs */
-
-class ConnectorBase;
-class SpikeEvent;
 
 void register_volume_transmitter( const std::string& name );
 

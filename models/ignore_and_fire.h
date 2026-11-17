@@ -23,15 +23,12 @@
 #ifndef IGNORE_AND_FIRE_H
 #define IGNORE_AND_FIRE_H
 
-#include <algorithm>
+#include <cstddef>
 #include <map>
-#include <math.h>
 #include <string>
-#include <vector>
 
 // Includes from nestkernel:
 #include "archiving_node.h"
-#include "connection.h"
 #include "dictionary.h"
 #include "event.h"
 #include "exceptions.h"

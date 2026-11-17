@@ -30,6 +30,8 @@
 #include <set>
 #include <sstream>
 #include <string>
+#include <utility>
+#include <variant>
 
 #include "logging.h"
 // Includes from nestkernel:
@@ -38,7 +40,6 @@
 #include "event_delivery_manager.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
-#include "logging_manager.h"
 #include "model.h"
 #include "model_manager.h"
 #include "modelrange.h"

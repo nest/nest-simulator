@@ -23,7 +23,6 @@
 #include "logging_event.h"
 
 #include <cassert>
-#include <ctime>
 #include <iomanip>
 #include <ostream>
 

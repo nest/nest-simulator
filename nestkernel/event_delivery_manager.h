@@ -24,6 +24,7 @@
 #define EVENT_DELIVERY_MANAGER_H
 
 #include <assert.h>
+#include <cstddef>
 // C++ includes:
 #include <vector>
 
@@ -35,31 +36,22 @@
 #include "event.h"
 #include "kernel_manager.h"
 #include "mpi_manager.h"  // OffGridSpike
-#include "node.h"
 #include "per_thread_bool_indicator.h"
-#include "secondary_event.h"
 #include "simulation_manager.h"
 #include "spike_data.h"
 #include "stopwatch.h"
 #include "target.h"
-#include "target_table.h"
-
-class Dictionary;
+#include "target_data.h"
 
 
 namespace nest
 {
-class OffGridSpikeData;
 class SecondaryEvent;
-class SpikeData;
 struct AssignedRanks;
-struct OffGridSpikeDataWithRank;
-struct SpikeDataWithRank;
 class Node;
 
 typedef MPIManager::OffGridSpike OffGridSpike;
 
-class TargetData;
 class SendBufferPosition;
 class TargetSendBufferPosition;
 

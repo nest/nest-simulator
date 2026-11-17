@@ -25,17 +25,15 @@
 
 #include <string>
 
+#include <cstddef>
+
 // Includes from nestkernel:
 #include "archiving_node.h"
-#include "connection.h"
 #include "event.h"
 #include "exceptions.h"
-#include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
 #include "slice_ring_buffer.h"
-
-class Dictionary;
 
 namespace nest
 {

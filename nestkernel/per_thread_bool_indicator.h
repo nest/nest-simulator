@@ -23,13 +23,12 @@
 #ifndef PER_THREAD_BOOL_INDICATOR_H
 #define PER_THREAD_BOOL_INDICATOR_H
 
-// C++ includes:
 #include <atomic>
+
+#include <cstddef>
+// C++ includes:
 #include <cstdint>
 #include <vector>
-
-// Includes from nestkernel:
-#include "vp_manager.h"
 
 
 namespace nest

@@ -27,14 +27,11 @@
 #include <string>
 #include <vector>
 
-// Includes from libnestutil:
-#include "compose.hpp"
 #include "dictionary.h"
 // Includes from nestkernel:
 #include "device.h"
 #include "device_node.h"
 #include "exceptions.h"
-#include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
 

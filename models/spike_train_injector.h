@@ -23,12 +23,12 @@
 #ifndef SPIKE_TRAIN_INJECTOR_H
 #define SPIKE_TRAIN_INJECTOR_H
 
-// C++ includes:
 #include <string>
+
+#include <cstddef>
+// C++ includes:
 #include <vector>
 
-// Includes from nestkernel:
-#include "connection.h"
 #include "device.h"
 #include "dictionary.h"
 #include "event.h"

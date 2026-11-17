@@ -30,8 +30,6 @@
 #include "archiving_node.h"
 #include "histentry.h"
 #include "nest_time.h"
-#include "nest_types.h"
-#include "synaptic_element.h"
 
 
 namespace nest

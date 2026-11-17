@@ -35,8 +35,6 @@
 #include <string>
 #include <vector>
 
-// Includes from libnestutil:
-#include "compose.hpp"
 #include "numerics.h"
 // Includes from nestkernel:
 #include "block_vector.h"
@@ -48,7 +46,6 @@
 #include "io_manager.h"
 #include "kernel_manager.h"
 #include "logging.h"
-#include "logging_manager.h"
 #include "model_manager.h"
 #include "mpi_manager.h"
 #include "music_manager.h"

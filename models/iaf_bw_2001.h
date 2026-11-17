@@ -23,10 +23,9 @@
 #ifndef IAF_BW_2001_H
 #define IAF_BW_2001_H
 
-#include <algorithm>
 #include <assert.h>
+#include <cstddef>
 #include <map>
-#include <math.h>
 #include <string>
 #include <typeinfo>
 #include <vector>
@@ -37,7 +36,6 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "nest_names.h"
-#include "nest_time.h"
 #include "node.h"
 #include "recordables_map.h"
 #include "simulation_manager.h"
@@ -46,14 +44,10 @@
 #ifdef HAVE_GSL
 #ifdef HAVE_BOOST
 
-// C includes:
-#include <gsl/gsl_errno.h>
-#include <gsl/gsl_matrix.h>
 #include <gsl/gsl_odeiv.h>
 
 // Includes from nestkernel:
 #include "archiving_node.h"
-#include "connection.h"
 #include "event.h"
 #include "nest_types.h"
 #include "ring_buffer.h"

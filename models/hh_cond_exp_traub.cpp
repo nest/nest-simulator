@@ -27,6 +27,7 @@
 #include <cmath>
 
 #include "event_delivery_manager.h"
+#include "nest_time.h"
 #include "simulation_manager.h"
 
 #ifdef HAVE_GSL

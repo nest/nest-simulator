@@ -30,8 +30,6 @@
 #include <sstream>
 #include <utility>
 
-// Includes from libnestutil:
-#include "compose.hpp"
 // Includes from nestkernel:
 #include "config.h"
 #include "dictionary.h"
@@ -40,7 +38,6 @@
 #include "io_manager.h"
 #include "kernel_manager.h"
 #include "logging.h"
-#include "logging_manager.h"
 #include "nest_names.h"
 #include "nest_time.h"
 #include "node_manager.h"

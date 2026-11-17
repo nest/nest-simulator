@@ -24,12 +24,16 @@
 #define CONNECTION_LABEL_IMPL_H
 
 #include "exceptions.h"
-#include "nest_names.h"
 
 #include <connection_label.h>
+#include <string>
+
+#include "dictionary.h"
+#include "nest_names.h"
 
 namespace nest
 {
+class ConnectorModel;
 
 template < typename ConnectionT >
 ConnectionLabel< ConnectionT >::ConnectionLabel()

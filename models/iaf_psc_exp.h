@@ -23,21 +23,18 @@
 #ifndef IAF_PSC_EXP_H
 #define IAF_PSC_EXP_H
 
-#include <algorithm>
 #include <assert.h>
 #include <cmath>
+#include <cstddef>
 #include <map>
 #include <string>
-#include <vector>
 
 // Includes from nestkernel:
 #include "archiving_node.h"
-#include "connection.h"
 #include "dictionary.h"
 #include "event.h"
 #include "exceptions.h"
 #include "nest_names.h"
-#include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
 #include "random_generators.h"

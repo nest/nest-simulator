@@ -23,20 +23,31 @@
 #ifndef RATE_TRANSFORMER_NODE_H
 #define RATE_TRANSFORMER_NODE_H
 
-// Generated includes:
 #include "config.h"
 
+#include <cstddef>
 // C++ includes:
+#include <cmath>
 #include <string>
+#include <vector>
 
+// Generated includes:
 // Includes from nestkernel:
 #include "archiving_node.h"
-#include "connection.h"
-#include "event.h"
-#include "nest_types.h"
+#include "connection_manager.h"
+#include "dict_util.h"
+#include "dictionary.h"
+#include "event_delivery_manager.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "nest_names.h"
+#include "nest_time.h"
 #include "node.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
+#include "secondary_event.h"
+#include "simulation_manager.h"
+#include "universal_data_logger.h"
 #include "universal_data_logger_impl.h"
 
 namespace nest

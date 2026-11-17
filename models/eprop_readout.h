@@ -23,26 +23,17 @@
 #ifndef EPROP_READOUT_H
 #define EPROP_READOUT_H
 
-// C++
-#include <algorithm>
+#include <cstddef>
 #include <map>
-#include <math.h>
 #include <string>
-#include <vector>
 
-// nestkernel
-#include "connection.h"
 #include "dictionary.h"
 #include "eprop_archiving_node_readout.h"
-#include "eprop_synapse.h"
-#include "event.h"
+#include "eprop_archiving_node_readout_impl.h"
 #include "exceptions.h"
-#include "histentry.h"
 #include "kernel_manager.h"
 #include "model_manager.h"
 #include "nest_names.h"
-#include "nest_time.h"
-#include "nest_types.h"
 #include "node.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
@@ -52,11 +43,6 @@
 
 namespace nest
 {
-class CommonSynapseProperties;
-class CurrentEvent;
-class DataLoggingRequest;
-class SpikeEvent;
-class WeightOptimizer;
 
 /* BeginUserDocs: neuron, e-prop plasticity, current-based, Bellec
 

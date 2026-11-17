@@ -24,9 +24,26 @@
 #define EPROP_ARCHIVING_NODE_RECURRENT_IMPL_H
 
 #include "kernel_manager.h"
-#include "simulation_manager.h"
 
+#include <algorithm>
+#include <cassert>
+#include <cmath>
+#include <map>
+#include <string>
+#include <vector>
+
+#include "dict_util.h"
+#include "dictionary.h"
+#include "eprop_archiving_node.h"
+#include "eprop_archiving_node_impl.h"
 #include "eprop_archiving_node_recurrent.h"
+#include "exceptions.h"
+#include "flush_event_mechanism.h"
+#include "histentry.h"
+#include "ignore_and_spike_mechanism.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "simulation_manager.h"
 
 namespace nest
 {

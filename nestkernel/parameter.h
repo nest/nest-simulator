@@ -23,13 +23,10 @@
 #ifndef PARAMETER_H_
 #define PARAMETER_H_
 
-// C++ includes:
-#include <cmath>
+#include <cstddef>
 #include <memory>
 #include <vector>
 
-// Includes from nestkernel:
-#include "node.h"
 #include "node_collection.h"
 #include "random_generators.h"
 

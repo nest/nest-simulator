@@ -24,17 +24,14 @@
 #define SIMULATION_MANAGER_H
 
 #include <assert.h>
+#include <cstddef>
 #include <sys/time.h>
 
 // Includes from libnestutil:
 #include "manager_interface.h"
-#include "stopwatch_impl.h"
-// Includes from nestkernel:
-#include "cycle_time_log.h"
 #include "nest_time.h"
 #include "stopwatch.h"
-
-class Dictionary;
+#include "stopwatch_impl.h"
 
 
 namespace nest

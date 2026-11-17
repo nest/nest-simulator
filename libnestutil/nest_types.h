@@ -23,8 +23,6 @@
 #ifndef NEST_TYPES_H
 #define NEST_TYPES_H
 
-// C++ includes:
-#include <cfloat>
 #include <climits>
 #include <cstddef>
 #include <limits>
@@ -33,8 +31,6 @@
 
 // Generated includes:
 #include "config.h"
-
-#include <cstdint>  // `uint64_t`
 
 /**
  * Namespace for the NEST simulation kernel.

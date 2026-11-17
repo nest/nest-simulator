@@ -24,8 +24,10 @@
 #define EPROP_SYNAPSE_BSSHSLM_2020_H
 
 // C++
+#include <algorithm>
 #include <assert.h>
 #include <cmath>
+#include <cstddef>
 #include <string>
 #include <vector>
 
@@ -45,7 +47,6 @@
 #include "nest_types.h"
 #include "node.h"
 #include "simulation_manager.h"
-#include "target_identifier.h"
 #include "weight_optimizer.h"
 
 namespace nest

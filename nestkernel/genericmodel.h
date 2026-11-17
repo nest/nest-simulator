@@ -23,8 +23,13 @@
 #ifndef GENERICMODEL_H
 #define GENERICMODEL_H
 
-// Includes from nestkernel:
 #include "model.h"
+
+#include <cstddef>
+#include <string>
+
+// Includes from nestkernel:
+#include "nest_types.h"
 
 namespace nest
 {

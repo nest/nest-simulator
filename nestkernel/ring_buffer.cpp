@@ -20,12 +20,10 @@
  *
  */
 
-#include <assert.h>
 #include <list>
 #include <vector>
 
 #include "connection_manager.h"
-#include "event_delivery_manager.h"
 #include "kernel_manager.h"
 #include "ring_buffer.h"
 

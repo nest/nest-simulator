@@ -22,6 +22,7 @@
 
 #include "poisson_generator.h"
 
+#include <vector>
 
 #include "exceptions.h"
 #include "genericmodel_impl.h"
@@ -30,8 +31,10 @@
 // Includes from libnestutil:
 #include "dict_util.h"
 #include "dictionary.h"
+#include "event_delivery_manager.h"
 #include "event_delivery_manager_impl.h"
 #include "nest_names.h"
+#include "nest_time.h"
 
 
 namespace nest

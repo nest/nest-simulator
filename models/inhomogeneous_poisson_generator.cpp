@@ -27,6 +27,7 @@
 
 // Includes from nestkernel:
 #include "dictionary.h"
+#include "event_delivery_manager.h"
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "genericmodel_impl.h"

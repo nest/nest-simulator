@@ -22,12 +22,12 @@
 
 #include "mcculloch_pitts_neuron.h"
 
-
 #include "dict_util.h"
 #include "dictionary.h"
 #include "genericmodel_impl.h"
 #include "nest_impl.h"
 #include "nest_names.h"
+#include "recordables_map.h"
 
 
 namespace nest

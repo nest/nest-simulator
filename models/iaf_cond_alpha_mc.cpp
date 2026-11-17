@@ -23,6 +23,7 @@
 
 #include "iaf_cond_alpha_mc.h"
 
+#include <algorithm>
 #include <assert.h>
 #include <gsl/gsl_errno.h>
 

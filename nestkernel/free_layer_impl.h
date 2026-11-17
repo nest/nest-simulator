@@ -25,6 +25,33 @@
 
 #include "free_layer.h"
 
+#include <algorithm>
+#include <cassert>
+#include <cmath>
+#include <cstddef>
+#include <iterator>
+#include <limits>
+#include <memory>
+#include <numeric>
+#include <string>
+#include <utility>
+#include <variant>
+#include <vector>
+
+#include "dictionary.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "layer.h"
+#include "mpi_manager.h"
+#include "nest_names.h"
+#include "node.h"
+#include "node_collection.h"
+#include "node_manager.h"
+#include "ntree.h"
+#include "parameter.h"
+#include "position.h"
+#include "random_generators.h"
+
 
 namespace nest
 {

@@ -36,7 +36,6 @@ namespace nest
 {
 
 class LoggingEvent;
-class LoggingDeliverer;
 
 //! Report only messages at levels higher than chosen level to user or logs. Default INFO.
 enum class VerbosityLevel

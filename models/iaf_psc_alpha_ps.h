@@ -23,18 +23,14 @@
 #ifndef IAF_PSC_ALPHA_PS_H
 #define IAF_PSC_ALPHA_PS_H
 
-#include <math.h>
-// C++ includes:
-#include <algorithm>
+#include <cstddef>
 #include <map>
 #include <string>
-#include <vector>
 
 // Generated includes:
 #include "config.h"
 // Includes from libnestutil:
 #include "archiving_node.h"
-#include "connection.h"
 #include "dictionary.h"
 #include "event.h"
 #include "exceptions.h"

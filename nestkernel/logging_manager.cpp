@@ -27,6 +27,7 @@
 #include <iostream>
 
 // Includes from libnestutil:
+#include "compose.hpp"
 #include "dictionary.h"
 #include "kernel_manager.h"
 #include "logging_event.h"

@@ -23,15 +23,13 @@
 #ifndef NODE_H
 #define NODE_H
 
-// C++ includes:
-#include <bitset>
+#include <cassert>
+#include <cstddef>
 #include <deque>
 #include <map>
 #include <string>
 #include <vector>
 
-// Includes from nestkernel:
-#include "common_synapse_properties.h"
 #include "deprecation_warning.h"
 #include "dictionary.h"
 #include "histentry.h"
@@ -46,7 +44,6 @@
 namespace nest
 {
 class DataLoggingReply;
-class ArchivingNode;
 class TimeConverter;
 class WeightOptimizer;
 class Model;

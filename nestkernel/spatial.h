@@ -23,16 +23,15 @@
 #ifndef SPATIAL_H
 #define SPATIAL_H
 
-// C++ includes:
 #include <string>
+
+#include <cstddef>
+// C++ includes:
 #include <vector>
 
-// Includes from nestkernel:
-#include "nest_types.h"
 #include "node_collection.h"
 // Includes from spatial:
 #include "dictionary.h"
-#include "free_layer.h"
 #include "layer.h"
 #include "mask.h"
 

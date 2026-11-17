@@ -28,15 +28,32 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <cstddef>
+#include <exception>
 #include <iterator>
+#include <memory>
+#include <string>
 #include <vector>
 
 #include "connection_manager.h"
+#include "dictionary.h"
+#include "exceptions.h"
 #include "kernel_manager.h"
+#include "node.h"
+#include "node_collection.h"
 #include "node_manager.h"
+#include "ntree.h"
+#include "parameter.h"
+#include "position.h"
+#include "random_generators.h"
+#include "vp_manager.h"
 
 namespace nest
 {
+template < int D >
+class Layer;
+template < int D >
+class MaskedLayer;
 
 template < int D >
 void

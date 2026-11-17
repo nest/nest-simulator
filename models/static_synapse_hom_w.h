@@ -25,6 +25,8 @@
 
 #include <string>
 
+#include <cstddef>
+
 // Includes from nestkernel:
 #include "common_properties_hom_w.h"
 #include "connection.h"

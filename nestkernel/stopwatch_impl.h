@@ -25,6 +25,12 @@
 
 #include "stopwatch.h"
 
+#include <algorithm>
+#include <ctime>
+#include <iosfwd>
+#include <string>
+#include <vector>
+
 #include "dictionary.h"
 #include "kernel_manager.h"
 #include "vp_manager.h"

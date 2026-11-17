@@ -24,8 +24,7 @@
 #define MODELRANGE_H
 
 
-// Includes from nestkernel:
-#include "nest_types.h"
+#include <cstddef>
 
 namespace nest
 {

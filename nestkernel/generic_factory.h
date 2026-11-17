@@ -25,18 +25,16 @@
 
 // C++ includes:
 #include <map>
+#include <string>
 
 // Includes from nestkernel:
 #include "generic_factory.h"
-#include "nest_types.h"
-
 // Includes from nestutil:
 #include "dictionary.h"
 
 
 namespace nest
 {
-class AbstractGeneric;
 
 /**
  * Generic Factory class for objects deriving from a base class BaseT.

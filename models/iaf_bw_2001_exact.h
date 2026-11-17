@@ -23,9 +23,8 @@
 #ifndef IAF_BW_2001_EXACT
 #define IAF_BW_2001_EXACT
 
-#include <algorithm>
+#include <cstddef>
 #include <map>
-#include <math.h>
 #include <string>
 #include <vector>
 
@@ -34,21 +33,16 @@
 #include "dictionary.h"
 #include "exceptions.h"
 #include "nest_names.h"
-#include "nest_time.h"
 #include "node.h"
 #include "recordables_map.h"
 #include "universal_data_logger.h"
 
 #ifdef HAVE_GSL
 
-// C includes:
-#include <gsl/gsl_errno.h>
-#include <gsl/gsl_matrix.h>
 #include <gsl/gsl_odeiv.h>
 
 // Includes from nestkernel:
 #include "archiving_node.h"
-#include "connection.h"
 #include "event.h"
 #include "nest_types.h"
 #include "ring_buffer.h"

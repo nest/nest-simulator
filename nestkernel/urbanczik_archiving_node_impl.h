@@ -25,6 +25,12 @@
 
 #include "urbanczik_archiving_node.h"
 
+#include <deque>
+
+#include "archiving_node.h"
+#include "histentry.h"
+#include "nest_time.h"
+
 namespace nest
 {
 

@@ -23,8 +23,10 @@
 #ifndef SPIKE_DATA_H
 #define SPIKE_DATA_H
 
-// C++ includes
 #include <cassert>
+
+#include <cstddef>
+// C++ includes
 
 // Includes from nestkernel:
 #include "nest_types.h"

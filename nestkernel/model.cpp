@@ -24,8 +24,6 @@
 
 #include <assert.h>
 
-// Includes from libnestutil:
-#include "compose.hpp"
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"

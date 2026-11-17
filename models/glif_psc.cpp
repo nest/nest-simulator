@@ -35,6 +35,7 @@
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
+#include "nest_time.h"
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
 

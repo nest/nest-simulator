@@ -28,11 +28,8 @@
 #ifdef HAVE_MUSIC
 #include <music.hh>
 #endif
-#include <string>
-
 // Includes from nestkernel:
 #include "manager_interface.h"
-#include "nest_types.h"
 
 #ifdef HAVE_MUSIC
 #include "music_event_handler.h"
@@ -41,7 +38,6 @@
 
 namespace nest
 {
-class Node;
 
 /**
  * Encapsulate all calls to MUSIC.

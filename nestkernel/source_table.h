@@ -23,9 +23,10 @@
 #ifndef SOURCE_TABLE_H
 #define SOURCE_TABLE_H
 
-// C++ includes:
 #include <cassert>
-#include <iostream>
+
+#include <cstddef>
+// C++ includes:
 #include <map>
 #include <vector>
 
@@ -39,15 +40,10 @@
 #include "block_vector.h"
 #include "static_assert.h"
 
-template < typename value_type_ >
-class BlockVector;
-
 namespace nest
 {
 
 class TargetData;
-class Source;
-class SpikeData;
 
 /**
  * Entry of compressed_spike_data_map_.

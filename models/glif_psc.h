@@ -23,21 +23,18 @@
 #ifndef GLIF_PSC_H
 #define GLIF_PSC_H
 
-#include <algorithm>
 #include <assert.h>
+#include <cstddef>
 #include <map>
-#include <math.h>
 #include <string>
 #include <vector>
 
 #include "archiving_node.h"
-#include "connection.h"
 #include "dictionary.h"
 #include "event.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "nest_names.h"
-#include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
 #include "recordables_map.h"

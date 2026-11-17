@@ -25,8 +25,6 @@
 #include <assert.h>
 #include <cmath>
 
-// Includes from nestkernel:
-#include "compose.hpp"
 #include "dict_util.h"
 #include "event_delivery_manager.h"
 #include "exceptions.h"
@@ -34,6 +32,7 @@
 #include "iaf_propagator.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
+#include "nest_time.h"
 #include "numerics.h"
 #include "simulation_manager.h"
 

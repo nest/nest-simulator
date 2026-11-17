@@ -22,11 +22,16 @@
 
 #include "iaf_bw_2001.h"
 
+#include <boost/math/policies/policy.hpp>
+#include <boost/math/special_functions/expm1.hpp>
+#include <boost/math/special_functions/sign.hpp>
+#include <boost/math/tools/rational.hpp>
 #include <cmath>
 #include <gsl/gsl_errno.h>
 
 #include "connection_manager.h"
 #include "event_delivery_manager.h"
+#include "nest_time.h"
 
 #ifdef HAVE_GSL
 #ifdef HAVE_BOOST
@@ -43,11 +48,6 @@
 #include "kernel_manager.h"
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
-
-// Includes from standard library
-#include <algorithm>
-#include <boost/math/special_functions/gamma.hpp>
-#include <typeinfo>
 
 namespace nest
 {

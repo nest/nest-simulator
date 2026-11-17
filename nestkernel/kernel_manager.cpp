@@ -23,6 +23,7 @@
 #include "kernel_manager.h"
 
 #include <assert.h>
+#include <new>
 #include <stdexcept>
 #include <stdlib.h>
 

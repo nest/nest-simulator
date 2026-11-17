@@ -23,14 +23,25 @@
 #ifndef GRID_LAYER_H
 #define GRID_LAYER_H
 
-// Includes from spatial:
 #include "layer.h"
 
-// Includes from C++
+#include <cstddef>
 #include <iterator>
+#include <utility>
+#include <vector>
+
+// Includes from spatial:
+#include "node_collection.h"
+#include "ntree.h"
+#include "position.h"
+
+class Dictionary;
 
 namespace nest
 {
+class AbstractMask;
+template < int D >
+class Mask;
 
 /**
  * Layer with neurons placed in a grid

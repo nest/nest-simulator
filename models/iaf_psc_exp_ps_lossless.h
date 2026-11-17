@@ -23,18 +23,14 @@
 #ifndef IAF_PSC_EXP_PS_LOSSLESS_H
 #define IAF_PSC_EXP_PS_LOSSLESS_H
 
-#include <math.h>
-// C++ includes:
-#include <algorithm>
+#include <cstddef>
 #include <map>
 #include <string>
-#include <vector>
 
 // Generated includes:
 #include "config.h"
 // Includes from libnestutil:
 #include "archiving_node.h"
-#include "connection.h"
 #include "dictionary.h"
 #include "event.h"
 #include "exceptions.h"

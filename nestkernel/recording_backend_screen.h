@@ -24,8 +24,9 @@
 #define RECORDING_BACKEND_SCREEN_H
 
 #include <ios>
+
+#include <cstddef>
 #include <map>
-#include <set>
 #include <string>
 #include <vector>
 
@@ -83,7 +84,6 @@ EndUserDocs */
 namespace nest
 {
 class Event;
-class RecordingDevice;
 
 /**
  * A simple recording backend implementation that prints all recorded data to

@@ -23,8 +23,10 @@
 #ifndef EPROP_LEARNING_SIGNAL_CONNECTION_BSSHSLM_2020_H
 #define EPROP_LEARNING_SIGNAL_CONNECTION_BSSHSLM_2020_H
 
-// C++
 #include <memory>
+
+#include <cstddef>
+// C++
 #include <string>
 
 // nestkernel

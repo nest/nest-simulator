@@ -24,6 +24,7 @@
 #define STDP_SYNAPSE_FACETSHW_HOM_H
 
 #include <assert.h>
+#include <cstddef>
 // C++ includes:
 #include <cmath>
 #include <deque>

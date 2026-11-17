@@ -23,12 +23,8 @@
 #ifndef IAF_PROPAGATOR_H
 #define IAF_PROPAGATOR_H
 
-// C++ includes:
-#include <cmath>
 #include <tuple>
-
-// Includes from libnestutil:
-#include "numerics.h"
+#include <utility>
 
 
 /**

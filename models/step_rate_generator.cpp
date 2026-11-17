@@ -34,7 +34,6 @@
 
 namespace nest
 {
-class DataLoggingRequest;
 
 void
 register_step_rate_generator( const std::string& name )

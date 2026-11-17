@@ -21,20 +21,21 @@
  */
 
 
+// C++ includes:
 #include "nest_impl.h"
 
-// C++ includes:
 #include <cassert>
 #include <deque>
 #include <map>
 #include <memory>
 #include <sstream>
+#include <stdexcept>
 #include <string>
+#include <type_traits>
 #include <utility>
+#include <variant>
 #include <vector>
 
-// Includes from nestkernel:
-#include "compose.hpp"
 #include "connection_id.h"
 #include "connection_manager.h"
 #include "dictionary.h"

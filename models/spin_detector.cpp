@@ -32,8 +32,6 @@
 #include "node_manager.h"
 #include "recording_backend.h"
 
-class Dictionary;
-
 
 namespace nest
 {

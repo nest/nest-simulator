@@ -23,13 +23,15 @@
 // Includes from libnestutil:
 #include "recording_device.h"
 
+#include <cassert>
 #include <map>
 #include <nest_names.h>
+#include <vector>
 
-#include "compose.hpp"
 #include "exceptions.h"
 #include "io_manager.h"
 #include "kernel_manager.h"
+#include "nest_time.h"
 #include "simulation_manager.h"
 
 namespace nest

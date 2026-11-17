@@ -22,7 +22,6 @@
 
 #include "volume_transmitter.h"
 
-
 // Includes from nestkernel:
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
@@ -34,6 +33,7 @@
 #include "dict_util.h"
 #include "dictionary.h"
 #include "event.h"
+#include "nest_time.h"
 
 
 namespace nest

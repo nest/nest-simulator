@@ -25,6 +25,8 @@
 
 #include <string>
 
+#include <cstddef>
+
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
 #include "connection.h"
@@ -32,7 +34,6 @@
 #include "dictionary.h"
 #include "enum_bitfield.h"
 #include "event.h"
-#include "event_delivery_manager.h"
 #include "nest_names.h"
 #include "nest_types.h"
 

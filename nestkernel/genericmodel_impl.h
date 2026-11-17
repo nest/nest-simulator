@@ -24,10 +24,15 @@
 #define GENERICMODEL_IMPL_H
 
 #include "genericmodel.h"
-#include "kernel_manager.h"
+
+#include <cstddef>
+#include <string>
+
+#include "dictionary.h"
 #include "logging.h"
-#include "logging_manager.h"
+#include "model.h"
 #include "nest_names.h"
+#include "nest_types.h"
 
 namespace nest
 {

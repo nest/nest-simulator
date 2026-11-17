@@ -23,8 +23,10 @@
 #ifndef URBANCZIK_SYNAPSE_H
 #define URBANCZIK_SYNAPSE_H
 
-// C++ includes:
 #include <cmath>
+
+#include <cstddef>
+// C++ includes:
 #include <deque>
 #include <string>
 
@@ -41,7 +43,6 @@
 #include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
-#include "ring_buffer.h"
 
 
 namespace nest

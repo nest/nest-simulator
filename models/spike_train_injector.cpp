@@ -36,7 +36,6 @@
 #include "dict_util.h"
 #include "event_delivery_manager.h"
 #include "logging.h"
-#include "logging_manager.h"
 
 
 namespace nest

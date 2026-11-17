@@ -22,11 +22,14 @@
 
 #include "ht_neuron.h"
 
+#include <algorithm>
 #include <gsl/gsl_errno.h>
 
 #include "dictionary.h"
 #include "event_delivery_manager.h"
 #include "nest_names.h"
+#include "nest_time.h"
+#include "recordables_map.h"
 #include "simulation_manager.h"
 
 #ifdef HAVE_GSL

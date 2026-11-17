@@ -24,7 +24,9 @@
 #include "eprop_learning_signal_connection_bsshslm_2020.h"
 
 // nestkernel
+#include "compose.hpp"
 #include "nest_impl.h"
+#include "source.h"
 
 
 namespace nest

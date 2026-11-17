@@ -25,13 +25,12 @@
 
 #include <string>
 
-// Includes from nestkernel:
-#include "connection.h"
+#include <cstddef>
+
 #include "device_node.h"
 #include "event.h"
 #include "exceptions.h"
 #include "nest_names.h"
-#include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
 #include "ring_buffer.h"

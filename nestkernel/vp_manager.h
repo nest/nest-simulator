@@ -24,8 +24,10 @@
 #define VP_MANAGER_H
 
 #include <algorithm>
+
 #include <assert.h>
 #include <cmath>
+#include <cstddef>
 
 // Includes from libnestutil:
 #include "kernel_manager.h"

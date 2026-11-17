@@ -24,10 +24,14 @@
 #define CONNECTION_MANAGER_IMPL_H
 
 #include "connection_manager.h"
+
 #include <cassert>
+#include <cstddef>
 #include <string>
+#include <vector>
 
 #include "conn_builder_factory.h"
+#include "dictionary.h"
 
 namespace nest
 {

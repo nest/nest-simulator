@@ -25,12 +25,29 @@
 
 #include "connection.h"
 
+#include <cassert>
+#include <cstddef>
+#include <memory>
+#include <string>
+#include <vector>
+
 #include "connection_manager.h"
 #include "delay_checker.h"
+#include "dictionary.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "nest_names.h"
+#include "nest_time.h"
 #include "nest_timeconverter.h"
+#include "node.h"
+#include "secondary_event.h"
+#include "syn_id_delay.h"
 
 namespace nest
 {
+class CommonSynapseProperties;
+class ConnectorModel;
+class spikecounter;
 
 template < typename targetidentifierT >
 void

@@ -25,8 +25,6 @@
 
 #include <vector>
 
-// Includes from nestkernel:
-#include "conn_builder.h"
 #include "node_collection.h"
 
 class Dictionary;

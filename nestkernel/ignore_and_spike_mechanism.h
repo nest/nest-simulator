@@ -23,14 +23,13 @@
 #ifndef IGNORE_AND_SPIKE_MECHANISM_H
 #define IGNORE_AND_SPIKE_MECHANISM_H
 
-// nestkernel
-#include "nest_time.h"
 
-// libnestutil
-#include "dict_util.h"
+class Dictionary;
 
 namespace nest
 {
+class Node;
+
 /**
  * @brief Class implementing an ignore-and-fire mechanism for neuron models.
  *

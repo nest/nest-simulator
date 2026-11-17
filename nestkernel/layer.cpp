@@ -26,12 +26,11 @@
 #include <assert.h>
 #include <functional>
 #include <iterator>
-#include <math.h>
 #include <memory>
 #include <numeric>
 #include <string>
 #include <type_traits>
-#include <utility>
+#include <variant>
 #include <vector>
 
 // Includes from nestkernel:

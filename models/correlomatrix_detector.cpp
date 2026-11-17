@@ -28,8 +28,6 @@
 #include <cmath>       // for less
 #include <functional>  // for bind2nd
 
-// Includes from libnestutil:
-#include "compose.hpp"
 #include "dict_util.h"
 #include "logging.h"
 // Includes from nestkernel:
@@ -38,7 +36,6 @@
 #include "event.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
-#include "logging_manager.h"
 #include "nest_impl.h"
 #include "nest_timeconverter.h"
 

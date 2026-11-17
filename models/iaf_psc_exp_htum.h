@@ -24,20 +24,16 @@
 #ifndef iaf_psc_exp_htum_H
 #define iaf_psc_exp_htum_H
 
-#include <algorithm>
+#include <cstddef>
 #include <map>
-#include <math.h>
 #include <string>
-#include <vector>
 
 // Includes from nestkernel:
 #include "archiving_node.h"
-#include "connection.h"
 #include "dictionary.h"
 #include "event.h"
 #include "exceptions.h"
 #include "nest_names.h"
-#include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
 #include "recordables_map.h"

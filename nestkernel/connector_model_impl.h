@@ -23,19 +23,36 @@
 #define CONNECTOR_MODEL_IMPL_H
 
 #include "connection_impl.h"
+
+#include <cassert>
+#include <cstddef>
+#include <map>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
+
 #include "connection_manager.h"
+#include "connector_base.h"
 #include "connector_base_impl.h"
 #include "connector_model.h"
 #include "delay_checker.h"
+#include "dictionary.h"
+#include "exceptions.h"
 #include "kernel_manager.h"
 #include "model_manager.h"
+#include "nest_names.h"
 #include "nest_time.h"
-#include "nest_timeconverter.h"
+#include "nest_types.h"
+#include "numerics.h"
+#include "secondary_event.h"
 #include "secondary_event_impl.h"
+#include "simulation_manager.h"
 
 
 namespace nest
 {
+class Node;
 
 // standard implementation to obtain the default delay
 // synapse types with homogeneous delays must provide a specialization

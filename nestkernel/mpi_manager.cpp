@@ -22,24 +22,26 @@
 
 #include "mpi_manager_impl.h"
 
-#include "config.h"
-
-// Includes from nestkernel:
-#include "dictionary.h"
-#include "kernel_manager.h"
-#include "logging.h"
-#include "logging_manager.h"
-#include "music_manager.h"
-#include "nest_names.h"
-#include "stopwatch.h"
-#include "stopwatch_impl.h"
-
+#include <cstddef>
+#include <mpi.h>
 // C++ includes
 #include <cmath>
 #include <limits>
 #include <numeric>
 #include <string>
 #include <vector>
+
+#include "config.h"
+// Includes from nestkernel:
+#include "dictionary.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "logging.h"
+#include "mpi_manager.h"
+#include "music_manager.h"
+#include "nest_names.h"
+#include "stopwatch.h"
+#include "stopwatch_impl.h"
 
 namespace nest
 {

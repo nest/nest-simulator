@@ -27,14 +27,11 @@
 #include <errno.h>
 // C++ includes:
 #include <cstdlib>
+#include <vector>
 
 // Generated includes:
 #include "config.h"
-// Includes from libnestutil:
-#include "compose.hpp"
-#include "kernel_manager.h"
 #include "logging.h"
-#include "logging_manager.h"
 #include "nest_names.h"
 #include "recording_backend.h"
 #include "recording_backend_ascii.h"
@@ -46,7 +43,6 @@
 #include "recording_backend_mpi.h"
 #include "stimulation_backend_mpi.h"
 #else
-#include "stimulation_backend.h"
 #endif
 #ifdef HAVE_SIONLIB
 #include "recording_backend_sionlib.h"

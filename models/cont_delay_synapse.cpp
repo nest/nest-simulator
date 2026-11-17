@@ -23,7 +23,9 @@
 #include "cont_delay_synapse.h"
 
 // Includes from nestkernel:
+#include "compose.hpp"
 #include "nest_impl.h"
+#include "source.h"
 
 
 namespace nest

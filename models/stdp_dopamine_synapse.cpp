@@ -30,6 +30,7 @@
 #include "nest_impl.h"
 #include "node_collection.h"
 #include "node_manager.h"
+#include "source.h"
 
 namespace nest
 {

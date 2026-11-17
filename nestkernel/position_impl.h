@@ -25,6 +25,17 @@
 
 #include "position.h"
 
+#include <algorithm>
+#include <array>
+#include <cassert>
+#include <cmath>
+#include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "exceptions.h"
+
 namespace nest
 {
 

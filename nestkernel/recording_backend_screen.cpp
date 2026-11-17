@@ -26,6 +26,7 @@
 #include <utility>
 
 // Includes from nestkernel:
+#include "compose.hpp"
 #include "dictionary.h"
 #include "event.h"
 #include "kernel_manager.h"

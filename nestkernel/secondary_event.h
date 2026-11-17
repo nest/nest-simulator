@@ -37,8 +37,6 @@
 namespace nest
 {
 
-class SICEvent;
-
 /**
  * Base class of secondary events. Provides interface for
  * serialization and deserialization. This event type may be

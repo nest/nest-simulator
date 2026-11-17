@@ -23,15 +23,14 @@
 #ifndef PULSEPACKET_GENERATOR_H
 #define PULSEPACKET_GENERATOR_H
 
-// C++ includes:
 #include <deque>
+
+#include <cstddef>
+// C++ includes:
 #include <string>
 #include <vector>
 
-// Includes from nestkernel:
-#include "connection.h"
 #include "event.h"
-#include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
 #include "random_generators.h"
@@ -131,7 +130,6 @@ private:
 
   void update( Time const&, const long, const long ) override;
 
-  struct Buffers_;
 
   // ------------------------------------------------------------
 

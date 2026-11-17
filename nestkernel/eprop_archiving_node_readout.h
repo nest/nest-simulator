@@ -24,13 +24,12 @@
 #define EPROP_ARCHIVING_NODE_READOUT_H
 
 // models
+#include "eprop_archiving_node.h"
 #include "eprop_archiving_node_impl.h"
-
-// nestkernel
-#include "histentry.h"
 
 namespace nest
 {
+class HistEntryEpropReadout;
 
 /**
  * Class implementing an intermediate archiving node model for readout node models supporting e-prop plasticity.

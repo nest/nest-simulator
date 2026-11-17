@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <assert.h>
 #include <utility>
+#include <variant>
 
 #include "cm_compartmentcurrents.h"
 #include "dictionary.h"
@@ -33,6 +34,7 @@
 #include "kernel_manager.h"
 #include "nest_impl.h"
 #include "nest_names.h"
+#include "nest_time.h"
 #include "simulation_manager.h"
 
 

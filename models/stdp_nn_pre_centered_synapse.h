@@ -24,6 +24,7 @@
 #define STDP_NN_PRE_CENTERED_SYNAPSE_H
 
 #include <assert.h>
+#include <cstddef>
 // C++ includes:
 #include <cmath>
 #include <deque>

@@ -23,7 +23,7 @@
 #ifndef EXCEPTIONS_H
 #define EXCEPTIONS_H
 
-#include <exception>
+#include <cstddef>
 // C++ includes:
 #include <sstream>
 #include <stdexcept>
@@ -39,8 +39,6 @@
 
 namespace nest
 {
-
-class Event;
 
 /**
  * @addtogroup Exceptions Exception classes

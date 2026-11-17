@@ -24,13 +24,14 @@
 #include "eprop_readout_bsshslm_2020.h"
 
 // C++
+#include <algorithm>
 #include <assert.h>
 #include <cmath>
 #include <limits>
+#include <vector>
 
 // libnestutil
 #include "dict_util.h"
-
 // nestkernel
 #include "connection_manager.h"
 #include "eprop_archiving_node_impl.h"
@@ -39,8 +40,10 @@
 #include "event_delivery_manager.h"
 #include "exceptions.h"
 #include "genericmodel_impl.h"
+#include "histentry.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
+#include "nest_time.h"
 #include "secondary_event_impl.h"
 #include "simulation_manager.h"
 

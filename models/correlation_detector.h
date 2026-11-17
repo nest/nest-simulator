@@ -24,13 +24,13 @@
 #define CORRELATION_DETECTOR_H
 
 
-// C++ includes:
 #include <deque>
+
+#include <cstddef>
+// C++ includes:
 #include <string>
 #include <vector>
 
-// Includes from nestkernel:
-#include "event.h"
 #include "exceptions.h"
 #include "nest_names.h"
 #include "nest_time.h"
@@ -42,8 +42,6 @@ class Dictionary;
 
 namespace nest
 {
-class SpikeEvent;
-class TimeConverter;
 
 /* BeginUserDocs: device, detector
 
@@ -262,7 +260,6 @@ private:
 
   // ------------------------------------------------------------
 
-  struct State_;
 
   struct Parameters_
   {

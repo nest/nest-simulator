@@ -22,21 +22,21 @@
 
 #include "ou_noise_generator.h"
 
+#include <cassert>
 // C++ includes:
+#include <cmath>
 #include <numeric>
 
-// Includes from libnestutil:
-#include "compose.hpp"
 #include "dict_util.h"
 #include "logging.h"
-#include "numerics.h"
-
 // Includes from nestkernel:
+#include "event.h"
 #include "event_delivery_manager.h"
 #include "event_delivery_manager_impl.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
+#include "nest_timeconverter.h"
 #include "universal_data_logger_impl.h"
 
 namespace nest

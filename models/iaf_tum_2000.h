@@ -23,20 +23,16 @@
 #ifndef IAF_TUM_2000_H
 #define IAF_TUM_2000_H
 
-#include <algorithm>
+#include <cstddef>
 #include <map>
-#include <math.h>
 #include <string>
-#include <vector>
 
 // Includes from nestkernel:
 #include "archiving_node.h"
-#include "connection.h"
 #include "dictionary.h"
 #include "event.h"
 #include "exceptions.h"
 #include "nest_names.h"
-#include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
 #include "random_generators.h"

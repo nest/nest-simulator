@@ -25,6 +25,7 @@
 #define BERNOULLI_SYNAPSE_H
 
 #include <assert.h>
+#include <cstddef>
 #include <string>
 
 // Includes from nestkernel:
@@ -39,6 +40,7 @@
 #include "nest_impl.h"
 #include "nest_names.h"
 #include "nest_types.h"
+#include "random_generators.h"
 
 namespace nest
 {

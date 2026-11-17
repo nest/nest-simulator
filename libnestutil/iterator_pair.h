@@ -24,9 +24,18 @@
 #define ITERATOR_PAIR_H_
 
 #include <boost/iterator/iterator_adaptor.hpp>
+#include <boost/static_assert.hpp>
 #include <boost/tuple/tuple.hpp>
+#include <cstddef>
+#include <iterator>
+#include <memory>
 
-#include "source.h"
+#include "iterator_pair.h"
+
+namespace nest
+{
+class Source;
+}  // namespace nest
 
 namespace boost
 {

@@ -24,6 +24,7 @@
 #define MODEL_MANAGER_H
 
 #include <assert.h>
+#include <cstddef>
 // C++ includes:
 #include <memory>
 #include <string>
@@ -34,11 +35,7 @@
 #include "dictionary.h"
 #include "exceptions.h"
 #include "manager_interface.h"
-#include "model.h"
-#include "nest_time.h"
 #include "nest_types.h"
-#include "node.h"
-#include "secondary_event.h"
 
 
 namespace nest

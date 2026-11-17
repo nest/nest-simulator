@@ -29,6 +29,15 @@
  */
 
 #include "nest_names.h"
+
+#include <cassert>
+#include <cstddef>
+#include <string>
+
+#include "dictionary.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "nest_types.h"
 #include "node.h"
 #include "node_manager.h"
 

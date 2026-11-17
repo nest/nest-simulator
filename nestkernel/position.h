@@ -23,23 +23,10 @@
 #ifndef POSITION_H
 #define POSITION_H
 
-// C++ includes:
-#include <algorithm>
 #include <array>
-#include <cassert>
-#include <cmath>
 #include <iostream>
-#include <sstream>
 #include <string>
-#include <utility>
 #include <vector>
-
-// Includes from libnestutil:
-#include "compose.hpp"
-
-// Includes from nestkernel:
-#include "exceptions.h"
-#include "nest_types.h"
 
 namespace nest
 {

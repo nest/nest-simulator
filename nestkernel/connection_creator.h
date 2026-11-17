@@ -23,14 +23,12 @@
 #ifndef CONNECTION_CREATOR_H
 #define CONNECTION_CREATOR_H
 
-// C++ includes:
 #include <iterator>
+
+#include <cstddef>
 #include <utility>
 #include <vector>
 
-// Includes from nestkernel:
-#include "connection_manager.h"
-#include "nest.h"
 // Includes from spatial:
 #include "dictionary.h"
 #include "mask.h"

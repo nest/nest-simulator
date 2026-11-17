@@ -24,7 +24,6 @@
 #include "target_table_devices.h"
 
 #include <assert.h>
-#include <set>
 
 #include "connection_id.h"
 #include "connection_label.h"
@@ -34,14 +33,12 @@
 #include "model_manager.h"
 #include "node.h"
 #include "node_manager.h"
-#include "secondary_event.h"
 #include "vp_manager.h"
 
 class Dictionary;
 
 namespace nest
 {
-class Event;
 
 TargetTableDevices::TargetTableDevices()
 {

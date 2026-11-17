@@ -22,8 +22,7 @@
 
 #include "cycle_time_log.h"
 
-// Includes from nestkernel:
-#include "kernel_manager.h"
+#include "dictionary.h"
 #include "nest_names.h"
 
 namespace nest

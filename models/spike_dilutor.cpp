@@ -26,11 +26,13 @@
 #include "dict_util.h"
 // Includes from nestkernel:
 #include "dictionary.h"
+#include "event_delivery_manager.h"
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
+#include "random_generators.h"
 #include "simulation_manager.h"
 #include "vp_manager.h"
 

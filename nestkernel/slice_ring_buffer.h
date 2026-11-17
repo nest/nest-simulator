@@ -23,8 +23,10 @@
 #ifndef SLICE_RING_BUFFER_H
 #define SLICE_RING_BUFFER_H
 
-// C++ includes:
 #include <cassert>
+
+#include <cstddef>
+// C++ includes:
 #include <limits>
 #include <vector>
 

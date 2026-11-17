@@ -24,6 +24,7 @@
 
 // Includes from nestkernel:
 #include "nest_impl.h"
+#include "source.h"
 
 
 namespace nest

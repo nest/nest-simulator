@@ -22,14 +22,6 @@
 
 #include "module_manager.h"
 
-#include <exception>
-#include <vector>
-
-#include "dictionary.h"
-#include "exceptions.h"
-#include "logging_manager.h"
-#include "nest_names.h"
-
 #ifdef HAVE_LIBLTDL
 
 #include <node_manager.h>

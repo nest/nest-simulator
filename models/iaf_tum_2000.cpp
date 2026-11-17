@@ -35,6 +35,7 @@
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
+#include "nest_time.h"
 #include "ring_buffer_impl.h"
 #include "simulation_manager.h"
 

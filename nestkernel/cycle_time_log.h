@@ -23,11 +23,12 @@
 #ifndef CYCLE_TIME_LOG_H
 #define CYCLE_TIME_LOG_H
 
-// C++ includes:
 #include <vector>
 
-// Includes from libnestutil:
-#include "dictionary.h"
+#include <cstddef>
+// C++ includes:
+
+class Dictionary;
 
 namespace nest
 {

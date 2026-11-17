@@ -22,18 +22,14 @@
 
 #include "conn_parameter.h"
 
+#include <compare>
 #include <memory>
 #include <string>
+#include <variant>
 
 // Includes from nestkernel:
 #include "dictionary.h"
 #include "exceptions.h"
-
-
-namespace nest
-{
-class Node;
-}  // namespace nest
 
 namespace nest
 {

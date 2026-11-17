@@ -31,7 +31,6 @@
 #include "io_manager.h"
 #include "kernel_manager.h"
 #include "logging.h"
-#include "logging_manager.h"
 #include "mpi.h"
 #include "nest_names.h"
 #include "nest_time.h"

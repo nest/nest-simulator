@@ -23,14 +23,15 @@
 #ifndef TARGET_TABLE_DEVICES_H
 #define TARGET_TABLE_DEVICES_H
 
-// C++ includes:
 #include <deque>
+
+#include <cstddef>
+// C++ includes:
+#include <set>
 #include <vector>
 
-// Includes from nestkernel:
-#include "connection_id.h"
 #include "connector_base.h"
-#include "event.h"
+#include "kernel_manager.h"
 #include "nest_types.h"
 #include "secondary_event.h"
 #include "vp_manager.h"
@@ -42,9 +43,7 @@ namespace nest
 class Node;
 class ConnectorModel;
 class ConnectionID;
-class ConnectorBase;
 class Event;
-class SecondaryEvent;
 
 /**
  * This data structure stores the connections between local neurons

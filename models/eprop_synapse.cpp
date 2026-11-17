@@ -23,14 +23,12 @@
 // nest models
 #include "eprop_synapse.h"
 
-// C++
-#include <utility>
-
 // nestkernel
 #include "block_vector.h"
 #include "connection_manager.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
+#include "source.h"
 
 
 namespace nest

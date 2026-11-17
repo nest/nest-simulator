@@ -24,8 +24,15 @@
 #define GENERIC_FACTORY_IMPL_H
 
 #include "generic_factory.h"
+
+#include <string>
+#include <utility>
+
+#include "exceptions.h"
 #include "grid_mask_impl.h"
 #include "mask_impl.h"
+
+class Dictionary;
 
 namespace nest
 {

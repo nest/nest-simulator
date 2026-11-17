@@ -23,6 +23,9 @@
 #ifndef RECORDABLES_MAP_H
 #define RECORDABLES_MAP_H
 
+#include "exceptions.h"
+#include <vector>
+
 // C++ includes:
 #include <cassert>
 #include <map>

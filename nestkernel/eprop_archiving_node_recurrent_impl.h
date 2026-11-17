@@ -23,6 +23,9 @@
 #ifndef EPROP_ARCHIVING_NODE_RECURRENT_IMPL_H
 #define EPROP_ARCHIVING_NODE_RECURRENT_IMPL_H
 
+#include "kernel_manager.h"
+#include "simulation_manager.h"
+
 #include "eprop_archiving_node_recurrent.h"
 
 namespace nest

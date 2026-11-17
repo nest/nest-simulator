@@ -23,6 +23,10 @@
 #ifndef CONNECTOR_BASE_IMPL_H
 #define CONNECTOR_BASE_IMPL_H
 
+#include "connection_label.h"
+#include "connection_manager.h"
+#include "kernel_manager.h"
+
 #include "connector_base.h"
 #include "node_collection.h"
 

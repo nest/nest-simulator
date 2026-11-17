@@ -36,13 +36,6 @@
 
 namespace nest
 {
-class Time;
-}
-
-std::ostream& operator<<( std::ostream&, const nest::Time& );
-
-namespace nest
-{
 /**
  *  Class to handle simulation time and realtime.
  *
@@ -185,7 +178,7 @@ protected:
   friend Time operator-( const Time& t1, const Time& t2 );
   friend Time operator*( const long factor, const Time& t );
   friend Time operator*( const Time& t, long factor );
-  friend std::ostream&( ::operator<< )( std::ostream&, const Time& );
+  friend std::ostream& operator<<( std::ostream&, const Time& );
 
   /////////////////////////////////////////////////////////////
   // Limits for time, including infinity definitions
@@ -691,8 +684,8 @@ operator*( const Time& t, long factor )
   return factor * t;
 }
 
-}  // namespace
+std::ostream& operator<<( std::ostream&, const Time& );
 
-std::ostream& operator<<( std::ostream&, const nest::Time& );
+}  // namespace
 
 #endif

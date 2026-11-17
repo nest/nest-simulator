@@ -31,7 +31,7 @@
 #include "genericmodel.h"
 #include "logging.h"
 #include "nest.h"
-#include "target_identifier.h"
+#include "target_identifier.h"  // IWYU pragma: keep
 #include "vp_manager.h"
 
 namespace nest

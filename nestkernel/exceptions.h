@@ -33,7 +33,7 @@
 // Includes from nestkernel:
 #include "nest_time.h"
 // Includes from thirdparty:
-#include "compose.hpp"
+#include "compose.hpp"  // IWYU pragma: export
 #include "config.h"
 
 

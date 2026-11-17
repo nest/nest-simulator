@@ -23,6 +23,8 @@
 #ifndef ENUM_BITFIELD_H
 #define ENUM_BITFIELD_H
 
+#include <type_traits>
+
 namespace nest
 {
 

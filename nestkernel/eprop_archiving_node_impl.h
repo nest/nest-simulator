@@ -23,6 +23,8 @@
 #ifndef EPROP_ARCHIVING_NODE_IMPL_H
 #define EPROP_ARCHIVING_NODE_IMPL_H
 
+#include "simulation_manager.h"
+
 #include "eprop_archiving_node.h"
 
 // Includes from nestkernel:

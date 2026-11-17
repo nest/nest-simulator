@@ -28,6 +28,7 @@
 
 // Includes from libnestutil:
 #include "dictionary.h"
+#include "kernel_manager.h"
 #include "logging_event.h"
 #include "nest_names.h"
 
@@ -127,6 +128,13 @@ LoggingManager::publish_log( const VerbosityLevel s,
       deliver_logging_event_( e );
     }
   }
+}
+
+
+void
+log_message( VerbosityLevel s, const std::string& fctn, const std::string& msg, const std::string& file, size_t line )
+{
+  kernel::manager< LoggingManager >.publish_log( s, fctn, msg, file, line );
 }
 
 }  // namespace nest

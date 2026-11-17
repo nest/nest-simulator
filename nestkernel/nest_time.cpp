@@ -180,8 +180,6 @@ operator*( const long factor, const Time& t )
   }
 }
 
-}
-
 std::ostream&
 operator<<( std::ostream& strm, const Time& t )
 {
@@ -201,3 +199,5 @@ operator<<( std::ostream& strm, const Time& t )
 
   return strm;
 }
+
+}  // namespace nest

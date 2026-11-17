@@ -94,6 +94,8 @@ We have several static code analyzers in the GitHub Actions CI. To run static co
 please refer to the "run" lines in the GitHub Actions CI definition at
 https://github.com/nest/nest-simulator/blob/main/.github/workflows/nestbuildmatrix.yml.
 
+.. _iwyu_check:
+
 include-what-you-use
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -109,29 +111,41 @@ and run ``build_support/check_iwyu.sh`` on the build directory:
 
 .. code-block:: bash
 
-   cmake -S <nest_source_dir> -B <build_dir> -DCMAKE_CXX_COMPILER=clang++          -DCMAKE_INSTALL_PREFIX=<install_dir> -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+   cmake -S <nest_source_dir> -B <build_dir> -DCMAKE_CXX_COMPILER=clang++ \
+         -DCMAKE_INSTALL_PREFIX=<install_dir> -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
    <nest_source_dir>/build_support/check_iwyu.sh --changed main <build_dir>
 
-``--changed main`` checks only the files that differ from ``main``, including uncommitted changes; a
-changed header is checked through its source file. Without ``--changed``, all files are checked, which
-takes a few minutes. To check specific files or directories, pass them after the build directory, e.g.
-``build_support/check_iwyu.sh <build_dir> nestkernel/node_manager.cpp``. IWYU analyses a header
-together with its source file, so pass ``node_manager.cpp`` to check ``node_manager.h``. The output is
-written to ``<build_dir>/iwyu.log``.
+``--changed main`` checks only the files that differ from ``main``, including uncommitted changes.
+Without ``--changed``, all files are checked, which takes a few minutes. To check specific files or
+directories, pass them after the build directory, e.g.
+``build_support/check_iwyu.sh <build_dir> nestkernel/node_manager.cpp``. The output is written to
+``<build_dir>/iwyu.log``.
+
+IWYU analyses a header ``foo.h`` together with ``foo.cpp``. For every other header, i.e., header-only code
+and ``*_impl.h`` files, the script adds a stub source file that only includes that header, so each header
+is analysed as well and must compile on its own. To apply IWYU's suggestions automatically, use IWYU's
+``fix_includes.py`` (``fix_include`` on Debian/Ubuntu) with the ``iwyu`` output format, then run
+``clang-format``.
 
 If IWYU reports ``'omp.h' file not found``, either configure with ``-Dwith-openmp=OFF`` or add the
 directory containing your compiler's ``omp.h`` with ``-DCMAKE_CXX_FLAGS="-isystem <dir>"``. Code inside
 ``#ifdef`` blocks for disabled features is not analysed, so includes needed only there may be reported
 as superfluous.
 
-IWYU's suggestions are not always right. Treat them as hints, not as rules:
+Things to keep in mind:
 
 * Suggestions for one file belong together: an include reported as superfluous may only be
   dispensable once the suggested additions are made.
-* IWYU misjudges the ``kernel::manager< ... >`` accessors and macros such as ``LOG`` defined in
-  header-only files, and sometimes asks a file to include headers needed only inside other
-  headers' templates.
-* ``config.h`` is always kept, because IWYU does not count ``#ifdef HAVE_...`` as a use.
+* Uses inside a macro are charged to the header that defines the macro, so that header must include
+  what the macro needs (or the macro calls a function declared there, as ``LOG`` does).
+* IWYU cannot always see that a template-dependent use needs a complete type. If removing an include
+  that IWYU calls superfluous breaks the build, mark it with ``// IWYU pragma: keep``. If a header's
+  templates require users to have another header (e.g. ``exceptions.h`` and ``compose.hpp``), use
+  ``// IWYU pragma: export`` in that header.
+* ``config.h`` and ``*_impl.h`` includes are always kept: IWYU does not count ``#ifdef HAVE_...``
+  as a use and cannot tell where the templates in ``*_impl.h`` are instantiated.
+* With GCC 15's standard library, IWYU 0.23 alternates between suggesting ``<vector>`` and
+  ``<format>`` for ``std::vector``; keep ``<vector>``.
 * IWYU's advice to include ``<stddef.h>`` for ``size_t`` is reported as ``<cstddef>``, which NEST uses.
 * NEST-specific mappings, e.g. that Boost sorting is used through ``sort.h``, are defined in
   ``build_support/iwyu/nest.imp``. Extend this file if IWYU repeatedly suggests an unsuitable header.

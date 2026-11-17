@@ -26,6 +26,7 @@
 // Includes from nestkernel:
 #include "nest_time.h"
 #include "nest_types.h"
+#include "static_assert.h"
 
 namespace nest
 {

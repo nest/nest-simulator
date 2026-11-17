@@ -32,12 +32,13 @@
  *       growth rule per file.
  */
 
+#include <string>
+
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "nest_types.h"
 
-// Includes from libnestutil:
-#include "dictionary.h"
+class Dictionary;
 
 namespace nest
 {

@@ -20,13 +20,19 @@
  *
  */
 
+#include <nest_names.h>
 // C++ includes:
 #include <iostream>
+#include <utility>
 
 // Includes from nestkernel:
-#include "recording_device.h"
-
+#include "dictionary.h"
+#include "event.h"
+#include "kernel_manager.h"
+#include "nest_time.h"
 #include "recording_backend_screen.h"
+#include "recording_device.h"
+#include "vp_manager.h"
 
 
 namespace nest
@@ -34,7 +40,7 @@ namespace nest
 void
 RecordingBackendScreen::initialize()
 {
-  device_data_map tmp( kernel().vp_manager.get_num_threads() );
+  device_data_map tmp( kernel::manager< VPManager >.get_num_threads() );
   device_data_.swap( tmp );
 }
 

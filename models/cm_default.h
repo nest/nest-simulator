@@ -23,14 +23,27 @@
 #ifndef CM_DEFAULT_H
 #define CM_DEFAULT_H
 
+#include <map>
+#include <math.h>
+#include <sstream>
+#include <string>
+#include <vector>
+
 // Includes from nestkernel:
 #include "archiving_node.h"
-#include "event.h"
-#include "nest_types.h"
-#include "universal_data_logger.h"
-
 #include "cm_compartmentcurrents.h"
 #include "cm_tree.h"
+#include "event.h"
+#include "exceptions.h"
+#include "nest_time.h"
+#include "nest_types.h"
+#include "node.h"
+#include "recordables_map.h"
+#include "ring_buffer.h"
+#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
+
+class Dictionary;
 
 namespace nest
 {

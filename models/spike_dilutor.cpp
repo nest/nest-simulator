@@ -24,14 +24,15 @@
 
 // Includes from libnestutil:
 #include "dict_util.h"
-
 // Includes from nestkernel:
+#include "dictionary.h"
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
 #include "nest_impl.h"
-
+#include "simulation_manager.h"
+#include "vp_manager.h"
 
 namespace nest
 {
@@ -99,7 +100,7 @@ spike_dilutor::init_state_()
   // This check cannot be done in the copy constructor because that is also used to
   // create model prototypes. Since spike_dilutor is deprecated anyways, we put this
   // brute-force solution here.
-  if ( kernel().vp_manager.get_num_threads() > 1 )
+  if ( kernel::manager< VPManager >.get_num_threads() > 1 )
   {
     throw KernelException( "The network contains a spike_dilutor which cannot be used with multiple threads." );
   }
@@ -142,7 +143,7 @@ spike_dilutor::update( Time const& T, const long from, const long to )
       DSSpikeEvent se;
 
       se.set_multiplicity( n_mother_spikes );
-      kernel().event_delivery_manager.send( *this, se, lag );
+      kernel::manager< EventDeliveryManager >.send( *this, se, lag );
     }
   }
 }
@@ -183,7 +184,7 @@ spike_dilutor::event_hook( DSSpikeEvent& e )
 void
 spike_dilutor::handle( SpikeEvent& e )
 {
-  B_.n_spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+  B_.n_spikes_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
     static_cast< double >( e.get_multiplicity() ) );
 }
 

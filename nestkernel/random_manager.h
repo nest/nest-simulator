@@ -23,19 +23,19 @@
 #ifndef RANDOM_MANAGER_H
 #define RANDOM_MANAGER_H
 
-// Generated includes:
-#include "config.h"
-
 // C++ includes:
+#include <cassert>
+#include <cstdint>
+#include <map>
 #include <string>
 #include <vector>
 
 // Includes from libnestutil:
 #include "manager_interface.h"
-
 // Includes from nestkernel:
-#include "nest_types.h"
 #include "random_generators.h"
+
+class Dictionary;
 
 namespace nest
 {

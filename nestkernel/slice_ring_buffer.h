@@ -24,17 +24,13 @@
 #define SLICE_RING_BUFFER_H
 
 // C++ includes:
-#include <algorithm>
 #include <cassert>
-#include <functional>
+#include <limits>
 #include <vector>
 
-// Generated includes:
-#include "config.h"
-
 // Includes from nestkernel:
+#include "event_delivery_manager.h"
 #include "kernel_manager.h"
-#include "nest_types.h"
 
 namespace nest
 {
@@ -155,29 +151,11 @@ private:
   SpikeInfo refract_;  //!< pseudo-event for return from refractoriness
 };
 
-inline void
-SliceRingBuffer::add_spike( const long rel_delivery, const long stamp, const double ps_offset, const double weight )
+inline SliceRingBuffer::SpikeInfo::SpikeInfo( long stamp, double ps_offset, double weight )
+  : stamp_( stamp )
+  , ps_offset_( ps_offset )
+  , weight_( weight )
 {
-  const long idx = kernel().event_delivery_manager.get_slice_modulo( rel_delivery );
-  assert( static_cast< size_t >( idx ) < queue_.size() );
-  assert( ps_offset >= 0 );
-
-  queue_[ idx ].push_back( SpikeInfo( stamp, ps_offset, weight ) );
-}
-
-inline void
-SliceRingBuffer::add_refractory( const long stamp, const double ps_offset )
-{
-  // We require that only one refractory-return pseudo-event is stored per
-  // time step.
-  //
-  // We guard against violation using assert(): refract_.stamp_ must
-  // be equal to the marker value for non-refractoriness. All else would mean
-  // that a refractory neuron fired.
-  assert( refract_.stamp_ == std::numeric_limits< long >::max() );
-
-  refract_.stamp_ = stamp;
-  refract_.ps_offset_ = ps_offset;
 }
 
 inline bool
@@ -234,29 +212,29 @@ SliceRingBuffer::get_next_spike( const long req_stamp,
   }
 }
 
-inline SliceRingBuffer::SpikeInfo::SpikeInfo( long stamp, double ps_offset, double weight )
-  : stamp_( stamp )
-  , ps_offset_( ps_offset )
-  , weight_( weight )
+inline void
+SliceRingBuffer::add_refractory( const long stamp, const double ps_offset )
 {
+  // We require that only one refractory-return pseudo-event is stored per
+  // time step.
+  //
+  // We guard against violation using assert(): refract_.stamp_ must
+  // be equal to the marker value for non-refractoriness. All else would mean
+  // that a refractory neuron fired.
+  assert( refract_.stamp_ == std::numeric_limits< long >::max() );
+
+  refract_.stamp_ = stamp;
+  refract_.ps_offset_ = ps_offset;
 }
 
-inline bool
-SliceRingBuffer::SpikeInfo::operator<( const SpikeInfo& b ) const
+inline void
+SliceRingBuffer::add_spike( const long rel_delivery, const long stamp, const double ps_offset, const double weight )
 {
-  return stamp_ == b.stamp_ ? ps_offset_ > b.ps_offset_ : stamp_ < b.stamp_;
-}
+  const long idx = kernel::manager< EventDeliveryManager >.get_slice_modulo( rel_delivery );
+  assert( static_cast< size_t >( idx ) < queue_.size() );
+  assert( ps_offset >= 0 );
 
-inline bool
-SliceRingBuffer::SpikeInfo::operator<=( const SpikeInfo& b ) const
-{
-  return not( *this > b );
-}
-
-inline bool
-SliceRingBuffer::SpikeInfo::operator>( const SpikeInfo& b ) const
-{
-  return stamp_ == b.stamp_ ? ps_offset_ < b.ps_offset_ : stamp_ > b.stamp_;
+  queue_[ idx ].push_back( SpikeInfo( stamp, ps_offset, weight ) );
 }
 
 }  // namespace nest

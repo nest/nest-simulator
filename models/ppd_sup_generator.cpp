@@ -22,17 +22,19 @@
 
 #include "ppd_sup_generator.h"
 
-// C++ includes:
-#include <algorithm>
+#include <assert.h>
+#include <cmath>
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
-
-// Includes from nestkernel:
+#include "dictionary.h"
 #include "event_delivery_manager_impl.h"
+#include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
+#include "nest_names.h"
+#include "numerics.h"
 
 
 namespace nest
@@ -261,7 +263,7 @@ ppd_sup_generator::update( Time const& T, const long from, const long to )
     }
 
     DSSpikeEvent se;
-    kernel().event_delivery_manager.send( *this, se, lag );
+    kernel::manager< EventDeliveryManager >.send( *this, se, lag );
   }
 }
 

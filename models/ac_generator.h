@@ -23,13 +23,26 @@
 #ifndef AC_GENERATOR_H
 #define AC_GENERATOR_H
 
+#include <algorithm>
+#include <map>
+#include <math.h>
+#include <string>
+#include <vector>
+
 // Includes from nestkernel:
 #include "connection.h"
 #include "device_node.h"
+#include "dictionary.h"
 #include "event.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
 #include "nest_types.h"
+#include "node.h"
+#include "recordables_map.h"
 #include "stimulation_device.h"
 #include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 /* BeginUserDocs: device, generator
 

@@ -226,8 +226,8 @@ NEST properties
 | ``-Dwith-full-logging=[OFF|ON]``              | Write debug output to file ``dump_<num_ranks>_<rank>.log``     |
 |                                               | [default=OFF]. Developers should wrap debugging output in      |
 |                                               | macro ``FULL_LOGGING_ONLY()`` and call                         |
-|                                               | ``kernel().write_dump()`` from inside it. The                  |
-|                                               | macro can contain almost any valid code.                       |
+|                                               | ``kernel::manager<KernelManager>().write_dump()`` from inside  |
+|                                               | it. The macro can contain almost any valid code.               |
 +-----------------------------------------------+----------------------------------------------------------------+
 
 Generic build configuration
@@ -262,6 +262,10 @@ Generic build configuration
 |                                                      | multiple defines by ';'.                                         |
 +------------------------------------------------------+------------------------------------------------------------------+
 | ``-Dwith-version-suffix=[string]``                   | Set a user defined version suffix [default=''].                  |
++------------------------------------------------------+------------------------------------------------------------------+
+| ``-Dwith-pgo=[OFF|GENERATE|USE]``                    | Control profile-guided optimization (PGO).                       |
++------------------------------------------------------+------------------------------------------------------------------+
+| ``-Dwith-lto=[OFF|ON]``                              | Control link-time optimization (LTO).                            |
 +------------------------------------------------------+------------------------------------------------------------------+
 | ``-DNESTKERNEL_API_CXX=<path>``                      | Use the given pre-generated ``nestkernel_api.cxx`` instead of    |
 |                                                      | running Cython [default: not set, Cython is run].                |

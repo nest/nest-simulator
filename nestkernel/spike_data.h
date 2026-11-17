@@ -28,6 +28,7 @@
 
 // Includes from nestkernel:
 #include "nest_types.h"
+#include "static_assert.h"
 #include "target.h"
 
 

@@ -23,9 +23,8 @@
 #include "event.h"
 
 // Includes from nestkernel:
+#include "connection_manager.h"
 #include "kernel_manager.h"
-#include "node.h"
-#include "secondary_event_impl.h"
 
 namespace nest
 {
@@ -55,112 +54,11 @@ Event::retrieve_sender_node_id_from_source_table() const
   }
   else
   {
-    const size_t node_id = kernel().connection_manager.get_source_node_id(
+    const size_t node_id = kernel::manager< ConnectionManager >.get_source_node_id(
       sender_spike_data_.get_tid(), sender_spike_data_.get_syn_id(), sender_spike_data_.get_lcid() );
     return node_id;
   }
 }
 
-size_t
-Event::get_receiver_node_id() const
-{
-  return receiver_->get_node_id();
-}
 
-void
-SpikeEvent::operator()()
-{
-  receiver_->handle( *this );
-}
-
-void
-WeightRecorderEvent::operator()()
-{
-  receiver_->handle( *this );
-}
-
-void
-DSSpikeEvent::operator()()
-{
-  sender_->event_hook( *this );
-}
-
-void
-RateEvent::operator()()
-{
-  receiver_->handle( *this );
-}
-
-void
-CurrentEvent::operator()()
-{
-  receiver_->handle( *this );
-}
-
-void
-DSCurrentEvent::operator()()
-{
-  sender_->event_hook( *this );
-}
-
-void
-ConductanceEvent::operator()()
-{
-  receiver_->handle( *this );
-}
-
-void
-DoubleDataEvent::operator()()
-{
-  receiver_->handle( *this );
-}
-
-void
-DataLoggingRequest::operator()()
-{
-  receiver_->handle( *this );
-}
-
-void
-DataLoggingReply::operator()()
-{
-  receiver_->handle( *this );
-}
-
-void
-GapJunctionEvent::operator()()
-{
-  receiver_->handle( *this );
-}
-
-void
-InstantaneousRateConnectionEvent::operator()()
-{
-  receiver_->handle( *this );
-}
-
-void
-DelayedRateConnectionEvent::operator()()
-{
-  receiver_->handle( *this );
-}
-
-void
-DiffusionConnectionEvent::operator()()
-{
-  receiver_->handle( *this );
-}
-
-void
-LearningSignalConnectionEvent::operator()()
-{
-  receiver_->handle( *this );
-}
-
-void
-SICEvent::operator()()
-{
-  receiver_->handle( *this );
-}
-
-}  // namespace nest
+}  // std::stringspace nest

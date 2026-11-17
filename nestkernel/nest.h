@@ -23,22 +23,29 @@
 #ifndef NEST_H
 #define NEST_H
 
-// C++ includes:
-#include <ostream>
+#include <deque>
+#include <iostream>
+#include <map>
+#include <string>
+#include <vector>
 
 // Includes from libnestutil:
 #include "dictionary.h"
-#include "enum_bitfield.h"
 #include "logging.h"
-
 // Includes from nestkernel:
 #include "connection_id.h"
+#include "generic_factory.h"
+#include "generic_factory_impl.h"
+#include "logging_manager.h"
 #include "mask.h"
-#include "mask_impl.h"
-#include "nest_time.h"
-#include "nest_types.h"
+#include "node_collection.h"
 #include "parameter.h"
 #include "random_generators.h"
+
+namespace boost
+{
+class any;
+}  // namespace boost
 
 namespace nest
 {
@@ -259,35 +266,6 @@ NodeCollectionPTR node_collection_array_index( NodeCollectionPTR node_collection
 
 // for debugging and testing mostly
 std::vector< size_t > node_collection_to_array( NodeCollectionPTR node_collection, const std::string& selection );
-
-template < class T >
-inline bool
-register_parameter( const std::string& name )
-{
-  return parameter_factory_().register_subtype< T >( name );
-}
-
-template < class T >
-inline bool
-register_mask()
-{
-  return mask_factory_().register_subtype< T >( T::get_name() );
-}
-
-inline bool
-register_mask( const std::string& name, MaskCreatorFunction creator )
-{
-  return mask_factory_().register_subtype( name, creator );
-}
-
-inline MaskPTR
-create_mask( const std::string& name, const Dictionary& d )
-{
-  d.init_access_flags();
-  auto mask = MaskPTR( mask_factory_().create( name, d ) );
-  d.all_entries_accessed( "CreateMask", "specs" );
-  return mask;
-}
 
 void message( const VerbosityLevel, const std::string&, const std::string&, const std::string&, const size_t );
 

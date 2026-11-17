@@ -271,10 +271,11 @@ function( NEST_PROCESS_WITH_GSL )
   if ( with-gsl )
     find_package( GSL 1.11 REQUIRED QUIET )
     message( STATUS "Found GSL: ${GSL_LIBRARIES} (found version ${GSL_VERSION})" )
-    # HAVE_GSL: simple flag, no equivalent target property exists.
-    # GSL_VERSION: display-only (ConfigureSummary), single consumer.
     set( HAVE_GSL ON PARENT_SCOPE )
+    # export variables needed for nest-config generation
     set( GSL_VERSION "${GSL_VERSION}" PARENT_SCOPE )
+    set( GSL_LIBRARIES "${GSL_LIBRARIES}" PARENT_SCOPE )
+    set( GSL_INCLUDE_DIRS "${GSL_INCLUDE_DIRS}" PARENT_SCOPE )
     # consumers use GSL::gsl imported target; no global include_directories() needed
   endif ()
   # Provide a dummy GSL::gsl if GSL is disabled so unconditional

@@ -267,9 +267,6 @@ Generic build configuration
 +------------------------------------------------------+------------------------------------------------------------------+
 | ``-Dwith-lto=[OFF|ON]``                              | Control link-time optimization (LTO).                            |
 +------------------------------------------------------+------------------------------------------------------------------+
-| ``-DCMAKE_INSTALL_MESSAGE=[ALWAYS|LAZY|NEVER]``      | Verbosity of installation process [default=LAZY]. LAZY displays  |
-|                                                      | only new or updated files, ALWAYS everything, NEVER nothing.     |
-+------------------------------------------------------+------------------------------------------------------------------+
 | ``-DNESTKERNEL_API_CXX=<path>``                      | Use the given pre-generated ``nestkernel_api.cxx`` instead of    |
 |                                                      | running Cython [default: not set, Cython is run].                |
 |                                                      | See :ref:`compile_with_python` for details.                      |

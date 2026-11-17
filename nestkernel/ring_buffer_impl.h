@@ -25,6 +25,15 @@
 
 #include "ring_buffer.h"
 
+// C++ includes:
+#include <array>
+#include <cassert>
+#include <cstddef>
+
+// Includes from nestkernel:
+#include "connection_manager.h"
+#include "kernel_manager.h"
+
 namespace nest
 {
 

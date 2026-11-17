@@ -36,14 +36,6 @@ namespace nest
 {
 
 /**
- * Returns the minimum delay in steps.
- *
- * Only used in assertions. It is defined in ring_buffer.cpp so that this header does not need to include
- * connection_manager.h, which would pull a large part of the kernel into every neuron model.
- */
-long ring_buffer_min_delay();
-
-/**
  *  Buffer Layout.
  *
  *  MODIFICATION 2005-06-19:
@@ -148,6 +140,14 @@ public:
   }
 
 private:
+  /**
+   * Minimum delay in steps, cached when the buffer is sized.
+   *
+   * Only used in assertions. Caching it keeps connection_manager.h, which would pull a large part of the kernel
+   * into every neuron model, out of this header, while the check stays inline.
+   */
+  long min_delay_;
+
   //! Buffered data
   std::vector< double > buffer_;
 
@@ -201,6 +201,14 @@ public:
   }
 
 private:
+  /**
+   * Minimum delay in steps, cached when the buffer is sized.
+   *
+   * Only used in assertions. Caching it keeps connection_manager.h, which would pull a large part of the kernel
+   * into every neuron model, out of this header, while the check stays inline.
+   */
+  long min_delay_;
+
   //! Buffered data
   std::vector< double > buffer_;
 
@@ -254,6 +262,14 @@ public:
   }
 
 private:
+  /**
+   * Minimum delay in steps, cached when the buffer is sized.
+   *
+   * Only used in assertions. Caching it keeps connection_manager.h, which would pull a large part of the kernel
+   * into every neuron model, out of this header, while the check stays inline.
+   */
+  long min_delay_;
+
   //! Buffered data
   std::vector< std::list< double > > buffer_;
 
@@ -311,7 +327,7 @@ inline double
 RingBuffer::get_value( const long offs )
 {
   assert( 0 <= offs and static_cast< size_t >( offs ) < buffer_.size() );
-  assert( offs < ring_buffer_min_delay() );
+  assert( offs < min_delay_ );
 
   // offs == 0 is beginning of slice, but we have to
   // take modulo into account when indexing
@@ -325,7 +341,7 @@ inline double
 RingBuffer::get_value_wfr_update( const long offs )
 {
   assert( 0 <= offs and static_cast< size_t >( offs ) < buffer_.size() );
-  assert( offs < ring_buffer_min_delay() );
+  assert( offs < min_delay_ );
 
   // offs == 0 is beginning of slice, but we have to
   // take modulo into account when indexing
@@ -354,7 +370,7 @@ inline double
 MultRBuffer::get_value( const long offs )
 {
   assert( 0 <= offs and static_cast< size_t >( offs ) < buffer_.size() );
-  assert( offs < ring_buffer_min_delay() );
+  assert( offs < min_delay_ );
 
   // offs == 0 is beginning of slice, but we have to
   // take modulo into account when indexing
@@ -382,7 +398,7 @@ inline std::list< double >&
 ListRingBuffer::get_list( const long offs )
 {
   assert( 0 <= offs and static_cast< size_t >( offs ) < buffer_.size() );
-  assert( offs < ring_buffer_min_delay() );
+  assert( offs < min_delay_ );
 
   // offs == 0 is beginning of slice, but we have to
   // take modulo into account when indexing

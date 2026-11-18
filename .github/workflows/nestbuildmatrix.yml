@@ -141,7 +141,7 @@ jobs:
         run: |
           sudo apt-get update
           # iwyu on Ubuntu 24.04 is built against clang 18; configure with the same compiler.
-          sudo apt-get install iwyu clang-18 libomp-18-dev libopenmpi-dev libgsl-dev libboost-dev
+          sudo apt-get install iwyu clang-18 libomp-18-dev libopenmpi-dev libgsl-dev libboost-dev libltdl-dev
           python -m pip install cython
           include-what-you-use --version
 
@@ -163,7 +163,7 @@ jobs:
               -Dwith-mpi=ON \
               -Dwith-gsl=ON \
               -Dwith-boost=ON \
-              -Dwith-ltdl=OFF
+              -Dwith-ltdl=ON
 
       - name: "Determine changed files"
         env:

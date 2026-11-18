@@ -130,7 +130,10 @@ is analysed as well and must compile on its own. To apply IWYU's suggestions aut
 If IWYU reports ``'omp.h' file not found``, either configure with ``-Dwith-openmp=OFF`` or add the
 directory containing your compiler's ``omp.h`` with ``-DCMAKE_CXX_FLAGS="-isystem <dir>"``. Code inside
 ``#ifdef`` blocks for disabled features is not analysed, so includes needed only there may be reported
-as superfluous.
+as superfluous. The CI job therefore enables OpenMP, MPI, GSL, Boost and libltdl; MUSIC, SIONlib and
+HDF5 code is not analysed. ``fix_includes.py`` adds includes outside of any ``#ifdef`` block: move
+includes of optional libraries (e.g. ``<mpi.h>``, ``<gsl/...>``) into the matching
+``#ifdef HAVE_...`` block, after ``config.h``, so that NEST still builds without them.
 
 Things to keep in mind:
 

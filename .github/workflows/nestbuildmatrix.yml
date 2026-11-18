@@ -140,7 +140,7 @@ jobs:
       - name: "Install dependencies"
         run: |
           sudo apt-get update
-          # iwyu on Ubuntu 24.04 is built against clang 18; configure with the same compiler.
+          # Ubuntu 24.04 ships IWYU 0.21 (built on clang 17); clang 18 only configures NEST and provides omp.h.
           sudo apt-get install iwyu clang-18 libomp-18-dev libopenmpi-dev libgsl-dev libboost-dev libltdl-dev
           python -m pip install cython
           include-what-you-use --version

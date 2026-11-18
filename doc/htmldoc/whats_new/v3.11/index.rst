@@ -16,11 +16,6 @@ on GitHub <https://github.com/nest/nest-simulator/releases/>`_. Here are some
 of the more interesting developments that happened:
 
 
-.. TODO: The axonal delays section depends on PR #2989 (not yet merged).
-   The ref target ``delays`` and the example ``auto_examples/axonal_delays``
-   are introduced by that PR; remove this section if it does not make it
-   into 3.11.
-
 Axonal delays
 -------------
 
@@ -160,8 +155,7 @@ ConnectionGenerator and support for libneurosim removed
 -------------------------------------------------------
 
 ``ConnectionGenerator`` and the support for ``libneurosim``, which depended on
-it, have been broken since the transition to NEST 3 without causing any user
-complaints. The remaining code has therefore been removed in NEST 3.11,
+it, have been been removed in NEST 3.11,
 including the ``-Dwith-libneurosim`` option for CMake.
 
 

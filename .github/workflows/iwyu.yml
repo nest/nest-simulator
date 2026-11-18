@@ -1,0 +1,62 @@
+name: "include-what-you-use"
+
+# On demand only: IWYU's advice depends on the IWYU version and the standard
+# library, so the check runs in the pinned container of
+# build_support/iwyu/run_in_container.sh, which developers can run locally too.
+# Add the label "iwyu" to a pull request to run it; it then runs again on every
+# push until the label is removed. It can also be started by hand for a branch.
+on:
+  pull_request:
+    types: [labeled, synchronize, reopened]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  include-what-you-use:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'iwyu')
+    runs-on: "ubuntu-24.04"
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+        with:
+          egress-policy: audit
+          disable-telemetry: true
+
+      - name: "Checkout repository content"
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: "Determine changed files"
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          # For a pull request, check what it changes; otherwise check everything.
+          if [ -n "$BASE_SHA" ] && git cat-file -e "$BASE_SHA^{commit}" 2>/dev/null; then
+              base="$(git merge-base "$BASE_SHA" HEAD)"
+              files="$(git diff --name-only "$base" HEAD -- '*.h' '*.cpp' | tr '\n' ' ')"
+              echo "IWYU_ARGS=--changed $base" >> "$GITHUB_ENV"
+          else
+              files=""
+              echo "IWYU_ARGS=" >> "$GITHUB_ENV"
+          fi
+          # Annotations only for changed files; GitHub shows few annotations per step.
+          echo "IWYU_ANNOTATE_FILES=$files" >> "$GITHUB_ENV"
+          echo "Changed C++ files: ${files:-<none or unknown, checking everything>}"
+
+      - name: "Run include-what-you-use"
+        run: |
+          rc=0
+          # shellcheck disable=SC2086
+          ./build_support/iwyu/run_in_container.sh $IWYU_ARGS || rc=$?
+          cat build/iwyu-container/summary.md >> "$GITHUB_STEP_SUMMARY" || true
+          exit "$rc"
+
+      - name: "Upload IWYU log"
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: "iwyu-log"
+          path: build/iwyu-container/iwyu.log

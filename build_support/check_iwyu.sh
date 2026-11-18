@@ -21,7 +21,7 @@
 
 # Run include-what-you-use (IWYU) on the NEST C++ sources.
 #
-# Usage: check_iwyu.sh [--changed <git-rev>] <build-dir> [<source-dir-or-file> ...]
+# Usage: check_iwyu.sh [--changed <git-rev>] [--fix] <build-dir> [<source-dir-or-file> ...]
 #
 # <build-dir> must contain compile_commands.json, i.e. NEST must have been
 # configured with -DCMAKE_EXPORT_COMPILE_COMMANDS=ON. Configuring is enough;
@@ -37,15 +37,27 @@
 # libnestutil/ that differ from <git-rev> (including uncommitted changes) are
 # checked.
 #
+# With --fix, IWYU's advice is applied with IWYU's fix_includes.py (fix_include
+# on Debian/Ubuntu) and the changed files are formatted with clang-format. The
+# advice for one file can change once others are fixed, so repeat until the
+# check reports no findings. Then build NEST with and without the optional
+# libraries: IWYU sees only the code of the configured features.
+#
+# Results depend on the IWYU version and the standard library. To get the same
+# results as everyone else, run build_support/iwyu/run_in_container.sh, which
+# uses a pinned Ubuntu image.
+#
 # Environment variables:
 #   IWYU_JOBS             number of parallel IWYU processes [default: nproc]
 #   IWYU_LOG              file for the complete IWYU output [default: <build-dir>/iwyu.log]
 #   IWYU_ANNOTATE_FILES   whitespace-separated list of source-relative paths for
 #                         which GitHub Actions annotations are printed (CI only)
 #   GITHUB_STEP_SUMMARY   if set (GitHub Actions), a Markdown summary is appended
+#   CLANG_FORMAT          clang-format executable used by --fix [default: clang-format]
 #
-# Exit status: 0 if IWYU has no findings, 1 if it has findings, 2 if IWYU could
-# not analyse all files (e.g. a header was not found).
+# Exit status: 0 if IWYU has no findings, 1 if it has findings (also with --fix,
+# where they have then been applied), 2 if IWYU could not analyse all files
+# (e.g. a header was not found).
 
 set -euo pipefail
 
@@ -55,9 +67,25 @@ if [ $# -lt 1 ]; then
 fi
 
 changed_rev=""
-if [ "$1" = "--changed" ]; then
-    changed_rev="${2:?--changed needs a git revision}"
-    shift 2
+fix=0
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --changed)
+            changed_rev="${2:?--changed needs a git revision}"
+            shift 2
+            ;;
+        --fix)
+            fix=1
+            shift
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+if [ $# -lt 1 ]; then
+    echo "error: no build directory given" >&2
+    exit 2
 fi
 
 NEST_SOURCE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -134,6 +162,7 @@ fi
 
 IWYU_JOBS="${IWYU_JOBS:-$(nproc)}"
 IWYU_LOG="${IWYU_LOG:-$BUILD_DIR/iwyu.log}"
+IWYU_RAW="$BUILD_DIR/iwyu.raw"
 
 echo "Running $(include-what-you-use --version | head -n 1) with $IWYU_JOBS jobs ..."
 
@@ -181,16 +210,19 @@ iwyu_to_warnings() {
 #   tell where the template definitions in *_impl.h are instantiated, so it must
 #   not remove those includes either.
 # - The grep drops IWYU's own complaints about libstdc++'s @headername comments.
+# - IWYU suggests <stddef.h> for size_t, but NEST uses <cstddef>, which IWYU
+#   accepts as well.
 "$IWYU_TOOL" -p "$IWYU_DB" -j "$IWYU_JOBS" -o iwyu "${targets[@]}" -- \
     -Xiwyu --mapping_file="$NEST_SOURCE/build_support/iwyu/nest.imp" \
     -Xiwyu --cxx17ns \
     -Xiwyu --keep='*config.h*' \
     -Xiwyu --keep='*_impl.h*' \
-    2>&1 | grep -v "no private include name for @headername mapping" | iwyu_to_warnings > "$IWYU_LOG" || true
+    2>&1 | grep -v "no private include name for @headername mapping" |
+    sed -e 's|#include <stddef.h>|#include <cstddef>|' > "$IWYU_RAW" || true
+iwyu_to_warnings < "$IWYU_RAW" > "$IWYU_LOG"
 
-# Report paths relative to the source directory. IWYU suggests <stddef.h> for
-# size_t, but NEST uses <cstddef>, which IWYU accepts as well.
-sed -i -e "s|$IWYU_DB/||g" -e "s|$NEST_SOURCE/||g" -e "s|add '#include <stddef.h>'|add '#include <cstddef>'|" "$IWYU_LOG"
+# Report paths relative to the source directory.
+sed -i -e "s|$IWYU_DB/||g" -e "s|$NEST_SOURCE/||g" "$IWYU_LOG"
 
 # A header checked from several translation units is reported once per unit.
 findings="$(grep -E '^[^ ]+:[0-9]+:[0-9]+: warning: ' "$IWYU_LOG" | grep -v '[.]iwyu[.]cpp:' | awk '!seen[$0]++' || true)"
@@ -224,7 +256,7 @@ if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
         echo "## include-what-you-use"
         echo
         echo "**$n_findings findings in $n_files files** ($n_fatal fatal errors)."
-        echo "This check is informational and does not block merging."
+        echo "$(include-what-you-use --version | head -n 1)."
         echo "The full log is attached to this workflow run as the \`iwyu-log\` artifact."
         echo
         if [ -n "$findings" ]; then
@@ -242,5 +274,28 @@ fi
 if [ "$n_fatal" -gt 0 ]; then
     grep -B4 -E 'fatal error:|Assertion failed|^error:|: error: ' "$IWYU_LOG" | head -n 40 >&2
     exit 2
+fi
+
+if [ "$fix" -eq 1 ] && [ "$n_findings" -gt 0 ]; then
+    FIX_INCLUDES="$(command -v fix_includes.py || command -v fix_include || true)"
+    if [ -z "$FIX_INCLUDES" ]; then
+        echo "error: fix_includes.py (or fix_include) not found on PATH" >&2
+        exit 2
+    fi
+    CLANG_FORMAT="${CLANG_FORMAT:-clang-format}"
+    required="$(sed -n 's/^ *CLANG_REQUIRE_VERSION: *//p' "$NEST_SOURCE/.github/workflows/nestbuildmatrix.yml" | head -n 1)"
+    if ! "$CLANG_FORMAT" --version 2>/dev/null | grep -q "version ${required:-unknown}"; then
+        echo "warning: NEST requires clang-format $required; $("$CLANG_FORMAT" --version 2>/dev/null | head -n 1 || echo "$CLANG_FORMAT not found")" >&2
+    fi
+    # Header stubs live in the build directory; only change NEST's own files.
+    only_re="^$NEST_SOURCE/($(IFS='|'; echo "${check_dirs[*]}"))/"
+    python3 "$FIX_INCLUDES" --nosafe_headers --nocomments --only_re="$only_re"         < "$IWYU_RAW" > "$BUILD_DIR/fix_includes.log" 2>&1 || true
+    mapfile -t fixed < <(git -C "$NEST_SOURCE" diff --name-only -- "${check_dirs[@]}")
+    if [ ${#fixed[@]} -gt 0 ]; then
+        (cd "$NEST_SOURCE" && "$CLANG_FORMAT" -i "${fixed[@]}")
+    fi
+    echo
+    echo "Applied IWYU's advice (log: $BUILD_DIR/fix_includes.log); ${#fixed[@]} file(s) in ${check_dirs[*]} now differ from the index."
+    echo "Run the check again until it reports no findings, then build NEST with and without the optional libraries."
 fi
 [ "$n_findings" -eq 0 ]

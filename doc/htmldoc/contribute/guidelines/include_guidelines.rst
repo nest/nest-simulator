@@ -32,4 +32,4 @@ Checking includes
 
 The `include-what-you-use <https://github.com/include-what-you-use/include-what-you-use>`_ tool reports missing and
 superfluous includes. It was used to clean up the NEST code base and is the recommended way to check new code.
-See :ref:`iwyu_check` for how to run it locally and in CI.
+See :ref:`iwyu_check` for how to run it.

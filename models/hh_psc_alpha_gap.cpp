@@ -20,11 +20,9 @@
  *
  */
 
-
 #include "hh_psc_alpha_gap.h"
 
 #include <assert.h>
-#include <gsl/gsl_errno.h>
 
 #include "connection_manager.h"
 #include "event_delivery_manager.h"
@@ -33,6 +31,9 @@
 #include "simulation_manager.h"
 
 #ifdef HAVE_GSL
+
+// Includes from GSL:
+#include <gsl/gsl_errno.h>
 
 // C++ includes:
 #include <cmath>  // in case we need isnan() // fabs

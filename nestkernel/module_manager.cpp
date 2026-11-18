@@ -24,15 +24,21 @@
 
 #ifdef HAVE_LIBLTDL
 
+// C++ includes:
+#include <exception>
+#include <string>
+#include <vector>
+
 #include <node_manager.h>
 
 // Includes from libnestutil:
+#include "dictionary.h"
 #include "logging.h"
 // Includes from nestkernel:
+#include "exceptions.h"
 #include "kernel_manager.h"
 #include "nest_extension_interface.h"
-// Includes from thirdparty:
-#include "compose.hpp"
+#include "nest_names.h"
 
 
 namespace nest

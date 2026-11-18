@@ -33,6 +33,7 @@
 // DynamicLoaderModule defined only if libltdl is available
 #ifdef HAVE_LIBLTDL
 #include <ltdl.h>
+#include <map>
 
 namespace nest
 {

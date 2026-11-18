@@ -20,16 +20,16 @@
  *
  */
 
-
 #include "pp_cond_exp_mc_urbanczik.h"
-
-#include <gsl/gsl_errno.h>
 
 #include "archiving_node.h"
 #include "event_delivery_manager.h"
 #include "simulation_manager.h"
 
 #ifdef HAVE_GSL
+
+// Includes from GSL:
+#include <gsl/gsl_errno.h>
 
 // Includes from libnestutil:
 #include "numerics.h"

@@ -59,18 +59,17 @@ namespace nest
  */
 extern "C" int pp_cond_exp_mc_urbanczik_dynamics( double, const double*, double*, void* );
 
-/** @BeginDocumentation
-Name: pp_cond_exp_mc_urbanczik_parameters - Helper class for pp_cond_exp_mc_urbanczik
-
-Description:
-``pp_cond_exp_mc_urbanczik_parameters`` is a helper class for the ``pp_cond_exp_mc_urbanczik`` neuron model
-that contains all parameters of the model that are needed to compute the weight changes of a
-connected ``urbanczik_synapse`` in the base class UrbanczikArchivingNode.
-
-Author: Jonas Stapmanns, David Dahmen, Jan Hahne
-
-SeeAlso: pp_cond_exp_mc_urbanczik
-*/
+/**
+ * @brief Helper class for pp_cond_exp_mc_urbanczik neuron model.
+ *
+ * pp_cond_exp_mc_urbanczik_parameters is a helper class for the pp_cond_exp_mc_urbanczik neuron model
+ * that contains all parameters of the model that are needed to compute the weight changes of a
+ * connected urbanczik_synapse in the base class UrbanczikArchivingNode.
+ *
+ * @see pp_cond_exp_mc_urbanczik
+ *
+ * @author Jonas Stapmanns, David Dahmen, Jan Hahne
+ */
 class pp_cond_exp_mc_urbanczik_parameters
 {
   friend class pp_cond_exp_mc_urbanczik;
@@ -200,8 +199,10 @@ these parameters are marked with an asterisk.
  E_ex*          mV      Excitatory reversal potential
  E_in*          mV      Inhibitory reversal potential
  g_L*           nS      Leak conductance
- tau_syn_ex*    ms      Rise time of the excitatory synaptic alpha function
- tau_syn_in*    ms      Rise time of the inhibitory synaptic alpha function
+ tau_syn_ex*    ms      Decay time constant of excitatory synaptic conductance
+                        (exponential function)
+ tau_syn_in*    ms      Decay time constant of inhibitory synaptic conductance
+                        (exponential function)
  I_e*           pA      Constant input current
  g_sp           nS      Coupling between soma and dendrite
  g_ps           nS      Coupling between dendrite and soma

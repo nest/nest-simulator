@@ -50,7 +50,7 @@ readout neurons. Each individual readout signal denoted as :math:`y_k` is compar
 signal represented as :math:`y_k^*`. The network's training error is assessed by employing a mean-squared error
 loss.
 
-Details on the event-based NEST implementation of e-prop can be found in :footcite:p:`KorcsakGorzo2025`.
+Details on the event-based NEST implementation of e-prop can be found in :footcite:p:`KorcsakGorzo2026`.
 
 The development of this task and the hyper-parameter optimization were conducted by Agnes Korcsak-Gorzo and
 Charl Linssen, inspired by activities and feedback received at the CapoCaccia Workshop toward Neuromorphic

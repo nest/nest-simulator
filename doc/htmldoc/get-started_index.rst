@@ -65,7 +65,6 @@ Next steps: Create your own network model
          ^^^
          * :ref:`connectivity_concepts`: A guide to define network connectivity in NEST
          * :ref:`spatial_networks`: A deep dive into building 2D and 3D networks
-         * :ref:`connection_generator`: Using an external library for generating connections
          * :ref:`synapse_spec`: Details on parameterizing synapses
 
     .. grid-item-card::
@@ -214,7 +213,7 @@ More topics
    :maxdepth: 1
    :hidden:
 
-   tutorials/pynest_tutorial/index
+   tutorials/pynest_tutorial/README
    tutorials/music_tutorial/index
    neurons/neuron_update
    neurons/neuron_types

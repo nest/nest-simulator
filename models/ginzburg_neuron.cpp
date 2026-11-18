@@ -28,6 +28,7 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
+
 namespace nest
 {
 void
@@ -61,11 +62,11 @@ gainfunction_ginzburg::set( const Dictionary& d, Node* node )
  */
 template <>
 void
-RecordablesMap< nest::ginzburg_neuron >::create()
+RecordablesMap< ginzburg_neuron >::create()
 {
   // use standard names wherever you can for consistency!
-  insert_( names::S, &nest::ginzburg_neuron::get_output_state__ );
-  insert_( names::h, &nest::ginzburg_neuron::get_input__ );
+  insert_( names::S, &ginzburg_neuron::get_output_state__ );
+  insert_( names::h, &ginzburg_neuron::get_input__ );
 }
 
 }  // namespace nest

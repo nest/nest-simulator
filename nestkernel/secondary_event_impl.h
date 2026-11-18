@@ -25,9 +25,12 @@
 // Includes from nestkernel
 #include "kernel_manager.h"
 
+namespace nest
+{
+
 template < typename DataType, typename Subclass >
 void
-nest::DataSecondaryEvent< DataType, Subclass >::add_syn_id( const nest::synindex synid )
+DataSecondaryEvent< DataType, Subclass >::add_syn_id( const synindex synid )
 {
   kernel().vp_manager.assert_thread_parallel();
 
@@ -44,8 +47,10 @@ nest::DataSecondaryEvent< DataType, Subclass >::add_syn_id( const nest::synindex
 
 template < typename DataType, typename Subclass >
 void
-nest::DataSecondaryEvent< DataType, Subclass >::set_coeff_length( const size_t coeff_length )
+DataSecondaryEvent< DataType, Subclass >::set_coeff_length( const size_t coeff_length )
 {
   kernel().vp_manager.assert_single_threaded();
   coeff_length_ = coeff_length;
 }
+
+}  // namespace nest

@@ -163,7 +163,7 @@ gainfunction_ginzburg::operator()( RngPtr rng, double h ) const
   return rng->drand() < c1_ * h + c2_ * 0.5 * ( 1.0 + tanh( c3_ * ( h - theta_ ) ) );
 }
 
-typedef binary_neuron< nest::gainfunction_ginzburg > ginzburg_neuron;
+typedef binary_neuron< gainfunction_ginzburg > ginzburg_neuron;
 void register_ginzburg_neuron( const std::string& name );
 
 

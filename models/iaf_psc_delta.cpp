@@ -37,6 +37,7 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
+
 namespace nest
 {
 void
@@ -66,7 +67,7 @@ RecordablesMap< iaf_psc_delta >::create()
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::iaf_psc_delta::Parameters_::Parameters_()
+iaf_psc_delta::Parameters_::Parameters_()
   : tau_m_( 10.0 )                                   // ms
   , c_m_( 250.0 )                                    // pF
   , t_ref_( 2.0 )                                    // ms
@@ -79,7 +80,7 @@ nest::iaf_psc_delta::Parameters_::Parameters_()
 {
 }
 
-nest::iaf_psc_delta::State_::State_()
+iaf_psc_delta::State_::State_()
   : y0_( 0.0 )
   , y3_( 0.0 )
   , r_( 0 )
@@ -92,7 +93,7 @@ nest::iaf_psc_delta::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_psc_delta::Parameters_::get( Dictionary& d ) const
+iaf_psc_delta::Parameters_::get( Dictionary& d ) const
 {
   d[ names::E_L ] = E_L_;  // Resting potential
   d[ names::I_e ] = I_e_;
@@ -106,7 +107,7 @@ nest::iaf_psc_delta::Parameters_::get( Dictionary& d ) const
 }
 
 double
-nest::iaf_psc_delta::Parameters_::set( const Dictionary& d, Node* node )
+iaf_psc_delta::Parameters_::set( const Dictionary& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
@@ -168,13 +169,13 @@ nest::iaf_psc_delta::Parameters_::set( const Dictionary& d, Node* node )
 }
 
 void
-nest::iaf_psc_delta::State_::get( Dictionary& d, const Parameters_& p ) const
+iaf_psc_delta::State_::get( Dictionary& d, const Parameters_& p ) const
 {
   d[ names::V_m ] = y3_ + p.E_L_;  // Membrane potential
 }
 
 void
-nest::iaf_psc_delta::State_::set( const Dictionary& d, const Parameters_& p, double delta_EL, Node* node )
+iaf_psc_delta::State_::set( const Dictionary& d, const Parameters_& p, double delta_EL, Node* node )
 {
   if ( update_value_param( d, names::V_m, y3_, node ) )
   {
@@ -186,12 +187,12 @@ nest::iaf_psc_delta::State_::set( const Dictionary& d, const Parameters_& p, dou
   }
 }
 
-nest::iaf_psc_delta::Buffers_::Buffers_( iaf_psc_delta& n )
+iaf_psc_delta::Buffers_::Buffers_( iaf_psc_delta& n )
   : logger_( n )
 {
 }
 
-nest::iaf_psc_delta::Buffers_::Buffers_( const Buffers_&, iaf_psc_delta& n )
+iaf_psc_delta::Buffers_::Buffers_( const Buffers_&, iaf_psc_delta& n )
   : logger_( n )
 {
 }
@@ -200,7 +201,7 @@ nest::iaf_psc_delta::Buffers_::Buffers_( const Buffers_&, iaf_psc_delta& n )
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::iaf_psc_delta::iaf_psc_delta()
+iaf_psc_delta::iaf_psc_delta()
   : ArchivingNode()
   , P_()
   , S_()
@@ -209,7 +210,7 @@ nest::iaf_psc_delta::iaf_psc_delta()
   recordablesMap_.create();
 }
 
-nest::iaf_psc_delta::iaf_psc_delta( const iaf_psc_delta& n )
+iaf_psc_delta::iaf_psc_delta( const iaf_psc_delta& n )
   : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -222,7 +223,7 @@ nest::iaf_psc_delta::iaf_psc_delta( const iaf_psc_delta& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_psc_delta::init_buffers_()
+iaf_psc_delta::init_buffers_()
 {
   B_.spikes_.clear();    // includes resize
   B_.currents_.clear();  // includes resize
@@ -231,7 +232,7 @@ nest::iaf_psc_delta::init_buffers_()
 }
 
 void
-nest::iaf_psc_delta::pre_run_hook()
+iaf_psc_delta::pre_run_hook()
 {
   B_.logger_.init();
 
@@ -269,7 +270,7 @@ nest::iaf_psc_delta::pre_run_hook()
  */
 
 void
-nest::iaf_psc_delta::update( Time const& origin, const long from, const long to )
+iaf_psc_delta::update( Time const& origin, const long from, const long to )
 {
   const double h = Time::get_resolution().get_ms();
   for ( long lag = from; lag < to; ++lag )
@@ -329,7 +330,7 @@ nest::iaf_psc_delta::update( Time const& origin, const long from, const long to 
 }
 
 void
-nest::iaf_psc_delta::handle( SpikeEvent& e )
+iaf_psc_delta::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -342,7 +343,7 @@ nest::iaf_psc_delta::handle( SpikeEvent& e )
 }
 
 void
-nest::iaf_psc_delta::handle( CurrentEvent& e )
+iaf_psc_delta::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -354,9 +355,9 @@ nest::iaf_psc_delta::handle( CurrentEvent& e )
 }
 
 void
-nest::iaf_psc_delta::handle( DataLoggingRequest& e )
+iaf_psc_delta::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
 
-}  // namespace
+}  // namespace nest

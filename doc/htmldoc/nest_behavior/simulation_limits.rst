@@ -6,14 +6,14 @@ Network and simulation limits
 NEST's kernel encodes target neuron identifiers, synapse types, thread IDs, and
 MPI ranks into a compact 64-bit integer.  The number of bits allocated to each
 field sets hard limits on the size of a simulation.  Some limits are fixed; others
-depend on the :ref:`target-bits-split compile option <target_bits_split>`.
+depend on the :ref:`with-target-bits-split compile option <target_bits_split>`.
 
 .. _target_bits_split:
 
 Configuring limits at compile time
 -----------------------------------
 
-The ``-Dtarget-bits-split`` CMake option controls how the 64-bit target
+The ``-Dwith-target-bits-split`` CMake option controls how the 64-bit target
 identifier is partitioned between synapse types, threads, and MPI ranks.  Two
 presets are available:
 
@@ -25,11 +25,11 @@ presets are available:
      - Preset name
      - Use case
      - Description
-   * - ``-Dtarget-bits-split='standard'``
-     - ``standard``
+   * - ``-Dwith-target-bits-split='default'``
+     - ``default``
      - Default
      - More synapse types and threads; fewer MPI ranks
-   * - ``-Dtarget-bits-split='hpc'``
+   * - ``-Dwith-target-bits-split='hpc'``
      - ``hpc``
      - Large HPC clusters
      - More MPI ranks and threads; fewer synapse types

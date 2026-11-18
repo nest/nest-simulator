@@ -190,6 +190,28 @@ class GetConnectionsTestCase(unittest.TestCase):
             conns = nest.GetConnections(target=tgt, synapse_label=label)
             self.assertEqual(reference_list, conns.synapse_model)
 
+    def test_GetConnectionsDeviceToDevice(self):
+        """
+        Ensure that connections directly from devices to devices are picked up correctly
+        """
+        nest.ResetKernel()
+        g = nest.Create("spike_generator", 4)
+        r = nest.Create("spike_recorder", 4)
+        nest.Connect(g, r, "one_to_one")
+        expected = sorted(zip(g.global_id, r.global_id))
+
+        actual = sorted(zip(*nest.GetConnections(target=r).get(["source", "target"]).values()))
+        assert actual == expected
+
+        actual = sorted(zip(*nest.GetConnections(source=g).get(["source", "target"]).values()))
+        assert actual == expected
+
+        actual = sorted(zip(*nest.GetConnections(source=g, target=r).get(["source", "target"]).values()))
+        assert actual == expected
+
+        actual = sorted(zip(*nest.GetConnections().get(["source", "target"]).values()))
+        assert actual == expected
+
 
 def suite():
     suite = unittest.makeSuite(GetConnectionsTestCase, "test")

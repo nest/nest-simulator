@@ -82,6 +82,15 @@ decay exponentially with time constants ``tau_sfa`` and ``tau_rr``, respectively
 
 See also :footcite:p:`Meffin2004`.
 
+.. note::
+
+   Incoming spikes are routed to the excitatory or inhibitory synapse type by the **sign of the
+   connection weight**. A positive weight targets the excitatory synapse type, a negative weight
+   the inhibitory one. Only the absolute value of the weight sets the conductance
+   amplitude. Spike connections must use the default ``receptor_type`` of 0.
+
+   See :ref:`synapse_selection` for the conventions used by other models.
+
 Parameters
 ++++++++++
 
@@ -330,7 +339,7 @@ private:
 
 
 inline size_t
-nest::iaf_cond_exp_sfa_rr::send_test_event( Node& target, size_t receptor_type, synindex, bool )
+iaf_cond_exp_sfa_rr::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

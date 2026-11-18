@@ -25,16 +25,13 @@
 // C++ includes:
 #include <string>
 
-// Generated includes:
-#include "config.h"
-
 // Includes from libnestutil:
 #include "numerics.h"
 
 using namespace nest;
 
-const double Time::Range::TICS_PER_MS_DEFAULT = CONFIG_TICS_PER_MS;
-const tic_t Time::Range::TICS_PER_STEP_DEFAULT = CONFIG_TICS_PER_STEP;
+constexpr double Time::Range::TICS_PER_MS_DEFAULT = 1000.0;
+constexpr tic_t Time::Range::TICS_PER_STEP_DEFAULT = 100;
 
 tic_t Time::Range::TICS_PER_STEP = Time::Range::TICS_PER_STEP_DEFAULT;
 double Time::Range::TICS_PER_STEP_INV = 1. / static_cast< double >( Time::Range::TICS_PER_STEP );
@@ -49,10 +46,10 @@ double Time::Range::STEPS_PER_MS = 1 / Time::Range::MS_PER_STEP;
 // define for unit -- const'ness is in the header
 // should only be necessary when not folded away
 // by the compiler as compile time consts
-const tic_t Time::LimitPosInf::tics;
-const long Time::LimitPosInf::steps;
-const tic_t Time::LimitNegInf::tics;
-const long Time::LimitNegInf::steps;
+constexpr tic_t Time::LimitPosInf::tics;
+constexpr long Time::LimitPosInf::steps;
+constexpr tic_t Time::LimitNegInf::tics;
+constexpr long Time::LimitNegInf::steps;
 
 tic_t
 Time::compute_max()

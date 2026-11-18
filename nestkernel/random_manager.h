@@ -145,20 +145,20 @@ private:
 };
 
 inline RngPtr
-nest::RandomManager::get_rank_synced_rng() const
+RandomManager::get_rank_synced_rng() const
 {
   return rank_synced_rng_;
 }
 
 inline RngPtr
-nest::RandomManager::get_vp_synced_rng( size_t tid ) const
+RandomManager::get_vp_synced_rng( size_t tid ) const
 {
   assert( tid < static_cast< size_t >( vp_specific_rngs_.size() ) );
   return vp_synced_rngs_[ tid ];
 }
 
 inline RngPtr
-nest::RandomManager::get_vp_specific_rng( size_t tid ) const
+RandomManager::get_vp_specific_rng( size_t tid ) const
 {
   assert( tid < static_cast< size_t >( vp_specific_rngs_.size() ) );
   return vp_specific_rngs_[ tid ];

@@ -25,8 +25,13 @@
 // Includes from nestkernel:
 #include "nest_impl.h"
 
+
+namespace nest
+{
 void
-nest::register_urbanczik_synapse( const std::string& name )
+register_urbanczik_synapse( const std::string& name )
 {
   register_connection_model< urbanczik_synapse >( name );
 }
+
+}  // namespace nest

@@ -19,15 +19,11 @@
 
 if(NOT "${SKBUILD}" STREQUAL "")
   install( PROGRAMS
-      nest-server
-      nest-server-mpi
       ${PROJECT_BINARY_DIR}/bin/nest-config
       DESTINATION ${SKBUILD_SCRIPTS_DIR}
       )
 else()
   install( PROGRAMS
-      nest-server
-      nest-server-mpi
       ${PROJECT_BINARY_DIR}/bin/nest-config
       DESTINATION ${CMAKE_INSTALL_BINDIR}
       )

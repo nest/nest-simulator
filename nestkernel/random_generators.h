@@ -124,12 +124,28 @@ public:
   /**
    * @brief Wrap std::sample for selection from NodeCollection
    *
-   * Inserts random sample without replacement of size n from range `[first, last)`into `dest`.
+   * Inserts random stable sample without replacement of size n from range `[first, last)`into `dest`.
+   *
+   * @note Running this with different random seeds will select different elements, but the order of elements
+   * will always be the same as in the node collection from which we sample. In particular, if `n == nc.size()`,
+   * then `dest` will contain the original node collection (as an explicit `vector`).
    */
-  virtual void sample( NodeCollection::const_iterator first,
+  virtual void stable_sample( NodeCollection::const_iterator first,
     NodeCollection::const_iterator last,
     std::back_insert_iterator< std::vector< NodeIDTriple > > dest,
     size_t n ) = 0;
+
+  /**
+   * @brief Select randomly shuffled elements from vector.
+   *
+   * Places `n` elements chosen from `data` without replacement, in random order, at the beginning of
+   * `data` and then reduces the size of `data` to `n`. If `n` exceeds `data.size()`, all elements are
+   * kept and only shuffled.
+   *
+   * @param data Vector to be shuffled and possibly shortened.
+   * @param n Number of elements to select.
+   */
+  virtual void partial_shuffle( std::vector< size_t >& data, const size_t n ) = 0;
 };
 
 /**
@@ -282,12 +298,28 @@ public:
   }
 
   inline void
-  sample( NodeCollection::const_iterator first,
+  stable_sample( NodeCollection::const_iterator first,
     NodeCollection::const_iterator last,
     std::back_insert_iterator< std::vector< NodeIDTriple > > dest,
     size_t n ) override
   {
     std::sample( first, last, dest, n, rng_ );
+  }
+
+  inline void
+  partial_shuffle( std::vector< size_t >& data, const size_t n ) override
+  {
+    const size_t num_elems = std::min( n, data.size() );
+
+    // Partial Fisher-Yates-Durstenfeld-Knuth: at each step select an element from the remaining range
+    // [ next, data.size() ) and swap it to the front. Draws num_elems random numbers and
+    // leaves the selection in random order.
+    for ( size_t next = 0, remaining = data.size(); next < num_elems; ++next, --remaining )
+    {
+      const size_t rnd = next + ulrand( remaining );
+      std::swap( data[ next ], data[ rnd ] );
+    }
+    data.resize( num_elems );  // keep only the selected elements.
   }
 
 private:

@@ -10,4 +10,4 @@ https://nest-simulator.readthedocs.org.
 
 For more information about the different workflows for documentation,
 please see
-https://nest-simulator.readthedocs.io/en/latest/developer_space/workflows/documentation_workflow/
+https://nest-simulator.readthedocs.io/en/latest/contribute/workflows/documentation_workflow/

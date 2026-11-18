@@ -108,7 +108,6 @@ If installation didn't work, see the :ref:`troubleshooting section <troubleshoot
    :glob:
 
    mac_install
-   livemedia
    cmake_options
    *
 

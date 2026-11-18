@@ -12,7 +12,7 @@ You can :ref:`let us know <contact_us>` about your publications that used NEST, 
 will add them to our `publication list <https://www.nest-simulator.org/publications/>`_; this will help make them
 visible to potential readers.
 
-You can also `get the NEST logo <https://github.com/nest/nest-simulator/tree/master/doc/logos>`_ for your poster or presentation.
+You can also `get the NEST logo <https://github.com/nest/nest-simulator/tree/main/doc/logos>`_ for your poster or presentation.
 
 ----
 

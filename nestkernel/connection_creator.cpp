@@ -82,7 +82,7 @@ ConnectionCreator::ConnectionCreator( const Dictionary& dict )
     {
       dict.update_value( names::synapse_parameters, syn_params_dvd );
     }
-    catch ( const nest::TypeMismatch& )
+    catch ( const TypeMismatch& )
     {
       // Give a more helpful message if the provided type is wrong.
       throw BadProperty( "synapse_parameters must be list of dictionaries" );

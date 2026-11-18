@@ -11,11 +11,9 @@
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/y/nest/nest-simulator?logo=github&color=%23ff6633)](https://github.com/nest/nest-simulator)
 
 [![Ubuntu version](https://img.shields.io/badge/ubuntu-(PPA)-blue?logo=debian)](https://nest-simulator.readthedocs.io/en/latest/installation/)
-[![Fedora package](https://img.shields.io/fedora/v/nest?logo=fedora)](https://src.fedoraproject.org/rpms/nest)
 [![conda-forge version](https://img.shields.io/conda/vn/conda-forge/nest-simulator.svg?logo=conda-forge&logoColor=white)](https://anaconda.org/conda-forge/nest-simulator)
 [![Homebrew version](https://img.shields.io/homebrew/v/nest.svg?logo=apple)](https://formulae.brew.sh/formula/nest)
 [![Docker Image Version](https://img.shields.io/docker/v/nest/nest-simulator?color=blue&label=docker&logo=docker&logoColor=white&sort=semver)](https://hub.docker.com/r/nest/nest-simulator)
-[![Virtual applicance](https://img.shields.io/badge/VM-v3.7-blue?logo=CodeSandbox)](https://nest-simulator.readthedocs.io/en/latest/installation/livemedia.html#live-media)
 
 [![YouTube Video Views](https://img.shields.io/youtube/views/K7KXmIv6ROY?style=social)](https://www.youtube.com/results?search_query=nest-simulator+neurons)
 
@@ -91,7 +89,7 @@ For general citations, please use
 
 
 If you need help or would like to discuss an idea or issue,
-join our [maling list](https://nest-simulator.org/documentation/developer_space/guidelines/mailing_list_guidelines.html),
+join our [mailing list](https://nest-simulator.org/mailinglist),
 where we encourage active participation from our developers and users to share their knowledge and experience with NEST.
 
 
@@ -107,7 +105,12 @@ For bug reports, feature requests, documentation improvements, or other issues,
 you can create a [GitHub issue](https://github.com/nest/nest-simulator/issues/new/choose),
 
 For working with NEST code and documentation, you can find guidelines for contributions
-[in our documentation](https://nest-simulator.org/documentation/developer_space/index.html#contribute-to-nest)
+[in our documentation](https://nest-simulator.org/documentation/)
+
+### Developer docs
+
+If you want to view the developer documentation for the C++ source code, plus additional developer-related
+docs, check out our [developer space](https://nest.github.io/nest-simulator).
 
 
 ## Publications

@@ -115,7 +115,7 @@ For example:
 
 
 Each recording backend may provide a specific set of parameters
-(explained in the backend documentation below) that will be included
+(explained in the backend documentation linked below) that will be included
 in the model status dictionary once the backend is set. This means
 that these parameters can only be reviewed and changed *after* the
 backend has been selected. In particular, recording-device specific
@@ -166,8 +166,8 @@ NEST. Please note that the availability of some of them depends on the
 compile-time configuration for NEST. See the backend documentation for
 details.
 
-.. include:: ../models/recording_backend_memory.rst
-.. include:: ../models/recording_backend_ascii.rst
-.. include:: ../models/recording_backend_screen.rst
-.. include:: ../models/recording_backend_sionlib.rst
-.. include:: ../models/recording_backend_mpi.rst
+.. toctree::
+   :maxdepth: 1
+   :glob:
+
+   /models/recording_backend_*

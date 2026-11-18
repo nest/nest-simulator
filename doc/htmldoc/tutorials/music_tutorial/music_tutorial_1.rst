@@ -167,4 +167,4 @@ Publication
 
 Djurfeldt M. et al. 2010. Run-time interoperability between neuronal
 network simulators based on the music framework. Neuroinformatics.
-8(1):43–60. `DOI: 10.1007/s12021-010-9064-z <https://link.springer.com/article/10.1007/s12021-010-9064-z>`_.
+8(1):43–60. `DOI: 10.1007/s12021-010-9064-z <https://doi.org/10.1007/s12021-010-9064-z>`_.

@@ -235,7 +235,7 @@ private:
 // which typically is in h-files.
 template < typename HostNode >
 size_t
-nest::UniversalDataLogger< HostNode >::connect_logging_device( const DataLoggingRequest& req,
+UniversalDataLogger< HostNode >::connect_logging_device( const DataLoggingRequest& req,
   const RecordablesMap< HostNode >& rmap )
 {
   // rports are assigned consecutively, the caller may not request specific
@@ -266,7 +266,7 @@ nest::UniversalDataLogger< HostNode >::connect_logging_device( const DataLogging
 }
 
 template < typename HostNode >
-nest::UniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const DataLoggingRequest& req,
+UniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const DataLoggingRequest& req,
   const RecordablesMap< HostNode >& rmap )
   : multimeter_( req.get_sender().get_node_id() )
   , num_vars_( 0 )
@@ -495,7 +495,7 @@ private:
 // which typically is in h-files.
 template < typename HostNode >
 size_t
-nest::DynamicUniversalDataLogger< HostNode >::connect_logging_device( const DataLoggingRequest& req,
+DynamicUniversalDataLogger< HostNode >::connect_logging_device( const DataLoggingRequest& req,
   const DynamicRecordablesMap< HostNode >& rmap )
 {
   // rports are assigned consecutively, the caller may not request specific
@@ -527,7 +527,7 @@ nest::DynamicUniversalDataLogger< HostNode >::connect_logging_device( const Data
 }
 
 template < typename HostNode >
-nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const DataLoggingRequest& req,
+DynamicUniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const DataLoggingRequest& req,
   const DynamicRecordablesMap< HostNode >& rmap )
   : multimeter_( req.get_sender().get_node_id() )
   , num_vars_( 0 )

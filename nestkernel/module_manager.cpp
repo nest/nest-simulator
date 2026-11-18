@@ -22,15 +22,23 @@
 
 #include "module_manager.h"
 
+#include <exception>
+#include <vector>
+
+#include "dictionary.h"
+#include "exceptions.h"
+#include "logging_manager.h"
+#include "nest_names.h"
+
 #ifdef HAVE_LIBLTDL
+
+#include <node_manager.h>
 
 // Includes from libnestutil:
 #include "logging.h"
-
 // Includes from nestkernel:
 #include "kernel_manager.h"
 #include "nest_extension_interface.h"
-
 // Includes from thirdparty:
 #include "compose.hpp"
 
@@ -113,7 +121,7 @@ ModuleManager::install( const std::string& name )
 {
   // We cannot have connections without network elements, so we only need to check nodes.
   // Simulating an empty network causes no problems, so we don't have to check for that.
-  if ( kernel().node_manager.size() > 0 )
+  if ( kernel::manager< NodeManager >.size() > 0 )
   {
     throw KernelException(
       "Network elements have been created, so external modules can no longer be imported. "

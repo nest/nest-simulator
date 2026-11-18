@@ -24,16 +24,25 @@
 #define IO_MANAGER_H
 
 // C++ includes:
+#include <map>
 #include <string>
+#include <utility>
+#include <vector>
 
 // Includes from libnestutil:
+#include "dictionary.h"
+#include "exceptions.h"
 #include "manager_interface.h"
 
-#include "recording_backend.h"
-#include "stimulation_backend.h"
 
+// NOTE: Use forward declarations to avoid circular dependencies
 namespace nest
 {
+class RecordingBackend;
+class StimulationBackend;
+class RecordingDevice;
+class StimulationDevice;
+class Event;
 
 /**
  * Manager to handle everything related to input and output.
@@ -165,22 +174,32 @@ private:
   std::map< std::string, StimulationBackend* > stimulation_backends_;
 };
 
-inline const std::string&
-IOManager::get_data_path() const
+template < class RecordingBackendT >
+void
+IOManager::register_recording_backend( const std::string& name )
 {
-  return data_path_;
+  if ( recording_backends_.find( name ) != recording_backends_.end() )
+  {
+    throw BackendAlreadyRegistered( name );
+  }
+
+  RecordingBackendT* recording_backend = new RecordingBackendT();
+  recording_backend->pre_run_hook();
+  recording_backends_.insert( std::make_pair( name, recording_backend ) );
 }
 
-inline const std::string&
-IOManager::get_data_prefix() const
+template < class StimulationBackendT >
+void
+IOManager::register_stimulation_backend( const std::string& name )
 {
-  return data_prefix_;
-}
+  if ( stimulation_backends_.find( name ) != stimulation_backends_.end() )
+  {
+    throw BackendAlreadyRegistered( name );
+  }
 
-inline bool
-IOManager::overwrite_files() const
-{
-  return overwrite_files_;
+  StimulationBackendT* stimulation_backend = new StimulationBackendT();
+  stimulation_backend->pre_run_hook();
+  stimulation_backends_.insert( std::make_pair( name, stimulation_backend ) );
 }
 
 }  // namespace nest

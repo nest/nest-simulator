@@ -93,3 +93,78 @@ Local static analysis
 We have several static code analyzers in the GitHub Actions CI. To run static code checks locally,
 please refer to the "run" lines in the GitHub Actions CI definition at
 https://github.com/nest/nest-simulator/blob/main/.github/workflows/nestbuildmatrix.yml.
+
+.. _iwyu_check:
+
+Cleaning up includes with include-what-you-use
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`include-what-you-use <https://include-what-you-use.org/>`_ (IWYU) reports missing and superfluous includes
+and can apply its advice. ``build_support/check_iwyu.sh`` runs it on ``nestkernel/``, ``models/`` and
+``libnestutil/``. It is a tool for cleaning up includes on demand, not a required check: IWYU's advice
+depends on the IWYU version and on the standard library, so two machines can disagree.
+
+To get the same results as everyone else, run it in the pinned container (IWYU 0.23 with GCC 15's
+standard library on Ubuntu 26.04). This needs Docker or Podman; the first run downloads the image, and
+every run installs the required packages, which takes a few minutes:
+
+.. code-block:: bash
+
+   build_support/iwyu/run_in_container.sh --changed main        # report findings
+   build_support/iwyu/run_in_container.sh --changed main --fix  # apply them
+
+The same container runs in CI on demand: add the label ``iwyu`` to a pull request, and the
+``include-what-you-use`` workflow checks the files the pull request changes, on every push until the
+label is removed. The job summary lists the number of findings per file, the full output is attached as
+the ``iwyu-log`` artifact, and findings in changed files are shown as annotations.
+
+To run IWYU without a container, install it (e.g. ``sudo apt install iwyu`` on Debian/Ubuntu), configure
+NEST with ``-DCMAKE_EXPORT_COMPILE_COMMANDS=ON`` (no build is needed) and run the script on the build
+directory:
+
+.. code-block:: bash
+
+   cmake -S <nest_source_dir> -B <build_dir> -DCMAKE_CXX_COMPILER=clang++          -DCMAKE_INSTALL_PREFIX=<install_dir> -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+   <nest_source_dir>/build_support/check_iwyu.sh --changed main <build_dir>
+
+``--changed main`` checks only the files that differ from ``main``, including uncommitted changes.
+Without ``--changed``, all files are checked, which takes a few minutes. To check specific files or
+directories, pass them after the build directory, e.g.
+``build_support/check_iwyu.sh <build_dir> nestkernel/node_manager.cpp``. The output is written to
+``<build_dir>/iwyu.log``.
+
+``--fix`` applies the advice with IWYU's ``fix_includes.py`` (``fix_include`` on Debian/Ubuntu) and
+formats the changed files with ``clang-format``. The advice for one file can change once other files are
+fixed, so repeat until no findings are left. Then review the changes and build NEST in a minimal
+configuration (e.g. ``-Dwith-mpi=OFF -Dwith-openmp=OFF -Dwith-gsl=OFF -Dwith-boost=OFF``) and with as many
+features as possible: IWYU only sees the code of the features enabled when NEST was configured (the
+container enables OpenMP, MPI, GSL, Boost and libltdl, but not MUSIC, SIONlib or HDF5), so includes needed
+only by other features may be reported as superfluous. ``fix_includes.py`` also adds includes outside of
+any ``#ifdef`` block: move includes of optional libraries (e.g. ``<mpi.h>``, ``<gsl/...>``) into the
+matching ``#ifdef HAVE_...`` block, after ``config.h``.
+
+IWYU analyses a header ``foo.h`` together with ``foo.cpp``. For every other header, i.e., header-only code
+and ``*_impl.h`` files, the script adds a stub source file that only includes that header, so each header
+is analysed as well and must compile on its own; compiler errors in such a stub are reported as
+findings ("does not compile on its own"). If IWYU reports ``'omp.h' file not found``, either configure with
+``-Dwith-openmp=OFF`` or add the directory containing your compiler's ``omp.h`` with
+``-DCMAKE_CXX_FLAGS="-isystem <dir>"``.
+
+Things to keep in mind:
+
+* Suggestions for one file belong together: an include reported as superfluous may only be
+  dispensable once the suggested additions are made.
+* Uses inside a macro are charged to the header that defines the macro, so that header must include
+  what the macro needs (or the macro calls a function declared there, as ``LOG`` does).
+* IWYU cannot always see that a template-dependent use needs a complete type. If removing an include
+  that IWYU calls superfluous breaks the build, mark it with ``// IWYU pragma: keep``. If a header's
+  templates require users to have another header (e.g. ``exceptions.h`` and ``compose.hpp``), use
+  ``// IWYU pragma: export`` in that header.
+* ``config.h`` and ``*_impl.h`` includes are always kept: IWYU does not count ``#ifdef HAVE_...``
+  as a use and cannot tell where the templates in ``*_impl.h`` are instantiated.
+* With GCC 15's standard library, IWYU 0.23 alternates between suggesting ``<vector>`` and
+  ``<format>`` for ``std::vector``, and ``<utility>`` and ``<iterator>`` for ``std::pair``.
+  ``nest.imp`` maps both symbols to the header that defines them.
+* IWYU's advice to include ``<stddef.h>`` for ``size_t`` is reported as ``<cstddef>``, which NEST uses.
+* NEST-specific mappings, e.g. that Boost sorting is used through ``sort.h``, are defined in
+  ``build_support/iwyu/nest.imp``. Extend this file if IWYU repeatedly suggests an unsuitable header.

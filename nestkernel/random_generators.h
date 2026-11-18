@@ -30,7 +30,6 @@
 #include <memory>
 #include <random>
 #include <type_traits>
-#include <utility>
 
 // libnestutil includes:
 #include "randutils.hpp"

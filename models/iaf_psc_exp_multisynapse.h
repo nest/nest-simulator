@@ -23,17 +23,28 @@
 #ifndef IAF_PSC_EXP_MULTISYNAPSE_H
 #define IAF_PSC_EXP_MULTISYNAPSE_H
 
+#include <math.h>
 // Generated includes:
+#include <map>
+#include <numeric>
 #include <sstream>
+#include <string>
+#include <vector>
 
 // Includes from nestkernel:
 #include "archiving_node.h"
 #include "connection.h"
+#include "dictionary.h"
 #include "event.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
 #include "nest_types.h"
+#include "node.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -207,8 +218,8 @@ private:
       I_SYN  // 2
     };
 
-    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = I_SYN;  // V_M, I
-    static const size_t NUM_STATE_ELEMENTS_PER_RECEPTOR = 1;      // I_SYN
+    static constexpr size_t NUMBER_OF_FIXED_STATES_ELEMENTS = I_SYN;  // V_M, I
+    static constexpr size_t NUM_STATE_ELEMENTS_PER_RECEPTOR = 1;      // I_SYN
 
     double I_const_;  //!< synaptic dc input current, variable 0
     std::vector< double > i_syn_;

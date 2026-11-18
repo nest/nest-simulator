@@ -29,8 +29,8 @@
 
 // Includes from nestkernel:
 #include "event.h"
+#include "event_delivery_manager.h"
 #include "nest_time.h"
-#include "nest_types.h"
 #include "recordables_map.h"
 
 namespace nest
@@ -84,26 +84,20 @@ namespace nest
  *
  * ...
  *
- * nest::iaf_cond_alpha::Buffers_::Buffers_(iaf_cond_alpha& n)
+ * iaf_cond_alpha::Buffers_::Buffers_(iaf_cond_alpha& n)
  * : logger_(n), ... {}
  *
- * nest::iaf_cond_alpha::Buffers_::Buffers_(const Buffers_&, iaf_cond_alpha& n)
+ * iaf_cond_alpha::Buffers_::Buffers_(const Buffers_&, iaf_cond_alpha& n)
  * : logger_(n), ... {}
  *
- * nest::iaf_cond_alpha::iaf_cond_alpha()
+ * iaf_cond_alpha::iaf_cond_alpha()
  * : ..., B_(*this) {}
  *
- * nest::iaf_cond_alpha::iaf_cond_alpha(const iaf_cond_alpha& n)
+ * iaf_cond_alpha::iaf_cond_alpha(const iaf_cond_alpha& n)
  * : ..., B_(n.B_, *this) {}
  * @code
  *
  * @todo Could HostNode be passed as const& to handle() and record_data()?
- *
- * @note To avoid inclusion problems and code-bloat, the class
- *       interface is defined in this file, while most of the
- *       implementation is in the companion universal_data_logger_impl.h.
- *       As a consequence, calls to UniversalDataLogger members should
- *       only come from cpp files---do not inline them.
  *
  * @addtogroup Devices
  */
@@ -340,29 +334,23 @@ UniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const DataLoggingRequ
  *
  * ...
  *
- * nest::aeif_cond_beta_multisynapse::Buffers_::Buffers_(aeif_cond_beta_multisynapse&
+ * aeif_cond_beta_multisynapse::Buffers_::Buffers_(aeif_cond_beta_multisynapse&
  * n)
  * : logger_(n), ... {}
  *
- * nest::aeif_cond_beta_multisynapse::Buffers_::Buffers_(const Buffers_&,
+ * aeif_cond_beta_multisynapse::Buffers_::Buffers_(const Buffers_&,
  * aeif_cond_beta_multisynapse& n)
  * : logger_(n), ... {}
  *
- * nest::aeif_cond_beta_multisynapse::aeif_cond_beta_multisynapse()
+ * aeif_cond_beta_multisynapse::aeif_cond_beta_multisynapse()
  * : ..., B_(*this) {}
  *
- * nest::aeif_cond_beta_multisynapse::aeif_cond_beta_multisynapse(const
+ * aeif_cond_beta_multisynapse::aeif_cond_beta_multisynapse(const
  * aeif_cond_beta_multisynapse& n)
  * : ..., B_(n.B_, *this) {}
  * @code
  *
  * @todo Could HostNode be passed as const& to handle() and record_data()?
- *
- * @note To avoid inclusion problems and code-bloat, the class
- *       interface is defined in this file, while most of the
- *       implementation is in the companion universal_data_logger_impl.h.
- *       As a consequence, calls to UniversalDataLogger members should
- *       only come from cpp files---do not inline them.
  *
  * @addtogroup Devices
  */

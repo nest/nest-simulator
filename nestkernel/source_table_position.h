@@ -29,6 +29,7 @@
 #include <vector>
 
 #include "block_vector.h"
+#include "source.h"
 
 namespace nest
 {

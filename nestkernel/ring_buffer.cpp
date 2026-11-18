@@ -20,20 +20,29 @@
  *
  */
 
-#include "ring_buffer.h"
+#include <assert.h>
+#include <list>
+#include <vector>
 
+#include "connection_manager.h"
+#include "event_delivery_manager.h"
+#include "kernel_manager.h"
+#include "ring_buffer.h"
 
 namespace nest
 {
+
 RingBuffer::RingBuffer()
-  : buffer_( kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay(), 0.0 )
+  : min_delay_( kernel::manager< ConnectionManager >.get_min_delay() )
+  , buffer_( min_delay_ + kernel::manager< ConnectionManager >.get_max_delay(), 0.0 )
 {
 }
 
 void
 RingBuffer::resize()
 {
-  size_t size = kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
+  min_delay_ = kernel::manager< ConnectionManager >.get_min_delay();
+  const size_t size = min_delay_ + kernel::manager< ConnectionManager >.get_max_delay();
   if ( buffer_.size() != size )
   {
     buffer_.resize( size );
@@ -50,14 +59,16 @@ RingBuffer::clear()
 
 
 MultRBuffer::MultRBuffer()
-  : buffer_( kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay(), 0.0 )
+  : min_delay_( kernel::manager< ConnectionManager >.get_min_delay() )
+  , buffer_( min_delay_ + kernel::manager< ConnectionManager >.get_max_delay(), 0.0 )
 {
 }
 
 void
 MultRBuffer::resize()
 {
-  size_t size = kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
+  min_delay_ = kernel::manager< ConnectionManager >.get_min_delay();
+  const size_t size = min_delay_ + kernel::manager< ConnectionManager >.get_max_delay();
   if ( buffer_.size() != size )
   {
     buffer_.resize( size );
@@ -73,14 +84,16 @@ MultRBuffer::clear()
 
 
 ListRingBuffer::ListRingBuffer()
-  : buffer_( kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay() )
+  : min_delay_( kernel::manager< ConnectionManager >.get_min_delay() )
+  , buffer_( min_delay_ + kernel::manager< ConnectionManager >.get_max_delay() )
 {
 }
 
 void
 ListRingBuffer::resize()
 {
-  size_t size = kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
+  min_delay_ = kernel::manager< ConnectionManager >.get_min_delay();
+  const size_t size = min_delay_ + kernel::manager< ConnectionManager >.get_max_delay();
   if ( buffer_.size() != size )
   {
     buffer_.resize( size );

@@ -22,19 +22,23 @@
 
 #include "correlospinmatrix_detector.h"
 
-// C++ includes:
-#include <cmath>
+#include <algorithm>
+#include <assert.h>
 #include <functional>
 
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "dict_util.h"
+#include "genericmodel_impl.h"
 #include "logging.h"
-
 // Includes from nestkernel:
+#include "connection_manager.h"
+#include "dictionary.h"
+#include "event.h"
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
+#include "logging_manager.h"
 #include "nest_impl.h"
+#include "nest_timeconverter.h"
 
 
 namespace nest
@@ -304,7 +308,6 @@ correlospinmatrix_detector::handle( SpikeEvent& e )
 
   if ( device_.is_active( stamp ) )
   {
-
     // The following logic implements the decoding
     // A single spike signals a transition to 0 state, two spikes in same time
     // step signal the transition to 1 state.
@@ -389,7 +392,7 @@ correlospinmatrix_detector::handle( SpikeEvent& e )
       }
       const double tau_edge = P_.tau_max_.get_steps() + P_.delta_tau_.get_steps();
 
-      const long min_delay = kernel().connection_manager.get_min_delay();
+      const long min_delay = kernel::manager< ConnectionManager >.get_min_delay();
       while ( not otherPulses.empty() and ( t_min_on - otherPulses.front().t_off_ ) >= tau_edge + min_delay )
       {
         otherPulses.pop_front();

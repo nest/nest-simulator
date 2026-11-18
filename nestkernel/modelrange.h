@@ -23,6 +23,7 @@
 #ifndef MODELRANGE_H
 #define MODELRANGE_H
 
+
 // Includes from nestkernel:
 #include "nest_types.h"
 
@@ -33,26 +34,10 @@ class modelrange
 {
 public:
   modelrange( size_t model, size_t first_node_id, size_t last_node_id );
-  bool
-  is_in_range( size_t node_id ) const
-  {
-    return ( node_id >= first_node_id_ and node_id <= last_node_id_ );
-  }
-  size_t
-  get_model_id() const
-  {
-    return model_;
-  }
-  size_t
-  get_first_node_id() const
-  {
-    return first_node_id_;
-  }
-  size_t
-  get_last_node_id() const
-  {
-    return last_node_id_;
-  }
+  bool is_in_range( size_t node_id ) const;
+  size_t get_model_id() const;
+  size_t get_first_node_id() const;
+  size_t get_last_node_id() const;
   void extend_range( size_t new_last_node_id );
 
 private:

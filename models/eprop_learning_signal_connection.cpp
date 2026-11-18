@@ -20,6 +20,7 @@
  *
  */
 
+// nest models
 #include "eprop_learning_signal_connection.h"
 
 // nestkernel

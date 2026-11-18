@@ -52,8 +52,22 @@ is_nan( T f )
 {
   return std::isnan( f );
 }
+
+/*
+ * Returns x mod p ensuring that the result is always positive.
+ */
+inline double
+pos_fmod( const double x, const double p )
+{
+  double r = std::fmod( x, p );
+  if ( r < 0 )
+  {
+    r += p;
+  }
+  return r;
 }
 
+}  // end namespace numerics
 
 // later also in namespace
 /**

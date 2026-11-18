@@ -23,12 +23,14 @@
 #ifndef VP_MANAGER_H
 #define VP_MANAGER_H
 
+#include <algorithm>
+#include <assert.h>
+#include <cmath>
+
 // Includes from libnestutil:
+#include "kernel_manager.h"
 #include "manager_interface.h"
-
-// Includes from nestkernel:
-#include "nest_types.h"
-
+#include "mpi_manager.h"
 
 #ifdef _OPENMP
 // C includes:
@@ -79,7 +81,11 @@ public:
    *
    * This function returns the total number of threads per process.
    */
-  size_t get_num_threads() const;
+  size_t
+  get_num_threads() const
+  {
+    return n_threads_;
+  }
 
   /**
    * Get OMP_NUM_THREADS environment variable.
@@ -91,22 +97,41 @@ public:
   /**
    * Returns true if the given global node exists on this vp.
    */
-  bool is_node_id_vp_local( const size_t node_id ) const;
+  bool
+  is_node_id_vp_local( const size_t node_id ) const
+  {
+    return ( node_id % get_num_virtual_processes() == static_cast< size_t >( get_vp() ) );
+  }
 
   /**
    * Returns thread local index of a given global node.
    */
-  size_t node_id_to_lid( const size_t node_id ) const;
+  size_t
+  node_id_to_lid( const size_t node_id ) const
+  {
+    // starts at lid 0 for node_ids >= 1 (expected value for neurons, excl. node ID 0)
+    return std::ceil( static_cast< double >( node_id ) / get_num_virtual_processes() ) - 1;
+  }
 
   /**
    * Returns the node ID of a given local index.
    */
-  size_t lid_to_node_id( const size_t lid ) const;
+  size_t
+  lid_to_node_id( const size_t lid ) const
+  {
+    const size_t vp = get_vp();
+    return ( lid + static_cast< size_t >( vp == 0 ) ) * get_num_virtual_processes() + vp;
+  }
 
   /**
    * Returns virtual process index.
    */
-  size_t get_vp() const;
+  size_t
+  get_vp() const
+  {
+    return kernel::manager< MPIManager >.get_rank()
+      + get_thread_id() * kernel::manager< MPIManager >.get_num_processes();
+  }
 
   /**
    * Return a thread number for a given global node id.
@@ -117,45 +142,86 @@ public:
    * T the number of threads. This may be used by Network::add_node()
    * if the user has not specified anything.
    */
-  size_t node_id_to_vp( const size_t node_id ) const;
+  size_t
+  node_id_to_vp( const size_t node_id ) const
+  {
+    return node_id % get_num_virtual_processes();
+  }
 
   /**
    * Convert a given VP ID to the corresponding thread ID
    */
-  size_t vp_to_thread( const size_t vp ) const;
+  size_t
+  vp_to_thread( const size_t vp ) const
+  {
+    return vp / kernel::manager< MPIManager >.get_num_processes();
+  }
 
   /**
    * Convert a given thread ID to the corresponding VP ID
    */
-  size_t thread_to_vp( const size_t tid ) const;
+  size_t
+  thread_to_vp( const size_t tid ) const
+  {
+    return tid * kernel::manager< MPIManager >.get_num_processes() + kernel::manager< MPIManager >.get_rank();
+  }
 
   /**
    * Return true, if the given VP is on the local machine
    */
-  bool is_local_vp( const size_t tid ) const;
+  bool
+  is_local_vp( const size_t vp ) const
+  {
+    return kernel::manager< MPIManager >.get_process_id_of_vp( vp ) == kernel::manager< MPIManager >.get_rank();
+  }
 
   /**
    * Returns the number of virtual processes.
    */
-  size_t get_num_virtual_processes() const;
+  size_t
+  get_num_virtual_processes() const
+  {
+    return get_num_threads() * kernel::manager< MPIManager >.get_num_processes();
+  }
 
   /**
    * Fails if NEST is in thread-parallel section.
    */
-  void assert_single_threaded() const;
+  void
+  assert_single_threaded() const
+  {
+#ifdef _OPENMP
+    assert( omp_get_num_threads() == 1 );
+#endif
+  }
 
   /**
    * Fails if NEST is not in thread-parallel section.
    */
-  void assert_thread_parallel() const;
+  void
+  assert_thread_parallel() const
+  {
+#ifdef _OPENMP
+    // omp_get_num_threads() returns int
+    assert( omp_get_num_threads() == static_cast< int >( n_threads_ ) );
+#endif
+  }
 
   /**
    * Returns the number of processes that are taken care of by a single thread
    * while processing MPI buffers in a multithreaded environment.
    */
-  size_t get_num_assigned_ranks_per_thread() const;
+  size_t
+  get_num_assigned_ranks_per_thread() const
+  {
+    return std::ceil( static_cast< double >( kernel::manager< MPIManager >.get_num_processes() ) / n_threads_ );
+  }
 
-  size_t get_start_rank_per_thread( const size_t tid ) const;
+  size_t
+  get_start_rank_per_thread( const size_t tid ) const
+  {
+    return tid * get_num_assigned_ranks_per_thread();
+  }
   size_t get_end_rank_per_thread( const size_t rank_start, const size_t num_assigned_ranks_per_thread ) const;
 
   /**
@@ -183,26 +249,30 @@ VPManager::get_thread_id() const
 }
 
 inline size_t
-VPManager::get_num_threads() const
+VPManager::get_end_rank_per_thread( const size_t rank_start, const size_t num_assigned_ranks_per_thread ) const
 {
-  return n_threads_;
+  size_t rank_end = rank_start + num_assigned_ranks_per_thread;
+
+  // if we have more threads than ranks, or if ranks can not be
+  // distributed evenly on threads, we need to make sure, that all
+  // threads care only about existing ranks
+  if ( rank_end > kernel::manager< MPIManager >.get_num_processes() )
+  {
+    rank_end = std::max( rank_start, kernel::manager< MPIManager >.get_num_processes() );
+  }
+
+  return rank_end;
 }
 
-inline void
-VPManager::assert_single_threaded() const
+inline AssignedRanks
+VPManager::get_assigned_ranks( const size_t tid )
 {
-#ifdef _OPENMP
-  assert( omp_get_num_threads() == 1 );
-#endif
-}
-
-inline void
-VPManager::assert_thread_parallel() const
-{
-#ifdef _OPENMP
-  // omp_get_num_threads() returns int
-  assert( omp_get_num_threads() == static_cast< int >( n_threads_ ) );
-#endif
+  AssignedRanks assigned_ranks;
+  assigned_ranks.begin = get_start_rank_per_thread( tid );
+  assigned_ranks.max_size = get_num_assigned_ranks_per_thread();
+  assigned_ranks.end = get_end_rank_per_thread( assigned_ranks.begin, assigned_ranks.max_size );
+  assigned_ranks.size = assigned_ranks.end - assigned_ranks.begin;
+  return assigned_ranks;
 }
 
 }  // namespace nest

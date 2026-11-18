@@ -137,18 +137,51 @@ IWYU_LOG="${IWYU_LOG:-$BUILD_DIR/iwyu.log}"
 
 echo "Running $(include-what-you-use --version | head -n 1) with $IWYU_JOBS jobs ..."
 
-# - clang-warning output gives "file:line:col: warning: ..." lines.
+# Convert IWYU's own output format, which all IWYU versions produce, into
+# "file:line:col: warning: ..." lines (iwyu_tool's clang-warning format exists
+# only from IWYU 0.22 on). Compiler diagnostics are passed through unchanged.
+iwyu_to_warnings() {
+    awk '
+        / should add these lines:$/    { mode = "add"; file = $0; sub(/ should add these lines:$/, "", file); next }
+        / should remove these lines:$/ { mode = "remove"; file = $0; sub(/ should remove these lines:$/, "", file); next }
+        /^The full include-list for /  { mode = "list"; next }
+        /^---$/                        { mode = ""; next }
+        /^\(.* has correct #includes\/fwd-decls\)$/ {
+            f = $0; sub(/^\(/, "", f); sub(/ has correct #includes\/fwd-decls\)$/, "", f)
+            print f ":1:1: note: #includes/fwd-decls are correct"; next
+        }
+        mode == "add" && NF {
+            item = $0; reason = ""
+            if (match(item, / +\/\/ for /)) { reason = substr(item, RSTART + RLENGTH); item = substr(item, 1, RSTART - 1) }
+            sub(/ +$/, "", item)
+            printf "%s:1:1: warning: add '\''%s'\''%s\n", file, item, (reason != "" ? " (for " reason ")" : "")
+            next
+        }
+        mode == "remove" && NF {
+            item = $0; sub(/^- /, "", item); lineno = 1
+            if (match(item, / +\/\/ lines? [0-9]+/)) {
+                tail = substr(item, RSTART); item = substr(item, 1, RSTART - 1)
+                match(tail, /[0-9]+/); lineno = substr(tail, RSTART, RLENGTH)
+            }
+            printf "%s:%s:1: warning: superfluous '\''%s'\''\n", file, lineno, item
+            next
+        }
+        mode != "" { next }
+        { print }
+    '
+}
+
 # - --keep: config.h is often needed only for #ifdef HAVE_..., which IWYU does
 #   not count as a use; removing it would silently change the build. IWYU cannot
 #   tell where the template definitions in *_impl.h are instantiated, so it must
 #   not remove those includes either.
 # - The grep drops IWYU's own complaints about libstdc++'s @headername comments.
-"$IWYU_TOOL" -p "$IWYU_DB" -j "$IWYU_JOBS" -o clang-warning "${targets[@]}" -- \
+"$IWYU_TOOL" -p "$IWYU_DB" -j "$IWYU_JOBS" -o iwyu "${targets[@]}" -- \
     -Xiwyu --mapping_file="$NEST_SOURCE/build_support/iwyu/nest.imp" \
     -Xiwyu --cxx17ns \
     -Xiwyu --keep='*config.h*' \
     -Xiwyu --keep='*_impl.h*' \
-    2>&1 | grep -v "no private include name for @headername mapping" > "$IWYU_LOG" || true
+    2>&1 | grep -v "no private include name for @headername mapping" | iwyu_to_warnings > "$IWYU_LOG" || true
 
 # Report paths relative to the source directory. IWYU suggests <stddef.h> for
 # size_t, but NEST uses <cstddef>, which IWYU accepts as well.

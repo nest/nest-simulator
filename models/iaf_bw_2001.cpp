@@ -22,18 +22,17 @@
 
 #include "iaf_bw_2001.h"
 
-#include <boost/math/policies/policy.hpp>
-#include <boost/math/special_functions/expm1.hpp>
-#include <boost/math/special_functions/sign.hpp>
-#include <boost/math/tools/rational.hpp>
 #include <cmath>
-#include <gsl/gsl_errno.h>
 
 #include "connection_manager.h"
 #include "event_delivery_manager.h"
 #include "nest_time.h"
 
 #ifdef HAVE_GSL
+
+// Includes from GSL:
+#include <gsl/gsl_errno.h>
+
 #ifdef HAVE_BOOST
 
 // Includes from standard library

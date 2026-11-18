@@ -25,13 +25,15 @@
 #include <algorithm>
 #include <assert.h>
 #include <cmath>
-#include <gsl/gsl_errno.h>
 #include <sstream>
 
 #include "nest_time.h"
 #include "simulation_manager.h"
 
 #ifdef HAVE_GSL
+
+// Includes from GSL:
+#include <gsl/gsl_errno.h>
 
 // C++ includes:
 #include <limits>

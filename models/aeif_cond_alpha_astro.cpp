@@ -24,7 +24,6 @@
 
 #include <algorithm>
 #include <assert.h>
-#include <gsl/gsl_errno.h>
 #include <vector>
 
 #include "connection_manager.h"
@@ -33,6 +32,9 @@
 #include "simulation_manager.h"
 
 #ifdef HAVE_GSL
+
+// Includes from GSL:
+#include <gsl/gsl_errno.h>
 
 // C++ includes:
 #include <cmath>

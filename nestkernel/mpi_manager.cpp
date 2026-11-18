@@ -22,16 +22,21 @@
 
 #include "mpi_manager_impl.h"
 
-#include <cstddef>
-#include <mpi.h>
 // C++ includes
 #include <cmath>
+#include <cstddef>
 #include <limits>
 #include <numeric>
 #include <string>
 #include <vector>
 
 #include "config.h"
+
+// C includes:
+#ifdef HAVE_MPI
+#include <mpi.h>
+#endif
+
 // Includes from nestkernel:
 #include "dictionary.h"
 #include "exceptions.h"

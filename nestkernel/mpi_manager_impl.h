@@ -26,12 +26,15 @@
 #include "mpi_manager.h"
 
 #include <cstddef>
-#include <mpi.h>
 #include <vector>
 
 #include "config.h"
 #include "spike_data.h"
 #include "target_data.h"
+
+#ifdef HAVE_MPI
+#include <mpi.h>
+#endif
 
 namespace nest
 {

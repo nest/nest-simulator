@@ -25,7 +25,6 @@
 #include <assert.h>
 #include <cmath>
 #include <cstddef>
-#include <gsl/gsl_errno.h>
 #include <sstream>
 
 #include "event_delivery_manager.h"
@@ -33,6 +32,9 @@
 #include "simulation_manager.h"
 
 #ifdef HAVE_GSL
+
+// Includes from GSL:
+#include <gsl/gsl_errno.h>
 
 // Includes from libnestutil:
 #include "dict_util.h"

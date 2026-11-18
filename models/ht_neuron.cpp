@@ -23,7 +23,6 @@
 #include "ht_neuron.h"
 
 #include <algorithm>
-#include <gsl/gsl_errno.h>
 
 #include "dictionary.h"
 #include "event_delivery_manager.h"
@@ -33,6 +32,9 @@
 #include "simulation_manager.h"
 
 #ifdef HAVE_GSL
+
+// Includes from GSL:
+#include <gsl/gsl_errno.h>
 
 // C++ includes:
 #include <cmath>

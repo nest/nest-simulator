@@ -22,10 +22,6 @@
 
 #include "siegert_neuron.h"
 
-#include <gsl/gsl_math.h>
-#include <gsl/gsl_sf_dawson.h>
-#include <gsl/gsl_sf_erf.h>
-
 #include "connection_manager.h"
 #include "event_delivery_manager.h"
 #include "secondary_event.h"
@@ -33,6 +29,11 @@
 #include "simulation_manager.h"
 
 #ifdef HAVE_GSL
+
+// Includes from GSL:
+#include <gsl/gsl_math.h>
+#include <gsl/gsl_sf_dawson.h>
+#include <gsl/gsl_sf_erf.h>
 
 // C++ includes:
 #include <cmath>  // in case we need isnan() // fabs

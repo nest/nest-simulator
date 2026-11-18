@@ -20,17 +20,18 @@
  *
  */
 
-
 #include "iaf_cond_alpha.h"
 
 #include <algorithm>
 #include <assert.h>
-#include <gsl/gsl_errno.h>
 
 #include "event_delivery_manager.h"
 #include "simulation_manager.h"
 
 #ifdef HAVE_GSL
+
+// Includes from GSL:
+#include <gsl/gsl_errno.h>
 
 // Includes from libnestutil:
 #include "dict_util.h"

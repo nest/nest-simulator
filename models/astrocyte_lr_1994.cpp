@@ -20,12 +20,10 @@
  *
  */
 
-
 #include "astrocyte_lr_1994.h"
 
 #include <algorithm>
 #include <assert.h>
-#include <gsl/gsl_errno.h>
 
 #include "connection_manager.h"
 #include "event.h"
@@ -35,6 +33,9 @@
 #include "simulation_manager.h"
 
 #ifdef HAVE_GSL
+
+// Includes from GSL:
+#include <gsl/gsl_errno.h>
 
 // C++ includes:
 #include <cmath>

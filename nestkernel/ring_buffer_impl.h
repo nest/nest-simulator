@@ -29,6 +29,7 @@
 #include <array>
 #include <cassert>
 #include <cstddef>
+#include <vector>
 
 // Includes from nestkernel:
 #include "connection_manager.h"

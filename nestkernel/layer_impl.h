@@ -35,6 +35,7 @@
 #include <ostream>
 #include <string>
 #include <typeinfo>
+#include <utility>
 #include <vector>
 
 #include "connection_id.h"

@@ -26,7 +26,6 @@
 
 #include <map>
 #include <nest_names.h>
-#include <vector>
 
 #include "io_manager.h"
 #include "kernel_manager.h"

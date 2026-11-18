@@ -23,7 +23,6 @@
 #ifndef CM_TREE_H
 #define CM_TREE_H
 
-#include <iterator>
 #include <map>
 #include <string>
 #include <utility>

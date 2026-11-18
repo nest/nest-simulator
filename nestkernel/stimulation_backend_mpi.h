@@ -24,7 +24,6 @@
 #define STIMULATION_BACKEND_MPI_H
 
 #include <cstddef>
-#include <iterator>
 #include <map>
 #include <mpi.h>
 #include <string>

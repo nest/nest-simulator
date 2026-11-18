@@ -24,7 +24,6 @@
 
 #include <assert.h>
 #include <cmath>
-#include <iterator>
 #include <map>
 #include <string>
 #include <utility>

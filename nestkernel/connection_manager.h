@@ -28,7 +28,6 @@
 #include <math.h>
 // C++ includes:
 #include <deque>
-#include <iterator>
 #include <map>
 #include <string>
 #include <utility>

@@ -22,16 +22,13 @@
 
 #include "exceptions.h"
 
+// Generated includes:
+#include "config.h"
+
 // Include MPI for MPI error string
 #ifdef HAVE_MPI
 #include <mpi.h>
 #endif
-
-// C++ includes:
-#include <sstream>
-
-// Generated includes:
-#include "config.h"
 
 // Includes from thirdparty:
 #include "compose.hpp"

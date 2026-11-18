@@ -23,14 +23,27 @@
 #ifndef TSODYKS2_SYNAPSE_H
 #define TSODYKS2_SYNAPSE_H
 
-// C++ includes:
 #include <cmath>
 
+#include <cstddef>
+// C++ includes:
+#include <string>
+
 // Includes from nestkernel:
+#include "common_synapse_properties.h"
 #include "connection.h"
+#include "connector_model.h"
+#include "dictionary.h"
+#include "enum_bitfield.h"
+#include "event.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "nest_types.h"
 
 namespace nest
 {
+class Node;
 
 /* BeginUserDocs: synapse, chemical, functional, stp, Tsodyks
 

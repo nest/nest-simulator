@@ -23,23 +23,18 @@
 #ifndef NODE_H
 #define NODE_H
 
-// C++ includes:
-#include <bitset>
+#include <cassert>
+#include <cstddef>
 #include <deque>
-#include <sstream>
+#include <map>
 #include <string>
-#include <utility>
 #include <vector>
 
-// Includes from nestkernel:
-#include "common_synapse_properties.h"
 #include "deprecation_warning.h"
-#include "event.h"
+#include "dictionary.h"
 #include "histentry.h"
-#include "nest_names.h"
 #include "nest_time.h"
 #include "nest_types.h"
-#include "secondary_event.h"
 
 
 /** @file node.h
@@ -48,10 +43,26 @@
 
 namespace nest
 {
-class Model;
-class ArchivingNode;
+class DataLoggingReply;
 class TimeConverter;
 class WeightOptimizer;
+class Model;
+class SpikeEvent;
+class WeightRecorderEvent;
+class RateEvent;
+class DataLoggingRequest;
+class CurrentEvent;
+class ConductanceEvent;
+class DoubleDataEvent;
+class DSSpikeEvent;
+class DSCurrentEvent;
+class GapJunctionEvent;
+class InstantaneousRateConnectionEvent;
+class DiffusionConnectionEvent;
+class DelayedRateConnectionEvent;
+class LearningSignalConnectionEvent;
+class SICEvent;
+class CommonSynapseProperties;
 
 /**
  * @defgroup user_interface Model developer interface.
@@ -80,19 +91,23 @@ class WeightOptimizer;
  * @ingroup user_interface
  */
 
-/**
- * General properties of all nodes.
- *
- * Parameters:
- * - frozen     (bool)   - Whether the node is updated during simulation
- * - global_id  (int)    - The node ID of the node (cf. local_id)
- * - local      (bool)   - Whether the node is available on the local process
- * - model      (string) - The model type the node was created from
- * - state      (int)    - The state of the node (see elementstates for details)
- * - thread     (int)    - The id of the thread the node is assigned to (valid locally)
- * - vp         (int)    - The id of the virtual process the node is assigned to (valid globally)
- *
- * @see GetStatus, SetStatus
+/** @BeginDocumentation
+
+   Name: Node - General properties of all nodes.
+
+   Parameters:
+   frozen     booltype    - Whether the node is updated during simulation
+   global_id  integertype - The node ID of the node (cf. local_id)
+   local      booltype    - Whether the node is available on the local process
+   model      literaltype - The model type the node was created from
+   state      integertype - The state of the node (see the help on elementstates
+                            for details)
+   thread     integertype - The id of the thread the node is assigned to (valid
+                            locally)
+   vp         integertype - The id of the virtual process the node is assigned
+                            to (valid globally)
+
+   SeeAlso: GetStatus, SetStatus, elementstates
  */
 
 class Node
@@ -168,7 +183,7 @@ public:
    *
    * Returns name of node model (e.g. "iaf_psc_alpha") as string.
    * This name is identical to the name that is used to identify
-   * the model in the NEST model registry.
+   * the model in the interpreter's model dictionary.
    */
   std::string get_name() const;
 
@@ -245,10 +260,7 @@ public:
    * Re-calculate time-based properties of the node.
    * This function is called after a change in resolution.
    */
-  virtual void
-  calibrate_time( const TimeConverter& )
-  {
-  }
+  virtual void calibrate_time( const TimeConverter& );
 
   /**
    * Cleanup node after Run.
@@ -258,10 +270,7 @@ public:
    * SimulationManager::run() returns. Typical use-cases are devices
    * that need to flush buffers.
    */
-  virtual void
-  post_run_cleanup()
-  {
-  }
+  virtual void post_run_cleanup();
 
   /**
    * Finalize node.
@@ -270,10 +279,7 @@ public:
    * full simulation, i.e., a cycle of Prepare, Run, Cleanup. Typical
    * use-cases are devices that need to close files.
    */
-  virtual void
-  finalize()
-  {
-  }
+  virtual void finalize();
 
   /**
    * Advance the state of the node in time through the given interval.
@@ -315,13 +321,14 @@ public:
    * @defgroup status_interface Configuration interface.
    *
    * Functions and infrastructure, responsible for the configuration
-   * of Nodes via the PyNEST API.
+   * of Nodes from the SLI Interpreter level.
    *
-   * Each node can be configured through a named parameter interface.
-   * In order to change parameters, the user can specify name-value pairs
-   * for each parameter. These pairs are stored in a data structure which
-   * is called Dictionary. Likewise, the user can query the configuration
-   * of any node by requesting a dictionary with name-value pairs.
+   * Each node can be configured from the SLI level through a named
+   * parameter interface. In order to change parameters, the user
+   * can specify name value pairs for each parameter. These pairs
+   * are stored in a data structure which is called Dictionary.
+   * Likewise, the user can query the configuration of any node by
+   * requesting a dictionary with name value pairs.
    *
    * The configuration interface consists of four functions which
    * implement storage and retrieval of named parameter sets.
@@ -710,11 +717,7 @@ public:
    * Return 0.0 if not overridden
    * @ingroup SP_functions
    */
-  virtual double
-  get_Ca_minus() const
-  {
-    return 0.0;
-  }
+  virtual double get_Ca_minus() const;
 
   /**
    * Get the number of synaptic element for the current Node at Ca_t which
@@ -723,22 +726,14 @@ public:
    * Return 0.0 if not overridden
    * @ingroup SP_functions
    */
-  virtual double
-  get_synaptic_elements( std::string ) const
-  {
-    return 0.0;
-  }
+  virtual double get_synaptic_elements( std::string ) const;
 
   /**
    * Get the number of vacant synaptic element for the current Node
    * Return 0 if not overridden
    * @ingroup SP_functions
    */
-  virtual int
-  get_synaptic_elements_vacant( std::string ) const
-  {
-    return 0;
-  }
+  virtual int get_synaptic_elements_vacant( std::string ) const;
 
   /**
    * Get the number of connected synaptic element for the current Node
@@ -746,11 +741,7 @@ public:
    * Return 0 if not overridden
    * @ingroup SP_functions
    */
-  virtual int
-  get_synaptic_elements_connected( std::string ) const
-  {
-    return 0;
-  }
+  virtual int get_synaptic_elements_connected( std::string ) const;
 
   /**
    * Get the number of all synaptic elements for the current Node at time t
@@ -758,11 +749,7 @@ public:
    * Return an empty map if not overridden
    * @ingroup SP_functions
    */
-  virtual std::map< std::string, double >
-  get_synaptic_elements() const
-  {
-    return std::map< std::string, double >();
-  }
+  virtual std::map< std::string, double > get_synaptic_elements() const;
 
   /**
    * Triggers the update of all SynapticElements
@@ -959,23 +946,14 @@ public:
    * used in check_connection to only connect neurons which send / receive
    * compatible information
    */
-  virtual SignalType
-  sends_signal() const
-  {
-    return SPIKE;
-  }
+  virtual SignalType sends_signal() const;
 
   /**
    * @returns type of signal this node consumes
    * used in check_connection to only connect neurons which send / receive
    * compatible information
    */
-  virtual SignalType
-  receives_signal() const
-  {
-    return SPIKE;
-  }
-
+  virtual SignalType receives_signal() const;
 
   /**
    *  Return a dictionary with the node's properties.
@@ -1081,11 +1059,7 @@ protected:
   Model& get_model_() const;
 
   //! Mark node as frozen.
-  void
-  set_frozen_( bool frozen )
-  {
-    frozen_ = frozen;
-  }
+  void set_frozen_( bool frozen );
 
   /**
    * Auxiliary function to downcast a Node to a concrete class derived from
@@ -1136,44 +1110,53 @@ private:
   size_t tmp_nc_index_;
 };
 
-inline bool
-Node::is_frozen() const
+template < typename ConcreteNode >
+const ConcreteNode&
+Node::downcast( const Node& n )
 {
-  return frozen_;
+  ConcreteNode const* tp = dynamic_cast< ConcreteNode const* >( &n );
+  assert( tp != 0 );
+  return *tp;
+}
+
+inline size_t
+Node::get_thread_lid() const
+{
+  return thread_lid_;
+}
+
+inline size_t
+Node::get_vp() const
+{
+  return vp_;
+}
+
+inline size_t
+Node::get_thread() const
+{
+  return thread_;
 }
 
 inline bool
-Node::node_uses_wfr() const
+Node::is_model_prototype() const
 {
-  return node_uses_wfr_;
+  return vp_ == invalid_thread;
+}
+
+inline int
+Node::get_model_id() const
+{
+  return model_id_;
+}
+
+inline size_t
+Node::get_node_id() const
+{
+  return node_id_;
 }
 
 inline bool
-Node::supports_urbanczik_archiving() const
-{
-  return false;
-}
-
-inline void
-Node::set_node_uses_wfr( const bool uwfr )
-{
-  node_uses_wfr_ = uwfr;
-}
-
-inline bool
-Node::has_proxies() const
-{
-  return true;
-}
-
-inline bool
-Node::local_receiver() const
-{
-  return false;
-}
-
-inline bool
-Node::one_node_per_process() const
+Node::is_proxy() const
 {
   return false;
 }
@@ -1185,111 +1168,40 @@ Node::is_off_grid() const
 }
 
 inline bool
-Node::is_proxy() const
+Node::one_node_per_process() const
 {
   return false;
 }
 
-inline std::string
-Node::get_element_type() const
+inline bool
+Node::local_receiver() const
 {
-  return names::neuron;
-}
-
-inline size_t
-Node::get_node_id() const
-{
-  return node_id_;
-}
-
-
-inline void
-Node::set_node_id_( size_t i )
-{
-  node_id_ = i;
-}
-
-
-inline int
-Node::get_model_id() const
-{
-  return model_id_;
-}
-
-inline void
-Node::set_model_id( int i )
-{
-  model_id_ = i;
+  return false;
 }
 
 inline bool
-Node::is_model_prototype() const
+Node::has_proxies() const
 {
-  return vp_ == invalid_thread;
+  return true;
 }
 
-inline void
-Node::set_thread( size_t t )
+inline bool
+Node::supports_urbanczik_archiving() const
 {
-  thread_ = t;
+  return false;
 }
 
-inline size_t
-Node::get_thread() const
+inline bool
+Node::node_uses_wfr() const
 {
-  return thread_;
+  return node_uses_wfr_;
 }
 
-inline void
-Node::set_vp( size_t vp )
+inline bool
+Node::is_frozen() const
 {
-  vp_ = vp;
+  return frozen_;
 }
-
-inline size_t
-Node::get_vp() const
-{
-  return vp_;
-}
-
-template < typename ConcreteNode >
-const ConcreteNode&
-Node::downcast( const Node& n )
-{
-  ConcreteNode const* tp = dynamic_cast< ConcreteNode const* >( &n );
-  assert( tp != 0 );
-  return *tp;
-}
-
-inline void
-Node::set_thread_lid( const size_t tlid )
-{
-  thread_lid_ = tlid;
-}
-
-inline size_t
-Node::get_thread_lid() const
-{
-  return thread_lid_;
-}
-
-inline void
-Node::set_tmp_nc_index( size_t index )
-{
-  tmp_nc_index_ = index;
-}
-
-inline size_t
-Node::get_tmp_nc_index()
-{
-  assert( tmp_nc_index_ != invalid_index );
-
-  const auto index = tmp_nc_index_;
-  tmp_nc_index_ = invalid_index;
-
-  return index;
-}
-
 
 }  // namespace
 

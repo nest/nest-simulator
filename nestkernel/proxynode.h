@@ -23,13 +23,14 @@
 #ifndef PROXYNODE_H
 #define PROXYNODE_H
 
-// Includes from nestkernel:
+#include <assert.h>
+#include <cstddef>
+
+#include "nest_types.h"
 #include "node.h"
 
 namespace nest
 {
-class SpikeEvent;
-class CurrentEvent;
 
 /**
  * @brief Proxy to provide Nodes on remote machines.
@@ -132,12 +133,6 @@ private:
   {
   }
 };
-
-inline bool
-proxynode::is_proxy() const
-{
-  return true;
-}
 
 }  // namespace
 

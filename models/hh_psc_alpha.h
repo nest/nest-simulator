@@ -23,25 +23,29 @@
 #ifndef HH_PSC_ALPHA_H
 #define HH_PSC_ALPHA_H
 
+#include <cstddef>
+#include <map>
+#include <string>
+
 // Generated includes:
 #include "config.h"
+#include "dictionary.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "node.h"
+#include "universal_data_logger.h"
 
 #ifdef HAVE_GSL
 
-// External includes:
-#include <gsl/gsl_errno.h>
-#include <gsl/gsl_matrix.h>
 #include <gsl/gsl_odeiv.h>
-#include <gsl/gsl_sf_exp.h>
 
 // Includes from nestkernel:
 #include "archiving_node.h"
-#include "connection.h"
 #include "event.h"
 #include "nest_types.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {

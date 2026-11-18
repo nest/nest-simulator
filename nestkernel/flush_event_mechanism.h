@@ -23,14 +23,13 @@
 #ifndef FLUSH_EVENT_MECHANISM_H
 #define FLUSH_EVENT_MECHANISM_H
 
-// nestkernel
-#include "nest_time.h"
 
-// libnestutil
-#include "dict_util.h"
+class Dictionary;
 
 namespace nest
 {
+class Node;
+
 /**
  * @brief Class implementing a flush event mechanism for neuron models.
  *

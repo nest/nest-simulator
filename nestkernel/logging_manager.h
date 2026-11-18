@@ -23,18 +23,14 @@
 #ifndef LOGGING_MANAGER_H
 #define LOGGING_MANAGER_H
 
-// C++ includes:
 #include <string>
+
+#include <cstddef>
+// C++ includes:
 #include <vector>
 
-// Includes from libnestutil:
-#include "dictionary.h"
 #include "logging.h"
 #include "manager_interface.h"
-
-
-// Inclused from nestkernel:
-#include "nest_names.h"
 
 namespace nest
 {

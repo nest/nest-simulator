@@ -22,15 +22,19 @@
 
 #include "ignore_and_spike_mechanism.h"
 
+#include <string>
+
 // nestkernel
 #include "exceptions.h"
 #include "nest_names.h"
-
 // libnestutil
 #include "dict_util.h"
+#include "dictionary.h"
+#include "nest_time.h"
 
 namespace nest
 {
+class Node;
 
 IgnoreAndSpikeMechanism::IgnoreAndSpikeMechanism()
   : ignore_and_spike_( false )

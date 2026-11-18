@@ -23,22 +23,22 @@
 #ifndef EXCEPTIONS_H
 #define EXCEPTIONS_H
 
-#include <exception>
-
+#include <cstddef>
 // C++ includes:
 #include <sstream>
+#include <stdexcept>
+#include <string>
+#include <utility>
 
 // Includes from nestkernel:
 #include "nest_time.h"
-
 // Includes from thirdparty:
-#include "compose.hpp"
+#include "compose.hpp"  // IWYU pragma: export
+#include "config.h"
 
 
 namespace nest
 {
-
-class Event;
 
 /**
  * @addtogroup Exceptions Exception classes

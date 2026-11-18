@@ -23,15 +23,15 @@
 #ifndef MODELRANGEMANAGER_H
 #define MODELRANGEMANAGER_H
 
-// C++ includes:
 #include <vector>
+
+#include <cstddef>
+// C++ includes:
 
 // Includes from libnestutil:
 #include "manager_interface.h"
-
 // Includes from nestkernel:
 #include "modelrange.h"
-#include "nest_types.h"
 
 namespace nest
 {
@@ -86,33 +86,6 @@ private:
   size_t last_node_id_;
 };
 
-inline void
-ModelRangeManager::set_status( const Dictionary& )
-{
-}
-
-inline void
-ModelRangeManager::get_status( Dictionary& )
-{
-}
-
-inline bool
-ModelRangeManager::is_in_range( size_t node_id ) const
-{
-  return ( node_id > 0 and node_id <= last_node_id_ and node_id >= first_node_id_ );
-}
-
-inline std::vector< modelrange >::const_iterator
-ModelRangeManager::begin() const
-{
-  return modelranges_.begin();
-}
-
-inline std::vector< modelrange >::const_iterator
-ModelRangeManager::end() const
-{
-  return modelranges_.end();
-}
 
 }  // namespace nest end
 

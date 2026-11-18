@@ -23,15 +23,22 @@
 #ifndef EPROP_IAF_ADAPT_H
 #define EPROP_IAF_ADAPT_H
 
-// nestkernel
-#include "connection.h"
-#include "eprop_archiving_node_impl.h"
+#include <cstddef>
+#include <map>
+#include <string>
+
+#include "dictionary.h"
 #include "eprop_archiving_node_recurrent.h"
-#include "eprop_synapse.h"
+#include "eprop_archiving_node_recurrent_impl.h"
 #include "event.h"
+#include "exceptions.h"
+#include "nest_names.h"
 #include "nest_types.h"
+#include "node.h"
+#include "recordables_map.h"
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {

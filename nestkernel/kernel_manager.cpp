@@ -21,22 +21,88 @@
  */
 
 #include "kernel_manager.h"
-#include "stopwatch_impl.h"
 
-// C++ includes:
-#include <fstream>
-#include <sstream>
+#include <assert.h>
+#include <new>
+#include <stdexcept>
+#include <stdlib.h>
 
-#ifdef __APPLE__
-// C includes:
-#include <mach/mach.h>
-#endif
-
+// Include concrete manager headers only in the implementation.
+#include "compose.hpp"
+#include "config.h"
+#include "connection_manager.h"
+#include "event_delivery_manager.h"
+#include "io_manager.h"
+#include "logging_manager.h"
+#include "model_manager.h"
+#include "modelrange_manager.h"
+#include "module_manager.h"
+#include "mpi_manager.h"
+#include "music_manager.h"
+#include "node_manager.h"
+#include "random_manager.h"
+#include "simulation_manager.h"
+#include "sp_manager.h"
+#include "vp_manager.h"
 
 namespace nest
 {
-KernelManager* KernelManager::kernel_manager_instance_ = nullptr;
 
+namespace
+{
+
+bool managers_created_ = false;
+
+/**
+ * Construct manager `T` in its storage.
+ *
+ * Placement new starts the lifetime of the manager object inside the union kernel::manager_storage< T >, after
+ * which kernel::manager< T > refers to a valid object. See the description in kernel_manager.h.
+ */
+template < class T >
+void
+construct_manager()
+{
+  ::new ( static_cast< void* >( &kernel::manager_storage< T >.object ) ) T();
+}
+
+}  // namespace
+
+void
+kernel::create_managers()
+{
+  if ( managers_created_ )
+  {
+    return;
+  }
+
+  // Construction order: a manager's constructor may only use managers constructed before it. Keep this order
+  // identical to KernelManager::managers, which determines the order of initialize() and finalize().
+  // KernelManager comes last; its constructor only stores the addresses of the other managers.
+  construct_manager< LoggingManager >();
+  construct_manager< MPIManager >();
+  construct_manager< VPManager >();
+  construct_manager< ModuleManager >();
+  construct_manager< RandomManager >();
+  construct_manager< SimulationManager >();
+  construct_manager< ModelRangeManager >();
+  construct_manager< ConnectionManager >();
+  construct_manager< SPManager >();
+  construct_manager< EventDeliveryManager >();
+  construct_manager< IOManager >();
+  construct_manager< ModelManager >();
+  construct_manager< MUSICManager >();
+  construct_manager< NodeManager >();
+  construct_manager< KernelManager >();
+
+  managers_created_ = true;
+}
+
+bool
+kernel::managers_created()
+{
+  return managers_created_;
+}
 
 Dictionary
 KernelManager::get_build_info_()
@@ -146,50 +212,22 @@ KernelManager::get_build_info_()
   return build_info;
 }
 
-void
-KernelManager::create_kernel_manager()
-{
-#pragma omp master
-  {
-    if ( not kernel_manager_instance_ )
-    {
-      kernel_manager_instance_ = new KernelManager();
-      assert( kernel_manager_instance_ );
-    }
-  }
-#pragma omp barrier
-}
-
 KernelManager::KernelManager()
   : fingerprint_( 0 )
-  , logging_manager()
-  , mpi_manager()
-  , vp_manager()
-  , module_manager()
-  , random_manager()
-  , simulation_manager()
-  , modelrange_manager()
-  , connection_manager()
-  , sp_manager()
-  , event_delivery_manager()
-  , io_manager()
-  , model_manager()
-  , music_manager()
-  , node_manager()
-  , managers( { &logging_manager,
-      &mpi_manager,
-      &vp_manager,
-      &module_manager,
-      &random_manager,
-      &simulation_manager,
-      &modelrange_manager,
-      &connection_manager,
-      &sp_manager,
-      &event_delivery_manager,
-      &io_manager,
-      &model_manager,
-      &music_manager,
-      &node_manager } )
+  , managers( { &kernel::manager< LoggingManager >,
+      &kernel::manager< MPIManager >,
+      &kernel::manager< VPManager >,
+      &kernel::manager< ModuleManager >,
+      &kernel::manager< RandomManager >,
+      &kernel::manager< SimulationManager >,
+      &kernel::manager< ModelRangeManager >,
+      &kernel::manager< ConnectionManager >,
+      &kernel::manager< SPManager >,
+      &kernel::manager< EventDeliveryManager >,
+      &kernel::manager< IOManager >,
+      &kernel::manager< ModelManager >,
+      &kernel::manager< MUSICManager >,
+      &kernel::manager< NodeManager > } )
   , initialized_( false )
 {
 }
@@ -199,52 +237,51 @@ KernelManager::~KernelManager()
 }
 
 void
-KernelManager::initialize()
+KernelManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
+  assert( not adjust_number_of_threads_or_rng_only );
+  assert( kernel::managers_created() );
+
   for ( auto& manager : managers )
   {
     manager->initialize( /* adjust_number_of_threads_or_rng_only */ false );
   }
 
-  sw_omp_synchronization_construction_.reset();
-  sw_omp_synchronization_simulation_.reset();
-  sw_mpi_synchronization_.reset();
-
   ++fingerprint_;
   initialized_ = true;
-  FULL_LOGGING_ONLY( dump_.open(
-    String::compose( "dump_%1_%2.log", mpi_manager.get_num_processes(), mpi_manager.get_rank() ).c_str() ); )
+  FULL_LOGGING_ONLY( dump_.open( String::compose(
+    "dump_%1_%2.log", kernel::manager< MPIManager >.get_num_processes(), kernel::manager< MPIManager >.get_rank() )
+      .c_str() ); )
 }
 
 void
 KernelManager::prepare()
 {
-  for ( auto& manager : managers )
+  for ( auto manager : managers )
   {
     manager->prepare();
   }
-
-  sw_omp_synchronization_simulation_.reset();
-  sw_mpi_synchronization_.reset();
 }
 
 void
 KernelManager::cleanup()
 {
-  for ( auto&& m_it = managers.rbegin(); m_it != managers.rend(); ++m_it )
+  for ( auto it = managers.rbegin(); it != managers.rend(); ++it )
   {
-    ( *m_it )->cleanup();
+    ( *it )->cleanup();
   }
 }
 
 void
-KernelManager::finalize()
+KernelManager::finalize( const bool adjust_number_of_threads_or_rng_only )
 {
+  assert( not adjust_number_of_threads_or_rng_only );
+
   FULL_LOGGING_ONLY( dump_.close(); )
 
-  for ( auto&& m_it = managers.rbegin(); m_it != managers.rend(); ++m_it )
+  for ( auto it = managers.rbegin(); it != managers.rend(); ++it )
   {
-    ( *m_it )->finalize( /* adjust_number_of_threads_or_rng_only */ false );
+    ( *it )->finalize( /* adjust_number_of_threads_or_rng_only */ false );
   }
   initialized_ = false;
 }
@@ -261,18 +298,18 @@ KernelManager::change_number_of_threads( size_t new_num_threads )
 {
   // Inputs are checked in VPManager::set_status().
   // Just double check here that all values are legal.
-  assert( node_manager.size() == 0 );
-  assert( not connection_manager.get_user_set_delay_extrema() );
-  assert( not simulation_manager.has_been_simulated() );
-  assert( not sp_manager.is_structural_plasticity_enabled() or new_num_threads == 1 );
+  assert( kernel::manager< NodeManager >.size() == 0 );
+  assert( not kernel::manager< ConnectionManager >.get_user_set_delay_extrema() );
+  assert( not kernel::manager< SimulationManager >.has_been_simulated() );
+  assert( not kernel::manager< SPManager >.is_structural_plasticity_enabled() or new_num_threads == 1 );
 
   // Finalize in reverse order of initialization with old thread number set
-  for ( auto mgr_it = managers.rbegin(); mgr_it != managers.rend(); ++mgr_it )
+  for ( auto it = managers.rbegin(); it != managers.rend(); ++it )
   {
-    ( *mgr_it )->finalize( /* adjust_number_of_threads_or_rng_only */ true );
+    ( *it )->finalize( /* adjust_number_of_threads_or_rng_only */ true );
   }
 
-  vp_manager.set_num_threads( new_num_threads );
+  kernel::manager< VPManager >.set_num_threads( new_num_threads );
 
   // Initialize in original order with new number of threads set
   for ( auto& manager : managers )
@@ -283,17 +320,13 @@ KernelManager::change_number_of_threads( size_t new_num_threads )
   // Finalizing deleted all register components. Now that all infrastructure
   // is in place again, we can tell modules to re-register the components
   // they provide.
-  module_manager.reinitialize_dynamic_modules();
+  kernel::manager< ModuleManager >.reinitialize_dynamic_modules();
 
   // Prepare timers and set the number of threads for multi-threaded timers
-  kernel().simulation_manager.reset_timers_for_preparation();
-  kernel().simulation_manager.reset_timers_for_dynamics();
-  kernel().event_delivery_manager.reset_timers_for_preparation();
-  kernel().event_delivery_manager.reset_timers_for_dynamics();
-
-  sw_omp_synchronization_construction_.reset();
-  sw_omp_synchronization_simulation_.reset();
-  sw_mpi_synchronization_.reset();
+  kernel::manager< SimulationManager >.reset_timers_for_preparation();
+  kernel::manager< SimulationManager >.reset_timers_for_dynamics();
+  kernel::manager< EventDeliveryManager >.reset_timers_for_preparation();
+  kernel::manager< EventDeliveryManager >.reset_timers_for_dynamics();
 }
 
 void
@@ -331,12 +364,6 @@ KernelManager::get_status( Dictionary& dict )
     // Not available for this OS.
     dict[ "memory_size" ] = -1;
   }
-
-  sw_omp_synchronization_construction_.get_status(
-    dict, names::time_omp_synchronization_construction, names::time_omp_synchronization_construction_cpu );
-  sw_omp_synchronization_simulation_.get_status(
-    dict, names::time_omp_synchronization_simulation, names::time_omp_synchronization_simulation_cpu );
-  sw_mpi_synchronization_.get_status( dict, names::time_mpi_synchronization, names::time_mpi_synchronization_cpu );
 }
 
 void
@@ -349,7 +376,22 @@ KernelManager::write_to_dump( const std::string& msg )
   }
 }
 
+bool
+KernelManager::is_initialized() const
+{
+  return initialized_;
+}
+
+unsigned long
+KernelManager::get_fingerprint() const
+{
+  return fingerprint_;
+}
+
 #ifdef __linux__
+
+#include <fstream>
+#include <sstream>
 
 size_t
 KernelManager::get_memsize_linux_() const
@@ -397,6 +439,8 @@ KernelManager::get_memsize_linux_() const
 
 
 #if defined __APPLE__
+
+#include <mach/mach.h>
 
 size_t
 KernelManager::get_memsize_darwin_() const

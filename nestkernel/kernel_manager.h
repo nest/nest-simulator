@@ -23,27 +23,16 @@
 #ifndef KERNEL_MANAGER_H
 #define KERNEL_MANAGER_H
 
-// Includes from libnestutil
-#include "config.h"
-
-// Includes from nestkernel:
-#include "connection_manager.h"
-#include "event_delivery_manager.h"
-#include "io_manager.h"
-#include "logging_manager.h"
-#include "model_manager.h"
-#include "modelrange_manager.h"
-#include "module_manager.h"
-#include "mpi_manager.h"
-#include "music_manager.h"
-#include "node_manager.h"
-#include "random_manager.h"
-#include "simulation_manager.h"
-#include "sp_manager.h"
-#include "vp_manager.h"
-
-#include "compose.hpp"
 #include <fstream>
+
+#include <cstddef>
+#include <string>
+#include <vector>
+
+#include "dictionary.h"
+#include "manager_interface.h"
+#include "random_generators.h"
+#include "random_manager.h"
 
 /**
  * Wrap debugging output code for easy enabling/disabling via -Dwith-full-logging=ON/OFF.
@@ -56,6 +45,19 @@
 
 namespace nest
 {
+class ConnectionManager;
+class EventDeliveryManager;
+class IOManager;
+class LoggingManager;
+class MPIManager;
+class MUSICManager;
+class ModelManager;
+class ModelRangeManager;
+class ModuleManager;
+class NodeManager;
+class SPManager;
+class SimulationManager;
+class VPManager;
 
 /**
  * @brief Global properties of the simulation kernel.
@@ -144,15 +146,9 @@ namespace nest
  *
  * @see Simulate, Node
  */
-class KernelManager
+class KernelManager : public ManagerInterface
 {
-private:
-  KernelManager();
-  ~KernelManager();
-
   unsigned long fingerprint_;
-
-  static KernelManager* kernel_manager_instance_;
 
   KernelManager( KernelManager const& );   // do not implement
   void operator=( KernelManager const& );  // do not implement
@@ -160,11 +156,8 @@ private:
   Dictionary get_build_info_();
 
 public:
-  /**
-   * Create/destroy and access the KernelManager singleton.
-   */
-  static void create_kernel_manager();
-  static KernelManager& get_kernel_manager();
+  KernelManager();
+  ~KernelManager() override;
 
   /**
    * Prepare kernel for operation.
@@ -174,7 +167,7 @@ public:
    *
    * @see finalize(), reset()
    */
-  void initialize();
+  void initialize( const bool adjust_number_of_threads_or_rng_only = false ) override;
 
   /**
    * Take down kernel after operation.
@@ -184,7 +177,7 @@ public:
    *
    * @see initialize(), reset()
    */
-  void finalize();
+  void finalize( const bool adjust_number_of_threads_or_rng_only = false ) override;
 
   /**
    * Reset kernel.
@@ -198,16 +191,15 @@ public:
   /**
    * Change number of threads.
    *
-   * Set the new number of threads on all managers by calling
-   * change_number_of_threads() on each of them.
+   * Set the new number of threads on all managers by calling change_number_of_threads() on each of them.
    */
   void change_number_of_threads( size_t new_num_threads );
 
-  void set_status( const Dictionary& );
-  void get_status( Dictionary& );
+  void set_status( const Dictionary& ) override;
+  void get_status( Dictionary& ) override;
 
-  void prepare();
-  void cleanup();
+  void prepare() override;
+  void cleanup() override;
 
   //! Returns true if kernel is initialized
   bool is_initialized() const;
@@ -221,108 +213,124 @@ public:
    */
   void write_to_dump( const std::string& msg );
 
-  /**
-   * \defgroup Manager components in NEST kernel
-   *
-   * The managers are defined below in the order in which they need to be initialized.
-   *
-   * NodeManager is last to ensure all model structures are in place before it is initialized.
-   * @{
-   */
-  LoggingManager logging_manager;
-  MPIManager mpi_manager;
-  VPManager vp_manager;
-  ModuleManager module_manager;
-  RandomManager random_manager;
-  SimulationManager simulation_manager;
-  ModelRangeManager modelrange_manager;
-  ConnectionManager connection_manager;
-  SPManager sp_manager;
-  EventDeliveryManager event_delivery_manager;
-  IOManager io_manager;
-  ModelManager model_manager;
-  MUSICManager music_manager;
-  NodeManager node_manager;
-  /**@}*/
-
-  //! Get the stopwatch to measure the time each thread is idle during network construction.
-  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded >&
-  get_omp_synchronization_construction_stopwatch()
-  {
-    return sw_omp_synchronization_construction_;
-  }
-
-  //! Get the stopwatch to measure the time each thread is idle during simulation.
-  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded >&
-  get_omp_synchronization_simulation_stopwatch()
-  {
-    return sw_omp_synchronization_simulation_;
-  }
-
-  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly >&
-  get_mpi_synchronization_stopwatch()
-  {
-    return sw_mpi_synchronization_;
-  }
-
 private:
   size_t get_memsize_linux_() const;   //!< return VmSize in kB
   size_t get_memsize_darwin_() const;  //!< return resident_size in kB
 
-  //! All managers, order determines initialization and finalization order (latter backwards)
+  /**
+   * All managers; order determines initialization and finalization order (latter backwards).
+   *
+   * Must list the managers in the same order as kernel::create_managers() constructs them.
+   */
   std::vector< ManagerInterface* > managers;
 
   bool initialized_;    //!< true if the kernel is initialized
   std::ofstream dump_;  //!< for FULL_LOGGING output
-
-  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_omp_synchronization_construction_;
-  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::Threaded > sw_omp_synchronization_simulation_;
-  Stopwatch< StopwatchGranularity::Detailed, StopwatchParallelism::MasterOnly > sw_mpi_synchronization_;
 };
 
-KernelManager& kernel();
+/**
+ * Global access to the managers and their lifetime.
+ *
+ * All managers, including the KernelManager itself, are accessed as `kernel::manager< XManager >`, e.g.,
+ * `kernel::manager< VPManager >.get_thread_id()`. This header only forward-declares the manager classes, so a
+ * file using a manager must include that manager's header (see the include guidelines in the developer docs).
+ *
+ * Why managers are constructed explicitly
+ * ---------------------------------------
+ * A plain `template < class T > inline T manager;` would construct each manager during dynamic initialization
+ * of the program. For implicitly instantiated variable templates, the C++ standard leaves the order of this
+ * initialization *unspecified*, across and even within translation units ([basic.start.dynamic]). Destruction
+ * at program exit happens in reverse order of construction, so it is unspecified as well. Since managers use
+ * each other in their constructors and destructors (e.g., ModuleManager logs via LoggingManager), this can lead
+ * to use before construction or after destruction; double frees at exit were observed with some compilers.
+ * Taking the managers' addresses in a particular order (as in KernelManager::managers) does not change their
+ * construction order.
+ *
+ * How it works
+ * ------------
+ * 1. `manager_storage< T >` reserves correctly sized and aligned memory for one manager `T`. It is a union whose
+ *    constructor only initializes the dummy member `unused_`, so the manager inside is *not* constructed. The
+ *    constructor is `constexpr` and the variable `constinit`, so the storage is set up at compile time and
+ *    takes no part in the unspecified dynamic initialization.
+ * 2. `manager< T >` is a reference to the manager object inside that storage. It is bound at compile/link time
+ *    (also `constinit`), so `kernel::manager< T >.f()` compiles to a direct access to a fixed address, without
+ *    any additional pointer indirection.
+ * 3. create_managers() constructs all managers in the storage with placement new, one after the other, in a
+ *    fixed order (see kernel_manager.cpp). It is called at the very beginning of init_nest(). Before that call,
+ *    the storage contains no valid objects and no manager must be used.
+ * 4. Managers are never destroyed: the destructor of the storage is intentionally empty, so the managers'
+ *    destructors do not run at program exit. This matches the behavior before managers became global
+ *    variables, when the KernelManager singleton was allocated with `new` and never deleted. Releasing
+ *    resources therefore belongs into the managers' finalize() methods, not into their destructors.
+ *
+ * Rules for manager code
+ * ----------------------
+ * - A manager constructor may only use managers that are constructed before it in create_managers().
+ * - Do not rely on a manager destructor being called.
+ * - When adding a new manager, add it to create_managers() and to KernelManager::managers, in the same position.
+ */
+namespace kernel
+{
+
+/**
+ * Storage for a single manager object, see the description above.
+ *
+ * The union reserves memory for a `T` without constructing it. The empty destructor keeps the manager alive
+ * until the program ends.
+ */
+template < class T >
+union ManagerStorage
+{
+  constexpr
+  ManagerStorage() noexcept : unused_()
+  {
+  }
+
+  // Intentionally empty: managers are never destroyed, see the description above.
+  ~ManagerStorage()
+  {
+  }
+
+  char unused_;  //!< Dummy member that is initialized instead of the manager object
+  T object;      //!< The manager, constructed explicitly by create_managers()
+};
+
+//! Storage for manager `T`, set up at compile time.
+template < class T >
+constinit inline ManagerStorage< T > manager_storage {};
+
+//! Access to manager `T`. Only valid after create_managers() has been called.
+template < class T >
+constinit inline T& manager = manager_storage< T >.object;
+
+/**
+ * Construct all managers in a fixed order.
+ *
+ * Must be called before any manager is used; init_nest() does this. Calling it more than once has no effect.
+ */
+void create_managers();
+
+//! Returns true if create_managers() has been called.
+bool managers_created();
+
+}  // namespace kernel
 
 inline RngPtr
 get_rank_synced_rng()
 {
-  return kernel().random_manager.get_rank_synced_rng();
+  return kernel::manager< RandomManager >.get_rank_synced_rng();
 }
 
 inline RngPtr
 get_vp_synced_rng( size_t tid )
 {
-  return kernel().random_manager.get_vp_synced_rng( tid );
+  return kernel::manager< RandomManager >.get_vp_synced_rng( tid );
 }
 
 inline RngPtr
 get_vp_specific_rng( size_t tid )
 {
-  return kernel().random_manager.get_vp_specific_rng( tid );
-}
-
-inline KernelManager&
-KernelManager::get_kernel_manager()
-{
-  assert( kernel_manager_instance_ );
-  return *kernel_manager_instance_;
-}
-
-inline KernelManager&
-kernel()
-{
-  return KernelManager::get_kernel_manager();
-}
-
-inline bool
-KernelManager::is_initialized() const
-{
-  return initialized_;
-}
-
-inline unsigned long
-KernelManager::get_fingerprint() const
-{
-  return fingerprint_;
+  return kernel::manager< RandomManager >.get_vp_specific_rng( tid );
 }
 
 }  // namespace nest

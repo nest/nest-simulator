@@ -23,8 +23,16 @@
 #ifndef RECORDING_BACKEND_SCREEN_H
 #define RECORDING_BACKEND_SCREEN_H
 
+#include <ios>
+
+#include <cstddef>
+#include <map>
+#include <string>
+#include <vector>
+
 #include "recording_backend.h"
-#include <set>
+
+class Dictionary;
 
 /* BeginUserDocs: NOINDEX
 
@@ -75,6 +83,7 @@ EndUserDocs */
 
 namespace nest
 {
+class Event;
 
 /**
  * A simple recording backend implementation that prints all recorded data to

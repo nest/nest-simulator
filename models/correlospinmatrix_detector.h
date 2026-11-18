@@ -24,16 +24,21 @@
 #define CORRELOSPINMATRIX_DETECTOR_H
 
 
-// C++ includes:
 #include <deque>
+
+#include <cstddef>
+// C++ includes:
+#include <string>
 #include <vector>
 
-// Includes from nestkernel:
-#include "event.h"
-#include "nest_timeconverter.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
 #include "pseudo_recording_device.h"
+
+class Dictionary;
 
 
 namespace nest
@@ -218,7 +223,6 @@ private:
 
   // ------------------------------------------------------------
 
-  struct State_;
 
   struct Parameters_
   {

@@ -22,12 +22,13 @@
 
 #include "logging_event.h"
 
-#include "kernel_manager.h"
+#include <cassert>
+#include <iomanip>
+#include <ostream>
 
 // C++ includes:
-#include <cassert>
-#include <ctime>
-#include <iomanip>
+#include "kernel_manager.h"
+#include "logging_manager.h"
 
 nest::LoggingEvent::LoggingEvent( const VerbosityLevel s,
   const std::string& fctn,
@@ -49,7 +50,7 @@ nest::LoggingEvent::LoggingEvent( const VerbosityLevel s,
 nest::VerbosityLevel
 nest::LoggingEvent::nest_verbosity_level() const
 {
-  return kernel().logging_manager.verbosity();
+  return kernel::manager< LoggingManager >.verbosity();
 }
 namespace nest
 {

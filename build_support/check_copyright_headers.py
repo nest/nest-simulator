@@ -22,7 +22,7 @@
 
 """Script to check if all files have a proper copyright header.
 
-This script checks the copyright headers of all C/C++/SLI/Python files
+This script checks the copyright headers of all C/C++/Python files
 in the source code against the corresponding templates defined in
 "doc/copyright_header.*". It uses the variable NEST_SOURCES to
 determine the source directory to check.

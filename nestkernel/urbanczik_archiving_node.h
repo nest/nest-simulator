@@ -30,8 +30,6 @@
 #include "archiving_node.h"
 #include "histentry.h"
 #include "nest_time.h"
-#include "nest_types.h"
-#include "synaptic_element.h"
 
 
 namespace nest
@@ -105,41 +103,6 @@ protected:
 private:
   std::deque< histentry_extended > urbanczik_history_[ urbanczik_parameters::NCOMP - 1 ];
 };
-
-template < class urbanczik_parameters >
-inline double
-UrbanczikArchivingNode< urbanczik_parameters >::get_C_m( int comp )
-{
-  return urbanczik_params->C_m[ comp ];
-}
-
-template < class urbanczik_parameters >
-inline double
-UrbanczikArchivingNode< urbanczik_parameters >::get_g_L( int comp )
-{
-  return urbanczik_params->g_L[ comp ];
-}
-
-template < class urbanczik_parameters >
-inline double
-UrbanczikArchivingNode< urbanczik_parameters >::get_tau_L( int comp )
-{
-  return urbanczik_params->C_m[ comp ] / urbanczik_params->g_L[ comp ];
-}
-
-template < class urbanczik_parameters >
-inline double
-UrbanczikArchivingNode< urbanczik_parameters >::get_tau_syn_ex( int comp )
-{
-  return urbanczik_params->tau_syn_ex[ comp ];
-}
-
-template < class urbanczik_parameters >
-inline double
-UrbanczikArchivingNode< urbanczik_parameters >::get_tau_syn_in( int comp )
-{
-  return urbanczik_params->tau_syn_in[ comp ];
-}
 
 }  // namespace nest
 

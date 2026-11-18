@@ -22,22 +22,26 @@
 
 #include "iaf_cond_exp.h"
 
+#include <algorithm>
+#include <assert.h>
+
+#include "event_delivery_manager.h"
+#include "nest_time.h"
+#include "simulation_manager.h"
+
 #ifdef HAVE_GSL
 
-// C++ includes:
-#include <cstdio>
-#include <iostream>
+// Includes from GSL:
+#include <gsl/gsl_errno.h>
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
-
 // Includes from nestkernel:
 #include "event.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
-#include "universal_data_logger_impl.h"
 
 
 namespace nest
@@ -54,8 +58,7 @@ register_iaf_cond_exp( const std::string& name )
   register_node_model< iaf_cond_exp >( name );
 }
 
-// Override the create() method with one call to RecordablesMap::insert_()
-// for each quantity to be recorded.
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< iaf_cond_exp >::create()
@@ -350,7 +353,6 @@ iaf_cond_exp::update( Time const& origin, const long from, const long to )
 {
   for ( long lag = from; lag < to; ++lag )
   {
-
     double t = 0.0;
 
     // numerical integration with adaptive step size control:
@@ -400,7 +402,7 @@ iaf_cond_exp::update( Time const& origin, const long from, const long to )
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
         SpikeEvent se;
-        kernel().event_delivery_manager.send( *this, se, lag );
+        kernel::manager< EventDeliveryManager >.send( *this, se, lag );
       }
 
     // set new input current
@@ -418,12 +420,12 @@ iaf_cond_exp::handle( SpikeEvent& e )
 
   if ( e.get_weight() > 0.0 )
   {
-    B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
   else
   {
-    B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_inh_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() );
   }
 }
@@ -436,7 +438,7 @@ iaf_cond_exp::handle( CurrentEvent& e )
   const double c = e.get_current();
   const double w = e.get_weight();
 
-  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ), w * c );
 }
 
 void

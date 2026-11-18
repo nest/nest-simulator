@@ -616,3 +616,96 @@ function( NEST_PROCESS_FULL_LOGGING )
   endif ()
   set( ENABLE_FULL_LOGGING ${with-full-logging} PARENT_SCOPE )
 endfunction()
+
+function(NEST_PROCESS_LTO)
+  if ( with-lto )
+    include(CheckIPOSupported)
+    check_ipo_supported()   # will terminate if unsupported
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE PARENT_SCOPE)
+
+    # GNU ld cannot link Clang's ThinLTO objects from static archives ("Expected at most one
+    # ThinLTO module per bitcode file"), so Clang on Linux links with lld unless the user chose
+    # a linker explicitly. Apple's linker is fine.
+    set( USER_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${CMAKE_SHARED_LINKER_FLAGS} ${CMAKE_MODULE_LINKER_FLAGS}" )
+    if ( CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_SYSTEM_NAME STREQUAL "Linux"
+         AND NOT CMAKE_LINKER_TYPE AND NOT USER_LINKER_FLAGS MATCHES "-fuse-ld|--ld-path" )
+      string( REGEX MATCH "^[0-9]+" CLANG_MAJOR_VERSION "${CMAKE_CXX_COMPILER_VERSION}" )
+      get_filename_component( CLANG_BIN_DIR "${CMAKE_CXX_COMPILER}" DIRECTORY )
+      find_program( NEST_LLD_LINKER NAMES ld.lld-${CLANG_MAJOR_VERSION} ld.lld HINTS "${CLANG_BIN_DIR}" )
+      if ( NOT NEST_LLD_LINKER )
+        message( FATAL_ERROR "LTO with Clang requires the lld linker (e.g., package lld-${CLANG_MAJOR_VERSION}). "
+                             "To use another linker, pass it via -DCMAKE_LINKER_TYPE or -fuse-ld in the linker flags." )
+      endif ()
+      # --ld-path takes a full path (Clang >= 12); Debian/Ubuntu only provide versioned ld.lld-NN
+      add_link_options( "--ld-path=${NEST_LLD_LINKER}" )
+      message( STATUS "LTO: linking with ${NEST_LLD_LINKER}" )
+    endif ()
+  endif()
+
+  set(WITH_LTO ${with-lto} PARENT_SCOPE)
+endfunction()
+
+function( NEST_PROCESS_PGO )
+  # optional profile-guided optimization
+  if ( with-pgo STREQUAL "OFF" )
+    set( PGO_MODE OFF PARENT_SCOPE )
+    return()
+  endif ()
+
+  if ( NOT with-pgo STREQUAL "GENERATE" AND NOT with-pgo STREQUAL "USE" )
+    message( FATAL_ERROR "Invalid with-pgo value '${with-pgo}'. Expected OFF, GENERATE, or USE." )
+  endif ()
+
+  if ( CMAKE_CXX_COMPILER_ID STREQUAL "GNU" )
+    if ( with-pgo STREQUAL "GENERATE" )
+      message( STATUS "PGO: Instrumentation Build Enabled (GCC)" )
+      set( PGO_MODE "GENERATE" PARENT_SCOPE )
+      add_compile_options( -fprofile-generate )
+      add_link_options( -fprofile-generate )
+    elseif ( with-pgo STREQUAL "USE" )
+      message( STATUS "PGO: Optimized Build Enabled (GCC)" )
+      set( PGO_MODE "USE" PARENT_SCOPE )
+      add_compile_options( -fprofile-use -fprofile-correction )
+      add_link_options( -fprofile-use -fprofile-correction )
+    endif ()
+  elseif ( CMAKE_CXX_COMPILER_ID MATCHES "Clang" )
+    set( PGO_PROFILE_DIR "${CMAKE_BINARY_DIR}/pgo-profiles" )
+    set( PGO_PROFILE_DATA "${PGO_PROFILE_DIR}/default.profdata" )
+
+    if ( with-pgo STREQUAL "GENERATE" )
+      file( MAKE_DIRECTORY "${PGO_PROFILE_DIR}" )
+      message( STATUS "PGO: Instrumentation Build Enabled (Clang; profiles in ${PGO_PROFILE_DIR})" )
+      set( PGO_MODE "GENERATE" PARENT_SCOPE )
+      add_compile_options( "-fprofile-generate=${PGO_PROFILE_DIR}" )
+      add_link_options( "-fprofile-generate=${PGO_PROFILE_DIR}" )
+    elseif ( with-pgo STREQUAL "USE" )
+      file( GLOB PGO_RAW_PROFILES "${PGO_PROFILE_DIR}/*.profraw" )
+      if ( PGO_RAW_PROFILES )
+        string( REGEX MATCH "^[0-9]+" CLANG_MAJOR_VERSION "${CMAKE_CXX_COMPILER_VERSION}" )
+        get_filename_component( CLANG_BIN_DIR "${CMAKE_CXX_COMPILER}" DIRECTORY )
+        find_program( NEST_LLVM_PROFDATA NAMES llvm-profdata-${CLANG_MAJOR_VERSION} llvm-profdata HINTS "${CLANG_BIN_DIR}" )
+        if ( NOT NEST_LLVM_PROFDATA )
+          message( FATAL_ERROR "PGO with Clang requires llvm-profdata (e.g., package llvm-${CLANG_MAJOR_VERSION}) to merge .profraw profiles." )
+        endif ()
+        execute_process(
+          COMMAND "${NEST_LLVM_PROFDATA}" merge -output=${PGO_PROFILE_DATA} ${PGO_RAW_PROFILES}
+          RESULT_VARIABLE PGO_MERGE_RESULT
+        )
+        if ( NOT PGO_MERGE_RESULT EQUAL 0 )
+          message( FATAL_ERROR "Failed to merge Clang PGO profiles in ${PGO_PROFILE_DIR} (exit code ${PGO_MERGE_RESULT})." )
+        endif ()
+      endif ()
+
+      if ( NOT EXISTS "${PGO_PROFILE_DATA}" )
+        message( FATAL_ERROR "No Clang PGO profile data found at ${PGO_PROFILE_DATA}. Run a -Dwith-pgo=GENERATE build first." )
+      endif ()
+
+      message( STATUS "PGO: Optimized Build Enabled (Clang; using ${PGO_PROFILE_DATA})" )
+      set( PGO_MODE "USE" PARENT_SCOPE )
+      add_compile_options( "-fprofile-use=${PGO_PROFILE_DATA}" )
+      add_link_options( "-fprofile-use=${PGO_PROFILE_DATA}" )
+    endif ()
+  else ()
+    message( FATAL_ERROR "with-pgo is currently only supported for GNU (GCC) and Clang compilers, not ${CMAKE_CXX_COMPILER_ID}." )
+  endif ()
+endfunction()

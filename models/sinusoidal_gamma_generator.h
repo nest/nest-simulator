@@ -23,21 +23,29 @@
 #ifndef SINUSOIDAL_GAMMA_GENERATOR_H
 #define SINUSOIDAL_GAMMA_GENERATOR_H
 
+#include <cstddef>
+#include <map>
+#include <string>
+
 // Generated includes:
 #include "config.h"
+#include "dictionary.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "node.h"
+#include "random_generators.h"
+#include "recordables_map.h"
+#include "universal_data_logger.h"
 
 #ifdef HAVE_GSL
 
 // C++ includes:
 #include <vector>
 
-// Includes from nestkernel:
-#include "connection.h"
-#include "device_node.h"
 #include "event.h"
 #include "nest_types.h"
 #include "stimulation_device.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {

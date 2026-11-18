@@ -23,15 +23,17 @@
 #ifndef STIMULATION_BACKEND_MPI_H
 #define STIMULATION_BACKEND_MPI_H
 
-#include "nest_time.h"
-#include "nest_types.h"
-#include "stimulation_backend.h"
-#include <arpa/inet.h>
+#include <cstddef>
+#include <map>
 #include <mpi.h>
-#include <netinet/in.h>
-#include <set>
-#include <sys/socket.h>
-#include <unistd.h>
+#include <string>
+#include <tuple>
+#include <utility>
+#include <variant>
+#include <vector>
+
+#include "stimulation_backend.h"
+#include "stimulation_device.h"
 
 /* BeginUserDocs: stimulation backend
 

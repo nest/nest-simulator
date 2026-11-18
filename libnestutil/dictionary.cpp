@@ -20,16 +20,25 @@
  *
  */
 
+// C++ includes
 #include <algorithm>
 #include <iomanip>
 #include <iostream>
+#include <iterator>
 #include <map>
+#include <numeric>
 #include <string>
 #include <vector>
 
 #include "dictionary.h"
-
 #include "kernel_manager.h"
+#include "logging_manager.h"
+#include "vp_manager.h"
+
+namespace nest
+{
+class Parameter;
+}  // namespace nest
 
 /**
  * General vector streamer.
@@ -380,7 +389,7 @@ dictionary_::init_access_flags( const bool thread_local_dict ) const
 {
   if ( not thread_local_dict )
   {
-    nest::kernel().vp_manager.assert_single_threaded();
+    nest::kernel::manager< nest::VPManager >.assert_single_threaded();
   }
   for ( const auto& [ key, entry ] : *this )
   {
@@ -393,14 +402,14 @@ dictionary_::all_entries_accessed( const std::string& where,
   const std::string& what,
   const bool thread_local_dict ) const
 {
-  if ( not nest::kernel().logging_manager.dict_miss_is_error() )
+  if ( not nest::kernel::manager< nest::LoggingManager >.dict_miss_is_error() )
   {
     return;
   }
 
   if ( not thread_local_dict )
   {
-    nest::kernel().vp_manager.assert_single_threaded();
+    nest::kernel::manager< nest::VPManager >.assert_single_threaded();
   }
 
   // Vector of elements in the Dictionary that are not accessed

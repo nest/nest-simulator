@@ -23,13 +23,17 @@
 #ifndef RECORDING_BACKEND_MPI_H
 #define RECORDING_BACKEND_MPI_H
 
-#include "recording_backend.h"
-#include <arpa/inet.h>
+#include <array>
+#include <cstddef>
+#include <map>
 #include <mpi.h>
-#include <netinet/in.h>
-#include <set>
-#include <sys/socket.h>
-#include <unistd.h>
+#include <string>
+#include <tuple>
+#include <variant>
+#include <vector>
+
+#include "recording_backend.h"
+#include "recording_device.h"
 
 /* BeginUserDocs: NOINDEX
 

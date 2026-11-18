@@ -1,5 +1,5 @@
 /*
- *  sp_manager_impl.h
+ *  grid_mask.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,33 +20,25 @@
  *
  */
 
-#ifndef SP_MANAGER_IMPL_H
-#define SP_MANAGER_IMPL_H
+#include "grid_mask.h"
 
-#include "sp_manager.h"
-
-// C++ includes:
-#include <string>
-
-// Includes from nestkernel:
-#include "growth_curve.h"
-#include "growth_curve_factory.h"
+#include "nest_names.h"
 
 namespace nest
 {
 
-template < typename GrowthCurve >
-void
-SPManager::register_growth_curve( const std::string& name )
+template <>
+std::string
+GridMask< 2 >::get_name()
 {
-  assert( not growthcurvedict_.known( name ) );
-  GenericGrowthCurveFactory* nc = new GrowthCurveFactory< GrowthCurve >();
-  assert( nc );
-  const int id = growthcurve_factories_.size();
-  growthcurve_factories_.push_back( nc );
-  growthcurvedict_[ name ] = static_cast< long >( id );
+  return names::grid;
 }
 
-}  // namespace nest
+template <>
+std::string
+GridMask< 3 >::get_name()
+{
+  return names::grid3d;
+}
 
-#endif /* SP_MANAGER_IMPL_H */
+}

@@ -23,18 +23,18 @@
 #ifndef SORT_H
 #define SORT_H
 
-#include <algorithm>
-#include <cstddef>
+#include <cstdlib>
 #include <vector>
 
 // Generated includes:
-#include "config.h"
-
 #include "block_vector.h"
+#include "config.h"
+#include "sort.h"
 
 #ifdef HAVE_BOOST
-#include "iterator_pair.h"
 #include <boost/sort/spreadsort/spreadsort.hpp>
+
+#include "iterator_pair.h"
 #endif
 
 #define INSERTION_SORT_CUTOFF 10  // use insertion sort for smaller arrays

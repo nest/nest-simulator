@@ -23,8 +23,17 @@
 #ifndef HH_COND_EXP_TRAUB_H
 #define HH_COND_EXP_TRAUB_H
 
+#include <cstddef>
+#include <map>
+#include <string>
+
 // Generated includes:
 #include "config.h"
+#include "dictionary.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "node.h"
+#include "universal_data_logger.h"
 
 #ifdef HAVE_GSL
 
@@ -33,12 +42,11 @@
 
 // Includes from nestkernel:
 #include "archiving_node.h"
-#include "connection.h"
 #include "event.h"
 #include "nest_types.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -418,7 +426,6 @@ hh_cond_exp_traub::set_status( const Dictionary& d )
 }
 
 }  // namespace
-
 
 #endif  // HAVE_GSL
 #endif  // HH_COND_EXP_TRAUB_H

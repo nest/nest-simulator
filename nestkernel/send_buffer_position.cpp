@@ -21,20 +21,17 @@
  */
 
 // Includes from nestkernel:
-#include "kernel_manager.h"
-
 #include "send_buffer_position.h"
+#include "kernel_manager.h"
+#include "mpi_manager.h"
 
-
-namespace nest
+nest::SendBufferPosition::SendBufferPosition()
+  : begin_( kernel::manager< MPIManager >.get_num_processes(), 0 )
+  , end_( kernel::manager< MPIManager >.get_num_processes(), 0 )
+  , idx_( kernel::manager< MPIManager >.get_num_processes(), 0 )
 {
-SendBufferPosition::SendBufferPosition()
-  : begin_( kernel().mpi_manager.get_num_processes(), 0 )
-  , end_( kernel().mpi_manager.get_num_processes(), 0 )
-  , idx_( kernel().mpi_manager.get_num_processes(), 0 )
-{
-  const size_t num_procs = kernel().mpi_manager.get_num_processes();
-  const size_t send_recv_count_per_rank = kernel().mpi_manager.get_send_recv_count_spike_data_per_rank();
+  const size_t num_procs = kernel::manager< MPIManager >.get_num_processes();
+  const size_t send_recv_count_per_rank = kernel::manager< MPIManager >.get_send_recv_count_spike_data_per_rank();
 
   for ( size_t rank = 0; rank < num_procs; ++rank )
   {
@@ -43,5 +40,3 @@ SendBufferPosition::SendBufferPosition()
     idx_[ rank ] = begin_[ rank ];
   }
 }
-
-}  // namespace nest

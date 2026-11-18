@@ -24,9 +24,10 @@
 #define RECORDING_BACKEND_H
 
 // C++ includes:
+#include <string>
 #include <vector>
 
-#include "dictionary.h"
+class Dictionary;
 
 namespace nest
 {

@@ -23,11 +23,7 @@
 #ifndef MANAGER_INTERFACE_H
 #define MANAGER_INTERFACE_H
 
-// Includes from nestkernel:
-#include "nest_types.h"
-
-// Includes from libnestutil:
-#include "dictionary.h"
+class Dictionary;
 
 namespace nest
 {

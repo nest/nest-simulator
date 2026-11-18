@@ -21,10 +21,10 @@
  */
 
 #include "quantal_stp_synapse.h"
-#include "quantal_stp_synapse_impl.h"
 
 // Includes from nestkernel:
 #include "nest_impl.h"
+#include "source.h"
 
 
 namespace nest

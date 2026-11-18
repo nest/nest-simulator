@@ -20,10 +20,15 @@
  *
  */
 
+// nest models
 #include "eprop_synapse.h"
 
 // nestkernel
+#include "block_vector.h"
+#include "connection_manager.h"
+#include "kernel_manager.h"
 #include "nest_impl.h"
+#include "source.h"
 
 
 namespace nest
@@ -74,7 +79,7 @@ EpropSynapseCommonProperties::set_status( const Dictionary& d, ConnectorModel& c
     const bool set_optimizer = optimizer_dict.update_value( names::type, new_optimizer );
     if ( set_optimizer and new_optimizer != optimizer_cp_->get_name() )
     {
-      if ( kernel().connection_manager.get_num_connections( cm.get_syn_id() ) > 0 )
+      if ( kernel::manager< ConnectionManager >.get_num_connections( cm.get_syn_id() ) > 0 )
       {
         throw BadParameter( "The optimizer cannot be changed because synapses have been created." );
       }

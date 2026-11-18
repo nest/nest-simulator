@@ -22,15 +22,22 @@
 
 #include "flush_event_mechanism.h"
 
+#include <limits>
+#include <string>
+
 // nestkernel
 #include "exceptions.h"
+#include "kernel_manager.h"
 #include "nest_names.h"
-
+#include "simulation_manager.h"
 // libnestutil
 #include "dict_util.h"
+#include "dictionary.h"
+#include "nest_time.h"
 
 namespace nest
 {
+class Node;
 
 FlushEventMechanism::FlushEventMechanism()
   : flush_event_send_interval_( std::numeric_limits< double >::infinity() )
@@ -72,7 +79,7 @@ FlushEventMechanism::set_status( const Dictionary& d, Node* node, const bool che
 
   if ( check_eprop_constraint )
   {
-    const double eprop_update_interval = kernel().simulation_manager.get_eprop_update_interval().get_ms();
+    const double eprop_update_interval = kernel::manager< SimulationManager >.get_eprop_update_interval().get_ms();
     if ( flush_event_send_interval_tmp < eprop_update_interval )
     {
       throw BadProperty( "flush_event_send_interval ≥ eprop_update_interval required." );

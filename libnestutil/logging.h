@@ -26,14 +26,16 @@
 /**
  *
  */
-#define LOG( s, fctn, msg ) nest::kernel().logging_manager.publish_log( ( s ), ( fctn ), ( msg ), __FILE__, __LINE__ )
+#include <cstddef>
+#include <string>
+
+#define LOG( s, fctn, msg ) nest::log_message( ( s ), ( fctn ), ( msg ), __FILE__, __LINE__ )
 
 
 namespace nest
 {
 
 class LoggingEvent;
-class LoggingDeliverer;
 
 //! Report only messages at levels higher than chosen level to user or logs. Default INFO.
 enum class VerbosityLevel
@@ -51,6 +53,10 @@ enum class VerbosityLevel
 };
 
 typedef void ( *deliver_logging_event_ptr )( const LoggingEvent& e );
+
+//! Pass a message to the LoggingManager; use the LOG macro instead of calling this directly.
+void
+log_message( VerbosityLevel s, const std::string& fctn, const std::string& msg, const std::string& file, size_t line );
 }
 
 #endif

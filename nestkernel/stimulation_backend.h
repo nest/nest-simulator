@@ -23,13 +23,12 @@
 #ifndef STIMULATION_BACKEND_H
 #define STIMULATION_BACKEND_H
 
-// C++ includes:
-#include <vector>
 
-#include "stimulation_device.h"
+class Dictionary;
 
 namespace nest
 {
+class StimulationDevice;
 
 /**
  * Abstract base class for all NESTio stimulation backends

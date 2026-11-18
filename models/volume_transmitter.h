@@ -23,12 +23,18 @@
 #ifndef VOLUME_TRANSMITTER_H
 #define VOLUME_TRANSMITTER_H
 
-// Includes from nestkernel:
-#include "event.h"
-#include "nest_types.h"
+#include <string>
+
+#include <cstddef>
+#include <vector>
+
+#include "exceptions.h"
+#include "nest_names.h"
 #include "node.h"
 #include "ring_buffer.h"
 #include "spikecounter.h"
+
+class Dictionary;
 
 
 namespace nest
@@ -105,8 +111,6 @@ Examples using this model
 .. listexamples:: volume_transmitter
 
 EndUserDocs */
-
-class ConnectorBase;
 
 void register_volume_transmitter( const std::string& name );
 

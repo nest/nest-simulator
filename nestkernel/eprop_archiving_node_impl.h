@@ -23,10 +23,21 @@
 #ifndef EPROP_ARCHIVING_NODE_IMPL_H
 #define EPROP_ARCHIVING_NODE_IMPL_H
 
-#include "eprop_archiving_node.h"
+#include "simulation_manager.h"
 
+#include <algorithm>
+#include <limits>
+#include <vector>
+
+#include "eprop_archiving_node.h"
 // Includes from nestkernel:
+#include "exceptions.h"
+#include "flush_event_mechanism.h"
+#include "histentry.h"
+#include "ignore_and_spike_mechanism.h"
 #include "kernel_manager.h"
+#include "nest_time.h"
+#include "node.h"
 
 namespace nest
 {
@@ -170,7 +181,7 @@ EpropArchivingNode< HistEntryT >::erase_used_eprop_history()
     return;
   }
 
-  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
+  const long update_interval = kernel::manager< SimulationManager >.get_eprop_update_interval().get_steps();
 
   auto it_update_hist = update_history_.begin();
 

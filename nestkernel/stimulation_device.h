@@ -23,16 +23,17 @@
 #ifndef STIMULATION_DEVICE_H
 #define STIMULATION_DEVICE_H
 
+// From standard library:
+#include <string>
+#include <vector>
+
+#include "dictionary.h"
 // Includes from nestkernel:
 #include "device.h"
 #include "device_node.h"
+#include "exceptions.h"
 #include "nest_types.h"
-
-// Includes from libnestutil:
-#include "compose.hpp"
-
-// From standard library:
-#include <string>
+#include "node.h"
 
 namespace nest
 {
@@ -232,18 +233,6 @@ private:
 
   Dictionary backend_params_;
 };
-
-inline std::string
-StimulationDevice::get_element_type() const
-{
-  return names::stimulator;
-}
-
-inline bool
-StimulationDevice::has_proxies() const
-{
-  return false;
-}
 
 inline bool
 StimulationDevice::local_receiver() const

@@ -20,21 +20,25 @@
  *
  */
 
-
 #include "iaf_cond_alpha_mc.h"
+
+#include <algorithm>
+#include <assert.h>
+
+#include "event_delivery_manager.h"
+#include "simulation_manager.h"
 
 #ifdef HAVE_GSL
 
-// C++ includes:
-#include <cstdio>
-#include <iostream>
+// Includes from GSL:
+#include <gsl/gsl_errno.h>
 
 // Includes from libnestutil:
 #include "dict_util.h"
 #include "numerics.h"
-
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
@@ -550,7 +554,6 @@ iaf_cond_alpha_mc::update( Time const& origin, const long from, const long to )
 {
   for ( long lag = from; lag < to; ++lag )
   {
-
     double t = 0.0;
 
     // numerical integration with adaptive step size control:
@@ -607,7 +610,7 @@ iaf_cond_alpha_mc::update( Time const& origin, const long from, const long to )
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
       SpikeEvent se;
-      kernel().event_delivery_manager.send( *this, se, lag );
+      kernel::manager< EventDeliveryManager >.send( *this, se, lag );
     }
 
     // set new input currents
@@ -628,7 +631,8 @@ iaf_cond_alpha_mc::handle( SpikeEvent& e )
   assert( e.get_rport() < 2 * NCOMP );
 
   B_.spikes_[ e.get_rport() ].add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
+    e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
+    e.get_weight() * e.get_multiplicity() );
 }
 
 void
@@ -640,7 +644,8 @@ iaf_cond_alpha_mc::handle( CurrentEvent& e )
 
   // add weighted current; HEP 2002-10-04
   B_.currents_[ e.get_rport() ].add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_current() );
+    e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
+    e.get_weight() * e.get_current() );
 }
 
 void

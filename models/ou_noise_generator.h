@@ -23,18 +23,25 @@
 #ifndef OU_NOISE_GENERATOR_H
 #define OU_NOISE_GENERATOR_H
 
-// C++ includes:
 #include <vector>
 
-// Includes from nestkernel:
-#include "connection.h"
-#include "device_node.h"
-#include "event.h"
-#include "nest_timeconverter.h"
+#include <cstddef>
+// C++ includes:
+#include <map>
+#include <string>
+
+#include "dictionary.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "nest_names.h"
+#include "nest_time.h"
 #include "nest_types.h"
+#include "node.h"
 #include "random_generators.h"
+#include "recordables_map.h"
 #include "stimulation_device.h"
 #include "universal_data_logger.h"
+#include "vp_manager.h"
 
 namespace nest
 {
@@ -250,7 +257,7 @@ private:
 inline size_t
 ou_noise_generator::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
-  if ( kernel().vp_manager.get_num_threads() > 1 )
+  if ( kernel::manager< VPManager >.get_num_threads() > 1 )
   {
     throw KernelException( "Recording from a ou_noise_generator is only possible in single-threaded mode." );
   }

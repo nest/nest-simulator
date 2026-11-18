@@ -23,12 +23,15 @@
 #ifndef EPROP_ARCHIVING_NODE_H
 #define EPROP_ARCHIVING_NODE_H
 
-// nestkernel
 #include "flush_event_mechanism.h"
+
+#include <cstddef>
+#include <vector>
+
+// nestkernel
 #include "histentry.h"
 #include "ignore_and_spike_mechanism.h"
 #include "nest_time.h"
-#include "nest_types.h"
 #include "node.h"
 
 namespace nest

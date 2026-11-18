@@ -23,11 +23,20 @@
 #ifndef GINZBURG_NEURON_H
 #define GINZBURG_NEURON_H
 
+#include <map>
+#include <math.h>
+#include <string>
+
 // Includes from models:
 #include "binary_neuron.h"
+#include "kernel_manager.h"
+#include "random_generators.h"
+
+class Dictionary;
 
 namespace nest
 {
+class Node;
 
 /* BeginUserDocs: neuron, binary
 
@@ -144,10 +153,13 @@ public:
   /** sets default parameters */
 
   gainfunction_ginzburg()
-    : theta_( 0.0 )  // mV
-    , c1_( 0.0 )     // (mV)^-1
-    , c2_( 1.0 )     // dimensionless
-    , c3_( 1.0 )     // (mV)^-1
+    : theta_( 0.0 )
+    ,  // mV
+    c1_( 0.0 )
+    ,  // (mV)^-1
+    c2_( 1.0 )
+    ,           // dimensionless
+    c3_( 1.0 )  // (mV)^-1
   {
   }
 
@@ -166,9 +178,6 @@ gainfunction_ginzburg::operator()( RngPtr rng, double h ) const
 typedef binary_neuron< gainfunction_ginzburg > ginzburg_neuron;
 void register_ginzburg_neuron( const std::string& name );
 
-
-template <>
-void RecordablesMap< ginzburg_neuron >::create();
 
 }  // namespace nest
 

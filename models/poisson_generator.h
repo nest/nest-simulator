@@ -23,13 +23,17 @@
 #ifndef POISSON_GENERATOR_H
 #define POISSON_GENERATOR_H
 
-// Includes from nestkernel:
-#include "connection.h"
-#include "device_node.h"
+#include <string>
+
+#include <cstddef>
+
 #include "event.h"
 #include "nest_types.h"
+#include "node.h"
 #include "random_generators.h"
 #include "stimulation_device.h"
+
+class Dictionary;
 
 namespace nest
 {

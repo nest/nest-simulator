@@ -21,10 +21,11 @@
  */
 
 #include "cont_delay_synapse.h"
-#include "cont_delay_synapse_impl.h"
 
 // Includes from nestkernel:
+#include "compose.hpp"
 #include "nest_impl.h"
+#include "source.h"
 
 
 namespace nest

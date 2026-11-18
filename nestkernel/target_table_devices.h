@@ -23,22 +23,27 @@
 #ifndef TARGET_TABLE_DEVICES_H
 #define TARGET_TABLE_DEVICES_H
 
+#include <deque>
+
+#include <cstddef>
 // C++ includes:
-#include <cassert>
-#include <map>
+#include <set>
 #include <vector>
 
-// Includes from nestkernel:
-#include "connection_id.h"
 #include "connector_base.h"
-#include "event.h"
+#include "kernel_manager.h"
 #include "nest_types.h"
+#include "secondary_event.h"
+#include "vp_manager.h"
 
+class Dictionary;
 
 namespace nest
 {
 class Node;
 class ConnectorModel;
+class ConnectionID;
+class Event;
 
 /**
  * This data structure stores the connections between local neurons
@@ -206,27 +211,6 @@ public:
 };
 
 inline void
-TargetTableDevices::get_synapse_status_from_device( const size_t tid,
-  const size_t ldid,
-  const synindex syn_id,
-  Dictionary& dict,
-  const size_t lcid ) const
-{
-  target_from_devices_[ tid ][ ldid ][ syn_id ]->get_synapse_status( tid, lcid, dict );
-}
-
-inline void
-TargetTableDevices::set_synapse_status_from_device( const size_t tid,
-  const size_t ldid,
-  const synindex syn_id,
-  ConnectorModel& cm,
-  const Dictionary& dict,
-  const size_t lcid )
-{
-  target_from_devices_[ tid ][ ldid ][ syn_id ]->set_synapse_status( lcid, dict, cm );
-}
-
-inline void
 TargetTableDevices::send_from_device( const size_t tid,
   const size_t ldid,
   Event& e,
@@ -243,22 +227,38 @@ TargetTableDevices::send_from_device( const size_t tid,
   }
 }
 
-inline bool
-TargetTableDevices::is_device_connected( const size_t tid, const size_t lcid ) const
+inline void
+TargetTableDevices::send_to_device( const size_t tid,
+  const size_t source_node_id,
+  Event& e,
+  const std::vector< ConnectorModel* >& cm )
 {
-  for ( auto& synapse : target_from_devices_[ tid ][ lcid ] )
+  const size_t lid = kernel::manager< VPManager >.node_id_to_lid( source_node_id );
+  for ( std::vector< ConnectorBase* >::iterator it = target_to_devices_[ tid ][ lid ].begin();
+    it != target_to_devices_[ tid ][ lid ].end();
+    ++it )
   {
-    if ( synapse )
+    if ( *it )
     {
-      std::deque< ConnectionID > conns;
-      synapse->get_all_connections( lcid, 0, tid, UNLABELED_CONNECTION, conns );
-      if ( not conns.empty() )
-      {
-        return true;
-      }
+      ( *it )->send_to_all( tid, cm, e );
     }
   }
-  return false;
+}
+
+inline void
+TargetTableDevices::send_to_device( const size_t tid,
+  const size_t source_node_id,
+  SecondaryEvent& e,
+  const std::vector< ConnectorModel* >& cm )
+{
+  const size_t lid = kernel::manager< VPManager >.node_id_to_lid( source_node_id );
+  for ( auto& synid : e.get_supported_syn_ids() )
+  {
+    if ( target_to_devices_[ tid ][ lid ][ synid ] )
+    {
+      target_to_devices_[ tid ][ lid ][ synid ]->send_to_all( tid, cm, e );
+    }
+  }
 }
 
 }  // namespace nest

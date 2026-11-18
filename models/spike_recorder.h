@@ -23,14 +23,15 @@
 #ifndef SPIKE_RECORDER_H
 #define SPIKE_RECORDER_H
 
-// C++ includes:
-#include <vector>
+#include <string>
 
-// Includes from nestkernel:
-#include "device_node.h"
-#include "event.h"
+#include <cstddef>
+// C++ includes:
+
 #include "exceptions.h"
+#include "nest_names.h"
 #include "nest_types.h"
+#include "node.h"
 #include "recording_device.h"
 
 /* BeginUserDocs: device, recorder, spike

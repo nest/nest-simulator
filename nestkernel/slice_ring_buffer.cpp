@@ -23,12 +23,18 @@
 #include "slice_ring_buffer.h"
 
 // C++ includes:
-#include <cmath>
+#include <algorithm>
+#include <functional>
 #include <limits>
 
+#include "config.h"
+#include "connection_manager.h"
+#include "event_delivery_manager.h"
+#include "kernel_manager.h"
 
 namespace nest
 {
+
 SliceRingBuffer::SliceRingBuffer()
   : refract_( std::numeric_limits< long >::max(), 0, 0 )
 {
@@ -39,8 +45,8 @@ SliceRingBuffer::resize()
 {
   // We want to compute ceil( ( d_min + d_max ) / d_min ) = 1 + ceil( d_max / d_min )
   // and can do so safely without casting to double.
-  const size_t d_min = kernel().connection_manager.get_min_delay();
-  const size_t d_max = kernel().connection_manager.get_max_delay();
+  const size_t d_min = kernel::manager< ConnectionManager >.get_min_delay();
+  const size_t d_max = kernel::manager< ConnectionManager >.get_max_delay();
   const size_t new_size = 1 + ( d_max + d_min - 1 ) / d_min;
 
   if ( queue_.size() != new_size )
@@ -71,7 +77,7 @@ void
 SliceRingBuffer::prepare_delivery()
 {
   // vector to deliver from in this slice
-  deliver_ = &( queue_[ kernel().event_delivery_manager.get_slice_modulo( 0 ) ] );
+  deliver_ = &( queue_[ kernel::manager< EventDeliveryManager >.get_slice_modulo( 0 ) ] );
 
   // sort events, first event last
   std::sort( deliver_->begin(), deliver_->end(), std::greater< SpikeInfo >() );
@@ -81,9 +87,26 @@ void
 SliceRingBuffer::discard_events()
 {
   // vector to deliver from in this slice
-  deliver_ = &( queue_[ kernel().event_delivery_manager.get_slice_modulo( 0 ) ] );
+  deliver_ = &( queue_[ kernel::manager< EventDeliveryManager >.get_slice_modulo( 0 ) ] );
 
   deliver_->clear();
+}
+bool
+SliceRingBuffer::SpikeInfo::operator>( const SpikeInfo& b ) const
+{
+  return stamp_ == b.stamp_ ? ps_offset_ < b.ps_offset_ : stamp_ > b.stamp_;
+}
+
+bool
+SliceRingBuffer::SpikeInfo::operator<=( const SpikeInfo& b ) const
+{
+  return not( *this > b );
+}
+
+bool
+SliceRingBuffer::SpikeInfo::operator<( const SpikeInfo& b ) const
+{
+  return stamp_ == b.stamp_ ? ps_offset_ > b.ps_offset_ : stamp_ < b.stamp_;
 }
 
 }  // namespace nest

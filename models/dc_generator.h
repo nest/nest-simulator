@@ -24,17 +24,20 @@
 #ifndef DC_GENERATOR_H
 #define DC_GENERATOR_H
 
-// C++ includes:
-#include <vector>
+#include <cstddef>
+#include <map>
+#include <string>
 
-// Includes from nestkernel:
-#include "connection.h"
-#include "device_node.h"
+#include "dictionary.h"
 #include "event.h"
+#include "exceptions.h"
+#include "nest_names.h"
 #include "nest_types.h"
-#include "ring_buffer.h"
+#include "node.h"
+#include "recordables_map.h"
 #include "stimulation_device.h"
 #include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {

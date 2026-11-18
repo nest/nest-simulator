@@ -24,17 +24,19 @@
 #define BLOCK_VECTOR_H_
 
 #include <cassert>
+
 #include <cmath>
+#include <cstddef>
 #include <iostream>
 #include <iterator>
+#include <string>
+#include <utility>
 #include <vector>
 
 #include "exceptions.h"
 
 template < typename value_type_ >
 class BlockVector;
-template < typename value_type_, typename ref_, typename ptr_ >
-class bv_iterator;
 
 constexpr int block_size_shift = 10;  //!< max_block_size = 2^block_size_shift
 constexpr int max_block_size = 1L << block_size_shift;

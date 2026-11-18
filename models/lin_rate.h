@@ -23,16 +23,21 @@
 #ifndef LIN_RATE_H
 #define LIN_RATE_H
 
-// Includes from models:
+#include <map>
+#include <string>
+
+#include "compose.hpp"
+#include "kernel_manager.h"
 #include "rate_neuron_ipn.h"
-#include "rate_neuron_ipn_impl.h"
 #include "rate_neuron_opn.h"
-#include "rate_neuron_opn_impl.h"
 #include "rate_transformer_node.h"
-#include "rate_transformer_node_impl.h"
+#include "recordables_map.h"
+
+class Dictionary;
 
 namespace nest
 {
+class Node;
 
 /* BeginUserDocs: neuron, rate
 
@@ -181,9 +186,6 @@ void register_lin_rate_opn( const std::string& name );
 typedef rate_transformer_node< nonlinearities_lin_rate > rate_transformer_lin;
 void register_rate_transformer_lin( const std::string& name );
 
-
-template <>
-void RecordablesMap< lin_rate_ipn >::create();
 template <>
 void RecordablesMap< lin_rate_opn >::create();
 template <>

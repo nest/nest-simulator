@@ -23,13 +23,16 @@
 #ifndef TARGET_DATA_H
 #define TARGET_DATA_H
 
-// C++ includes:
 #include <limits>
+
+#include <cassert>
+#include <cstddef>
+#include <cstdint>
+// C++ includes:
 
 // Includes from nestkernel:
 #include "nest_types.h"
 #include "static_assert.h"
-#include "target.h"
 
 namespace nest
 {

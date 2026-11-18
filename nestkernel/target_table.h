@@ -23,20 +23,19 @@
 #ifndef TARGET_TABLE_H
 #define TARGET_TABLE_H
 
-// C++ includes:
 #include <cassert>
-#include <iostream>
-#include <map>
+
+#include <cstddef>
+// C++ includes:
 #include <vector>
 
 // Includes from nestkernel:
 #include "nest_types.h"
-#include "spike_data.h"
 #include "target.h"
-#include "target_data.h"
 
 namespace nest
 {
+class TargetData;
 
 /**
  * This data structure stores all targets of the local neurons.
@@ -115,7 +114,7 @@ public:
   void compress_secondary_send_buffer_pos( const size_t tid );
 };
 
-inline const std::vector< Target >&
+inline const std::vector< nest::Target >&
 TargetTable::get_targets( const size_t tid, const size_t lid ) const
 {
   return targets_[ tid ][ lid ];
@@ -126,13 +125,6 @@ TargetTable::get_secondary_send_buffer_positions( const size_t tid, const size_t
 {
   assert( syn_id < secondary_send_buffer_pos_[ tid ][ lid ].size() );
   return secondary_send_buffer_pos_[ tid ][ lid ][ syn_id ];
-}
-
-inline void
-TargetTable::clear( const size_t tid )
-{
-  targets_[ tid ].clear();
-  secondary_send_buffer_pos_[ tid ].clear();
 }
 
 }  // namespace nest

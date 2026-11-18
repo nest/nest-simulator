@@ -23,24 +23,28 @@
 #ifndef SIEGERT_NEURON_H
 #define SIEGERT_NEURON_H
 
+#include <cstddef>
+#include <map>
+#include <string>
+#include <vector>
+
 #include "config.h"
+#include "dictionary.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "universal_data_logger.h"
 
 #ifdef HAVE_GSL
 
 // C includes:
 #include <gsl/gsl_integration.h>
-#include <gsl/gsl_sf_dawson.h>
-#include <gsl/gsl_sf_erf.h>
 
 // Includes from nestkernel:
 #include "archiving_node.h"
-#include "connection.h"
-#include "event.h"
-#include "nest_types.h"
 #include "node.h"
 #include "recordables_map.h"
-#include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {

@@ -23,13 +23,9 @@
 #ifndef PSEUDO_RECORDING_DEVICE_H
 #define PSEUDO_RECORDING_DEVICE_H
 
-// C++ includes:
-#include <fstream>
-#include <vector>
-
 // Includes from nestkernel:
 #include "device.h"
-#include "nest_types.h"
+#include "nest_time.h"
 
 
 namespace nest

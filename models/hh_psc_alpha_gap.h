@@ -23,25 +23,30 @@
 #ifndef HH_PSC_ALPHA_GAP_H
 #define HH_PSC_ALPHA_GAP_H
 
+#include <cstddef>
+#include <map>
+#include <string>
+#include <vector>
+
 #include "config.h"
+#include "dictionary.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "universal_data_logger.h"
 
 #ifdef HAVE_GSL
 
-// C includes:
-#include <gsl/gsl_errno.h>
-#include <gsl/gsl_matrix.h>
 #include <gsl/gsl_odeiv.h>
-#include <gsl/gsl_sf_exp.h>
 
 // Includes from nestkernel:
 #include "archiving_node.h"
-#include "connection.h"
 #include "event.h"
 #include "nest_types.h"
 #include "node.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
-#include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {

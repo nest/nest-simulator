@@ -23,9 +23,10 @@
 #ifndef SEND_BUFFER_POSITION_H
 #define SEND_BUFFER_POSITION_H
 
-// C++ includes:
 #include <cassert>
-#include <limits>
+
+#include <cstddef>
+// C++ includes:
 #include <vector>
 
 // Includes from nestkernel:

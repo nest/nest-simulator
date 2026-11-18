@@ -33,15 +33,17 @@
 
 #include "gif_pop_psc_exp.h"
 
-// Includes from libnestutil:
-#include "compose.hpp"
+#include <assert.h>
+#include <cmath>
+#include <limits>
+
 #include "dict_util.h"
-
-// Includes from nestkernel:
-#include "model_manager_impl.h"
+#include "event_delivery_manager.h"
+#include "genericmodel_impl.h"
+#include "kernel_manager.h"
 #include "nest_impl.h"
-#include "universal_data_logger_impl.h"
-
+#include "nest_time.h"
+#include "simulation_manager.h"
 
 namespace nest
 {
@@ -59,8 +61,7 @@ register_gif_pop_psc_exp( const std::string& name )
 
 RecordablesMap< gif_pop_psc_exp > gif_pop_psc_exp::recordablesMap_;
 
-// Override the create() method with one call to RecordablesMap::insert_()
-// for each quantity to be recorded.
+// Override the create() method with one call to RecordablesMap::insert_() for each quantity to be recorded.
 template <>
 void
 RecordablesMap< gif_pop_psc_exp >::create()
@@ -643,7 +644,7 @@ gif_pop_psc_exp::update( Time const& origin, const long from, const long to )
       SpikeEvent* se;
       se = new SpikeEvent;
       se->set_multiplicity( S_.n_spikes_ );
-      kernel().event_delivery_manager.send( *this, *se, lag );
+      kernel::manager< EventDeliveryManager >.send( *this, *se, lag );
     }
   }
 }
@@ -657,11 +658,11 @@ gif_pop_psc_exp::handle( SpikeEvent& e )
 
   if ( s > 0.0 )
   {
-    B_.ex_spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), s );
+    B_.ex_spikes_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ), s );
   }
   else
   {
-    B_.in_spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), s );
+    B_.in_spikes_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ), s );
   }
 }
 
@@ -674,7 +675,7 @@ gif_pop_psc_exp::handle( CurrentEvent& e )
   const double w = e.get_weight();
 
   // Add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ), w * c );
 }
 
 void

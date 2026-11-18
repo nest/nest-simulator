@@ -23,19 +23,17 @@
 #ifndef MODULE_MANAGER_H
 #define MODULE_MANAGER_H
 
-// Generated includes:
-#include "config.h"
-
-// C++ includes:
-#include <map>
 #include <string>
 
+// Generated includes:
+#include "config.h"
 // Includes from nestkernel:
 #include "manager_interface.h"
 
 // DynamicLoaderModule defined only if libltdl is available
 #ifdef HAVE_LIBLTDL
 #include <ltdl.h>
+#include <map>
 
 namespace nest
 {

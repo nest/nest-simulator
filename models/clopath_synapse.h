@@ -23,16 +23,27 @@
 #ifndef CLOPATH_SYNAPSE_H
 #define CLOPATH_SYNAPSE_H
 
-// C++ includes:
 #include <cmath>
+
+#include <cstddef>
+// C++ includes:
+#include <deque>
+#include <string>
 
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
 #include "connection.h"
 #include "connector_model.h"
+#include "dictionary.h"
+#include "enum_bitfield.h"
 #include "event.h"
-#include "nest.h"
-#include "ring_buffer.h"
+#include "exceptions.h"
+#include "histentry.h"
+#include "nest_impl.h"
+#include "nest_names.h"
+#include "nest_time.h"
+#include "nest_types.h"
+#include "node.h"
 
 
 namespace nest

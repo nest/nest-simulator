@@ -22,8 +22,16 @@
 #ifndef CM_COMPARTMENTCURRENTS_H
 #define CM_COMPARTMENTCURRENTS_H
 
-#include <stdlib.h>
+#include <assert.h>
+#include <cmath>
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
 
+#include "dictionary.h"
+#include "nest_names.h"
+#include "nest_time.h"
 #include "ring_buffer.h"
 
 namespace nest

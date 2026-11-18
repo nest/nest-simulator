@@ -23,15 +23,13 @@
 
 #include "parrot_neuron.h"
 
-// Includes from libnestutil:
-#include "numerics.h"
-
 // Includes from nestkernel:
-#include "event_delivery_manager_impl.h"
-#include "exceptions.h"
+#include "event_delivery_manager.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"
-
+#include "nest_time.h"
+#include "simulation_manager.h"
 
 namespace nest
 {
@@ -67,7 +65,7 @@ parrot_neuron::update( Time const& origin, const long from, const long to )
       // create a new SpikeEvent, set its multiplicity and send it
       SpikeEvent se;
       se.set_multiplicity( current_spikes_n );
-      kernel().event_delivery_manager.send( *this, se, lag );
+      kernel::manager< EventDeliveryManager >.send( *this, se, lag );
 
       // set the spike times, respecting the multiplicity
       for ( unsigned long i = 0; i < current_spikes_n; i++ )
@@ -80,7 +78,7 @@ parrot_neuron::update( Time const& origin, const long from, const long to )
     {
       SpikeEvent se;
       se.set_flush_event_flag( true );
-      kernel().event_delivery_manager.send( *this, se, lag );
+      kernel::manager< EventDeliveryManager >.send( *this, se, lag );
       set_last_event_time( t );
     }
   }
@@ -106,7 +104,7 @@ parrot_neuron::handle( SpikeEvent& e )
   // Repeat only spikes incoming on port 0, port 1 will be ignored
   if ( 0 == e.get_rport() )
   {
-    B_.n_spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.n_spikes_.add_value( e.get_rel_delivery_steps( kernel::manager< SimulationManager >.get_slice_origin() ),
       static_cast< double >( e.get_multiplicity() ) );
   }
 }

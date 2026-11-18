@@ -24,17 +24,22 @@
 #ifndef STEP_RATE_GENERATOR_H
 #define STEP_RATE_GENERATOR_H
 
-// C++ includes:
+#include <cstddef>
+#include <map>
+#include <string>
 #include <vector>
 
-// Includes from nestkernel:
-#include "connection.h"
-#include "device_node.h"
-#include "event.h"
+#include "dictionary.h"
+#include "exceptions.h"
+#include "nest_names.h"
+#include "nest_time.h"
 #include "nest_types.h"
-#include "ring_buffer.h"
+#include "node.h"
+#include "recordables_map.h"
+#include "secondary_event.h"
 #include "stimulation_device.h"
 #include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {

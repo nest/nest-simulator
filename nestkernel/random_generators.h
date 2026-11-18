@@ -23,18 +23,20 @@
 #ifndef RANDOM_GENERATORS_H
 #define RANDOM_GENERATORS_H
 
-// C++ includes:
 #include <algorithm>
+
+#include <cstddef>
+// C++ includes:
+#include <cstdint>
 #include <initializer_list>
 #include <iterator>
-#include <memory>
 #include <random>
 #include <type_traits>
 #include <utility>
+#include <vector>
 
 // libnestutil includes:
 #include "randutils.hpp"
-
 // nestkernel includes:
 #include "node_collection.h"
 

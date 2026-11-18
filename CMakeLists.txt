@@ -83,6 +83,10 @@ option( with-intel-compiler-strict-math "Pass -fp-model strict when compiling wi
 set( with-libraries OFF CACHE STRING "Link additional libraries [default=OFF]. Give full path. Separate multiple libraries by ';'." )
 set( with-includes OFF CACHE STRING "Add additional include paths [default=OFF]. Give full path without '-I'. Separate multiple include paths by ';'." )
 set( with-defines OFF CACHE STRING "Additional defines, e.g. '-DXYZ=1' [default=OFF]. Separate multiple defines by ';'." )
+option( with-lto "Control link-time optimization (LTO) [default=OFF]." OFF )
+set( with-pgo OFF CACHE STRING "Control profile-guided optimization (PGO) [default=OFF]. Set to GENERATE to build with profiling instrumentation and set to USE to use the profiling results in the final optimized build."  )
+# Declared here so that nest_check_unknown_options() accepts it on the command line.
+option( CMAKE_EXPORT_COMPILE_COMMANDS "Write compile_commands.json for tools such as include-what-you-use or clang-tidy [default=OFF]." OFF )
 
 # documentation build configuration
 option( with-userdoc "Build user documentation [default=OFF]." OFF )
@@ -161,6 +165,8 @@ nest_process_with_target_bits_split()
 nest_process_userdoc()
 nest_process_devdoc()
 nest_process_full_logging()
+nest_process_pgo()
+nest_process_lto()
 
 nest_process_models()
 

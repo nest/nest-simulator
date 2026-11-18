@@ -139,9 +139,14 @@ echo "Running $(include-what-you-use --version | head -n 1) with $IWYU_JOBS jobs
 
 # Convert IWYU's own output format, which all IWYU versions produce, into
 # "file:line:col: warning: ..." lines (iwyu_tool's clang-warning format exists
-# only from IWYU 0.22 on). Compiler diagnostics are passed through unchanged.
+# only from IWYU 0.22 on). Compiler errors in a header stub mean that the header
+# does not compile on its own; they are reported as findings, not as failures of
+# IWYU. Other compiler diagnostics are passed through unchanged.
 iwyu_to_warnings() {
     awk '
+        /^In file included from .*[.]iwyu[.]cpp:/ { stub = 1 }
+        /^$/                                       { stub = 0 }
+        stub && /: error: /                        { sub(/: error: /, ": warning: does not compile on its own: ") }
         / should add these lines:$/    { mode = "add"; file = $0; sub(/ should add these lines:$/, "", file); next }
         / should remove these lines:$/ { mode = "remove"; file = $0; sub(/ should remove these lines:$/, "", file); next }
         /^The full include-list for /  { mode = "list"; next }

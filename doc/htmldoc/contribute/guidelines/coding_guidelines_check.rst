@@ -123,7 +123,8 @@ directories, pass them after the build directory, e.g.
 
 IWYU analyses a header ``foo.h`` together with ``foo.cpp``. For every other header, i.e., header-only code
 and ``*_impl.h`` files, the script adds a stub source file that only includes that header, so each header
-is analysed as well and must compile on its own. To apply IWYU's suggestions automatically, use IWYU's
+is analysed as well and must compile on its own; compiler errors in such a stub are reported as
+findings ("does not compile on its own"). To apply IWYU's suggestions automatically, use IWYU's
 ``fix_includes.py`` (``fix_include`` on Debian/Ubuntu) with the ``iwyu`` output format, then run
 ``clang-format``.
 

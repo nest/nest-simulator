@@ -148,7 +148,8 @@ Things to keep in mind:
 * ``config.h`` and ``*_impl.h`` includes are always kept: IWYU does not count ``#ifdef HAVE_...``
   as a use and cannot tell where the templates in ``*_impl.h`` are instantiated.
 * With GCC 15's standard library, IWYU 0.23 alternates between suggesting ``<vector>`` and
-  ``<format>`` for ``std::vector``; keep ``<vector>``.
+  ``<format>`` for ``std::vector``, and ``<utility>`` and ``<iterator>`` for ``std::pair``.
+  ``nest.imp`` maps both symbols to the header that defines them.
 * IWYU's advice to include ``<stddef.h>`` for ``size_t`` is reported as ``<cstddef>``, which NEST uses.
 * NEST-specific mappings, e.g. that Boost sorting is used through ``sort.h``, are defined in
   ``build_support/iwyu/nest.imp``. Extend this file if IWYU repeatedly suggests an unsuitable header.

@@ -58,6 +58,7 @@ public:
   Model* clone( const std::string& ) const override;
 
   bool has_proxies() override;
+  bool local_receiver() override;
   bool one_node_per_process() override;
   bool is_off_grid() override;
   void calibrate_time( const TimeConverter& tc ) override;
@@ -163,6 +164,13 @@ GenericModel< ElementT >::has_proxies()
 
 template < typename ElementT >
 inline bool
+GenericModel< ElementT >::local_receiver()
+{
+  return proto_.local_receiver();
+}
+
+template < typename ElementT >
+inline bool
 GenericModel< ElementT >::one_node_per_process()
 {
   return proto_.one_node_per_process();
@@ -232,7 +240,7 @@ GenericModel< ElementT >::sends_secondary_event( SICEvent& sic )
 }
 
 template < typename ElementT >
-inline nest::SignalType
+inline SignalType
 GenericModel< ElementT >::sends_signal() const
 {
   return proto_.sends_signal();

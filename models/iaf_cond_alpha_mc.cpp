@@ -39,12 +39,13 @@
 #include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
-std::vector< std::string > nest::iaf_cond_alpha_mc::comp_names_( NCOMP );
-nest::RecordablesMap< nest::iaf_cond_alpha_mc > nest::iaf_cond_alpha_mc::recordablesMap_;
-
 
 namespace nest
 {
+std::vector< std::string > iaf_cond_alpha_mc::comp_names_( NCOMP );
+RecordablesMap< iaf_cond_alpha_mc > iaf_cond_alpha_mc::recordablesMap_;
+
+
 void
 register_iaf_cond_alpha_mc( const std::string& name )
 {
@@ -70,22 +71,21 @@ RecordablesMap< iaf_cond_alpha_mc >::create()
 
   insert_( names::t_ref_remaining, &iaf_cond_alpha_mc::get_r_ );
 }
-}
 
 /* ----------------------------------------------------------------
  * Iteration function
  * ---------------------------------------------------------------- */
 
 extern "C" int
-nest::iaf_cond_alpha_mc_dynamics( double, const double y[], double f[], void* pnode )
+iaf_cond_alpha_mc_dynamics( double, const double y[], double f[], void* pnode )
 {
   // some shorthands
-  typedef nest::iaf_cond_alpha_mc N;
-  typedef nest::iaf_cond_alpha_mc::State_ S;
+  typedef iaf_cond_alpha_mc N;
+  typedef iaf_cond_alpha_mc::State_ S;
 
   // get access to node so we can work almost as in a member function
   assert( pnode );
-  const nest::iaf_cond_alpha_mc& node = *( reinterpret_cast< nest::iaf_cond_alpha_mc* >( pnode ) );
+  const iaf_cond_alpha_mc& node = *( reinterpret_cast< iaf_cond_alpha_mc* >( pnode ) );
 
   bool is_refractory = false;
 
@@ -152,7 +152,7 @@ nest::iaf_cond_alpha_mc_dynamics( double, const double y[], double f[], void* pn
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::iaf_cond_alpha_mc::Parameters_::Parameters_()
+iaf_cond_alpha_mc::Parameters_::Parameters_()
   : V_th( -55.0 )     // mV
   , V_reset( -60.0 )  // mV
   , t_ref( 2.0 )      // ms
@@ -192,7 +192,7 @@ nest::iaf_cond_alpha_mc::Parameters_::Parameters_()
   I_e[ DIST ] = 0.0;       // pA
 }
 
-nest::iaf_cond_alpha_mc::Parameters_::Parameters_( const Parameters_& p )
+iaf_cond_alpha_mc::Parameters_::Parameters_( const Parameters_& p )
   : V_th( p.V_th )
   , V_reset( p.V_reset )
   , t_ref( p.t_ref )
@@ -216,8 +216,8 @@ nest::iaf_cond_alpha_mc::Parameters_::Parameters_( const Parameters_& p )
   }
 }
 
-nest::iaf_cond_alpha_mc::Parameters_&
-nest::iaf_cond_alpha_mc::Parameters_::operator=( const Parameters_& p )
+iaf_cond_alpha_mc::Parameters_&
+iaf_cond_alpha_mc::Parameters_::operator=( const Parameters_& p )
 {
   assert( this != &p );  // would be bad logical error in program
 
@@ -247,7 +247,7 @@ nest::iaf_cond_alpha_mc::Parameters_::operator=( const Parameters_& p )
 }
 
 
-nest::iaf_cond_alpha_mc::State_::State_( const Parameters_& p )
+iaf_cond_alpha_mc::State_::State_( const Parameters_& p )
   : r_( 0 )
 {
   // for simplicity, we first initialize all values to 0,
@@ -262,7 +262,7 @@ nest::iaf_cond_alpha_mc::State_::State_( const Parameters_& p )
   }
 }
 
-nest::iaf_cond_alpha_mc::State_::State_( const State_& s )
+iaf_cond_alpha_mc::State_::State_( const State_& s )
   : r_( s.r_ )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -271,8 +271,8 @@ nest::iaf_cond_alpha_mc::State_::State_( const State_& s )
   }
 }
 
-nest::iaf_cond_alpha_mc::State_&
-nest::iaf_cond_alpha_mc::State_::operator=( const State_& s )
+iaf_cond_alpha_mc::State_&
+iaf_cond_alpha_mc::State_::operator=( const State_& s )
 {
   r_ = s.r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -282,7 +282,7 @@ nest::iaf_cond_alpha_mc::State_::operator=( const State_& s )
   return *this;
 }
 
-nest::iaf_cond_alpha_mc::Buffers_::Buffers_( iaf_cond_alpha_mc& n )
+iaf_cond_alpha_mc::Buffers_::Buffers_( iaf_cond_alpha_mc& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -292,7 +292,7 @@ nest::iaf_cond_alpha_mc::Buffers_::Buffers_( iaf_cond_alpha_mc& n )
   // init_buffers_().
 }
 
-nest::iaf_cond_alpha_mc::Buffers_::Buffers_( const Buffers_&, iaf_cond_alpha_mc& n )
+iaf_cond_alpha_mc::Buffers_::Buffers_( const Buffers_&, iaf_cond_alpha_mc& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -307,7 +307,7 @@ nest::iaf_cond_alpha_mc::Buffers_::Buffers_( const Buffers_&, iaf_cond_alpha_mc&
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_cond_alpha_mc::Parameters_::get( Dictionary& d ) const
+iaf_cond_alpha_mc::Parameters_::get( Dictionary& d ) const
 {
   d[ names::V_th ] = V_th;
   d[ names::V_reset ] = V_reset;
@@ -335,7 +335,7 @@ nest::iaf_cond_alpha_mc::Parameters_::get( Dictionary& d ) const
 }
 
 void
-nest::iaf_cond_alpha_mc::Parameters_::set( const Dictionary& d, Node* node )
+iaf_cond_alpha_mc::Parameters_::set( const Dictionary& d, Node* node )
 {
   // allow setting the membrane potential
   update_value_param( d, names::V_th, V_th, node );
@@ -386,7 +386,7 @@ nest::iaf_cond_alpha_mc::Parameters_::set( const Dictionary& d, Node* node )
 }
 
 void
-nest::iaf_cond_alpha_mc::State_::get( Dictionary& d ) const
+iaf_cond_alpha_mc::State_::get( Dictionary& d ) const
 {
   // we assume here that State_::get() always is called after
   // Parameters_::get(), so that the per-compartment dictionaries exist
@@ -400,7 +400,7 @@ nest::iaf_cond_alpha_mc::State_::get( Dictionary& d ) const
 }
 
 void
-nest::iaf_cond_alpha_mc::State_::set( const Dictionary& d, const Parameters_&, Node* node )
+iaf_cond_alpha_mc::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
   // extract from sub-dictionaries
   for ( size_t n = 0; n < NCOMP; ++n )
@@ -418,7 +418,7 @@ nest::iaf_cond_alpha_mc::State_::set( const Dictionary& d, const Parameters_&, N
  * Default and copy constructor for node, and destructor
  * ---------------------------------------------------------------- */
 
-nest::iaf_cond_alpha_mc::iaf_cond_alpha_mc()
+iaf_cond_alpha_mc::iaf_cond_alpha_mc()
   : ArchivingNode()
   , P_()
   , S_( P_ )
@@ -433,7 +433,7 @@ nest::iaf_cond_alpha_mc::iaf_cond_alpha_mc()
   comp_names_[ DIST ] = "distal";
 }
 
-nest::iaf_cond_alpha_mc::iaf_cond_alpha_mc( const iaf_cond_alpha_mc& n )
+iaf_cond_alpha_mc::iaf_cond_alpha_mc( const iaf_cond_alpha_mc& n )
   : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -441,7 +441,7 @@ nest::iaf_cond_alpha_mc::iaf_cond_alpha_mc( const iaf_cond_alpha_mc& n )
 {
 }
 
-nest::iaf_cond_alpha_mc::~iaf_cond_alpha_mc()
+iaf_cond_alpha_mc::~iaf_cond_alpha_mc()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
@@ -463,7 +463,7 @@ nest::iaf_cond_alpha_mc::~iaf_cond_alpha_mc()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_cond_alpha_mc::init_buffers_()
+iaf_cond_alpha_mc::init_buffers_()
 {
   B_.spikes_.resize( NUM_SPIKE_RECEPTORS );
   for ( size_t n = 0; n < NUM_SPIKE_RECEPTORS; ++n )
@@ -523,7 +523,7 @@ nest::iaf_cond_alpha_mc::init_buffers_()
 }
 
 void
-nest::iaf_cond_alpha_mc::pre_run_hook()
+iaf_cond_alpha_mc::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -546,7 +546,7 @@ nest::iaf_cond_alpha_mc::pre_run_hook()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_cond_alpha_mc::update( Time const& origin, const long from, const long to )
+iaf_cond_alpha_mc::update( Time const& origin, const long from, const long to )
 {
   for ( long lag = from; lag < to; ++lag )
   {
@@ -622,7 +622,7 @@ nest::iaf_cond_alpha_mc::update( Time const& origin, const long from, const long
 }
 
 void
-nest::iaf_cond_alpha_mc::handle( SpikeEvent& e )
+iaf_cond_alpha_mc::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
   assert( e.get_rport() < 2 * NCOMP );
@@ -632,7 +632,7 @@ nest::iaf_cond_alpha_mc::handle( SpikeEvent& e )
 }
 
 void
-nest::iaf_cond_alpha_mc::handle( CurrentEvent& e )
+iaf_cond_alpha_mc::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
   // not 100% clean, should look at MIN, SUP
@@ -644,9 +644,11 @@ nest::iaf_cond_alpha_mc::handle( CurrentEvent& e )
 }
 
 void
-nest::iaf_cond_alpha_mc::handle( DataLoggingRequest& e )
+iaf_cond_alpha_mc::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
+
+}  // namespace nest
 
 #endif  // HAVE_GSL

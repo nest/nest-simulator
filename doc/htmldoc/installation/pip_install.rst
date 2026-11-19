@@ -77,18 +77,17 @@ Or install NEST with one of the following options:
    # Install with Sonata format support (HDF5-based network files)
    pip install nest-simulator[sonata]
 
-   # Install with server capabilities (REST API)
-   pip install nest-simulator[server]
-
    # Install with example dependencies
    pip install nest-simulator[examples]
 
    # Install all options
    pip install nest-simulator[full]
 
+   # NEST Server (REST API) is a separate package
+   pip install nest-server
+
    # Combine multiple options
-   pip install nest-simulator[sonata,server]
-   pip install nest-simulator[examples,server]
+   pip install nest-simulator[sonata,examples]
 
 Install latest development version
 ----------------------------------
@@ -120,7 +119,7 @@ You can also install with extra packages using the ``#egg=`` syntax:
    pip install "git+https://github.com/nest/nest-simulator.git#egg=nest-simulator[full]"
 
    # Install with specific extras
-   pip install "git+https://github.com/nest/nest-simulator.git#egg=nest-simulator[sonata,server]"
+   pip install "git+https://github.com/nest/nest-simulator.git#egg=nest-simulator[sonata,examples]"
 
 .. note::
 
@@ -142,7 +141,7 @@ To install from a local copy of the NEST repository:
 
    # Install with extras (see pyproject.toml to view what's installed)
    pip install -e ".[full]"
-   pip install -e ".[sonata,server]"
+   pip install -e ".[sonata,examples]"
 
 
 .. note::
@@ -182,7 +181,6 @@ Package contents
 **Optional Features:**
 
 - **Sonata support**: HDF5-based network format (macOS, Alpine Linux, Debian/Ubuntu)
-- **Server mode**: REST API for remote access
 - **Examples**: Additional tools needed by some examples (including `ipython`, `imageio`, `seaborn`, `networkX`, `cycler`)
 
 

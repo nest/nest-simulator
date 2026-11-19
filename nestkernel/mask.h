@@ -401,19 +401,19 @@ public:
     if ( major_axis_ <= 0 or minor_axis_ <= 0 or polar_axis_ <= 0 )
     {
       throw BadProperty(
-        "nest::EllipseMask<D>: "
+        "EllipseMask<D>: "
         "All axis > 0 required." );
     }
     if ( major_axis_ < minor_axis_ )
     {
       throw BadProperty(
-        "nest::EllipseMask<D>: "
+        "EllipseMask<D>: "
         "major_axis greater than minor_axis required." );
     }
     if ( D == 2 and not( polar_angle_ == 0.0 ) )
     {
       throw BadProperty(
-        "nest::EllipseMask<D>: "
+        "EllipseMask<D>: "
         "polar_angle not defined in 2D." );
     }
 
@@ -740,7 +740,7 @@ BoxMask< D >::BoxMask( const Dictionary& d )
   if ( not( lower_left_ < upper_right_ ) )
   {
     throw BadProperty(
-      "nest::BoxMask<D>: "
+      "BoxMask<D>: "
       "Upper right must be strictly to the right and above lower left." );
   }
 
@@ -758,7 +758,7 @@ BoxMask< D >::BoxMask( const Dictionary& d )
     if ( D == 2 )
     {
       throw BadProperty(
-        "nest::BoxMask<D>: "
+        "BoxMask<D>: "
         "polar_angle not defined in 2D." );
     }
     polar_angle_ = d.get< double >( names::polar_angle );
@@ -837,7 +837,7 @@ inline BoxMask< D >::BoxMask( const Position< D >& lower_left,
   if ( D == 2 and not( polar_angle_ == 0.0 ) )
   {
     throw BadProperty(
-      "nest::BoxMask<D>: "
+      "BoxMask<D>: "
       "polar_angle not defined in 2D." );
   }
 
@@ -898,7 +898,7 @@ BallMask< D >::BallMask( const Dictionary& d )
   radius_ = d.get< double >( names::radius );
   if ( radius_ <= 0 )
   {
-    throw BadProperty( "nest::BallMask<D>: radius > 0 required." );
+    throw BadProperty( "BallMask<D>: radius > 0 required." );
   }
 
   if ( d.known( names::anchor ) )
@@ -929,13 +929,13 @@ EllipseMask< D >::EllipseMask( const Dictionary& d )
   if ( major_axis_ <= 0 or minor_axis_ <= 0 )
   {
     throw BadProperty(
-      "nest::EllipseMask<D>: "
+      "EllipseMask<D>: "
       "All axis > 0 required." );
   }
   if ( major_axis_ < minor_axis_ )
   {
     throw BadProperty(
-      "nest::EllipseMask<D>: "
+      "EllipseMask<D>: "
       "major_axis greater than minor_axis required." );
   }
 
@@ -947,7 +947,7 @@ EllipseMask< D >::EllipseMask( const Dictionary& d )
     if ( D == 2 )
     {
       throw BadProperty(
-        "nest::EllipseMask<D>: "
+        "EllipseMask<D>: "
         "polar_axis not defined in 2D." );
     }
     polar_axis_ = d.get< double >( names::polar_axis );
@@ -955,7 +955,7 @@ EllipseMask< D >::EllipseMask( const Dictionary& d )
     if ( polar_axis_ <= 0 )
     {
       throw BadProperty(
-        "nest::EllipseMask<D>: "
+        "EllipseMask<D>: "
         "All axis > 0 required." );
     }
 
@@ -986,7 +986,7 @@ EllipseMask< D >::EllipseMask( const Dictionary& d )
     if ( D == 2 )
     {
       throw BadProperty(
-        "nest::EllipseMask<D>: "
+        "EllipseMask<D>: "
         "polar_angle not defined in 2D." );
     }
     polar_angle_ = d.get< double >( names::polar_angle );

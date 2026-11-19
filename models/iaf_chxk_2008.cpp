@@ -38,14 +38,14 @@
 #include "universal_data_logger_impl.h"
 
 
+namespace nest
+{
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::iaf_chxk_2008 > nest::iaf_chxk_2008::recordablesMap_;
+RecordablesMap< iaf_chxk_2008 > iaf_chxk_2008::recordablesMap_;
 
-namespace nest  // template specialization must be placed in namespace
-{
 void
 register_iaf_chxk_2008( const std::string& name )
 {
@@ -69,21 +69,20 @@ RecordablesMap< iaf_chxk_2008 >::create()
   insert_( names::I_syn_in, &iaf_chxk_2008::get_I_syn_inh_ );
   insert_( names::I_ahp, &iaf_chxk_2008::get_I_ahp_ );
 }
-}
 
 /* ----------------------------------------------------------------
  * Iteration function
  * ---------------------------------------------------------------- */
 
 extern "C" inline int
-nest::iaf_chxk_2008_dynamics( double, const double y[], double f[], void* pnode )
+iaf_chxk_2008_dynamics( double, const double y[], double f[], void* pnode )
 {
   // a shorthand
-  typedef nest::iaf_chxk_2008::State_ S;
+  typedef iaf_chxk_2008::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::iaf_chxk_2008& node = *( reinterpret_cast< nest::iaf_chxk_2008* >( pnode ) );
+  const iaf_chxk_2008& node = *( reinterpret_cast< iaf_chxk_2008* >( pnode ) );
 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
@@ -117,7 +116,7 @@ nest::iaf_chxk_2008_dynamics( double, const double y[], double f[], void* pnode 
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::iaf_chxk_2008::Parameters_::Parameters_()
+iaf_chxk_2008::Parameters_::Parameters_()
   :  // Default values chosen based on values found in
   // Alex Casti's simulator
   V_th( -45.0 )      // mV
@@ -138,7 +137,7 @@ nest::iaf_chxk_2008::Parameters_::Parameters_()
   recordablesMap_.create();
 }
 
-nest::iaf_chxk_2008::State_::State_( const Parameters_& p )
+iaf_chxk_2008::State_::State_( const Parameters_& p )
   : r( 0 )
 {
   y[ V_M ] = p.E_L;  // initialize to reversal potential
@@ -148,7 +147,7 @@ nest::iaf_chxk_2008::State_::State_( const Parameters_& p )
   }
 }
 
-nest::iaf_chxk_2008::State_::State_( const State_& s )
+iaf_chxk_2008::State_::State_( const State_& s )
   : r( s.r )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -157,8 +156,8 @@ nest::iaf_chxk_2008::State_::State_( const State_& s )
   }
 }
 
-nest::iaf_chxk_2008::State_&
-nest::iaf_chxk_2008::State_::operator=( const State_& s )
+iaf_chxk_2008::State_&
+iaf_chxk_2008::State_::operator=( const State_& s )
 {
   r = s.r;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -168,7 +167,7 @@ nest::iaf_chxk_2008::State_::operator=( const State_& s )
   return *this;
 }
 
-nest::iaf_chxk_2008::Buffers_::Buffers_( iaf_chxk_2008& n )
+iaf_chxk_2008::Buffers_::Buffers_( iaf_chxk_2008& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -178,7 +177,7 @@ nest::iaf_chxk_2008::Buffers_::Buffers_( iaf_chxk_2008& n )
   // init_buffers_().
 }
 
-nest::iaf_chxk_2008::Buffers_::Buffers_( const Buffers_&, iaf_chxk_2008& n )
+iaf_chxk_2008::Buffers_::Buffers_( const Buffers_&, iaf_chxk_2008& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -193,7 +192,7 @@ nest::iaf_chxk_2008::Buffers_::Buffers_( const Buffers_&, iaf_chxk_2008& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_chxk_2008::Parameters_::get( Dictionary& d ) const
+iaf_chxk_2008::Parameters_::get( Dictionary& d ) const
 {
   d[ names::V_th ] = V_th;
   d[ names::g_L ] = g_L;
@@ -211,7 +210,7 @@ nest::iaf_chxk_2008::Parameters_::get( Dictionary& d ) const
 }
 
 void
-nest::iaf_chxk_2008::Parameters_::set( const Dictionary& d, Node* node )
+iaf_chxk_2008::Parameters_::set( const Dictionary& d, Node* node )
 {
   // allow setting the membrane potential
   update_value_param( d, names::V_th, V_th, node );
@@ -238,13 +237,13 @@ nest::iaf_chxk_2008::Parameters_::set( const Dictionary& d, Node* node )
 }
 
 void
-nest::iaf_chxk_2008::State_::get( Dictionary& d ) const
+iaf_chxk_2008::State_::get( Dictionary& d ) const
 {
   d[ names::V_m ] = y[ V_M ];  // Membrane potential
 }
 
 void
-nest::iaf_chxk_2008::State_::set( const Dictionary& d, const Parameters_&, Node* node )
+iaf_chxk_2008::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
   update_value_param( d, names::V_m, y[ V_M ], node );
 }
@@ -253,7 +252,7 @@ nest::iaf_chxk_2008::State_::set( const Dictionary& d, const Parameters_&, Node*
  * Default and copy constructor for node, and destructor
  * ---------------------------------------------------------------- */
 
-nest::iaf_chxk_2008::iaf_chxk_2008()
+iaf_chxk_2008::iaf_chxk_2008()
   : ArchivingNode()
   , P_()
   , S_( P_ )
@@ -261,7 +260,7 @@ nest::iaf_chxk_2008::iaf_chxk_2008()
 {
 }
 
-nest::iaf_chxk_2008::iaf_chxk_2008( const iaf_chxk_2008& n )
+iaf_chxk_2008::iaf_chxk_2008( const iaf_chxk_2008& n )
   : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -269,7 +268,7 @@ nest::iaf_chxk_2008::iaf_chxk_2008( const iaf_chxk_2008& n )
 {
 }
 
-nest::iaf_chxk_2008::~iaf_chxk_2008()
+iaf_chxk_2008::~iaf_chxk_2008()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
@@ -291,7 +290,7 @@ nest::iaf_chxk_2008::~iaf_chxk_2008()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_chxk_2008::init_buffers_()
+iaf_chxk_2008::init_buffers_()
 {
   ArchivingNode::clear_history();
 
@@ -340,7 +339,7 @@ nest::iaf_chxk_2008::init_buffers_()
 }
 
 void
-nest::iaf_chxk_2008::pre_run_hook()
+iaf_chxk_2008::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -355,7 +354,7 @@ nest::iaf_chxk_2008::pre_run_hook()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_chxk_2008::update( Time const& origin, const long from, const long to )
+iaf_chxk_2008::update( Time const& origin, const long from, const long to )
 {
   for ( long lag = from; lag < to; ++lag )
   {
@@ -440,7 +439,7 @@ nest::iaf_chxk_2008::update( Time const& origin, const long from, const long to 
 }
 
 void
-nest::iaf_chxk_2008::handle( SpikeEvent& e )
+iaf_chxk_2008::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -457,7 +456,7 @@ nest::iaf_chxk_2008::handle( SpikeEvent& e )
 }
 
 void
-nest::iaf_chxk_2008::handle( CurrentEvent& e )
+iaf_chxk_2008::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -466,8 +465,11 @@ nest::iaf_chxk_2008::handle( CurrentEvent& e )
 }
 
 void
-nest::iaf_chxk_2008::handle( DataLoggingRequest& e )
+iaf_chxk_2008::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
+
+}  // namespace nest
+
 #endif  // HAVE_GSL

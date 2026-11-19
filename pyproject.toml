@@ -20,7 +20,7 @@ authors = [
 maintainers = [
   { name = "Steffen Graber", email = "s.graber@fz-juelich.de" },
 ]
-requires-python = ">=3.9, <4.0"
+requires-python = ">=3.10, <4.0"
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Science/Research",
@@ -29,7 +29,6 @@ classifiers = [
   "Operating System :: MacOS",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
@@ -48,13 +47,6 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-server = [
-  "Flask",
-  "flask-cors",
-  "gunicorn",
-  "requests",
-  "RestrictedPython"
-]
 test = [
   "pytest",
   "pytest-cov",
@@ -76,7 +68,6 @@ docs = [
   "sphinx_design",
   "sphinx-material",
   "sphinx-copybutton",
-  "sphinx-carousel",
   "sphinx-notfound-page",
   "sphinxcontrib-mermaid",
   "sphinxcontrib-plantuml",
@@ -108,9 +99,7 @@ full = [
   # Sonata support
   "h5py>=3.8.0",
   # Additional tools
-  "nestml", "nest-desktop",
-  # Nest server dependencies
-  "Flask", "flask-cors", "gunicorn", "requests", "RestrictedPython",
+  "nestml", "nest-desktop", "nest-server",
   # Development tools
   "jupyter", "jupyterlab", "notebook"
 ]
@@ -141,7 +130,6 @@ result = "{version}"
 [tool.scikit-build.cmake.define]
 with-optimize = "-O2"
 with-warning = "ON"
-with-python = "ON"
 with-boost = "ON"
 with-gsl = "ON"
 with-openmp = "ON"

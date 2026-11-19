@@ -25,9 +25,9 @@
 // nestkernel
 #include "nest_impl.h"
 
+
 namespace nest
 {
-
 void
 register_eprop_synapse( const std::string& name )
 {

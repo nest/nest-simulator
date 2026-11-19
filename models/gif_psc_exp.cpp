@@ -34,6 +34,7 @@
 #include "iaf_propagator.h"
 #include "numerics.h"
 
+
 namespace nest
 {
 void
@@ -66,7 +67,7 @@ RecordablesMap< gif_psc_exp >::create()
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::gif_psc_exp::Parameters_::Parameters_()
+gif_psc_exp::Parameters_::Parameters_()
   : g_L_( 4.0 )         // nS
   , E_L_( -70.0 )       // mV
   , V_reset_( -55.0 )   // mV
@@ -86,7 +87,7 @@ nest::gif_psc_exp::Parameters_::Parameters_()
 }
 
 
-nest::gif_psc_exp::State_::State_()
+gif_psc_exp::State_::State_()
   : I_stim_( 0.0 )
   , V_( -70.0 )
   , sfa_( 0.0 )
@@ -104,7 +105,7 @@ nest::gif_psc_exp::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::gif_psc_exp::Parameters_::get( Dictionary& d ) const
+gif_psc_exp::Parameters_::get( Dictionary& d ) const
 {
   d[ names::I_e ] = I_e_;
   d[ names::E_L ] = E_L_;
@@ -124,7 +125,7 @@ nest::gif_psc_exp::Parameters_::get( Dictionary& d ) const
 }
 
 void
-nest::gif_psc_exp::Parameters_::set( const Dictionary& d, Node* node )
+gif_psc_exp::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::I_e, I_e_, node );
   update_value_param( d, names::E_L, E_L_, node );
@@ -208,7 +209,7 @@ nest::gif_psc_exp::Parameters_::set( const Dictionary& d, Node* node )
 }
 
 void
-nest::gif_psc_exp::State_::get( Dictionary& d, const Parameters_& ) const
+gif_psc_exp::State_::get( Dictionary& d, const Parameters_& ) const
 {
   d[ names::V_m ] = V_;      // Membrane potential
   d[ names::E_sfa ] = sfa_;  // Adaptive threshold potential
@@ -216,17 +217,17 @@ nest::gif_psc_exp::State_::get( Dictionary& d, const Parameters_& ) const
 }
 
 void
-nest::gif_psc_exp::State_::set( const Dictionary& d, const Parameters_&, Node* node )
+gif_psc_exp::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
   update_value_param( d, names::V_m, V_, node );
 }
 
-nest::gif_psc_exp::Buffers_::Buffers_( gif_psc_exp& n )
+gif_psc_exp::Buffers_::Buffers_( gif_psc_exp& n )
   : logger_( n )
 {
 }
 
-nest::gif_psc_exp::Buffers_::Buffers_( const Buffers_&, gif_psc_exp& n )
+gif_psc_exp::Buffers_::Buffers_( const Buffers_&, gif_psc_exp& n )
   : logger_( n )
 {
 }
@@ -235,7 +236,7 @@ nest::gif_psc_exp::Buffers_::Buffers_( const Buffers_&, gif_psc_exp& n )
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::gif_psc_exp::gif_psc_exp()
+gif_psc_exp::gif_psc_exp()
   : ArchivingNode()
   , P_()
   , S_()
@@ -244,7 +245,7 @@ nest::gif_psc_exp::gif_psc_exp()
   recordablesMap_.create();
 }
 
-nest::gif_psc_exp::gif_psc_exp( const gif_psc_exp& n )
+gif_psc_exp::gif_psc_exp( const gif_psc_exp& n )
   : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -257,7 +258,7 @@ nest::gif_psc_exp::gif_psc_exp( const gif_psc_exp& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::gif_psc_exp::init_buffers_()
+gif_psc_exp::init_buffers_()
 {
   B_.spikes_ex_.clear();  // includes resize
   B_.spikes_in_.clear();  // includes resize
@@ -267,7 +268,7 @@ nest::gif_psc_exp::init_buffers_()
 }
 
 void
-nest::gif_psc_exp::pre_run_hook()
+gif_psc_exp::pre_run_hook()
 {
   B_.logger_.init();
 
@@ -311,7 +312,7 @@ nest::gif_psc_exp::pre_run_hook()
  */
 
 void
-nest::gif_psc_exp::update( Time const& origin, const long from, const long to )
+gif_psc_exp::update( Time const& origin, const long from, const long to )
 {
   for ( long lag = from; lag < to; ++lag )
   {
@@ -388,7 +389,7 @@ nest::gif_psc_exp::update( Time const& origin, const long from, const long to )
 }
 
 void
-nest::gif_psc_exp::handle( SpikeEvent& e )
+gif_psc_exp::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -409,7 +410,7 @@ nest::gif_psc_exp::handle( SpikeEvent& e )
 }
 
 void
-nest::gif_psc_exp::handle( CurrentEvent& e )
+gif_psc_exp::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -421,9 +422,9 @@ nest::gif_psc_exp::handle( CurrentEvent& e )
 }
 
 void
-nest::gif_psc_exp::handle( DataLoggingRequest& e )
+gif_psc_exp::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
 
-}  // namespace
+}  // namespace nest

@@ -305,7 +305,7 @@ private:
 
 
 inline size_t
-nest::cm_default::send_test_event( Node& target, size_t receptor_type, synindex, bool )
+cm_default::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

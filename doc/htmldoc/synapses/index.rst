@@ -15,7 +15,6 @@ Guides on using synapses in NEST
   .. grid-item-card:: Managing coonnections
 
       * :ref:`connectivity_concepts`
-      * :ref:`connection_generator`
       * :ref:`synapse_spec`
 
   .. grid-item-card:: Weight normalization

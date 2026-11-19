@@ -106,7 +106,7 @@ Note:
 
 In the current implementation of the model, the values of
 :math:`\eta_i` and :math:`\gamma_i` are affected immediately after spike
-emission. However, `GIF toolbox <http://wiki.epfl.ch/giftoolbox>`_, which
+emission. However, `GIF toolbox <https://github.com/pozzorin/GIFFittingToolbox>`_, which
 fits the model using experimental data, requires a different set of
 :math:`\eta_i` and :math:`\gamma_i`. It applies the jump of
 :math:`\eta_i` and :math:`\gamma_i` after the refractory period. One can
@@ -130,6 +130,15 @@ The shape of postsynaptic current is exponential.
 
   For implementation details see the
   `IAF Integration Singularity notebook <../model_details/IAF_Integration_Singularity.ipynb>`_.
+
+.. note::
+
+   Incoming spikes are routed to the excitatory or inhibitory synapse type by the **sign of the
+   connection weight**. A positive weight targets the excitatory synapse type, a negative weight
+   the inhibitory one, and also sets the direction of the post-synaptic current.
+   Spike connections must use the default ``receptor_type`` of 0.
+
+   See :ref:`synapse_selection` for the conventions used by other models.
 
 Parameters
 ++++++++++

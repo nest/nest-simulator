@@ -160,13 +160,13 @@ nonlinearities_tanh_rate::mult_coupling_in( double )
   return 1.;
 }
 
-typedef rate_neuron_ipn< nest::nonlinearities_tanh_rate > tanh_rate_ipn;
+typedef rate_neuron_ipn< nonlinearities_tanh_rate > tanh_rate_ipn;
 void register_tanh_rate_ipn( const std::string& name );
 
-typedef rate_neuron_opn< nest::nonlinearities_tanh_rate > tanh_rate_opn;
+typedef rate_neuron_opn< nonlinearities_tanh_rate > tanh_rate_opn;
 void register_tanh_rate_opn( const std::string& name );
 
-typedef rate_transformer_node< nest::nonlinearities_tanh_rate > rate_transformer_tanh;
+typedef rate_transformer_node< nonlinearities_tanh_rate > rate_transformer_tanh;
 void register_rate_transformer_tanh( const std::string& name );
 
 

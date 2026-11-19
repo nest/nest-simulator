@@ -6,7 +6,7 @@ Install NEST from source
 
 .. note::
 
-    Please see our :ref:`development workflows and guidelines <developer_space>`, if you need
+    Please see our :ref:`development workflows and guidelines <contribute>`, if you need
     a refresher in git or need to review the coding or documentation guidelines.
 
 
@@ -26,7 +26,7 @@ Install NEST from source
 
 
 
-We have provided an `environment.yml <https://github.com/nest/nest-simulator/blob/master/environment.yml>`_
+We have provided an `environment.yml <https://github.com/nest/nest-simulator/blob/main/environment.yml>`_
 file that contains all possible packages needed for NEST development.
 
 .. grid:: 3

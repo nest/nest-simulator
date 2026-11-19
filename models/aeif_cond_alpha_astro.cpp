@@ -41,14 +41,15 @@
 #include "nest_names.h"
 #include "universal_data_logger_impl.h"
 
+
+namespace nest
+{
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::aeif_cond_alpha_astro > nest::aeif_cond_alpha_astro::recordablesMap_;
+RecordablesMap< aeif_cond_alpha_astro > aeif_cond_alpha_astro::recordablesMap_;
 
-namespace nest  // template specialization must be placed in namespace
-{
 void
 register_aeif_cond_alpha_astro( const std::string& name )
 {
@@ -68,17 +69,16 @@ RecordablesMap< aeif_cond_alpha_astro >::create()
   insert_( names::w, &aeif_cond_alpha_astro::get_y_elem_< aeif_cond_alpha_astro::State_::W > );
   insert_( names::I_SIC, &aeif_cond_alpha_astro::get_I_sic_ );
 }
-}
 
 extern "C" int
-nest::aeif_cond_alpha_astro_dynamics( double, const double y[], double f[], void* pnode )
+aeif_cond_alpha_astro_dynamics( double, const double y[], double f[], void* pnode )
 {
   // a shorthand
-  typedef nest::aeif_cond_alpha_astro::State_ S;
+  typedef aeif_cond_alpha_astro::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::aeif_cond_alpha_astro& node = *( reinterpret_cast< nest::aeif_cond_alpha_astro* >( pnode ) );
+  const aeif_cond_alpha_astro& node = *( reinterpret_cast< aeif_cond_alpha_astro* >( pnode ) );
 
   const bool is_refractory = node.S_.r_ > 0;
 
@@ -130,7 +130,7 @@ nest::aeif_cond_alpha_astro_dynamics( double, const double y[], double f[], void
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::aeif_cond_alpha_astro::Parameters_::Parameters_()
+aeif_cond_alpha_astro::Parameters_::Parameters_()
   : V_peak_( 0.0 )     // mV
   , V_reset_( -60.0 )  // mV
   , t_ref_( 0.0 )      // ms
@@ -151,7 +151,7 @@ nest::aeif_cond_alpha_astro::Parameters_::Parameters_()
 {
 }
 
-nest::aeif_cond_alpha_astro::State_::State_( const Parameters_& p )
+aeif_cond_alpha_astro::State_::State_( const Parameters_& p )
   : r_( 0 )
 {
   y_[ 0 ] = p.E_L;
@@ -161,7 +161,7 @@ nest::aeif_cond_alpha_astro::State_::State_( const Parameters_& p )
   }
 }
 
-nest::aeif_cond_alpha_astro::State_::State_( const State_& s )
+aeif_cond_alpha_astro::State_::State_( const State_& s )
   : r_( s.r_ )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -170,8 +170,8 @@ nest::aeif_cond_alpha_astro::State_::State_( const State_& s )
   }
 }
 
-nest::aeif_cond_alpha_astro::State_&
-nest::aeif_cond_alpha_astro::State_::operator=( const State_& s )
+aeif_cond_alpha_astro::State_&
+aeif_cond_alpha_astro::State_::operator=( const State_& s )
 {
   r_ = s.r_;
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
@@ -186,7 +186,7 @@ nest::aeif_cond_alpha_astro::State_::operator=( const State_& s )
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_cond_alpha_astro::Parameters_::get( Dictionary& d ) const
+aeif_cond_alpha_astro::Parameters_::get( Dictionary& d ) const
 {
   d[ names::C_m ] = C_m;
   d[ names::V_th ] = V_th;
@@ -208,7 +208,7 @@ nest::aeif_cond_alpha_astro::Parameters_::get( Dictionary& d ) const
 }
 
 void
-nest::aeif_cond_alpha_astro::Parameters_::set( const Dictionary& d, Node* node )
+aeif_cond_alpha_astro::Parameters_::set( const Dictionary& d, Node* node )
 {
   update_value_param( d, names::V_th, V_th, node );
   update_value_param( d, names::V_peak, V_peak_, node );
@@ -284,7 +284,7 @@ nest::aeif_cond_alpha_astro::Parameters_::set( const Dictionary& d, Node* node )
 }
 
 void
-nest::aeif_cond_alpha_astro::State_::get( Dictionary& d ) const
+aeif_cond_alpha_astro::State_::get( Dictionary& d ) const
 {
   d[ names::V_m ] = y_[ V_M ];
   d[ names::g_ex ] = y_[ G_EXC ];
@@ -295,7 +295,7 @@ nest::aeif_cond_alpha_astro::State_::get( Dictionary& d ) const
 }
 
 void
-nest::aeif_cond_alpha_astro::State_::set( const Dictionary& d, const Parameters_&, Node* node )
+aeif_cond_alpha_astro::State_::set( const Dictionary& d, const Parameters_&, Node* node )
 {
   update_value_param( d, names::V_m, y_[ V_M ], node );
   update_value_param( d, names::g_ex, y_[ G_EXC ], node );
@@ -309,7 +309,7 @@ nest::aeif_cond_alpha_astro::State_::set( const Dictionary& d, const Parameters_
   }
 }
 
-nest::aeif_cond_alpha_astro::Buffers_::Buffers_( aeif_cond_alpha_astro& n )
+aeif_cond_alpha_astro::Buffers_::Buffers_( aeif_cond_alpha_astro& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -319,7 +319,7 @@ nest::aeif_cond_alpha_astro::Buffers_::Buffers_( aeif_cond_alpha_astro& n )
   // init_buffers_().
 }
 
-nest::aeif_cond_alpha_astro::Buffers_::Buffers_( const Buffers_&, aeif_cond_alpha_astro& n )
+aeif_cond_alpha_astro::Buffers_::Buffers_( const Buffers_&, aeif_cond_alpha_astro& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -333,7 +333,7 @@ nest::aeif_cond_alpha_astro::Buffers_::Buffers_( const Buffers_&, aeif_cond_alph
  * Default and copy constructor for node, and destructor
  * ---------------------------------------------------------------- */
 
-nest::aeif_cond_alpha_astro::aeif_cond_alpha_astro()
+aeif_cond_alpha_astro::aeif_cond_alpha_astro()
   : ArchivingNode()
   , P_()
   , S_( P_ )
@@ -342,7 +342,7 @@ nest::aeif_cond_alpha_astro::aeif_cond_alpha_astro()
   recordablesMap_.create();
 }
 
-nest::aeif_cond_alpha_astro::aeif_cond_alpha_astro( const aeif_cond_alpha_astro& n )
+aeif_cond_alpha_astro::aeif_cond_alpha_astro( const aeif_cond_alpha_astro& n )
   : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -350,7 +350,7 @@ nest::aeif_cond_alpha_astro::aeif_cond_alpha_astro( const aeif_cond_alpha_astro&
 {
 }
 
-nest::aeif_cond_alpha_astro::~aeif_cond_alpha_astro()
+aeif_cond_alpha_astro::~aeif_cond_alpha_astro()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
@@ -372,7 +372,7 @@ nest::aeif_cond_alpha_astro::~aeif_cond_alpha_astro()
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_cond_alpha_astro::init_buffers_()
+aeif_cond_alpha_astro::init_buffers_()
 {
   B_.spike_exc_.clear();     // includes resize
   B_.spike_inh_.clear();     // includes resize
@@ -424,7 +424,7 @@ nest::aeif_cond_alpha_astro::init_buffers_()
 }
 
 void
-nest::aeif_cond_alpha_astro::pre_run_hook()
+aeif_cond_alpha_astro::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -449,7 +449,7 @@ nest::aeif_cond_alpha_astro::pre_run_hook()
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_cond_alpha_astro::update( Time const& origin, const long from, const long to )
+aeif_cond_alpha_astro::update( Time const& origin, const long from, const long to )
 {
   assert( State_::V_M == 0 );
 
@@ -536,7 +536,7 @@ nest::aeif_cond_alpha_astro::update( Time const& origin, const long from, const 
 }
 
 void
-nest::aeif_cond_alpha_astro::handle( SpikeEvent& e )
+aeif_cond_alpha_astro::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -553,7 +553,7 @@ nest::aeif_cond_alpha_astro::handle( SpikeEvent& e )
 }
 
 void
-nest::aeif_cond_alpha_astro::handle( CurrentEvent& e )
+aeif_cond_alpha_astro::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -564,7 +564,7 @@ nest::aeif_cond_alpha_astro::handle( CurrentEvent& e )
 }
 
 void
-nest::aeif_cond_alpha_astro::handle( SICEvent& e )
+aeif_cond_alpha_astro::handle( SICEvent& e )
 {
   const double weight = e.get_weight();
   const long delay = e.get_delay_steps() - kernel().connection_manager.get_min_delay();
@@ -580,9 +580,11 @@ nest::aeif_cond_alpha_astro::handle( SICEvent& e )
 }
 
 void
-nest::aeif_cond_alpha_astro::handle( DataLoggingRequest& e )
+aeif_cond_alpha_astro::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
+
+}  // namespace nest
 
 #endif  // HAVE_GSL

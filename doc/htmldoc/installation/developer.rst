@@ -15,7 +15,15 @@ Install NEST from source
 
 .. code-block:: sh
 
-   git clone git@github.com:<your-username>/nest-simulator.git
+   git clone https://github.com/nest/nest-simulator.git
+
+If you have set up SSH keys for GitHub, clone ``git@github.com:nest/nest-simulator.git``
+instead.
+
+.. note::
+
+    If you plan to contribute to NEST via pull requests, fork the repository first and
+    clone your fork instead. See :ref:`git workflow <git_workflow>` for the details.
 
 
 * or download the tarball `here <https://github.com/nest/nest-simulator/releases>`_ and unpack it:
@@ -23,6 +31,10 @@ Install NEST from source
 .. code-block:: sh
 
     tar -xzvf nest-simulator-x.y.tar.gz
+
+To build a specific release instead of the current development version, list the available
+tags with ``git tag`` and check out the release you want with ``git checkout vX.Y``. The
+tarballs on the releases page linked above correspond to these tags.
 
 
 

@@ -261,7 +261,17 @@ MPIManager::set_status( const Dictionary& dict )
   }
 
   dict.update_value( names::growth_factor_buffer_spike_data, growth_factor_buffer_spike_data_ );
-  dict.update_value( names::growth_factor_buffer_target_data, growth_factor_buffer_target_data_ );
+  double new_growth_factor_buffer_target_data = 0;
+  if ( dict.update_value( names::growth_factor_buffer_target_data, new_growth_factor_buffer_target_data ) )
+  {
+    // A factor below 1 would shrink the buffer in each round, below 2 * nest.num_processes.
+    // Written as not( x ≥ 1 ) to reject NaN as well.
+    if ( not( new_growth_factor_buffer_target_data >= 1 ) )
+    {
+      throw BadProperty( "growth_factor_buffer_target_data ≥ 1 required." );
+    }
+    growth_factor_buffer_target_data_ = new_growth_factor_buffer_target_data;
+  }
 
   dict.update_value( names::shrink_factor_buffer_spike_data, shrink_factor_buffer_spike_data_ );
 }

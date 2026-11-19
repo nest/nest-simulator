@@ -1874,7 +1874,7 @@ ConnectionManager::fill_target_buffer( const size_t tid,
       ++source_2_idx;
     }  // end while
 
-    // If we breaked out of the while() loop, we also need to break out here as there is no more space
+    // If we broke out of the while() loop, we also need to break out here as there is no more space
     // for data in this thread's chunk.
     if ( not source_table_read )
     {

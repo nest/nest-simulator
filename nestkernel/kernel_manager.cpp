@@ -77,7 +77,7 @@ kernel::create_managers()
 
   // Construction order: a manager's constructor may only use managers constructed before it. Keep this order
   // identical to KernelManager::managers, which determines the order of initialize() and finalize().
-  // KernelManager comes last; its constructor only stores the addresses of the other managers.
+  // KernelManager comes last, as its constructor only stores the addresses of the other managers.
   construct_manager_< LoggingManager >();
   construct_manager_< MPIManager >();
   construct_manager_< VPManager >();

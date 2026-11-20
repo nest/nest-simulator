@@ -232,10 +232,10 @@ private:
  * `manager< ManagerT >` is a `constinit` reference to the union's `object` member, so
  * `kernel::manager< ManagerT >.f()` compiles to a direct access at a fixed address with no extra pointer indirection.
  * At the start of `init_nest()`, `create_managers()` placement-news all managers in a fixed order (see
- * kernel_manager.cpp); no manager may be used before that call.
+ * kernel_manager.cpp). No manager may be used before that call.
  *
  * `~ManagerStorage()` is intentionally empty, so manager destructors never run at exit. This matches the previous
- * `KernelManager` singleton, which was heap-allocated and never deleted; cleanup belongs in `finalize()`, not in
+ * `KernelManager` singleton, which was heap-allocated and never deleted. Cleanup belongs in `finalize()`, not in
  * destructors. When writing or adding a manager, only access managers constructed earlier in `create_managers()`, and
  * keep `create_managers()` and `KernelManager::managers` in the same order.
  */
@@ -276,7 +276,7 @@ constinit inline ManagerT& manager = manager_storage< ManagerT >.object;
 /**
  * Construct all managers in a fixed order.
  *
- * Must be called before any manager is used; init_nest() does this. Calling it more than once has no effect.
+ * Must be called before any manager is used (init_nest() does this). Calling it more than once has no effect.
  */
 void create_managers();
 

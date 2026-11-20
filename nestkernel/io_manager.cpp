@@ -134,9 +134,10 @@ IOManager::finalize( const bool adjust_number_of_threads_or_rng_only )
   // When only the number of threads changes, the backends of extension modules are removed as well, as
   // ModuleManager::reinitialize_dynamic_modules() registers them again (#4013); the built-in ones are kept.
   const std::set< std::string > none;
-  remove_backends_( recording_backends_, adjust_number_of_threads_or_rng_only ? builtin_recording_backends_ : none );
-  remove_backends_(
-    stimulation_backends_, adjust_number_of_threads_or_rng_only ? builtin_stimulation_backends_ : none );
+  const auto& keep_recording = adjust_number_of_threads_or_rng_only ? builtin_recording_backends_ : none;
+  const auto& keep_stimulation = adjust_number_of_threads_or_rng_only ? builtin_stimulation_backends_ : none;
+  remove_backends_( recording_backends_, keep_recording );
+  remove_backends_( stimulation_backends_, keep_stimulation );
 }
 
 template < typename BackendT >

@@ -102,6 +102,9 @@ def test_module_backend_records(backend_module):
     nest.Install(backend_module)
     record_to_module_backend()
     nest.ResetKernel()
+    nest.Install(backend_module)
+    record_to_module_backend()
+    nest.ResetKernel()
 
 
 @pytest.mark.skipif_missing_threads

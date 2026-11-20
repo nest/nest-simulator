@@ -49,7 +49,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Current-based leaky integrate-and-fire neuron with alpha-shaped
+Current-based leaky integrate-and-fire neuron with alpha-function shaped
 postsynaptic currents using regula falsi method for approximation of
 threshold crossing
 
@@ -59,7 +59,7 @@ Description
 .. versionadded:: 2.18
 
 ``iaf_psc_alpha_ps`` is the "canonical" implementation of the leaky
-integrate-and-fire model neuron with alpha-shaped postsynaptic
+integrate-and-fire model neuron with alpha-function shaped postsynaptic
 currents in the sense of :footcite:p:`Morrison2007a`, that is, the most exact implementation
 available. It is a leaky integrate-and-fire neuron model with
 
@@ -171,6 +171,15 @@ can only change at on-grid times.
 
 For details about exact subthreshold integration, please see
 :doc:`../neurons/exact-integration`.
+
+.. note::
+
+   Incoming spikes are routed to the excitatory or inhibitory synapse type by the **sign of the
+   connection weight**. A positive weight targets the excitatory synapse type, a negative weight
+   the inhibitory one, and also sets the direction of the post-synaptic current.
+   Spike connections must use the default ``receptor_type`` of 0.
+
+   See :ref:`synapse_selection` for the conventions used by other models.
 
 Parameters
 ++++++++++

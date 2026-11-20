@@ -6,7 +6,7 @@ E-prop plasticity examples
 Eligibility propagation (e-prop) :footcite:p:`Bellec2020` is a three-factor learning rule for spiking neural networks that approximates the
 performance of backpropagation through time (BPTT). A complete e-prop model comprises a recurrent neuron model, a
 readout neuron model, a synapse model, and a learning signal connection. Two such models are provided: the original
-formulation by Bellec et al. (2020) :footcite:p:`Bellec2020` and an extended variant with additional biological features :footcite:p:`KorcsakGorzo2025`. The e-prop models are related as follows:
+formulation by Bellec et al. (2020) :footcite:p:`Bellec2020` and an extended variant with additional biological features :footcite:p:`KorcsakGorzo2026`. The e-prop models are related as follows:
 
 .. image:: eprop_model_relationships.png
 

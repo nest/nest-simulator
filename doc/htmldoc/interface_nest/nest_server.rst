@@ -35,4 +35,4 @@ All NEST Server operations are managed using the ``nest-server`` command that ca
 
 .. note::
 
-   For more information, please read the documentation on `NEST Server <https://github.com/nest/nest-server>` repository.
+   For more information, see the `NEST Server repository <https://github.com/nest/nest-server>`_.

@@ -57,8 +57,8 @@ MPIManager::MPIManager()
   , send_buffer_size_( 0 )
   , recv_buffer_size_( 0 )
   , use_mpi_( false )
-  , buffer_size_target_data_( 1 )
-  , buffer_size_spike_data_( 1 )
+  , buffer_size_target_data_( 2 * num_processes_ )
+  , buffer_size_spike_data_( 2 * num_processes_ )
   , max_buffer_size_target_data_( 16777216 )
   , adaptive_target_buffers_( true )
   , growth_factor_buffer_spike_data_( 1.5 )
@@ -225,10 +225,30 @@ MPIManager::set_status( const Dictionary& dict )
 {
   dict.update_value( names::adaptive_target_buffers, adaptive_target_buffers_ );
 
+  long mbstd = 0;
+  if ( dict.update_value( names::max_buffer_size_target_data, mbstd ) )
+  {
+    if ( mbstd < 2 * num_processes_ )
+    {
+      throw BadProperty( "max_buffer_size_target_data ≥ 2 * nest.num_processes required." );
+    }
+    max_buffer_size_target_data_ = mbstd;
+
+    // enforce maximum
+    if ( buffer_size_target_data_ > max_buffer_size_target_data_ )
+    {
+      set_buffer_size_target_data( max_buffer_size_target_data_ );
+    }
+  }
+
   long new_buffer_size_target_data = buffer_size_target_data_;
   dict.update_value( names::buffer_size_target_data, new_buffer_size_target_data );
-  if ( new_buffer_size_target_data != static_cast< long >( buffer_size_target_data_ )
-    and new_buffer_size_target_data < static_cast< long >( max_buffer_size_target_data_ ) )
+  if ( new_buffer_size_target_data < 2 * num_processes_
+    or new_buffer_size_target_data > static_cast< long >( max_buffer_size_target_data_ ) )
+  {
+    throw BadProperty( "2 * nest.num_processes ≤ buffer_size_target_data ≤ max_buffer_size_target_data required." );
+  }
+  if ( new_buffer_size_target_data != static_cast< long >( buffer_size_target_data_ ) )
   {
     set_buffer_size_target_data( new_buffer_size_target_data );
   }
@@ -241,16 +261,16 @@ MPIManager::set_status( const Dictionary& dict )
   }
 
   dict.update_value( names::growth_factor_buffer_spike_data, growth_factor_buffer_spike_data_ );
-  dict.update_value( names::growth_factor_buffer_target_data, growth_factor_buffer_target_data_ );
-
-  long mbstd = 0;
-  if ( dict.update_value( names::max_buffer_size_target_data, mbstd ) )
+  double new_growth_factor_buffer_target_data = 0;
+  if ( dict.update_value( names::growth_factor_buffer_target_data, new_growth_factor_buffer_target_data ) )
   {
-    if ( mbstd < 0 )
+    // A factor below 1 would shrink the buffer in each round, below 2 * nest.num_processes.
+    // Written as not( x ≥ 1 ) to reject NaN as well.
+    if ( not( new_growth_factor_buffer_target_data >= 1 ) )
     {
-      throw BadProperty( "max_buffer_size_target_data ≥ 0 required." );
+      throw BadProperty( "growth_factor_buffer_target_data ≥ 1 required." );
     }
-    max_buffer_size_target_data_ = mbstd;
+    growth_factor_buffer_target_data_ = new_growth_factor_buffer_target_data;
   }
 
   dict.update_value( names::shrink_factor_buffer_spike_data, shrink_factor_buffer_spike_data_ );

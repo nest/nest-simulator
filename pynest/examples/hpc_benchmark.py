@@ -120,7 +120,7 @@ def convert_synapse_weight(tau_m, tau_syn, C_m):
     Computes conversion factor for synapse weight from mV to pA
 
     This function is specific to the leaky integrate-and-fire neuron
-    model with alpha-shaped postsynaptic currents.
+    model with alpha-function shaped postsynaptic currents.
 
     """
 

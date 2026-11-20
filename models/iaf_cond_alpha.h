@@ -63,7 +63,7 @@ extern "C" int iaf_cond_alpha_dynamics( double, const double*, double*, void* );
 Short description
 +++++++++++++++++
 
-Leaky integrate-and-fire neuron model with alpha-shaped synaptic conductances
+Leaky integrate-and-fire neuron model with alpha-function shaped synaptic conductances
 
 Description
 +++++++++++
@@ -144,6 +144,15 @@ synaptic current.
 
    This model integrates the subthreshold and synaptic dynamics with an
    adaptive-step-size Runge-Kutta-Fehlberg solver from the GNU Scientific Library.
+
+.. note::
+
+   Incoming spikes are routed to the excitatory or inhibitory synapse type by the **sign of the
+   connection weight**. A positive weight targets the excitatory synapse type, a negative weight
+   the inhibitory one. Only the absolute value of the weight sets the conductance
+   amplitude. Spike connections must use the default ``receptor_type`` of 0.
+
+   See :ref:`synapse_selection` for the conventions used by other models.
 
 Parameters
 ++++++++++

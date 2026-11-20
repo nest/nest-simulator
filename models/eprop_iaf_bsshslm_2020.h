@@ -149,7 +149,7 @@ For more information on e-prop plasticity, see the documentation on the other e-
  * :doc:`eprop_synapse_bsshslm_2020<../models/eprop_synapse_bsshslm_2020/>`
  * :doc:`eprop_learning_signal_connection_bsshslm_2020<../models/eprop_learning_signal_connection_bsshslm_2020/>`
 
-Details on the event-based NEST implementation of e-prop can be found in :footcite:p:`KorcsakGorzo2025`.
+Details on the event-based NEST implementation of e-prop can be found in :footcite:p:`KorcsakGorzo2026`.
 
 Parameters
 ++++++++++

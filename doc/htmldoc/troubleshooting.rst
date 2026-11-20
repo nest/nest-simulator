@@ -120,9 +120,8 @@ This error message means something in your environment is not set correctly, dep
    You must use Python :version:`python` or newer if you installed NEST with
 
    a. the Ubuntu PPA,
-   b. the conda-forge package,
-   c. the Live Media, or
-   d. if you compiled NEST with Python 3 bindings
+   b. the conda-forge package, or
+   c. if you compiled NEST with Python 3 bindings
 
    Type ``python`` or ``ipython`` in the terminal. The python version that is used will be displayed.
 

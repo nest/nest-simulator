@@ -40,6 +40,7 @@ Model::Model( const std::string& name )
   : name_( name )
   , type_id_( 0 )
   , memory_()
+  , blocks_()
 {
 }
 
@@ -62,6 +63,8 @@ Model::set_threads_( size_t t )
 
   memory_.resize( t );
   memory_.shrink_to_fit();
+  blocks_.clear();
+  blocks_.resize( t );
 }
 
 void
@@ -69,6 +72,16 @@ Model::reserve_additional( size_t t, size_t n )
 {
   assert( t < memory_.size() );
   memory_[ t ].reserve( n );
+}
+
+void
+Model::create_update_block( const size_t t, const std::vector< Node* >& nodes )
+{
+  assert( t < blocks_.size() );
+  if ( auto block = make_update_block_( nodes ) )
+  {
+    blocks_[ t ].push_back( std::move( block ) );
+  }
 }
 
 void

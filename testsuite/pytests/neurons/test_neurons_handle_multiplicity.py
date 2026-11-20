@@ -67,6 +67,9 @@ skip_list = [
     "music_message_out_proxy",  # music device
     "music_rate_in_proxy",  # music device
     "music_rate_out_proxy",  # music device
+    "sir_neuron",  # multi-state neuron
+    "sirs_neuron",  # multi-state neuron
+    "sis_neuron",  # multi-state neuron
     "astrocyte_lr_1994",  # does not have V_m
 ]
 

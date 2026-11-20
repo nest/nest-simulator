@@ -22,6 +22,9 @@
 
 #include "archiving_node.h"
 
+// C++ includes:
+#include <cassert>
+
 // Includes from nestkernel:
 #include "kernel_manager.h"
 
@@ -223,21 +226,22 @@ ArchivingNode::set_spiketime( Time const& t_sp, double offset, size_t multiplici
       last_spike_ = t_sp_ms;
       history_.push_back( histentry( last_spike_, Kminus_, Kminus_triplet_, 0 ) );
     }
+
+    // Corrections reach synapses which have not read this spike from the history, so they have to be
+    // accounted for in the same way a regular read is.
+    const size_t num_corrections = correct_synapses_stdp_ax_delay_( t_sp );
+    if ( num_corrections > 0 )
+    {
+      assert( history_.size() >= multiplicity );
+      for ( size_t i = 0; i < multiplicity; ++i )
+      {
+        history_[ history_.size() - 1 - i ].access_counter_ += num_corrections;
+      }
+    }
   }
   else
   {
     last_spike_ = t_sp_ms;
-  }
-
-  // Corrections reach synapses which have not read this spike from the history, so they have to be
-  // accounted for in the same way a regular read is.
-  const size_t num_corrections = correct_synapses_stdp_ax_delay_( t_sp );
-  if ( num_corrections > 0 )
-  {
-    for ( size_t i = 0; i < multiplicity; ++i )
-    {
-      history_[ history_.size() - 1 - i ].access_counter_ += num_corrections;
-    }
   }
 }
 

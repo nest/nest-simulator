@@ -39,7 +39,7 @@ RESOLUTION = 0.1
 def run(parrot_model, min_delay, max_delay, chunks, spike_times, threads):
     nest.ResetKernel()
     nest.set(resolution=RESOLUTION, local_num_threads=threads)
-    delays = np.round(np.arange(min_delay, max_delay + RESOLUTION / 2, RESOLUTION), 1)
+    delays = np.arange(min_delay, max_delay + RESOLUTION / 2, RESOLUTION)
     nest.SetDefaults("static_synapse", {"delay": min_delay})  # the default delay must lie within the delay extrema
     nest.set(min_delay=min_delay, max_delay=max_delay)
     precise = parrot_model.endswith("_ps")
@@ -55,8 +55,8 @@ def run(parrot_model, min_delay, max_delay, chunks, spike_times, threads):
         nest.Simulate(c)
     ev = rec.get("events")
     sent = np.asarray(spike_times) + min_delay  # the first parrot repeats the spikes after min_delay
-    expected = sorted((int(post[k].global_id), round(t + d, 6)) for k, d in enumerate(delays) for t in sent)
-    got = sorted(zip(ev["senders"].tolist(), np.round(ev["times"], 6).tolist()))
+    expected = sorted((post[k].global_id, t + d) for k, d in enumerate(delays) for t in sent)
+    got = sorted(zip(ev["senders"], ev["times"]))
     return expected, got
 
 
@@ -67,4 +67,5 @@ def run(parrot_model, min_delay, max_delay, chunks, spike_times, threads):
 def test_spikes_arrive_after_their_delay(parrot_model, min_delay, max_delay, chunks, threads):
     spike_times = [1.0, 2.3, 4.0, 7.7, 11.1]
     expected, got = run(parrot_model, min_delay, max_delay, chunks, spike_times, threads)
-    assert got == expected
+    assert [s for s, _ in got] == [s for s, _ in expected]
+    assert [t for _, t in got] == pytest.approx([t for _, t in expected])

@@ -123,6 +123,7 @@ const std::string clear( "clear" );
 const std::string comp_idx( "comp_idx" );
 const std::string comparator( "comparator" );
 const std::string compartments( "compartments" );
+const std::string compressed_spike_data_copies( "compressed_spike_data_copies" );
 const std::string conc_Mg2( "conc_Mg2" );
 const std::string configbit_0( "configbit_0" );
 const std::string configbit_1( "configbit_1" );

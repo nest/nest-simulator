@@ -388,4 +388,11 @@ iaf_psc_exp::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
+DirectSpikeInputAddr
+iaf_psc_exp::get_direct_spike_input()
+{
+  // handle( SpikeEvent& ) adds the weight to channel SYN_EX (w > 0) or SYN_IN of the slot given by the delivery step
+  return DirectSpikeInputAddr( B_.input_buffer_, Buffers_::SYN_EX, Buffers_::SYN_IN );
+}
+
 }  // namespace nest

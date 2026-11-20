@@ -1698,6 +1698,22 @@ ConnectionManager::compress_secondary_send_buffer_pos( const size_t tid )
 }
 
 void
+ConnectionManager::clear_direct_spike_tables()
+{
+  // one connector per thread and synapse type: the loop is short
+  for ( auto& connectors : connections_ )
+  {
+    for ( ConnectorBase* connector : connectors )
+    {
+      if ( connector )
+      {
+        connector->clear_direct_spike_table();
+      }
+    }
+  }
+}
+
+void
 ConnectionManager::remove_disabled_connections_( const size_t tid )
 {
   assert( use_compressed_spikes_ );

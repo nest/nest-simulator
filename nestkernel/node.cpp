@@ -267,6 +267,12 @@ Node::handle( SpikeEvent& )
   throw UnexpectedEvent( "The target node does not handle spike input." );
 }
 
+DirectSpikeInputAddr
+Node::get_direct_spike_input()
+{
+  return DirectSpikeInputAddr();  // not supported, spikes are delivered via handle( SpikeEvent& )
+}
+
 size_t
 Node::handles_test_event( SpikeEvent&, size_t )
 {

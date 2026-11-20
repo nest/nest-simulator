@@ -23,8 +23,12 @@
 #ifndef STATICSYNAPSE_H
 #define STATICSYNAPSE_H
 
+// C++ includes:
+#include <type_traits>
+
 // Includes from nestkernel:
 #include "connection.h"
+#include "target_identifier.h"
 
 namespace nest
 {
@@ -68,6 +72,26 @@ class static_synapse : public Connection< targetidentifierT >
   double weight_;
 
 public:
+  /**
+   * Whether spikes of this connection type may be delivered directly into the input buffer of the target.
+   *
+   * Only for targets identified by a thread-local index (hpc synapses), because the table of input
+   * buffers is indexed by it. See nestkernel/direct_spike_delivery.h.
+   */
+  static constexpr bool supports_direct_delivery = std::is_same< targetidentifierT, TargetIdentifierIndex >::value;
+
+  double
+  get_weight() const
+  {
+    return weight_;
+  }
+
+  size_t
+  get_target_index() const
+  {
+    return this->get_target_identifier().get_index();
+  }
+
   // this line determines which common properties to use
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;

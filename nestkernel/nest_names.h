@@ -384,6 +384,7 @@ const std::string num_connections( "num_connections" );
 const std::string num_processes( "num_processes" );
 const std::string number_of_connections( "number_of_connections" );
 
+const std::string direct_spike_delivery( "direct_spike_delivery" );
 const std::string off_grid_spiking( "off_grid_spiking" );
 const std::string offset( "offset" );
 const std::string offsets( "offsets" );

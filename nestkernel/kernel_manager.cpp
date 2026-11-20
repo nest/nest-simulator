@@ -53,16 +53,16 @@ namespace
 bool managers_created_ = false;
 
 /**
- * Construct manager `T` in its storage.
+ * Construct manager `ManagerT` in its storage.
  *
- * Placement new starts the lifetime of the manager object inside the union kernel::manager_storage< T >, after
- * which kernel::manager< T > refers to a valid object. See the description in kernel_manager.h.
+ * Placement new starts the lifetime of the manager object inside the union kernel::manager_storage< ManagerT >, after
+ * which kernel::manager< ManagerT > refers to a valid object. See the description in kernel_manager.h.
  */
-template < class T >
+template < typename ManagerT >
 void
-construct_manager()
+construct_manager_()
 {
-  ::new ( static_cast< void* >( &kernel::manager_storage< T >.object ) ) T();
+  ::new ( static_cast< void* >( &kernel::manager_storage< ManagerT >.object ) ) ManagerT();
 }
 
 }  // namespace
@@ -78,21 +78,21 @@ kernel::create_managers()
   // Construction order: a manager's constructor may only use managers constructed before it. Keep this order
   // identical to KernelManager::managers, which determines the order of initialize() and finalize().
   // KernelManager comes last; its constructor only stores the addresses of the other managers.
-  construct_manager< LoggingManager >();
-  construct_manager< MPIManager >();
-  construct_manager< VPManager >();
-  construct_manager< ModuleManager >();
-  construct_manager< RandomManager >();
-  construct_manager< SimulationManager >();
-  construct_manager< ModelRangeManager >();
-  construct_manager< ConnectionManager >();
-  construct_manager< SPManager >();
-  construct_manager< EventDeliveryManager >();
-  construct_manager< IOManager >();
-  construct_manager< ModelManager >();
-  construct_manager< MUSICManager >();
-  construct_manager< NodeManager >();
-  construct_manager< KernelManager >();
+  construct_manager_< LoggingManager >();
+  construct_manager_< MPIManager >();
+  construct_manager_< VPManager >();
+  construct_manager_< ModuleManager >();
+  construct_manager_< RandomManager >();
+  construct_manager_< SimulationManager >();
+  construct_manager_< ModelRangeManager >();
+  construct_manager_< ConnectionManager >();
+  construct_manager_< SPManager >();
+  construct_manager_< EventDeliveryManager >();
+  construct_manager_< IOManager >();
+  construct_manager_< ModelManager >();
+  construct_manager_< MUSICManager >();
+  construct_manager_< NodeManager >();
+  construct_manager_< KernelManager >();
 
   managers_created_ = true;
 }

@@ -216,43 +216,28 @@ private:
 /**
  * Global access to the managers and their lifetime.
  *
- * All managers, including the KernelManager itself, are accessed as `kernel::manager< XManager >`, e.g.,
- * `kernel::manager< VPManager >.get_thread_id()`. This header only forward-declares the manager classes, so a
- * file using a manager must include that manager's header (see the include guidelines in the developer docs).
+ * Managers (including KernelManager) are accessed via `kernel::manager< XManager >`, e.g.,
+ * `kernel::manager< VPManager >.get_thread_id()`. Because this header only forward-declares the manager classes,
+ * files using a manager must include that manager's header.
  *
- * Why managers are constructed explicitly
- * ---------------------------------------
- * A plain `template < class T > inline T manager;` would construct each manager during dynamic initialization
- * of the program. For implicitly instantiated variable templates, the C++ standard leaves the order of this
- * initialization *unspecified*, across and even within translation units ([basic.start.dynamic]). Destruction
- * at program exit happens in reverse order of construction, so it is unspecified as well. Since managers use
- * each other in their constructors and destructors (e.g., ModuleManager logs via LoggingManager), this can lead
- * to use before construction or after destruction; double frees at exit were observed with some compilers.
- * Taking the managers' addresses in a particular order (as in KernelManager::managers) does not change their
+ * Using a plain `template < typename ManagerT > inline ManagerT manager;` does not work reliably because the C++
+ * standard leaves the dynamic initialization order of implicitly instantiated variable templates unspecified (with
+ * destruction running in reverse order). Since managers call into each other during construction and destruction
+ * (e.g., ModuleManager logs via LoggingManager), this can access uninitialized or already-destroyed managers and
+ * caused double frees at exit on some compilers. Taking their addresses in KernelManager::managers does not affect
  * construction order.
  *
- * How it works
- * ------------
- * 1. `manager_storage< T >` reserves correctly sized and aligned memory for one manager `T`. It is a union whose
- *    constructor only initializes the dummy member `unused_`, so the manager inside is *not* constructed. The
- *    constructor is `constexpr` and the variable `constinit`, so the storage is set up at compile time and
- *    takes no part in the unspecified dynamic initialization.
- * 2. `manager< T >` is a reference to the manager object inside that storage. It is bound at compile/link time
- *    (also `constinit`), so `kernel::manager< T >.f()` compiles to a direct access to a fixed address, without
- *    any additional pointer indirection.
- * 3. create_managers() constructs all managers in the storage with placement new, one after the other, in a
- *    fixed order (see kernel_manager.cpp). It is called at the very beginning of init_nest(). Before that call,
- *    the storage contains no valid objects and no manager must be used.
- * 4. Managers are never destroyed: the destructor of the storage is intentionally empty, so the managers'
- *    destructors do not run at program exit. This matches the behavior before managers became global
- *    variables, when the KernelManager singleton was allocated with `new` and never deleted. Releasing
- *    resources therefore belongs into the managers' finalize() methods, not into their destructors.
+ * Instead, `manager_storage< ManagerT >` reserves aligned storage for each manager in a union whose `constexpr`
+ * constructor only initializes the dummy `unused_` member, keeping it out of dynamic initialization (`constinit`).
+ * `manager< ManagerT >` is a `constinit` reference to the union's `object` member, so
+ * `kernel::manager< ManagerT >.f()` compiles to a direct access at a fixed address with no extra pointer indirection.
+ * At the start of `init_nest()`, `create_managers()` placement-news all managers in a fixed order (see
+ * kernel_manager.cpp); no manager may be used before that call.
  *
- * Rules for manager code
- * ----------------------
- * - A manager constructor may only use managers that are constructed before it in create_managers().
- * - Do not rely on a manager destructor being called.
- * - When adding a new manager, add it to create_managers() and to KernelManager::managers, in the same position.
+ * `~ManagerStorage()` is intentionally empty, so manager destructors never run at exit. This matches the previous
+ * `KernelManager` singleton, which was heap-allocated and never deleted; cleanup belongs in `finalize()`, not in
+ * destructors. When writing or adding a manager, only access managers constructed earlier in `create_managers()`, and
+ * keep `create_managers()` and `KernelManager::managers` in the same order.
  */
 namespace kernel
 {
@@ -260,10 +245,10 @@ namespace kernel
 /**
  * Storage for a single manager object, see the description above.
  *
- * The union reserves memory for a `T` without constructing it. The empty destructor keeps the manager alive
+ * The union reserves memory for a `ManagerT` without constructing it. The empty destructor keeps the manager alive
  * until the program ends.
  */
-template < class T >
+template < typename ManagerT >
 union ManagerStorage
 {
   constexpr
@@ -276,17 +261,17 @@ union ManagerStorage
   {
   }
 
-  char unused_;  //!< Dummy member that is initialized instead of the manager object
-  T object;      //!< The manager, constructed explicitly by create_managers()
+  char unused_;     //!< Dummy member that is initialized instead of the manager object
+  ManagerT object;  //!< The manager, constructed explicitly by create_managers()
 };
 
-//! Storage for manager `T`, set up at compile time.
-template < class T >
-constinit inline ManagerStorage< T > manager_storage {};
+//! Storage for manager `ManagerT`, set up at compile time.
+template < typename ManagerT >
+constinit inline ManagerStorage< ManagerT > manager_storage {};
 
-//! Access to manager `T`. Only valid after create_managers() has been called.
-template < class T >
-constinit inline T& manager = manager_storage< T >.object;
+//! Access to manager `ManagerT`. Only valid after create_managers() has been called.
+template < typename ManagerT >
+constinit inline ManagerT& manager = manager_storage< ManagerT >.object;
 
 /**
  * Construct all managers in a fixed order.

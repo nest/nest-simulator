@@ -30,3 +30,4 @@
 #include "test_parameter.h"
 #include "test_sort.h"
 #include "test_target_fields.h"
+#include "test_thread_blocks.h"

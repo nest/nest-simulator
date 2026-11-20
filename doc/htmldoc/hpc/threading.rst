@@ -83,6 +83,100 @@ Table of OpenMP settings
    * - ``export OMP_DISPLAY_ENV=true``
      - display OpenMP variables
 
+.. _many_threads:
+
+Settings for many threads per process
+`````````````````````````````````````
+
+In every simulation cycle, all threads of a process meet at barriers, and the spikes of all threads are collected and
+exchanged. With a few threads per process this takes little time. With many threads per process, and in particular when
+the threads of one process run on several sockets or chips, these steps become a large part of the cycle. The following
+kernel parameters reduce this part. They do not change the results of a simulation, only how fast it runs. All of them
+are off by default (``False`` or 1); whether they pay off depends on the model and the system, so compare the run times.
+
+All of them assume that every thread has a core of its own and that the threads are bound to their cores
+(``OMP_PROC_BIND`` and ``OMP_PLACES``, see above).
+
+``tree_barrier``
+   Replaces the OpenMP barriers of the simulation loop by a barrier in which the threads arrive in small groups, like the
+   branches of a tree, and wait by spinning instead of sleeping. Do not use it when there are more threads than cores,
+   since a spinning thread then takes the core away from a thread that has work to do.
+
+   ``tree_barrier_fan_in`` sets the size of the groups. Set it to the number of cores that share a last-level cache,
+   for example 8 for the core complexes of AMD EPYC processors. How to find this number depends on the system. On many
+   Linux systems, ``lscpu --caches`` gives the size of one cache of each level and of all caches of that level together
+   (for the L3 of a node with 256 cores, for example, 16 MB and 512 MB: 32 caches, so 8 cores per cache), and a modern
+   Linux system may expose the cores that share the last-level cache with core 0 at a location like
+   ``/sys/devices/system/cpu/cpu0/cache/index3/shared_cpu_list``. Where all cores of a socket share one cache, or where
+   this information is not available, keep the default of 8: larger groups make the tree shallower, but more threads
+   then write the same counter.
+
+``single_cycle_barrier``
+   With ``tree_barrier``, completes a simulation cycle with one barrier instead of two: the work between the two
+   barriers is done while the threads arrive, by the last thread of each group and by the master thread. It pays off
+   where a barrier is expensive compared to the cycle: many threads per process, several sockets or chips per process,
+   short cycles.
+
+``collocation_groups``
+   Divides the threads into this many groups, which collect the spikes of their threads in parallel instead of the master
+   thread alone. Set it to the number of sockets or NUMA nodes used by the process.
+
+``compressed_spike_data_copies``
+   Gives each block of threads its own copy of the table that the threads read for every spike they deliver, so that the
+   threads of a socket read local memory. Set it to the number of sockets or NUMA nodes used by the process. Each copy
+   needs additional memory.
+
+With bound threads, NEST forms the groups and blocks along the NUMA nodes of the threads (see below). An example for one
+process with 128 threads on a node with two sockets of 64 cores each:
+
+.. code-block:: bash
+
+   export OMP_NUM_THREADS=128
+   export OMP_PROC_BIND=close
+   export OMP_PLACES=cores
+
+.. code-block:: python
+
+   nest.set(
+       local_num_threads=128,
+       tree_barrier=True,
+       single_cycle_barrier=True,
+       collocation_groups=2,
+       compressed_spike_data_copies=2,
+   )
+
+With one process per socket instead, each process uses one socket, and ``collocation_groups`` and
+``compressed_spike_data_copies`` stay at 1.
+
+.. _one_core_free:
+
+Leaving one core to the operating system
+````````````````````````````````````````
+
+The operating system handles most of its background work, such as interrupts and system services, on the first core of a
+node. A thread of NEST on that core is delayed now and then, and since all threads meet at the end of every simulation cycle,
+the other threads wait for it. Leaving this core free and running one thread fewer can therefore make a simulation faster,
+in particular with many threads per process and short simulation cycles. Whether it does depends on the system, so compare
+the run times with and without.
+
+To leave core 0 free, list the places of the threads explicitly. For one process on a node with two sockets of 64 cores
+each (cores 0-63 and 64-127):
+
+.. code-block:: bash
+
+   export OMP_NUM_THREADS=127
+   export OMP_PROC_BIND=close
+   export OMP_PLACES="{1}:63,{64}:64"
+
+and set ``nest.local_num_threads = 127`` in your script. ``{1}:63`` means 63 places starting at core 1, ``{64}:64`` the 64
+cores of the second socket. Run ``lscpu`` to see how the cores of your node are numbered and which cores belong to which
+socket or NUMA node. With Slurm, request all cores of the node (``--cpus-per-task=128``) and let OpenMP place the threads
+(``srun --cpu-bind=none``), so that the places above are not restricted by Slurm.
+
+When the threads are bound to places in this way, NEST forms its blocks of threads (``collocation_groups``,
+``compressed_spike_data_copies``) along the NUMA nodes of the threads, so that a block does not span two nodes even if the
+nodes run different numbers of threads.
+
 .. note::
 
    Using ```python``` on HPC systems might lead to inconsistencies in multi-threading libraries resulting in a degredation of performance.

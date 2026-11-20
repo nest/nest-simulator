@@ -80,6 +80,12 @@ public:
 
   bool valid_connection_rule( std::string );
 
+  /**
+   * Count the target data of thread tid for compute_target_data_buffer_size().
+   *
+   * Must be called by every thread before compute_target_data_buffer_size().
+   */
+  void count_target_data( const size_t tid );
   void compute_target_data_buffer_size();
   void compute_compressed_secondary_recv_buffer_positions( const size_t tid );
   void collect_compressed_spike_data( const size_t tid );
@@ -710,6 +716,9 @@ private:
   //! For each thread, store (syn_id, compressed_spike_data_map_::iterator) pair for next iteration while filling target
   //! buffers
   std::vector< std::pair< size_t, std::map< size_t, CSDMapEntry >::const_iterator > > iteration_state_;
+
+  //! Number of target data of each thread, see count_target_data()
+  std::vector< size_t > num_target_data_;
 };
 
 inline bool

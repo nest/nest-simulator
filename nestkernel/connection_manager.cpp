@@ -120,6 +120,7 @@ ConnectionManager::initialize( const bool adjust_number_of_threads_or_rng_only )
   const size_t num_threads = kernel().vp_manager.get_num_threads();
   connections_.resize( num_threads );
   secondary_recv_buffer_pos_.resize( num_threads );
+  num_target_data_.assign( num_threads, 0 );
   compressed_spike_data_.resize( 0 );
 
   has_primary_connections_ = false;
@@ -1033,6 +1034,12 @@ ConnectionManager::trigger_update_weight( const long vt_id,
   }
 }
 
+void
+ConnectionManager::count_target_data( const size_t tid )
+{
+  num_target_data_[ tid ] = get_num_target_data( tid );
+}
+
 size_t
 ConnectionManager::get_num_target_data( const size_t tid ) const
 {
@@ -1456,12 +1463,12 @@ void
 ConnectionManager::compute_target_data_buffer_size()
 {
   // Determine number of target data on this rank. Since each thread
-  // has its own data structures, we need to count connections on every
-  // thread separately to compute the total number of sources.
+  // has its own data structures, every thread has counted its sources
+  // in count_target_data().
   size_t num_target_data = 0;
   for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    num_target_data += get_num_target_data( tid );
+    num_target_data += num_target_data_[ tid ];
   }
 
   // Determine maximum number of target data across all ranks, because
@@ -1782,6 +1789,10 @@ ConnectionManager::collect_compressed_spike_data( const size_t tid )
     }  // of omp single; implicit barrier
 
     source_table_.collect_compressible_sources( tid );
+    kernel().get_omp_synchronization_construction_stopwatch().start();
+#pragma omp barrier
+    kernel().get_omp_synchronization_construction_stopwatch().stop();
+    source_table_.assemble_compressed_spike_data( tid );
     kernel().get_omp_synchronization_construction_stopwatch().start();
 #pragma omp barrier
     kernel().get_omp_synchronization_construction_stopwatch().stop();

@@ -96,8 +96,10 @@ public:
     std::vector< ConnectorBase* >& hetconn,
     const synindex syn_id,
     const Dictionary& d,
-    const double delay = NAN,
-    const double weight = NAN ) = 0;
+    const double delay = numerics::nan,
+    const double dendritic_delay = numerics::nan,
+    const double axonal_delay = numerics::nan,
+    const double weight = numerics::nan ) = 0;
 
   virtual ConnectorModel* clone( std::string, synindex syn_id ) const = 0;
 
@@ -116,6 +118,8 @@ public:
    * Connection::check_synapse_params().
    */
   virtual void check_synapse_params( const Dictionary& ) const = 0;
+
+  virtual void check_valid_default_delay_parameters( const Dictionary& syn_params ) const = 0;
 
   virtual std::unique_ptr< SecondaryEvent > get_secondary_event() = 0;
 
@@ -155,11 +159,13 @@ private:
 
   ConnectionT default_connection_;
   size_t receptor_type_;
+  synindex syn_id_;
 
 public:
   GenericConnectorModel( const std::string name )
     : ConnectorModel( name, ConnectionT::properties )
     , receptor_type_( 0 )
+    , syn_id_( invalid_synindex )
   {
   }
 
@@ -168,6 +174,7 @@ public:
     , cp_( cm.cp_ )
     , default_connection_( cm.default_connection_ )
     , receptor_type_( cm.receptor_type_ )
+    , syn_id_( cm.syn_id_ )
   {
   }
 
@@ -177,6 +184,8 @@ public:
     const synindex syn_id,
     const Dictionary& d,
     const double delay,
+    const double dendritic_delay,
+    const double axonal_delay,
     const double weight ) override;
 
   ConnectorModel* clone( std::string, synindex ) const override;
@@ -197,6 +206,8 @@ public:
 
   void check_synapse_params( const Dictionary& syn_spec ) const override;
 
+  void check_valid_default_delay_parameters( const Dictionary& syn_params ) const override;
+
   std::unique_ptr< SecondaryEvent >
   get_secondary_event() override
   {
@@ -211,15 +222,7 @@ public:
 
 private:
   void used_default_delay();
-
-  void add_connection_( Node& src,
-    Node& tgt,
-    std::vector< ConnectorBase* >& hetconn,
-    const synindex syn_id,
-    ConnectionT& c,
-    const size_t receptor_type );
-
-};  // GenericConnectorModel
+};
 
 }  // namespace nest
 

@@ -23,6 +23,7 @@
 #include "connector_base.h"
 
 // Includes from nestkernel:
+#include "axonal_delay_archiving_node.h"
 #include "kernel_manager.h"
 
 // Includes from models:
@@ -33,6 +34,20 @@
 
 namespace nest
 {
+
+template < typename ConnectionT >
+void
+Connector< ConnectionT >::register_axonal_delay_correction_required_( const ConnectionT& c )
+{
+  if constexpr ( ConnectionT::requires_axonal_delay_correction )
+  {
+    if ( c.get_axonal_delay_steps() >= c.get_dendritic_delay_steps() )
+    {
+      axonal_delay_correction_required_ = true;
+      kernel().connection_manager.register_predominant_axonal_delay( kernel().vp_manager.get_thread_id() );
+    }
+  }
+}
 
 template < typename ConnectionT >
 void
@@ -60,6 +75,19 @@ Connector< ConnectionT >::send_weight_event( const size_t tid,
     wr_e.set_receiver_node_id( e.get_receiver_node_id() );
     wr_e();
   }
+}
+
+template < typename ConnectionT >
+void
+Connector< ConnectionT >::correct_weight_stdp_ax_delay( const size_t tid,
+  CorrectionEntrySTDPAxDelay& entry,
+  const double t_spike_critical_interval_end,
+  const double t_post_spike )
+{
+  typename ConnectionT::CommonPropertiesType const& cp = static_cast< GenericConnectorModel< ConnectionT >* >(
+    kernel().model_manager.get_connection_models( tid )[ entry.get_syn_id() ] )
+                                                           ->get_common_properties();
+  C_[ entry.get_lcid() ].correct_weight_stdp_ax_delay( tid, entry, t_spike_critical_interval_end, t_post_spike, cp );
 }
 
 }  // of namespace nest

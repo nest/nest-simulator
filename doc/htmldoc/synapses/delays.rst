@@ -1,0 +1,82 @@
+.. _delays:
+
+Delays
+======
+
+In NEST, transmission delays are specified with the ``delay`` parameter.
+Delays are considered fully dendritic by all built-in models and therefore, the ``delay`` parameter is still used by
+most models.
+
+It is now also possible to specify both explicit, heterogeneous axonal and dendritic delays for models
+supporting this feature. This is useful for STDP models and other models relying on the timing of spike arrival at the
+synapse.
+
+Currently, only ``stdp_pl_synapse_hom_ax_delay`` supports explicitly specifying axonal and dendritic delays with the
+``axonal_delay`` and ``dendritic_delay`` parameters. For STDP with predominant axonal delays, neuron models must be
+adjusted to correctly handle these delays. At this point, ``iaf_psc_alpha``, ``iaf_psc_exp``, ``iaf_psc_delta`` and
+``parrot_neuron`` support STDP with predominant axonal delays; connecting such a synapse to any other neuron
+model raises an error.
+
+When using ``stdp_pl_synapse_hom_ax_delay``:
+
+- The parameter ``delay`` is no longer valid. This is to prevent ambiguity between the two types of delays.
+- The parameter names ``dendritic_delay`` and ``axonal_delay`` have to be used to specify delay.
+- If these parameters are not explicitly provided, then the default values are used:
+
+  ``dendritic_delay: 1.0``  and ``axonal_delay: 0.0``.
+- If only axonal delay is provided and no dendritic delay, the dendritic delay is assumed to be 0 and vice-versa.
+
+.. warning::
+
+   Each delay is rounded to the simulation resolution **separately**, so a split which does not fit onto
+   the resolution grid silently changes the *total* delay. As an example, consider trying to split a
+   total delay of 1.5 ms into equal axonal and dendritic parts by specifying ``axonal_delay: 0.75, dendritic_delay: 0.75``. Both delays would be rounded up to 0.8 ms to fit onto the time grid,
+   resulting in a total delay of 1.6 ms. This matters in particular when a sweep varies the split
+   while holding the total fixed: The sweep needs to ensure that each delay is a multiple of the resolution.
+   Read the delays back with ``nest.GetConnections().delay`` if in doubt.
+
+
+Use of ``axonal_delay`` and ``dendritic_delay`` is the same as ``delay``:
+
+
+**Using syn_spec**
+
+.. code-block:: python
+
+   nest.Create("iaf_psc_alpha")
+   nest.Connect(neuron, neuron, syn_spec={"synapse_model": "stdp_pl_synapse_hom", "delay": 1.0})
+
+.. code-block:: python
+
+   nest.Create("iaf_psc_alpha")
+   nest.Connect(neuron, neuron, syn_spec=
+               {"synapse_model": "stdp_pl_synapse_hom_ax_delay", "axonal_delay": 1.0, "dendritic_delay": 1.0})
+
+**Using SetStatus**
+
+.. code-block:: python
+
+   conn = nest.Connect(neuron, neuron, syn_spec={"synapse_model": "stdp_pl_synapse_hom"})
+   nest.SetStatus(conn, {"delay": 1.0})
+
+.. code-block:: python
+
+   conn = nest.Connect(neuron, neuron, syn_spec={"synapse_model": "stdp_pl_synapse_hom_ax_delay"}, return_synapsecollection=True)
+   conn.set({"axonal_delay": 1.0, "dendritic_delay": 1.0})
+
+**Using SetDefaults**
+
+.. code-block:: python
+
+   nest.SetDefaults("stdp_pl_synapse_hom", {"delay": 1.0})
+
+.. code-block:: python
+
+   nest.SetDefaults("stdp_pl_synapse_hom_ax_delay", {"axonal_delay": 1.0, "dendritic_delay": 1.0})
+
+
+.. seealso::
+
+   :doc:`Example using axonal delays </auto_examples/axonal_delays>`
+
+   For details on further developments see :ref:`axonal_delays_dev`.

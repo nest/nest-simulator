@@ -74,6 +74,12 @@ SpikeEvent::operator()()
 }
 
 void
+WeightCorrectionEvent::operator()()
+{
+  receiver_->handle( *this );
+}
+
+void
 WeightRecorderEvent::operator()()
 {
   receiver_->handle( *this );

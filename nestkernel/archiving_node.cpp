@@ -22,6 +22,9 @@
 
 #include "archiving_node.h"
 
+// C++ includes:
+#include <cassert>
+
 // Includes from nestkernel:
 #include "kernel_manager.h"
 
@@ -32,7 +35,7 @@ namespace nest
 // member functions for ArchivingNode
 
 ArchivingNode::ArchivingNode()
-  : StructuralPlasticityNode()
+  : AxonalDelayArchivingNode()
   , IgnoreAndSpikeMechanism()
   , n_incoming_( 0 )
   , Kminus_( 0.0 )
@@ -48,7 +51,7 @@ ArchivingNode::ArchivingNode()
 }
 
 ArchivingNode::ArchivingNode( const ArchivingNode& n )
-  : StructuralPlasticityNode( n )
+  : AxonalDelayArchivingNode( n )
   , IgnoreAndSpikeMechanism( n )
   , n_incoming_( n.n_incoming_ )
   , Kminus_( n.Kminus_ )
@@ -64,8 +67,12 @@ ArchivingNode::ArchivingNode( const ArchivingNode& n )
 }
 
 void
-ArchivingNode::register_stdp_connection( double t_first_read, double delay )
+ArchivingNode::register_stdp_connection( const double t_first_read,
+  const double dendritic_delay,
+  const double axonal_delay )
 {
+  register_axonal_delay_connection( dendritic_delay, axonal_delay );
+
   // Mark all entries in the deque, which we will not read in future as read by
   // this input, so that we safely increment the incoming number of
   // connections afterwards without leaving spikes in the history.
@@ -80,7 +87,7 @@ ArchivingNode::register_stdp_connection( double t_first_read, double delay )
 
   n_incoming_++;
 
-  max_delay_ = std::max( delay, max_delay_ );
+  max_delay_ = std::max( dendritic_delay + axonal_delay, max_delay_ );
 }
 
 double
@@ -93,8 +100,7 @@ ArchivingNode::get_K_value( double t )
     return trace_;
   }
 
-  // search for the latest post spike in the history buffer that came strictly
-  // before `t`
+  // search for the latest post spike in the history buffer that came strictly before `t`
   int i = history_.size() - 1;
   while ( i >= 0 )
   {
@@ -176,9 +182,17 @@ ArchivingNode::get_history( double t1,
 }
 
 void
-ArchivingNode::set_spiketime( Time const& t_sp, double offset )
+ArchivingNode::set_spiketime( Time const& t_sp, double offset, size_t multiplicity )
 {
-  StructuralPlasticityNode::set_spiketime( t_sp, offset );
+  if ( multiplicity == 0 )
+  {
+    return;
+  }
+
+  for ( size_t i = 0; i < multiplicity; ++i )
+  {
+    StructuralPlasticityNode::set_spiketime( t_sp, offset );
+  }
 
   const double t_sp_ms = t_sp.get_ms() - offset;
 
@@ -205,10 +219,25 @@ ArchivingNode::set_spiketime( Time const& t_sp, double offset )
       }
     }
     // update spiking history
-    Kminus_ = Kminus_ * std::exp( ( last_spike_ - t_sp_ms ) * tau_minus_inv_ ) + 1.0;
-    Kminus_triplet_ = Kminus_triplet_ * std::exp( ( last_spike_ - t_sp_ms ) * tau_minus_triplet_inv_ ) + 1.0;
-    last_spike_ = t_sp_ms;
-    history_.push_back( histentry( last_spike_, Kminus_, Kminus_triplet_, 0 ) );
+    for ( size_t i = 0; i < multiplicity; ++i )
+    {
+      Kminus_ = Kminus_ * std::exp( ( last_spike_ - t_sp_ms ) * tau_minus_inv_ ) + 1.0;
+      Kminus_triplet_ = Kminus_triplet_ * std::exp( ( last_spike_ - t_sp_ms ) * tau_minus_triplet_inv_ ) + 1.0;
+      last_spike_ = t_sp_ms;
+      history_.push_back( histentry( last_spike_, Kminus_, Kminus_triplet_, 0 ) );
+    }
+
+    // Corrections reach synapses which have not read this spike from the history, so they have to be
+    // accounted for in the same way a regular read is.
+    const size_t num_corrections = correct_synapses_stdp_ax_delay_( t_sp );
+    if ( num_corrections > 0 )
+    {
+      assert( history_.size() >= multiplicity );
+      for ( size_t i = 0; i < multiplicity; ++i )
+      {
+        history_[ history_.size() - 1 - i ].access_counter_ += num_corrections;
+      }
+    }
   }
   else
   {
@@ -273,6 +302,5 @@ ArchivingNode::clear_history()
   Kminus_triplet_ = 0.0;
   history_.clear();
 }
-
 
 }  // of namespace nest

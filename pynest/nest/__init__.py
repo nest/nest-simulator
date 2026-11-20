@@ -345,6 +345,12 @@ class NestModule(types.ModuleType):
         readonly=True,
         localonly=True,
     )
+    num_corrections = KernelAttribute(
+        "int",
+        "The number of retrospective weight corrections performed for synapses with predominantly axonal delays",
+        readonly=True,
+        localonly=True,
+    )
     connection_rules = KernelAttribute(
         "list[str]",
         "The list of available connection rules",

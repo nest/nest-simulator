@@ -10,7 +10,7 @@ If you transition from a NEST 2.x version, please see our extensive
 :ref:`transition guide from NEST 2.x to 3.0 <refguide_2_3>` and the
 :ref:`list of updates for previous releases in the 3.x series <whats_new>`.
 
-The release of 3.11 brought a lot of changes with over ?? PRs
+The release of 3.11 brought a lot of changes with over 100 PRs
 including many bug fixes and enhancements as detailed in the `release notes
 on GitHub <https://github.com/nest/nest-simulator/releases/>`_. Here are some
 of the more interesting developments that happened:

@@ -767,7 +767,7 @@ SimulationManager::update_connection_infrastructure( const size_t tid )
 #pragma omp barrier  // wait for all threads to finish sorting
   kernel().get_omp_synchronization_construction_stopwatch().stop();
 
-#pragma omp single
+#pragma omp master
   {
     kernel().connection_manager.compute_target_data_buffer_size();
     kernel().event_delivery_manager.resize_send_recv_buffers_target_data();
@@ -777,6 +777,7 @@ SimulationManager::update_connection_infrastructure( const size_t tid )
     kernel().connection_manager.sync_has_primary_connections();
     kernel().connection_manager.check_secondary_connections_exist();
   }
+#pragma omp barrier
 
   if ( kernel().connection_manager.secondary_connections_exist() )
   {
@@ -790,11 +791,12 @@ SimulationManager::update_connection_infrastructure( const size_t tid )
 #pragma omp barrier
     kernel().get_omp_synchronization_construction_stopwatch().stop();
 
-#pragma omp single
+#pragma omp master
     {
       kernel().mpi_manager.communicate_recv_counts_secondary_events();
       kernel().event_delivery_manager.configure_secondary_buffers();
     }
+#pragma omp barrier
   }
 
   sw_gather_target_data_.start();
@@ -803,7 +805,6 @@ SimulationManager::update_connection_infrastructure( const size_t tid )
   // presynaptic side
   if ( kernel().connection_manager.use_compressed_spikes() )
   {
-#pragma omp barrier
 #pragma omp single
     {
       kernel().connection_manager.initialize_iteration_state();  // could possibly be combined with s'th above
@@ -980,7 +981,7 @@ SimulationManager::update_()
 
 // the following block is executed by a single thread
 // the other threads wait at the end of the block
-#pragma omp single
+#pragma omp master
             {
               // check whether all threads are done
               for ( size_t i = 0; i < done.size(); ++i )
@@ -996,6 +997,7 @@ SimulationManager::update_()
               done_all = true;
               done.clear();
             }
+#pragma omp barrier
 
             // deliver SecondaryEvents generated during wfr_update
             // returns the done value over all threads
@@ -1039,10 +1041,11 @@ SimulationManager::update_()
           kernel().get_omp_synchronization_simulation_stopwatch().start();
 #pragma omp barrier
           kernel().get_omp_synchronization_simulation_stopwatch().stop();
-#pragma omp single
+#pragma omp master
           {
             kernel().sp_manager.update_structural_plasticity();
           }
+#pragma omp barrier
           // Remove 10% of the vacant elements
           for ( SparseNodeArray::const_iterator i = kernel().node_manager.get_local_nodes( tid ).begin();
             i != kernel().node_manager.get_local_nodes( tid ).end();

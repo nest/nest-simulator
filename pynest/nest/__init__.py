@@ -112,10 +112,13 @@ class NestModule(types.ModuleType):
         # Finalize the nest module with a public API.
         _api = list(k for k in self.__dict__ if not k.startswith("_"))
         _api.extend(k for k in dir(type(self)) if not k.startswith("_"))
-        self.__all__ = list(set(_api))
+        # Leave out the kernel attributes that this build does not report, so that `from nest import *` works.
+        _status = NestModule.ll_api.nestkernel.llapi_get_kernel_status()
+        _unavailable = {k for k in self._kernel_attr_names if k not in _status and k != "kernel_status"}
+        self.__all__ = list(set(_api) - _unavailable)
 
         # Add version for backward compatibility
-        self.__version__ = NestModule.ll_api.nestkernel.llapi_get_kernel_status()["build_info"]["version"]
+        self.__version__ = _status["build_info"]["version"]
 
         # Block setting of unknown attributes
         type(self).__setattr__ = _setattr_error

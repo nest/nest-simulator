@@ -63,6 +63,31 @@ def test_nest_get_unknown_attr_raises():
         nest.get("accessAbsolutelyUnknownKernelAttribute")
 
 
+def test_kernel_attributes_missing_in_build():
+    """
+    Ensure that declared kernel attributes that this build does not report are not available.
+
+    The kernel reports some attributes only if the build contains the feature, for example ``cycle_time_log``
+    only with ``-Dwith-cycle-timers=ON``. Such an attribute must raise ``AttributeError``, so that ``hasattr``
+    returns ``False``, and must not be listed in ``__all__``. Regression test for #4012.
+    """
+
+    status = nest.GetKernelStatus()
+    missing = {k for k in nest._kernel_attr_names if k not in status and k != "kernel_status"}
+    for name in missing:
+        assert not hasattr(nest, name)
+        assert name not in nest.__all__
+        assert name not in dir(nest)
+
+
+def test_star_import():
+    """
+    Ensure that ``from nest import *`` works in every build. Regression test for #4012.
+    """
+
+    exec("from nest import *", {})
+
+
 def test_nest_set():
     """
     Test the ``nest`` module's setter.

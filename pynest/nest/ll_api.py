@@ -106,6 +106,10 @@ class KernelAttribute:
 
         if self._full_status:
             return status_root
+        elif self._name not in status_root:
+            # The kernel reports some attributes only if the build contains the feature (compile switch); then
+            # `hasattr()` returns False.
+            raise AttributeError(self._name)
         else:
             return status_root[self._name]
 

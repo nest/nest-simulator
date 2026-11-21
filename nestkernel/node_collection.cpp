@@ -1044,7 +1044,14 @@ NodeCollectionComposite::operator==( NodeCollectionPTR rhs ) const
 
   // Checking if rhs_ptr is invalid first, to avoid segfaults. If rhs is a NodeCollectionPrimitive,
   // rhs_ptr will be a null pointer.
-  if ( not rhs_ptr or size_ != rhs_ptr->size() or parts_.size() != rhs_ptr->parts_.size() )
+  //
+  // Comparing parts_ alone is not enough: slicing a NodeCollection that carries metadata keeps
+  // the original parts_ (to avoid copying the metadata) and only narrows the visible range via
+  // first_part_/last_part_/first_elem_/last_elem_. Two composites can therefore share the exact
+  // same parts_ while representing different node ranges, so those bounds must be compared too.
+  if ( not rhs_ptr or size_ != rhs_ptr->size() or parts_.size() != rhs_ptr->parts_.size()
+    or first_part_ != rhs_ptr->first_part_ or last_part_ != rhs_ptr->last_part_
+    or first_elem_ != rhs_ptr->first_elem_ or last_elem_ != rhs_ptr->last_elem_ )
   {
     return false;
   }

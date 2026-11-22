@@ -94,7 +94,29 @@ Table of OpenMP settings
 
    For general details on pinning in HPC systems see `the HPC wiki article <https://hpc-wiki.info/hpc/Binding/Pinning>`_.
 
+.. _many_threads:
 
+Many threads per process
+------------------------
+
+After the update of each simulation cycle, the spikes that all threads of a process have registered are collected for
+the exchange with the other processes. By default the master thread does this alone while the other threads wait. With
+many threads per process, and in particular when the threads of one process run on several sockets, this serial step
+becomes a large part of the cycle. The following kernel parameter divides it among several threads. It does not change
+the results of a simulation, only how fast it runs.
+
+``collocation_groups``
+   Divides the threads of a process into this many groups of consecutive threads; the first thread of each group
+   collects the spikes of its group, all groups at the same time. With a single MPI process, the threads then deliver
+   the spikes directly from the buffers of the groups. Set it to the number of sockets or NUMA nodes used by the
+   process. The default of 1 keeps the collection on the master thread. It pays off with many threads per process; with
+   few threads the serial step is short and the setting has little effect, so compare the run times. The parameter can
+   only be set before the first call of ``Simulate``. It is ignored for a single thread, for off-grid spiking, and for a
+   single process without compressed spikes.
+
+.. code-block:: python
+
+   nest.set(local_num_threads=128, collocation_groups=2)
 
 
 References

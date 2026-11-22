@@ -63,3 +63,26 @@ with eachother (e.g., virtual memory thrashing).
 
 Over-subscribing processes is typically used in development in testing and can help identify performance bottlenecks.
 But performance can be degraded in this scenario.
+
+.. _many_processes:
+
+Large networks on many nodes
+----------------------------
+
+When a network is distributed over many MPI processes, a thread holds only one or two targets of a given source neuron
+among its neurons. The delivery of a spike then consists mostly of memory accesses that miss the caches: the lookup of
+the source in the compressed spike data, the first connection of its targets on the thread, and the target neuron. The
+following kernel parameter hides part of this waiting time. It does not change the results of a simulation, only how
+fast it runs. It is off by default.
+
+``spike_delivery_prefetch``
+   With compressed spikes (``use_compressed_spikes``, the default), the delivery requests the memory for the lookups and
+   for the first connection of each spike a few batches of spikes ahead (software prefetching), so that these accesses
+   overlap with the delivery of earlier spikes. It pays off when a source neuron has few targets per thread, as in large
+   networks on many nodes. When a source has many targets per thread, as in a network on a single node, most of these
+   accesses hit the caches anyway and the setting has little effect. How much it helps depends on the processor, so
+   compare the run times with and without it.
+
+.. code-block:: python
+
+   nest.set(spike_delivery_prefetch=True)

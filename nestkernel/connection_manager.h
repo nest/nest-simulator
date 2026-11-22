@@ -462,6 +462,21 @@ public:
 
   const std::vector< SpikeData >& get_compressed_spike_data( const synindex syn_id, const size_t idx );
 
+  /**
+   * Prefetch the header of row idx of the compressed spike data of synapse type syn_id.
+   *
+   * The header holds the address of the row; it has to be read before the entries can be prefetched. Hints for the
+   * processor without effect on the simulation, see EventDeliveryManager::deliver_events_prefetch_().
+   */
+  void prefetch_compressed_spike_data_row( const synindex syn_id, const size_t idx ) const;
+
+  //! Prefetch the entry of thread tid in row idx of the compressed spike data; reads the header of the row.
+  void prefetch_compressed_spike_data_entry( const size_t tid, const synindex syn_id, const size_t idx ) const;
+
+  //! Prefetch the connection lcid of synapse type syn_id on thread tid.
+  void prefetch_connection( const size_t tid, const synindex syn_id, const size_t lcid ) const;
+
+
   //! Set iteration_state_ entries for all threads to beginning of compressed_spike_data_map_.
   void initialize_iteration_state();
 
@@ -931,6 +946,26 @@ inline const std::vector< SpikeData >&
 ConnectionManager::get_compressed_spike_data( const synindex syn_id, const size_t idx )
 {
   return compressed_spike_data_[ syn_id ][ idx ];
+}
+
+inline void
+ConnectionManager::prefetch_compressed_spike_data_row( const synindex syn_id, const size_t idx ) const
+{
+  __builtin_prefetch( &compressed_spike_data_[ syn_id ][ idx ] );
+}
+
+inline void
+ConnectionManager::prefetch_compressed_spike_data_entry( const size_t tid,
+  const synindex syn_id,
+  const size_t idx ) const
+{
+  __builtin_prefetch( compressed_spike_data_[ syn_id ][ idx ].data() + tid );
+}
+
+inline void
+ConnectionManager::prefetch_connection( const size_t tid, const synindex syn_id, const size_t lcid ) const
+{
+  connections_[ tid ][ syn_id ]->prefetch_connection( lcid );
 }
 
 inline void

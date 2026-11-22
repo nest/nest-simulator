@@ -504,6 +504,7 @@ const std::string spike_buffer_grow_extra( "spike_buffer_grow_extra" );
 const std::string spike_buffer_resize_log( "spike_buffer_resize_log" );
 const std::string spike_buffer_shrink_limit( "spike_buffer_shrink_limit" );
 const std::string spike_buffer_shrink_spare( "spike_buffer_shrink_spare" );
+const std::string spike_delivery_prefetch( "spike_delivery_prefetch" );
 const std::string spike_dependent_threshold( "spike_dependent_threshold" );
 const std::string spike_multiplicities( "spike_multiplicities" );
 const std::string spike_times( "spike_times" );

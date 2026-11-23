@@ -70,10 +70,7 @@ parrot_neuron::update( Time const& origin, const long from, const long to )
       kernel().event_delivery_manager.send( *this, se, lag );
 
       // set the spike times, respecting the multiplicity
-      for ( unsigned long i = 0; i < current_spikes_n; i++ )
-      {
-        set_spiketime( Time::step( t + 1 ) );
-      }
+      set_spiketime( Time::step( t + 1 ), 0.0, current_spikes_n );
       set_last_event_time( t );
     }
     else if ( flush_event_is_due( t ) )
@@ -83,6 +80,8 @@ parrot_neuron::update( Time const& origin, const long from, const long to )
       kernel().event_delivery_manager.send( *this, se, lag );
       set_last_event_time( t );
     }
+
+    clear_expired_correction_entries_stdp_ax_delay_( lag );
   }
 }
 
@@ -109,6 +108,13 @@ parrot_neuron::handle( SpikeEvent& e )
     B_.n_spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       static_cast< double >( e.get_multiplicity() ) );
   }
+}
+
+void
+parrot_neuron::handle( WeightCorrectionEvent& )
+{
+  // Weights of incoming connections are ignored by the parrot neuron, so correcting a weight has no effect on
+  // the spikes it repeats.
 }
 
 }  // namespace nest

@@ -330,6 +330,8 @@ public:
    */
   bool is_flush_event();
 
+  const SpikeData& get_sender_spike_data() const;
+
 protected:
   size_t sender_node_id_;        //!< node ID of sender or 0
   SpikeData sender_spike_data_;  //!< spike data of sender node, in some cases required to retrieve node ID
@@ -449,6 +451,43 @@ inline size_t
 SpikeEvent::get_multiplicity() const
 {
   return multiplicity_;
+}
+
+class WeightCorrectionEvent : public SpikeEvent
+{
+public:
+  WeightCorrectionEvent();
+  void operator()() override;
+  WeightCorrectionEvent* clone() const override;
+
+  void set_new_weight( double );
+  double get_new_weight() const;
+
+protected:
+  double new_weight_;
+};
+
+inline WeightCorrectionEvent::WeightCorrectionEvent()
+  : new_weight_( 0. )
+{
+}
+
+inline WeightCorrectionEvent*
+WeightCorrectionEvent::clone() const
+{
+  return new WeightCorrectionEvent( *this );
+}
+
+inline void
+WeightCorrectionEvent::set_new_weight( double new_weight )
+{
+  new_weight_ = new_weight;
+}
+
+inline double
+WeightCorrectionEvent::get_new_weight() const
+{
+  return new_weight_;
 }
 
 
@@ -978,10 +1017,9 @@ inline void
 Event::set_stamp( Time const& s )
 {
   stamp_ = s;
-  stamp_steps_ = 0;  // setting stamp_steps to zero indicates
-                     // stamp_steps needs to be recalculated from
-                     // stamp_ next time it is needed (e.g., in
-                     // get_rel_delivery_steps)
+  // setting stamp_steps to zero indicates stamp_steps needs to be recalculated from stamp_ next time it is needed
+  // (e.g., in get_rel_delivery_steps)
+  stamp_steps_ = 0;
 }
 
 inline void
@@ -1052,6 +1090,12 @@ inline void
 Event::set_rport( size_t rp )
 {
   rp_ = rp;
+}
+
+inline const SpikeData&
+Event::get_sender_spike_data() const
+{
+  return sender_spike_data_;
 }
 }
 

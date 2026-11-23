@@ -93,6 +93,7 @@ const std::string asc_init( "asc_init" );
 const std::string asc_r( "asc_r" );
 const std::string available( "available" );
 const std::string average_gradient( "average_gradient" );
+const std::string axonal_delay( "axonal_delay" );
 const std::string azimuth_angle( "azimuth_angle" );
 
 const std::string b( "b" );
@@ -153,6 +154,7 @@ const std::string delta_IP3( "delta_IP3" );
 const std::string delta_P( "delta_P" );
 const std::string delta_tau( "delta_tau" );
 const std::string dendritic_curr( "dendritic_curr" );
+const std::string dendritic_delay( "dendritic_delay" );
 const std::string dendritic_exc( "dendritic_exc" );
 const std::string dendritic_inh( "dendritic_inh" );
 const std::string dg( "dg" );
@@ -381,6 +383,7 @@ const std::string node_uses_wfr( "node_uses_wfr" );
 const std::string noise( "noise" );
 const std::string noisy_rate( "noisy_rate" );
 const std::string num_connections( "num_connections" );
+const std::string num_corrections( "num_corrections" );
 const std::string num_processes( "num_processes" );
 const std::string number_of_connections( "number_of_connections" );
 

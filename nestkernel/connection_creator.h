@@ -26,6 +26,9 @@
 // C++ includes:
 #include <vector>
 
+// Includes from libnestutil:
+#include "numerics.h"
+
 // Includes from nestkernel:
 #include "kernel_manager.h"
 #include "mask.h"
@@ -133,6 +136,19 @@ private:
 
   void extract_params_( const Dictionary&, std::vector< Dictionary >& );
 
+  /**
+   * Evaluate a delay parameter.
+   *
+   * Synapses use either a single delay or a dendritic and an axonal delay, so the delay parameters which are not used
+   * by a synapse are stored as null pointers. They are not evaluated, but yield NaN to signal that they are not set.
+   */
+  template < typename... Args >
+  static double
+  evaluate_delay_( const ParameterPTR& delay_parameter, Args&&... args )
+  {
+    return delay_parameter ? delay_parameter->value( std::forward< Args >( args )... ) : numerics::nan;
+  }
+
   template < typename Iterator, int D >
   void connect_to_target_( Iterator from,
     Iterator to,
@@ -184,6 +200,8 @@ private:
   std::vector< std::vector< Dictionary > > param_dicts_;
   std::vector< ParameterPTR > weight_;
   std::vector< ParameterPTR > delay_;
+  std::vector< ParameterPTR > dendritic_delay_;
+  std::vector< ParameterPTR > axonal_delay_;
 };
 
 }  // namespace nest

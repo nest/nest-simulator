@@ -31,6 +31,7 @@
 #include "stopwatch.h"
 
 // Includes from nestkernel:
+#include "axonal_delay_archiving_node.h"
 #include "conn_builder.h"
 #include "connection_id.h"
 #include "connector_base.h"
@@ -139,7 +140,9 @@ public:
    * \param target_thread Thread that hosts the target node.
    * \param syn_id The synapse model to use.
    * \param params Parameter dictionary to configure the synapse.
-   * \param delay Delay of the connection (in ms).
+   * \param delay Total delay of the connection (in ms).
+   * \param dendritic_delay Dendritic delay of the connection (in ms).
+   * \param axonal_delay Axonal delay of the connection (in ms).
    * \param weight Weight of the connection.
    */
   void connect( const size_t snode_id,
@@ -148,6 +151,8 @@ public:
     const synindex syn_id,
     const Dictionary& params,
     const double delay = numerics::nan,
+    const double dendritic_delay = numerics::nan,
+    const double axonal_delay = numerics::nan,
     const double weight = numerics::nan );
 
   /**
@@ -168,6 +173,8 @@ public:
     const long* targets,
     const double* weights,
     const double* delays,
+    const double* dendritic_delays,
+    const double* axonal_delays,
     const std::vector< std::string >& p_keys,
     const double* p_values,
     size_t n,
@@ -310,6 +317,23 @@ public:
     Event& e );
 
   /**
+   * On occurrence of a post-synaptic spike, correct the weight update of a previous pre-synaptic spike which was
+   * processed before the current post-synaptic spike, but had to be processed after it, if it was known at this point
+   * in time. The new weight of the synapse is recorded in the correction entry.
+   *
+   * @param tid The thread storing the synapse.
+   * @param entry Correction entry of the pre-synaptic spike which needs a correction. It identifies the synapse
+   * (synapse type and local connection index) and holds the data required for the correction.
+   * @param t_spike_critical_interval_end End of the critical interval of the pre-synaptic spike which needs a
+   * correction.
+   * @param t_post_spike Time of the current post-synaptic spike.
+   */
+  void correct_weight_stdp_ax_delay( size_t tid,
+    CorrectionEntrySTDPAxDelay& entry,
+    double t_spike_critical_interval_end,
+    double t_post_spike );
+
+  /**
    * Send event e to all device targets of source source_node_id
    */
   void send_to_devices( const size_t tid, const size_t source_node_id, Event& e );
@@ -319,11 +343,6 @@ public:
    * Send event e to all targets of source device ldid (local device id)
    */
   void send_from_device( const size_t tid, const size_t ldid, Event& e );
-
-  /**
-   * Send event e to all targets of node source on thread t
-   */
-  void send_local( size_t t, Node& source, Event& e );
 
   /**
    * Resize the structures for the Connector objects if necessary.
@@ -393,31 +412,30 @@ public:
   void sort_connections( const size_t tid );
 
   /**
-   * Returns true if connection information needs to be
-   * communicated. False otherwise.
+   * Returns true if connection information needs to be communicated. False otherwise.
    */
   bool connections_have_changed() const;
 
   /**
-   * Sets flag indicating whether connection information needs to be
-   * communicated to true.
+   * Sets flag indicating whether connection information needs to be communicated to true.
    */
   void set_connections_have_changed();
 
   /**
-   * Sets flag indicating whether connection information needs to be
-   * communicated to false.
+   * Sets flag indicating whether connection information needs to be communicated to false.
    */
   void unset_connections_have_changed();
 
+  bool have_predominant_axonal_delays() const;
+
+  void register_predominant_axonal_delay( const size_t tid );
+
   /**
-   * Deletes TargetTable and resets processed flags of
-   * SourceTable.
+   * Deletes TargetTable and resets processed flags of SourceTable.
    *
-   * This function must be called if connections are
-   * created after connections have been communicated previously. It
-   * basically restores the connection infrastructure to a state where
-   * all information only exists on the postsynaptic side.
+   * This function must be called if connections are created after connections have been communicated previously. It
+   * basically restores the connection infrastructure to a state where all information only exists on the postsynaptic
+   * side.
    */
   void restructure_connection_tables( const size_t tid );
 
@@ -540,7 +558,9 @@ private:
    * \param tid The thread of the target node.
    * \param syn_id The synapse model to use.
    * \param params The parameters for the connection.
-   * \param delay The delay of the connection (optional).
+   * \param delay Total delay of the connection (in ms).
+   * \param dendritic_delay Dendritic delay of the connection (in ms).
+   * \param axonal_delay Axonal delay of the connection (in ms).
    * \param weight The weight of the connection (optional).
    */
   void connect_( Node& source,
@@ -550,6 +570,8 @@ private:
     const synindex syn_id,
     const Dictionary& params,
     const double delay = numerics::nan,
+    const double dendritic_delay = numerics::nan,
+    const double axonal_delay = numerics::nan,
     const double weight = numerics::nan );
 
   /**
@@ -576,17 +598,17 @@ private:
     const size_t tid,
     const synindex syn_id,
     const Dictionary& params,
-    const double delay = NAN,
-    const double weight = NAN );
+    const double delay = numerics::nan,
+    const double weight = numerics::nan );
 
   /**
    * connect_from_device_ is used to establish a connection between a sender and
    * receiving node if the sender does not have proxies.
    *
-   * The parameters delay and weight have the default value NAN.
-   * NAN is a special value in cmath, which describes double values that
+   * The parameters delay and weight have the default value numerics::nan.
+   * numerics::nan is a special value in C++, which describes double values that
    * are not a number. If delay or weight is omitted in an connect call,
-   * NAN indicates this and weight/delay are set only, if they are valid.
+   * numerics::nan indicates this and weight/delay are set only, if they are valid.
    *
    * \param source A reference to the sending Node.
    * \param target A reference to the receiving Node.
@@ -602,8 +624,8 @@ private:
     const size_t tid,
     const synindex syn_id,
     const Dictionary& params,
-    const double delay = NAN,
-    const double weight = NAN );
+    const double delay = numerics::nan,
+    const double weight = numerics::nan );
 
   /**
    * Increases the connection count.
@@ -678,6 +700,12 @@ private:
   //! simulate.
   bool connections_have_changed_;
 
+  //! True if any connection has a predominantly axonal delay, i.e., an axonal delay at least as long as its dendritic
+  //! delay.
+  bool have_predominant_axonal_delays_;
+
+  PerThreadBoolIndicator check_axonal_delays_;
+
   //! true if GetConnections has been called.
   bool get_connections_has_been_called_;
 
@@ -710,6 +738,16 @@ private:
   //! For each thread, store (syn_id, compressed_spike_data_map_::iterator) pair for next iteration while filling target
   //! buffers
   std::vector< std::pair< size_t, std::map< size_t, CSDMapEntry >::const_iterator > > iteration_state_;
+
+  /**
+   * Number of weight corrections required for STDP synapses with predominant axonal delays during the whole
+   * simulation, counted per thread.
+   *
+   * Corrections are triggered from inside the OpenMP parallel region, so a single shared counter would be a data
+   * race and would undercount by a nondeterministic amount. One entry per thread, summed on read, in the same way
+   * EventDeliveryManager keeps local_spike_counter_.
+   */
+  std::vector< size_t > num_corrections_;
 };
 
 inline bool
@@ -820,6 +858,23 @@ ConnectionManager::connections_have_changed() const
   return connections_have_changed_;
 }
 
+inline bool
+ConnectionManager::have_predominant_axonal_delays() const
+{
+  return have_predominant_axonal_delays_;
+}
+
+inline void
+ConnectionManager::register_predominant_axonal_delay( const size_t tid )
+{
+  if ( check_axonal_delays_[ tid ].is_false() )
+  {
+#pragma omp atomic write
+    have_predominant_axonal_delays_ = true;
+    check_axonal_delays_.set_true( tid );
+  }
+}
+
 inline void
 ConnectionManager::add_target( const size_t tid, const size_t target_rank, const TargetData& target_data )
 {
@@ -908,6 +963,17 @@ ConnectionManager::send( const size_t tid,
   Event& e )
 {
   connections_[ tid ][ syn_id ]->send( tid, lcid, cm, e );
+}
+
+inline void
+ConnectionManager::correct_weight_stdp_ax_delay( const size_t tid,
+  CorrectionEntrySTDPAxDelay& entry,
+  const double t_spike_critical_interval_end,
+  const double t_post_spike )
+{
+  ++num_corrections_[ tid ];
+  connections_[ tid ][ entry.get_syn_id() ]->correct_weight_stdp_ax_delay(
+    tid, entry, t_spike_critical_interval_end, t_post_spike );
 }
 
 inline void

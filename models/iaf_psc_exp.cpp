@@ -243,6 +243,8 @@ iaf_psc_exp::init_buffers_()
 void
 iaf_psc_exp::pre_run_hook()
 {
+  AxonalDelayArchivingNode::pre_run_hook_();
+
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
@@ -344,6 +346,8 @@ iaf_psc_exp::update( const Time& origin, const long from, const long to )
 
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );
+
+    clear_expired_correction_entries_stdp_ax_delay_( lag );
   }
 }
 
@@ -359,6 +363,31 @@ iaf_psc_exp::handle( SpikeEvent& e )
 
   // separate buffer channels for excitatory and inhibitory inputs
   B_.input_buffer_.add_value( input_buffer_slot, s > 0 ? Buffers_::SYN_EX : Buffers_::SYN_IN, s );
+}
+
+void
+iaf_psc_exp::handle( WeightCorrectionEvent& e )
+{
+  assert( e.get_delay_steps() > 0 );
+
+  const size_t input_buffer_slot = kernel().event_delivery_manager.get_modulo(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
+
+  const double s_old = e.get_weight() * e.get_multiplicity();
+  const double s_new = e.get_new_weight() * e.get_multiplicity();
+
+  // separate buffer channels for excitatory and inhibitory inputs, selected as in handle( SpikeEvent& )
+  if ( ( s_old > 0 ) == ( s_new > 0 ) )
+  {
+    // same channel: only the difference has to be added
+    B_.input_buffer_.add_value( input_buffer_slot, s_old > 0 ? Buffers_::SYN_EX : Buffers_::SYN_IN, s_new - s_old );
+  }
+  else
+  {
+    // the sign changed: remove the old weight from its channel and add the new weight to the other one
+    B_.input_buffer_.add_value( input_buffer_slot, s_old > 0 ? Buffers_::SYN_EX : Buffers_::SYN_IN, -s_old );
+    B_.input_buffer_.add_value( input_buffer_slot, s_new > 0 ? Buffers_::SYN_EX : Buffers_::SYN_IN, s_new );
+  }
 }
 
 void

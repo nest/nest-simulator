@@ -27,6 +27,7 @@
 #include <atomic>
 #include <cassert>
 #include <limits>
+#include <memory>  // unique_ptr
 #include <vector>
 
 // Includes from libnestutil:
@@ -234,6 +235,14 @@ public:
    */
   void collocate_group( const size_t g );
 
+  /**
+   * Marks the spike register of thread tid as occupied in the occupancy bitmap of its collocation group.
+   *
+   * Called by every thread before it arrives at the barrier, if use_group_collocation() is true; a thread with an empty
+   * register sets no bit. collocate_group() then visits only the marked registers.
+   */
+  void mark_register( const size_t tid );
+
   //! First thread of each collocation group, followed by the number of threads; valid after
   //! configure_spike_data_buffers().
   std::vector< size_t > get_collocation_group_bounds() const;
@@ -435,10 +444,25 @@ private:
   //! Number of groups of threads that collocate the spike registers in parallel (1: master thread alone).
   size_t collocation_groups_;
 
+  //! One word of the occupancy bitmap of a collocation group, on a cache line of its own.
+  struct alignas( 64 ) OccupancyWord_
+  {
+    std::atomic< uint64_t > bits_ = 0;
+  };
+
   //! Buffers of one group of threads for the collocation of the spike registers (see use_group_collocation()).
   struct CollocationGroup_
   {
     size_t first_thread_ = 0;  //!< first thread of the group; the group ends where the next one begins
+    /**
+     * Occupancy bitmap of the spike registers of the group in the current cycle.
+     *
+     * Bit i of word w is set if the register of thread first_thread_ + 64 * w + i holds spikes; set by the threads of
+     * the group before they arrive at the barrier, read and cleared by the thread that collocates the group.
+     */
+    std::unique_ptr< OccupancyWord_[] > occupancy_;
+    //! Threads with marked registers, filled and read by the collocating thread; capacity: threads of the group
+    std::vector< size_t > marked_;
     //! [ target rank ] spikes of the last cycle, read by the delivery or the MPI exchange
     std::vector< std::vector< SpikeData > > spikes_;
     //! [ target rank ] spikes collected in the current cycle; swapped with spikes_ in gather_spike_data()

@@ -1170,6 +1170,11 @@ SimulationManager::update_()
 #endif
         };
 
+        if ( collocate_in_groups )
+        {
+          kernel().event_delivery_manager.mark_register( tid );
+        }
+
         if ( use_single_barrier )
         {
           // One barrier per cycle: the last thread of each group to arrive collocates its group, the master thread

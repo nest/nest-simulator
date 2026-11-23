@@ -24,6 +24,7 @@
 
 // C++ includes:
 #include <algorithm>  // rotate, ranges::find
+#include <bit>        // countr_zero
 #include <numeric>    // accumulate
 #include <thread>     // this_thread::yield
 
@@ -255,12 +256,19 @@ EventDeliveryManager::configure_spike_data_buffers()
   const size_t num_threads = kernel().vp_manager.get_num_threads();
   assert( emitted_spikes_register_.size() == num_threads );  // collocation_group_begin_() ends the last group there
   const size_t num_groups = std::max< size_t >( 1, std::min( collocation_groups_, num_threads ) );
-  group_buffers_.assign( num_groups, CollocationGroup_() );
+  group_buffers_.clear();
+  group_buffers_.resize( num_groups );
   for ( size_t g = 0; g < num_groups; ++g )
   {
     group_buffers_[ g ].first_thread_ = ( g * num_threads + num_groups - 1 ) / num_groups;
     group_buffers_[ g ].spikes_.resize( kernel().mpi_manager.get_num_processes() );
     group_buffers_[ g ].spikes_next_.resize( kernel().mpi_manager.get_num_processes() );
+  }
+  for ( size_t g = 0; g < num_groups; ++g )  // after all first threads are set: collocation_group_begin_( g + 1 )
+  {
+    const size_t group_size = collocation_group_begin_( g + 1 ) - group_buffers_[ g ].first_thread_;
+    group_buffers_[ g ].occupancy_ = std::make_unique< OccupancyWord_[] >( ( group_size + 63 ) / 64 );
+    group_buffers_[ g ].marked_.reserve( group_size );
   }
 
   send_buffer_spike_data_.clear();
@@ -410,6 +418,23 @@ EventDeliveryManager::collocate_groups( const size_t tid )
 }
 
 void
+EventDeliveryManager::mark_register( const size_t tid )
+{
+  if ( emitted_spikes_register_[ tid ]->empty() )
+  {
+    return;
+  }
+  size_t g = group_buffers_.size() - 1;
+  while ( group_buffers_[ g ].first_thread_ > tid )
+  {
+    --g;
+  }
+  const size_t i = tid - group_buffers_[ g ].first_thread_;
+  // relaxed: the barrier orders the marks before the collocation of the group
+  group_buffers_[ g ].occupancy_[ i / 64 ].bits_.fetch_or( uint64_t( 1 ) << ( i % 64 ), std::memory_order_relaxed );
+}
+
+void
 EventDeliveryManager::collocate_group( const size_t g )
 {
   const size_t first = collocation_group_begin_( g );
@@ -423,7 +448,28 @@ EventDeliveryManager::collocate_group( const size_t g )
   {
     buffer.clear();
   }
-  for ( size_t t = first; t < last; ++t )
+  // Visit only the marked registers, in the order of the threads. The cache lines of the registers are requested in two
+  // batches, first all vector headers, then all data, so that their transfers from the cores of the group overlap
+  // instead of following one another (group prefetching).
+  auto& marked = group_buffers_[ g ].marked_;
+  marked.clear();
+  for ( size_t w = 0; w < ( last - first + 63 ) / 64; ++w )
+  {
+    for ( auto bits = group_buffers_[ g ].occupancy_[ w ].bits_.exchange( 0, std::memory_order_relaxed ); bits != 0;
+      bits &= bits - 1 )
+    {
+      marked.push_back( first + 64 * w + std::countr_zero( bits ) );
+    }
+  }
+  for ( const auto t : marked )
+  {
+    __builtin_prefetch( emitted_spikes_register_[ t ] );
+  }
+  for ( const auto t : marked )
+  {
+    __builtin_prefetch( emitted_spikes_register_[ t ]->data() );
+  }
+  for ( const auto t : marked )
   {
     for ( const SpikeDataWithRank& e : *emitted_spikes_register_[ t ] )
     {

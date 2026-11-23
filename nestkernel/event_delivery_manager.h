@@ -26,6 +26,7 @@
 // C++ includes:
 #include <atomic>
 #include <cassert>
+#include <cstdint>
 #include <limits>
 #include <memory>  // unique_ptr
 #include <vector>
@@ -231,15 +232,15 @@ public:
    * Collocation of group g, by any one thread, after all threads of the group have finished their update.
    *
    * Called by collocate_groups() (first thread of the group, two barriers) and as the group step of the single barrier
-   * (last thread of the group to arrive, see TreeBarrier).
+   * (last thread of the group to arrive, see TreeBarrier). Visits only the registers marked by mark_register().
    */
   void collocate_group( const size_t g );
 
   /**
    * Marks the spike register of thread tid as occupied in the occupancy bitmap of its collocation group.
    *
-   * Called by every thread before it arrives at the barrier, if use_group_collocation() is true; a thread with an empty
-   * register sets no bit. collocate_group() then visits only the marked registers.
+   * Called by every thread before it arrives at the barrier of a cycle in which the groups collocate; a thread with an
+   * empty register sets no bit.
    */
   void mark_register( const size_t tid );
 
@@ -444,9 +445,16 @@ private:
   //! Number of groups of threads that collocate the spike registers in parallel (1: master thread alone).
   size_t collocation_groups_;
 
-  //! One word of the occupancy bitmap of a collocation group, on a cache line of its own.
+  /**
+   * One word of the occupancy bitmap of a collocation group, on a cache line of its own.
+   *
+   * One bit per thread rather than one flag per thread: the collocating thread reads one cache line per 64 threads
+   * instead of one per thread. The threads set their bits when they finish their update, so the atomic updates of the
+   * shared line are spread over the arrival times of the threads.
+   */
   struct alignas( 64 ) OccupancyWord_
   {
+    static constexpr size_t NUM_BITS = 64;
     std::atomic< uint64_t > bits_ = 0;
   };
 
@@ -457,11 +465,13 @@ private:
     /**
      * Occupancy bitmap of the spike registers of the group in the current cycle.
      *
-     * Bit i of word w is set if the register of thread first_thread_ + 64 * w + i holds spikes; set by the threads of
-     * the group before they arrive at the barrier, read and cleared by the thread that collocates the group.
+     * Bit i of word w is set if the register of thread first_thread_ + 64 * w + i holds spikes. The threads of the
+     * group set their bits before they arrive at the barrier, the collocating thread reads and clears them after the
+     * arrival of the group; the barrier orders both. A thread marks again only after the barrier that follows the
+     * collocation of all groups (the single barrier, or the second of two barriers).
      */
     std::unique_ptr< OccupancyWord_[] > occupancy_;
-    //! Threads with marked registers, filled and read by the collocating thread; capacity: threads of the group
+    //! Threads with marked registers in thread order, written and read only by the collocating thread
     std::vector< size_t > marked_;
     //! [ target rank ] spikes of the last cycle, read by the delivery or the MPI exchange
     std::vector< std::vector< SpikeData > > spikes_;

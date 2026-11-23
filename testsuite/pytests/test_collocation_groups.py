@@ -71,7 +71,8 @@ def build_and_run(groups, threads=4, two_simulations=True, synapse_model="static
     return ev["senders"], ev["times"], neurons.get("V_m"), nest.local_spike_counter
 
 
-@pytest.mark.parametrize("threads, groups", [(1, 2), (4, 2), (4, 3), (4, 4), (7, 2), (7, 3), (7, 16)])
+# (130, 2): groups of 65 threads, whose occupancy bitmaps need two words
+@pytest.mark.parametrize("threads, groups", [(1, 2), (4, 2), (4, 3), (4, 4), (7, 2), (7, 3), (7, 16), (130, 2)])
 @pytest.mark.parametrize("synapse_model", ["static_synapse", "static_synapse_hpc"])
 def test_identical_results(threads, groups, synapse_model):
     ref = build_and_run(1, threads, synapse_model=synapse_model)

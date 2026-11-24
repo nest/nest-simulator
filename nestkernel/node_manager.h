@@ -35,6 +35,7 @@
 #include "nest_types.h"
 #include "node_collection.h"
 #include "sparse_node_array.h"
+#include "update_block.h"
 
 
 namespace nest
@@ -243,6 +244,14 @@ public:
    */
   const SparseNodeArray& get_local_nodes( size_t ) const;
 
+  /**
+   * Return the units of the update of thread t: blocks of neurons and single nodes, in the order of the local nodes.
+   *
+   * The units are formed in prepare_nodes(), so that a call of Run() does not pay for them; they are formed again if
+   * nodes were added since. See group_update_units().
+   */
+  const std::vector< UpdateUnit< Node > >& get_update_units( size_t t );
+
   bool have_nodes_changed() const;
   void set_have_nodes_changed( const bool changed );
 
@@ -287,6 +296,9 @@ private:
    * @see prepare_nodes_()
    */
   void prepare_node_( Node* );
+
+  //! Form the units of the update of thread t from its local nodes.
+  void form_update_units_( size_t t );
 
   /**
    * Add normal neurons.
@@ -350,6 +362,9 @@ private:
                                                        //!< use the waveform relaxation method
   bool wfr_is_used_;                                   //!< there is at least one node that uses
                                                        //!< waveform relaxation
+
+  std::vector< std::vector< UpdateUnit< Node > > > update_units_;  //!< units of the update of every thread
+  std::vector< size_t > update_units_num_nodes_;  //!< number of local nodes of every thread when its units were formed
 
   size_t size_last_local_data_update_;  //! Network size when local node data was last updated
   size_t num_active_nodes_;             //!< number of nodes created by prepare_nodes

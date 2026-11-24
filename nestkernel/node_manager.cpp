@@ -25,6 +25,7 @@
 // C++ includes:
 #include <algorithm>
 #include <iomanip>
+#include <limits>
 #include <set>
 
 // Includes from libnestutil:
@@ -50,6 +51,8 @@ NodeManager::NodeManager()
   , node_collection_container_()
   , wfr_nodes_vec_()
   , wfr_is_used_( false )
+  , update_units_()
+  , update_units_num_nodes_()
   , size_last_local_data_update_( 0 )  // zero to force update
   , num_active_nodes_( 0 )
   , num_thread_local_devices_()
@@ -72,6 +75,8 @@ NodeManager::initialize( const bool adjust_number_of_threads_or_rng_only )
   size_last_local_data_update_ = 0;
   local_nodes_.resize( kernel().vp_manager.get_num_threads() );
   num_thread_local_devices_.resize( kernel().vp_manager.get_num_threads(), 0 );
+  update_units_.assign( kernel().vp_manager.get_num_threads(), {} );
+  update_units_num_nodes_.assign( kernel().vp_manager.get_num_threads(), std::numeric_limits< size_t >::max() );
   update_thread_local_node_data();
 
   if ( not adjust_number_of_threads_or_rng_only )
@@ -83,6 +88,8 @@ NodeManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 void
 NodeManager::finalize( const bool )
 {
+  update_units_.clear();  // the units point to the nodes destructed next
+  update_units_num_nodes_.clear();
   destruct_nodes_();
   clear_node_collection_container();
 }
@@ -208,9 +215,11 @@ NodeManager::add_neurons_( Model& model, size_t min_node_id, size_t max_node_id 
 
       size_t node_id = min_node_id + ( num_vps + vp - min_node_id_vp ) % num_vps;
 
+      std::vector< Node* > created;  // the neurons of this Create() call on this thread, for a block of the model
       while ( node_id <= max_node_id )
       {
         Node* node = model.create( tid );
+        created.push_back( node );
         node->set_node_id_( node_id );
         node->set_model_id( model.get_model_id() );
         node->set_thread( tid );
@@ -219,6 +228,10 @@ NodeManager::add_neurons_( Model& model, size_t min_node_id, size_t max_node_id 
 
         local_nodes_[ tid ].add_local_node( *node );
         node_id += num_vps;
+      }
+      if ( not created.empty() )
+      {
+        model.create_update_block( tid, created );
       }
       local_nodes_[ tid ].set_max_node_id( max_node_id );
     }
@@ -596,6 +609,30 @@ NodeManager::prepare_node_( Node* n )
 }
 
 void
+NodeManager::form_update_units_( const size_t t )
+{
+  std::vector< Node* > nodes;  // plain pointers, so that group_update_units() can be tested without the kernel
+  nodes.reserve( local_nodes_[ t ].size() );
+  for ( const auto& entry : local_nodes_[ t ] )
+  {
+    nodes.push_back( entry.get_node() );
+  }
+  update_units_[ t ] =
+    group_update_units( nodes.begin(), nodes.end(), []( const Node* n ) { return n->get_update_block(); } );
+  update_units_num_nodes_[ t ] = local_nodes_[ t ].size();
+}
+
+const std::vector< UpdateUnit< Node > >&
+NodeManager::get_update_units( const size_t t )
+{
+  if ( update_units_num_nodes_[ t ] != local_nodes_[ t ].size() )
+  {
+    form_update_units_( t );  // nodes were added after prepare_nodes()
+  }
+  return update_units_[ t ];
+}
+
+void
 NodeManager::prepare_nodes()
 {
   assert( kernel().is_initialized() );
@@ -627,6 +664,7 @@ NodeManager::prepare_nodes()
           }
         }
       }
+      form_update_units_( tid );
     }
     catch ( ... )
     {

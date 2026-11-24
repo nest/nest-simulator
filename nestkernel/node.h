@@ -48,6 +48,8 @@
 
 namespace nest
 {
+
+class UpdateBlock;
 class Model;
 class ArchivingNode;
 class TimeConverter;
@@ -171,6 +173,14 @@ public:
    * the model in the NEST model registry.
    */
   std::string get_name() const;
+
+  /**
+   * Return the block the update of this node belongs to, nullptr if the node is updated on its own.
+   *
+   * Nodes of a block are consecutive among the local nodes of their thread and are updated by one call of
+   * UpdateBlock::update() instead of update(), see group_update_units().
+   */
+  virtual UpdateBlock* get_update_block() const;
 
   /**
    * Return the element type of the node.

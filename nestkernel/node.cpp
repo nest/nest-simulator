@@ -112,6 +112,12 @@ Node::get_name() const
   return kernel().model_manager.get_node_model( model_id_ )->get_name();
 }
 
+UpdateBlock*
+Node::get_update_block() const
+{
+  return nullptr;
+}
+
 Model&
 Node::get_model_() const
 {

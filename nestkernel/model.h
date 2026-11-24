@@ -24,12 +24,14 @@
 #define MODEL_H
 
 // C++ includes:
+#include <memory>
 #include <new>
 #include <string>
 #include <vector>
 
 // Includes from nestkernel:
 #include "node.h"
+#include "update_block.h"
 
 
 namespace nest
@@ -57,6 +59,7 @@ public:
     : name_( m.name_ )
     , type_id_( m.type_id_ )
     , memory_( m.memory_ )
+    , blocks_()
   {
   }
 
@@ -97,6 +100,18 @@ public:
    * Reserve space for n additional Nodes.
    */
   void reserve_additional( size_t t, size_t n );
+
+  /**
+   * Let the model form a block of the neurons nodes it has just created on thread t.
+   *
+   * nodes are the neurons of one Create() call on thread t. If the model forms a block (make_update_block_()), the
+   * block makes Node::get_update_block() of each of its neurons return the block, so that the simulation loop updates
+   * them through it (see UpdateBlock), and the model keeps the block until its neurons are destroyed.
+   *
+   * Only thread t calls this function, inside the parallel region of NodeManager::add_neurons_(), and it writes only
+   * blocks_[ t ], which set_threads_() has sized before.
+   */
+  void create_update_block( size_t t, const std::vector< Node* >& nodes );
 
   /**
    * Return name of the Model.
@@ -226,6 +241,9 @@ private:
    */
   virtual Node* create_() = 0;
 
+  //! Return a block of the neurons nodes, or nullptr if the model forms no block.
+  virtual std::unique_ptr< UpdateBlock > make_update_block_( const std::vector< Node* >& nodes ) = 0;
+
   /**
    * Name of the Model.
    *
@@ -247,6 +265,14 @@ private:
    * Memory for all nodes sorted by threads.
    */
   std::vector< std::vector< Node* > > memory_;
+
+  /**
+   * Blocks of the neurons of the model, sorted by threads (see create_update_block()).
+   *
+   * The blocks must outlive their neurons. They do: ResetKernel finalizes the managers in reverse order, so the
+   * NodeManager deletes the neurons before the ModelManager clears the models and with them the blocks.
+   */
+  std::vector< std::vector< std::unique_ptr< UpdateBlock > > > blocks_;
 };
 
 

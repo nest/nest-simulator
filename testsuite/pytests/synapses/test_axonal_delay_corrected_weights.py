@@ -24,19 +24,16 @@ Verify retrospective weight correction for ``stdp_pl_synapse_hom_ax_delay``.
 
 ``test_stdp_pl_synapse_hom`` compares weights recorded by a weight recorder,
 which reflect pre-correction transmitted weights. Here we check the corrected
-results against a causal reference evaluated with the full postsynaptic spike
+results against a causal reference evaluated with the full post-synaptic spike
 train:
 
 - Final synapse weights once all pending corrections have completed.
-- Delivered postsynaptic input (via the target neuron's ``V_m`` trace), which
-  catches wrong ``WeightCorrectionEvent`` deltas when multiple presynaptic
-  spikes on the same connection overlap within one critical window.
+- Delivered post-synaptic input (via the target neuron's ``V_m`` trace), to
+  catch incorrect ``WeightCorrectionEvent`` deltas.
 
-Short presynaptic inter-spike intervals (below ``axonal_delay - dendritic_delay``)
-exercise multi-spike overlap and entry hand-off. All neuron models supporting
-predominantly axonal delays are tested, including the boundary
-``axonal_delay == dendritic_delay`` where the buffer is active but no
-corrections should fire.
+All neuron models supporting predominantly axonal delays are tested, including
+the boundary ``axonal_delay == dendritic_delay`` where the buffer is active
+but no corrections should fire.
 """
 
 from math import exp
@@ -56,8 +53,7 @@ TAU_MINUS = 33.7
 SYNAPSE_PARAMS = {"lambda": 0.1, "alpha": 0.1, "mu": 0.4, "tau_plus": 20.0}
 EPS = 1e-6
 
-# Neuron models supporting predominantly axonal delays; see
-# Node::supports_axonal_delay_corrections().
+# Neuron models supporting predominantly axonal delays (see ``Node::supports_axonal_delay_corrections()``).
 SUPPORTED_NEURONS = ["iaf_psc_alpha", "iaf_psc_exp", "iaf_psc_delta", "parrot_neuron"]
 
 
@@ -75,7 +71,7 @@ def _causal_spike_weights(pre_spikes, post_spikes, axonal_delay, dendritic_delay
 
     Mirrors ``stdp_pl_synapse_hom_ax_delay::send()``: facilitation integrates
     over ``(t_last_pre + d_axon - d_dend, t_pre + d_axon - d_dend]`` (matching
-    ``get_history()``), and depression reads the postsynaptic trace strictly
+    ``get_history()``), and depression reads the post-synaptic trace strictly
     before ``t_pre + d_axon - d_dend`` (matching ``get_K_value()``).
     ``t_lastspike_`` starts at ``-d_axon`` so the synapse starts at t = 0.
     """
@@ -114,8 +110,7 @@ def _simulate(axonal_delay, dendritic_delay, pre_interval, num_threads, neuron_m
     pre_drive = [np.round(np.arange(1.0 + 0.1 * i, stop, pre_interval + 0.1 * (i % 5)), 1) for i in range(N_PRE)]
     post_drive = [np.round(np.arange(2.0 + 0.1 * j, stop, 1.3 + 0.1 * (j % 7)), 1) for j in range(N_POST)]
 
-    # parrot_neuron repeats its input spikes at known times; postsynaptic spike
-    # times are read back from the recorder.
+    # parrot_neuron repeats its input spikes at known times. Post-synaptic spike times are read back from the recorder.
     pre = nest.Create("parrot_neuron", N_PRE)
     # parrot_neuron has no refractory period and repeats port 0 only, so connect
     # plastic synapses to port 1 to avoid perturbing a parrot target's firing.
@@ -154,14 +149,14 @@ def _simulate(axonal_delay, dendritic_delay, pre_interval, num_threads, neuron_m
     recorded = {node: np.sort(times[senders == node]) for node in pre.tolist() + post.tolist()}
 
     # Under MPI, spike_recorder only sees local senders, whereas connections
-    # live on the target rank. Derive presynaptic times from pre_drive and
+    # live on the target rank. Derive pre-synaptic times from pre_drive and
     # verify them against the recorder wherever the parrot neuron is local.
     trains = {}
     for node, drive in zip(pre.tolist(), pre_drive):
         trains[node] = np.round(drive + DRIVE_DELAY, 10)
         if len(recorded[node]) > 0:
             assert recorded[node] == pytest.approx(trains[node]), f"parrot {node} did not repeat its input"
-    # Postsynaptic targets are local to this rank, so their recorded trains are complete.
+    # Post-synaptic targets are local to this rank, so their recorded trains are complete.
     for node in post.tolist():
         trains[node] = recorded[node]
 

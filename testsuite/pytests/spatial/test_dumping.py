@@ -23,20 +23,18 @@
 Tests for hl_api_spatial dumping functions.
 """
 
-import os
 import unittest
 
 import nest
 import numpy as np
+import pytest
 
 
 class DumpingTestCase(unittest.TestCase):
-    def nest_tmpdir(self):
-        """Returns temp dir path from environment, current dir otherwise."""
-        if "NEST_DATA_PATH" in os.environ:
-            return os.environ["NEST_DATA_PATH"]
-        else:
-            return "."
+    @pytest.fixture(autouse=True)
+    def _tmp_path(self, tmp_path):
+        """Gives each test a directory of its own, which pytest removes."""
+        self.tmp_path = tmp_path
 
     def test_DumpNodes(self):
         """Test dumping nodes."""
@@ -45,13 +43,12 @@ class DumpingTestCase(unittest.TestCase):
             "iaf_psc_alpha", positions=nest.spatial.grid(shape=[3, 3], extent=[2.0, 2.0], edge_wrap=True)
         )
 
-        filename = os.path.join(self.nest_tmpdir(), "test_DumpNodes.out.lyr")
+        filename = str(self.tmp_path / "nodes.out.lyr")
         nest.DumpLayerNodes(spatial_nodes, filename)
 
         npa = np.genfromtxt(filename)
         reference = np.array([[n.global_id] + list(nest.GetPosition(n)) for n in spatial_nodes])
         self.assertTrue(np.allclose(npa, reference))
-        os.remove(filename)
 
     def test_DumpConns(self):
         """Test dumping connections."""
@@ -62,7 +59,7 @@ class DumpingTestCase(unittest.TestCase):
         )
         nest.Connect(spatial_nodes, spatial_nodes, cdict)
 
-        filename = os.path.join(self.nest_tmpdir(), f"{self._testMethodName}.out.cnn")
+        filename = str(self.tmp_path / "conns.out.cnn")
         nest.DumpLayerConnections(spatial_nodes, spatial_nodes, "static_synapse", filename)
         npa = np.genfromtxt(filename)
         reference = np.array(
@@ -74,7 +71,6 @@ class DumpingTestCase(unittest.TestCase):
             ]
         )
         self.assertTrue(np.array_equal(npa, reference))
-        os.remove(filename)
 
     def test_DumpConns_diff(self):
         """Test dump connections between different layers."""
@@ -87,13 +83,12 @@ class DumpingTestCase(unittest.TestCase):
 
         print("Num. connections:", nest.num_connections)
 
-        filename = os.path.join(self.nest_tmpdir(), f"{self._testMethodName}.out.cnn")
+        filename = str(self.tmp_path / "conns.out.cnn")
         nest.DumpLayerConnections(l1, l2, "static_synapse", filename)
         print("filename:", filename)
         npa = np.genfromtxt(filename)
         reference = np.array([1.0, 2.0, 1.0, 1.0, 0.0, 0.0])
         self.assertTrue(np.array_equal(npa, reference))
-        os.remove(filename)
 
     def test_DumpConns_syn(self):
         """Test dump connections with specific synapse."""
@@ -110,13 +105,12 @@ class DumpingTestCase(unittest.TestCase):
 
         print("Num. connections:", nest.num_connections)
 
-        filename = os.path.join(self.nest_tmpdir(), f"{self._testMethodName}.out.cnn")
+        filename = str(self.tmp_path / "conns.out.cnn")
         nest.DumpLayerConnections(l2, l3, syn_model, filename)
         print("filename:", filename)
         npa = np.genfromtxt(filename)
         reference = np.array([2.0, 3.0, 1.0, 1.0, 0.0, 0.0])
         self.assertTrue(np.array_equal(npa, reference))
-        os.remove(filename)
 
     def test_DumpConns_sliced(self):
         """Test dumping connections with sliced layer."""
@@ -127,7 +121,7 @@ class DumpingTestCase(unittest.TestCase):
         )
         nest.Connect(spatial_nodes, spatial_nodes, cdict)
 
-        filename = os.path.join(self.nest_tmpdir(), f"{self._testMethodName}.out.cnn")
+        filename = str(self.tmp_path / "conns.out.cnn")
         nest.DumpLayerConnections(spatial_nodes[0], spatial_nodes, "static_synapse", filename)
         npa = np.genfromtxt(filename)
         reference = np.array(
@@ -149,14 +143,3 @@ class DumpingTestCase(unittest.TestCase):
         self.assertEqual(len(npa), len(reference))
         for conn in npa:
             self.assertTrue(conn in reference, "Connection not in reference: {}".format(conn))
-        os.remove(filename)
-
-
-def suite():
-    suite = unittest.makeSuite(DumpingTestCase, "test")
-    return suite
-
-
-if __name__ == "__main__":
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(suite())

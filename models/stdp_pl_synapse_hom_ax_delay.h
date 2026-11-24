@@ -405,7 +405,7 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::correct_weight_stdp_ax_delay(
   const double t_post_spike,
   const STDPPLHomAxDelayCommonProperties& cp )
 {
-  const double wrong_weight = weight_;  // incorrectly transmitted weight
+  const double wrong_weight = entry.get_new_weight();  // weight the target currently holds for this spike
   Node* target = get_target( tid );
 
   // Read everything required from the entry up front, since updating the weights to revert to below also modifies

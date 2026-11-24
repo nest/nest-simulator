@@ -20,29 +20,23 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Check that retrospective spike correction leaves the *corrected* weight right.
+Verify retrospective weight correction for ``stdp_pl_synapse_hom_ax_delay``.
 
-``test_stdp_pl_synapse_hom`` compares the weights NEST hands to the weight recorder.
-Those are the weights the synapse transmits, which are pre-correction by design, so that
-test cannot see whether a correction landed on the right value -- it has to permit any
-transmitted weight that a pending correction would change.
+``test_stdp_pl_synapse_hom`` compares weights recorded by a weight recorder,
+which reflect pre-correction transmitted weights. Here we check the corrected
+results against a causal reference evaluated with the full postsynaptic spike
+train:
 
-This test looks at the weight the synapse is left holding once every correction has been
-applied, and compares it against ``send()`` evaluated with the whole postsynaptic history
-available, which is what retrospective correction is meant to reproduce. Every spike time
-is prescribed, so that reference is exact and the comparison is not statistical.
+- Final synapse weights once all pending corrections have completed.
+- Delivered postsynaptic input (via the target neuron's ``V_m`` trace), which
+  catches wrong ``WeightCorrectionEvent`` deltas when multiple presynaptic
+  spikes on the same connection overlap within one critical window.
 
-The parametrisation matters more than its size. A correction entry only has to be handed
-on to the next spike on the same connection while two of them are in flight together, i.e.
-while the presynaptic inter-spike interval is shorter than ``axonal - dendritic``; the
-short-interval cases below are the ones that exercise that hand-off.
-
-The cases are run against every neuron model that drives the correction mechanism, because
-the buffer lives in the neuron: a model which never clears it, or clears it at the wrong
-lag, leaves stale entries that only show up as a wrong weight. The ``axonal == dendritic``
-case is deliberately among them -- it is the boundary at which a connection starts counting
-as predominantly axonal, so the neuron maintains the buffer, yet no correction can ever be
-required, and both halves of that have to hold at once.
+Short presynaptic inter-spike intervals (below ``axonal_delay - dendritic_delay``)
+exercise multi-spike overlap and entry hand-off. All neuron models supporting
+predominantly axonal delays are tested, including the boundary
+``axonal_delay == dendritic_delay`` where the buffer is active but no
+corrections should fire.
 """
 
 from math import exp
@@ -62,7 +56,7 @@ TAU_MINUS = 33.7
 SYNAPSE_PARAMS = {"lambda": 0.1, "alpha": 0.1, "mu": 0.4, "tau_plus": 20.0}
 EPS = 1e-6
 
-# The neuron models which support synapses with predominantly axonal delay; see
+# Neuron models supporting predominantly axonal delays; see
 # Node::supports_axonal_delay_corrections().
 SUPPORTED_NEURONS = ["iaf_psc_alpha", "iaf_psc_exp", "iaf_psc_delta", "parrot_neuron"]
 
@@ -76,18 +70,19 @@ def _depress(weight, kminus):
     return new_weight if new_weight > 0.0 else 0.0
 
 
-def _causal_weight(pre_spikes, post_spikes, axonal_delay, dendritic_delay):
-    """The weight ``send()`` arrives at when no postsynaptic spike is ever missed.
+def _causal_spike_weights(pre_spikes, post_spikes, axonal_delay, dendritic_delay):
+    """Compute per-spike weights as ``send()`` would with full post history.
 
-    Mirrors stdp_pl_synapse_hom_ax_delay::send(): facilitation walks the history over
-    ``(t_last_pre + d_axon - d_dend, t_pre + d_axon - d_dend]``, closed at the upper end
-    because ``get_history()`` is, and depression reads the postsynaptic trace strictly
-    before ``t_pre + d_axon - d_dend`` because ``get_K_value()`` is strict. ``t_lastspike_``
-    starts at ``-d_axon``, standing for a spike that reached the synapse at t=0.
+    Mirrors ``stdp_pl_synapse_hom_ax_delay::send()``: facilitation integrates
+    over ``(t_last_pre + d_axon - d_dend, t_pre + d_axon - d_dend]`` (matching
+    ``get_history()``), and depression reads the postsynaptic trace strictly
+    before ``t_pre + d_axon - d_dend`` (matching ``get_K_value()``).
+    ``t_lastspike_`` starts at ``-d_axon`` so the synapse starts at t = 0.
     """
     weight = INITIAL_WEIGHT
     kplus = 0.0
     t_last_pre = -axonal_delay
+    spike_weights = []
 
     for t_pre in pre_spikes:
         t_arrival = t_pre + axonal_delay - dendritic_delay
@@ -97,10 +92,17 @@ def _causal_weight(pre_spikes, post_spikes, axonal_delay, dendritic_delay):
                 weight = _facilitate(weight, kplus * exp(minus_dt / SYNAPSE_PARAMS["tau_plus"]))
         kminus = sum(exp((t_post - t_arrival) / TAU_MINUS) for t_post in post_spikes if t_arrival - t_post > EPS)
         weight = _depress(weight, kminus)
+        spike_weights.append(weight)
         kplus = kplus * exp((t_last_pre - t_pre) / SYNAPSE_PARAMS["tau_plus"]) + 1.0
         t_last_pre = t_pre
 
-    return weight
+    return spike_weights
+
+
+def _causal_weight(pre_spikes, post_spikes, axonal_delay, dendritic_delay):
+    """Return the final weight produced by ``_causal_spike_weights``."""
+    spike_weights = _causal_spike_weights(pre_spikes, post_spikes, axonal_delay, dendritic_delay)
+    return spike_weights[-1] if spike_weights else INITIAL_WEIGHT
 
 
 def _simulate(axonal_delay, dendritic_delay, pre_interval, num_threads, neuron_model="iaf_psc_alpha"):
@@ -112,11 +114,11 @@ def _simulate(axonal_delay, dendritic_delay, pre_interval, num_threads, neuron_m
     pre_drive = [np.round(np.arange(1.0 + 0.1 * i, stop, pre_interval + 0.1 * (i % 5)), 1) for i in range(N_PRE)]
     post_drive = [np.round(np.arange(2.0 + 0.1 * j, stop, 1.3 + 0.1 * (j % 7)), 1) for j in range(N_POST)]
 
-    # parrot_neuron repeats its input exactly, so the presynaptic spike times are prescribed;
-    # the postsynaptic times are whatever the neurons produce and are read back below.
+    # parrot_neuron repeats its input spikes at known times; postsynaptic spike
+    # times are read back from the recorder.
     pre = nest.Create("parrot_neuron", N_PRE)
-    # parrot_neuron has no refractory period, and it repeats spikes arriving on port 0 only. The plastic input is
-    # therefore connected to port 1, so that the STDP synapses do not influence the spiking of a parrot target.
+    # parrot_neuron has no refractory period and repeats port 0 only, so connect
+    # plastic synapses to port 1 to avoid perturbing a parrot target's firing.
     is_parrot = neuron_model == "parrot_neuron"
     post_params = {"tau_minus": TAU_MINUS} if is_parrot else {"tau_minus": TAU_MINUS, "t_ref": 0.0}
     post = nest.Create(neuron_model, N_POST, params=post_params)
@@ -151,43 +153,59 @@ def _simulate(axonal_delay, dendritic_delay, pre_interval, num_threads, neuron_m
     times = recorder.events["times"]
     recorded = {node: np.sort(times[senders == node]) for node in pre.tolist() + post.tolist()}
 
-    # Under MPI a spike_recorder only ever sees senders local to its own rank, and the
-    # presynaptic side of a connection generally is not: a connection lives on the rank of its
-    # target. The presynaptic times are prescribed, though -- parrot_neuron repeats its input
-    # exactly, one drive delay later -- so take them from the drive rather than the recorder,
-    # and check that against the recorder wherever the rank did see them, so "repeats exactly"
-    # stays tested rather than assumed.
+    # Under MPI, spike_recorder only sees local senders, whereas connections
+    # live on the target rank. Derive presynaptic times from pre_drive and
+    # verify them against the recorder wherever the parrot neuron is local.
     trains = {}
     for node, drive in zip(pre.tolist(), pre_drive):
         trains[node] = np.round(drive + DRIVE_DELAY, 10)
         if len(recorded[node]) > 0:
             assert recorded[node] == pytest.approx(trains[node]), f"parrot {node} did not repeat its input"
-    # Targets are local by construction, so their recorded trains are complete.
+    # Postsynaptic targets are local to this rank, so their recorded trains are complete.
     for node in post.tolist():
         trains[node] = recorded[node]
 
     return nest.GetConnections(synapse_model="stdp_pl_synapse_hom_ax_delay"), trains
 
 
+def _record_vm(neuron_model, post_drive, simtime, connect_pre):
+    """Simulate a driven target neuron and return its V_m trace and spike times."""
+    nest.ResetKernel()
+    nest.set(resolution=RESOLUTION, local_num_threads=1)
+
+    post = nest.Create(neuron_model, params={"tau_minus": TAU_MINUS, "t_ref": 0.0})
+    post_gen = nest.Create("spike_generator", params={"spike_times": post_drive})
+    nest.Connect(post_gen, post, syn_spec={"weight": DRIVE_WEIGHT, "delay": DRIVE_DELAY})
+
+    connect_pre(post)
+
+    sr = nest.Create("spike_recorder")
+    nest.Connect(post, sr)
+    mm = nest.Create("multimeter", params={"record_from": ["V_m"], "interval": RESOLUTION})
+    nest.Connect(mm, post)
+
+    nest.Simulate(simtime)
+    return mm.events["V_m"], np.sort(sr.events["times"])
+
+
 @pytest.mark.parametrize(
     "axonal_delay, dendritic_delay, pre_interval",
     [
-        (2.0, 0.5, 0.7),  # several spikes of one connection critical at once
+        (2.0, 0.5, 0.7),  # multiple spikes in flight on one connection
         (2.0, 0.0, 0.7),  # purely axonal delay, same regime
-        (3.0, 0.1, 0.7),  # axonal delay spanning many min-delay intervals
-        (2.0, 0.5, 3.0),  # interval longer than axonal - dendritic: no hand-off needed
-        (1.0, 0.5, 0.7),  # correction window shorter than one communication interval
-        (1.5, 1.5, 0.7),  # axonal == dendritic: no correction can ever be required
+        (3.0, 0.1, 0.7),  # axonal delay spanning several min-delay intervals
+        (2.0, 0.5, 3.0),  # interval > axonal - dendritic: no hand-off needed
+        (1.0, 0.5, 0.7),  # critical window shorter than one min-delay interval
+        (1.5, 1.5, 0.7),  # axonal == dendritic: no corrections required
     ],
 )
-# The 4-thread case needs a build with multithreading support; NEST raises on
-# local_num_threads > 1 without it.
+# NEST raises on local_num_threads > 1 when built without OpenMP support.
 @pytest.mark.parametrize("num_threads", [1, pytest.param(4, marks=pytest.mark.skipif_missing_threads)])
 @pytest.mark.parametrize("neuron_model", SUPPORTED_NEURONS)
 def test_corrected_weights_match_causal_reference(
     axonal_delay, dendritic_delay, pre_interval, num_threads, neuron_model
 ):
-    """Every synapse must end with the same weight as a causal implementation that never misses a spike."""
+    """Verify that final synapse weights match the causal reference."""
     connections, trains = _simulate(axonal_delay, dendritic_delay, pre_interval, num_threads, neuron_model)
 
     sources = connections.source
@@ -203,24 +221,69 @@ def test_corrected_weights_match_causal_reference(
         if (source, target) not in reference:
             reference[(source, target)] = _causal_weight(trains[source], trains[target], axonal_delay, dendritic_delay)
         expected = reference[(source, target)]
-        assert weight == pytest.approx(expected, rel=1e-9), (
-            f"synapse {source}->{target} ended on {weight!r}, "
-            f"but a causally correct implementation gives {expected!r}"
-        )
+        assert weight == pytest.approx(
+            expected, rel=1e-9
+        ), f"synapse {source}->{target} ended at {weight!r}, expected {expected!r}"
 
 
 @pytest.mark.parametrize("neuron_model", SUPPORTED_NEURONS)
 def test_corrections_actually_fire(neuron_model):
-    """Guard the guard: the parametrisation above has to enter the correction path at all.
-
-    At ``axonal_delay <= dendritic_delay`` no correction is ever required, so a test that
-    only ever ran such a case would pass without exercising anything. Equality is the
-    interesting half: a spike is handed to the synapse no earlier than the slice in which
-    it was emitted, so at ``axonal == dendritic`` the whole postsynaptic history the synapse
-    needs is already there and the count has to be exactly zero, not merely small.
-    """
+    """Verify that corrections fire when axonal > dendritic and never when equal."""
     _simulate(axonal_delay=2.0, dendritic_delay=0.5, pre_interval=0.7, num_threads=1, neuron_model=neuron_model)
     assert nest.num_corrections > 0
 
     _simulate(axonal_delay=1.5, dendritic_delay=1.5, pre_interval=0.7, num_threads=1, neuron_model=neuron_model)
     assert nest.num_corrections == 0
+
+
+@pytest.mark.parametrize(
+    "axonal_delay, dendritic_delay, pre_interval",
+    [
+        (2.0, 0.5, 0.5),  # multiple spikes in flight on one connection
+        (3.0, 0.5, 0.5),  # axonal delay spanning several min-delay intervals
+        (2.0, 0.5, 3.0),  # interval > axonal - dendritic: no hand-off needed
+        (1.0, 0.5, 0.5),  # critical window shorter than one min-delay interval
+        (1.5, 1.5, 0.5),  # axonal == dendritic: no corrections required
+    ],
+)
+@pytest.mark.parametrize("neuron_model", ["iaf_psc_alpha", "iaf_psc_exp", "iaf_psc_delta"])
+def test_delivered_weights_match_causal_reference(axonal_delay, dendritic_delay, pre_interval, neuron_model):
+    """Verify that delivered spike weights match the causal reference.
+
+    Compares the target neuron's ``V_m`` trace against a reference neuron
+    driven with the exact causal per-spike weights. Requires
+    ``dendritic_delay > 0`` so pending spikes remain in the target's ring
+    buffer when corrections arrive.
+    """
+    simtime = 40.0
+    # Binary-exact intervals keep t_spike on exact grid steps in Time::ms_stamp().
+    pre_drive = np.arange(1.0, 30.0, pre_interval)
+    post_drive = np.arange(2.0, 30.0, 1.5)
+    pre_spikes = pre_drive + DRIVE_DELAY
+
+    def connect_plastic(post):
+        pre = nest.Create("parrot_neuron")
+        pre_gen = nest.Create("spike_generator", params={"spike_times": pre_drive})
+        nest.Connect(pre_gen, pre, syn_spec={"delay": DRIVE_DELAY})
+        nest.SetDefaults("stdp_pl_synapse_hom_ax_delay", SYNAPSE_PARAMS)
+        nest.Connect(
+            pre,
+            post,
+            syn_spec={
+                "synapse_model": "stdp_pl_synapse_hom_ax_delay",
+                "weight": INITIAL_WEIGHT,
+                "axonal_delay": axonal_delay,
+                "dendritic_delay": dendritic_delay,
+            },
+        )
+
+    vm_actual, post_spikes = _record_vm(neuron_model, post_drive, simtime, connect_plastic)
+    causal_weights = _causal_spike_weights(pre_spikes, post_spikes, axonal_delay, dendritic_delay)
+
+    def connect_reference(post):
+        pre_gen = nest.Create("spike_generator", params={"spike_times": pre_spikes, "spike_weights": causal_weights})
+        nest.Connect(pre_gen, post, syn_spec={"delay": axonal_delay + dendritic_delay})
+
+    vm_ref, _ = _record_vm(neuron_model, post_drive, simtime, connect_reference)
+    assert vm_actual == pytest.approx(vm_ref, rel=1e-9, abs=1e-9)
+

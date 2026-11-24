@@ -28,7 +28,6 @@
 #include <cassert>
 #include <cstdint>
 #include <limits>
-#include <memory>  // unique_ptr
 #include <vector>
 
 // Includes from libnestutil:
@@ -380,8 +379,15 @@ private:
   //! Delivers events directly from the buffers of the groups (single MPI process, see use_group_collocation()).
   void deliver_events_from_groups_( const size_t tid );
 
-  //! Copies the buffers of the groups into the send buffer like collocate_spike_data_buffers_() does for the registers;
-  //! requests their cache lines in two batches (headers, then data) before the copy.
+  /**
+   * Copies the buffers of the groups into the send buffer like collocate_spike_data_buffers_() does for the registers.
+   *
+   * The collocating threads on other cores wrote the buffers, so every cache line of them is a transfer between cores.
+   * Up to MAX_PREFETCHED_GROUP_BUFFERS buffers, their cache lines are requested in two batches before the copy, first
+   * the vector headers, then the data of the non-empty buffers, so that the transfers overlap. Measured on two nodes
+   * (PD14, one process per node): the copy took 0.84-1.35 us without the prefetches and 0.51-0.57 us with them on AMD
+   * EPYC 9754 nodes with 2 and 4 groups, 0.99-1.18 and 0.51 us on JUPITER; real-time factor -2.6 % with 4 groups.
+   */
   template < typename SpikeDataT >
   void concatenate_group_buffers_( SendBufferPosition& send_buffer_position,
     std::vector< SpikeDataT >& send_buffer,
@@ -447,13 +453,29 @@ private:
   size_t collocation_groups_;
 
   /**
+   * Largest number of group buffers (groups times MPI processes) whose cache lines concatenate_group_buffers_()
+   * prefetches.
+   *
+   * Prefetched lines must stay in the L1 cache until the copy reads them: 256 headers (6 kB) and up to 256 first data
+   * lines (16 kB) fit into the 32-48 kB of an L1 data cache next to the send buffer. With more buffers, early
+   * prefetches would be evicted before their use, and most buffers are empty. The prefetches were measured with 2
+   * processes only.
+   */
+  static constexpr size_t MAX_PREFETCHED_GROUP_BUFFERS = 256;
+
+  /**
    * One word of the occupancy bitmap of a collocation group, on a cache line of its own.
    *
    * One bit per thread rather than one flag per thread: the collocating thread reads one cache line per 64 threads
    * instead of one per thread. The threads set their bits when they finish their update, so the atomic updates of the
-   * shared line are spread over the arrival times of the threads.
+   * shared line are spread over the arrival times of the threads. The words of different groups lie on different
+   * lines, so the groups do not interfere.
+   *
+   * Do not split a word into words for fewer threads without measuring: on an Intel Xeon 6980P node with 4 groups of
+   * 64 threads, reading and clearing the words of a group took about 0.5 us, and a word per 8 threads made PD14
+   * slower (+5.8 % against +4.6 % of this layout, both against visiting all registers).
    */
-  struct alignas( 64 ) OccupancyWord_
+  struct alignas( 64 ) OccupancyWord_  // 64 bytes: cache line of the server processors, as TreeBarrier::Padded_
   {
     static constexpr size_t NUM_BITS = 64;
     std::atomic< uint64_t > bits_ = 0;
@@ -471,7 +493,7 @@ private:
      * arrival of the group; the barrier orders both. A thread marks again only after the barrier that follows the
      * collocation of all groups (the single barrier, or the second of two barriers).
      */
-    std::unique_ptr< OccupancyWord_[] > occupancy_;
+    std::vector< OccupancyWord_ > occupancy_;
     //! Threads with marked registers in thread order, written and read only by the collocating thread
     std::vector< size_t > marked_;
     //! [ target rank ] spikes of the last cycle, read by the delivery or the MPI exchange

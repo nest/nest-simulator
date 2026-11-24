@@ -256,7 +256,8 @@ EventDeliveryManager::configure_spike_data_buffers()
   const size_t num_threads = kernel().vp_manager.get_num_threads();
   assert( emitted_spikes_register_.size() == num_threads );  // collocation_group_begin_() ends the last group there
   const size_t num_groups = std::max< size_t >( 1, std::min( collocation_groups_, num_threads ) );
-  group_buffers_ = std::vector< CollocationGroup_ >( num_groups );  // not assign(): the groups hold atomics, no copies
+  // the groups are constructed in place: they hold atomics and cannot be copied
+  group_buffers_ = std::vector< CollocationGroup_ >( num_groups );
   for ( size_t g = 0; g < num_groups; ++g )
   {
     group_buffers_[ g ].first_thread_ = ( g * num_threads + num_groups - 1 ) / num_groups;

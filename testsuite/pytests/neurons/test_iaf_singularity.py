@@ -37,7 +37,7 @@ class TestIAFSingularity:
     membrane potential trace must be smooth.
     """
 
-    @pytest.mark.parametrize("model", ["iaf_psc_exp", "iaf_psc_alpha"])
+    @pytest.mark.parametrize("model", ["iaf_psc_exp", "iaf_psc_exp_hpc", "iaf_psc_alpha"])
     @pytest.mark.parametrize("h", [0.001, 0.1])
     @pytest.mark.parametrize("tau_m", [1.0, 10.0, 100.0])
     def test_smooth_response(self, model, h, tau_m):

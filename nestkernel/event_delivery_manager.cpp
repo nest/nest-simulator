@@ -684,6 +684,22 @@ EventDeliveryManager::concatenate_group_buffers_( SendBufferPosition& send_buffe
   // keep the behaviour when a chunk is full: all spikes are counted, only those that fit are
   // written, and the caller repeats the call with a larger send buffer.
   //
+  // The buffers were written by the collocating threads on other cores. Request their cache lines in two batches,
+  // first all vector headers, then all data, so that the transfers overlap (as in collocate_group()).
+  for ( const auto& group : group_buffers_ )
+  {
+    for ( const auto& spikes : group.spikes_ )
+    {
+      __builtin_prefetch( &spikes );
+    }
+  }
+  for ( const auto& group : group_buffers_ )
+  {
+    for ( const auto& spikes : group.spikes_ )
+    {
+      __builtin_prefetch( spikes.data() );
+    }
+  }
   // as in collocate_spike_data_buffers_(): all spikes are counted, only those that fit into the chunk are written
   for ( const auto& group : group_buffers_ )
   {

@@ -380,7 +380,8 @@ private:
   //! Delivers events directly from the buffers of the groups (single MPI process, see use_group_collocation()).
   void deliver_events_from_groups_( const size_t tid );
 
-  //! Copies the buffers of the groups into the send buffer like collocate_spike_data_buffers_() does for the registers.
+  //! Copies the buffers of the groups into the send buffer like collocate_spike_data_buffers_() does for the registers;
+  //! requests their cache lines in two batches (headers, then data) before the copy.
   template < typename SpikeDataT >
   void concatenate_group_buffers_( SendBufferPosition& send_buffer_position,
     std::vector< SpikeDataT >& send_buffer,

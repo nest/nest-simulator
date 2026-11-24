@@ -697,7 +697,10 @@ EventDeliveryManager::concatenate_group_buffers_( SendBufferPosition& send_buffe
   {
     for ( const auto& spikes : group.spikes_ )
     {
-      __builtin_prefetch( spikes.data() );
+      if ( not spikes.empty() )  // an empty buffer keeps its old capacity; with many ranks most are empty
+      {
+        __builtin_prefetch( spikes.data() );
+      }
     }
   }
   // as in collocate_spike_data_buffers_(): all spikes are counted, only those that fit into the chunk are written

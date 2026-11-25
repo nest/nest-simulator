@@ -24,7 +24,12 @@ Up to now, NEST has treated all transmission delays as purely dendritic. This
 distinction matters for spike-timing dependent plasticity (STDP), because the
 weight update depends on when pre- and postsynaptic spikes arrive at the
 synapse. If the axonal delay is larger than the dendritic delay, NEST now
-corrects weight changes retroactively when a postsynaptic spike arrives later.
+employs a method that guarantees causal order of spikes without having to rework
+its entire highly optimized spike delivery algorithm, thus not impacting the
+performance of simulations without axonal delay, by correcting synaptic weight
+changes retroactively in certain cases after postsynaptic spikes. This method has been
+shown to achieve the best performance, while also guaranteeing fully correct dynamics
+throughout the simulation.
 
 The new synapse model ``stdp_pl_synapse_hom_ax_delay`` accepts the parameters
 ``axonal_delay`` and ``dendritic_delay`` instead of ``delay``:

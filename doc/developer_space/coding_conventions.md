@@ -150,7 +150,8 @@ threshold, `syn` synapse, `ref` refractory, `ex` excitatory, `in` inhibitory.
   4. Third-party library headers (e.g., GSL, MPI)
   5. NEST project headers
 - **Include What You Use:** include every header that defines a symbol you rely
-  on directly. Do not rely on transitive inclusion through other headers.
+  on directly. Do not rely on transitive inclusion through other headers. See
+  \ref devdoc_include_guidelines "Include Guidelines" for details.
 
 ### Namespaces
 
@@ -244,3 +245,6 @@ regular `//` comments inside the function body.
 - \ref devdoc_workflow "Developer documentation workflow"
 - \ref devdoc_architecture "Architecture Overview"
 - \ref devdoc_design_decisions "Design Decisions"
+- \ref devdoc_include_guidelines "Include Guidelines"
+- \ref devdoc_kernel_managers "Kernel Managers"
+- \ref devdoc_performance "Performance Guidelines"

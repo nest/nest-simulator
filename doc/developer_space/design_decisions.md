@@ -61,16 +61,19 @@ were fragile and painful to maintain.
 **Options considered:**
 1. Reference-based managers — store each subsystem manager by reference in
    `KernelManager` and use forward declarations to break the include cycle.
-2. Template-based inline globals — expose each manager through a file-static
-   template function `manager<T>()` that returns a reference to the global
+2. Template-based inline globals — expose each manager through the variable
+   template `kernel::manager< ManagerT >`, a reference to the global manager
    instance, so the full type is only needed at the call site.
 
 **Decision:**
 Template-based inline globals for manager access (option 2).
 
 **Rationale:**
-The template approach eliminated all `*_impl.h` files and allowed
-performance-critical accessor functions to be inlined by the compiler.
+The template approach removed several of the manager-related `*_impl.h`
+workaround files (for example `vp_manager_impl.h`, `io_manager_impl.h` and
+`sp_manager_impl.h`) and allowed performance-critical accessor functions to be
+inlined by the compiler. Other `*_impl.h` files remain where a complete type is
+needed outside the `.cpp` file.
 It also enforced Include What You Use (IWYU) discipline: each translation
 unit must now explicitly include the header for every manager it uses,
 making dependencies explicit. A benchmark comparing the two approaches showed
@@ -81,5 +84,14 @@ approach recovered that regression.
 250+ files were touched to add explicit manager includes. New code must
 include the specific manager header it needs rather than relying on transitive
 inclusion through `kernel_manager.h`. There was no external API change.
+
+Performance-critical definitions were moved back into the manager headers
+(see \ref devdoc_performance "Performance Guidelines").
+
+Because the construction and destruction order of template-instantiated
+globals is unspecified, the managers are not plain globals: their storage is
+reserved at compile time, `kernel::create_managers()` constructs them in a
+fixed order at the start of `init_nest()`, and they are never destroyed
+(see \ref devdoc_kernel_managers "Kernel Managers").
 
 **Reference:** [PR #3544](https://github.com/nest/nest-simulator/pull/3544)

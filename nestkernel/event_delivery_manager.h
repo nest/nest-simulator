@@ -24,7 +24,9 @@
 #define EVENT_DELIVERY_MANAGER_H
 
 // C++ includes:
+#include <atomic>
 #include <cassert>
+#include <cstdint>
 #include <limits>
 #include <vector>
 
@@ -204,6 +206,48 @@ public:
   void gather_spike_data();
 
   /**
+   * True if the spike registers are collocated by several threads in parallel.
+   *
+   * This is the case if the kernel parameter collocation_groups is larger than one, there is more than one thread and
+   * the spikes are on-grid. The threads are divided into groups of consecutive threads. After the first barrier of a
+   * cycle the first thread of every group copies the spike registers of its group into buffers of the group (one per
+   * target rank), all groups in parallel (collocate_groups()). With several MPI processes the master thread then
+   * concatenates the buffers of the groups, in the order of the groups, into the send buffer, which is what the
+   * collocation of a single thread would have produced; the MPI communication is unchanged. With a single MPI process
+   * (and compressed spikes) there is no communication at all: after the second barrier every thread delivers directly
+   * from the buffers of the groups.
+   */
+  bool use_group_collocation() const;
+
+  /**
+   * Collocation of the group of thread tid by its first thread (no operation for the other threads).
+   *
+   * Called by all threads between the two barriers of a cycle, if use_group_collocation() was true before the first
+   * barrier.
+   */
+  void collocate_groups( const size_t tid );
+
+  /**
+   * Collocation of group g, by any one thread, after all threads of the group have finished their update.
+   *
+   * Called by collocate_groups() (first thread of the group, two barriers) and as the group step of the single barrier
+   * (last thread of the group to arrive, see TreeBarrier). Visits only the registers marked by mark_register().
+   */
+  void collocate_group( const size_t g );
+
+  /**
+   * Marks the spike register of thread tid as occupied in the occupancy bitmap of its collocation group.
+   *
+   * Called by every thread before it arrives at the barrier of a cycle in which the groups collocate; a thread with an
+   * empty register sets no bit.
+   */
+  void mark_register( const size_t tid );
+
+  //! First thread of each collocation group, followed by the number of threads; valid after
+  //! configure_spike_data_buffers().
+  std::vector< size_t > get_collocation_group_bounds() const;
+
+  /**
    * Collocates presynaptic connection information, communicates via
    * MPI and creates presynaptic connection infrastructure.
    */
@@ -327,10 +371,30 @@ private:
   template < typename SpikeDataT >
   void deliver_events_( const size_t tid, const std::vector< SpikeDataT >& recv_buffer );
 
+  //! Delivers events directly from the buffers of the groups (single MPI process, see use_group_collocation()).
+  void deliver_events_from_groups_( const size_t tid );
+
+  /**
+   * Copies the buffers of the groups into the send buffer like collocate_spike_data_buffers_() does for the registers.
+   *
+   * The collocating threads on other cores wrote the buffers, so every cache line of them is a transfer between cores.
+   * Up to MAX_PREFETCHED_GROUP_BUFFERS buffers, their cache lines are requested in two batches before the copy, first
+   * the vector headers, then the data of the non-empty buffers, so that the transfers overlap. Measured on two nodes
+   * (PD14, one process per node): the copy took 0.84-1.35 us without the prefetches and 0.51-0.57 us with them on AMD
+   * EPYC 9754 nodes with 2 and 4 groups, 0.99-1.18 and 0.51 us on JUPITER; real-time factor -2.6 % with 4 groups.
+   */
+  template < typename SpikeDataT >
+  void concatenate_group_buffers_( SendBufferPosition& send_buffer_position,
+    std::vector< SpikeDataT >& send_buffer,
+    std::vector< size_t >& num_spikes_per_rank );
+
   /**
    * Deletes all spikes from spike registers and resets spike counters.
    */
   void reset_spike_register_( const size_t tid );
+
+  //! First thread of collocation group g; for g = number of groups, the number of threads.
+  size_t collocation_group_begin_( const size_t g ) const;
 
   /**
    * Resizes spike registers according minimal delay so it can accommodate all possible lags.
@@ -372,6 +436,87 @@ private:
   //--------------------------------------------------//
 
   bool off_grid_spiking_;  //!< indicates whether spikes are not constrained to the grid
+
+  //! Number of groups of threads that collocate the spike registers in parallel (1: master thread alone).
+  size_t collocation_groups_;
+
+  /**
+   * Largest number of group buffers (groups times MPI processes) whose cache lines concatenate_group_buffers_()
+   * prefetches.
+   *
+   * Prefetched lines must stay in the L1 cache until the copy reads them: 256 headers (6 kB) and up to 256 first data
+   * lines (16 kB) fit into the 32-48 kB of an L1 data cache next to the send buffer. With more buffers, early
+   * prefetches would be evicted before their use, and most buffers are empty. The prefetches were measured with 2
+   * processes only.
+   */
+  static constexpr size_t MAX_PREFETCHED_GROUP_BUFFERS = 256;
+
+  /**
+   * One word of the occupancy bitmap of a collocation group, on a cache line of its own.
+   *
+   * One bit per thread rather than one flag per thread: the collocating thread reads one cache line per 64 threads
+   * instead of one per thread. The threads set their bits when they finish their update, so the atomic updates of the
+   * shared line are spread over the arrival times of the threads. The words of different groups lie on different
+   * lines, so the groups do not interfere.
+   *
+   * Do not split a word into words for fewer threads without measuring: on an Intel Xeon 6980P node with 4 groups of
+   * 64 threads, reading and clearing the words of a group took about 0.5 us, and a word per 8 threads made PD14
+   * slower (+5.8 % against +4.6 % of this layout, both against visiting all registers).
+   */
+  struct alignas( 64 ) OccupancyWord_  // 64 bytes: cache line of the server processors, as TreeBarrier::Padded_
+  {
+    static constexpr size_t NUM_BITS = 64;
+    std::atomic< uint64_t > bits_ = 0;
+  };
+
+  //! Buffers of one group of threads for the collocation of the spike registers (see use_group_collocation()).
+  struct CollocationGroup_
+  {
+    size_t first_thread_ = 0;  //!< first thread of the group; the group ends where the next one begins
+    /**
+     * Occupancy bitmap of the spike registers of the group in the current cycle.
+     *
+     * Bit i of word w is set if the register of thread first_thread_ + 64 * w + i holds spikes. The threads of the
+     * group set their bits before they arrive at the barrier, the collocating thread reads and clears them after the
+     * arrival of the group; the barrier orders both. A thread marks again only after the barrier that follows the
+     * collocation of all groups (the single barrier, or the second of two barriers).
+     */
+    std::vector< OccupancyWord_ > occupancy_;
+    //! Threads with marked registers in thread order, written and read only by the collocating thread
+    std::vector< size_t > marked_;
+    //! [ target rank ] spikes of the last cycle, read by the delivery or the MPI exchange
+    std::vector< std::vector< SpikeData > > spikes_;
+    //! [ target rank ] spikes collected in the current cycle; swapped with spikes_ in gather_spike_data()
+    std::vector< std::vector< SpikeData > > spikes_next_;
+  };
+
+  /**
+   * The collocation groups.
+   *
+   * Two sets of spikes per group, because with one barrier per cycle a group collocates as soon as its own threads have
+   * arrived, while threads of other groups may still deliver the spikes of the last cycle. The master thread swaps the
+   * sets within each group; the vector of the groups does not change during a simulation, so that every thread can
+   * read the groups and their first threads at any time. Both sets live in this one member, because an additional
+   * member of the manager changes the memory layout of the kernel, which cost up to 4 % on PD14.
+   */
+  std::vector< CollocationGroup_ > group_buffers_;
+
+  //! Counter on a cache line of its own (see groups_collocated_).
+  struct alignas( 64 ) PaddedCounter_
+  {
+    std::atomic< size_t > value_ = 0;
+  };
+
+  /**
+   * Number of groups that have finished their collocation in the current cycle.
+   *
+   * Atomic, because the collocating threads of all groups increment it concurrently while the master thread spins on
+   * it in gather_spike_data() before it swaps the group buffers; release and acquire make the group buffers visible to
+   * the master. On a cache line of its own, because it is written in every cycle while all threads read the
+   * neighboring members (moduli_ for every delivered spike); sharing a line cost up to 13 % on PD14 (one process of
+   * 288 threads on four NVIDIA Grace chips).
+   */
+  PaddedCounter_ groups_collocated_;
 
   /**
    * Table of pre-computed modulos.
@@ -546,6 +691,23 @@ EventDeliveryManager::get_slice_modulo( long d )
   assert( 0 <= d and d < num_moduli_ );
 
   return slice_moduli_[ offsets_.slice_moduli_offset_ + d ];
+}
+
+inline size_t
+EventDeliveryManager::collocation_group_begin_( const size_t g ) const
+{
+  return g < group_buffers_.size() ? group_buffers_[ g ].first_thread_ : emitted_spikes_register_.size();
+}
+
+inline std::vector< size_t >
+EventDeliveryManager::get_collocation_group_bounds() const
+{
+  std::vector< size_t > bounds( group_buffers_.size() + 1 );
+  for ( size_t g = 0; g < bounds.size(); ++g )
+  {
+    bounds[ g ] = collocation_group_begin_( g );
+  }
+  return bounds;
 }
 
 }  // namespace nest

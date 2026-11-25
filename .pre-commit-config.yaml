@@ -75,7 +75,7 @@ repos:
           - matplotlib
           - mpi4py
           - notebook
-          - numpy
+          - numpy<2.5  # numpy>=2.5 needs Python>=3.12; its stubs break mypy --python-version=3.11
           - pandas
           - pydocstyle
           - pydot

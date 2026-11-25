@@ -56,7 +56,19 @@ void install_module( const std::string& module_name );
 
 void reset_kernel();
 
-void enable_structural_plasticity();
+/**
+ * Enable structural plasticity.
+ *
+ * Vacant pre- and postsynaptic elements are matched uniformly at random unless a spatial
+ * kernel and/or mask is given; these require all neurons involved to have positions.
+ *
+ * @param spatial_kernel Parameter evaluated on the positions of each candidate source-target pair;
+ *                       its value weights the candidate, zero excludes it. Must be finite and
+ *                       non-negative. If null, all candidates are equally likely.
+ * @param spatial_mask   Mask applied to the source-target displacement; candidates outside it are
+ *                       excluded. If null, no candidate is excluded on spatial grounds.
+ */
+void enable_structural_plasticity( ParameterPTR spatial_kernel = nullptr, MaskPTR spatial_mask = nullptr );
 void disable_structural_plasticity();
 
 void register_logger_client( const deliver_logging_event_ptr client_callback );

@@ -106,6 +106,14 @@ def _simulate(axonal_delay, dendritic_delay, pre_interval, num_threads, neuron_m
     nest.ResetKernel()
     nest.set(resolution=RESOLUTION, local_num_threads=num_threads)
 
+    # Stop generating spikes well before SIMTIME (at 80 ms of 120 ms) so all
+    # in-flight spikes and weight corrections settle before reading final weights.
+    # Each pre and post neuron gets its own start offset (0.1 * i, 0.1 * j) and
+    # firing interval (+ 0.1 * (i % 5) for pre, + 0.1 * (j % 7) for post) so the
+    # all-to-all synapses see varied spike timings instead of firing in lockstep.
+    # Rounding to 1 decimal removes float drift accumulated by np.arange() (e.g.
+    # 4.300000000000001), which Time::ms_stamp() would round up to the next
+    # 0.1 ms step.
     stop = SIMTIME - 2.0 * (SIMTIME / 6.0)
     pre_drive = [np.round(np.arange(1.0 + 0.1 * i, stop, pre_interval + 0.1 * (i % 5)), 1) for i in range(N_PRE)]
     post_drive = [np.round(np.arange(2.0 + 0.1 * j, stop, 1.3 + 0.1 * (j % 7)), 1) for j in range(N_POST)]
@@ -250,15 +258,16 @@ def test_delivered_weights_match_causal_reference(axonal_delay, dendritic_delay,
     ``dendritic_delay > 0`` so pending spikes remain in the target's ring
     buffer when corrections arrive.
     """
-    simtime = 40.0
+
+    TEST_SIMTIME = 40.0
     # Binary-exact intervals keep t_spike on exact grid steps in Time::ms_stamp().
-    pre_drive = np.arange(1.0, 30.0, pre_interval)
-    post_drive = np.arange(2.0, 30.0, 1.5)
-    pre_spikes = pre_drive + DRIVE_DELAY
+    PRE_DRIVE = np.arange(1.0, 30.0, pre_interval)
+    POST_DRIVE = np.arange(2.0, 30.0, 1.5)
+    PRE_SPIKES = PRE_DRIVE + DRIVE_DELAY
 
     def connect_plastic(post):
         pre = nest.Create("parrot_neuron")
-        pre_gen = nest.Create("spike_generator", params={"spike_times": pre_drive})
+        pre_gen = nest.Create("spike_generator", params={"spike_times": PRE_DRIVE})
         nest.Connect(pre_gen, pre, syn_spec={"delay": DRIVE_DELAY})
         nest.SetDefaults("stdp_pl_synapse_hom_ax_delay", SYNAPSE_PARAMS)
         nest.Connect(
@@ -272,13 +281,12 @@ def test_delivered_weights_match_causal_reference(axonal_delay, dendritic_delay,
             },
         )
 
-    vm_actual, post_spikes = _record_vm(neuron_model, post_drive, simtime, connect_plastic)
-    causal_weights = _causal_spike_weights(pre_spikes, post_spikes, axonal_delay, dendritic_delay)
-
-    def connect_reference(post):
-        pre_gen = nest.Create("spike_generator", params={"spike_times": pre_spikes, "spike_weights": causal_weights})
+    def connect_reference(post, weights):
+        pre_gen = nest.Create("spike_generator", params={"spike_times": PRE_SPIKES, "spike_weights": weights})
         nest.Connect(pre_gen, post, syn_spec={"delay": axonal_delay + dendritic_delay})
 
-    vm_ref, _ = _record_vm(neuron_model, post_drive, simtime, connect_reference)
-    assert vm_actual == pytest.approx(vm_ref, rel=1e-9, abs=1e-9)
+    vm_actual, post_spikes = _record_vm(neuron_model, POST_DRIVE, TEST_SIMTIME, connect_plastic)
+    causal_weights = _causal_spike_weights(PRE_SPIKES, post_spikes, axonal_delay, dendritic_delay)
+    vm_ref, _ = _record_vm(neuron_model, POST_DRIVE, TEST_SIMTIME, lambda post: connect_reference(post, causal_weights))
 
+    assert vm_actual == pytest.approx(vm_ref, rel=1e-9, abs=1e-9)

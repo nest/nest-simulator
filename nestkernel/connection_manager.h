@@ -675,7 +675,12 @@ private:
   //! Set when compressed_spike_data_copies_ changes, see compressed_spike_data_copies_changed().
   bool compressed_spike_data_copies_changed_;
 
-  //! The copies: [block][synapses][sources][threads of the block] (empty if compressed_spike_data_copies_ == 1).
+  /**
+   * The copies: [block][synapses][sources][threads of the block] (empty if compressed_spike_data_copies_ == 1).
+   *
+   * Each copy is constructed by the first thread of its block, so that by first-touch placement its memory resides in
+   * the NUMA domain of the block (see collect_compressed_spike_data()).
+   */
   std::vector< std::vector< std::vector< std::vector< SpikeData > > > > compressed_spike_data_blocks_;
   std::vector< size_t > compressed_spike_data_block_of_;   //!< block of every thread
   std::vector< size_t > compressed_spike_data_column_of_;  //!< column of every thread in the copy of its block

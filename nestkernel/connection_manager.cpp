@@ -1833,8 +1833,9 @@ ConnectionManager::collect_compressed_spike_data( const size_t tid )
 
     if ( not compressed_spike_data_blocks_.empty() )
     {
-      // The first thread of every block copies the columns of the threads of its block, so that the memory of the copy
-      // is allocated and first touched by a thread of the block.
+      // The first thread of every block makes the copy of its block, not the thread of the omp single above: a page is
+      // placed in the NUMA domain of the thread that first writes it (first touch), and the containers write their
+      // elements when they construct them, so the thread that constructs a copy determines where its memory resides.
       const size_t num_threads = kernel().vp_manager.get_num_threads();
       const size_t blocks = compressed_spike_data_blocks_.size();
       const size_t b = compressed_spike_data_block_of_[ tid ];
